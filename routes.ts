@@ -1,9 +1,8 @@
 import { NextPage } from "next"
 import React from "react"
+import { TUserRoles } from './interfaces/ITokenData'
 
-export type TUserRoles = 'root' | 'admin' | 'moderator' | 'dubber' | 'subber' | 'subscriber' | 'editor' | 'user'
-
-interface IRoute {
+export interface IRoute {
   public?: boolean,
   access?: TUserRoles[],
   path: string,
@@ -15,6 +14,8 @@ interface IRoutes {
   oopsWorks: IRoute,
   oops404: IRoute,
   oopsRestricted: IRoute,
+  authSignin: IRoute,
+  authSignup: IRoute,
 }
 
 export const routes: IRoutes = {
@@ -37,5 +38,13 @@ export const routes: IRoutes = {
   oopsRestricted: {
     path: '/oops/restricted',
     public: true,
+  },
+  authSignin: {
+    path: '/auth',
+    access: []
+  },
+  authSignup: {
+    path: '/auth/signup',
+    access: []
   },
 }

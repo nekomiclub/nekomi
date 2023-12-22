@@ -1,11 +1,11 @@
 import { NextPage } from 'next';
 
-const page: NextPage = (props) => {
+const Restricted: NextPage<{ reason?: string }> = (props) => {
   return (
     <div className="page">
-      works
+      restricted due to {props.reason}
     </div>
   );
 }
 
-export default page;
+export default Restricted;

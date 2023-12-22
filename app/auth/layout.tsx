@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
 
+import './styles.scss'
+
 export const metadata: Metadata = {
   title: 'Авторизація',
   description: 'Увійди в свій акаунт, та повернись в світ українського аніме'

@@ -1,17 +1,25 @@
 'use client'
 
 import { NextPage, Metadata } from 'next';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import userSlice from '../store/reducers/userSlice';
+import { logout } from '../components/authorization'
 
-const metadata: Metadata = {
-  title: 'animee head'
-}
+const Home: NextPage = (props) => {
+  const { isAuth, roles, uid, username } = useAppSelector(state => state.user)
+  const { reducer } = userSlice.actions;
+  const dispatch = useAppDispatch();
 
-const page: NextPage = (props) => {
   return (
     <div className="page">
-      head
+      <h1>{isAuth ? <>
+        <p>Logged in as {username}</p>
+        <button onClick={() => logout()}>logout</button>
+      </> : <>
+        You are not logged in.
+      </>}</h1>
     </div>
   );
 }
 
-export default page;
+export default Home;

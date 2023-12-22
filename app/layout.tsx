@@ -1,7 +1,9 @@
-import './styles/globals.css';
-import './styles/index.scss'
+import '../styles/globals.css';
+import '../styles/index.scss'
 
 import { Metadata } from 'next'
+import StorageProvider from '../components/StorageProvider'
+import AuthProvider from '../components/AuthProvider'
 
 export const metadata: Metadata = {
   title: 'animee',
@@ -15,7 +17,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ua">
-      <body id='root'>{children}</body>
+      <body id='root'>
+        <StorageProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </StorageProvider>
+      </body>
     </html>
   )
 }

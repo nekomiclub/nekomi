@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Home } from '../assets/assets'
+import { Home } from '../../assets/assets'
 import { routes } from '../../routes'
 
 import './styles.scss'

@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react'
 
-import { Logo, Home } from '../../assets/assets'
+import { Logo, Home } from '../../../assets/assets'
 import { ReturnToHome } from '../components';
 
 import '../styles.scss'
@@ -14,7 +14,7 @@ const Indev: NextPage = (props) => {
 
   useEffect(() => {
     if (searchParams.has('redirected')) {
-      console.warn('You are beeing redirected to indev page due to development status of the site')
+      console.warn('You are being redirected to indev page due to site`s development status')
       console.warn('You can connect fullkekw (which is owner of the site) in telegram - @unniiiverse')
     }
   }, [])

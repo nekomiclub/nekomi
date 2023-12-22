@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 
-const page: NextPage = (props) => {
+const NotFound: NextPage = (props) => {
   return (
     <div className="page">
       404
@@ -8,4 +8,4 @@ const page: NextPage = (props) => {
   );
 }
 
-export default page;
+export default NotFound;
