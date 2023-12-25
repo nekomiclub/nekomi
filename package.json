@@ -21,6 +21,8 @@
     "next": "14.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-idle-timer": "^5.7.2",
+    "react-range": "^1.8.14",
     "react-redux": "^9.0.4",
     "react-uvc": "^1.7.1",
     "redux": "^5.0.0",

@@ -4,6 +4,7 @@ import { NextPage, Metadata } from 'next';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import userSlice from '../store/reducers/userSlice';
 import { logout } from '../components/authorization'
+import BorderGradient from '../components/BorderGradient';
 
 const Home: NextPage = (props) => {
   const { isAuth, roles, uid, username } = useAppSelector(state => state.user)

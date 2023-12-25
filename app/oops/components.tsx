@@ -14,9 +14,8 @@ import './styles.scss'
 export const ReturnToHome = () => {
   return (
     <Link href={routes.home.path}>
-      <button className='oops-button flex items-center gap-[24px] py-[8px] px-[24px] border border-purple rounded-[4px]'>
+      <button className='oops-button flex items-center gap-[24px] py-[16px] px-[24px] border border-purple rounded-[4px]'>
         <Home width={24} height={25} />
-        <p className='text-[24px] text-white uppercase font-extralight'>на головну</p>
       </button>
     </Link>
   );

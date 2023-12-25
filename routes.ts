@@ -16,6 +16,8 @@ interface IRoutes {
   oopsRestricted: IRoute,
   authSignin: IRoute,
   authSignup: IRoute,
+  watch: IRoute,
+  watchTitle: IRoute,
 }
 
 export const routes: IRoutes = {
@@ -46,5 +48,13 @@ export const routes: IRoutes = {
   authSignup: {
     path: '/auth/signup',
     access: []
+  },
+  watch: {
+    path: '/w',
+    public: true,
+  },
+  watchTitle: {
+    path: '/w/*',
+    public: true,
   },
 }

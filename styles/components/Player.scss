@@ -1,0 +1,52 @@
+@import '../colors.scss';
+
+.player {
+  &-nextEp {
+    svg {
+      path, rect {
+        transition: .2s ease-in-out;
+      }
+    }
+
+    &--disabled {
+      svg {
+        path, rect {
+          fill: #A1A1A1;
+        }  
+      }
+    }
+  }
+
+  &-scroll {
+    &::-webkit-scrollbar {
+      width: 2px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: none;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $gradientPrimary;
+    }
+  }
+}
+
+#player {
+  &-volume {
+    &--tooltip {
+      transition: .3s ease-in-out;
+    }
+
+    &:hover {
+      #player-volume--tooltip {
+        opacity: 100;
+        visibility: visible;
+      }
+    }
+  }
+
+  &-duration {
+    
+  }
+}

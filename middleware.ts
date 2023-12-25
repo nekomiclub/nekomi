@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.pathname;
 
   //* Production redir
-  if (HIDE_IN_PROD) {
+  if (HIDE_IN_PROD && prodMode) {
     if (url.includes('/_next/')) {
       return res.next();
     }

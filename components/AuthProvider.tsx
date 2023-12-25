@@ -25,13 +25,31 @@ const AuthProvider: NextPage<{ children: any }> = ({ children }) => {
   const { reducer } = userSlice.actions;
   const dispatch = useAppDispatch();
 
-  const checkPageExisting = (): boolean => {
+  const getRoute = (): IRoute => {
     // @ts-ignore
     let route: IRoute = {}
 
     for (const key in routes) {
-      if (routes[key].path === path) route = routes[key]
+      const routeRec = routes[key] as IRoute
+      if (routeRec.path === path) route = routeRec
     }
+
+    for (const key in routes) {
+      let routeRec = routes[key] as IRoute
+
+      if (routeRec.path.includes('/*')) {
+        for (const key in routes) {
+          const routeRec = routes[key] as IRoute
+          if (routeRec.path === routeRec.path.replace('/*', '')) route = routeRec
+        }
+      }
+    }
+
+    return route;
+  }
+
+  const checkPageExisting = (): boolean => {
+    const route = getRoute();
 
     if (!route.path) {
       setPageExist(false)
@@ -43,12 +61,7 @@ const AuthProvider: NextPage<{ children: any }> = ({ children }) => {
   }
 
   const checkAccess = (roles: TUserRoles[]) => {
-    // @ts-ignore
-    let route: IRoute = {}
-
-    for (const key in routes) {
-      if (routes[key].path === path) route = routes[key]
-    }
+    const route = getRoute();
 
     let grantAccess = route.public || false;
 
