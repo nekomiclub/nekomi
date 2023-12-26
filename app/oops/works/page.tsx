@@ -3,7 +3,7 @@ import { OopsTechWorks } from '../../../assets/assets';
 import { ReturnToHome } from '../components';
 import Link from 'next/link';
 
-const page: NextPage = (props) => {
+const TechWorks: NextPage = (props) => {
   return (
     <div className="bg-dark h-screen">
       <div className="wrapper h-full w-full justify-center items-center">
@@ -18,4 +18,4 @@ const page: NextPage = (props) => {
   );
 }
 
-export default page;
+export default TechWorks;

@@ -6,6 +6,7 @@ export interface IRoute {
   public?: boolean,
   access?: TUserRoles[],
   path: string,
+  status?: 'indev' | 'works' | 'clear'
 }
 
 interface IRoutes {
@@ -18,8 +19,6 @@ interface IRoutes {
   authSignup: IRoute,
   watch: IRoute,
   watchTitle: IRoute,
-  sth: IRoute
-  sth2: IRoute
 }
 
 export const routes: IRoutes = {
@@ -45,7 +44,7 @@ export const routes: IRoutes = {
   },
   authSignin: {
     path: '/auth',
-    access: ['root']
+    access: []
   },
   authSignup: {
     path: '/auth/signup',
@@ -58,13 +57,6 @@ export const routes: IRoutes = {
   watchTitle: {
     path: '/w/*',
     public: true,
-  },
-  sth: {
-    path: '/w/*/*/bleb',
-    public: true,
-  },
-  sth2: {
-    path: '/w/*/*/bleb/*',
-    public: true,
-  },
+    status: 'works'
+  }
 }

@@ -6,6 +6,9 @@ import { useEffect, useState } from 'react'
 import { IRoute, routes } from '../routes';
 import NotFound from '@/oops/404/page';
 import Loading from './Loading';
+import Indev from '@/oops/indev/page';
+import TechWorks from '@/oops/works/page';
+import { HIDE_IN_PROD, prodMode } from '../config';
 
 export const getRoute = (path: string): IRoute | null => {
   // @ts-ignore
@@ -22,14 +25,16 @@ export const getRoute = (path: string): IRoute | null => {
     }
   }
 
-  // return null
   return Object.keys(route || {}).length ? route : null;
 }
 
 const PageRouter: NextPage<{ children: any }> = ({ children }) => {
   const [pageExist, setPageExist] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [hide, setHide] = useState(HIDE_IN_PROD && prodMode)
+  const [pageStatus, setPageStatus] = useState<'clear' | 'indev' | 'works'>('clear')
   const path = usePathname();
+  const [userPreView, setUserPreView] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -37,11 +42,20 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
     let exist = false
 
     if (route) {
+      setPageStatus(route.status || 'clear')
+
       exist = true
       setPageExist(exist)
     } else {
       exist = false
       setPageExist(exist)
+    }
+
+    const preViewKey = localStorage.getItem('userPreViewKey');
+    if (preViewKey === 'unniiiverse2612') {
+      console.warn('Hide prevented due to usePreViewKey')
+      setUserPreView(true)
+      setHide(false)
     }
 
     setLoading(false)
@@ -50,7 +64,19 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
   return (
     <>
       {loading ? <Loading /> : <>
-        {pageExist ? children : <NotFound />}
+        {/* Hide in prod */}
+        {hide ? <Indev /> : <>
+
+          {/* Page exist */}
+          {pageExist ? <>
+
+            {/* Page status */}
+            {pageStatus === 'clear' || userPreView ? <>
+
+              {children}
+            </> : pageStatus === 'indev' ? <Indev /> : pageStatus === 'works' ? <TechWorks /> : <NotFound />}
+          </> : <NotFound />}
+        </>}
       </>}
     </>
   );
