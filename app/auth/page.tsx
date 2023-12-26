@@ -24,8 +24,8 @@ const AuthSignIn: NextPage = (props) => {
           </Link>
 
           <div className='flex flex-col gap-[4px] items-center'>
-            <h2 className='text-[32px] font-bold text-white'>З поверненням!</h2>
-            <p className='text-[14px] font-extralight text-white'>Увійди в свій акаунт, та повернись у світ українського аніме</p>
+            <h2 className='text-[32px] max-[500px]:text-[24px] font-bold text-white text-center'>З поверненням!</h2>
+            <p className='text-[14px] font-extralight text-white text-center'>Увійди в свій акаунт, та повернись у світ українського аніме</p>
           </div>
 
           <div className='flex flex-col gap-[4px] w-full'>
@@ -38,12 +38,12 @@ const AuthSignIn: NextPage = (props) => {
             <span className='block w-full h-[1px] bg-[#A1A1A1]/[.5]'></span>
           </div>
 
-          <p className='text-white text-[24px] font-extralight max-w-[490px] text-center'>Авторизація через юзернейм/почту тимчасово недоступна</p>
+          <p className='text-white text-[24px] max-[500px]:text-[16px] font-extralight max-w-[490px] text-center'>Авторизація через юзернейм/почту тимчасово недоступна</p>
 
           {/* <WithForm method='signin' /> */}
         </div>
 
-        <p className='text-white text-[24px] font-extralight'>Нема акаунту? <Link href={routes.authSignup.path} className='text-purple font-bold'>Зареєструватися</Link></p>
+        <p className='text-white text-[24px] max-[500px]:text-[16px] font-extralight text-center max-[500px]:pb-[32px]'>Нема акаунту? <Link href={routes.authSignup.path} className='text-purple font-bold'>Зареєструватися</Link></p>
       </div>
     </div>
   );

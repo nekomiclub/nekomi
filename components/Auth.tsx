@@ -66,9 +66,9 @@ export const WithGoogle: NextPage = (props) => {
 
   return (
     <div>
-      <button className='w-full flex gap-[40px] py-[16px] px-[24px] bg-white rounded-[2px] justify-center items-center' onClick={authorizate}>
+      <button className='w-full flex gap-[40px] max-[500px]:gap-[24px] max-[500px]:py-[8px] max-[500px]:px-[16px] py-[16px] px-[24px] bg-white rounded-[2px] justify-center items-center' onClick={authorizate}>
         <GoogleLogo width={24} height={24} />
-        <p className='text-dark text-[24px] font-extralight'>Продовжити з Google</p>
+        <p className='text-dark text-[24px] max-[500px]:16px font-extralight'>Продовжити з Google</p>
       </button>
 
       <div ref={ref}></div>

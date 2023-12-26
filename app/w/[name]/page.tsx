@@ -577,10 +577,12 @@ const defaultDub: ITitleEpisodesDub = {
 
 import SupportDiaka from '../../../assets/watch/supportDiaka.png'
 import SupportMonobank from '../../../assets/watch/supportMonobank.png'
+import NotFound from '@/oops/404/page';
 
 const TitleItem: NextPage = (props) => {
   const { name } = useParams<{ name: string }>()
   const [title, setTitle] = useState<ITitle>()
+  const [titleNotFound, setTitleNotFound] = useState(false)
   const [totalEps, setTotalEps] = useState(0)
   const [selectedDub, setSelectedDub] = useState<ITitleEpisodesDub>(defaultDub)
   const [selectedDubber, setSelectedDubber] = useState<IDubber>()
@@ -588,15 +590,20 @@ const TitleItem: NextPage = (props) => {
 
   useEffect(() => {
     (async function () {
-      const res = await $api.get<ITitle>(`${env.apiUrl}/v1/title/${name}`);
-      setTitle(localizeTitle(res.data!))
+      try {
+        const res = await $api.get<ITitle>(`${env.apiUrl}/v1/title/${name}`);
+        setTitle(localizeTitle(res.data!))
 
-      let maxEps = 0
-      res.data.dubs?.forEach(dub => {
-        if (dub.eps.length > maxEps) maxEps = dub.eps.length;
-      })
+        let maxEps = 0
+        res.data.dubs?.forEach(dub => {
+          if (dub.eps.length > maxEps) maxEps = dub.eps.length;
+        })
 
-      setTotalEps(maxEps)
+        setTotalEps(maxEps)
+      } catch (e) {
+        console.error(e);
+        setTitleNotFound(true)
+      }
     })()
   }, [])
 
@@ -846,7 +853,7 @@ const TitleItem: NextPage = (props) => {
             </div>
           </div>
         </div>
-      </> : <Loading />}
+      </> : titleNotFound ? <NotFound /> : <Loading />}
     </div>
   );
 }

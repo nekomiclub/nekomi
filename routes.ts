@@ -57,6 +57,5 @@ export const routes: IRoutes = {
   watchTitle: {
     path: '/w/*',
     public: true,
-    status: 'works'
   }
 }

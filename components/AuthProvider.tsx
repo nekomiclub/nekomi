@@ -91,7 +91,7 @@ const AuthProvider: NextPage<{ children: any }> = ({ children }) => {
     <>
       {loaded ? <>
 
-        {hasAccess ? children : <Restricted reason={restrictReason} />}
+        {hasAccess ? children : <Restricted />}
 
       </> : <Loading />}
     </>

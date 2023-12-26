@@ -22,8 +22,8 @@ const page: NextPage = (props) => {
           </Link>
 
           <div className='flex flex-col gap-[4px] items-center'>
-            <h2 className='text-[32px] font-bold text-white'>Створи акаунт</h2>
-            <p className='text-[14px] font-extralight text-white'>Отримай всі переваги від наявності акаунту</p>
+            <h2 className='text-[32px] max-[500px]:text-[24] font-bold text-white text-center'>Створи акаунт</h2>
+            <p className='text-[14px] font-extralight text-white text-center'>Отримай всі переваги від наявності акаунту</p>
           </div>
 
           <div className='flex flex-col gap-[4px] w-full'>
@@ -39,12 +39,12 @@ const page: NextPage = (props) => {
             <span className='block w-full h-[1px] bg-[#A1A1A1]/[.5]'></span>
           </div>
 
-          <p className='text-white text-[24px] font-extralight max-w-[490px] text-center'>Реєстрація через юзернейм/почту тимчасово недоступна</p>
+          <p className='text-white text-[24px] font-extralight max-w-[490px] text-center max-[500px]:text-[16px]'>Реєстрація через юзернейм/почту тимчасово недоступна</p>
 
           {/* <WithForm /> */}
         </div>
 
-        <p className='text-white text-[24px] font-extralight'>Є акаунт? <Link href={routes.authSignin.path} className='text-purple font-bold'>Увійти</Link></p>
+        <p className='text-white text-[24px] max-[500px]:text-[16px] max-[500px]:pb-[32px] font-extralight text-center'>Є акаунт? <Link href={routes.authSignin.path} className='text-purple font-bold'>Увійти</Link></p>
       </div>
     </>
   );
