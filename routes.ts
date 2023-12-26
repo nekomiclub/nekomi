@@ -18,6 +18,8 @@ interface IRoutes {
   authSignup: IRoute,
   watch: IRoute,
   watchTitle: IRoute,
+  sth: IRoute
+  sth2: IRoute
 }
 
 export const routes: IRoutes = {
@@ -43,7 +45,7 @@ export const routes: IRoutes = {
   },
   authSignin: {
     path: '/auth',
-    access: []
+    access: ['root']
   },
   authSignup: {
     path: '/auth/signup',
@@ -55,6 +57,14 @@ export const routes: IRoutes = {
   },
   watchTitle: {
     path: '/w/*',
+    public: true,
+  },
+  sth: {
+    path: '/w/*/*/bleb',
+    public: true,
+  },
+  sth2: {
+    path: '/w/*/*/bleb/*',
     public: true,
   },
 }

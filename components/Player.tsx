@@ -839,11 +839,6 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     videoRef.current!.playbackRate = speed;
   }, [speed])
 
-  useEffect(() => {
-    videoRef.current!.currentTime = playerMoment[0];
-    videoRef.current!.play();
-  }, [playerQuality])
-
   // Move range previews while hovering
   useEffect(() => {
     if (!videoDuration) return;
@@ -1030,6 +1025,12 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
       setPlayerVolumePreMuted(playerVolume)
       setPlayerVolume(0)
     }
+  }
+
+  const changeQuality = (quality: 'q2k' | 'q1080' | 'q720' | 'q480' | 'q240') => {
+    videoRef.current!.currentTime = playerMoment[0];
+    videoRef.current!.play();
+    setPlayerQuality(quality)
   }
 
 
@@ -1274,31 +1275,31 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
                   <div className='flex flex-col gap-[4px]'>
                     {currentDub.eps.find(ep => ep.order === currentEp)?.source.q2k ? <>
-                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer gradient--primary`} onClick={() => setPlayerQuality('q2k')}>
+                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer gradient--primary`} onClick={() => changeQuality('q2k')}>
                         <p className='text-[14px] text-white'>2K</p>
                       </li>
                     </> : null}
 
                     {currentDub.eps.find(ep => ep.order === currentEp)?.source.q1080 ? <>
-                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q1080' ? 'bg-white/[.2]' : ''}`} onClick={() => setPlayerQuality('q1080')}>
+                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q1080' ? 'bg-white/[.2]' : ''}`} onClick={() => changeQuality('q1080')}>
                         <p className='text-[14px] text-white'>1080</p>
                       </li>
                     </> : null}
 
                     {currentDub.eps.find(ep => ep.order === currentEp)?.source.q720 ? <>
-                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q720' ? 'bg-white/[.2]' : ''}`} onClick={() => setPlayerQuality('q720')}>
+                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q720' ? 'bg-white/[.2]' : ''}`} onClick={() => changeQuality('q720')}>
                         <p className='text-[14px] text-white'>720</p>
                       </li>
                     </> : null}
 
                     {currentDub.eps.find(ep => ep.order === currentEp)?.source.q480 ? <>
-                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q480' ? 'bg-white/[.2]' : ''}`} onClick={() => setPlayerQuality('q480')}>
+                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q480' ? 'bg-white/[.2]' : ''}`} onClick={() => changeQuality('q480')}>
                         <p className='text-[14px] text-white'>480</p>
                       </li>
                     </> : null}
 
                     {currentDub.eps.find(ep => ep.order === currentEp)?.source.q240 ? <>
-                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q240' ? 'bg-white/[.2]' : ''}`} onClick={() => setPlayerQuality('q240')}>
+                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q240' ? 'bg-white/[.2]' : ''}`} onClick={() => changeQuality('q240')}>
                         <p className='text-[14px] text-white'>240</p>
                       </li>
                     </> : null}

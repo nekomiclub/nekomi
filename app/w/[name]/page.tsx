@@ -603,9 +603,12 @@ const TitleItem: NextPage = (props) => {
   useEffect(() => {
     if (!title) return;
 
-    let tmp: any = title!.details!.split('\n')
-    tmp.unshift('Плеер може працювати нестабільно, превью для серій відображаються також нестабільно. Ми пофіксимо це в найближчий час.')
-    title!.details! = tmp.join('\n');
+    let tmp: any = title!.details?.split('\n') || []
+    console.log(title.country)
+    if (title.country === 'null') {
+      tmp.unshift('Тайтл не оновлений, тому інформація може бути неактуальна та/або неточна. Якщо ви вважаєте цей тайтл важливим, напишіть про це адміністрації.')
+    }
+    title!.details = tmp.join('\n');
   }, [title])
 
   useEffect(() => {
@@ -717,7 +720,7 @@ const TitleItem: NextPage = (props) => {
                   </li>
                   <li className='flex gap-[24px]'>
                     <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Країна:</p>
-                    <p className='text-white text-[24px] font-normal'>{title.country}</p>
+                    <p className='text-white text-[24px] font-normal'>{title.country === 'null' ? 'Країне ще не оновлена 😥' : title.country}</p>
                   </li>
                   <li className='flex gap-[24px]'>
                     <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Озвучка:</p>

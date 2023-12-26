@@ -92,11 +92,6 @@ export default function localizeTitle(title: ITitle): ITitle {
   }
 
   switch (title.country) {
-    case 'null': {
-      title.country = 'Країна не оновлена 😥'
-      break;
-    }
-
     case 'japan': {
       title.country = 'Японія'
       break;

@@ -13,11 +13,13 @@ import { routes, IRoute } from '../routes';
 import Restricted from '@/oops/restricted/page'
 import NotFound from '@/oops/404/page'
 import Loading from './Loading';
+import { getRoute } from './PageRouter'
 
 const AuthProvider: NextPage<{ children: any }> = ({ children }) => {
   const [loaded, setLoaded] = useState(false)
   const [hasAccess, setHasAccess] = useState(false)
   const [pageExist, setPageExist] = useState(true)
+  const [restrictReason, setRestrictReason] = useState('')
 
   const router = useRouter();
   const path = usePathname();
@@ -25,43 +27,12 @@ const AuthProvider: NextPage<{ children: any }> = ({ children }) => {
   const { reducer } = userSlice.actions;
   const dispatch = useAppDispatch();
 
-  const getRoute = (): IRoute => {
-    // @ts-ignore
-    let route: IRoute = {}
-
-    for (const key in routes) {
-      const routeRec = routes[key] as IRoute
-      if (routeRec.path === path) route = routeRec
-    }
-
-    for (const key in routes) {
-      let routeRec = routes[key] as IRoute
-
-      if (routeRec.path.includes('/*')) {
-        for (const key in routes) {
-          const routeRec = routes[key] as IRoute
-          if (routeRec.path === routeRec.path.replace('/*', '')) route = routeRec
-        }
-      }
-    }
-
-    return route;
-  }
-
-  const checkPageExisting = (): boolean => {
-    const route = getRoute();
-
-    if (!route.path) {
-      setPageExist(false)
-      return false;
-    } else {
-      setPageExist(true)
-      return true;
-    }
-  }
-
   const checkAccess = (roles: TUserRoles[]) => {
-    const route = getRoute();
+    const route = getRoute(path);
+
+    if (!route) {
+      return setHasAccess(false)
+    }
 
     let grantAccess = route.public || false;
 
@@ -73,48 +44,56 @@ const AuthProvider: NextPage<{ children: any }> = ({ children }) => {
       grantAccess = true;
     }
 
+    if (!grantAccess) {
+      setRestrictReason('Ви вже авторизовані. Для того щоб перезайти в акаунт, спочатку вийдіть.')
+    }
+
     setHasAccess(grantAccess)
   }
 
   useEffect(() => {
+    setLoaded(false);
+
     (async function () {
-      if (!checkPageExisting()) {
-        return;
-      }
-
-      if (localStorage.getItem('token')) {
-        try {
-          const res = await axios.get<{ token: string }>(`${env.apiUrl}/v1/auth/refresh`, { withCredentials: true })
-          localStorage.setItem('token', res.data.token)
-
-          const tokenDecodeRes = await $api.post<ITokenData>(`${env.apiUrl}/v1/token/decode`, {
-            token: `bearer=${res.data.token}`
+      try {
+        if (localStorage.getItem('token')) {
+          const verifyRes = await $api.post<{ verified: boolean }>(`${env.apiUrl}/v1/token/verify`, {
+            token: `bearer=${localStorage.getItem('token')}`,
+            method: 'access'
           })
 
-          checkAccess(tokenDecodeRes.data.roles)
-          dispatch(reducer({ isAuth: true, roles: tokenDecodeRes.data.roles, uid: tokenDecodeRes.data.uid, username: tokenDecodeRes.data.username }))
+          if (!verifyRes.data.verified) {
+            checkAccess([])
+            setLoaded(true)
+            return
+          }
+
+          const tokenDataRes = await $api.post<ITokenData>(`${env.apiUrl}/v1/token/decode`, {
+            token: `bearer=${localStorage.getItem('token')}`
+          })
+
+          const { roles, uid, username } = tokenDataRes.data
+
+          checkAccess(roles)
           setLoaded(true)
-        } catch (e) {
-          console.error(e)
+          dispatch(reducer({ isAuth: true, roles, uid, username }))
+        } else {
+          checkAccess([])
+          setLoaded(true)
         }
-      } else {
-        checkAccess([])
-        setLoaded(true)
+      } catch (e) {
+        console.error(e)
       }
     })()
-  }, [])
+  }, [path])
 
   return (
     <>
-      {pageExist ? <>
+      {loaded ? <>
 
-        {loaded ? <>
+        {hasAccess ? children : <Restricted reason={restrictReason} />}
 
-          {hasAccess ? children : <Restricted reason='Ви вже в акаунті.' />}
-
-        </> : <Loading />}
-
-      </> : <NotFound />}
+      </> : <Loading />}
     </>
   );
 }

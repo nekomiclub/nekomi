@@ -4,6 +4,7 @@ import '../styles/index.scss'
 import { Metadata } from 'next'
 import StorageProvider from '../components/StorageProvider'
 import AuthProvider from '../components/AuthProvider'
+import PageRouter from '../components/PageRouter';
 
 export default function RootLayout({
   children,
@@ -14,9 +15,11 @@ export default function RootLayout({
     <html lang="ua">
       <body id='root'>
         <StorageProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
+          <PageRouter>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </PageRouter>
         </StorageProvider>
       </body>
     </html>
