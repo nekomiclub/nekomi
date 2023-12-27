@@ -26,7 +26,9 @@
     "react-redux": "^9.0.4",
     "react-uvc": "^1.7.1",
     "redux": "^5.0.0",
-    "typescript": "5.2.2"
+    "swiper": "^11.0.5",
+    "typescript": "5.2.2",
+    "use-debounce": "^10.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.16",

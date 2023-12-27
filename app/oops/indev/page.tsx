@@ -8,6 +8,7 @@ import { Logo, Home } from '../../../assets/assets'
 import { ReturnToHome } from '../components';
 
 import '../styles.scss'
+import Header from '../../../components/Header';
 
 const Indev: NextPage = (props) => {
   const searchParams = useSearchParams();
@@ -21,6 +22,7 @@ const Indev: NextPage = (props) => {
 
   return (
     <div className="bg-dark h-screen">
+      <Header />
       <div className="wrapper h-full w-full justify-center items-center">
         <Logo width={256} height={256} className='oops-logo mb-[50px]' />
         <h1 className='uppercase text-[40px] text-white mb-[100px] text-center'>МИ ПРАЦЮЄМО НАД ЦИМ</h1>

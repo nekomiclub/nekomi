@@ -1,8 +1,14 @@
 @import '../../../styles/colors.scss';
+@import '../../../styles/index.scss';
 
-.title {
+.watch {
   &-btn {
     position: relative;
+
+    .white,
+    .red {
+      position: absolute;
+    }
     
     .white {
       path, rect {
@@ -35,5 +41,16 @@
         opacity: 1;
       }
     }
+  }
+}
+
+#title-about {
+  flex-direction: row !important;
+  padding: 148px $wrapperSidePadding 100px;
+}
+
+@media only screen and (max-width: 1140px) {
+  #title-about {
+    flex-direction: column !important;
   }
 }

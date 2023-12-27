@@ -1,8 +1,8 @@
 'use client'
 
 import { NextPage } from 'next';
-import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 import { ITitle, ITitleEpisodesDub } from '@/../interfaces/ITitle';
 import $api from '@/../components/http';
 import { env } from '@/../config';
@@ -579,6 +579,24 @@ import SupportDiaka from '../../../assets/watch/supportDiaka.png'
 import SupportMonobank from '../../../assets/watch/supportMonobank.png'
 import NotFound from '@/oops/404/page';
 import { AxiosError } from 'axios';
+import Header from '../../../components/Header';
+import Footer from '../../../components/Footer';
+
+export const WatchButton: React.FC<{ href: string }> = ({ href }) => {
+  return <div className='flex gap-[8px]'>
+    <BorderGradient round='2px' className='max-[600px]:w-full'>
+      <Link href={href}>
+        <button className='watch-btn px-[24px] py-[16px] flex gap-[16px] items-center justify-center rounded-[2px] max-[600px]:w-full'>
+          <div className='relative w-[32px] h-[32px]'>
+            <Play width={32} height={32} className='absolute red' />
+            <Play width={32} height={32} className='absolute white' />
+          </div>
+          <p className='text-[24px] text-white'>Дивитись</p>
+        </button>
+      </Link>
+    </BorderGradient>
+  </div>
+}
 
 const TitleItem: NextPage = (props) => {
   const { name } = useParams<{ name: string }>()
@@ -631,13 +649,14 @@ const TitleItem: NextPage = (props) => {
   return (
     <div className='w-screen min-h-screen h-full bg-dark'>
       {title ? <>
+        <Header />
         <div className='h-screen w-full absolute top-0 left-0'>
           <div className='block w-full h-full absolute top-0 left-0 z-[2]' style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0.40) 0%, #121212 90.21%), linear-gradient(227deg, rgba(255, 242, 242, 0.03) 25.7%, rgba(255, 250, 250, 0.07) 94.73%)', backdropFilter: 'blur(35px)' }}></div>
           {/* Edit with blurhash */}
           <img src={title.background} alt="..." className='w-full h-full' />
         </div>
 
-        <div className="wrapper flex-row z-[3] py-[100px] gap-[40px] mb-[40px] max-[1140px]:flex-col max-[1140px]:items-center">
+        <div className="wrapper z-[3] gap-[40px] mb-[40px] max-[1140px]:flex-col max-[1140px]:items-center" id='title-about'>
           <img src={title.poster} alt="..." className='h-full w-[500px] rounded-[4px]' />
 
           <div className='flex flex-col justify-between gap-[24px] w-full max-w-[700px] max-[1140px]:max-w-none'>
@@ -656,19 +675,7 @@ const TitleItem: NextPage = (props) => {
 
               <p className='text-white text-[16px]'>{title.description}</p>
 
-              <div className='flex gap-[8px]'>
-                <BorderGradient round='2px' className='max-[600px]:w-full'>
-                  <Link href='#player'>
-                    <button className='title-btn px-[24px] py-[16px] flex gap-[16px] items-center justify-center rounded-[2px] max-[600px]:w-full'>
-                      <div className='relative w-[32px] h-[32px]'>
-                        <Play width={32} height={32} className='absolute red' />
-                        <Play width={32} height={32} className='absolute white' />
-                      </div>
-                      <p className='text-[24px] text-white'>Дивитись</p>
-                    </button>
-                  </Link>
-                </BorderGradient>
-              </div>
+              <WatchButton href='#player' />
 
               {title.details ? <>
                 <div className='px-[24px] py-[16px] rounded-[2px] border border-[#f39c12] bg-[#f1c40f]/[.1] flex flex-col gap-[16px]'>
@@ -746,113 +753,121 @@ const TitleItem: NextPage = (props) => {
           </div>
         </div>
 
-        <div className="wrapper gap-[40px] pb-[40px]">
-          <div className='flex gap-[32px] items-start max-[1032px]:flex-col max-[1032px]:items-center'>
-            <div className='w-full h-[600px] bg-grey rounded-[2px] mb-[40px]'>
-              <Player dubs={title.dubs || []} currentDubHandler={currentDubHandler} estimatedEps={title.estimatedEps} titleId={title.id} />
-            </div>
-
-            <div className='bg-grey flex flex-col gap-[32px] rounded-[2px] px-[24px] py-[16px] max-[600px]:w-full'>
-              {selectedDub ? <>
-                <div className='flex justify-between items-center gap-[32px] max-[500px]:flex-col'>
-                  <div className='block w-[128px] h-[128px] rounded-[2px] overflow-hidden flex-shrink-0'>
-                    <img src={selectedDubber?.thumbURL} alt="..." />
-                  </div>
-
-                  <div className='flex flex-col justify-center items-center px-[32px] w-full'>
-                    <p className='text-white text-[24px] font-extralight whitespace-nowrap'>Озвучили</p>
-                    <p className='text-white text-[24px] font-bold'>{selectedDubber?.name}</p>
-                  </div>
+        <div className='mb-[100px] flex flex-col gap-[40px]'>
+          <div className="wrapper gap-[40px] pb-[40px]">
+            <div className='flex gap-[32px] items-start max-[1032px]:flex-col max-[1032px]:items-center'>
+              {title.dubs!.some(el => el.eps.length !== 0) ? <>
+                <div className='w-full h-[600px] bg-grey rounded-[2px] mb-[40px]'>
+                  <Player dubs={title.dubs || []} currentDubHandler={currentDubHandler} estimatedEps={title.estimatedEps} titleId={title.id} />
                 </div>
 
-                <div className='flex justify-center gap-[32px]'>
-                  <div className='flex items-center gap-[8px]'>
-                    <RatingStar width={24} height={24} />
-                    <p className="gradient--primary-text text-[24px] font-bold">{selectedDubber?.rating}</p>
-                  </div>
+                <div className='bg-grey flex flex-col gap-[32px] rounded-[2px] px-[24px] py-[16px] max-[600px]:w-full'>
+                  {selectedDub ? <>
+                    <div className='flex justify-between items-center gap-[32px] max-[500px]:flex-col'>
+                      <div className='block w-[128px] h-[128px] rounded-[2px] overflow-hidden flex-shrink-0'>
+                        <img src={selectedDubber?.thumbURL} alt="..." />
+                      </div>
 
-                  <div className='flex items-center gap-[8px]'>
-                    <WatchPreference width={24} height={24} />
-                    <p className="gradient--primary-text text-[24px] font-bold">-</p>
-                  </div>
+                      <div className='flex flex-col justify-center items-center px-[32px] w-full'>
+                        <p className='text-white text-[24px] font-extralight whitespace-nowrap'>Озвучили</p>
+                        <p className='text-white text-[24px] font-bold'>{selectedDubber?.name}</p>
+                      </div>
+                    </div>
+
+                    <div className='flex justify-center gap-[32px]'>
+                      <div className='flex items-center gap-[8px]'>
+                        <RatingStar width={24} height={24} />
+                        <p className="gradient--primary-text text-[24px] font-bold">{selectedDubber?.rating}</p>
+                      </div>
+
+                      <div className='flex items-center gap-[8px]'>
+                        <WatchPreference width={24} height={24} />
+                        <p className="gradient--primary-text text-[24px] font-bold">-</p>
+                      </div>
+                    </div>
+
+                    {selectedDubber?.support.bymeacoffee || selectedDubber?.support.diaka || selectedDubber?.support.monobank || selectedDubber?.support.patreon || selectedDubber?.support.privatbank ? <>
+                      <div className='flex items-center flex-col gap-[16px]'>
+                        <h4 className='text-white text-[24px] font-extralight'>Дяка</h4>
+
+                        <div className='flex gap-[8px] max-[600px]:gap-[16px] items-center'>
+                          {selectedDubber?.support.bymeacoffee && <>
+                            <Link href={selectedDubber.support!.bymeacoffee} target='_blank'>
+                              <SupportBMC height={40} width={40} />
+                            </Link>
+                          </>}
+
+                          {selectedDubber?.support.patreon && <>
+                            <Link href={selectedDubber.support!.patreon} target='_blank'>
+                              <SupportPatreon height={40} width={40} />
+                            </Link>
+                          </>}
+
+                          {selectedDubber?.support.privatbank && <>
+                            <Link href={selectedDubber.support!.privatbank} target='_blank'>
+                              <SupportPrivatbank height={40} width={40} />
+                            </Link>
+                          </>}
+
+                          {selectedDubber?.support.monobank && <>
+                            <Link href={selectedDubber.support!.monobank} target='_blank'>
+                              <img src={SupportMonobank.src} alt="monobank" />
+                            </Link>
+                          </>}
+
+                          {selectedDubber?.support.diaka && <>
+                            <Link href={selectedDubber.support!.diaka} target='_blank'>
+                              <img src={SupportDiaka.src} alt="diaka" />
+                            </Link>
+                          </>}
+                        </div>
+                      </div>
+                    </> : null}
+
+                    {selectedDubber?.socials.instagram || selectedDubber?.socials.telegram || selectedDubber?.socials.tiktok || selectedDubber?.socials.youtube ? <>
+                      <div className='flex items-center flex-col gap-[16px]'>
+                        <h4 className='text-white text-[24px] font-extralight'>Мережі</h4>
+
+                        <div className='flex gap-[8px] max-[600px]:gap-[16px] items-center'>
+                          {selectedDubber?.socials.instagram && <>
+                            <Link href={selectedDubber.socials!.instagram} target='_blank'>
+                              <Instagram height={40} width={40} />
+                            </Link>
+                          </>}
+
+                          {selectedDubber?.socials.telegram && <>
+                            <Link href={selectedDubber.socials!.telegram} target='_blank'>
+                              <Telegram height={40} width={40} />
+                            </Link>
+                          </>}
+
+                          {selectedDubber?.socials.tiktok && <>
+                            <Link href={selectedDubber.socials!.tiktok} target='_blank'>
+                              <Tiktok height={40} width={40} />
+                            </Link>
+                          </>}
+
+                          {selectedDubber?.socials.youtube && <>
+                            <Link href={selectedDubber.socials!.youtube} target='_blank'>
+                              <Youtube height={40} width={40} />
+                            </Link>
+                          </>}
+                        </div>
+                      </div>
+                    </> : null}
+                  </> : <>
+                    <p className='text-[24px] text-white whitespace-nowrap font-extralight'>Озвучка не вибрана</p>
+                  </>}
                 </div>
-
-                {selectedDubber?.support.bymeacoffee || selectedDubber?.support.diaka || selectedDubber?.support.monobank || selectedDubber?.support.patreon || selectedDubber?.support.privatbank ? <>
-                  <div className='flex items-center flex-col gap-[16px]'>
-                    <h4 className='text-white text-[24px] font-extralight'>Дяка</h4>
-
-                    <div className='flex gap-[8px] max-[600px]:gap-[16px] items-center'>
-                      {selectedDubber?.support.bymeacoffee && <>
-                        <Link href={selectedDubber.support!.bymeacoffee} target='_blank'>
-                          <SupportBMC height={40} width={40} />
-                        </Link>
-                      </>}
-
-                      {selectedDubber?.support.patreon && <>
-                        <Link href={selectedDubber.support!.patreon} target='_blank'>
-                          <SupportPatreon height={40} width={40} />
-                        </Link>
-                      </>}
-
-                      {selectedDubber?.support.privatbank && <>
-                        <Link href={selectedDubber.support!.privatbank} target='_blank'>
-                          <SupportPrivatbank height={40} width={40} />
-                        </Link>
-                      </>}
-
-                      {selectedDubber?.support.monobank && <>
-                        <Link href={selectedDubber.support!.monobank} target='_blank'>
-                          <img src={SupportMonobank.src} alt="monobank" />
-                        </Link>
-                      </>}
-
-                      {selectedDubber?.support.diaka && <>
-                        <Link href={selectedDubber.support!.diaka} target='_blank'>
-                          <img src={SupportDiaka.src} alt="diaka" />
-                        </Link>
-                      </>}
-                    </div>
-                  </div>
-                </> : null}
-
-                {selectedDubber?.socials.instagram || selectedDubber?.socials.telegram || selectedDubber?.socials.tiktok || selectedDubber?.socials.youtube ? <>
-                  <div className='flex items-center flex-col gap-[16px]'>
-                    <h4 className='text-white text-[24px] font-extralight'>Мережі</h4>
-
-                    <div className='flex gap-[8px] max-[600px]:gap-[16px] items-center'>
-                      {selectedDubber?.socials.instagram && <>
-                        <Link href={selectedDubber.socials!.instagram} target='_blank'>
-                          <Instagram height={40} width={40} />
-                        </Link>
-                      </>}
-
-                      {selectedDubber?.socials.telegram && <>
-                        <Link href={selectedDubber.socials!.telegram} target='_blank'>
-                          <Telegram height={40} width={40} />
-                        </Link>
-                      </>}
-
-                      {selectedDubber?.socials.tiktok && <>
-                        <Link href={selectedDubber.socials!.tiktok} target='_blank'>
-                          <Tiktok height={40} width={40} />
-                        </Link>
-                      </>}
-
-                      {selectedDubber?.socials.youtube && <>
-                        <Link href={selectedDubber.socials!.youtube} target='_blank'>
-                          <Youtube height={40} width={40} />
-                        </Link>
-                      </>}
-                    </div>
-                  </div>
-                </> : null}
               </> : <>
-                <p className='text-[24px] text-white whitespace-nowrap font-extralight'>Озвучка не вибрана</p>
+                <h3 className='text-[24px] text-white gradient--primary-text font-bold'>Нажаль, озвучок нема</h3>
               </>}
             </div>
           </div>
         </div>
       </> : titleNotFound ? <NotFound /> : <Loading />}
+
+      <Footer />
     </div>
   );
 }

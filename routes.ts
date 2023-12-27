@@ -19,6 +19,16 @@ interface IRoutes {
   authSignup: IRoute,
   watch: IRoute,
   watchTitle: IRoute,
+  aboutFK: IRoute,
+  joinFK: IRoute,
+  contacts: IRoute,
+  agreement: IRoute,
+  privatePolicy: IRoute,
+  copyright: IRoute,
+  support: IRoute,
+  partners: IRoute,
+  FAQ: IRoute,
+  API: IRoute,
 }
 
 export const routes: IRoutes = {
@@ -57,5 +67,56 @@ export const routes: IRoutes = {
   watchTitle: {
     path: '/w/*',
     public: true,
-  }
+  },
+  aboutFK: {
+    path: '/fk/about',
+    public: true,
+    status: 'indev'
+  },
+  agreement: {
+    path: '/info/agreement',
+    public: true,
+    status: 'indev'
+  },
+  API: {
+    path: '/api',
+    public: true,
+    status: 'indev'
+  },
+  contacts: {
+    path: '/info/contacts',
+    public: true,
+    status: 'indev'
+  },
+  copyright: {
+    path: '/info/copyright',
+    public: true,
+    status: 'indev'
+  },
+  FAQ: {
+    path: '/info/faq',
+    public: true,
+    status: 'indev'
+  },
+  joinFK: {
+    path: '/fk/join',
+    public: true,
+    status: 'indev'
+  },
+  partners: {
+    path: '/info/partners',
+    public: true,
+    status: 'indev'
+  },
+  privatePolicy: {
+    path: '/info/policy',
+    public: true,
+    status: 'indev'
+  },
+  support: {
+    path: '/support',
+    public: true,
+    status: 'indev'
+  },
+
 }

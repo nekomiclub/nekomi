@@ -6,6 +6,11 @@ import StorageProvider from '../components/StorageProvider'
 import AuthProvider from '../components/AuthProvider'
 import PageRouter from '../components/PageRouter';
 
+export const metadata: Metadata = {
+  title: 'animee',
+  description: 'Поринь у світ українського аніме!'
+}
+
 export default function RootLayout({
   children,
 }: {

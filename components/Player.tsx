@@ -678,6 +678,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
       setCurrentDubber(res.data!)
     })()
 
+    videoRef.current!.currentTime = playerMoment[0];
     currentDubHandler(currentDub)
   }, [currentDub])
 
@@ -872,7 +873,6 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
   useEffect(() => {
     videoRef.current!.currentTime = playerMoment[0];
-    videoRef.current!.play().catch(() => null);
   }, [playerQuality])
 
 
@@ -1442,6 +1442,12 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
         </div>
 
         <video ref={videoRef} src={currentDub.eps.find(ep => ep.order == currentEp)?.source[playerQuality]!} className='absolute top-0 left-0 w-full h-full z-[29]' controls={false} preload='metadata'></video>
+
+        <div className='w-full h-full flex justify-center items-center flex-col max-w-[500px] m-auto'>
+          <h5 className='text-[24px] text-white'>Побачили це повідомлення?</h5>
+          <p className='text-[16px] text-white text-center'>Ви, можливо, вибрали якість якої ще нема на сервері</p>
+          <p className='text-[16px] text-white text-center'>Або відео просто ще не прогрузилось</p>
+        </div>
       </div>
 
     </div>

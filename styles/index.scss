@@ -121,3 +121,17 @@ button {
     background: $gradientSecondary;
   }
 }
+
+html, body {
+  &::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $grey;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $gradientPrimary;
+  }
+}

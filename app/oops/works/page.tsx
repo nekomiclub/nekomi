@@ -2,10 +2,12 @@ import { NextPage } from 'next';
 import { OopsTechWorks } from '../../../assets/assets';
 import { ReturnToHome } from '../components';
 import Link from 'next/link';
+import Header from '../../../components/Header';
 
 const TechWorks: NextPage = (props) => {
   return (
     <div className="bg-dark h-screen">
+      <Header />
       <div className="wrapper h-full w-full justify-center items-center">
         <OopsTechWorks width={256} height={256} className='mb-[50px]' />
         <div className='flex flex-col gap-[8px] mb-[100px] items-center'>
