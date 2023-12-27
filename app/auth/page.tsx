@@ -17,7 +17,7 @@ const AuthSignIn: NextPage = (props) => {
         <Image src={DefaultImg1} alt='...' blurDataURL={DefaultImg1.blurDataURL} fill loading='lazy' className='absolute h-full -z-[1]' />
       </div>
 
-      <div className="container">
+      <div className="container relative z-[3]">
         <div className='flex flex-col items-center gap-[24px]'>
           <Link href={routes.home.path}>
             <Logo width={128} height={102} />

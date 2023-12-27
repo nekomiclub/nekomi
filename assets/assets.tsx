@@ -309,3 +309,18 @@ export const HeaderSearch = (props: { width?: number, height?: number, className
     </svg>
   );
 }
+
+export const HeaderAccount = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 40 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g clip-path="url(#clip0_534_1824)">
+        <path d="M20 0.155762C8.95313 0.155762 0 9.10889 0 20.1558C0 31.2026 8.95313 40.1558 20 40.1558C31.0469 40.1558 40 31.2026 40 20.1558C40 9.10889 31.0469 0.155762 20 0.155762ZM20 10.1558C23.107 10.1558 25.625 12.6745 25.625 15.7808C25.625 18.887 23.1094 21.4058 20 21.4058C16.8938 21.4058 14.375 18.887 14.375 15.7808C14.375 12.6745 16.8906 10.1558 20 10.1558ZM20 35.1558C15.8648 35.1558 12.1172 33.4737 9.39844 30.7581C10.6641 27.4917 13.7891 25.1558 17.5 25.1558H22.5C26.2141 25.1558 29.3391 27.4901 30.6016 30.7581C27.8828 33.4761 24.1328 35.1558 20 35.1558Z" fill="white" />
+      </g>
+      <defs>
+        <clipPath id="clip0_534_1824">
+          <rect width="40" height="40" fill="white" transform="translate(0 0.155762)" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}

@@ -15,7 +15,7 @@ const page: NextPage = (props) => {
         <Image src={DefaultImg1} alt='...' blurDataURL={DefaultImg1.blurDataURL} fill loading='lazy' className='absolute h-full -z-[1]' />
       </div>
 
-      <div className="container">
+      <div className="container z-[3] relative">
         <div className='flex flex-col items-center gap-[24px]'>
           <Link href={routes.home.path}>
             <Logo width={128} height={102} />
@@ -44,6 +44,7 @@ const page: NextPage = (props) => {
           {/* <WithForm /> */}
         </div>
 
+        <p className='text-white text-[16px] max-w-[400px] font-extralight text-center'>Продовжующи реєстрацію, ви підтверджуєте свою згоду з <Link className='text-blue font-bold' href={routes.agreement.path}>угодою користувача</Link> та <Link className='text-blue font-bold' href={routes.privatePolicy.path}>політикою конфіденційності</Link></p>
         <p className='text-white text-[24px] max-[500px]:text-[16px] max-[500px]:pb-[32px] font-extralight text-center'>Є акаунт? <Link href={routes.authSignin.path} className='text-purple font-bold'>Увійти</Link></p>
       </div>
     </>

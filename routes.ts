@@ -76,7 +76,6 @@ export const routes: IRoutes = {
   agreement: {
     path: '/info/agreement',
     public: true,
-    status: 'indev'
   },
   API: {
     path: '/api',
@@ -86,12 +85,10 @@ export const routes: IRoutes = {
   contacts: {
     path: '/info/contacts',
     public: true,
-    status: 'indev'
   },
   copyright: {
     path: '/info/copyright',
     public: true,
-    status: 'indev'
   },
   FAQ: {
     path: '/info/faq',
@@ -111,7 +108,6 @@ export const routes: IRoutes = {
   privatePolicy: {
     path: '/info/policy',
     public: true,
-    status: 'indev'
   },
   support: {
     path: '/support',

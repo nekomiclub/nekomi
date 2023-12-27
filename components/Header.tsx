@@ -2,7 +2,7 @@
 
 import { NextPage } from 'next';
 import { useEffect, useMemo, useState } from 'react'
-import { HeaderSearch, Logo, RatingStar } from '../assets/assets';
+import { HeaderAccount, HeaderSearch, Logo, RatingStar } from '../assets/assets';
 import { Popup } from 'react-uvc'
 import { useDebounce } from 'use-debounce';
 import 'react-uvc/dist/css/popup.css'; // Optional styles.
@@ -15,8 +15,10 @@ import Loading from './Loading';
 import localizeTitle from './localizeTitle';
 import Link from 'next/link';
 import { routes } from '../routes';
+import { useAppSelector } from '../hooks/redux';
 
 const Header: NextPage = (props) => {
+  const { isAuth, uid } = useAppSelector(state => state.user)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery] = useDebounce(searchQuery, 350)
   const [searchResults, setSearchResults] = useState<ITitle[]>([])
@@ -24,8 +26,14 @@ const Header: NextPage = (props) => {
     id: 'search-popup'
   }))
 
+  const [userAvatar, setUserAvatar] = useState('')
+
   useEffect(() => {
     popup.init()
+
+    if (isAuth) {
+      $api.get(`${env.apiUrl}/v1/user/${uid}`).catch(e => console.error(e)).then(res => setUserAvatar(res!.data!.avatar))
+    }
   }, [])
 
   useEffect(() => {
@@ -43,10 +51,20 @@ const Header: NextPage = (props) => {
             <Logo width={64} height={48} />
           </Link>
 
-          <div className='flex items-center uvc-popup-trigger' data-uvc-popup-openid="search-popup" onClick={() => popup.open()}>
-            <button>
+          <div className='flex items-center gap-[16px]'>
+            <button className='uvc-popup-trigger' data-uvc-popup-openid="search-popup" onClick={() => popup.open()}>
               <HeaderSearch width={32} height={32} />
             </button>
+
+            {isAuth ? <>
+              <Link href={'#'} className='w-[32px] h-[32px] rounded-[32px] bg-grey'>
+                {userAvatar ? <img src={userAvatar} alt="avatar" /> : null}
+              </Link>
+            </> : <>
+              <Link href={routes.authSignin.path}>
+                <HeaderAccount width={32} height={32} />
+              </Link>
+            </>}
           </div>
         </div>
       </header>
