@@ -8,7 +8,9 @@ import NotFound from '@/oops/404/page';
 import Loading from './Loading';
 import Indev from '@/oops/indev/page';
 import TechWorks from '@/oops/works/page';
-import { HIDE_IN_PROD, prodMode } from '../config';
+import { HIDE_IN_PROD, env, prodMode } from '../config';
+import axios from 'axios';
+import ServerUnavailable from '@/oops/ServerUnavailable';
 
 export const getRoute = (path: string): IRoute | null => {
   // @ts-ignore
@@ -35,6 +37,7 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
   const [pageStatus, setPageStatus] = useState<'clear' | 'indev' | 'works'>('clear')
   const path = usePathname();
   const [userPreView, setUserPreView] = useState(false)
+  const [serverAvailable, setServerAvailable] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -49,6 +52,7 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
     } else {
       exist = false
       setPageExist(exist)
+      return
     }
 
     const preViewKey = localStorage.getItem('userPreViewKey');
@@ -58,7 +62,7 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
       setHide(false)
     }
 
-    setLoading(false)
+    axios.get(`${env.apiUrl}/v1/uptime`).then(() => setServerAvailable(true)).catch(() => setServerAvailable(false)).finally(() => setLoading(false))
   }, [path])
 
   return (
@@ -67,15 +71,17 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
         {/* Hide in prod */}
         {hide ? <Indev /> : <>
 
-          {/* Page exist */}
-          {pageExist ? <>
+          {serverAvailable ? <>
+            {/* Page exist */}
+            {pageExist ? <>
 
-            {/* Page status */}
-            {pageStatus === 'clear' || userPreView ? <>
+              {/* Page status */}
+              {pageStatus === 'clear' || userPreView ? <>
 
-              {children}
-            </> : pageStatus === 'indev' ? <Indev /> : pageStatus === 'works' ? <TechWorks /> : <NotFound />}
-          </> : <NotFound />}
+                {children}
+              </> : pageStatus === 'indev' ? <Indev /> : pageStatus === 'works' ? <TechWorks /> : <NotFound />}
+            </> : <NotFound />}
+          </> : <ServerUnavailable />}
         </>}
       </>}
     </>

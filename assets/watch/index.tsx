@@ -15,7 +15,7 @@ export const PlayerEnterFS = (props: { width?: number, height?: number, classNam
 export const PlayerExitFS = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 32} height={props.height || 32} className={props.className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g clip-path="url(#clip0_45_1030)">
+      <g clipPath="url(#clip0_45_1030)">
         <path d="M10 20H2C1.46957 20 0.960859 20.2107 0.585786 20.5858C0.210714 20.9609 0 21.4696 0 22C0 22.5304 0.210714 23.0391 0.585786 23.4142C0.960859 23.7893 1.46957 24 2 24H8V30C8 30.5304 8.21071 31.0391 8.58579 31.4142C8.96086 31.7893 9.46957 32 10 32C10.5304 32 11.0391 31.7893 11.4142 31.4142C11.7893 31.0391 12 30.5304 12 30V22C12.0001 21.7373 11.9485 21.4772 11.8481 21.2345C11.7476 20.9917 11.6003 20.7712 11.4145 20.5855C11.2288 20.3997 11.0083 20.2524 10.7655 20.1519C10.5228 20.0515 10.2627 19.9999 10 20Z" fill="white" />
         <path d="M30 20H22C21.7373 19.9999 21.4772 20.0515 21.2345 20.1519C20.9917 20.2524 20.7712 20.3997 20.5855 20.5855C20.3997 20.7712 20.2524 20.9917 20.1519 21.2345C20.0515 21.4772 19.9999 21.7373 20 22V30C20 30.5304 20.2107 31.0391 20.5858 31.4142C20.9609 31.7893 21.4696 32 22 32C22.5304 32 23.0391 31.7893 23.4142 31.4142C23.7893 31.0391 24 30.5304 24 30V24H30C30.5304 24 31.0391 23.7893 31.4142 23.4142C31.7893 23.0391 32 22.5304 32 22C32 21.4696 31.7893 20.9609 31.4142 20.5858C31.0391 20.2107 30.5304 20 30 20Z" fill="white" />
         <path d="M22 12H30C30.5304 12 31.0391 11.7893 31.4142 11.4142C31.7893 11.0391 32 10.5304 32 10C32 9.46957 31.7893 8.96086 31.4142 8.58579C31.0391 8.21071 30.5304 8 30 8H24V2C24 1.46957 23.7893 0.960859 23.4142 0.585786C23.0391 0.210714 22.5304 0 22 0C21.4696 0 20.9609 0.210714 20.5858 0.585786C20.2107 0.960859 20 1.46957 20 2V10C19.9999 10.2627 20.0515 10.5228 20.1519 10.7655C20.2524 11.0083 20.3997 11.2288 20.5855 11.4145C20.7712 11.6003 20.9917 11.7476 21.2345 11.8481C21.4772 11.9485 21.7373 12.0001 22 12Z" fill="white" />
@@ -49,10 +49,10 @@ export const PlayerPause = (props: { width?: number, height?: number, className?
 export const PlayerVolume = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 32} height={props.height || 32} className={props.className} viewBox="0 0 34 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9.27051 9.29559V21.1464" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M29.7842 7.68091C30.7728 8.67026 31.5572 9.84551 32.0923 11.1394C32.6275 12.4332 32.903 13.8202 32.903 15.221C32.903 16.6218 32.6275 18.0088 32.0923 19.3027C31.5572 20.5965 30.7728 21.7717 29.7842 22.7611" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M9.27022 21.1464H2.18146C1.86812 21.1464 1.56761 21.0216 1.34604 20.7993C1.12447 20.5771 1 20.2756 1 19.9613V10.4807C1 10.1664 1.12447 9.86493 1.34604 9.64269C1.56761 9.42044 1.86812 9.29559 2.18146 9.29559H9.27022L19.9034 1V29.442L9.27022 21.1464Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M25.6045 11.8731C26.0439 12.3121 26.3925 12.8339 26.6304 13.4084C26.8683 13.9829 26.9907 14.5989 26.9907 15.221C26.9907 15.8431 26.8683 16.459 26.6304 17.0335C26.3925 17.608 26.0439 18.1298 25.6045 18.5688" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M9.27051 9.29559V21.1464" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M29.7842 7.68091C30.7728 8.67026 31.5572 9.84551 32.0923 11.1394C32.6275 12.4332 32.903 13.8202 32.903 15.221C32.903 16.6218 32.6275 18.0088 32.0923 19.3027C31.5572 20.5965 30.7728 21.7717 29.7842 22.7611" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.27022 21.1464H2.18146C1.86812 21.1464 1.56761 21.0216 1.34604 20.7993C1.12447 20.5771 1 20.2756 1 19.9613V10.4807C1 10.1664 1.12447 9.86493 1.34604 9.64269C1.56761 9.42044 1.86812 9.29559 2.18146 9.29559H9.27022L19.9034 1V29.442L9.27022 21.1464Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M25.6045 11.8731C26.0439 12.3121 26.3925 12.8339 26.6304 13.4084C26.8683 13.9829 26.9907 14.5989 26.9907 15.221C26.9907 15.8431 26.8683 16.459 26.6304 17.0335C26.3925 17.608 26.0439 18.1298 25.6045 18.5688" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -60,9 +60,9 @@ export const PlayerVolume = (props: { width?: number, height?: number, className
 export const PlayerVolumeLow = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 32} height={props.height || 32} className={props.className} viewBox="0 0 28 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9.27051 9.29559V21.1464" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M9.27022 21.1464H2.18146C1.86812 21.1464 1.56761 21.0216 1.34604 20.7993C1.12447 20.5771 1 20.2756 1 19.9613V10.4807C1 10.1664 1.12447 9.86493 1.34604 9.64269C1.56761 9.42044 1.86812 9.29559 2.18146 9.29559H9.27022L19.9034 1V29.442L9.27022 21.1464Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M25.6045 11.8731C26.0439 12.3121 26.3925 12.8339 26.6304 13.4084C26.8683 13.9829 26.9907 14.5989 26.9907 15.221C26.9907 15.8431 26.8683 16.459 26.6304 17.0335C26.3925 17.608 26.0439 18.1298 25.6045 18.5688" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M9.27051 9.29559V21.1464" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.27022 21.1464H2.18146C1.86812 21.1464 1.56761 21.0216 1.34604 20.7993C1.12447 20.5771 1 20.2756 1 19.9613V10.4807C1 10.1664 1.12447 9.86493 1.34604 9.64269C1.56761 9.42044 1.86812 9.29559 2.18146 9.29559H9.27022L19.9034 1V29.442L9.27022 21.1464Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M25.6045 11.8731C26.0439 12.3121 26.3925 12.8339 26.6304 13.4084C26.8683 13.9829 26.9907 14.5989 26.9907 15.221C26.9907 15.8431 26.8683 16.459 26.6304 17.0335C26.3925 17.608 26.0439 18.1298 25.6045 18.5688" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -70,11 +70,11 @@ export const PlayerVolumeLow = (props: { width?: number, height?: number, classN
 export const PlayerVolumeHight = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 32} className={props.className} viewBox="0 0 40 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9.2959 9.29559V21.1464" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M29.8721 7.68091C30.8637 8.67026 31.6505 9.84551 32.1873 11.1394C32.7241 12.4332 33.0004 13.8202 33.0004 15.221C33.0004 16.6218 32.7241 18.0088 32.1873 19.3027C31.6505 20.5965 30.8637 21.7717 29.8721 22.7611" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M34 5C35.585 6.31212 36.8424 7.87079 37.7004 9.58674C38.5584 11.3027 39 13.1422 39 15C39 16.8578 38.5584 18.6973 37.7004 20.4133C36.8424 22.1292 35.585 23.6879 34 25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M9.29559 21.1464H2.18508C1.87078 21.1464 1.56935 21.0216 1.3471 20.7993C1.12486 20.5771 1 20.2756 1 19.9613V10.4807C1 10.1664 1.12486 9.86493 1.3471 9.64269C1.56935 9.42044 1.87078 9.29559 2.18508 9.29559H9.29559L19.9613 1V29.442L9.29559 21.1464Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M25.6797 11.8731C26.1204 12.3121 26.4701 12.8339 26.7087 13.4084C26.9474 13.9829 27.0702 14.5989 27.0702 15.221C27.0702 15.8431 26.9474 16.459 26.7087 17.0335C26.4701 17.608 26.1204 18.1298 25.6797 18.5688" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M9.2959 9.29559V21.1464" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M29.8721 7.68091C30.8637 8.67026 31.6505 9.84551 32.1873 11.1394C32.7241 12.4332 33.0004 13.8202 33.0004 15.221C33.0004 16.6218 32.7241 18.0088 32.1873 19.3027C31.6505 20.5965 30.8637 21.7717 29.8721 22.7611" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M34 5C35.585 6.31212 36.8424 7.87079 37.7004 9.58674C38.5584 11.3027 39 13.1422 39 15C39 16.8578 38.5584 18.6973 37.7004 20.4133C36.8424 22.1292 35.585 23.6879 34 25" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.29559 21.1464H2.18508C1.87078 21.1464 1.56935 21.0216 1.3471 20.7993C1.12486 20.5771 1 20.2756 1 19.9613V10.4807C1 10.1664 1.12486 9.86493 1.3471 9.64269C1.56935 9.42044 1.87078 9.29559 2.18508 9.29559H9.29559L19.9613 1V29.442L9.29559 21.1464Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M25.6797 11.8731C26.1204 12.3121 26.4701 12.8339 26.7087 13.4084C26.9474 13.9829 27.0702 14.5989 27.0702 15.221C27.0702 15.8431 26.9474 16.459 26.7087 17.0335C26.4701 17.608 26.1204 18.1298 25.6797 18.5688" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -82,8 +82,8 @@ export const PlayerVolumeHight = (props: { width?: number, height?: number, clas
 export const PlayerVolumeMuted = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 32} className={props.className} viewBox="0 0 40 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9.2959 9.29559V21.1464" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M9.29559 21.1464H2.18508C1.87078 21.1464 1.56935 21.0216 1.3471 20.7993C1.12486 20.5771 1 20.2756 1 19.9613V10.4807C1 10.1664 1.12486 9.86493 1.3471 9.64269C1.56935 9.42044 1.87078 9.29559 2.18508 9.29559H9.29559L19.9613 1V29.442L9.29559 21.1464Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M9.2959 9.29559V21.1464" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.29559 21.1464H2.18508C1.87078 21.1464 1.56935 21.0216 1.3471 20.7993C1.12486 20.5771 1 20.2756 1 19.9613V10.4807C1 10.1664 1.12486 9.86493 1.3471 9.64269C1.56935 9.42044 1.87078 9.29559 2.18508 9.29559H9.29559L19.9613 1V29.442L9.29559 21.1464Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M27.533 19.4666C27.6663 19.6 27.7997 19.6666 27.9997 19.6666C28.1997 19.6666 28.333 19.6 28.4663 19.4666L31.9997 15.9333L35.533 19.4666C35.6663 19.6 35.8663 19.6666 35.9997 19.6666C36.133 19.6666 36.333 19.6 36.4663 19.4666C36.733 19.2 36.733 18.8 36.4663 18.5333L32.933 15L36.4663 11.4666C36.733 11.2 36.733 10.8 36.4663 10.5333C36.1997 10.2666 35.7997 10.2666 35.533 10.5333L31.9997 14.0666L28.4663 10.5333C28.1997 10.2666 27.7997 10.2666 27.533 10.5333C27.2663 10.8 27.2663 11.2 27.533 11.4666L31.0663 15L27.533 18.5333C27.2663 18.8 27.2663 19.2 27.533 19.4666Z" fill="white" />
     </svg>
   );
@@ -111,8 +111,8 @@ export const PlayerSettings = (props: { width?: number, height?: number, classNa
 export const PlayerSubtitles = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g clip-path="url(#clip0_45_1118)">
-        <g clip-path="url(#clip1_45_1118)">
+      <g clipPath="url(#clip0_45_1118)">
+        <g clipPath="url(#clip1_45_1118)">
           <path d="M20 4H4C2.895 4 2 4.895 2 6V18C2 19.105 2.895 20 4 20H20C21.105 20 22 19.105 22 18V6C22 4.895 21.105 4 20 4ZM4 12H8V14H4V12ZM14 18H4V16H14V18ZM20 18H16V16H20V18ZM20 14H10V12H20V14Z" fill="white" />
         </g>
       </g>
@@ -131,7 +131,7 @@ export const PlayerSubtitles = (props: { width?: number, height?: number, classN
 export const PlayerSpeed = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g clip-path="url(#clip0_45_1127)">
+      <g clipPath="url(#clip0_45_1127)">
         <path d="M10.917 11.9546C10.917 12.7758 11.6008 13.4418 12.4432 13.4418C13.035 13.4418 13.5422 13.1103 13.7954 12.6307L13.7996 12.6345L16.5857 7.73621L11.6947 10.659L11.6993 10.6635C11.2348 10.9188 10.917 11.3981 10.917 11.9546Z" fill="white" />
         <path d="M18.5917 4.86785C17.0278 3.53585 15.0071 2.68535 12.6982 2.55823V4.81835C14.6223 4.9376 15.756 5.5331 16.8943 6.46235L18.5917 4.86785Z" fill="white" />
         <path d="M19.6817 11.25H21.9983C21.8428 8.99998 20.9396 7.15123 19.5374 5.63623L17.8984 7.22361C18.8859 8.32611 19.5354 9.74998 19.6817 11.25Z" fill="white" />
@@ -149,7 +149,7 @@ export const PlayerSpeed = (props: { width?: number, height?: number, className?
 export const PlayerQuality = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g clip-path="url(#clip0_45_1139)">
+      <g clipPath="url(#clip0_45_1139)">
         <path d="M20.6889 4H5.44439C4.24116 4 3.2666 4.895 3.2666 6V18C3.2666 19.105 4.24116 20 5.44439 20H20.6889C21.8921 20 22.8667 19.105 22.8667 18V6C22.8667 4.895 21.8921 4 20.6889 4ZM11.9777 15H10.3444V13H8.16662V15H6.53328V9H8.16662V11.5H10.3444V9H11.9777V15ZM19.6 14C19.6 14.55 19.1154 15 18.5111 15H17.6944V16.5H16.0611V15H15.2444C14.6401 15 14.1555 14.55 14.1555 14V10C14.1555 9.45 14.6401 9 15.2444 9H18.5111C19.1154 9 19.6 9.45 19.6 10V14ZM15.7889 13.5H17.9667V10.5H15.7889V13.5Z" fill="white" />
       </g>
       <defs>

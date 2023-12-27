@@ -23,7 +23,7 @@ const Indev: NextPage = (props) => {
     <div className="bg-dark h-screen">
       <div className="wrapper h-full w-full justify-center items-center">
         <Logo width={256} height={256} className='oops-logo mb-[50px]' />
-        <h1 className='uppercase text-[40px] text-white mb-[100px]'>МИ ПРАЦЮЄМО НАД ЦИМ</h1>
+        <h1 className='uppercase text-[40px] text-white mb-[100px] text-center'>МИ ПРАЦЮЄМО НАД ЦИМ</h1>
         <ReturnToHome />
       </div>
     </div>

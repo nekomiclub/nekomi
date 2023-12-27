@@ -578,6 +578,7 @@ const defaultDub: ITitleEpisodesDub = {
 import SupportDiaka from '../../../assets/watch/supportDiaka.png'
 import SupportMonobank from '../../../assets/watch/supportMonobank.png'
 import NotFound from '@/oops/404/page';
+import { AxiosError } from 'axios';
 
 const TitleItem: NextPage = (props) => {
   const { name } = useParams<{ name: string }>()
@@ -601,7 +602,6 @@ const TitleItem: NextPage = (props) => {
 
         setTotalEps(maxEps)
       } catch (e) {
-        console.error(e);
         setTitleNotFound(true)
       }
     })()
@@ -611,7 +611,6 @@ const TitleItem: NextPage = (props) => {
     if (!title) return;
 
     let tmp: any = title!.details?.split('\n') || []
-    console.log(title.country)
     if (title.country === 'null') {
       tmp.unshift('Тайтл не оновлений, тому інформація може бути неактуальна та/або неточна. Якщо ви вважаєте цей тайтл важливим, напишіть про це адміністрації.')
     }
@@ -638,15 +637,15 @@ const TitleItem: NextPage = (props) => {
           <img src={title.background} alt="..." className='w-full h-full' />
         </div>
 
-        <div className="wrapper flex-row z-[3] py-[100px] gap-[40px] mb-[40px]">
+        <div className="wrapper flex-row z-[3] py-[100px] gap-[40px] mb-[40px] max-[1140px]:flex-col max-[1140px]:items-center">
           <img src={title.poster} alt="..." className='h-full w-[500px] rounded-[4px]' />
 
-          <div className='flex flex-col justify-between gap-[24px] w-full max-w-[700px]'>
+          <div className='flex flex-col justify-between gap-[24px] w-full max-w-[700px] max-[1140px]:max-w-none'>
             <div className='flex flex-col gap-[24px]'>
-              <div className='flex justify-between'>
-                <div className='flex flex-col gap-[4px]'>
-                  <h2 className='text-white text-[40px] font-bold'>{title.names?.ukr || title.code}</h2>
-                  <h3 className='text-[24px] font-extralight text-white'>{title.names?.eng || title.code} {roles.includes('editor') ? `/ ${title.id}` : null}</h3>
+              <div className='flex justify-between max-[500px]:flex-col max-[500px]:gap-[16px] max-[500px]:items-center'>
+                <div className='flex flex-col gap-[4px] w-full'>
+                  <h2 className='text-white text-[40px] font-bold max-[600px]:text-[32px] max-[500px]:text-[24px]'>{title.names?.ukr || title.code}</h2>
+                  <h3 className='text-[24px] font-extralight text-white max-[600px]:text-[16px]'>{title.names?.eng || title.code} {roles.includes('editor') ? `/ ${title.id}` : null}</h3>
                 </div>
 
                 <div className='flex gap-[8px] items-center'>
@@ -658,9 +657,9 @@ const TitleItem: NextPage = (props) => {
               <p className='text-white text-[16px]'>{title.description}</p>
 
               <div className='flex gap-[8px]'>
-                <BorderGradient round='2px'>
+                <BorderGradient round='2px' className='max-[600px]:w-full'>
                   <Link href='#player'>
-                    <button className='title-btn px-[24px] py-[16px] flex gap-[16px] items-center rounded-[2px]'>
+                    <button className='title-btn px-[24px] py-[16px] flex gap-[16px] items-center justify-center rounded-[2px] max-[600px]:w-full'>
                       <div className='relative w-[32px] h-[32px]'>
                         <Play width={32} height={32} className='absolute red' />
                         <Play width={32} height={32} className='absolute white' />
@@ -680,65 +679,65 @@ const TitleItem: NextPage = (props) => {
               </> : null}
 
               <div className='flex flex-col gap-[24px]'>
-                <h3 className='text-[32px] font-bold text-white'>Про серіал</h3>
+                <h3 className='text-[32px] font-bold text-white max-[600px]:text-[24px]'>Про серіал</h3>
 
                 <ul className='flex flex-col gap-[8px]'>
-                  <li className='flex gap-[24px]'>
-                    <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Статус:</p>
-                    <p className='text-white text-[24px] font-normal'>{title.status}</p>
+                  <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Статус:</p>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-normal'>{title.status}</p>
                   </li>
-                  <li className='flex gap-[24px]'>
-                    <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Епізоди:</p>
-                    <p className='text-white text-[24px] font-normal'>{totalEps}/{title.estimatedEps}</p>
+                  <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Епізоди:</p>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-normal'>{totalEps}/{title.estimatedEps}</p>
                   </li>
-                  <li className='flex gap-[24px]'>
-                    <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Жанри:</p>
+                  <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Жанри:</p>
                     <div className='flex flex-wrap gap-[8px]'>
                       {title.genres.map(genre => {
                         return <Link href={'#'} key={genre}>
                           {/* //! LINK FOR GENRE */}
-                          <p className='text-white text-[24px] font-bold'>{genre}</p>
+                          <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{genre}</p>
                         </Link>
                       })}
                     </div>
                   </li>
-                  <li className='flex gap-[24px]'>
-                    <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Рейтинг:</p>
-                    <p className='text-white text-[24px] font-bold gradient--primary-text'>{title.ageRate}</p>
+                  <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Рейтинг:</p>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold gradient--primary-text'>{title.ageRate}</p>
                   </li>
-                  <li className='flex gap-[24px]'>
-                    <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Сезон:</p>
-                    <p className='text-white text-[24px] font-normal'>{title.season}</p>
+                  <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Сезон:</p>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-normal'>{title.season}</p>
                   </li>
-                  <li className='flex gap-[24px]'>
-                    <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Тип:</p>
-                    <p className='text-white text-[24px] font-normal'>{title.type}</p>
+                  <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Тип:</p>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-normal'>{title.type}</p>
                   </li>
-                  <li className='flex gap-[24px]'>
-                    <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Студія:</p>
+                  <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Студія:</p>
                     <div className='flex flex-wrap gap-[8px]'>
                       {title.studios.map(studio => {
                         return <Link href={'#'} key={studio}>
                           {/* //! LINK FOR STUDIO */}
-                          <p className='text-white text-[24px] font-bold'>{studio}</p>
+                          <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{studio}</p>
                         </Link>
                       })}
                     </div>
                   </li>
-                  <li className='flex gap-[24px]'>
-                    <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Країна:</p>
-                    <p className='text-white text-[24px] font-normal'>{title.country === 'null' ? 'Країне ще не оновлена 😥' : title.country}</p>
+                  <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Країна:</p>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-normal'>{title.country === 'null' ? 'Країне ще не оновлена 😥' : title.country}</p>
                   </li>
-                  <li className='flex gap-[24px]'>
-                    <p className='text-white text-[24px] font-extralight min-w-[110px] text-right'>Озвучка:</p>
+                  <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Озвучка:</p>
                     <div className='flex flex-wrap gap-[8px]'>
                       {title.dubs?.length ? title.dubs?.map(dub => {
                         return <Link href={'#'} key={dub.id}>
                           {/* //! LINK FOR DUBBER */}
                           {/* @ts-ignore */}
-                          <p className='text-white text-[24px] font-bold'>{dub.name}</p>
+                          <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{dub.name}</p>
                         </Link>
-                      }) : <p className='text-white text-[24px] font-normal'>Озвучки не додані 😥</p>}
+                      }) : <p className='text-white text-[24px] max-[600px]:text-[16px] font-normal'>Озвучки не додані 😥</p>}
                     </div>
                   </li>
                 </ul>
@@ -747,21 +746,21 @@ const TitleItem: NextPage = (props) => {
           </div>
         </div>
 
-        <div className="wrapper gap-[40px]">
-          <div className='flex gap-[32px] items-start'>
+        <div className="wrapper gap-[40px] pb-[40px]">
+          <div className='flex gap-[32px] items-start max-[1032px]:flex-col max-[1032px]:items-center'>
             <div className='w-full h-[600px] bg-grey rounded-[2px] mb-[40px]'>
               <Player dubs={title.dubs || []} currentDubHandler={currentDubHandler} estimatedEps={title.estimatedEps} titleId={title.id} />
             </div>
 
-            <div className='bg-grey flex flex-col gap-[32px] rounded-[2px] px-[24px] py-[16px]'>
+            <div className='bg-grey flex flex-col gap-[32px] rounded-[2px] px-[24px] py-[16px] max-[600px]:w-full'>
               {selectedDub ? <>
-                <div className='flex justify-between items-center'>
-                  <div className='block w-[128px] h-[128px] rounded-[2px] overflow-hidden bg-dark'>
+                <div className='flex justify-between items-center gap-[32px] max-[500px]:flex-col'>
+                  <div className='block w-[128px] h-[128px] rounded-[2px] overflow-hidden flex-shrink-0'>
                     <img src={selectedDubber?.thumbURL} alt="..." />
                   </div>
 
-                  <div className='flex flex-col justify-center items-center px-[32px]'>
-                    <p className='text-white text-[24px] font-extralight whitespace-nowrap'>Озвучування від</p>
+                  <div className='flex flex-col justify-center items-center px-[32px] w-full'>
+                    <p className='text-white text-[24px] font-extralight whitespace-nowrap'>Озвучили</p>
                     <p className='text-white text-[24px] font-bold'>{selectedDubber?.name}</p>
                   </div>
                 </div>
@@ -779,10 +778,10 @@ const TitleItem: NextPage = (props) => {
                 </div>
 
                 {selectedDubber?.support.bymeacoffee || selectedDubber?.support.diaka || selectedDubber?.support.monobank || selectedDubber?.support.patreon || selectedDubber?.support.privatbank ? <>
-                  <div className='flex items-center flex-col gap-[8px] gap-[32px]'>
+                  <div className='flex items-center flex-col gap-[16px]'>
                     <h4 className='text-white text-[24px] font-extralight'>Дяка</h4>
 
-                    <div className='flex gap-[8px] items-center'>
+                    <div className='flex gap-[8px] max-[600px]:gap-[16px] items-center'>
                       {selectedDubber?.support.bymeacoffee && <>
                         <Link href={selectedDubber.support!.bymeacoffee} target='_blank'>
                           <SupportBMC height={40} width={40} />
@@ -817,10 +816,10 @@ const TitleItem: NextPage = (props) => {
                 </> : null}
 
                 {selectedDubber?.socials.instagram || selectedDubber?.socials.telegram || selectedDubber?.socials.tiktok || selectedDubber?.socials.youtube ? <>
-                  <div className='flex items-center flex-col gap-[8px] gap-[32px]'>
+                  <div className='flex items-center flex-col gap-[16px]'>
                     <h4 className='text-white text-[24px] font-extralight'>Мережі</h4>
 
-                    <div className='flex gap-[8px] items-center'>
+                    <div className='flex gap-[8px] max-[600px]:gap-[16px] items-center'>
                       {selectedDubber?.socials.instagram && <>
                         <Link href={selectedDubber.socials!.instagram} target='_blank'>
                           <Instagram height={40} width={40} />

@@ -9,7 +9,7 @@ const Restricted: NextPage = (props) => {
         <OopsRestricted width={256} height={256} className='oops-restricted mb-[50px]' />
 
         <div className='flex flex-col gap-[8px] mb-[100px]'>
-          <h1 className='uppercase text-[40px] text-white'>ДОСТУП ОБМЕЖЕНИЙ</h1>
+          <h1 className='uppercase text-[40px] text-white text-center'>ДОСТУП ОБМЕЖЕНИЙ</h1>
         </div>
 
         <ReturnToHome />

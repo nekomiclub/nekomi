@@ -583,17 +583,18 @@ interface IPlayerSessionData {
   speed: number
 }
 
+let previewShownTimeout;
 const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, currentDubHandler: (dub: ITitleEpisodesDub) => void, titleId: string }> = ({ dubs, currentDubHandler, estimatedEps, titleId }) => {
-  const [playerStarted, setPlayerStarted] = useState(false) //! FALSE
-  const [isDubListOpened, setIsDubListOpened] = useState(false) // ! FALSE  
+  const [playerStarted, setPlayerStarted] = useState(false)
+  const [isDubListOpened, setIsDubListOpened] = useState(false)
   const [idToDubber, setIdToDubber] = useState<{ id: string, name: string }[]>([])
   const [currentDub, setCurrentDub] = useState<ITitleEpisodesDub>(dubs[0])
   const [currentDubber, setCurrentDubber] = useState<IDubber>()
   const [currentEp, setCurrentEp] = useState(1)
   const [isNextEpDisabled, setIsNextEpDusabled] = useState(false)
 
-  const [isPlayerSettingsOpen, setIsPlayerSettingsOpen] = useState(false) // ! FALSE
-  const [settingsPage, setSettingsPage] = useState<'general' | 'qualities' | 'subs' | 'speed' | 'volume'>('general') // ! GENERAL
+  const [isPlayerSettingsOpen, setIsPlayerSettingsOpen] = useState(false)
+  const [settingsPage, setSettingsPage] = useState<'general' | 'qualities' | 'subs' | 'speed' | 'volume'>('general')
 
   const playerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -863,13 +864,16 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
       })
 
       durationRange.addEventListener('pointerleave', () => {
-        console.log('leave')
-
         durationRangePreview.style.opacity = '0';
         durationRangePreview.style.visibility = 'hidden';
       })
     }
   }, [videoDuration])
+
+  useEffect(() => {
+    videoRef.current!.currentTime = playerMoment[0];
+    videoRef.current!.play().catch(() => null);
+  }, [playerQuality])
 
 
 
@@ -995,6 +999,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     setPlayerMoment(values)
     video.currentTime = values[0];
 
+    clearTimeout(previewShownTimeout);
+
     const durationRange = document.querySelector('#player-duration') as HTMLDivElement
     const durationRangePreview = document.querySelector('#player-duration--preview') as HTMLDivElement
 
@@ -1005,6 +1011,11 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
     moveRangePreview(values[0])
     setPreview(values[0], durationRangePreview.querySelector('img')!)
+
+    previewShownTimeout = setTimeout(() => {
+      durationRangePreview.style.opacity = '0';
+      durationRangePreview.style.visibility = 'hidden';
+    }, 1000);
   }
 
   const getHrsMinsSecs = (time: number): { hrs: number, mins: number, secs: number, pretty: string } => {
@@ -1028,8 +1039,6 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
   }
 
   const changeQuality = (quality: 'q2k' | 'q1080' | 'q720' | 'q480' | 'q240') => {
-    videoRef.current!.currentTime = playerMoment[0];
-    videoRef.current!.play();
     setPlayerQuality(quality)
   }
 
@@ -1101,7 +1110,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
         <div id="player-layout--bottom" className={`absolute bottom-0 w-full bg-dark/[.2] px-[60px] py-[24px] gap-[40px] flex justify-between  z-[31] items-center duration-300 ${isPlayerIdle ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
           {/* Play/Pause */}
-          <button className='w-[32px] h-[40px] relative' onClick={() => setIsPaused(!isPaused)}>
+          <button className='flex-shrink-0 w-[32px] h-[40px] relative' onClick={() => setIsPaused(!isPaused)}>
             <PlayerWatch width={32} height={40} className={`absolute top-0 left-0 duration-200 ${isPaused ? `opacity-100 visible` : `opacity-0 invisible`}`} />
             <PlayerPause width={32} height={40} className={`absolute top-0 left-0 duration-200 ${isPaused ? `opacity-0 invisible` : `opacity-100 visible`}`} />
           </button>
@@ -1154,7 +1163,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
               <div ref={progressRef} className='absolute top-0 left-0 h-full gradient--secondary rounded-[4px] pointer-events-none z-30'></div>
               {/* <div ref={preloadRef} className='absolute top-0 left-0 h-[5px] gradient--secondary rounded-[4px] pointer-events-none z-30'></div> */}
-              <div className='w-full absolute left-0 flex justify-between items-center top-[12px]'>
+              <div className={`w-full absolute left-0 flex justify-between items-center top-[12px] duration-200 ${playerSize[0] <= 500 ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
                 <p className='text-white text-[14px] font-extralight'>{getHrsMinsSecs(playerMoment[0]).pretty}</p>
                 <p className='text-white text-[14px] font-extralight'>{getHrsMinsSecs(videoDuration).pretty}</p>
               </div>
@@ -1163,7 +1172,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
           <div className='flex items-center gap-[12px]'>
             {/* Volume */}
-            <div className='relative' id='player-volume'>
+            <div className={`duration-200 ${playerSize[0] <= 600 ? 'opacity-0 invisible absolute' : 'opacity-100 visible relative'}`} id='player-volume'>
               <button className='relative w-[40px] h-[32px]' onClick={() => muteVideo()}>
                 <PlayerVolume width={40} height={32} className={`absolute top-0 left-0 duration-200 ${playerVolume > 10 && playerVolume < 80 ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
                 <PlayerVolumeHight width={40} height={32} className={`absolute top-0 left-0 duration-200 ${playerVolume >= 80 ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
@@ -1208,7 +1217,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
             </div>
 
             {/* PIP */}
-            <button onClick={() => changePIP()}>
+            <button onClick={() => changePIP()} className={`duration-200 ${playerSize[0] <= 600 ? 'opacity-0 invisible absolute' : 'opacity-100 visible'}`}>
               <PlayerPIP width={32} height={32} />
             </button>
 

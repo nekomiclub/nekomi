@@ -19,6 +19,10 @@ $api.interceptors.response.use(cfg => {
 
   return cfg;
 }, async (err: AxiosError) => {
+  if (err.code === 'ERR_NETWORK') {
+    return;
+  }
+
   if (err.response!.status === 401 && !triedRefresh) {
     const originalRequest = err.config;
     triedRefresh = true;
