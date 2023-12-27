@@ -11,7 +11,7 @@ import Footer from '../components/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Play } from '../assets/assets';
-import { WatchButton } from './w/[name]/page';
+import { WatchButton } from '../components/BorderGradient';
 import { routes } from '../routes';
 import { PlayerVolume, PlayerVolumeMuted } from '../assets/watch';
 import { Swiper, SwiperSlide } from 'swiper/react';

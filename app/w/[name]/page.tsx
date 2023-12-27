@@ -8,7 +8,7 @@ import $api from '@/../components/http';
 import { env } from '@/../config';
 import Loading from '../../../components/Loading';
 import { Instagram, Play, RatingStar, SupportBMC, SupportPatreon, SupportPrivatbank, Telegram, Tiktok, WatchPreference, Youtube } from '../../../assets/assets';
-import BorderGradient from '../../../components/BorderGradient';
+import BorderGradient, { WatchButton } from '../../../components/BorderGradient';
 import Link from 'next/link';
 
 import './styles.scss'
@@ -581,22 +581,6 @@ import NotFound from '@/oops/404/page';
 import { AxiosError } from 'axios';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
-
-export const WatchButton: React.FC<{ href: string }> = ({ href }) => {
-  return <div className='flex gap-[8px]'>
-    <BorderGradient round='2px' className='max-[600px]:w-full'>
-      <Link href={href}>
-        <button className='watch-btn px-[24px] py-[16px] flex gap-[16px] items-center justify-center rounded-[2px] max-[600px]:w-full'>
-          <div className='relative w-[32px] h-[32px]'>
-            <Play width={32} height={32} className='absolute red' />
-            <Play width={32} height={32} className='absolute white' />
-          </div>
-          <p className='text-[24px] text-white'>Дивитись</p>
-        </button>
-      </Link>
-    </BorderGradient>
-  </div>
-}
 
 const TitleItem: NextPage = (props) => {
   const { name } = useParams<{ name: string }>()
