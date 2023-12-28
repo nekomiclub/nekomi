@@ -1,13 +1,63 @@
 'use client'
 
 import { NextPage } from 'next';
+import { useEffect, useState } from 'react'
 import { Logo, Telegram, Tiktok } from '../assets/assets';
 import Link from 'next/link';
 
 import '../styles/components/Footer.scss'
 import { routes } from '../routes';
+import { devMode, env } from '../config';
+import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 
+let isFirstOpen = true;
 const Footer: NextPage = (props) => {
+  const [ws, setWs] = useState<WebSocket>()
+  const [online, setOnline] = useState(1)
+
+  useEffect(() => {
+    if (typeof window !== undefined && !ws) {
+      setWs(new WebSocket(devMode ? `ws://192.168.0.106:${env.wsPort}` : `ws://api.animee.club:${env.wsPort}`))
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!ws) return;
+    let sid = (Math.random() + 1).toString(36).substring(8)
+
+    ws.onopen = () => {
+      if (!sessionStorage.getItem('sid')) {
+        sessionStorage.setItem('sid', sid)
+      } else {
+        sid = sessionStorage.getItem('sid')!
+      }
+
+      const payload: IWS<IWSPresence> = {
+        type: 'presence',
+        payload: {
+          sid,
+          connectedAt: +new Date()
+        }
+      }
+
+      ws.send(JSON.stringify(payload))
+    }
+
+    ws.onmessage = raw => {
+      const message = JSON.parse(raw.data) as { type: TWS, payload: any };
+
+      if (message.type === 'presence') {
+        setOnline((message as IWS<IWSPresence>).payload.audience!)
+      }
+
+      if (isFirstOpen) {
+        isFirstOpen = false;
+        ws.close();
+        setWs(new WebSocket(devMode ? `ws://192.168.0.106:${env.wsPort}` : `ws://api.animee.club:${env.wsPort}`))
+      }
+    }
+  }, [ws])
+
   return (
     <footer className='py-[16px] w-full bg-dark'>
       <div className="wrapper flex-col items-center gap-[32px]">
@@ -30,7 +80,7 @@ const Footer: NextPage = (props) => {
             </Link>
           </div>
 
-          {/* <p className='text-white text-[16px]'>Онлайн: <span className='font-bold text-white'>911</span></p> */}
+          <p className='text-white text-[16px]'>Онлайн: <span className='font-bold text-white'>{online}</span></p>
         </div>
 
         <div className='flex gap-[24px] w-full max-[670px]:flex-col max-[670px]:items-center'>

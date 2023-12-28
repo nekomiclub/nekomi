@@ -8,9 +8,10 @@ import NotFound from '@/oops/404/page';
 import Loading from './Loading';
 import Indev from '@/oops/indev/page';
 import TechWorks from '@/oops/works/page';
-import { HIDE_IN_PROD, env, prodMode } from '../config';
+import { HIDE_IN_PROD, devMode, env, prodMode } from '../config';
 import axios from 'axios';
 import ServerUnavailable from '@/oops/ServerUnavailable';
+import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 
 export const getRoute = (path: string): IRoute | null => {
   // @ts-ignore
@@ -38,6 +39,7 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
   const path = usePathname();
   const [userPreView, setUserPreView] = useState(false)
   const [serverAvailable, setServerAvailable] = useState(false)
+  const [ws, setWs] = useState<WebSocket>()
 
   useEffect(() => {
     setLoading(true)
@@ -62,8 +64,42 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
       setHide(false)
     }
 
+    if (typeof window !== undefined && !ws) {
+      setWs(new WebSocket(devMode ? `ws://192.168.0.106:${env.wsPort}` : `ws://api.animee.club:${env.wsPort}`))
+    }
+
     axios.get(`${env.apiUrl}/v1/uptime`).then(() => setServerAvailable(true)).catch(() => setServerAvailable(false)).finally(() => setLoading(false))
   }, [path])
+
+  useEffect(() => {
+    if (!ws) return;
+
+    ws.onerror = e => console.error(`WS error: ${e}`)
+    let sid = (Math.random() + 1).toString(36).substring(8);
+
+    ws.onopen = () => {
+      if (!sessionStorage.getItem('sid')) {
+        sessionStorage.setItem('sid', sid)
+      } else {
+        sid = sessionStorage.getItem('sid')!
+      }
+
+      const payload: IWS<IWSPresence> = {
+        type: 'presence',
+        payload: {
+          sid,
+          connectedAt: +new Date()
+        }
+      }
+
+      ws.send(JSON.stringify(payload))
+    }
+
+
+    // ws.onmessage = raw => {
+    //   const message = JSON.parse(raw.data) as { type: TWS, payload: any };
+    // }
+  }, [ws])
 
   return (
     <>

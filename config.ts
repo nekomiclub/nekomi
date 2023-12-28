@@ -6,7 +6,8 @@ interface IEnv {
   FIREBASE_APIKEY: string,
   FIREBASE_APPID: string,
   FIREBASE_MSI: string,
-  apiUrl: string
+  apiUrl: string,
+  wsPort: number
 }
 // @ts-ignore
 export const env: IEnv = {
@@ -14,7 +15,8 @@ export const env: IEnv = {
   FIREBASE_APIKEY: 'AIzaSyAonyJixltRbgINqakQYPqkj_yuAb2g4rI',
   FIREBASE_APPID: '1:563218119856:web:c0dca24f5df0531d754f75',
   FIREBASE_MSI: '563218119856',
-  apiUrl: devMode ? 'http://192.168.0.106' : 'https://api.animee.club'
+  apiUrl: devMode ? 'http://192.168.0.106' : 'https://api.animee.club',
+  wsPort: 8080
   // apiUrl: 'https://api.animee.club'
 }
 
