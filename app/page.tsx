@@ -152,10 +152,12 @@ const Home: NextPage = (props) => {
 
             <Swiper className='flex items-center w-full' slidesPerView={5} spaceBetween={8} breakpoints={{
               320: {
-                slidesPerView: 1
+                slidesPerView: 1.2,
+                centeredSlides: true
               },
               500: {
-                slidesPerView: 2
+                slidesPerView: 2,
+                centeredSlides: false
               },
               700: {
                 slidesPerView: 3

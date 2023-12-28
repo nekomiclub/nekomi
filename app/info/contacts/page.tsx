@@ -50,7 +50,7 @@ const Contacts: NextPage = (props) => {
       <Header />
 
       <div className="wrapper h-full justify-center items-center">
-        <h2 className='text-[24px] text-white mb-[24px]'>Контакти розробників animee</h2>
+        <h2 className='text-[24px] text-white mb-[24px] text-center'>Контакти розробників animee</h2>
 
         <div className='flex justify-center gap-[16px] max-w-[1170px] w-full'>
           <div className='flex flex-col gap-[8px] w-fit'>

@@ -18,7 +18,7 @@ import { routes } from '../routes';
 import { useAppSelector } from '../hooks/redux';
 
 const Header: NextPage = (props) => {
-  const { isAuth, uid } = useAppSelector(state => state.user)
+  const { isAuth, uid, username } = useAppSelector(state => state.user)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery] = useDebounce(searchQuery, 350)
   const [searchResults, setSearchResults] = useState<ITitle[]>([])
@@ -57,7 +57,7 @@ const Header: NextPage = (props) => {
             </button>
 
             {isAuth ? <>
-              <Link href={'#'} className='w-[32px] h-[32px] rounded-[32px] bg-grey'>
+              <Link href={`${routes.user.path.replace('/*', '')}/${username}`} className='w-[32px] h-[32px] rounded-[32px] bg-grey'>
                 {userAvatar ? <img src={userAvatar} alt="avatar" /> : null}
               </Link>
             </> : <>

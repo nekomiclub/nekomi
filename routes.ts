@@ -29,6 +29,7 @@ interface IRoutes {
   partners: IRoute,
   FAQ: IRoute,
   API: IRoute,
+  user: IRoute,
 }
 
 export const routes: IRoutes = {
@@ -114,5 +115,8 @@ export const routes: IRoutes = {
     public: true,
     status: 'indev'
   },
-
+  user: {
+    path: '/u/*',
+    public: true,
+  },
 }
