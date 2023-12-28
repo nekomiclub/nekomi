@@ -17,7 +17,7 @@ const Footer: NextPage = (props) => {
 
   useEffect(() => {
     if (typeof window !== undefined && !ws) {
-      setWs(new WebSocket(devMode ? `ws://192.168.0.106:${env.wsPort}` : `ws://api.animee.club:${env.wsPort}`))
+      setWs(new WebSocket(devMode ? `ws://192.168.0.106:${env.wsPort}` : `wss://api.animee.club:${env.wsPort}`))
     }
   }, [])
 
