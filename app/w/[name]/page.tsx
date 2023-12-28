@@ -641,9 +641,9 @@ const TitleItem: NextPage = (props) => {
         </div>
 
         <div className="wrapper z-[3] gap-[40px] mb-[40px] max-[1140px]:flex-col max-[1140px]:items-center" id='title-about'>
-          <img src={title.poster} loading='lazy' alt="..." className='h-full w-[500px] rounded-[4px]' />
+          <img src={title.poster} loading='lazy' alt="..." className='h-full min-w-[380px] max-w-[500px] rounded-[4px]' />
 
-          <div className='flex flex-col justify-between gap-[24px] w-full max-w-[700px] max-[1140px]:max-w-none'>
+          <div className='flex flex-col justify-between gap-[24px] w-full'>
             <div className='flex flex-col gap-[24px]'>
               <div className='flex justify-between max-[500px]:flex-col max-[500px]:gap-[16px] max-[500px]:items-center'>
                 <div className='flex flex-col gap-[4px] w-full'>

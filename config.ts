@@ -18,4 +18,4 @@ export const env: IEnv = {
   // apiUrl: 'https://api.animee.club'
 }
 
-export const HIDE_IN_PROD = true;
+export const HIDE_IN_PROD = false;
