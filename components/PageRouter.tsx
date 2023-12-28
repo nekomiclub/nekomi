@@ -8,7 +8,7 @@ import NotFound from '@/oops/404/page';
 import Loading from './Loading';
 import Indev from '@/oops/indev/page';
 import TechWorks from '@/oops/works/page';
-import { HIDE_IN_PROD, devMode, env, prodMode } from '../config';
+import { HIDE_IN_PROD, WS_URL, devMode, env, prodMode } from '../config';
 import axios from 'axios';
 import ServerUnavailable from '@/oops/ServerUnavailable';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
@@ -65,7 +65,7 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
     }
 
     if (typeof window !== undefined && !ws) {
-      setWs(new WebSocket(devMode ? `ws://192.168.0.106:${env.wsPort}` : `ws://api.animee.club:${env.wsPort}`))
+      setWs(new WebSocket(WS_URL))
     }
 
     axios.get(`${env.apiUrl}/v1/uptime`).then(() => setServerAvailable(true)).catch(() => setServerAvailable(false)).finally(() => setLoading(false))

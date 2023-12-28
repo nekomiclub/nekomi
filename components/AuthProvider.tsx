@@ -82,7 +82,8 @@ const AuthProvider: NextPage<{ children: any }> = ({ children }) => {
           setLoaded(true)
         }
       } catch (e) {
-        console.error(e)
+        checkAccess([])
+        setLoaded(true)
       }
     })()
   }, [path])

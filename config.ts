@@ -1,4 +1,4 @@
-export const devMode = process.env.NODE_ENV === 'development';
+export const devMode = false; /*  process.env.NODE_ENV === 'development' */
 export const prodMode = process.env.NODE_ENV === 'production';
 
 interface IEnv {
@@ -17,7 +17,8 @@ export const env: IEnv = {
   FIREBASE_MSI: '563218119856',
   apiUrl: devMode ? 'http://192.168.0.106' : 'https://api.animee.club',
   wsPort: 8080
-  // apiUrl: 'https://api.animee.club'
 }
+
+export const WS_URL = devMode ? `ws://192.168.0.106:${env.wsPort}` : `wss://api.animee.club:${env.wsPort}`;
 
 export const HIDE_IN_PROD = false;

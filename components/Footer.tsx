@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 import '../styles/components/Footer.scss'
 import { routes } from '../routes';
-import { devMode, env } from '../config';
+import { WS_URL, devMode, env } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 
 let isFirstOpen = true;
@@ -17,7 +17,7 @@ const Footer: NextPage = (props) => {
 
   useEffect(() => {
     if (typeof window !== undefined && !ws) {
-      setWs(new WebSocket(devMode ? `ws://192.168.0.106:${env.wsPort}` : `wss://api.animee.club:${env.wsPort}`))
+      setWs(new WebSocket(WS_URL))
     }
   }, [])
 
@@ -53,7 +53,7 @@ const Footer: NextPage = (props) => {
       if (isFirstOpen) {
         isFirstOpen = false;
         ws.close();
-        setWs(new WebSocket(devMode ? `ws://192.168.0.106:${env.wsPort}` : `ws://api.animee.club:${env.wsPort}`))
+        setWs(new WebSocket(WS_URL))
       }
     }
   }, [ws])
