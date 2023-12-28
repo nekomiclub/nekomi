@@ -50,7 +50,7 @@ const UserPage: NextPage = (props) => {
           {!isFound && !userData ? <NotFound /> : <>
             <img src={userData!.profileBg || DefaultBg.src} loading='lazy' alt="..." className='w-full h-full absolute top-0 left-0' />
 
-            <div className="wrapper">
+            <div className="wrapper items-center">
               <div className='backdrop-blur-[128px] flex flex-col gap-[16px] max-w-[1170px] w-full px-[32px] py-[16px] rounded-[4px]' style={{ background: 'rgba(18, 18, 18, 0.40)' }}>
                 <div className='flex items-center w-full gap-[40px] max-[512px]:flex-col'>
                   <img src={userData!.avatar!} alt="avatar" className='rounded-[2px] w-[128px] h-[128px]' />
@@ -64,9 +64,12 @@ const UserPage: NextPage = (props) => {
                       </div>
                     </div>
 
-                    {state.username === username ? <>
-                      <p className='text-[16px] text-white text-center'>Ви є всласником цього акаунту.</p>
-                    </> : null}
+                    <div className='flex flex-col gap-[4px]'>
+                      <p className='text-[16px] text-white max-[600px]:text-center'>Зареєстрований {new Date(userData?.stats.createdAt!).toLocaleString('ua')}</p>
+                      {state.username === username ? <>
+                        <p className='text-[16px] text-white max-[600px]:text-center'>Ви є всласником цього акаунту.</p>
+                      </> : null}
+                    </div>
                   </div>
                 </div>
 
