@@ -48,7 +48,7 @@ const UserPage: NextPage = (props) => {
 
           {/* User not found */}
           {!isFound && !userData ? <NotFound /> : <>
-            <img src={userData!.profileBg || DefaultBg.src} alt="..." className='w-full h-full absolute top-0 left-0' />
+            <img src={userData!.profileBg || DefaultBg.src} loading='lazy' alt="..." className='w-full h-full absolute top-0 left-0' />
 
             <div className="wrapper">
               <div className='backdrop-blur-[128px] flex flex-col gap-[16px] max-w-[1170px] w-full px-[32px] py-[16px] rounded-[4px]' style={{ background: 'rgba(18, 18, 18, 0.40)' }}>

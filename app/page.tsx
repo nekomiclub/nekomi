@@ -37,7 +37,7 @@ const TitleItem: React.FC<{ skeleton?: boolean, title?: IActualTitle }> = ({ ske
   return <Link href={skeleton ? '#' : `${routes.watch.path}/${title?.code}`}>
     <div className={`relative w-full h-[200px] bg-grey rounded-[2px] flex flex-col justify-end`}>
       {skeleton ? null : <>
-        <img src={title!.poster} alt={`Poster for ${title!.code}`} className='w-full h-full absolute top-0 left-0' />
+        <img src={title!.poster} alt={`Poster for ${title!.code}`} loading='lazy' className='w-full h-full absolute top-0 left-0' />
         <div className='absolute top-[4px] right-[8px] px-[4px] py-[2px] rounded-[2px] gradient--primary'>
           <p className='text-[12px] text-white font-bold'>{title!.rating}</p>
         </div>
@@ -74,7 +74,7 @@ const Home: NextPage = (props) => {
     code: 'jujutsu-kaisen-2',
     name: 'Магічна битва 2',
     poster: 'https://wallpapercave.com/wp/wp12526882.jpg',
-    video: 'http://192.168.0.106/v1/media/72cbb2e3-803b-40de-995d-efbf09c2056f'
+    video: 'https://api.animee.club/v1/media/10fee214-f32f-4312-82f3-00c4a5b98b54'
   })
 
   const [actualTitles, setActualTitles] = useState<IActualTitle[]>([{
@@ -131,7 +131,7 @@ const Home: NextPage = (props) => {
       <main className='h-full bg-dark'>
         <div className='relative w-full h-screen flex flex-col items-end bg-dark mb-[100px]'>
           <div className='bg-grey w-full h-full'>
-            <img ref={posterRef} src={headTitle.poster} alt="..." className={`w-full h-full absolute top-0 left-0 duration-1000 object-cover ${posterVisible ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
+            <img ref={posterRef} src={headTitle.poster} loading='lazy' alt="..." className={`w-full h-full absolute top-0 left-0 duration-1000 object-cover ${posterVisible ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
             <div ref={videoRef} className={`absolute top-0 left-0 w-full h-full bg-black duration-1000 ${videoVisible ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
               <video src={headTitle.video} preload='metadata' controls={false} muted={muted} autoPlay loop className='w-full h-full object-cover'></video>
             </div>

@@ -45,7 +45,7 @@ const Header: NextPage = (props) => {
 
   return (
     <>
-      <header className='fixed top-0 left-0 w-full py-[16px] bg-dark/[.4] backdrop-blur-[10px] z-[20]'>
+      <header className='fixed top-0 left-0 w-full py-[16px] bg-dark/[.4] backdrop-blur-[10px] z-[20] duration-200'>
         <div className="wrapper flex-row items-center justify-between">
           <Link href={routes.home.path}>
             <Logo width={64} height={48} />
@@ -58,7 +58,7 @@ const Header: NextPage = (props) => {
 
             {isAuth ? <>
               <Link href={`${routes.user.path.replace('/*', '')}/${username}`} className='w-[32px] h-[32px] rounded-[32px] bg-grey'>
-                {userAvatar ? <img src={userAvatar} alt="avatar" /> : null}
+                {userAvatar ? <img src={userAvatar} alt="avatar" loading='lazy' /> : null}
               </Link>
             </> : <>
               <Link href={routes.authSignin.path}>
@@ -78,7 +78,7 @@ const Header: NextPage = (props) => {
               {searchResults.map(title => {
                 return <Link href={`${routes.watch.path}/${title.code}`} key={title.id}>
                   <div className='px-[16px] py-[8px] duration-200 w-fit rounded-[4px] hover:bg-grey flex items-start gap-[16px]'>
-                    <img src={title.poster} alt={`Poster for ${title.code}`} className='w-[60px] h-[80px] bg-grey' />
+                    <img src={title.poster} alt={`Poster for ${title.code}`} loading='lazy' className='w-[60px] h-[80px] bg-grey' />
 
                     <div className='flex flex-col gap-[4px]'>
                       <p className='text-[24px] font-extralight text-white'>{title.names.ukr || title.code}</p>

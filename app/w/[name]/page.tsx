@@ -637,11 +637,11 @@ const TitleItem: NextPage = (props) => {
         <div className='h-screen w-full absolute top-0 left-0'>
           <div className='block w-full h-full absolute top-0 left-0 z-[2]' style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0.40) 0%, #121212 90.21%), linear-gradient(227deg, rgba(255, 242, 242, 0.03) 25.7%, rgba(255, 250, 250, 0.07) 94.73%)', backdropFilter: 'blur(35px)' }}></div>
           {/* Edit with blurhash */}
-          <img src={title.background} alt="..." className='w-full h-full' />
+          <img src={title.background} loading='lazy' alt="..." className='w-full h-full' />
         </div>
 
         <div className="wrapper z-[3] gap-[40px] mb-[40px] max-[1140px]:flex-col max-[1140px]:items-center" id='title-about'>
-          <img src={title.poster} alt="..." className='h-full w-[500px] rounded-[4px]' />
+          <img src={title.poster} loading='lazy' alt="..." className='h-full w-[500px] rounded-[4px]' />
 
           <div className='flex flex-col justify-between gap-[24px] w-full max-w-[700px] max-[1140px]:max-w-none'>
             <div className='flex flex-col gap-[24px]'>
@@ -749,7 +749,7 @@ const TitleItem: NextPage = (props) => {
                   {selectedDub ? <>
                     <div className='flex justify-between items-center gap-[32px] max-[500px]:flex-col'>
                       <div className='block w-[128px] h-[128px] rounded-[2px] overflow-hidden flex-shrink-0'>
-                        <img src={selectedDubber?.thumbURL} alt="..." />
+                        <img src={selectedDubber?.thumbURL} alt="..." loading='lazy' />
                       </div>
 
                       <div className='flex flex-col justify-center items-center px-[32px] w-full'>
@@ -795,13 +795,13 @@ const TitleItem: NextPage = (props) => {
 
                           {selectedDubber?.support.monobank && <>
                             <Link href={selectedDubber.support!.monobank} target='_blank'>
-                              <img src={SupportMonobank.src} alt="monobank" />
+                              <img src={SupportMonobank.src} alt="monobank" loading='lazy' />
                             </Link>
                           </>}
 
                           {selectedDubber?.support.diaka && <>
                             <Link href={selectedDubber.support!.diaka} target='_blank'>
-                              <img src={SupportDiaka.src} alt="diaka" />
+                              <img src={SupportDiaka.src} alt="diaka" loading='lazy' />
                             </Link>
                           </>}
                         </div>

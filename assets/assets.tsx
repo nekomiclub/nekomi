@@ -304,8 +304,8 @@ export const SupportPrivatbank = (props: { width?: number, height?: number, clas
 export const HeaderSearch = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 40 41" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M18.3333 31.8224C25.6971 31.8224 31.6667 25.8529 31.6667 18.4891C31.6667 11.1253 25.6971 5.15576 18.3333 5.15576C10.9695 5.15576 5 11.1253 5 18.4891C5 25.8529 10.9695 31.8224 18.3333 31.8224Z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M35 35.1558L27.75 27.9058" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M18.3333 31.8224C25.6971 31.8224 31.6667 25.8529 31.6667 18.4891C31.6667 11.1253 25.6971 5.15576 18.3333 5.15576C10.9695 5.15576 5 11.1253 5 18.4891C5 25.8529 10.9695 31.8224 18.3333 31.8224Z" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M35 35.1558L27.75 27.9058" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

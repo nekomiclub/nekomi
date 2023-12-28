@@ -1155,7 +1155,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
               <div ref={durationRangePreviewRef} id='player-duration--preview' className='absolute w-[160px] bg-dark rounded-[4px] bottom-[300%] left-0 overflow-hidden opacity-0 invisible'>
                 <div className='w-[160px] h-[120px] bg-white/[.2]'>
-                  <img src="" alt="..." className='w-full h-full' id='player-previews--frame' />
+                  <img src="" alt="..." loading='lazy' className='w-full h-full' id='player-previews--frame' />
                 </div>
 
                 <p className='text-[14px] font-extralight text-white w-full h-full absolute bottom-0 flex justify-center items-end'>00:20</p>
