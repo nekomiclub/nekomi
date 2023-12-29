@@ -61,7 +61,7 @@ const Header: NextPage = (props) => {
 
   return (
     <>
-      <header className='fixed top-0 left-0 w-full py-[16px] bg-dark/[.4] backdrop-blur-[10px] z-[20] duration-200'>
+      <header className='fixed top-0 left-0 w-full py-[16px] bg-dark/[.4] backdrop-blur-[10px] z-[110] duration-200'>
         <div className="wrapper flex-row items-center justify-between">
           <Link href={routes.home.path}>
             <Logo width={64} height={48} />
@@ -99,13 +99,13 @@ const Header: NextPage = (props) => {
         </div>
       </header>
 
-      <div className="uvc-popup-close flex flex-col justify-center items-center px-[24px] cursor-pointer" id="uvc-popup-layer" onClick={() => popup.close()}>
+      <div className="uvc-popup-close flex flex-col justify-center items-center px-[24px] py-[24px] cursor-pointer" id="uvc-popup-layer" onClick={() => popup.close()}>
         <div className="uvc-popup-dialog max-h-[800px] max-[500px]:max-h-[600px] max-w-[800px] w-full bg-dark rounded-[4px] overflow-y-scroll search-scroll z-[10] cursor-default duration-200" onClick={e => e.stopPropagation()} data-uvc-popup-id="search-popup">
-          <input type="text" className='w-full px-[24px] border-b border-b-[#1D1D1D] bg-transparent py-[8px] text-white' value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder='...' />
+          <input type="text" className='w-full px-[24px] border-b border-b-[#1D1D1D] bg-transparent py-[8px] text-white placeholder:text-white' value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder='...' />
 
           <div className='px-[24px] py-[16px] flex flex-col gap-[4px]'>
             {searchResults ? <>
-              {searchResults.map(title => {
+              {searchResults.length ? searchResults.map(title => {
                 return <Link href={`${routes.watch.path}/${title.code}`} key={title.id}>
                   <div className='px-[16px] py-[8px] duration-200 w-fit rounded-[4px] hover:bg-grey flex items-start gap-[16px]'>
                     <img src={title.poster} alt={`Poster for ${title.code}`} loading='lazy' className='w-[60px] h-[80px] bg-grey' />
@@ -126,7 +126,7 @@ const Header: NextPage = (props) => {
                     </div>
                   </div>
                 </Link>
-              })}
+              }) : <p className='text-[16px] font-bold gradient--primary-text'>За вашим запитом нічого не знайдено</p>}
             </> : <>
               <p className='text-[16px] font-bold gradient--primary-text'>Завантажуємо...</p>
             </>}

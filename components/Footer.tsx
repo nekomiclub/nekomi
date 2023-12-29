@@ -67,7 +67,7 @@ const Footer: NextPage = (props) => {
 
             <div className='flex flex-col gap-[4px]'>
               <p className='uppercase text-[32px] text-white font-extralight max-[670px]:text-[24px]'>ANIMEE.CLUB</p>
-              <p className='text-[16px] text-white font-extralight'>Поринь у світ українського аніме!</p>
+              <p className='text-[16px] text-white font-extralight'>Поринь у світ україномовного аніме!</p>
             </div>
           </div>
 
@@ -98,7 +98,7 @@ const Footer: NextPage = (props) => {
 
             {/* Contacts */}
             <Link href={routes.contacts.path}>
-              <p className='footer-link footer-link--disabled'>Контакти</p> {/* disabled */}
+              <p className='footer-link'>Контакти</p>
             </Link>
           </ul>
 

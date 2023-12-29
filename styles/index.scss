@@ -135,3 +135,16 @@ html, body {
     background: $gradientPrimary;
   }
 }
+
+.home-titleCard {
+  &-blur {
+    transition: .2s;
+  }
+
+  &:hover {
+    .home-titleCard-blur {
+      padding-top: 24px;
+    padding-bottom: 24px;
+    }
+  }
+}

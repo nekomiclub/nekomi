@@ -65,9 +65,9 @@ const UserPage: NextPage = (props) => {
                     </div>
 
                     <div className='flex flex-col gap-[4px]'>
-                      <p className='text-[16px] text-white max-[600px]:text-center'>Зареєстрований {new Date(userData?.stats.createdAt!).toLocaleString('ua')}</p>
+                      <p className='text-[16px] text-white max-[600px]:text-center'>Зареєстрований {new Date(userData?.stats.createdAt!).toLocaleString('ua').split(',')[0]}</p>
                       {state.username === username ? <>
-                        <p className='text-[16px] text-white max-[600px]:text-center'>Ви є всласником цього акаунту.</p>
+                        <p className='text-[16px] text-white max-[600px]:text-center'>Ви є власником цього акаунту.</p>
                       </> : null}
                     </div>
                   </div>

@@ -753,8 +753,8 @@ const TitleItem: NextPage = (props) => {
                       </div>
 
                       <div className='flex flex-col justify-center items-center px-[32px] w-full'>
-                        <p className='text-white text-[24px] font-extralight whitespace-nowrap'>Озвучили</p>
-                        <p className='text-white text-[24px] font-bold'>{selectedDubber?.name}</p>
+                        <p className='text-white text-[24px] font-extralight whitespace-nowrap text-center'>Озвучили</p>
+                        <p className='text-white text-[24px] font-bold text-center'>{selectedDubber?.name}</p>
                       </div>
                     </div>
 

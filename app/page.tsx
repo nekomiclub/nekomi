@@ -34,7 +34,7 @@ interface IActualTitle {
 }
 
 const TitleItem: React.FC<{ skeleton?: boolean, title?: IActualTitle }> = ({ skeleton, title }) => {
-  return <Link href={skeleton ? '#' : `${routes.watch.path}/${title?.code}`}>
+  return <Link href={skeleton ? '#' : `${routes.watch.path}/${title?.code}`} className='home-titleCard'>
     <div className={`relative w-full h-[200px] bg-grey rounded-[2px] flex flex-col justify-end`}>
       {skeleton ? null : <>
         <img src={title!.poster} alt={`Poster for ${title!.code}`} loading='lazy' className='w-full h-full absolute top-0 left-0' />
@@ -42,8 +42,8 @@ const TitleItem: React.FC<{ skeleton?: boolean, title?: IActualTitle }> = ({ ske
           <p className='text-[12px] text-white font-bold'>{title!.rating}</p>
         </div>
       </>}
-      <div className='backdrop-blur-[10px] w-full flex h-fit z-[3] relative' style={{ background: 'rgba(18, 18, 18, 0.20)' }}>
-        <p className='text-center text-[16px] text-white w-full px-[16px] py-[8px]'>{skeleton ? '' : title!.name}</p>
+      <div className='home-titleCard-blur backdrop-blur-[10px] w-full flex h-fit z-[3] relative px-[16px] py-[8px]' style={{ background: 'rgba(18, 18, 18, 0.20)' }}>
+        <p className='text-center text-[16px] text-white w-full'>{skeleton ? '' : title!.name}</p>
       </div>
     </div>
   </Link>
@@ -88,7 +88,7 @@ const Home: NextPage = (props) => {
     poster: 'https://api.animee.club/v1/media/bbfc26d1-b5ba-4a47-9ae8-54144dd2366a',
     rating: '7.6'
   }, {
-    code: 'soso-no-furiren',
+    code: 'sousou-no-frieren',
     name: 'Фрірен, що проводжає в останню путь',
     poster: 'https://api.animee.club/v1/media/105725f2-37ac-43b3-9b17-fcc099d9d18c',
     rating: '8.9'
@@ -150,7 +150,7 @@ const Home: NextPage = (props) => {
               </button>
             </div>
 
-            <Swiper className='flex items-center w-full' slidesPerView={5} spaceBetween={8} breakpoints={{
+            <Swiper className='flex items-center w-full h-[216px]' slidesPerView={5} spaceBetween={8} breakpoints={{
               320: {
                 slidesPerView: 1.2,
                 centeredSlides: true

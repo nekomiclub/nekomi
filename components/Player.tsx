@@ -604,10 +604,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
   const durationRangePreviewRef = useRef<HTMLDivElement>(null)
 
   const volumeRef = useRef<HTMLDivElement>(null)
-  const volumeRefSettings = useRef<HTMLDivElement>(null)
-  const speedRef = useRef<HTMLDivElement>(null)
 
-  const [playerSize, setPlayerSize] = useState([0, 0])
+  const [playerSize, setPlayerSize] = useState([800, 800])
   const [videoDuration, setVideoDuration] = useState(0)
 
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -824,20 +822,12 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
       volumeRef.current.style.width = `${(playerVolume).toFixed(2)}%`;
     }
 
-    if (volumeRefSettings.current) {
-      volumeRefSettings.current.style.width = `${(playerVolume).toFixed(2)}%`;
-    }
-
 
     videoRef.current!.volume = playerVolume / 100;
   }, [playerVolume])
 
   // Change speed & speed pregress ref width
   useEffect(() => {
-    if (speedRef.current) {
-      speedRef.current.style.width = `${((speed - 0.25) / 1.75 * 100).toFixed(2)}%`;
-    }
-
     videoRef.current!.playbackRate = speed;
   }, [speed])
 
@@ -1028,13 +1018,17 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
   }
 
   const muteVideo = () => {
+    const video = videoRef.current!
+
     // if volume not null
     if (playerVolumePreMuted) {
       setPlayerVolume(playerVolumePreMuted)
       setPlayerVolumePreMuted(null)
+      video.muted = false
     } else {
       setPlayerVolumePreMuted(playerVolume)
       setPlayerVolume(0)
+      video.muted = true
     }
   }
 
@@ -1359,7 +1353,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
                         />
                       )}
                     />
-                    <div ref={speedRef} className='absolute top-0 left-0 h-full gradient--secondary rounded-[4px] pointer-events-none z-30'></div>
+                    <div className='absolute top-0 left-0 h-full gradient--secondary rounded-[4px] pointer-events-none z-30' style={{ width: `${((speed - 0.25) / 1.75 * 100).toFixed(2)}%` }}></div>
                   </div>
                   <p className='text-white text-[14px] font-extralight'>{speed}x</p>
                 </div> : null}
@@ -1426,7 +1420,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
                         />
                       )}
                     />
-                    <div ref={volumeRefSettings} className='absolute top-0 left-0 h-full gradient--secondary rounded-[4px] pointer-events-none z-30'></div>
+                    <div className='absolute top-0 left-0 h-full gradient--secondary rounded-[4px] pointer-events-none z-30' style={{ width: `${(playerVolume).toFixed(2)}%` }}></div>
                   </div>
                   <p className='text-white text-[14px] font-extralight'>{playerVolume}</p>
                 </div> : null}

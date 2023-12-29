@@ -8,7 +8,7 @@ import PageRouter from '../components/PageRouter';
 
 export const metadata: Metadata = {
   title: 'animee',
-  description: 'Поринь у світ українського аніме!'
+  description: 'Поринь у світ україномовного аніме!'
 }
 
 export default function RootLayout({
