@@ -641,18 +641,18 @@ const TitleItem: NextPage = (props) => {
         </div>
 
         <div className="wrapper z-[3] gap-[40px] mb-[40px] max-[1140px]:flex-col max-[1140px]:items-center" id='title-about'>
-          <img src={title.poster} loading='lazy' alt="..." className='h-full min-w-[380px] max-w-[500px] rounded-[4px]' />
+          <img src={title.poster} loading='lazy' alt="..." className='h-full min-w-[380px] max-w-[500px] max-[545px]:w-full max-[545px]:min-w-[300px] rounded-[4px]' />
 
           <div className='flex flex-col justify-between gap-[24px] w-full'>
             <div className='flex flex-col gap-[24px]'>
-              <div className='flex justify-between max-[500px]:flex-col max-[500px]:gap-[16px] max-[500px]:items-center'>
+              <div className='flex justify-between max-[500px]:gap-[16px] max-[500px]:items-center'>
                 <div className='flex flex-col gap-[4px] w-full'>
                   <h2 className='text-white text-[40px] font-bold max-[600px]:text-[32px] max-[500px]:text-[24px]'>{title.names?.ukr || title.code}</h2>
                   <h3 className='text-[24px] font-extralight text-white max-[600px]:text-[16px]'>{title.names?.eng || title.code} {roles.includes('editor') ? `/ ${title.id}` : null}</h3>
                 </div>
 
                 <div className='flex gap-[8px] items-center'>
-                  <RatingStar />
+                  <RatingStar className='max-[500px]:opacity-0' />
                   <p className='gradient--primary-text text-[24px] font-bold'>{title.rating || '-'}</p>
                 </div>
               </div>

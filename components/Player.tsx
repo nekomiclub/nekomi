@@ -2,16 +2,17 @@
 
 import next, { NextPage } from 'next';
 import { useEffect, useState, MouseEvent, useRef, useCallback } from 'react'
-import { Play, PlayerDubsList, PlayerNext } from '../assets/assets';
+import { OopsServerUnavailable, Play, PlayerDubsList, PlayerNext } from '../assets/assets';
 import { ITitleEpisodeDubbed, ITitleEpisodesDub } from '../interfaces/ITitle';
 import $api from './http';
 import { IDubber } from '../interfaces/IDubber';
-import { env } from '../config';
+import { devMode, env } from '../config';
 import { useIdleTimer } from 'react-idle-timer'
 import { Range } from 'react-range'
 
 import '../styles/components/Player.scss'
 import { PlayerEnterFS, PlayerExitFS, PlayerPIP, PlayerPause, PlayerQuality, PlayerSettings, PlayerSettingsPrev, PlayerSpeed, PlayerSubtitles, PlayerVolume, PlayerVolumeHight, PlayerVolumeLow, PlayerVolumeMuted, PlayerWatch } from '../assets/watch';
+import axios from 'axios';
 
 // const defaultDub: ITitleEpisodesDub = {
 //   eps: [
@@ -594,6 +595,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
   const [isNextEpDisabled, setIsNextEpDusabled] = useState(false)
 
   const [isPlayerSettingsOpen, setIsPlayerSettingsOpen] = useState(false)
+  const [isDataLoadedFromLS, setIsDataLoadedFromLS] = useState(false)
   const [settingsPage, setSettingsPage] = useState<'general' | 'qualities' | 'subs' | 'speed' | 'volume'>('general')
 
   const playerRef = useRef<HTMLDivElement>(null)
@@ -607,6 +609,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
   const [playerSize, setPlayerSize] = useState([800, 800])
   const [videoDuration, setVideoDuration] = useState(0)
+  const [videoProcessed, setVideoProcessed] = useState(false)
 
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isPaused, setIsPaused] = useState(true)
@@ -666,6 +669,13 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
         setPlayerMoment([video.currentTime])
       })
     }
+
+    const lsData = getLSData();
+
+    if (lsData) {
+      setCurrentEp(lsData.ep)
+      changeDub(dubs.find(el => el.id === lsData.dub)!)
+    }
   }, [])
 
   useEffect(() => {
@@ -701,10 +711,25 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     }
   }, [isPlayerIdle])
 
-  // Pause and start at the beginning
+  // Pause and start at the beginning //! In dev mode not check if video reassembled
   useEffect(() => {
     setIsPaused(true);
-    setPlayerMoment([0])
+
+    const lsData = getLSData();
+
+
+    if (lsData && lsData.dub === currentDub.id && lsData.ep === currentEp) {
+      changeMoment([lsData.moment])
+      setIsDataLoadedFromLS(true)
+    } else {
+      changeMoment([0])
+    }
+
+    if (isDataLoadedFromLS) {
+      writeLSData({});
+    }
+
+    if (!devMode) axios.get(currentDub.eps.find(el => el.order === currentEp)!.framesURL![0]).then(() => setVideoProcessed(true)).catch(e => setVideoProcessed(false))
   }, [currentEp, currentDub])
 
   // Change progress width according to moment
@@ -899,7 +924,9 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
   }
 
   function setPreview(moment: number, img: HTMLImageElement) {
-    const frames = currentDub.eps.find(el => el.order === currentEp)!.framesURL!/* .sort((a, b) => +b.split('_f_')[1] - +a.split('_f_')[1]) */
+    if (!img) return;
+
+    const frames = currentDub.eps.find(el => el.order === currentEp)!.framesURL!
     const momentIndex = Math.floor(Math.floor(moment / 5) / 25);
     const momentFrame = frames[momentIndex];
 
@@ -934,7 +961,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     setIsDubListOpened(!isDubListOpened)
   }
 
-  const changeDub = (dub: ITitleEpisodesDub) => {
+  function changeDub(dub: ITitleEpisodesDub) {
     setCurrentDub(dub)
 
     let maxEp = 0;
@@ -984,7 +1011,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     }
   }
 
-  const changeMoment = (values: number[]) => {
+  function changeMoment(values: number[]) {
     const video = videoRef.current!;
     setPlayerMoment(values)
     video.currentTime = values[0];
@@ -1006,6 +1033,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
       durationRangePreview.style.opacity = '0';
       durationRangePreview.style.visibility = 'hidden';
     }, 1000);
+
+    writeLSData({ moment: values[0] })
   }
 
   const getHrsMinsSecs = (time: number): { hrs: number, mins: number, secs: number, pretty: string } => {
@@ -1034,6 +1063,29 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
   const changeQuality = (quality: 'q2k' | 'q1080' | 'q720' | 'q480' | 'q240') => {
     setPlayerQuality(quality)
+  }
+
+  function writeLSData({ dub, ep, moment }: { dub?: string, ep?: number, moment?: number }) {
+    const data = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IPlayerLocalData[];
+    let newData: IPlayerLocalData[] = []
+
+    if (data) {
+      newData = data.filter(el => el.id !== titleId);
+    }
+
+    newData.push({
+      id: titleId,
+      dub: dub || currentDub.id,
+      ep: ep || currentEp,
+      moment: moment || playerMoment[0]
+    })
+
+    localStorage.setItem('kekwplayer_data', JSON.stringify(newData))
+  }
+
+  function getLSData(): IPlayerLocalData | null {
+    const data = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IPlayerLocalData[];
+    return data.find(el => el.id === titleId) || null;
   }
 
 
@@ -1148,8 +1200,13 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
               />
 
               <div ref={durationRangePreviewRef} id='player-duration--preview' className='absolute w-[160px] bg-dark rounded-[4px] bottom-[300%] left-0 overflow-hidden opacity-0 invisible'>
-                <div className='w-[160px] h-[120px] bg-white/[.2]'>
-                  <img src="" alt="..." loading='lazy' className='w-full h-full' id='player-previews--frame' />
+                <div className='w-[160px] h-[120px]'>
+                  {videoProcessed ? <>
+                    <img src="" alt="..." loading='lazy' className='w-full h-full' id='player-previews--frame' />
+                  </> : <div className='flex w-ful h-full justify-center items-center flex-col gap-[4px]'>
+                    <OopsServerUnavailable height={60} width={60} />
+                    <span className='text-[12px] text-white text-center font-extralight'>Відео ще не оброблене.</span>
+                  </div>}
                 </div>
 
                 <p className='text-[14px] font-extralight text-white w-full h-full absolute bottom-0 flex justify-center items-end'>00:20</p>
@@ -1278,8 +1335,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
                   <div className='flex flex-col gap-[4px]'>
                     {currentDub.eps.find(ep => ep.order === currentEp)?.source.q2k ? <>
-                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer gradient--primary`} onClick={() => changeQuality('q2k')}>
-                        <p className='text-[14px] text-white'>2K</p>
+                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer gradient--primary`} onClick={() => videoProcessed ? changeQuality('q2k') : null}>
+                        <p className={`text-[14px] text-white ${videoProcessed ? '' : 'text-white/[.5]'}`}>2K</p>
                       </li>
                     </> : null}
 
@@ -1290,20 +1347,20 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
                     </> : null}
 
                     {currentDub.eps.find(ep => ep.order === currentEp)?.source.q720 ? <>
-                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q720' ? 'bg-white/[.2]' : ''}`} onClick={() => changeQuality('q720')}>
-                        <p className='text-[14px] text-white'>720</p>
+                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q720' ? 'bg-white/[.2]' : ''}`} onClick={() => videoProcessed ? changeQuality('q720') : null}>
+                        <p className={`text-[14px] text-white ${videoProcessed ? '' : 'text-white/[.5]'}`}>720</p>
                       </li>
                     </> : null}
 
                     {currentDub.eps.find(ep => ep.order === currentEp)?.source.q480 ? <>
-                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q480' ? 'bg-white/[.2]' : ''}`} onClick={() => changeQuality('q480')}>
-                        <p className='text-[14px] text-white'>480</p>
+                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q480' ? 'bg-white/[.2]' : ''}`} onClick={() => videoProcessed ? changeQuality('q480') : null}>
+                        <p className={`text-[14px] text-white ${videoProcessed ? '' : 'text-white/[.5]'}`}>480</p>
                       </li>
                     </> : null}
 
                     {currentDub.eps.find(ep => ep.order === currentEp)?.source.q240 ? <>
-                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q240' ? 'bg-white/[.2]' : ''}`} onClick={() => changeQuality('q240')}>
-                        <p className='text-[14px] text-white'>240</p>
+                      <li className={`px-[4px] py-[2px] rounded-[2px] duration-200 hover:bg-grey cursor-pointer ${playerQuality === 'q240' ? 'bg-white/[.2]' : ''}`} onClick={() => videoProcessed ? changeQuality('q240') : null}>
+                        <p className={`text-[14px] text-white ${videoProcessed ? '' : 'text-white/[.5]'}`}>240</p>
                       </li>
                     </> : null}
                   </div>
