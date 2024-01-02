@@ -16,6 +16,8 @@ import '../../styles/components/Lib.scss'
 import Link from 'next/link';
 import { routes } from '../../routes';
 import { Dropdown } from '../../assets/assets';
+import { UserLibDelayed } from '../../assets/user';
+import { Tooltip } from 'react-tooltip';
 
 function randomInteger(min: number, max: number): number {
   return Math.floor(min + Math.random() * (max + 1 - min));
@@ -28,9 +30,14 @@ const LibItem: NextPage<{ title: ITitle }> = ({ title }) => {
     <Link href={`${routes.watchTitle.path.replace('/*', '')}/${title.code}`} className='lib-card duration-200 relative flex flex-col items-center justify-between h-[240px]'>
       <img src={title.poster} alt={`${title.code} poster`} loading='lazy' className='w-full h-full absolute top-0 left-0' />
 
-      <div className='w-full flex justify-end items-center px-[8px] py-[8px]'>
+      <div className='w-full flex justify-end items-center px-[8px] py-[8px] gap-[8px]'>
         <div className='px-[8px] py-[4px] rounded-[2px] gradient--primary relative '>
           <p className='text-[16px] text-white font-bold'>{title.rating || '-'}</p>
+        </div>
+
+        <div className={`flex items-center justify-center relative px-[4px] py-[4px] rounded-[2px] ${title.country !== 'null' ? 'bg-green-600' : 'bg-red-400'}`} data-tooltip-id={`${title.code}-tt--isUpdated`} data-tooltip-content={title.country !== 'null' ? 'Цей тайтл оновлений' : 'Цей тайтл ще не оновлений'}>
+          <UserLibDelayed width={24} height={24} className='lib-card--isUpdated' />
+          <Tooltip id={`${title.code}-tt--isUpdated`} />
         </div>
       </div>
 
@@ -65,7 +72,7 @@ const Lib: NextPage = (props) => {
 
   const [pagesTrack, setPagesTrack] = useState<number[]>([])
 
-  const titlesPerPage = 10;
+  const titlesPerPage = 30;
 
   useEffect(() => {
     const container = titlesContainerRef.current;
@@ -163,7 +170,11 @@ const Lib: NextPage = (props) => {
 
           // Set prev pages
           while (prevI <= values.pagesMax - 2 - nextI) {
-            tmpNumsArr.push(--tmpPage)
+            tmpPage--;
+
+            if (tmpPage < 1) return
+
+            tmpNumsArr.push(tmpPage)
             prevI++
           }
 

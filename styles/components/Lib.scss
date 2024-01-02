@@ -1,3 +1,5 @@
+@import '../colors.scss';
+
 .lib {
   &-card {
     width: calc((100% / 4) - 18px);
@@ -19,6 +21,12 @@
 
     @media only screen and (max-width: 600px) {
       width: 100%;
+    }
+
+    &--isUpdated {
+      path, rect {
+        fill: $white;
+      }
     }
   }
 

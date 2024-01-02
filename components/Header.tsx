@@ -2,7 +2,7 @@
 
 import { NextPage } from 'next';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { HeaderAccount, HeaderLogout, HeaderSearch, Logo, RatingStar } from '../assets/assets';
 import { Popup } from 'react-uvc'
 import { useDebounce } from 'use-debounce';
@@ -72,7 +72,7 @@ const Header: NextPage = (props) => {
           </Link>
 
           <div className='flex items-center gap-[16px]'>
-            <button className='uvc-popup-trigger' data-uvc-popup-openid="search-popup" onClick={() => popup.open()}>
+            <button className='uvc-popup-trigger' data-uvc-popup-openid="search-popup" onClick={() => { popup.open() }}>
               <HeaderSearch width={32} height={32} />
             </button>
 
