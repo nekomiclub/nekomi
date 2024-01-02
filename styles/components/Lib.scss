@@ -1,0 +1,40 @@
+.lib {
+  &-card {
+    width: calc((100% / 4) - 18px);
+
+    &:hover {
+      .lib-card--blur {
+        padding-top: 16px;
+        padding-bottom: 16px;
+      }
+    }
+
+    @media only screen and (max-width: 1400px) {
+      width: calc((100% / 3) - 18px);
+    }
+
+    @media only screen and (max-width: 1100px) {
+      width: calc((100% / 2) - 18px);
+    }
+
+    @media only screen and (max-width: 600px) {
+      width: 100%;
+    }
+  }
+
+  &-pageTrack {
+    transition: .2s ease-in-out;
+
+    p {
+      transition: .2s ease-in-out;
+    }
+
+    &:hover {
+      background: rgba($color: #fff, $alpha: .2);
+
+      p {
+        font-weight: 700;
+      }
+    }
+  }
+}

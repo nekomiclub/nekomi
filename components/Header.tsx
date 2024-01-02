@@ -27,8 +27,8 @@ const Header: NextPage = (props) => {
   const dispatch = useAppDispatch();
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [userDetailsOpened, setUserDetailsOpened] = useState(false)
   const [debouncedQuery] = useDebounce(searchQuery, 350)
+  const [userDetailsOpened, setUserDetailsOpened] = useState(false)
   const [searchResults, setSearchResults] = useState<ITitle[]>([])
   const [isAuth, setIsAuth] = useState(state.isAuth)
   const [popup] = useState(new Popup({
@@ -65,6 +65,10 @@ const Header: NextPage = (props) => {
         <div className="wrapper flex-row items-center justify-between">
           <Link href={routes.home.path}>
             <Logo width={64} height={48} />
+          </Link>
+
+          <Link href={routes.lib.path}>
+            <p className='text-[24px] text-white font-extralight'>Тека</p>
           </Link>
 
           <div className='flex items-center gap-[16px]'>
