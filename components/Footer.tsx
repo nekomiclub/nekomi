@@ -26,14 +26,8 @@ const Footer: NextPage = (props) => {
     let sid = (Math.random() + 1).toString(36).substring(8)
 
     ws.onopen = () => {
-      if (!sessionStorage.getItem('sid')) {
-        sessionStorage.setItem('sid', sid)
-      } else {
-        sid = sessionStorage.getItem('sid')!
-      }
-
       const payload: IWS<IWSPresence> = {
-        type: 'presence',
+        type: 'presence/audience',
         payload: {
           sid,
           connectedAt: +new Date()

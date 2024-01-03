@@ -78,10 +78,10 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
     let sid = (Math.random() + 1).toString(36).substring(8);
 
     ws.onopen = () => {
-      if (!sessionStorage.getItem('sid')) {
-        sessionStorage.setItem('sid', sid)
+      if (!localStorage.getItem('sid')) {
+        localStorage.setItem('sid', sid)
       } else {
-        sid = sessionStorage.getItem('sid')!
+        sid = localStorage.getItem('sid')!
       }
 
       const payload: IWS<IWSPresence> = {
@@ -96,9 +96,19 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
     }
 
 
-    // ws.onmessage = raw => {
-    //   const message = JSON.parse(raw.data) as { type: TWS, payload: any };
-    // }
+    ws.onmessage = raw => {
+      const message = JSON.parse(raw.data) as { type: TWS, payload: any };
+
+      const payload: IWS<IWSPresence> = {
+        type: 'presence',
+        payload: {
+          sid,
+          connectedAt: +new Date()
+        }
+      }
+
+      ws.send(JSON.stringify(payload))
+    }
   }, [ws])
 
   return (

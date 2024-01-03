@@ -7,7 +7,10 @@ export const $api = axios.create({
 })
 
 $api.interceptors.request.use(cfg => {
-  cfg.headers.Authorization = `bearer=${localStorage.getItem('token')}`;
+  if (localStorage.getItem('token')) {
+    cfg.headers.Authorization = `bearer=${localStorage.getItem('token')}`;
+  }
+
   return cfg;
 })
 
@@ -19,23 +22,29 @@ $api.interceptors.response.use(cfg => {
 
   return cfg;
 }, async (err: AxiosError) => {
-  if (err.code === 'ERR_NETWORK') {
-    return;
+  const status = err.response?.status;
+
+  // Return if bad request or forbidden or not found or server error
+  if (status === 400 || status === 403 || status === 404 || status === 500) {
+    return Promise.reject(err)
   }
 
-  if (err.response!.status === 401 && !triedRefresh) {
+
+  if (status === 401 && !triedRefresh && localStorage.getItem('token')) {
     const originalRequest = err.config;
     triedRefresh = true;
 
     try {
       const newToken = await axios.get<{ token: string }>(`${env.apiUrl}/v1/auth/refresh`, { withCredentials: true })
-      localStorage.setItem('token', newToken.data.token)
-    } catch (e) {
-      console.error(e)
-    }
+      localStorage.setItem('token', newToken.data.token);
 
-    return $api.request(originalRequest!)
+      return $api.request(originalRequest!)
+    } catch (e) {
+      return Promise.reject(e)
+    }
   }
+
+  return Promise.reject(err)
 })
 
 export default $api;

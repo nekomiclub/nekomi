@@ -1,6 +1,7 @@
 'use client'
 
-import next, { NextPage } from 'next';
+import { NextPage } from 'next';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState, MouseEvent, useRef, useCallback } from 'react'
 import { OopsServerUnavailable, Play, PlayerDubsList, PlayerNext } from '../assets/assets';
 import { ITitleEpisodeDubbed, ITitleEpisodesDub } from '../interfaces/ITitle';
@@ -13,6 +14,7 @@ import { Range } from 'react-range'
 import '../styles/components/Player.scss'
 import { PlayerEnterFS, PlayerExitFS, PlayerPIP, PlayerPause, PlayerQuality, PlayerSettings, PlayerSettingsPrev, PlayerSpeed, PlayerSubtitles, PlayerVolume, PlayerVolumeHight, PlayerVolumeLow, PlayerVolumeMuted, PlayerWatch } from '../assets/watch';
 import axios from 'axios';
+import { IStatRecord } from '../interfaces/IStat';
 
 // const defaultDub: ITitleEpisodesDub = {
 //   eps: [
@@ -585,7 +587,10 @@ interface IPlayerSessionData {
 }
 
 let previewShownTimeout;
+let isUnloadStatSended = false;
 const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, currentDubHandler: (dub: ITitleEpisodesDub) => void, titleId: string }> = ({ dubs, currentDubHandler, estimatedEps, titleId }) => {
+  const pathname = usePathname()
+
   const [playerStarted, setPlayerStarted] = useState(false)
   const [isDubListOpened, setIsDubListOpened] = useState(false)
   const [idToDubber, setIdToDubber] = useState<{ id: string, name: string }[]>([])
@@ -606,6 +611,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
   const durationRangePreviewRef = useRef<HTMLDivElement>(null)
 
   const volumeRef = useRef<HTMLDivElement>(null)
+  const watchedSRef = useRef(0);
+  const watchedInterval = useRef<any>();
 
   const [playerSize, setPlayerSize] = useState([800, 800])
   const [videoDuration, setVideoDuration] = useState(0)
@@ -665,6 +672,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
         setVideoDuration(video.duration)
       })
 
+
       video.addEventListener('timeupdate', e => {
         setPlayerMoment([video.currentTime])
       })
@@ -675,6 +683,16 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     if (lsData) {
       setCurrentEp(lsData.ep)
       changeDub(dubs.find(el => el.id === lsData.dub)!)
+    }
+
+    return () => {
+      if (!isUnloadStatSended) {
+        isUnloadStatSended = true;
+        return;
+      }
+
+      sendStat();
+      clearInterval(watchedInterval.current)
     }
   }, [])
 
@@ -696,9 +714,13 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     if (isPaused) {
       video.pause()
       setPlayerMoment([video.currentTime])
+      clearInterval(watchedInterval!.current)
     } else {
       video.play()
       setPlayerMoment([video.currentTime])
+      watchedInterval!.current = setInterval(() => {
+        watchedSRef.current++
+      }, 1000)
     }
   }, [isPaused])
 
@@ -716,7 +738,6 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     setIsPaused(true);
 
     const lsData = getLSData();
-
 
     if (lsData && lsData.dub === currentDub.id && lsData.ep === currentEp) {
       changeMoment([lsData.moment])
@@ -964,6 +985,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
   function changeDub(dub: ITitleEpisodesDub) {
     setCurrentDub(dub)
 
+    sendStat();
+
     let maxEp = 0;
 
     dub.eps.forEach(ep => {
@@ -982,6 +1005,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     let maxEp = 0;
     let nextEp = ep || currentEp;
     nextEp++;
+
+    sendStat();
 
     currentDub.eps.forEach(ep => {
       if (ep.order > maxEp) maxEp = ep.order;
@@ -1088,6 +1113,18 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     return data.find(el => el.id === titleId) || null;
   }
 
+  function sendStat() {
+    const req: IStatRecord = {
+      selectedDub: currentDub.id,
+      title: titleId,
+      watchtime: watchedSRef.current
+    }
+
+    watchedSRef.current = 0;
+
+    // Skip error (401)
+    $api.post(`${env.apiUrl}/v1/stat/record`, req).catch(e => null)
+  }
 
   return (
     <div id="player" className='w-full h-full relative bg-black' ref={playerRef} tabIndex={0}>
@@ -1167,9 +1204,9 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
               <Range
                 step={1}
                 min={0}
-                max={videoDuration}
+                max={videoDuration + 2}
                 onChange={values => changeMoment(values)}
-                values={playerMoment}
+                values={[Math.round(playerMoment[0])]}
                 renderTrack={({ props, children }) => (
                   <div
                     {...props}
