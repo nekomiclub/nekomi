@@ -16,39 +16,39 @@ export const IcoCalendar = (props: { width?: number, height?: number, className?
       <path d="M11.5 12C11.5 12.5523 11.9477 13 12.5 13C13.0523 13 13.5 12.5523 13.5 12C13.5 11.4477 13.0523 11 12.5 11C11.9477 11 11.5 11.4477 11.5 12Z" fill="url(#paint4_linear_735_26644)" />
       <path d="M16.5 13C15.9477 13 15.5 12.5523 15.5 12C15.5 11.4477 15.9477 11 16.5 11C17.0523 11 17.5 11.4477 17.5 12C17.5 12.5523 17.0523 13 16.5 13Z" fill="url(#paint5_linear_735_26644)" />
       <path d="M8.5 7C7.94772 7 7.5 7.44772 7.5 8C7.5 8.55228 7.94772 9 8.5 9H16.5C17.0523 9 17.5 8.55228 17.5 8C17.5 7.44772 17.0523 7 16.5 7H8.5Z" fill="url(#paint6_linear_735_26644)" />
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M6.5 3C4.84315 3 3.5 4.34315 3.5 6V18C3.5 19.6569 4.84315 21 6.5 21H18.5C20.1569 21 21.5 19.6569 21.5 18V6C21.5 4.34315 20.1569 3 18.5 3H6.5ZM18.5 5H6.5C5.94772 5 5.5 5.44772 5.5 6V18C5.5 18.5523 5.94772 19 6.5 19H18.5C19.0523 19 19.5 18.5523 19.5 18V6C19.5 5.44772 19.0523 5 18.5 5Z" fill="url(#paint7_linear_735_26644)" />
+      <path fillRule="evenodd" clipRule="evenodd" d="M6.5 3C4.84315 3 3.5 4.34315 3.5 6V18C3.5 19.6569 4.84315 21 6.5 21H18.5C20.1569 21 21.5 19.6569 21.5 18V6C21.5 4.34315 20.1569 3 18.5 3H6.5ZM18.5 5H6.5C5.94772 5 5.5 5.44772 5.5 6V18C5.5 18.5523 5.94772 19 6.5 19H18.5C19.0523 19 19.5 18.5523 19.5 18V6C19.5 5.44772 19.0523 5 18.5 5Z" fill="url(#paint7_linear_735_26644)" />
       <defs>
         <linearGradient id="paint0_linear_735_26644" x1="7.5" y1="11.9412" x2="9.50047" y2="11.9497" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
         <linearGradient id="paint1_linear_735_26644" x1="7.5" y1="15.9412" x2="9.50047" y2="15.9497" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
         <linearGradient id="paint2_linear_735_26644" x1="11.5" y1="15.9412" x2="13.5005" y2="15.9497" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
         <linearGradient id="paint3_linear_735_26644" x1="15.5" y1="15.9412" x2="17.5005" y2="15.9497" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
         <linearGradient id="paint4_linear_735_26644" x1="11.5" y1="11.9412" x2="13.5005" y2="11.9497" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
         <linearGradient id="paint5_linear_735_26644" x1="15.5" y1="11.9412" x2="17.5005" y2="11.9497" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
         <linearGradient id="paint6_linear_735_26644" x1="7.5" y1="7.94118" x2="17.4979" y2="8.15529" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
         <linearGradient id="paint7_linear_735_26644" x1="3.5" y1="11.4706" x2="21.5042" y2="11.5477" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
       </defs>
     </svg>
@@ -92,8 +92,63 @@ export const IcoLibrary = (props: { width?: number, height?: number, className?:
       <path d="M28.5003 4H19.167C18.1798 4.00334 17.2291 4.37409 16.5003 5.04C15.7715 4.37409 14.8209 4.00334 13.8337 4H4.50033C4.1467 4 3.80756 4.14048 3.55752 4.39052C3.30747 4.64057 3.16699 4.97971 3.16699 5.33333V25.3333C3.16699 25.687 3.30747 26.0261 3.55752 26.2761C3.80756 26.5262 4.1467 26.6667 4.50033 26.6667H12.1777C12.8846 26.6683 13.5622 26.9491 14.063 27.448L15.5577 28.9427C15.5697 28.9547 15.5857 28.9587 15.5977 28.9707C15.7123 29.0773 15.8403 29.1707 15.9897 29.232H15.9923C16.3176 29.3667 16.683 29.3667 17.0083 29.232H17.011C17.1603 29.1707 17.2883 29.076 17.403 28.9707C17.415 28.9587 17.431 28.9547 17.443 28.9427L18.9377 27.448C19.4385 26.9491 20.1161 26.6683 20.823 26.6667H28.5003C28.8539 26.6667 29.1931 26.5262 29.4431 26.2761C29.6932 26.0261 29.8337 25.687 29.8337 25.3333V5.33333C29.8337 4.97971 29.6932 4.64057 29.4431 4.39052C29.1931 4.14048 28.8539 4 28.5003 4ZM27.167 24H20.823C19.7575 24.0031 18.717 24.3228 17.8337 24.9187V8C17.8337 7.26533 18.431 6.66667 19.167 6.66667H27.167V24Z" fill="url(#paint0_linear_735_26670)" />
       <defs>
         <linearGradient id="paint0_linear_735_26670" x1="3.16699" y1="15.9214" x2="29.8398" y2="16.0417" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+export const IcoHome = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M21.146 8.5752L13.596 2.4402C12.671 1.6892 11.329 1.6892 10.404 2.4402L2.855 8.5742C2.59 8.7892 2.439 9.1072 2.439 9.4472V20.9902C2.439 21.6102 2.944 22.1202 3.564 22.1202H8.626C9.246 22.1202 9.751 21.6102 9.751 20.9902V13.6842H14.25V20.9902C14.25 21.6102 14.755 22.1202 15.375 22.1202H20.437C21.057 22.1202 21.562 21.6102 21.562 20.9902V9.4472C21.561 9.1072 21.41 8.7892 21.146 8.5752ZM20.436 20.9962H15.374V13.6792C15.374 13.0592 14.869 12.5602 14.249 12.5602H9.75C9.13 12.5602 8.625 13.0592 8.625 13.6792V20.9962H3.564V9.4472L11.114 3.3132C11.627 2.8952 12.374 2.8962 12.887 3.3132L20.437 9.4472L20.436 20.9962Z" fill="white" />
+    </svg>
+  );
+}
+
+export const IcoStats = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 16V11M12 16V8M16 16V14M18 4H6C4.89543 4 4 4.89543 4 6V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V6C20 4.89543 19.1046 4 18 4Z" stroke="white" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export const IcoFolder = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M21 21H3C2.40326 21 1.83097 20.7629 1.40901 20.341C0.987053 19.919 0.75 19.3467 0.75 18.75V5.25C0.75 4.65326 0.987053 4.08097 1.40901 3.65901C1.83097 3.23705 2.40326 3 3 3H9C9.11018 2.99982 9.21905 3.02392 9.31887 3.07059C9.41868 3.11725 9.50698 3.18534 9.5775 3.27L11.85 6H21C21.5967 6 22.169 6.23705 22.591 6.65901C23.0129 7.08097 23.25 7.65326 23.25 8.25V18.75C23.25 19.3467 23.0129 19.919 22.591 20.341C22.169 20.7629 21.5967 21 21 21ZM3 4.5C2.80109 4.5 2.61032 4.57902 2.46967 4.71967C2.32902 4.86032 2.25 5.05109 2.25 5.25V18.75C2.25 18.9489 2.32902 19.1397 2.46967 19.2803C2.61032 19.421 2.80109 19.5 3 19.5H21C21.1989 19.5 21.3897 19.421 21.5303 19.2803C21.671 19.1397 21.75 18.9489 21.75 18.75V8.25C21.75 8.05109 21.671 7.86032 21.5303 7.71967C21.3897 7.57902 21.1989 7.5 21 7.5H11.4975C11.3886 7.49909 11.2812 7.47446 11.1827 7.42783C11.0843 7.3812 10.9972 7.3137 10.9275 7.23L8.6475 4.5H3Z" fill="white" />
+    </svg>
+  );
+}
+
+export const IcoSettings = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6.0375 1.6875L0.1875 12L6.0375 22.3125H17.9437L23.8125 12L17.9625 1.6875H6.0375ZM17.0812 20.8125H6.91875L1.9125 12L6.91875 3.1875H17.0812L22.0875 12L17.0812 20.8125Z" fill="white" />
+      <path d="M12 6.5625C9 6.5625 6.5625 9 6.5625 12C6.5625 15 9 17.4375 12 17.4375C15 17.4375 17.4375 15 17.4375 12C17.4375 9 15 6.5625 12 6.5625ZM12 15.9375C9.825 15.9375 8.0625 14.175 8.0625 12C8.0625 9.825 9.825 8.0625 12 8.0625C14.175 8.0625 15.9375 9.825 15.9375 12C15.9375 14.175 14.175 15.9375 12 15.9375Z" fill="white" />
+    </svg>
+  );
+}
+
+export const IcoArrow = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16.5 18.5906L15.5297 19.5L7.5 12L15.5297 4.5L16.5 5.40469L9.44531 12L16.5 18.5906Z" fill="white" />
+    </svg>
+  );
+}
+
+export const IcoAccordionArrow = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4.63594 8.65781L4.72031 8.75625L11.0953 16.0922C11.3109 16.3406 11.6344 16.4953 11.9953 16.4953C12.3562 16.4953 12.6797 16.3359 12.8953 16.0922L19.2656 8.77031L19.3734 8.64844C19.4531 8.53125 19.5 8.39063 19.5 8.24063C19.5 7.83281 19.1531 7.5 18.7219 7.5H5.27812C4.84687 7.5 4.5 7.83281 4.5 8.24063C4.5 8.39531 4.55156 8.54062 4.63594 8.65781Z" fill="url(#paint0_linear_775_18077)" />
+      <defs>
+        <linearGradient id="paint0_linear_775_18077" x1="4.5" y1="11.7331" x2="19.503" y2="11.8402" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
       </defs>
     </svg>

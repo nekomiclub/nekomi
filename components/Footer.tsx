@@ -53,7 +53,7 @@ const Footer: NextPage = (props) => {
   }, [ws])
 
   return (
-    <footer className='py-[16px] w-full bg-dark'>
+    <footer className='relative py-[16px] w-full bg-dark'>
       <div className="wrapper flex-col items-center gap-[32px]">
         <div className='flex justify-between w-full items-center max-[600px]:flex-col max-[600px]:gap-[32px]'>
           <div className='flex gap-[24px] items-center'>

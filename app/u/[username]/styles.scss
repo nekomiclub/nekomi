@@ -1,0 +1,25 @@
+@import '../../../styles/colors.scss';
+
+.user {
+  &-created {
+    path, rect {
+      fill: $white;
+    }
+  }
+}
+
+.uvc {
+  &-accordion {
+    &-trigger {
+      transition: .2s ease-in-out;
+      
+      &--open {
+        .user-accordion--arrow {
+          transform: rotate(180deg);
+        }
+
+        border-color: #FF416C;
+      }
+    }
+  }
+}

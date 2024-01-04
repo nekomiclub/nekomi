@@ -7,8 +7,9 @@ import AuthProvider from '../components/AuthProvider'
 import PageRouter from '../components/PageRouter';
 
 export const metadata: Metadata = {
-  title: 'animee',
-  description: 'Поринь у світ україномовного аніме!'
+  title: 'Animee',
+  description: 'Поринь у світ україномовного аніме!',
+  applicationName: 'Animee',
 }
 
 export default function RootLayout({

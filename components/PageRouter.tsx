@@ -76,6 +76,7 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
 
     ws.onerror = e => console.error(`WS error: ${e}`)
     let sid = (Math.random() + 1).toString(36).substring(8);
+    let prevAudience = 0;
 
     ws.onopen = () => {
       if (!localStorage.getItem('sid')) {
@@ -99,15 +100,19 @@ const PageRouter: NextPage<{ children: any }> = ({ children }) => {
     ws.onmessage = raw => {
       const message = JSON.parse(raw.data) as { type: TWS, payload: any };
 
-      const payload: IWS<IWSPresence> = {
-        type: 'presence',
-        payload: {
-          sid,
-          connectedAt: +new Date()
+      //* Update presence 
+      if (prevAudience !== message.payload.audience) {
+        const payload: IWS<IWSPresence> = {
+          type: 'presence',
+          payload: {
+            sid,
+            connectedAt: +new Date()
+          }
         }
-      }
 
-      ws.send(JSON.stringify(payload))
+        prevAudience = message.payload.audience
+        ws.send(JSON.stringify(payload))
+      };
     }
   }, [ws])
 
