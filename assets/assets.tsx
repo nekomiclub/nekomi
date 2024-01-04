@@ -114,7 +114,7 @@ export const OopsServerUnavailable = (props: { width?: number, height?: number, 
 }
 
 
-export const RatingStar = (props: { width?: number, height?: number, className?: string }) => {
+export const IcoRating = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M9.36189 9.51511C9.36189 9.51511 6.20189 9.86511 4.09389 10.0991C3.90389 10.1221 3.73589 10.2491 3.67289 10.4421C3.60989 10.6351 3.67289 10.8361 3.81289 10.9631C5.37889 12.3921 7.73189 14.5321 7.73189 14.5321C7.72989 14.5321 7.08589 17.6451 6.65789 19.7221C6.62189 19.9101 6.68989 20.1091 6.85389 20.2281C7.01689 20.3471 7.22689 20.3491 7.39189 20.2561C9.23589 19.2081 11.9979 17.6321 11.9979 17.6321C11.9979 17.6321 14.7609 19.2081 16.6019 20.2571C16.7699 20.3491 16.9799 20.3471 17.1429 20.2281C17.3069 20.1091 17.3749 19.9101 17.3379 19.7231C16.9099 17.6451 16.2669 14.5321 16.2669 14.5321C16.2669 14.5321 18.6199 12.3921 20.1859 10.9661C20.3259 10.8351 20.3879 10.6341 20.3259 10.4421C20.2639 10.2501 20.0959 10.1231 19.9059 10.1011C17.7979 9.86511 14.6369 9.51511 14.6369 9.51511C14.6369 9.51511 13.3269 6.61711 12.4539 4.68511C12.3719 4.51211 12.1999 4.39111 11.9979 4.39111C11.7959 4.39111 11.6229 4.51311 11.5449 4.68511C10.6709 6.61711 9.36189 9.51511 9.36189 9.51511Z" fill="url(#paint0_linear_101_6244)" />
@@ -144,7 +144,7 @@ export const Play = (props: { width?: number, height?: number, className?: strin
   );
 }
 
-export const WatchPreference = (props: { width?: number, height?: number, className?: string }) => {
+export const IcoClock = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12.5 23.75C10.275 23.75 8.09989 23.0902 6.24984 21.854C4.39979 20.6179 2.95785 18.8609 2.10636 16.8052C1.25487 14.7495 1.03209 12.4875 1.46617 10.3052C1.90025 8.12295 2.97171 6.11839 4.54505 4.54505C6.11839 2.97171 8.12295 1.90025 10.3052 1.46617C12.4875 1.03209 14.7495 1.25487 16.8052 2.10636C18.8609 2.95785 20.6179 4.39979 21.854 6.24984C23.0902 8.09989 23.75 10.275 23.75 12.5C23.75 15.4837 22.5647 18.3452 20.455 20.455C18.3452 22.5647 15.4837 23.75 12.5 23.75ZM12.5 2.75001C10.5716 2.75001 8.68657 3.32183 7.0832 4.39318C5.47982 5.46452 4.23013 6.98726 3.49218 8.76884C2.75423 10.5504 2.56114 12.5108 2.93735 14.4021C3.31355 16.2935 4.24215 18.0307 5.60571 19.3943C6.96928 20.7579 8.70656 21.6865 10.5979 22.0627C12.4892 22.4389 14.4496 22.2458 16.2312 21.5078C18.0127 20.7699 19.5355 19.5202 20.6068 17.9168C21.6782 16.3134 22.25 14.4284 22.25 12.5C22.25 9.91414 21.2228 7.43419 19.3943 5.60571C17.5658 3.77723 15.0859 2.75001 12.5 2.75001Z" fill="url(#paint0_linear_107_6614)" />
@@ -180,7 +180,7 @@ export const PlayerNext = (props: { width?: number, height?: number, className?:
   );
 }
 
-export const Telegram = (props: { width?: number, height?: number, className?: string }) => {
+export const IcoSocialTelegram = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_101_6394)">
@@ -199,7 +199,7 @@ export const Telegram = (props: { width?: number, height?: number, className?: s
   );
 }
 
-export const Instagram = (props: { width?: number, height?: number, className?: string }) => {
+export const IcoSupportInstagram = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_511_1444)">
@@ -218,7 +218,7 @@ export const Instagram = (props: { width?: number, height?: number, className?: 
   );
 }
 
-export const Tiktok = (props: { width?: number, height?: number, className?: string }) => {
+export const IcoSupportTiktok = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_511_1433)">
@@ -237,7 +237,7 @@ export const Tiktok = (props: { width?: number, height?: number, className?: str
   );
 }
 
-export const Youtube = (props: { width?: number, height?: number, className?: string }) => {
+export const IcoSocialYoutube = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_511_1435)">
@@ -262,7 +262,7 @@ export const Youtube = (props: { width?: number, height?: number, className?: st
   );
 }
 
-export const SupportPatreon = (props: { width?: number, height?: number, className?: string }) => {
+export const IcoSupportPatreon = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_511_1429)">
@@ -282,7 +282,7 @@ export const SupportPatreon = (props: { width?: number, height?: number, classNa
   );
 }
 
-export const SupportBMC = (props: { width?: number, height?: number, className?: string }) => {
+export const IcoSupportBymeacoffe = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M34.1933 10.6916L33.9733 9.5816C33.7749 8.58494 33.3266 7.64327 32.3049 7.28327C31.9766 7.16827 31.6049 7.11994 31.3549 6.8816C31.1016 6.64327 31.0283 6.2716 30.9699 5.92827C30.8616 5.29827 30.7616 4.66827 30.6499 4.03994C30.5549 3.49827 30.4799 2.88994 30.2333 2.39493C29.9083 1.72827 29.2383 1.33827 28.5733 1.0816C28.2319 0.953983 27.8836 0.846028 27.5299 0.758268C25.8633 0.319935 24.1133 0.158268 22.4016 0.0649348C20.3462 -0.0480755 18.2854 -0.0135424 16.2349 0.168268C14.7099 0.306602 13.1016 0.474935 11.6516 1.0016C11.1216 1.19493 10.5749 1.42827 10.1716 1.8366C9.67659 2.33993 9.51659 3.11994 9.87659 3.7466C10.1333 4.1916 10.5683 4.5066 11.0299 4.71327C11.6299 4.98327 12.2583 5.1866 12.9016 5.32327C14.6933 5.71993 16.5499 5.87493 18.3799 5.93993C20.4099 6.02327 22.4416 5.9566 24.4633 5.74327C24.9616 5.68827 25.4599 5.6216 25.9566 5.54493C26.5433 5.45493 26.9199 4.68993 26.7466 4.15493C26.5399 3.5166 25.9849 3.26994 25.3566 3.3666C24.5799 3.48994 23.7566 3.5466 23.0533 3.60993C21.0916 3.74327 19.1233 3.7466 17.1599 3.61993C16.5157 3.5773 15.8727 3.51784 15.2316 3.4416C15.0883 3.42494 14.9316 3.39994 14.8016 3.3816C14.3966 3.3216 13.9949 3.24827 13.5949 3.16494C13.4099 3.11994 13.4099 2.8566 13.5949 2.8116H13.6033C14.0649 2.7116 14.5316 2.6316 14.9999 2.5666H15.0033C15.2216 2.5516 15.4416 2.51327 15.6599 2.4866C17.5565 2.28976 19.4643 2.22294 21.3699 2.2866C22.4933 2.31827 23.6149 2.39827 24.7316 2.5266L25.1116 2.57827C25.5566 2.64493 25.9999 2.72494 26.4416 2.81994C27.0949 2.9616 27.9333 3.00827 28.2249 3.72327C28.3166 3.9516 28.3583 4.20327 28.4099 4.4416L28.9416 6.91494C28.9529 6.96797 28.9531 7.02275 28.9423 7.07588C28.9315 7.12901 28.9098 7.17934 28.8787 7.22374C28.8476 7.26815 28.8077 7.30567 28.7614 7.33397C28.7152 7.36228 28.6636 7.38076 28.6099 7.38827H28.6049C28.5433 7.39827 28.4799 7.40494 28.4183 7.41327C25.7966 7.74774 23.1561 7.91198 20.5133 7.90494C17.8946 7.90224 15.2788 7.73301 12.6816 7.39827C12.4483 7.36994 12.1933 7.32827 11.9866 7.29827C11.4433 7.21827 10.9049 7.11827 10.3649 7.02993C9.70993 6.9216 9.08493 6.9766 8.49326 7.29827C8.00992 7.56494 7.61492 7.9716 7.36826 8.4666C7.11159 8.99327 7.03659 9.5666 6.92326 10.1333C6.80826 10.6999 6.62992 11.3116 6.69826 11.8933C6.84326 13.1483 7.71993 14.1683 8.98159 14.3966C15.2207 15.51 21.5874 15.7211 27.8866 15.0233C28.0063 15.0097 28.1275 15.0231 28.2413 15.0625C28.3551 15.102 28.4586 15.1665 28.5441 15.2512C28.6297 15.336 28.6952 15.4389 28.7357 15.5523C28.7762 15.6657 28.7908 15.7868 28.7783 15.9066L28.6599 17.0683L26.9633 33.5799C26.8949 34.2633 26.8849 34.9666 26.7549 35.6416C26.5516 36.7033 25.8333 37.3549 24.7849 37.5933C23.8233 37.8116 22.8433 37.9266 21.8583 37.9349C20.7649 37.9416 19.6749 37.8933 18.5816 37.8983C17.4166 37.9049 15.9883 37.7983 15.0899 36.9316C14.2983 36.1683 14.1899 34.9749 14.0816 33.9433L12.8633 22.2549L12.3266 17.0983C12.2649 16.5133 11.8499 15.9399 11.1966 15.9683C10.6366 15.9933 9.99992 16.4683 10.0666 17.0999L10.4466 20.7416L12.0283 35.9283C12.2733 38.1683 13.9849 39.3749 16.1049 39.7149C17.3416 39.9149 18.6099 39.9549 19.8666 39.9749C21.4766 40.0016 23.1033 40.0633 24.6866 39.7716C27.0333 39.3416 28.7949 37.7749 29.0466 35.3433C29.6133 29.7899 30.1849 24.2383 30.7533 18.6849L31.1116 15.2066C31.1292 15.0341 31.202 14.8719 31.3191 14.744C31.4362 14.6161 31.5913 14.5294 31.7616 14.4966C32.4316 14.3666 33.0733 14.1433 33.5516 13.6333C34.3099 12.8199 34.4616 11.7616 34.1933 10.6916ZM31.7299 11.9783C31.4883 12.2066 31.1249 12.3133 30.7666 12.3666C26.7399 12.9649 22.6566 13.2666 18.5866 13.1333C15.6733 13.0333 12.7916 12.7099 9.90826 12.3033C9.62493 12.2633 9.31993 12.2116 9.12493 12.0033C8.75826 11.6099 8.93992 10.8199 9.03492 10.3449C9.12159 9.9116 9.28826 9.32994 9.80659 9.26827C10.6133 9.17327 11.5499 9.51494 12.3499 9.63494C13.3116 9.7816 14.2766 9.89994 15.2449 9.98827C19.3783 10.3649 23.5816 10.3049 27.6983 9.75494C28.4483 9.65493 29.1966 9.53827 29.9399 9.40494C30.6049 9.28494 31.3399 9.0616 31.7399 9.74827C32.0166 10.2166 32.0533 10.8433 32.0099 11.3716C31.9968 11.6023 31.896 11.8193 31.7283 11.9783H31.7299Z" fill="white" />
@@ -291,7 +291,7 @@ export const SupportBMC = (props: { width?: number, height?: number, className?:
   );
 }
 
-export const SupportPrivatbank = (props: { width?: number, height?: number, className?: string }) => {
+export const IcoSupportPrivatbank = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M32.2367 8.25752V31.6865H29.0434C27.6709 20.098 20.388 12.8202 8.7633 11.4206V8.22953H32.2367V8.25752ZM0.5 0V19.4542H4.64566C15.514 19.4542 21.0322 24.9685 21.0322 35.8572V40H40.5V0H0.5Z" fill="#4EA524" />

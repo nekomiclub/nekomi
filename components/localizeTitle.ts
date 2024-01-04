@@ -38,7 +38,8 @@ const genresTranslation = {
   action: 'Екшен',
   ecchi: 'Еччі',
   thriller: 'Триллер',
-  erotica: 'Еротика'
+  erotica: 'Еротика',
+  gourmet: 'Кулінарія',
 }
 
 export const dubsIDs = {
@@ -49,7 +50,14 @@ export const dubsIDs = {
   'fanvoxua': '4b792d83-e650-4fe8-a9fc-d9a283dfb6af',
   'kachur': 'bc08931d-a8d4-4bcb-9c82-3def865872d9',
   'sokyra': '8236263b-f434-4081-87cd-a5b8692b25dc',
-  'lifecycle': 'fd9439bb-8cf9-4fbd-b7df-e9e20b64327e'
+  'lifecycle': 'fd9439bb-8cf9-4fbd-b7df-e9e20b64327e',
+  'inari': '075fb2d0-73f3-4738-953b-59fd0484412c',
+  'clan kaizoku': '881f2bd1-429d-4f69-9159-2087f42a485b',
+  'kisuki': '8ae494ce-0fc0-4898-8f09-5b51a3804386',
+  'unimay': '2e259095-9b18-4032-9484-f968dc559025',
+  'vrdub': 'f9dfcc69-0028-4934-b0d7-50ab6ab2f841',
+  'uamax': '825ec906-5dbc-4a11-9bd2-fb746ae3a17d',
+  'bulbul': '19bcd0b8-1136-4ba7-a004-5c305346d22e',
 }
 
 export function getDubberById(id: string) {

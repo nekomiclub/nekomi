@@ -1,0 +1,58 @@
+@import '../../../styles/index.scss';
+@import '../../../styles/colors.scss';
+
+.dub {
+  &-allDubbedTitlesBtn {
+    transition: .2s ease-in-out;
+    position: relative;
+
+    &::after {
+      content: '';
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      position: absolute;
+      @extend .gradient--primary;
+      opacity: 0;
+      transition: .2s ease-in-out;
+    }
+
+    &:hover {
+      &::after {
+        opacity: 1;
+      }
+
+      .dub-btn {
+        &--white {
+          opacity: 1;
+        }
+
+        &--gradient {
+          opacity: 0;
+        }
+      }
+    }
+  }
+
+  &-btn {
+    &--white {
+      opacity: 0;
+      transition: .2s ease-in-out;
+      position: absolute !important;
+      top: 0;
+      left: 0;
+
+      path, rect {
+        fill: $white;
+      }
+    }
+
+    &--gradient {
+      transition: .2s ease-in-out;
+      position: absolute !important;
+      top: 0;
+      left: 0;
+    }
+  }
+}

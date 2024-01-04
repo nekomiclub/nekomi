@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState, useRef } from 'react'
-import { HeaderAccount, HeaderLogout, HeaderSearch, Logo, RatingStar } from '../assets/assets';
+import { HeaderAccount, HeaderLogout, HeaderSearch, Logo, IcoRating } from '../assets/assets';
 import { Popup } from 'react-uvc'
 import { useDebounce } from 'use-debounce';
 import 'react-uvc/dist/css/popup.css'; // Optional styles.
@@ -119,7 +119,7 @@ const Header: NextPage = (props) => {
 
                       <div className='flex items-center gap-[16px] w-full'>
                         <div className='flex items-center gap-[4px]'>
-                          <RatingStar width={16} height={16} />
+                          <IcoRating width={16} height={16} />
                           <p className='text-[16px] font-bold gradient--primary-text'>{title.rating}</p>
                         </div>
                         <p className='text-[16px] font-extralight text-white'>{localizeTitle(title).type}</p>

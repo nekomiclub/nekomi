@@ -2,7 +2,7 @@
 
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react'
-import { Logo, Telegram, Tiktok } from '../assets/assets';
+import { Logo, IcoSocialTelegram, IcoSupportTiktok } from '../assets/assets';
 import Link from 'next/link';
 
 import '../styles/components/Footer.scss'
@@ -67,10 +67,10 @@ const Footer: NextPage = (props) => {
 
           <div className='flex gap-[8px]'>
             <Link href={'https://t.me/an1meeClub'} target='_blank'>
-              <Telegram width={32} height={32} />
+              <IcoSocialTelegram width={32} height={32} />
             </Link>
             <Link href={'https://www.tiktok.com/@an1mee.club'} target='_blank'>
-              <Tiktok width={32} height={32} />
+              <IcoSupportTiktok width={32} height={32} />
             </Link>
           </div>
 

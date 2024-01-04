@@ -7,7 +7,7 @@ import { ITitle, ITitleEpisodesDub } from '@/../interfaces/ITitle';
 import $api from '@/../components/http';
 import { env } from '@/../config';
 import Loading from '../../../components/Loading';
-import { Instagram, Play, RatingStar, SupportBMC, SupportPatreon, SupportPrivatbank, Telegram, Tiktok, WatchPreference, Youtube } from '../../../assets/assets';
+import { IcoSupportInstagram, Play, IcoRating, IcoSupportBymeacoffe, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSupportTiktok, IcoClock, IcoSocialYoutube } from '../../../assets/assets';
 import BorderGradient, { WatchButton } from '../../../components/BorderGradient';
 import Link from 'next/link';
 
@@ -581,6 +581,7 @@ import NotFound from '@/oops/404/page';
 import { AxiosError } from 'axios';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
+import { routes } from '../../../routes';
 
 const TitleItem: NextPage = (props) => {
   const { name } = useParams<{ name: string }>()
@@ -652,7 +653,7 @@ const TitleItem: NextPage = (props) => {
                 </div>
 
                 <div className='flex gap-[8px] items-center'>
-                  <RatingStar className='max-[500px]:opacity-0' />
+                  <IcoRating className='max-[500px]:opacity-0' />
                   <p className='gradient--primary-text text-[24px] font-bold'>{title.rating || '-'}</p>
                 </div>
               </div>
@@ -723,8 +724,7 @@ const TitleItem: NextPage = (props) => {
                     <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Озвучка:</p>
                     <div className='flex flex-wrap gap-[8px]'>
                       {title.dubs?.length ? title.dubs?.map(dub => {
-                        return <Link href={'#'} key={dub.id}>
-                          {/* //! LINK FOR DUBBER */}
+                        return <Link href={`${routes.dubber.path.replace('/*', '')}/${dub.id}`} key={dub.id}>
                           {/* @ts-ignore */}
                           <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{dub.name}</p>
                         </Link>
@@ -760,12 +760,12 @@ const TitleItem: NextPage = (props) => {
 
                     <div className='flex justify-center gap-[32px]'>
                       <div className='flex items-center gap-[8px]'>
-                        <RatingStar width={24} height={24} />
+                        <IcoRating width={24} height={24} />
                         <p className="gradient--primary-text text-[24px] font-bold">{selectedDubber?.rating}</p>
                       </div>
 
                       <div className='flex items-center gap-[8px]'>
-                        <WatchPreference width={24} height={24} />
+                        <IcoClock width={24} height={24} />
                         <p className="gradient--primary-text text-[24px] font-bold">-</p>
                       </div>
                     </div>
@@ -777,19 +777,19 @@ const TitleItem: NextPage = (props) => {
                         <div className='flex gap-[8px] max-[600px]:gap-[16px] items-center'>
                           {selectedDubber?.support.bymeacoffee && <>
                             <Link href={selectedDubber.support!.bymeacoffee} target='_blank'>
-                              <SupportBMC height={40} width={40} />
+                              <IcoSupportBymeacoffe height={40} width={40} />
                             </Link>
                           </>}
 
                           {selectedDubber?.support.patreon && <>
                             <Link href={selectedDubber.support!.patreon} target='_blank'>
-                              <SupportPatreon height={40} width={40} />
+                              <IcoSupportPatreon height={40} width={40} />
                             </Link>
                           </>}
 
                           {selectedDubber?.support.privatbank && <>
                             <Link href={selectedDubber.support!.privatbank} target='_blank'>
-                              <SupportPrivatbank height={40} width={40} />
+                              <IcoSupportPrivatbank height={40} width={40} />
                             </Link>
                           </>}
 
@@ -815,25 +815,25 @@ const TitleItem: NextPage = (props) => {
                         <div className='flex gap-[8px] max-[600px]:gap-[16px] items-center'>
                           {selectedDubber?.socials.instagram && <>
                             <Link href={selectedDubber.socials!.instagram} target='_blank'>
-                              <Instagram height={40} width={40} />
+                              <IcoSupportInstagram height={40} width={40} />
                             </Link>
                           </>}
 
                           {selectedDubber?.socials.telegram && <>
                             <Link href={selectedDubber.socials!.telegram} target='_blank'>
-                              <Telegram height={40} width={40} />
+                              <IcoSocialTelegram height={40} width={40} />
                             </Link>
                           </>}
 
                           {selectedDubber?.socials.tiktok && <>
                             <Link href={selectedDubber.socials!.tiktok} target='_blank'>
-                              <Tiktok height={40} width={40} />
+                              <IcoSupportTiktok height={40} width={40} />
                             </Link>
                           </>}
 
                           {selectedDubber?.socials.youtube && <>
                             <Link href={selectedDubber.socials!.youtube} target='_blank'>
-                              <Youtube height={40} width={40} />
+                              <IcoSocialYoutube height={40} width={40} />
                             </Link>
                           </>}
                         </div>
