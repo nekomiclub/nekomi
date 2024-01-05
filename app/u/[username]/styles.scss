@@ -2,23 +2,47 @@
 
 .user {
   &-created {
-    path, rect {
+
+    path,
+    rect {
       fill: $white;
     }
   }
-}
 
-.uvc {
-  &-accordion {
-    &-trigger {
-      transition: .2s ease-in-out;
-      
-      &--open {
-        .user-accordion--arrow {
-          transform: rotate(180deg);
-        }
+  &-library {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
 
-        border-color: #FF416C;
+    @media only screen and (max-width: 1140px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media only screen and (max-width: 882px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media only screen and (max-width: 680px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media only screen and (max-width: 510px) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    &-titles {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+
+      @media only screen and (max-width: 1140px) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @media only screen and (max-width: 882px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @media only screen and (max-width: 680px) {
+        grid-template-columns: repeat(1, 1fr);
       }
     }
   }

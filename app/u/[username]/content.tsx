@@ -1,16 +1,23 @@
 'use client'
 
 import { NextPage } from 'next';
-import { useEffect, useState, useRef } from 'react'
-import { IUser } from '../../../interfaces/IUser';
+import { useParams } from 'next/navigation'
+import React, { useEffect, useState, useRef, RefObject } from 'react'
+import { IUser, IUserList } from '../../../interfaces/IUser';
 import { IcoAccordionArrow, IcoArrow, IcoCalendar, IcoFolder, IcoHome, IcoSettings, IcoStats } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { useAppSelector } from '../../../hooks/redux';
 import gsap from 'gsap';
+import Link from 'next/link';
+import { IcoFilledCan, IcoFilledClock, IcoFilledHeart, IcoFilledPlans } from '../../../assets/ico/filled';
+import { IcoEyeHidden, IcoEyeSuccess, IcoEyeVisible } from '../../../assets/ico/eye';
+
+import './styles.scss'
+import { routes } from '../../../routes';
 
 type TTab = 'home' | 'stats' | 'library' | 'settings';
 
-const SidebarItem: NextPage<{ currTab: TTab, tab: TTab, setTab: (tab: TTab) => void }> = ({ setTab, tab, currTab }) => {
+export const SidebarItem: NextPage<{ currTab: TTab, tab: TTab, setTab: (tab: TTab) => void }> = ({ setTab, tab, currTab }) => {
   return (
     <button className={`user-sidebar-item flex gap-[16px] items-center px-[8px] py-[4px] rounded-[2px] duration-200 hover:bg-dark/[.2] ${currTab === tab ? 'bg-dark/[.4]' : ''}`} onClick={() => setTab(tab)}>
       {tab === 'home' && <IcoHome width={24} height={24} />}
@@ -28,12 +35,67 @@ const SidebarItem: NextPage<{ currTab: TTab, tab: TTab, setTab: (tab: TTab) => v
   )
 }
 
-const UserContent: NextPage<{ user: IUser }> = ({ user }) => {
-  const userData = useAppSelector(state => state.user);
-  const [tab, setTab] = useState<TTab>('settings')
-  const [menuCollapsed, setMenuCollapsed] = useState(false)
-  const [isOwner] = useState(userData.username === user.username)
+export const LibItem: NextPage<{ list: IUserList, username: string }> = ({ list, username }) => {
+  const isOwner = username === useAppSelector(state => state.user).username;
 
+  return (
+    <>
+      {!list.hidden || list.hidden && isOwner ? <Link className='px-[16px] pt-[24px] pb-[8px] flex items-center flex-col gap-[16px] border border-white rounded-[2px] duration-200 hover:bg-dark/[.1]' href={routes.userList.path.replace('*', username).replace('*', list.id)}>
+        {list.id.match(/^fav/gi) && <IcoFilledHeart width={128} height={128} />}
+        {list.id.match(/^watched/gi) && <IcoEyeSuccess width={128} height={128} />}
+        {list.id.match(/^plans/gi) && <IcoFilledPlans width={128} height={128} />}
+        {list.id.match(/^delayed/gi) && <IcoFilledClock width={128} height={128} />}
+        {list.id.match(/^threwn/gi) && <IcoFilledCan width={128} height={128} />}
+
+        <div className='flex items-center gap-[8px]'>
+          <p className='text-[16px] text-white font-extralight'>{list.name}</p>
+
+          <Tooltip content={`Ця тека ${list.hidden ? 'прихована' : 'видима'} для всіх користувачів`}>
+            {list.hidden ? <IcoEyeHidden width={16} height={16} /> : <IcoEyeVisible width={16} height={16} />}
+          </Tooltip>
+        </div>
+      </Link> : null}
+    </>
+  )
+}
+
+export const UserHeader: NextPage<{ user: IUser }> = ({ user }) => {
+  return (
+    <>
+      <div className='flex w-full items-center gap-[40px] pb-[16px] max-[550px]:flex-col'>
+        <img src={user.avatar} alt={`Аватар ${user.username}`} loading='lazy' />
+
+        <div className='flex flex-col gap-[4px]'>
+          <div className='flex gap-[24px] items-center max-[550px]:justify-center'>
+            <h1 className='text-[32px] text-white font-bold'>@{user.username}</h1>
+
+            {/* Badges */}
+            <div className='flex items-center gap-[4px]'></div>
+          </div>
+
+          <div className='flex items-center gap-[8px] max-[550px]:justify-center'>
+            {/* Level */}
+            {/* <div className='flex items-center gap-[8px]'></div> */}
+
+            <Tooltip content={`Дата створення акаунту`}>
+              <div className='flex items-center gap-[8px]'>
+                <IcoCalendar className='user-created' />
+                <p className='text-[16px] text-white font-extralight'>{new Date(user.stats.createdAt).toLocaleString('uk').split(',')[0]}</p>
+              </div>
+            </Tooltip>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' | 'list' }> = ({ user, children, type }) => {
+  const params = useParams<{ username: string }>()
+  const userData = useAppSelector(state => state.user)
+  const [tab, setTab] = useState<TTab>('library')
+  const [menuCollapsed, setMenuCollapsed] = useState(false)
+  const [isOwner] = useState(user.username === userData.username)
   const root = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -66,38 +128,10 @@ const UserContent: NextPage<{ user: IUser }> = ({ user }) => {
   }, [menuCollapsed])
 
   return (
-    <div className='flex flex-col' ref={root}>
-      <div className='flex w-full items-center gap-[40px] pb-[16px]'>
-        <img src={user.avatar} alt={`Аватар ${user.username}`} loading='lazy' />
-
-        <div className='flex flex-col gap-[4px]'>
-          <div className='flex gap-[24px] items-center'>
-            <h1 className='text-[32px] text-white font-bold'>@{user.username}</h1>
-
-            {/* Badges */}
-            <div className='flex items-center gap-[4px]'></div>
-          </div>
-
-          <div className='flex items-center gap-[8px]'>
-            {/* Level */}
-            {/* <div className='flex items-center gap-[8px]'></div> */}
-
-            <Tooltip content={`Дата створення акаунту`}>
-              <div className='flex items-center gap-[8px]'>
-                <IcoCalendar className='user-created' />
-                <p className='text-[16px] text-white font-extralight'>{new Date(user.stats.createdAt).toLocaleString('uk').split(',')[0]}</p>
-              </div>
-            </Tooltip>
-          </div>
-        </div>
-      </div>
-
-      <span className='block w-full h-[1px] rounded-[2px] bg-white/[.2]'></span>
-
-      <div className='flex pt-[8px] gap-[8px]'>
-
-        <div className='flex flex-col gap-[4px]'>
-          <button onClick={() => setMenuCollapsed(!menuCollapsed)} className={`w-full flex justify-end px-[8px] py-[4px] duration-200 hover:bg-dark/[.2]`}>
+    <div className='flex flex-col w-full' ref={root}>
+      <div className='flex pt-[8px] gap-[8px] w-full max-[550px]:flex-col'>
+        <div className='flex flex-col gap-[4px]' ref={root}>
+          <button onClick={() => setMenuCollapsed(!menuCollapsed)} className={`w-full flex justify-end px-[8px] py-[4px] duration-200 hover:bg-dark/[.2] max-[550px]:hidden`}>
             <IcoArrow width={24} height={24} className={`duration-200 ${menuCollapsed ? 'rotate-[180deg]' : ''}`} />
           </button>
 
@@ -110,30 +144,23 @@ const UserContent: NextPage<{ user: IUser }> = ({ user }) => {
         <span className='block w-[1px] rounded-[2px] bg-white/[.2]'></span>
 
         <div className='w-full h-full'>
-          {/* Home tab */}
           {tab === 'home' && <div className='w-full h-full flex justify-center items-center'>
             <h3 className='text-[24px] text-white font-bold'>Головна в розробці</h3>
           </div>}
 
-          {/* Stats tab */}
           {tab === 'stats' && <div className='w-full h-full flex justify-center items-center'>
             <h3 className='text-[24px] text-white font-bold'>Статистика в розробці</h3>
           </div>}
 
-          {/* Library tab */}
-          {tab === 'library' && <div className='w-full h-full flex justify-center items-center'>
-            <h3 className='text-[24px] text-white font-bold'>Тека в розробці</h3>
+          {tab === 'library' && <div className='w-full h-full flex items-center flex-col gap-[24px]'>
+            {children}
           </div>}
 
-          {/* Settings tab */}
           {tab === 'settings' && <div className='w-full h-full flex items-center flex-col gap-[8px]'>
             <h3 className='text-[24px] text-white font-bold'>Налаштування в розробці</h3>
           </div>}
         </div>
-
       </div>
     </div>
   );
 }
-
-export default UserContent;

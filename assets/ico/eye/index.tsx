@@ -1,0 +1,51 @@
+//* width={props.width || 24} height={props.height || 24} className={props.className}
+
+// export const Template = (props: { width?: number, height?: number, className?: string }) => {
+//   return (
+
+//   );
+// }
+
+export const IcoEyeSuccess = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.9578 12.0094C18.8344 9.5625 15.9 6.75 12 6.75C10.425 6.75 8.98125 7.19531 7.45781 8.14688C6.17344 8.95313 4.85625 10.0875 3.04688 11.9531L3 12L3.31406 12.3234C5.89687 14.9672 8.12813 17.25 12 17.25C13.7109 17.25 15.3703 16.6922 17.0719 15.5438C18.5203 14.5641 19.7531 13.3219 20.7422 12.3187L21 12.0609L20.9578 12.0094ZM12 15.75C9.93281 15.75 8.25 14.0672 8.25 12C8.25 9.93281 9.93281 8.25 12 8.25C14.0672 8.25 15.75 9.93281 15.75 12C15.75 14.0672 14.0672 15.75 12 15.75Z" fill="url(#paint0_linear_790_18450)" />
+      <g clip-path="url(#clip0_790_18450)">
+        <path d="M14.2499 9.84257C14.0472 9.68554 13.7636 9.73359 13.6159 9.94921L11.5077 13.0336L10.3464 11.7762C10.1753 11.5816 9.88817 11.5723 9.70535 11.7551C9.52254 11.9367 9.51317 12.2426 9.68543 12.4359C9.68543 12.4359 11.0964 14.0016 11.2991 14.1586C11.5018 14.3156 11.7854 14.2676 11.9331 14.0519L14.3507 10.5164C14.4983 10.2996 14.4526 9.99843 14.2499 9.84257Z" fill="url(#paint1_linear_790_18450)" />
+      </g>
+      <defs>
+        <linearGradient id="paint0_linear_790_18450" x1="3" y1="11.6912" x2="21.0036" y2="11.8234" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF416C" />
+          <stop offset="1" stop-color="#FF4B2B" />
+        </linearGradient>
+        <linearGradient id="paint1_linear_790_18450" x1="9.56201" y1="11.8682" x2="14.4385" y2="11.8908" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF416C" />
+          <stop offset="1" stop-color="#FF4B2B" />
+        </linearGradient>
+        <clipPath id="clip0_790_18450">
+          <rect width="6" height="6" fill="white" transform="translate(9 9)" />
+        </clipPath>
+      </defs>
+    </svg>
+
+  );
+}
+
+export const IcoEyeVisible = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+
+  );
+}
+
+export const IcoEyeHidden = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.94 17.94C16.2306 19.243 14.1491 19.9649 12 20C5 20 1 12 1 12C2.24389 9.68191 3.96914 7.65662 6.06 6.06001M9.9 4.24001C10.5883 4.07889 11.2931 3.99835 12 4.00001C19 4.00001 23 12 23 12C22.393 13.1356 21.6691 14.2047 20.84 15.19M14.12 14.12C13.8454 14.4148 13.5141 14.6512 13.1462 14.8151C12.7782 14.9791 12.3809 15.0673 11.9781 15.0744C11.5753 15.0815 11.1752 15.0074 10.8016 14.8565C10.4281 14.7056 10.0887 14.481 9.80385 14.1962C9.51897 13.9113 9.29439 13.572 9.14351 13.1984C8.99262 12.8248 8.91853 12.4247 8.92563 12.0219C8.93274 11.6191 9.02091 11.2219 9.18488 10.8539C9.34884 10.4859 9.58525 10.1547 9.88 9.88001" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M1 1L23 23" stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  );
+}

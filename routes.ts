@@ -30,6 +30,7 @@ interface IRoutes {
   FAQ: IRoute,
   API: IRoute,
   user: IRoute,
+  userList: IRoute,
   dubber: IRoute,
   lib: IRoute,
 }
@@ -119,6 +120,10 @@ export const routes: IRoutes = {
   },
   user: {
     path: '/u/*',
+    public: true,
+  },
+  userList: {
+    path: '/u/*/list/*',
     public: true,
   },
   dubber: {

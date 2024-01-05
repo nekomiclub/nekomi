@@ -1,71 +1,42 @@
-import type { NextPage, Metadata, ResolvingMetadata } from 'next';
+'use client'
 
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
-
-import DefaultBg from '../../../assets/defaultLargeImages/1.webp'
-import NotFound from '@/oops/404/page';
-import axios from 'axios';
-import { env } from '../../../config';
+import { NextPage } from 'next';
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { IUser } from '../../../interfaces/IUser';
-import UserContent from './content';
+import { LibItem } from './content';
+import $api from '../../../components/http';
+import { env } from '../../../config';
+import Loading from '../../../components/Loading';
 
-import './styles.scss'
+const UserLists: NextPage = () => {
+  const params = useParams<{ username: string }>()
+  const [isErrored, setIsErrored] = useState(false)
+  const [user, setUser] = useState<IUser>()
 
-interface IProps {
-  params: { username: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
-
-export async function generateMetadata(
-  { params, searchParams }: IProps,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  try {
-    const { data } = await axios.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`);
-
-    return {
-      title: `@${data.username} - animee`,
-      description: `Сторінка @${data.username}`,
+  useEffect(() => {
+    try {
+      $api.get(`${env.apiUrl}/v1/user/${params.username}`).then(res => setUser(res.data))
+    } catch (e) {
+      console.error(e)
+      setIsErrored(true)
     }
-  } catch (e) {
-    return {
-      title: `Користувач не знайдений`
-    }
-  }
+  }, [])
+
+  return isErrored ? <p className='text-[24px] text-white font-bold'>Йой, ви не повинні були цього бачити! Створіть будь ласка тікет з темою: UserLists data fetch error та прікріпіть лог консолі (F12 - Консоль)</p> : (
+    <>
+      {user ? <>
+        {user.lists.some(el => !el.hidden) ? <>
+          <div className='user-library gap-[8px] w-full'>
+            {user.lists.map(list => {
+              return <LibItem list={list} username={params.username} key={list.id} />
+            })}
+          </div>
+        </> : <h3 className='text-[24px] text-white font-bold'>Всі теки цього користувача приховані</h3>}
+      </> : <div className='py-[80px] bg-dark w-full'><Loading h='full' w='full' /></div>}
+    </>
+
+  );
 }
 
-const UserPage: NextPage<IProps> = async ({ params, searchParams }) => {
-  // @ts-ignore
-  let userData: IUser = {}
-  let isErrored = false;
-
-  try {
-    const res = await axios.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`)
-    userData = res.data
-  } catch (e) {
-    isErrored = true
-  }
-
-  return isErrored ? <NotFound /> : <>
-    <Header />
-
-    <main className='w-full min-h-screen h-full bg-dark flex flex-col justify-center items-center'>
-
-      <div className='fixed w-full h-full top-0 left-0'>
-        <img src={DefaultBg.src} alt="..." className='w-full h-full' />
-      </div>
-
-      <div className="wrapper max-w-[1170px]">
-        <div className='bg-dark/[.2] backdrop-blur-[128px] px-[32px] py-[24px] rounded-[4px]'>
-          <UserContent user={userData} />
-        </div>
-      </div>
-
-    </main>
-
-    <Footer />
-  </>
-}
-
-export default UserPage;
+export default UserLists;

@@ -30,6 +30,8 @@ export interface IUserList {
   id: string
 }
 
+export type TUserListType = 'favorite' | 'watched' | 'delayed' | 'plans' | 'threwn' | 'user';
+
 export interface IUserStats {
   createdAt: number,
   titles: {
