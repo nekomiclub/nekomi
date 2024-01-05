@@ -8,11 +8,13 @@ import { LibItem } from './content';
 import $api from '../../../components/http';
 import { env } from '../../../config';
 import Loading from '../../../components/Loading';
+import { useAppSelector } from '../../../hooks/redux';
 
 const UserLists: NextPage = () => {
   const params = useParams<{ username: string }>()
   const [isErrored, setIsErrored] = useState(false)
   const [user, setUser] = useState<IUser>()
+  const userData = useAppSelector(state => state.user)
 
   useEffect(() => {
     try {
@@ -26,7 +28,7 @@ const UserLists: NextPage = () => {
   return isErrored ? <p className='text-[24px] text-white font-bold'>Йой, ви не повинні були цього бачити! Створіть будь ласка тікет з темою: UserLists data fetch error та прікріпіть лог консолі (F12 - Консоль)</p> : (
     <>
       {user ? <>
-        {user.lists.some(el => !el.hidden) ? <>
+        {user.lists.some(el => !el.hidden) || userData.username === params.username ? <>
           <div className='user-library gap-[8px] w-full'>
             {user.lists.map(list => {
               return <LibItem list={list} username={params.username} key={list.id} />
