@@ -74,7 +74,6 @@ const UserList: NextPage = (props) => {
   useEffect(() => {
     if (rawTitles.length !== list?.titles.length) return;
     setTitles(rawTitles);
-    console.log(rawTitles)
   }, [rawTitles])
 
   useEffect(() => console.log(titles), [titles])

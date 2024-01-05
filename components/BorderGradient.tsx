@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { Play } from '../assets/assets';
 import '../app/w/[name]/styles.scss'
 
-const BorderGradient: NextPage<{ children: any, width?: string, round?: string, className?: string }> = ({ children, round, width, className }) => {
+const BorderGradient: NextPage<{ children: any, width?: string, round?: string, className?: string, h?: string, w?: string }> = ({ children, round, width, className, w, h }) => {
   return (
-    <div className={`gradient--primary-border w-fit h-fit ${className}`} style={{ '--w': width || '1px', '--r': round || '4px' } as React.CSSProperties}>
+    <div className={`gradient--primary-border ${h ? h : 'h-fit'}  ${w ? w : 'w-fit'}${className || ''}`} style={{ '--w': width || '1px', '--r': round || '4px' } as React.CSSProperties}>
       {children}
     </div>
   );
