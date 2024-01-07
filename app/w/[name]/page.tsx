@@ -339,7 +339,7 @@ const TitleItem: NextPage = (props) => {
                 </div>
 
                 <div className='bg-grey flex flex-col gap-[32px] rounded-[2px] px-[24px] py-[16px] max-[600px]:w-full'>
-                  {selectedDub ? <>
+                  {selectedDubber ? <>
                     <div className='flex justify-between items-center gap-[32px] max-[500px]:flex-col'>
                       <div className='block w-[128px] h-[128px] rounded-[2px] overflow-hidden flex-shrink-0'>
                         <img src={selectedDubber?.thumbURL} alt="..." loading='lazy' />
