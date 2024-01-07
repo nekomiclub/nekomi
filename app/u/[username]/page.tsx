@@ -9,13 +9,11 @@ import $api from '../../../components/http';
 import { env } from '../../../config';
 import Loading from '../../../components/Loading';
 import { useAppSelector } from '../../../hooks/redux';
-import { useAppSelector } from '../../../hooks/redux';
 
 const UserLists: NextPage = () => {
   const params = useParams<{ username: string }>()
   const [isErrored, setIsErrored] = useState(false)
   const [user, setUser] = useState<IUser>()
-  const userData = useAppSelector(state => state.user)
   const userData = useAppSelector(state => state.user)
 
   useEffect(() => {
