@@ -76,8 +76,6 @@ const UserList: NextPage = (props) => {
     setTitles(rawTitles);
   }, [rawTitles])
 
-  useEffect(() => console.log(titles), [titles])
-
   return isErrored ? <p className='text-[24px] text-white font-bold'>Йой, ви не повинні були цього бачити! Створіть будь ласка тікет з темою: UserList data fetch error та прікріпіть лог консолі (F12 - Консоль)</p> : (
     <>
       {list ? <>

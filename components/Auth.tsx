@@ -53,7 +53,7 @@ export const WithGoogle: NextPage = (props) => {
       router.replace(routes.home.path)
 
     } catch (e) {
-      console.log(e)
+      console.error(e)
 
       if (e instanceof AxiosError) {
         ref.current?.insertAdjacentHTML('beforeend', `<p class="text-red-400 max-w-[426px]">${e.response?.data.msg}</p>`)
@@ -178,8 +178,6 @@ export const WithForm: NextPage<{ method: 'signin' | 'signup' }> = (props) => {
         method: 'access',
         token: localStorage.getItem('token')
       })
-
-      console.log(tokenData)
     } catch (e) {
       if (e instanceof AxiosError) {
         const emsg = e.response?.data.msg;

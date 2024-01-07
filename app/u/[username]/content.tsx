@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState, useRef, RefObject } from 'react'
 import { IUser, IUserList } from '../../../interfaces/IUser';
-import { IcoAccordionArrow, IcoArrow, IcoCalendar, IcoFolder, IcoHome, IcoSettings, IcoStats } from '../../../assets/ico/Icos';
+import { IcoAccordionArrow, IcoArrow, IcoCalendar, IcoFolder, IcoHome, IcoSettings, IcoStats, IcoWatching } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { useAppSelector } from '../../../hooks/redux';
 import gsap from 'gsap';
@@ -45,7 +45,7 @@ export const LibItem: NextPage<{ list: IUserList, username: string }> = ({ list,
         {list.id.match(/^watched/gi) && <IcoEyeSuccess width={128} height={128} />}
         {list.id.match(/^plans/gi) && <IcoFilledPlans width={128} height={128} />}
         {list.id.match(/^delayed/gi) && <IcoFilledClock width={128} height={128} />}
-        {list.id.match(/^threwn/gi) && <IcoFilledCan width={128} height={128} />}
+        {list.id.match(/^watching/gi) && <IcoWatching width={128} height={128} />}
 
         <div className='flex items-center gap-[8px]'>
           <p className='text-[16px] text-white font-extralight'>{list.name}</p>
