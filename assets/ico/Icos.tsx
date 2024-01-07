@@ -176,3 +176,17 @@ export const IcoHeart = (props: { width?: number, height?: number, className?: s
     );
   }
 }
+
+export const IcoWatching = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 131 129" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16.7803 19.7V109.3C16.7803 111.1 18.2013 112.5 20.0283 112.5H110.972C112.799 112.5 114.22 111.1 114.22 109.3V19.7C114.22 17.9 112.799 16.5 110.972 16.5H20.0283C18.2013 16.5 16.7803 17.9 16.7803 19.7ZM55.3503 87.7H44.1853C43.1703 87.7 42.3583 86.5 42.9673 85.7L53.5233 64.9L42.9673 44.1C42.5613 43.1 43.1703 42.1 44.1853 42.1H55.3503C55.9593 42.1 56.3653 42.5 56.5683 42.9L67.7333 64.9L56.5683 86.9C56.5683 87.3 55.9593 87.7 55.3503 87.7ZM79.9133 86.9C79.7103 87.3 79.1013 87.7 78.6953 87.7H67.5303C66.5153 87.7 65.7033 86.5 66.3123 85.7L76.8683 64.9L66.3123 44.1C65.9063 43.1 66.5153 42.1 67.5303 42.1H78.6953C79.3043 42.1 79.7103 42.5 79.9133 42.9L91.0783 64.9L79.9133 86.9Z" fill="url(#paint0_linear_833_21857)" />
+      <defs>
+        <linearGradient id="paint0_linear_833_21857" x1="16.7803" y1="61.6765" x2="114.243" y2="62.1002" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF416C" />
+          <stop offset="1" stop-color="#FF4B2B" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}

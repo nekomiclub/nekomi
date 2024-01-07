@@ -18,558 +18,7 @@ import { IDubber } from '../../../interfaces/IDubber';
 import Player from '../../../components/Player';
 
 const defaultDub: ITitleEpisodesDub = {
-  eps: [
-    {
-      order: 1,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_0',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_1',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_2',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_3',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_4',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_5',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_6',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_7',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_8',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_9',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_10',
-        'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/aa193dfc-5bb7-4379-bf33-25a255001adb_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 2,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_0',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_1',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_2',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_3',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_4',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_5',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_6',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_7',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_8',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_9',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_10',
-        'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/93551b8e-2128-404e-b86e-3f611214a8d0_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 3,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_0',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_1',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_2',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_3',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_4',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_5',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_6',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_7',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_8',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_9',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_10',
-        'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/dafd9680-6476-46b3-98ca-ca53af79f5c4_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 4,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_0',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_1',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_2',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_3',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_4',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_5',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_6',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_7',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_8',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_9',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_10',
-        'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/7a949e9d-ac54-45ae-9308-dac64ff63628_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 5,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_0',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_1',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_2',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_3',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_4',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_5',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_6',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_7',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_8',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_9',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_10',
-        'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/81ea5c8a-f37f-40bb-a39e-b44da8adcb96_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 6,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_0',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_1',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_2',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_3',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_4',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_5',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_6',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_7',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_8',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_9',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_10',
-        'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/d4b647ed-50dd-44c0-addb-08dd4b6293d7_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 7,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_0',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_1',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_2',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_3',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_4',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_5',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_6',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_7',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_8',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_9',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_10',
-        'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/0db58c3b-f617-42b9-9e17-7d3d692039bb_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 8,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_0',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_1',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_2',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_3',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_4',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_5',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_6',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_7',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_8',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_9',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_10',
-        'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/55d2d37e-00ed-4f91-aabf-a24e61d0e4f4_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 9,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_0',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_1',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_2',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_3',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_4',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_5',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_6',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_7',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_8',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_9',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_10',
-        'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/f91c7373-c673-48ef-b45e-6512ade011e9_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 10,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_0',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_1',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_2',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_3',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_4',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_5',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_6',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_7',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_8',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_9',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_10',
-        'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/a6941a71-c6a6-4030-99dd-3c17d94f9f04_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 11,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_0',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_1',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_2',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_3',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_4',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_5',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_6',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_7',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_8',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_9',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_10',
-        'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/cedbba7b-20d6-431a-bd4c-8004357e1122_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 12,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_0',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_1',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_2',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_3',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_4',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_5',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_6',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_7',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_8',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_9',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_10',
-        'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/7f107f33-d2df-44e9-992f-e70b781d8e0f_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 13,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_0',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_1',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_2',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_3',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_4',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_5',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_6',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_7',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_8',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_9',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_10',
-        'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/009a93cb-4add-41c0-bfa6-8178dfa8a4bb_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 14,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_0',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_1',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_2',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_3',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_4',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_5',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_6',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_7',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_8',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_9',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_10',
-        'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/110fd3a5-1945-4dea-b13b-fc286e44d5da_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 15,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_0',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_1',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_2',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_3',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_4',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_5',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_6',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_7',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_8',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_9',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_10',
-        'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/189251ab-9612-4a13-9ad9-3d7c2906c09d_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 16,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_0',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_1',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_2',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_3',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_4',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_5',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_6',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_7',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_8',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_9',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_10',
-        'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/abf74dea-27ab-46e0-a556-4dcd82af28ef_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 17,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_0',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_1',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_2',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_3',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_4',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_5',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_6',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_7',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_8',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_9',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_10',
-        'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/8e8fc417-01b0-49e0-9255-2b8d116e7ef1_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 18,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_0',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_1',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_2',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_3',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_4',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_5',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_6',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_7',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_8',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_9',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_10',
-        'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/047c4e05-0d3f-4dd5-8f70-82faf1f886ea_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 19,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_0',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_1',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_2',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_3',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_4',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_5',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_6',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_7',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_8',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_9',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_10',
-        'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/21589da7-1b4d-4be1-a797-7489ce124246_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 20,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_0',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_1',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_2',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_3',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_4',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_5',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_6',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_7',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_8',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_9',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_10',
-        'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/3587bf2c-6894-4724-9579-a67a50ab321f_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 21,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_0',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_1',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_2',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_3',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_4',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_5',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_6',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_7',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_8',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_9',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_10',
-        'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/64cc4257-8733-49f3-93fc-efe80e5c9bf7_q_480',
-        q240: null
-      }
-    },
-    {
-      order: 22,
-      subIDs: null,
-      framesURL: [
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_0',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_1',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_2',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_3',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_4',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_5',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_6',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_7',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_8',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_9',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_10',
-        'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_f_11'
-      ],
-      source: {
-        q2k: null,
-        q1080: 'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908',
-        q720: null,
-        q480: 'https://api.animee.club/v1/media/40c1df8c-0ae7-48d5-b759-8e708f750908_q_480',
-        q240: null
-      }
-    }
-  ],
+  eps: [],
   id: 'd979d465-1407-452f-8955-a7692480f9ac',
   include2K: false,
   includeSub: false
@@ -582,12 +31,14 @@ import { AxiosError } from 'axios';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import { routes } from '../../../routes';
-import { IcoHeart } from '../../../assets/ico/Icos';
+import { IcoHeart, IcoWatching } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { IUser } from '../../../interfaces/IUser';
 import { IcoFolderAdd } from '../../../assets/ico/folder';
 import { IcoFilledCan, IcoFilledClock, IcoFilledHeart, IcoFilledPlans } from '../../../assets/ico/filled';
 import { IcoEyeSuccess } from '../../../assets/ico/eye';
+
+type TUserList = 'watched' | 'delayed' | 'plans' | 'watching' | 'favorite' | 'custom'
 
 const TitleItem: NextPage = (props) => {
   const { name } = useParams<{ name: string }>()
@@ -600,7 +51,7 @@ const TitleItem: NextPage = (props) => {
 
   const [isTitleFavorite, setIsTitleFavorite] = useState(false)
   const [isLibsSelectOpen, setIsLibsSelectOpen] = useState(false)
-  const [titleInLibs, setTitleInLibs] = useState<('watched' | 'delayed' | 'plans' | 'threwn')[]>([])
+  const [titleInLibs, setTitleInLibs] = useState<TUserList[]>([])
 
   useEffect(() => {
     (async function () {
@@ -633,9 +84,7 @@ const TitleItem: NextPage = (props) => {
     if (username) {
       $api.get<IUser>(`${env.apiUrl}/v1/user/${username}`).catch(e => console.error(e)).then(res => {
         const user = res!.data;
-        const titleInLibs: ('watched' | 'delayed' | 'plans' | 'threwn')[] = []
-
-        console.log(user)
+        const titleInLibs: TUserList[] = []
 
         if (user.lists.find(el => el.id.match(/^favorite/gi))!.titles.includes(title!.id)) {
           setIsTitleFavorite(true)
@@ -645,8 +94,8 @@ const TitleItem: NextPage = (props) => {
           titleInLibs.push('watched')
         }
 
-        if (user.lists.find(el => el.id.match(/^threwn/gi))!.titles.includes(title!.id)) {
-          titleInLibs.push('threwn')
+        if (user.lists.find(el => el.id.match(/^watching/gi))!.titles.includes(title!.id)) {
+          titleInLibs.push('watching')
         }
 
         if (user.lists.find(el => el.id.match(/^plans/gi))!.titles.includes(title!.id)) {
@@ -695,7 +144,7 @@ const TitleItem: NextPage = (props) => {
     }
   }
 
-  function changeInLibrary(type: 'watched' | 'delayed' | 'plans' | 'threwn') {
+  function changeInLibrary(type: TUserList) {
     if (username) {
       $api.get<IUser>(`${env.apiUrl}/v1/user/${username}`).catch(e => console.error(e)).then(res => {
         const user = res!.data;
@@ -782,6 +231,11 @@ const TitleItem: NextPage = (props) => {
                     <p className='text-[16px] text-white'>{isTitleFavorite ? 'Вилучити з улюблених' : 'Додати в улюблені'}</p>
                   </button>
 
+                  <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeInLibrary('watching')}>
+                    <IcoWatching height={24} width={24} className='flex-shrink-0' />
+                    <p className='text-[16px] text-white'>{titleInLibs.includes('watching') ? 'Вилучити з переглядаємих' : 'Додати в переглядаємі'}</p>
+                  </button>
+
                   <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeInLibrary('plans')}>
                     <IcoFilledPlans height={24} width={24} className='flex-shrink-0' />
                     <p className='text-[16px] text-white'>{titleInLibs.includes('plans') ? 'Вилучити з планів' : 'Додати в плани'}</p>
@@ -795,11 +249,6 @@ const TitleItem: NextPage = (props) => {
                   <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeInLibrary('delayed')}>
                     <IcoFilledClock height={24} width={24} className='flex-shrink-0' />
                     <p className='text-[16px] text-white'>{titleInLibs.includes('delayed') ? 'Вилучити з відкладених' : 'Додати в відкладені'}</p>
-                  </button>
-
-                  <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeInLibrary('threwn')}>
-                    <IcoFilledCan height={24} width={24} className='flex-shrink-0' />
-                    <p className='text-[16px] text-white'>{titleInLibs.includes('threwn') ? 'Вилучити з викинутих' : 'Додати в викинуті'}</p>
                   </button>
                 </div>
               </div>
@@ -837,7 +286,9 @@ const TitleItem: NextPage = (props) => {
                   </li>
                   <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
                     <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Рейтинг:</p>
-                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold gradient--primary-text'>{title.ageRate}</p>
+                    <Tooltip content={title.ageRate === 'G' ? 'Для всіх' : title.ageRate === 'PG' ? 'Для дітей' : title.ageRate === 'PG-13' ? 'Для дітей від 13 років' : title.ageRate === 'R+' ? '18+' : title.ageRate === 'R-17' ? 'Для підлітків від 17 років' : 'Як ти отримав цей рейтинг?'}>
+                      <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold gradient--primary-text'>{title.ageRate}</p>
+                    </Tooltip>
                   </li>
                   <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
                     <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Сезон:</p>
@@ -896,20 +347,26 @@ const TitleItem: NextPage = (props) => {
 
                       <div className='flex flex-col justify-center items-center px-[32px] w-full'>
                         <p className='text-white text-[24px] font-extralight whitespace-nowrap text-center'>Озвучили</p>
-                        <p className='text-white text-[24px] font-bold text-center'>{selectedDubber?.name}</p>
+                        <Link href={routes.dubber.path.replace('*', selectedDubber!.code)}>
+                          <p className='text-white text-[24px] font-bold text-center'>{selectedDubber?.name}</p>
+                        </Link>
                       </div>
                     </div>
 
                     <div className='flex justify-center gap-[32px]'>
-                      <div className='flex items-center gap-[8px]'>
-                        <IcoRating width={24} height={24} />
-                        <p className="gradient--primary-text text-[24px] font-bold">{selectedDubber?.rating}</p>
-                      </div>
+                      <Tooltip content='Рейтинг команди'>
+                        <div className='flex items-center gap-[8px]'>
+                          <IcoRating width={24} height={24} />
+                          <p className="gradient--primary-text text-[24px] font-bold">{selectedDubber?.rating}</p>
+                        </div>
+                      </Tooltip>
 
-                      <div className='flex items-center gap-[8px]'>
-                        <IcoClock width={24} height={24} />
-                        <p className="gradient--primary-text text-[24px] font-bold">-</p>
-                      </div>
+                      <Tooltip content='Перевага команди серед інших'>
+                        <div className='flex items-center gap-[8px]'>
+                          <IcoClock width={24} height={24} />
+                          <p className="gradient--primary-text text-[24px] font-bold">-</p>
+                        </div>
+                      </Tooltip>
                     </div>
 
                     {selectedDubber?.support.bymeacoffee || selectedDubber?.support.diaka || selectedDubber?.support.monobank || selectedDubber?.support.patreon || selectedDubber?.support.privatbank ? <>

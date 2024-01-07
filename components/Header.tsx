@@ -110,7 +110,7 @@ const Header: NextPage = (props) => {
           <div className='px-[24px] py-[16px] flex flex-col gap-[4px]'>
             {searchResults ? <>
               {searchResults.length ? searchResults.map(title => {
-                return <Link href={`${routes.watch.path}/${title.code}`} key={title.id}>
+                return <Link href={`${routes.watch.path}/${title.code}`} onClick={() => document.documentElement.style.overflow = 'visible'} key={title.id}>
                   <div className='px-[16px] py-[8px] duration-200 w-fit rounded-[4px] hover:bg-grey flex items-start gap-[16px]'>
                     <img src={title.poster} alt={`Poster for ${title.code}`} loading='lazy' className='w-[60px] h-[80px] bg-grey' />
 
