@@ -58,6 +58,11 @@ export const dubsIDs = {
   'vrdub': 'f9dfcc69-0028-4934-b0d7-50ab6ab2f841',
   'uamax': '825ec906-5dbc-4a11-9bd2-fb746ae3a17d',
   'bulbul': '19bcd0b8-1136-4ba7-a004-5c305346d22e',
+  'espada studio': '3903c614-3f66-4c46-b4af-27e0ee6e137e',
+  'ufdub': '319ec974-3116-43e9-8966-51237f0479ae',
+  'kitsune': '275342e8-a6be-47bc-86f6-c3084b9867f9',
+  'lisovyi viter': '1d8b59c1-3e11-49fc-99ab-f3e080a099bd',
+  'real cossack dubbing': 'c0bafd73-0a38-46f8-a5ef-b8e6aa150020',
 }
 
 export function getDubberById(id: string) {

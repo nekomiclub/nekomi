@@ -292,7 +292,7 @@ const TitleItem: NextPage = (props) => {
                   </li>
                   <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
                     <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Сезон:</p>
-                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-normal'>{title.season}</p>
+                    <p className='text-white text-[24px] max-[600px]:text-[16px] font-normal'>{title.season}, {title.year}</p>
                   </li>
                   <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
                     <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Тип:</p>
