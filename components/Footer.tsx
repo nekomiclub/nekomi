@@ -138,7 +138,7 @@ const Footer: NextPage = (props) => {
           </ul>
         </div>
 
-        <p className='text-[16px] text-white/[.3] font-extralight text-center'>animee.club by fullkekw © 2023 </p>
+        <p className='text-[16px] text-white/[.3] font-extralight text-center'>animee.club by fullkekw © 2023 - {new Date().getFullYear()}</p>
       </div>
     </footer>
   );

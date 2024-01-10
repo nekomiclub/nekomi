@@ -35,7 +35,7 @@ export async function middleware(req: NextRequest) {
     const payload = decode(token) as ITokenData
 
     //* Redirect if token expired
-    if (payload.exp * 1000 <= + new Date()) {
+    if (payload.exp! * 1000 <= + new Date()) {
       return redirToAuth(url, origin)
     }
 

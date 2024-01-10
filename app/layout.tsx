@@ -8,6 +8,15 @@ export const metadata: Metadata = {
   title: 'Animee',
   description: 'Поринь у світ україномовного аніме!',
   applicationName: 'Animee',
+  metadataBase: new URL('https://animee.club'),
+  openGraph: {
+    title: `Головна - animee`,
+    description: `Поринь у світ україномовного аніме разом з animee!`,
+    url: 'https://animee.club',
+    siteName: 'Animee',
+    type: 'article',
+    images: './icon.png'
+  }
 }
 
 export default function RootLayout({

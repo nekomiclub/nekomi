@@ -11,7 +11,7 @@ import { headers } from 'next/headers'
 
 import DefaultBg from '../../../assets/defaultLargeImages/1.webp'
 import './styles.scss'
-import { getRoute } from "../../../components/PageRouter";
+import { getRoute } from "../../../components/Providers";
 
 interface IProps {
   children: React.ReactNode,
@@ -29,6 +29,15 @@ export async function generateMetadata(
     return {
       title: `@${data.username} - animee`,
       description: `Сторінка @${data.username}`,
+      metadataBase: new URL(`https://api.animee.club`),
+      openGraph: {
+        title: `@${data.username} - animee`,
+        description: `Сторінка @${data.username}`,
+        url: `https://animee.club/w/${data.username}`,
+        siteName: 'Animee',
+        type: 'profile',
+        images: data.avatar
+      }
     }
   } catch (e) {
     return {

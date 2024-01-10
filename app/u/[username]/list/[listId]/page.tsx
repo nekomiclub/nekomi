@@ -14,6 +14,8 @@ import { useAppSelector } from '../../../../../hooks/redux';
 import Link from 'next/link';
 import { routes } from '../../../../../routes';
 import { ITitle } from '../../../../../interfaces/ITitle';
+import { Jelly } from '@uiball/loaders'
+import { ITokenData } from '../../../../../interfaces/ITokenData';
 
 const TitleItem: NextPage<{ title: ITitle }> = ({ title }) => {
   return (
@@ -42,22 +44,28 @@ const UserList: NextPage = (props) => {
   const [listType, setListType] = useState<TUserListType>()
   const params = useParams<{ username: string, listId: string }>()
   const [isOwner, setIsOwner] = useState(false);
-  const userData = useAppSelector(state => state.user)
   const [rawTitles, setRawTitles] = useState<ITitle[]>([])
   const [titles, setTitles] = useState<ITitle[]>([])
 
+  const state = useAppSelector(state => state.user)
+  const [userData, setUserData] = useState<ITokenData>()
+
   useEffect(() => {
+    if (!state.username) return;
+
     try {
       $api.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`).then(res => {
         setUser(res.data)
-        setIsOwner(res.data.username === userData.username)
+        setIsOwner(res.data.username === state.username)
         setList(res.data.lists.find(el => el.id === params.listId))
       })
     } catch (e) {
       console.error(e)
       setIsErrored(true)
     }
-  }, [])
+
+    setUserData(state)
+  }, [state])
 
   useEffect(() => {
     if (!list) return;
@@ -118,11 +126,15 @@ const UserList: NextPage = (props) => {
                     return <TitleItem title={title} key={title.id} />
                   })}
                 </div>
-              </> : <p className='text-[16px] text-white'>Завантажуємо...</p>}
+              </> : <div className='w-full h-full flex justify-center items-center'>
+                <Jelly color='#fff' />
+              </div>}
             </> : <h3 className='text-[24px] text-white font-bold text-center'>Ця тека порожня</h3>}
           </div>
         </> : <h3 className='text-[24px] text-white font-bold'>Це приватна тека.</h3>}
-      </> : <Loading w='full' h='full' />}
+      </> : <div className='w-full h-full flex justify-center items-center'>
+        <Jelly color='#fff' />
+      </div>}
     </>
   );
 }
