@@ -2,11 +2,13 @@ import { NextPage } from "next"
 import React from "react"
 import { TUserRoles } from './interfaces/ITokenData'
 
+export type TRouteStatus = 'indev' | 'works' | 'clear'
+
 export interface IRoute {
   public?: boolean,
   access?: TUserRoles[],
   path: string,
-  status?: 'indev' | 'works' | 'clear'
+  status?: TRouteStatus
 }
 
 interface IRoutes {
@@ -115,8 +117,8 @@ export const routes: IRoutes = {
   },
   support: {
     path: '/support',
-    public: true,
-    status: 'indev'
+    status: 'indev',
+    access: ['admin']
   },
   user: {
     path: '/u/*',

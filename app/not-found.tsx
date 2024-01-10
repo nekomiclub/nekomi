@@ -1,6 +1,6 @@
 'use client'
 
-import PageRouter from '../components/PageRouter';
+import * as Provider from '../components/Providers';
 import NotFound from './oops/404/page';
 
 export default function Error({
@@ -10,7 +10,5 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
-  console.error(error)
-
-  return <PageRouter><NotFound /></PageRouter>
+  return <Provider.Routing><NotFound /></Provider.Routing>
 }

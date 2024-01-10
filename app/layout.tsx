@@ -2,9 +2,7 @@ import '../styles/globals.css';
 import '../styles/index.scss'
 
 import { Metadata } from 'next'
-import StorageProvider from '../components/StorageProvider'
-import AuthProvider from '../components/AuthProvider'
-import PageRouter from '../components/PageRouter';
+import * as Provider from '../components/Providers'
 
 export const metadata: Metadata = {
   title: 'Animee',
@@ -20,13 +18,11 @@ export default function RootLayout({
   return (
     <html lang="ua">
       <body id='root'>
-        <StorageProvider>
-          <PageRouter>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </PageRouter>
-        </StorageProvider>
+        <Provider.Storage>
+          <Provider.State>
+            {children}
+          </Provider.State>
+        </Provider.Storage>
       </body>
     </html>
   )
