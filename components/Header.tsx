@@ -77,8 +77,8 @@ const Header: NextPage = (props) => {
             </button>
 
             {isAuth ? <>
-              <button className={`relative w-[32px] h-[32px] rounded-[32px] bg-grey`} onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
-                {userAvatar ? <img src={userAvatar} alt="avatar" loading='lazy' /> : null}
+              <button className={`relative`} onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
+                <img src={userAvatar} alt="avatar" loading='lazy' width={40} height={40} className='rounded-[32px] bg-grey' />
 
                 <div className={`absolute top-[48px] right-0 bg-dark rounded-[2px] duration-200 ${userDetailsOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                   <div className='flex flex-col'>

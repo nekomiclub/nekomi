@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { ITitle, ITitleEpisodesDub } from '@/../interfaces/ITitle';
 import $api from '@/../components/http';
-import { env } from '@/../config';
+import { animeGenres, env, genresDescription } from '@/../config';
 import Loading from '../../../components/Loading';
 import { IcoSupportInstagram, Play, IcoRating, IcoSupportBymeacoffe, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSupportTiktok, IcoClock, IcoSocialYoutube } from '../../../assets/assets';
 import BorderGradient, { WatchButton } from '../../../components/BorderGradient';
@@ -38,7 +38,11 @@ import { IcoFolderAdd } from '../../../assets/ico/folder';
 import { IcoFilledCan, IcoFilledClock, IcoFilledHeart, IcoFilledPlans } from '../../../assets/ico/filled';
 import { IcoEyeSuccess } from '../../../assets/ico/eye';
 
-type TUserList = 'watched' | 'delayed' | 'plans' | 'watching' | 'favorite' | 'custom'
+type TUserList = 'watched' | 'delayed' | 'plans' | 'watching' | 'favorite' | 'custom';
+
+function getKeyByValue(object: Object, value: string): string | undefined {
+  return Object.keys(object).find(key => object[key] === value);
+}
 
 const TitleItem: NextPage = (props) => {
   const { name } = useParams<{ name: string }>()
@@ -276,11 +280,13 @@ const TitleItem: NextPage = (props) => {
                   <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
                     <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Жанри:</p>
                     <div className='flex flex-wrap gap-[8px]'>
-                      {title.genres.map(genre => {
-                        return <Link href={'#'} key={genre}>
-                          {/* //! LINK FOR GENRE */}
-                          <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{genre}</p>
-                        </Link>
+                      {title.genres.map((genre, i) => {
+                        return <Tooltip content={genresDescription.find(el => el.genre === getKeyByValue(animeGenres, genre))?.description || 'Опис цього жанру ще не написаний.'} key={genre}>
+                          <Link href={'#'}>
+                            {/* //! LINK FOR GENRE */}
+                            <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{genre}{++i < title.genres.length ? ',' : ''}</p>
+                          </Link>
+                        </Tooltip>
                       })}
                     </div>
                   </li>
@@ -301,10 +307,10 @@ const TitleItem: NextPage = (props) => {
                   <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
                     <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Студія:</p>
                     <div className='flex flex-wrap gap-[8px]'>
-                      {title.studios.map(studio => {
+                      {title.studios.map((studio, i) => {
                         return <Link href={'#'} key={studio}>
                           {/* //! LINK FOR STUDIO */}
-                          <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{studio}</p>
+                          <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{studio}{++i < title.studios.length ? ',' : ''}</p>
                         </Link>
                       })}
                     </div>
@@ -316,10 +322,10 @@ const TitleItem: NextPage = (props) => {
                   <li className='flex gap-[40px] max-[600px]:gap-[24px]'>
                     <p className='text-white text-[24px] max-[600px]:text-[16px] font-extralight min-w-[110px]'>Озвучка:</p>
                     <div className='flex flex-wrap gap-[8px]'>
-                      {title.dubs?.length ? title.dubs?.map(dub => {
+                      {title.dubs?.length ? title.dubs?.map((dub, i) => {
                         return <Link href={`${routes.dubber.path.replace('/*', '')}/${dub.id}`} key={dub.id}>
                           {/* @ts-ignore */}
-                          <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{dub.name}</p>
+                          <p className='text-white text-[24px] max-[600px]:text-[16px] font-bold'>{dub.name}{++i < title.dubs.length ? ',' : ''}</p>
                         </Link>
                       }) : <p className='text-white text-[24px] max-[600px]:text-[16px] font-normal'>Озвучки не додані 😥</p>}
                     </div>

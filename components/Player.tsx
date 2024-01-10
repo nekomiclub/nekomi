@@ -1142,8 +1142,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
             <PlayerDubsList width={32} height={40} />
 
             {/* Dubs select */}
-            <div id='dubs-list' className={`absolute left-0 rounded-[2px] bg-dark px-[6px] py-[4px] flex gap-[12px] duration-200 ${isDubListOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`} style={{ top: 'calc(100% + 8px)' }}>
-              <div className='flex flex-col gap-[4px] max-h-[150px] overflow-y-scroll player-scroll'>
+            <div id='dubs-list' className={`absolute left-0 rounded-[2px] w-[257px] bg-dark px-[6px] py-[4px] flex gap-[12px] duration-200 ${isDubListOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`} style={{ top: 'calc(100% + 8px)' }}>
+              <div className='flex flex-col gap-[4px] max-h-[150px] overflow-y-scroll player-scroll shrink-0'>
                 {dubs.map(dub => {
                   return <div key={dub.id} className={`py-[2px] px-[4px] rounded-[2px] duration-100 hover:bg-white/[.2] flex items-center gap-[12px] ${currentDub.id === dub.id ? 'bg-white/[.2]' : ''}`} onClick={() => changeDub(dub)}>
                     <p className='text-white text-[16px] font-extralight whitespace-nowrap'>{idToDubber.find(el => el.id === dub.id)?.name}</p>
@@ -1171,7 +1171,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
               <span className='block w-[1px] bg-white/[.2] rounded-[2px]'></span>
 
-              <div className='flex flex-col max-h-[150px] overflow-y-scroll player-scroll'>
+              <div className='flex flex-col max-h-[150px] overflow-y-scroll player-scroll w-full'>
                 {currentDub.eps.map(ep => {
                   return <button key={ep.order} className={`py-[2px] px-[4px] rounded-[2px] duration-200 hover:bg-white/[.2] ${currentEp === ep.order ? 'bg-white/[.2]' : ''}`} onClick={() => nextEpisode(ep.order)}>
                     <p className='text-white'>{ep.order}</p>

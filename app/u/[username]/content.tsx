@@ -63,7 +63,7 @@ export const UserHeader: NextPage<{ user: IUser }> = ({ user }) => {
   return (
     <>
       <div className='flex w-full items-center gap-[40px] pb-[16px] max-[550px]:flex-col'>
-        <img src={user.avatar} alt={`Аватар ${user.username}`} loading='lazy' />
+        <img src={user.avatar} alt={`Аватар ${user.username}`} loading='lazy' width={128} height={128} className='rounded-[4px]' />
 
         <div className='flex flex-col gap-[4px]'>
           <div className='flex gap-[24px] items-center max-[550px]:justify-center'>
