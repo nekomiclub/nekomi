@@ -33,6 +33,7 @@ export async function generateMetadata(
       title: `${data.name} на animee`,
       description: `Сторінка команди озвучення - ${data.name}`,
       metadataBase: new URL(`https://api.animee.club`),
+      keywords: ['anime', 'аніме на українській мові', data.name],
       openGraph: {
         title: `${data.name} на animee`,
         description: `Сторінка команди озвучення - ${data.name}`,
