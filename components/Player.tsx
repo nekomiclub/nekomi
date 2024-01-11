@@ -1140,45 +1140,6 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
         <div id="player-layout--top" className={`absolute left-[60px] top-[24px] flex gap-[8px] items-stretch duration-300 z-[31] ${isPlayerIdle ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
           <button className='px-[16px] bg-dark rounded-[4px] relative' onClick={() => changeDubsList()}>
             <PlayerDubsList width={32} height={40} />
-
-            {/* Dubs select */}
-            <div id='dubs-list' className={`absolute left-0 rounded-[2px] w-[257px] bg-dark px-[6px] py-[4px] flex gap-[12px] duration-200 ${isDubListOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`} style={{ top: 'calc(100% + 8px)' }}>
-              <div className='flex flex-col gap-[4px] max-h-[150px] overflow-y-scroll player-scroll shrink-0'>
-                {dubs.map(dub => {
-                  return <div key={dub.id} className={`py-[2px] px-[4px] rounded-[2px] duration-100 hover:bg-white/[.2] flex items-center gap-[12px] ${currentDub.id === dub.id ? 'bg-white/[.2]' : ''}`} onClick={() => changeDub(dub)}>
-                    <p className='text-white text-[16px] font-extralight whitespace-nowrap'>{idToDubber.find(el => el.id === dub.id)?.name}</p>
-
-                    <div className='flex items-center gap-[4px]'>
-                      <div className='bg-grey px-[4px] py-[2px] rounded-[2px]'>
-                        <p className='text-white text-[12px] font-extralight'>{dub.eps.length}/{estimatedEps}</p>
-                      </div>
-
-                      {dub.include2K ? <>
-                        <div className='gradient--primary px-[4px] py-[2px] rounded-[2px]'>
-                          <p className='text-white text-[12px] font-extralight'>2K</p>
-                        </div>
-                      </> : null}
-
-                      {dub.includeSub ? <>
-                        <div className='gradient--primary px-[4px] py-[2px] rounded-[2px]'>
-                          <p className='text-white text-[12px] font-extralight'>SUB</p>
-                        </div>
-                      </> : null}
-                    </div>
-                  </div>
-                })}
-              </div>
-
-              <span className='block w-[1px] bg-white/[.2] rounded-[2px]'></span>
-
-              <div className='flex flex-col max-h-[150px] overflow-y-scroll player-scroll w-full'>
-                {currentDub.eps.map(ep => {
-                  return <button key={ep.order} className={`py-[2px] px-[4px] rounded-[2px] duration-200 hover:bg-white/[.2] ${currentEp === ep.order ? 'bg-white/[.2]' : ''}`} onClick={() => nextEpisode(ep.order)}>
-                    <p className='text-white'>{ep.order}</p>
-                  </button>
-                })}
-              </div>
-            </div>
           </button>
 
           <div className='bg-dark px-[12px] py-[8px] flex flex-col gap-[2px] items-center rounded-[4px]'>
@@ -1189,6 +1150,45 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
           <button className={`px-[16px] bg-dark rounded-[4px] player-nextEp ${isNextEpDisabled ? 'player-nextEp--disabled' : ''}`} onClick={() => nextEpisode()}>
             <PlayerNext width={32} height={32} />
           </button>
+
+          {/* Dubs select */}
+          <div id='dubs-list' className={`absolute left-0 rounded-[2px] min-w-full w-fit bg-dark px-[6px] py-[4px] flex gap-[12px] duration-200 ${isDubListOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`} style={{ top: 'calc(100% + 8px)' }}>
+            <div className='flex flex-col gap-[4px] max-h-[150px] overflow-y-scroll player-scroll shrink-0'>
+              {dubs.map(dub => {
+                return <div key={dub.id} className={`py-[2px] px-[4px] rounded-[2px] duration-100 hover:bg-white/[.2] flex items-center gap-[12px] ${currentDub.id === dub.id ? 'bg-white/[.2]' : ''}`} onClick={() => changeDub(dub)}>
+                  <p className='text-white text-[16px] font-extralight whitespace-nowrap'>{idToDubber.find(el => el.id === dub.id)?.name}</p>
+
+                  <div className='flex items-center gap-[4px]'>
+                    <div className='bg-grey px-[4px] py-[2px] rounded-[2px]'>
+                      <p className='text-white text-[12px] font-extralight'>{dub.eps.length}/{estimatedEps}</p>
+                    </div>
+
+                    {dub.include2K ? <>
+                      <div className='gradient--primary px-[4px] py-[2px] rounded-[2px]'>
+                        <p className='text-white text-[12px] font-extralight'>2K</p>
+                      </div>
+                    </> : null}
+
+                    {dub.includeSub ? <>
+                      <div className='gradient--primary px-[4px] py-[2px] rounded-[2px]'>
+                        <p className='text-white text-[12px] font-extralight'>SUB</p>
+                      </div>
+                    </> : null}
+                  </div>
+                </div>
+              })}
+            </div>
+
+            <span className='block w-[1px] bg-white/[.2] rounded-[2px]'></span>
+
+            <div className='flex flex-col max-h-[150px] overflow-y-scroll player-scroll w-full'>
+              {currentDub.eps.map(ep => {
+                return <button key={ep.order} className={`py-[2px] px-[4px] rounded-[2px] duration-200 hover:bg-white/[.2] ${currentEp === ep.order ? 'bg-white/[.2]' : ''}`} onClick={() => nextEpisode(ep.order)}>
+                  <p className='text-white'>{ep.order}</p>
+                </button>
+              })}
+            </div>
+          </div>
         </div>
 
         <div id="player-layout--bottom" className={`absolute bottom-0 w-full bg-dark/[.2] px-[60px] py-[24px] gap-[40px] flex justify-between  z-[31] items-center duration-300 ${isPlayerIdle ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
