@@ -4,5 +4,7 @@ export type TUserRoles = 'root' | 'admin' | 'moderator' | 'dubber' | 'subber' | 
 export interface ITokenData {
   roles: TUserRoles[],
   uid: string,
-  username: string
+  username: string,
+  iat?: number,
+  exp?: number
 }

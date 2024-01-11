@@ -17,13 +17,6 @@ import { useAppSelector } from '../../../hooks/redux';
 import { IDubber } from '../../../interfaces/IDubber';
 import Player from '../../../components/Player';
 
-const defaultDub: ITitleEpisodesDub = {
-  eps: [],
-  id: 'd979d465-1407-452f-8955-a7692480f9ac',
-  include2K: false,
-  includeSub: false
-}
-
 import SupportDiaka from '../../../assets/watch/supportDiaka.png'
 import SupportMonobank from '../../../assets/watch/supportMonobank.png'
 import NotFound from '@/oops/404/page';
@@ -49,7 +42,7 @@ const TitleItem: NextPage = (props) => {
   const [title, setTitle] = useState<ITitle>()
   const [titleNotFound, setTitleNotFound] = useState(false)
   const [totalEps, setTotalEps] = useState(0)
-  const [selectedDub, setSelectedDub] = useState<ITitleEpisodesDub>(defaultDub)
+  const [selectedDub, setSelectedDub] = useState<ITitleEpisodesDub>()
   const [selectedDubber, setSelectedDubber] = useState<IDubber>()
   const { isAuth, roles, uid, username } = useAppSelector(state => state.user)
 
@@ -116,6 +109,8 @@ const TitleItem: NextPage = (props) => {
   }, [title])
 
   useEffect(() => {
+    if (!selectedDub?.id) return
+
     (async function () {
       const res = await $api.get<IDubber>(`${env.apiUrl}/v1/dubber/${selectedDub.id}`)
       setSelectedDubber(res.data)
@@ -345,7 +340,7 @@ const TitleItem: NextPage = (props) => {
                 </div>
 
                 <div className='bg-grey flex flex-col gap-[32px] rounded-[2px] px-[24px] py-[16px] max-[600px]:w-full'>
-                  {selectedDubber ? <>
+                  {selectedDubber && selectedDub ? <>
                     <div className='flex justify-between items-center gap-[32px] max-[500px]:flex-col'>
                       <div className='block w-[128px] h-[128px] rounded-[2px] overflow-hidden flex-shrink-0'>
                         <img src={selectedDubber?.thumbURL} alt="..." loading='lazy' />

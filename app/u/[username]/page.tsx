@@ -9,6 +9,7 @@ import $api from '../../../components/http';
 import { env } from '../../../config';
 import Loading from '../../../components/Loading';
 import { useAppSelector } from '../../../hooks/redux';
+import { Jelly } from '@uiball/loaders'
 
 const UserLists: NextPage = () => {
   const params = useParams<{ username: string }>()
@@ -48,7 +49,9 @@ const UserLists: NextPage = () => {
             })}
           </div>
         </> : <h3 className='text-[24px] text-white font-bold'>Всі теки цього користувача приховані</h3>}
-      </> : <div className='py-[80px] bg-dark w-full'><Loading h='full' w='full' /></div>}
+      </> : <div className='w-full h-full flex justify-center items-center'>
+        <Jelly color='#fff' />
+      </div>}
     </>
 
   );

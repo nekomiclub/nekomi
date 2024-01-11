@@ -19,11 +19,13 @@ import { routes } from '../routes';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { logout } from './authorization';
 import userSlice from '../store/reducers/userSlice';
+import { ITokenData } from '../interfaces/ITokenData';
 
 const Header: NextPage = (props) => {
   const router = useRouter();
 
-  const { uid, username, ...state } = useAppSelector(state => state.user)
+  const state = useAppSelector(state => state.user)
+  const [userData, setUserData] = useState<ITokenData>(useAppSelector(state => state.user))
   const dispatch = useAppDispatch();
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -39,11 +41,18 @@ const Header: NextPage = (props) => {
 
   useEffect(() => {
     popup.init()
-
-    if (isAuth) {
-      $api.get(`${env.apiUrl}/v1/user/${uid}`).catch(e => console.error(e)).then(res => setUserAvatar(res!.data!.avatar))
-    }
   }, [])
+
+  useEffect(() => {
+    if (!state.username) return;
+
+    if (state.isAuth) {
+      $api.get(`${env.apiUrl}/v1/user/${state.uid}`).catch(e => console.error(e)).then(res => setUserAvatar(res!.data!.avatar))
+    }
+
+    setIsAuth(state.isAuth)
+    setUserData(state)
+  }, [state])
 
   useEffect(() => {
     (async function () {
@@ -82,7 +91,7 @@ const Header: NextPage = (props) => {
 
                 <div className={`absolute top-[48px] right-0 bg-dark rounded-[2px] duration-200 ${userDetailsOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                   <div className='flex flex-col'>
-                    <Link className='flex items-center gap-[8px] px-[16px] py-[8px] duration-200 hover:bg-white/[.1]' href={`${routes.user.path.replace('/*', '')}/${username}`}>
+                    <Link className='flex items-center gap-[8px] px-[16px] py-[8px] duration-200 hover:bg-white/[.1]' href={`${routes.user.path.replace('/*', '')}/${userData.username}`}>
                       <HeaderAccount width={24} height={24} className='flex-shrink-0' />
                       <p className='text-[16px] text-white font-bold'>Акаунт</p>
                     </Link>
