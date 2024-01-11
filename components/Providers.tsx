@@ -14,6 +14,8 @@ import { decode } from 'jsonwebtoken'
 import { ITokenData, TUserRoles } from '../interfaces/ITokenData';
 import { useAppDispatch } from '../hooks/redux';
 import userSlice from '../store/reducers/userSlice';
+import { WS_URL } from '../config';
+import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 
 const store = setupStore();
 
@@ -87,18 +89,68 @@ export const Routing: NextPage<{ children: any }> = ({ children }) => {
 
 export const State: NextPage<{ children: any }> = ({ children }) => {
   const dispatch = useAppDispatch();
+  const [ws, setWs] = useState<WebSocket>()
 
   useEffect(() => {
     if (typeof window === undefined) return;
 
     const token = localStorage.getItem('token');
 
-    if (!token) return;
+    if (token) {
+      const payload = decode(token) as ITokenData;
 
-    const payload = decode(token) as ITokenData;
+      dispatch(userSlice.actions.reducer({ isAuth: true, ...payload }))
+    };
 
-    dispatch(userSlice.actions.reducer({ isAuth: true, ...payload }))
+    if (!ws) {
+      setWs(new WebSocket(WS_URL))
+    }
   }, [])
+
+  useEffect(() => {
+    if (!ws) return;
+
+    ws.onerror = e => console.error(`WS error: ${e}`)
+
+    let sid = (Math.random() + 1).toString(36).substring(8);
+    let prevAudience = 0;
+
+    ws.onopen = () => {
+      if (!localStorage.getItem('sid')) {
+        localStorage.setItem('sid', sid)
+      } else {
+        sid = localStorage.getItem('sid')!
+      }
+
+      const payload: IWS<IWSPresence> = {
+        type: 'presence',
+        payload: {
+          sid,
+          connectedAt: +new Date()
+        }
+      }
+
+      ws.send(JSON.stringify(payload))
+    }
+
+    ws.onmessage = raw => {
+      const message = JSON.parse(raw.data) as { type: TWS, payload: any };
+
+      //* Update presence 
+      if (prevAudience !== message.payload.audience) {
+        const payload: IWS<IWSPresence> = {
+          type: 'presence',
+          payload: {
+            sid,
+            connectedAt: +new Date()
+          }
+        }
+
+        prevAudience = message.payload.audience
+        ws.send(JSON.stringify(payload))
+      };
+    }
+  }, [ws])
 
   return (
     <>

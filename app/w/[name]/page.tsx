@@ -44,7 +44,8 @@ const TitleItem: NextPage = (props) => {
   const [totalEps, setTotalEps] = useState(0)
   const [selectedDub, setSelectedDub] = useState<ITitleEpisodesDub>()
   const [selectedDubber, setSelectedDubber] = useState<IDubber>()
-  const { isAuth, roles, uid, username } = useAppSelector(state => state.user)
+  const state = useAppSelector(state => state.user)
+  const [userData, setUserData] = useState(useAppSelector(state => state.user))
 
   const [isTitleFavorite, setIsTitleFavorite] = useState(false)
   const [isLibsSelectOpen, setIsLibsSelectOpen] = useState(false)
@@ -69,6 +70,12 @@ const TitleItem: NextPage = (props) => {
   }, [])
 
   useEffect(() => {
+    if (!state.uid) return;
+
+    setUserData(state)
+  }, [state])
+
+  useEffect(() => {
     if (!title) return;
 
     let tmp: any = title!.details?.split('\n') || []
@@ -78,8 +85,8 @@ const TitleItem: NextPage = (props) => {
 
     title!.details = tmp.join('\n');
 
-    if (username) {
-      $api.get<IUser>(`${env.apiUrl}/v1/user/${username}`).catch(e => console.error(e)).then(res => {
+    if (userData.username) {
+      $api.get<IUser>(`${env.apiUrl}/v1/user/${userData.username}`).catch(e => console.error(e)).then(res => {
         const user = res!.data;
         const titleInLibs: TUserList[] = []
 
@@ -124,8 +131,8 @@ const TitleItem: NextPage = (props) => {
   function makeTitleFavorite() {
     setIsTitleFavorite(!isTitleFavorite);
 
-    if (username) {
-      $api.get<IUser>(`${env.apiUrl}/v1/user/${username}`).catch(e => console.error(e)).then(res => {
+    if (userData.username) {
+      $api.get<IUser>(`${env.apiUrl}/v1/user/${userData.username}`).catch(e => console.error(e)).then(res => {
         const user = res!.data;
 
         if (isTitleFavorite) {
@@ -144,8 +151,8 @@ const TitleItem: NextPage = (props) => {
   }
 
   function changeInLibrary(type: TUserList) {
-    if (username) {
-      $api.get<IUser>(`${env.apiUrl}/v1/user/${username}`).catch(e => console.error(e)).then(res => {
+    if (userData.username) {
+      $api.get<IUser>(`${env.apiUrl}/v1/user/${userData.username}`).catch(e => console.error(e)).then(res => {
         const user = res!.data;
 
         if (titleInLibs.includes(type)) {
@@ -182,7 +189,7 @@ const TitleItem: NextPage = (props) => {
               <div className='flex justify-between max-[500px]:gap-[16px] max-[500px]:items-center'>
                 <div className='flex flex-col gap-[4px] w-full'>
                   <h2 className='text-white text-[40px] font-bold max-[600px]:text-[32px] max-[500px]:text-[24px]'>{title.names?.ukr || title.code}</h2>
-                  <h3 className='text-[24px] font-extralight text-white max-[600px]:text-[16px]'>{title.names?.eng || title.code} {roles.includes('editor') ? `/ ${title.id}` : null}</h3>
+                  <h3 className='text-[24px] font-extralight text-white max-[600px]:text-[16px]'>{title.names?.eng || title.code} {userData.roles.includes('editor' || 'root') ? `/ ${title.id}` : null}</h3>
                 </div>
 
                 <div className='flex gap-[8px] items-center'>
@@ -198,8 +205,8 @@ const TitleItem: NextPage = (props) => {
 
                 <div className='flex items-stretch gap-[8px]'>
                   <BorderGradient h='stretch'>
-                    <button className={`h-full watch-btn ${isTitleFavorite ? 'watch-btn--activated' : ''} ${isAuth ? '' : 'watch-btn--disabled'} relative`} disabled={!isAuth} onClick={() => isAuth ? makeTitleFavorite() : null}>
-                      <Tooltip content={isAuth ? `${isTitleFavorite ? 'Прибрати вподобання' : 'Вподобати тайтл'}` : 'Ви не можете вподобати тайтл. Спочатку увійдіть в акаунт'}>
+                    <button className={`h-full watch-btn ${isTitleFavorite ? 'watch-btn--activated' : ''} ${userData.isAuth ? '' : 'watch-btn--disabled'} relative`} disabled={!userData.isAuth} onClick={() => userData.isAuth ? makeTitleFavorite() : null}>
+                      <Tooltip content={userData.isAuth ? `${isTitleFavorite ? 'Прибрати вподобання' : 'Вподобати тайтл'}` : 'Ви не можете вподобати тайтл. Спочатку увійдіть в акаунт'}>
                         <div className='px-[16px] py-[12px]'>
                           <div className='w-[40px] h-[40px] relative'>
                             <IcoHeart width={40} height={40} solid className='white' />
@@ -211,8 +218,8 @@ const TitleItem: NextPage = (props) => {
                   </BorderGradient>
 
                   <BorderGradient h='stretch'>
-                    <button className={`h-full watch-btn ${isAuth ? '' : 'watch-btn--disabled'} relative`} disabled={!isAuth} onClick={() => isAuth ? setIsLibsSelectOpen(!isLibsSelectOpen) : null}>
-                      <Tooltip content={isAuth ? `Додати тайтл в теку` : 'Ви не можете додавати тайтли в теки. Спочатку увійдіть в акаунт'}>
+                    <button className={`h-full watch-btn ${userData.isAuth ? '' : 'watch-btn--disabled'} relative`} disabled={!userData.isAuth} onClick={() => userData.isAuth ? setIsLibsSelectOpen(!isLibsSelectOpen) : null}>
+                      <Tooltip content={userData.isAuth ? `Додати тайтл в теку` : 'Ви не можете додавати тайтли в теки. Спочатку увійдіть в акаунт'}>
                         <div className='px-[16px] py-[12px]'>
                           <div className='w-[40px] h-[40px] relative'>
                             <IcoFolderAdd width={40} height={40} solid className='white' />
