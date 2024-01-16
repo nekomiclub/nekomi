@@ -1,0 +1,12 @@
+.title-card {
+  &-blur {
+    transition: .2s;
+  }
+
+  &:hover {
+    .title-card-blur {
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
+  }
+}

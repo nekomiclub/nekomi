@@ -1,8 +1,16 @@
+// Packages styles
+import 'hash-image/dist/style.css'
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import '../styles/globals.css';
 import '../styles/index.scss'
 
+
 import { Metadata } from 'next'
 import * as Provider from '../components/Providers'
+import axios from 'axios';
+import { env } from '../config';
+import ServerUnavailable from './oops/ServerUnavailable';
 
 export const metadata: Metadata = {
   title: 'Animee',
@@ -20,17 +28,20 @@ export const metadata: Metadata = {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  let serverAvailable = false;
+  await axios.get(`${env.apiUrl}/v1/uptime`).then(() => serverAvailable = true).catch(() => serverAvailable = false)
+
   return (
     <html lang="ua">
       <body id='root'>
         <Provider.Storage>
           <Provider.State>
-            {children}
+            {serverAvailable ? children : <ServerUnavailable />}
           </Provider.State>
         </Provider.Storage>
       </body>

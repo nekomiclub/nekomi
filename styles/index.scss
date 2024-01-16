@@ -97,7 +97,7 @@ button {
         z-index: 2;
         position: relative;
       }
-      
+
       &::before {
         content: "";
         position: absolute;
@@ -122,7 +122,8 @@ button {
   }
 }
 
-html, body {
+html,
+body {
   &::-webkit-scrollbar {
     width: 2px;
   }
@@ -144,7 +145,7 @@ html, body {
   &:hover {
     .home-titleCard-blur {
       padding-top: 24px;
-    padding-bottom: 24px;
+      padding-bottom: 24px;
     }
   }
 }

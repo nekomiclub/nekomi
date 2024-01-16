@@ -30,6 +30,8 @@ import { IUser } from '../../../interfaces/IUser';
 import { IcoFolderAdd } from '../../../assets/ico/folder';
 import { IcoFilledCan, IcoFilledClock, IcoFilledHeart, IcoFilledPlans } from '../../../assets/ico/filled';
 import { IcoEyeSuccess } from '../../../assets/ico/eye';
+import { HashImage } from 'hash-image';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 type TUserList = 'watched' | 'delayed' | 'plans' | 'watching' | 'favorite' | 'custom';
 
@@ -177,12 +179,13 @@ const TitleItem: NextPage = (props) => {
         <Header />
         <div className='h-screen w-full absolute top-0 left-0'>
           <div className='block w-full h-full absolute top-0 left-0 z-[2]' style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0.40) 0%, #121212 90.21%), linear-gradient(227deg, rgba(255, 242, 242, 0.03) 25.7%, rgba(255, 250, 250, 0.07) 94.73%)', backdropFilter: 'blur(35px)' }}></div>
-          {/* Edit with blurhash */}
-          <img src={title.background} loading='lazy' alt="..." className='w-full h-full' />
+          <HashImage src={title.background} fill alt="..." parentClassName='!z-[1] !h-screen' />
         </div>
 
         <div className="wrapper z-[3] gap-[40px] mb-[40px] max-[1140px]:flex-col max-[1140px]:items-center" id='title-about'>
-          <img src={title.poster} loading='lazy' alt="..." className='h-full min-w-[380px] max-w-[500px] max-[545px]:w-full max-[545px]:min-w-[300px] rounded-[4px]' />
+          <div className='h-auto w-fit shrink-0'>
+            <HashImage src={title.poster} alt="..." fill parentClassName='min-w-[380px] max-w-[500px] max-[545px]:w-full max-[545px]:min-w-[300px] !w-full rounded-[4px]' />
+          </div>
 
           <div className='flex flex-col justify-between gap-[24px] w-full'>
             <div className='flex flex-col gap-[24px]'>
@@ -342,22 +345,32 @@ const TitleItem: NextPage = (props) => {
           <div className="wrapper gap-[40px] pb-[40px]">
             <div className='flex gap-[32px] items-start max-[1032px]:flex-col max-[1032px]:items-center'>
               {title.dubs!.some(el => el.eps.length !== 0) ? <>
-                <div className='w-full h-[600px] bg-grey rounded-[2px] mb-[40px]'>
-                  <Player dubs={title.dubs || []} currentDubHandler={currentDubHandler} estimatedEps={title.estimatedEps} titleId={title.id} />
-                </div>
+                <SkeletonTheme baseColor='#121212' highlightColor='#181818'>
+                  <div className='w-full h-[600px] bg-grey rounded-[2px] mb-[40px]'>
+                    <Player dubs={title.dubs || []} currentDubHandler={currentDubHandler} estimatedEps={title.estimatedEps} titleId={title.id} />
+                  </div>
 
-                <div className='bg-grey flex flex-col gap-[32px] rounded-[2px] px-[24px] py-[16px] max-[600px]:w-full'>
-                  {selectedDubber && selectedDub ? <>
+                  <div className='bg-grey flex flex-col gap-[32px] rounded-[2px] px-[24px] py-[16px] max-[600px]:w-full'>
                     <div className='flex justify-between items-center gap-[32px] max-[500px]:flex-col'>
-                      <div className='block w-[128px] h-[128px] rounded-[2px] overflow-hidden flex-shrink-0'>
-                        <img src={selectedDubber?.thumbURL} alt="..." loading='lazy' />
+                      <div className='block w-[128px] h-[128px] flex-shrink-0'>
+                        {selectedDubber ? <>
+                          <HashImage src={selectedDubber?.thumbURL} alt="..." fill parentClassName='rounded-[2px] overflow-hidden' />
+                        </> : <>
+                          <Skeleton height={'100%'} className='rounded-[2px]' />
+                        </>}
                       </div>
 
                       <div className='flex flex-col justify-center items-center px-[32px] w-full'>
                         <p className='text-white text-[24px] font-extralight whitespace-nowrap text-center'>Озвучили</p>
-                        <Link href={routes.dubber.path.replace('*', selectedDubber!.code)}>
-                          <p className='text-white text-[24px] font-bold text-center'>{selectedDubber?.name}</p>
-                        </Link>
+                        {selectedDubber ? <>
+                          <Link href={routes.dubber.path.replace('*', selectedDubber!.code)}>
+                            <p className='text-white text-[24px] font-bold text-center'>{selectedDubber?.name}</p>
+                          </Link>
+                        </> : <>
+                          <div className='w-full'>
+                            <Skeleton count={1} height={24} />
+                          </div>
+                        </>}
                       </div>
                     </div>
 
@@ -365,14 +378,20 @@ const TitleItem: NextPage = (props) => {
                       <Tooltip content='Рейтинг команди'>
                         <div className='flex items-center gap-[8px]'>
                           <IcoRating width={24} height={24} />
-                          <p className="gradient--primary-text text-[24px] font-bold">{selectedDubber?.rating}</p>
+                          <p className="gradient--primary-text text-[24px] font-bold">
+                            {selectedDubber ? selectedDubber?.rating : <Skeleton width={24} />}
+                          </p>
                         </div>
                       </Tooltip>
 
                       <Tooltip content='Перевага команди серед інших'>
                         <div className='flex items-center gap-[8px]'>
                           <IcoClock width={24} height={24} />
-                          <p className="gradient--primary-text text-[24px] font-bold">-</p>
+                          <p className="gradient--primary-text text-[24px] font-bold">
+                            {selectedDubber ? <>
+                              -
+                            </> : <Skeleton width={24} />}
+                          </p>
                         </div>
                       </Tooltip>
                     </div>
@@ -446,10 +465,8 @@ const TitleItem: NextPage = (props) => {
                         </div>
                       </div>
                     </> : null}
-                  </> : <>
-                    <p className='text-[24px] text-white whitespace-nowrap font-extralight'>Озвучка не вибрана</p>
-                  </>}
-                </div>
+                  </div>
+                </SkeletonTheme>
               </> : <>
                 <h3 className='text-[24px] text-white gradient--primary-text font-bold'>Нажаль, озвучок нема</h3>
               </>}

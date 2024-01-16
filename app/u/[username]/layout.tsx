@@ -5,13 +5,14 @@ import { Metadata, ResolvingMetadata } from "next";
 import NotFound from "@/oops/404/page";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
-import { UserHeader, UserContent } from "./content";
+import { UserHeader, UserContent, UserBackground } from "./content";
 import { headers } from 'next/headers'
 
 
 import DefaultBg from '../../../assets/defaultLargeImages/1.webp'
 import './styles.scss'
 import { getRoute } from "../../../components/Providers";
+import { HashImage } from "hash-image";
 
 interface IProps {
   children: React.ReactNode,
@@ -64,7 +65,7 @@ export default async function Layout({ children, params }: IProps) {
     <main className='w-full min-h-screen h-full bg-dark flex flex-col justify-center items-center py-[120px]'>
 
       <div className='fixed w-full h-full top-0 left-0'>
-        <img src={DefaultBg.src} alt="..." className='w-full h-full' />
+        <UserBackground src={DefaultBg.src} />
       </div>
 
       <div className="wrapper max-w-[1170px]">

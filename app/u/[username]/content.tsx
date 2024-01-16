@@ -14,6 +14,7 @@ import { IcoEyeHidden, IcoEyeSuccess, IcoEyeVisible } from '../../../assets/ico/
 
 import './styles.scss'
 import { routes } from '../../../routes';
+import { HashImage } from 'hash-image';
 
 type TTab = 'home' | 'stats' | 'library' | 'settings';
 
@@ -48,7 +49,7 @@ export const LibItem: NextPage<{ list: IUserList, username: string }> = ({ list,
         {list.id.match(/^watching/gi) && <IcoWatching width={128} height={128} />}
 
         <div className='flex items-center gap-[8px]'>
-          <p className='text-[16px] text-white font-extralight'>{list.name}</p>
+          <p className='text-[16px] text-white font-extralight'>{list.name} ({list.titles.length})</p>
 
           <Tooltip content={`Ця тека ${list.hidden ? 'прихована' : 'видима'} для всіх користувачів`}>
             {list.hidden ? <IcoEyeHidden width={16} height={16} /> : <IcoEyeVisible width={16} height={16} />}
@@ -63,7 +64,7 @@ export const UserHeader: NextPage<{ user: IUser }> = ({ user }) => {
   return (
     <>
       <div className='flex w-full items-center gap-[40px] pb-[16px] max-[550px]:flex-col'>
-        <img src={user.avatar} alt={`Аватар ${user.username}`} loading='lazy' width={128} height={128} className='rounded-[4px]' />
+        <HashImage src={user.avatar} alt={`Аватар ${user.username}`} width={128} height={128} parentClassName='rounded-[4px] overflow-hidden' />
 
         <div className='flex flex-col gap-[4px]'>
           <div className='flex gap-[24px] items-center max-[550px]:justify-center'>
@@ -163,4 +164,12 @@ export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' |
       </div>
     </div>
   );
+}
+
+export const UserBackground: NextPage<{ src: string }> = ({ src }) => {
+  return (
+    <>
+      <HashImage src={src} alt="..." fill parentClassName='!h-full' />
+    </>
+  )
 }

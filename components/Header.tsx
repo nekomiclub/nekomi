@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { logout } from './authorization';
 import userSlice from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
+import { HashImage } from 'hash-image';
 
 const Header: NextPage = (props) => {
   const router = useRouter();
@@ -87,7 +88,7 @@ const Header: NextPage = (props) => {
 
             {isAuth ? <>
               <button className={`relative`} onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
-                <img src={userAvatar} alt="avatar" loading='lazy' width={40} height={40} className='rounded-[32px] bg-grey' />
+                <HashImage src={userAvatar} alt="..." width={40} height={40} parentClassName='rounded-[32px] overflow-hidden' />
 
                 <div className={`absolute top-[48px] right-0 bg-dark rounded-[2px] duration-200 ${userDetailsOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                   <div className='flex flex-col'>
@@ -121,7 +122,7 @@ const Header: NextPage = (props) => {
               {searchResults.length ? searchResults.map(title => {
                 return <Link href={`${routes.watch.path}/${title.code}`} onClick={() => document.documentElement.style.overflow = 'visible'} key={title.id}>
                   <div className='px-[16px] py-[8px] duration-200 w-fit rounded-[4px] hover:bg-grey flex items-start gap-[16px]'>
-                    <img src={title.poster} alt={`Poster for ${title.code}`} loading='lazy' className='w-[60px] h-[80px] bg-grey' />
+                    <HashImage src={title.poster} alt={`Poster for ${title.code}`} width={60} height={80} />
 
                     <div className='flex flex-col gap-[4px]'>
                       <p className='text-[24px] font-extralight text-white'>{title.names.ukr || title.code}</p>
@@ -135,7 +136,10 @@ const Header: NextPage = (props) => {
                         <p className='text-[16px] font-extralight text-white'>{title.year}</p>
                       </div>
 
-                      {title.dubs?.length ? <span className='font-bold gradient--primary-text'>Має озвучку</span> : <span className='font-extralight text-white'>Озвучка відсутня</span>}
+                      <div className='flex gap-[16px] max-[560px]:flex-col items-start max-[560px]:gap-[8px]'>
+                        {title.dubs?.length ? <span className='font-bold gradient--primary-text'>Має озвучку</span> : <span className='font-extralight text-white'>Озвучка відсутня</span>}
+                        {title.dubs?.length ? <span className='font-bold gradient--primary-text'>Тайтл оновлений</span> : <span className='font-extralight text-white'>Тайтл не оновлений</span>}
+                      </div>
                     </div>
                   </div>
                 </Link>

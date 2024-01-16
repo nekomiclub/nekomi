@@ -18,6 +18,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/css';
 import { useIdleTimer } from 'react-idle-timer';
+import { HashImage } from 'hash-image';
+import Skeleton from 'react-loading-skeleton';
 
 interface IHeadTitle {
   name: string,
@@ -37,7 +39,7 @@ const TitleItem: React.FC<{ skeleton?: boolean, title?: IActualTitle }> = ({ ske
   return <Link href={skeleton ? '#' : `${routes.watch.path}/${title?.code}`} className='home-titleCard'>
     <div className={`relative w-full h-[200px] bg-grey rounded-[2px] flex flex-col justify-end`}>
       {skeleton ? null : <>
-        <img src={title!.poster} alt={`Poster for ${title!.code}`} loading='lazy' className='w-full h-full absolute top-0 left-0' />
+        <img src={title!.poster} alt={`Poster for ${title!.code}`} loading='lazy' className='absolute top-0 left-0 w-full h-full' />
         <div className='absolute top-[4px] right-[8px] px-[4px] py-[2px] rounded-[2px] gradient--primary'>
           <p className='text-[12px] text-white font-bold'>{title!.rating}</p>
         </div>
@@ -150,9 +152,9 @@ const Home: NextPage = (props) => {
               </button>
             </div>
 
-            <Swiper className='flex items-center w-full h-[216px]' slidesPerView={5} spaceBetween={8} breakpoints={{
+            <Swiper className='flex items-center w-full h-[216px]' slidesPerView={'auto'} spaceBetween={8} breakpoints={{
               320: {
-                slidesPerView: 1.2,
+                slidesPerView: 1.4,
                 centeredSlides: true
               },
               500: {
@@ -171,7 +173,7 @@ const Home: NextPage = (props) => {
             }}>
               {actualTitles ? <>
                 {actualTitles.map(title => {
-                  return <SwiperSlide className='w-fit' key={title.code}>
+                  return <SwiperSlide key={title.code}>
                     <TitleItem title={title} />
                   </SwiperSlide>
                 })}

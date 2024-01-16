@@ -14,8 +14,10 @@ import { decode } from 'jsonwebtoken'
 import { ITokenData, TUserRoles } from '../interfaces/ITokenData';
 import { useAppDispatch } from '../hooks/redux';
 import userSlice from '../store/reducers/userSlice';
-import { WS_URL } from '../config';
+import { WS_URL, env } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
+import axios from 'axios';
+import ServerUnavailable from '@/oops/ServerUnavailable';
 
 const store = setupStore();
 

@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from 'react'
 import { NextPage } from 'next';
 import { GoogleLogo } from '../../assets/assets'
@@ -8,13 +10,13 @@ import { Logo } from '../../assets/assets';
 import Link from 'next/link';
 import { routes } from '../../routes';
 import { WithGoogle, WithForm } from '../../components/Auth'
+import { HashImage } from 'hash-image';
 
 const AuthSignIn: NextPage = (props) => {
   return (
     <div className='relative h-screen'>
-      {/* Fix with blurhash */}
       <div className='fixed top-0 left-0 w-full h-full'>
-        <Image src={DefaultImg1} alt='...' blurDataURL={DefaultImg1.blurDataURL} fill loading='lazy' className='absolute h-full -z-[1]' />
+        <HashImage src={DefaultImg1.src} alt='...' fill parentClassName='!h-full' />
       </div>
 
       <div className="container relative z-[3]">

@@ -16,26 +16,7 @@ import { routes } from '../../../../../routes';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { Jelly } from '@uiball/loaders'
 import { ITokenData } from '../../../../../interfaces/ITokenData';
-
-const TitleItem: NextPage<{ title: ITitle }> = ({ title }) => {
-  return (
-    <Link href={routes.watchTitle.path.replace('*', title.code)}>
-      <div className='w-full flex flex-col items-center justify-between relative h-[240px] rounded-[4px]'>
-        <img src={title.poster} alt="poster" className='absolute top-0 left-0 w-full h-full' />
-
-        <div className='w-full flex justify-end'>
-          <div className='px-[4px] py-[2px] rounded-[2px] relative top-[2px] right-[4px] gradient--primary'>
-            <p className='text-[12px] text-white font-bold'>{title.rating}</p>
-          </div>
-        </div>
-
-        <div className='bg-dark/[.2] backdrop-blur-[10px] px-[8px] py-[4px] w-full'>
-          <p className='text-[16px] text-white text-center'>{title.names.ukr || title.code}</p>
-        </div>
-      </div>
-    </Link>
-  )
-}
+import { TitleCard } from '../../../../../components/GeneralComponents';
 
 const UserList: NextPage = (props) => {
   const [isErrored, setIsErrored] = useState(false)
@@ -95,7 +76,7 @@ const UserList: NextPage = (props) => {
           </Tooltip>
 
           <div className='flex items-center gap-[16px]'>
-            <h3 className='text-[24px] text-white font-bold'>{list?.name}</h3>
+            <h3 className='text-[24px] text-white font-bold'>{list?.name} ({list.titles.length})</h3>
             {isOwner && <Tooltip content={`Ця тека ${list.hidden ? 'прихована' : 'видима'} для всіх користувачів`}>
               {list.hidden ? <IcoEyeHidden width={16} height={16} /> : <IcoEyeVisible width={16} height={16} />}
             </Tooltip>}
@@ -114,16 +95,12 @@ const UserList: NextPage = (props) => {
         </div>
 
         {!list.hidden || list.hidden && isOwner ? <>
-          <div>
-
-          </div>
-
           <div className='w-full'>
             {list.titles.length ? <>
               {titles.length ? <>
                 <div className='user-library-titles gap-[16px]'>
                   {titles.map(title => {
-                    return <TitleItem title={title} key={title.id} />
+                    return <TitleCard title={title} key={title.id} />
                   })}
                 </div>
               </> : <div className='w-full h-full flex justify-center items-center'>
