@@ -12,7 +12,7 @@ export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
   return (
     <Link href={routes.watchTitle.path.replace('*', title.code)}>
       <div className='title-card w-full flex flex-col items-center justify-between relative h-[240px] rounded-[4px]'>
-        <HashImage src={title.poster} alt="poster" fill parentClassName='absolute top-0 left-0 !w-full !h-full' />
+        <HashImage src={title.poster} alt="poster" fill parentClassName='!absolute top-0 left-0 !w-full !h-full' />
 
         <div className='w-full flex justify-end relative z-[2]'>
           <div className='px-[4px] py-[2px] rounded-[2px] relative top-[2px] right-[4px] gradient--primary'>
