@@ -1,57 +1,62 @@
-'use client'
-
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { IUser, IUserList } from '../../../interfaces/IUser';
-import { LibItem } from './content';
-import $api from '../../../components/http';
+import { LibItem, UserListsContent } from './content';
 import { env } from '../../../config';
 import Loading from '../../../components/Loading';
 import { useAppSelector } from '../../../hooks/redux';
 import { Jelly } from '@uiball/loaders'
+import { routes } from '../../../routes';
+import { ITitle } from '../../../interfaces/ITitle';
+import axios from 'axios';
+import { cookies } from 'next/headers';
+import { decode } from 'jsonwebtoken';
+import { ITokenData } from '../../../interfaces/ITokenData';
 
-const UserLists: NextPage = () => {
-  const params = useParams<{ username: string }>()
-  const [isErrored, setIsErrored] = useState(false)
-  const [user, setUser] = useState<IUser>()
-  const userData = useAppSelector(state => state.user)
+interface IProps {
+  params: { username: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
 
-  useEffect(() => {
-    try {
-      $api.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`).then(res => {
-        const user = res.data;
-        let tmpLists: IUserList[] = []
-        tmpLists.unshift(user!.lists.slice(user.lists.findIndex(el => el.id.match(/watching/g)))[0])
-        tmpLists.unshift(user!.lists.slice(user.lists.findIndex(el => el.id.match(/favorite/g)))[0])
+const UserLists: NextPage<IProps> = async ({ params, searchParams }) => {
+  let isErrored = false;
 
-        user.lists = [...tmpLists, ...user.lists.filter(el => !tmpLists.some(list => el.id === list.id))]
+  const { username } = params;
+  // @ts-expect-error Need empty object
+  let user: IUser = {}
 
-        setUser(user)
-      })
-    } catch (e) {
-      console.error(e)
-      setIsErrored(true)
-    }
-  }, [])
+  try {
+    await axios.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`).then(res => {
+      const data = res.data;
+      let tmpLists: IUserList[] = []
+      tmpLists.unshift(data!.lists.slice(data.lists.findIndex(el => el.id.match(/watching/g)))[0])
+      tmpLists.unshift(data!.lists.slice(data.lists.findIndex(el => el.id.match(/favorite/g)))[0])
 
-  useEffect(() => {
-    if (!user) return;
-  }, [user])
+      user.lists = [...tmpLists, ...data.lists.filter(el => !tmpLists.some(list => el.id === list.id))]
+      user = data;
+    })
+  } catch (e) {
+    isErrored = true;
+  }
+
+  if (!user.uid) {
+    isErrored = true;
+  }
+
+  const token = cookies().get('refreshToken')?.value;
+  // @ts-expect-error Need empty object
+  let tokenPayload: ITokenData = {}
+
+  if (token) {
+    tokenPayload = decode(token)! as ITokenData;
+  }
+
+  const isOwner = tokenPayload.username === user.username || false;
 
   return isErrored ? <p className='text-[24px] text-white font-bold'>Йой, ви не повинні були цього бачити! Створіть будь ласка тікет з темою: UserLists data fetch error та прікріпіть лог консолі (F12 - Консоль)</p> : (
     <>
-      {user ? <>
-        {user.lists.some(el => !el.hidden) || userData.username === params.username ? <>
-          <div className='user-library gap-[8px] w-full'>
-            {user.lists.map(list => {
-              return <LibItem list={list} username={params.username} key={list.id} />
-            })}
-          </div>
-        </> : <h3 className='text-[24px] text-white font-bold'>Всі теки цього користувача приховані</h3>}
-      </> : <div className='w-full h-full flex justify-center items-center'>
-        <Jelly color='#fff' />
-      </div>}
+      <UserListsContent user={user} isOwner={isOwner} />
     </>
 
   );

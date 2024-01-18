@@ -179,7 +179,7 @@ const TitleItem: NextPage = (props) => {
         <Header />
         <div className='h-screen w-full absolute top-0 left-0'>
           <div className='block w-full h-full absolute top-0 left-0 z-[2]' style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0.40) 0%, #121212 90.21%), linear-gradient(227deg, rgba(255, 242, 242, 0.03) 25.7%, rgba(255, 250, 250, 0.07) 94.73%)', backdropFilter: 'blur(35px)' }}></div>
-          <HashImage src={title.background} fill alt="..." parentClassName='!z-[1] !h-screen' />
+          <HashImage src={title.background} fill alt="..." parentClassName='!z-[1] !h-screen' initialHash='L025[Uj[fQj[j[fQfQfQfQfQfQfQ' />
         </div>
 
         <div className="wrapper z-[3] gap-[40px] mb-[40px] max-[1140px]:flex-col max-[1140px]:items-center" id='title-about'>

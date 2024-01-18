@@ -36,12 +36,10 @@ export const SidebarItem: NextPage<{ currTab: TTab, tab: TTab, setTab: (tab: TTa
   )
 }
 
-export const LibItem: NextPage<{ list: IUserList, username: string }> = ({ list, username }) => {
-  const isOwner = username === useAppSelector(state => state.user).username;
-
+export const LibItem: NextPage<{ list: IUserList, isOwner: boolean, link: string }> = ({ list, isOwner, link }) => {
   return (
     <>
-      {!list.hidden || list.hidden && isOwner ? <Link className='px-[16px] pt-[24px] pb-[8px] flex items-center flex-col gap-[16px] border border-white rounded-[2px] duration-200 hover:bg-dark/[.1]' href={routes.userList.path.replace('*', username).replace('*', list.id)}>
+      {!list.hidden || list.hidden && isOwner ? <Link className='px-[16px] pt-[24px] pb-[8px] flex items-center flex-col gap-[16px] border border-white rounded-[2px] duration-200 hover:bg-dark/[.1]' href={link}>
         {list.id.match(/^fav/gi) && <IcoFilledHeart width={128} height={128} />}
         {list.id.match(/^watched/gi) && <IcoEyeSuccess width={128} height={128} />}
         {list.id.match(/^plans/gi) && <IcoFilledPlans width={128} height={128} />}
@@ -169,7 +167,21 @@ export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' |
 export const UserBackground: NextPage<{ src: string }> = ({ src }) => {
   return (
     <>
-      <HashImage src={src} alt="..." fill parentClassName='!h-full' />
+      <HashImage src={src} alt="..." fill parentClassName='!h-full' initialHash='L025[Uj[fQj[j[fQfQfQfQfQfQfQ' />
+    </>
+  )
+}
+
+export const UserListsContent: NextPage<{ user: IUser, isOwner: boolean }> = ({ user, isOwner }) => {
+  return (
+    <>
+      {user.lists.some(el => !el.hidden) || isOwner ? <>
+        <div className='user-library gap-[8px] w-full'>
+          {user.lists.map(list => {
+            return <LibItem list={list} isOwner={true} link={routes.userList.path.replace('*', user.username).replace('*', list.id)} key={list.id} />
+          })}
+        </div>
+      </> : <h3 className='text-[24px] text-white font-bold'>Всі теки цього користувача приховані</h3>}
     </>
   )
 }
