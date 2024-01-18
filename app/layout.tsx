@@ -1,6 +1,7 @@
 // Packages styles
 import 'hash-image/dist/style.css'
 import 'react-loading-skeleton/dist/skeleton.css'
+import 'react-uvc/dist/css/popup.css';
 
 import '../styles/globals.css';
 import '../styles/index.scss'
