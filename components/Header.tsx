@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState, useRef } from 'react'
 import { HeaderAccount, HeaderLogout, HeaderSearch, Logo, IcoRating } from '../assets/assets';
 import { Popup } from 'react-uvc'
 import { useDebounce } from 'use-debounce';
-import 'react-uvc/dist/css/popup.css'; // Optional styles.
 
 import '../styles/components/serachPopup.scss'
 import { ITitle } from '../interfaces/ITitle';
@@ -21,6 +20,9 @@ import { logout } from './authorization';
 import userSlice from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
 import { HashImage } from 'hash-image';
+
+// Debounced query fired twice with empty string
+let firstFirstLoad = true;
 
 const Header: NextPage = (props) => {
   const router = useRouter();
@@ -38,6 +40,7 @@ const Header: NextPage = (props) => {
     id: 'search-popup'
   }))
 
+  const firstLoad = useRef(true)
   const [userAvatar, setUserAvatar] = useState('')
 
   useEffect(() => {
@@ -56,6 +59,14 @@ const Header: NextPage = (props) => {
   }, [state])
 
   useEffect(() => {
+    if (!debouncedQuery.length && firstLoad.current && firstFirstLoad) {
+      firstFirstLoad = false;
+      return
+    } else if (!debouncedQuery.length && firstLoad.current) {
+      firstLoad.current = false;
+      return
+    }
+
     (async function () {
       const res = await $api.get<{ results: ITitle[] }>(`${env.apiUrl}/v1/titles/search?query=${debouncedQuery}`)
       setSearchResults(res.data.results)
@@ -122,7 +133,7 @@ const Header: NextPage = (props) => {
               {searchResults.length ? searchResults.map(title => {
                 return <Link href={`${routes.watch.path}/${title.code}`} onClick={() => document.documentElement.style.overflow = 'visible'} key={title.id}>
                   <div className='px-[16px] py-[8px] duration-200 w-fit rounded-[4px] hover:bg-grey flex items-start gap-[16px]'>
-                    <HashImage src={title.poster} alt={`Poster for ${title.code}`} width={60} height={80} />
+                    <HashImage src={title.poster} alt={`Poster for ${title.code}`} width={60} height={80} parentClassName='shrink-0' style={{ visibility: 'inherit' }} />
 
                     <div className='flex flex-col gap-[4px]'>
                       <p className='text-[24px] font-extralight text-white'>{title.names.ukr || title.code}</p>
@@ -143,7 +154,9 @@ const Header: NextPage = (props) => {
                     </div>
                   </div>
                 </Link>
-              }) : <p className='text-[16px] font-bold gradient--primary-text'>За вашим запитом нічого не знайдено</p>}
+              }) : <p className='text-[16px] font-bold gradient--primary-text'>
+                {!debouncedQuery.length ? 'Почніть водити запит...' : 'Нічого не знайдено (´。＿。｀)'}
+              </p>}
             </> : <>
               <p className='text-[16px] font-bold gradient--primary-text'>Завантажуємо...</p>
             </>}

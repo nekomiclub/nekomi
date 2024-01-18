@@ -91,11 +91,17 @@ export const UserHeader: NextPage<{ user: IUser }> = ({ user }) => {
 
 export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' | 'list' }> = ({ user, children, type }) => {
   const params = useParams<{ username: string }>()
-  const userData = useAppSelector(state => state.user)
+  const state = useAppSelector(state => state.user)
   const [tab, setTab] = useState<TTab>('library')
   const [menuCollapsed, setMenuCollapsed] = useState(false)
-  const [isOwner] = useState(user.username === userData.username)
+  const [isOwner, setIsOwner] = useState(false)
   const root = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!state.uid) return;
+
+    setIsOwner(state.username === params.username)
+  }, [state])
 
   useEffect(() => {
     const ps = root.current!.querySelectorAll('.user-sidebar-item p')
@@ -178,7 +184,7 @@ export const UserListsContent: NextPage<{ user: IUser, isOwner: boolean }> = ({ 
       {user.lists.some(el => !el.hidden) || isOwner ? <>
         <div className='user-library gap-[8px] w-full'>
           {user.lists.map(list => {
-            return <LibItem list={list} isOwner={true} link={routes.userList.path.replace('*', user.username).replace('*', list.id)} key={list.id} />
+            return <LibItem list={list} isOwner={isOwner} link={routes.userList.path.replace('*', user.username).replace('*', list.id)} key={list.id} />
           })}
         </div>
       </> : <h3 className='text-[24px] text-white font-bold'>Всі теки цього користувача приховані</h3>}

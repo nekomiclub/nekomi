@@ -22,6 +22,7 @@ const UserList: NextPage = (props) => {
   const [isErrored, setIsErrored] = useState(false)
   const [user, setUser] = useState<IUser>()
   const [list, setList] = useState<IUserList>()
+  const [listNotFound, setListNotFound] = useState(false)
   const [listType, setListType] = useState<TUserListType>()
   const params = useParams<{ username: string, listId: string }>()
   const [isOwner, setIsOwner] = useState(false);
@@ -32,20 +33,29 @@ const UserList: NextPage = (props) => {
   const [userData, setUserData] = useState<ITokenData>()
 
   useEffect(() => {
-    if (!state.username) return;
-
     try {
       $api.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`).then(res => {
         setUser(res.data)
-        setIsOwner(res.data.username === state.username)
-        setList(res.data.lists.find(el => el.id === params.listId))
+
+        const list = res.data.lists.find(el => el.id === params.listId);
+
+        if (list) {
+          setList(res.data.lists.find(el => el.id === params.listId))
+        } else {
+          setListNotFound(true)
+        }
       })
     } catch (e) {
       console.error(e)
       setIsErrored(true)
     }
+  }, [])
+
+  useEffect(() => {
+    if (!state.username) return;
 
     setUserData(state)
+    setIsOwner(state.username === params.username)
   }, [state])
 
   useEffect(() => {
@@ -109,6 +119,21 @@ const UserList: NextPage = (props) => {
             </> : <h3 className='text-[24px] text-white font-bold text-center'>Ця тека порожня</h3>}
           </div>
         </> : <h3 className='text-[24px] text-white font-bold'>Це приватна тека.</h3>}
+      </> : listNotFound ? <>
+        <div className='flex justify-between items-center gap-[16px] w-full'>
+          <Tooltip content='Повернутися назад'>
+            <Link href={routes.user.path.replace('*', params.username)}>
+              <IcoArrow width={24} height={24} />
+            </Link>
+          </Tooltip>
+
+          <div className='flex items-center gap-[16px]'>
+            <h3 className='text-[24px] text-white font-bold'>Цієї теки не існує.</h3>
+          </div>
+
+          {/* Blank div for justify between */}
+          <div></div>
+        </div>
       </> : <div className='w-full h-full flex justify-center items-center'>
         <Jelly color='#fff' />
       </div>}
