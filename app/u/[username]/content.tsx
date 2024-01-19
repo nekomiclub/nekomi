@@ -179,6 +179,17 @@ export const UserBackground: NextPage<{ src: string }> = ({ src }) => {
 }
 
 export const UserListsContent: NextPage<{ user: IUser, isOwner: boolean }> = ({ user, isOwner }) => {
+  useEffect(() => {
+    console.groupCollapsed('RUNTIME UserListsContent COMPONENT DEBUG')
+
+    console.log(`ISOWNER: `, isOwner)
+    console.log(`USERNAME: `, user.username)
+    console.log(`UID: `, user.uid)
+    console.log(`IS SOME VISIBLE LISTS: `, user.lists.some(el => !el.hidden))
+
+    console.groupEnd();
+  }, [])
+
   return (
     <>
       {user.lists.some(el => !el.hidden) || isOwner ? <>
