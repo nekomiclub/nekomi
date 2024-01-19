@@ -1,18 +1,11 @@
 import { NextPage } from 'next';
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
 import { IUser, IUserList } from '../../../interfaces/IUser';
 import { LibItem, UserListsContent } from './content';
 import { env } from '../../../config';
-import Loading from '../../../components/Loading';
-import { useAppSelector } from '../../../hooks/redux';
-import { Jelly } from '@uiball/loaders'
-import { routes } from '../../../routes';
-import { ITitle } from '../../../interfaces/ITitle';
 import axios from 'axios';
-import { cookies } from 'next/headers';
 import { decode } from 'jsonwebtoken';
 import { ITokenData } from '../../../interfaces/ITokenData';
+import { cookies } from 'next/headers';
 
 interface IProps {
   params: { username: string }
@@ -52,7 +45,7 @@ const UserLists: NextPage<IProps> = async ({ params, searchParams }) => {
     tokenPayload = decode(token)! as ITokenData;
   }
 
-  const isOwner = tokenPayload.username === username || false;
+  const isOwner = tokenPayload.username === username;
 
   return isErrored ? <p className='text-[24px] text-white font-bold'>Йой, ви не повинні були цього бачити! Створіть будь ласка тікет з темою: UserLists data fetch error та прікріпіть лог консолі (F12 - Консоль)</p> : (
     <>
