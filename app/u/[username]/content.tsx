@@ -179,9 +179,20 @@ export const UserBackground: NextPage<{ src: string }> = ({ src }) => {
 }
 
 export const UserListsContent: NextPage<{ user: IUser, isOwner: boolean }> = ({ user, isOwner }) => {
+  useEffect(() => {
+    console.groupCollapsed('RUNTIME UserListsContent COMPONENT DEBUG')
+
+    console.log(`ISOWNER: `, isOwner)
+    console.log(`USER: `, user)
+    console.log(`LISTS: `, user.lists)
+    console.log(`IS SOME VISIBLE LISTS: `, user.lists.some(el => !el.hidden))
+
+    console.groupEnd();
+  }, [])
+
   return (
     <>
-      {user.lists.some(el => !el.hidden) || isOwner ? <>
+      {isOwner || user.lists.some(el => !el.hidden) ? <>
         <div className='user-library gap-[8px] w-full'>
           {user.lists.map(list => {
             return <LibItem list={list} isOwner={isOwner} link={routes.userList.path.replace('*', user.username).replace('*', list.id)} key={list.id} />

@@ -52,7 +52,7 @@ const UserLists: NextPage<IProps> = async ({ params, searchParams }) => {
     tokenPayload = decode(token)! as ITokenData;
   }
 
-  const isOwner = tokenPayload.username === user.username || false;
+  const isOwner = tokenPayload.username === username || false;
 
   return isErrored ? <p className='text-[24px] text-white font-bold'>Йой, ви не повинні були цього бачити! Створіть будь ласка тікет з темою: UserLists data fetch error та прікріпіть лог консолі (F12 - Консоль)</p> : (
     <>
