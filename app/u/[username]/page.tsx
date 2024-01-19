@@ -1,6 +1,4 @@
 import { NextPage } from 'next';
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
 import { IUser, IUserList } from '../../../interfaces/IUser';
 import { LibItem, UserListsContent } from './content';
 import { env } from '../../../config';
