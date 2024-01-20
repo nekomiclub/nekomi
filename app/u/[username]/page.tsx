@@ -2,13 +2,8 @@ import { NextPage } from 'next';
 import { IUser, IUserList } from '../../../interfaces/IUser';
 import { LibItem, UserListsContent } from './content';
 import { env } from '../../../config';
-import Loading from '../../../components/Loading';
-import { useAppSelector } from '../../../hooks/redux';
-import { Jelly } from '@uiball/loaders'
-import { routes } from '../../../routes';
-import { ITitle } from '../../../interfaces/ITitle';
 import axios from 'axios';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { decode } from 'jsonwebtoken';
 import { ITokenData } from '../../../interfaces/ITokenData';
 
@@ -50,9 +45,6 @@ const UserLists: NextPage<IProps> = async ({ params, searchParams }) => {
     tokenPayload = decode(token)! as ITokenData;
   }
 
-  console.log(token)
-
-  console.log('- - - -')
   console.log(tokenPayload)
   console.log(username)
   console.log(tokenPayload.username === username)

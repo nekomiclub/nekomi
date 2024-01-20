@@ -88,6 +88,8 @@ export const dubsIDs = {
   'Кіцуне': '275342e8-a6be-47bc-86f6-c3084b9867f9',
   'Лісовий Вітер': '1d8b59c1-3e11-49fc-99ab-f3e080a099bd',
   'Справжня Козацька Озвучка (СКО)': 'c0bafd73-0a38-46f8-a5ef-b8e6aa150020',
+  'Hatoshi': '8257785e-372b-4aed-b19b-49bfc4808340',
+  'Робота Голосом': '057fe719-50ff-46cb-b0d4-dd052c0cd563'
 }
 
 export const genresDescription: {
