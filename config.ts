@@ -89,7 +89,9 @@ export const dubsIDs = {
   'Лісовий Вітер': '1d8b59c1-3e11-49fc-99ab-f3e080a099bd',
   'Справжня Козацька Озвучка (СКО)': 'c0bafd73-0a38-46f8-a5ef-b8e6aa150020',
   'Hatoshi': '8257785e-372b-4aed-b19b-49bfc4808340',
-  'Робота Голосом': '057fe719-50ff-46cb-b0d4-dd052c0cd563'
+  'Робота Голосом': '057fe719-50ff-46cb-b0d4-dd052c0cd563',
+  'GlassMoon': '93476a61-c38f-41b2-8f75-19eaef8a047c',
+  'Субтитри': '254efe79-f62a-4911-8e79-bffad83a6278'
 }
 
 export const genresDescription: {
