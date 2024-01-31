@@ -733,7 +733,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     }
   }, [isPlayerIdle])
 
-  // Pause and start at the beginning //! In dev mode not check if video reassembled
+  // Pause and start at the beginning
   useEffect(() => {
     setIsPaused(true);
 
@@ -750,7 +750,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
       writeLSData({});
     }
 
-    if (!devMode) axios.get(currentDub.eps.find(el => el.order === currentEp)!.framesURL![0]).then(() => setVideoProcessed(true)).catch(e => setVideoProcessed(false))
+    if (currentDub.eps.find(el => el.order === currentEp) === undefined) return
+    axios.get(currentDub.eps.find(el => el.order === currentEp)!.framesURL![0]).then(() => setVideoProcessed(true)).catch(e => setVideoProcessed(false))
   }, [currentEp, currentDub])
 
   // Change progress width according to moment
@@ -938,7 +939,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     } else {
       // No breakpoints
       durationRangePreview.style.transform = `translateX(${offset}px)`;
-      durationRangePreview.style.left = `-80px`;
+      durationRangePreview.style.left = `-${halfPreviewWidth}px`;
     }
 
     durationRangePreview.querySelector('p')!.innerText = getHrsMinsSecs(secs).pretty
@@ -1236,8 +1237,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
                 )}
               />
 
-              <div ref={durationRangePreviewRef} id='player-duration--preview' className='absolute w-[160px] bg-dark rounded-[4px] bottom-[300%] left-0 overflow-hidden opacity-0 invisible'>
-                <div className='w-[160px] h-[120px]'>
+              <div ref={durationRangePreviewRef} id='player-duration--preview' className='absolute w-[240px] bg-dark rounded-[4px] bottom-[300%] left-0 overflow-hidden opacity-0 invisible'>
+                <div className='w-[240px] h-[135px]'>
                   {videoProcessed ? <>
                     <img src="" alt="..." loading='lazy' className='w-full h-full' id='player-previews--frame' />
                   </> : <div className='flex w-ful h-full justify-center items-center flex-col gap-[4px]'>
