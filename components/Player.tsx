@@ -3,6 +3,8 @@
 import { NextPage } from 'next';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState, MouseEvent, useRef, useCallback } from 'react'
+import { getImageSize } from 'react-image-size';
+
 import { OopsServerUnavailable, Play, PlayerDubsList, PlayerNext } from '../assets/assets';
 import { ITitleEpisodeDubbed, ITitleEpisodesDub } from '../interfaces/ITitle';
 import $api from './http';
@@ -631,7 +633,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
   useIdleTimer({
     onIdle: () => {
-      setIsPlayerIdle(true)
+      // setIsPlayerIdle(true)
     },
     onAction: () => setIsPlayerIdle(false),
     timeout: 5000,
@@ -901,10 +903,10 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
         setPreview(secs, durationRangePreview.querySelector('img')!)
       })
 
-      durationRange.addEventListener('pointerleave', () => {
-        durationRangePreview.style.opacity = '0';
-        durationRangePreview.style.visibility = 'hidden';
-      })
+      // durationRange.addEventListener('pointerleave', () => {
+      //   durationRangePreview.style.opacity = '0';
+      //   durationRangePreview.style.visibility = 'hidden';
+      // })
     }
   }, [videoDuration])
 
@@ -945,18 +947,25 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     durationRangePreview.querySelector('p')!.innerText = getHrsMinsSecs(secs).pretty
   }
 
-  function setPreview(moment: number, img: HTMLImageElement) {
+  async function setPreview(moment: number, img: HTMLImageElement) {
     if (!img) return;
 
     const frames = currentDub.eps.find(el => el.order === currentEp)!.framesURL!
-    const momentIndex = Math.floor(Math.floor(moment / 5) / 25);
-    const momentFrame = frames[momentIndex];
-
+    let previewIndex = Math.floor(moment / 5);
+    const frameIndex = Math.floor(previewIndex / 25);
+    const frame = frames[frameIndex];
     const imgWidth = img.offsetWidth;
-    const momentOffset = momentIndex * (imgWidth * 25); // img width * 25
 
-    img.setAttribute('src', momentFrame)
-    img.style.objectPosition = `-${Math.floor(Math.floor(moment / 5) * imgWidth) - momentOffset}px` // math.floor / img width
+    while (previewIndex > 25) {
+      previewIndex -= 25;
+    }
+
+    const offset = previewIndex * imgWidth;
+    console.log(offset)
+    console.log(imgWidth)
+
+    if (img.getAttribute('src') !== frame) img.setAttribute('src', frame);
+    img.style.objectPosition = `-${offset}px`
   }
 
   const startPlayer = () => {
@@ -1237,8 +1246,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
                 )}
               />
 
-              <div ref={durationRangePreviewRef} id='player-duration--preview' className='absolute w-[240px] bg-dark rounded-[4px] bottom-[300%] left-0 overflow-hidden opacity-0 invisible'>
-                <div className='w-[240px] h-[135px]'>
+              <div ref={durationRangePreviewRef} id='player-duration--preview' className={`absolute h-[135px] w-[240px] bg-black rounded-[4px] bottom-[300%] left-0 overflow-hidden opacity-0 invisible`}>
+                <div className={'flex justify-center w-full h-full'}>
                   {videoProcessed ? <>
                     <img src="" alt="..." loading='lazy' className='w-full h-full' id='player-previews--frame' />
                   </> : <div className='flex w-ful h-full justify-center items-center flex-col gap-[4px]'>
