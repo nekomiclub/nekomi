@@ -633,7 +633,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
   useIdleTimer({
     onIdle: () => {
-      // setIsPlayerIdle(true)
+      setIsPlayerIdle(true)
     },
     onAction: () => setIsPlayerIdle(false),
     timeout: 5000,
@@ -903,10 +903,10 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
         setPreview(secs, durationRangePreview.querySelector('img')!)
       })
 
-      // durationRange.addEventListener('pointerleave', () => {
-      //   durationRangePreview.style.opacity = '0';
-      //   durationRangePreview.style.visibility = 'hidden';
-      // })
+      durationRange.addEventListener('pointerleave', () => {
+        durationRangePreview.style.opacity = '0';
+        durationRangePreview.style.visibility = 'hidden';
+      })
     }
   }, [videoDuration])
 
