@@ -961,8 +961,6 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     }
 
     const offset = previewIndex * imgWidth;
-    console.log(offset)
-    console.log(imgWidth)
 
     if (img.getAttribute('src') !== frame) img.setAttribute('src', frame);
     img.style.objectPosition = `-${offset}px`
