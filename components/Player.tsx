@@ -1071,9 +1071,15 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
   }
 
   const getHrsMinsSecs = (time: number): { hrs: number, mins: number, secs: number, pretty: string } => {
-    const mins = Math.floor(time / 60);
+    let mins = Math.floor(time / 60);
     const secs = Math.floor(time - mins * 60);
-    const hrs = Math.floor(time / 3600);
+    let hrs = 0;
+
+    while (mins >= 60) {
+      hrs += 1;
+      mins -= 60;
+    }
+
     const pretty = `${hrs ? hrs < 10 ? `0${hrs}:` : `${hrs}:` : ''}${mins < 10 ? `0${mins}:` : `${mins}:`}${secs < 10 ? `0${secs}` : secs}`
 
     return { hrs, mins, secs, pretty }
@@ -1254,7 +1260,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
                   </div>}
                 </div>
 
-                <p className='text-[14px] font-extralight text-white w-full h-full absolute bottom-0 flex justify-center items-end'>00:20</p>
+                <p className='text-[14px] font-extralight text-white w-full h-full absolute bottom-0 flex justify-center items-end'>00:00</p>
               </div>
 
               <div ref={progressRef} className='absolute top-0 left-0 h-full gradient--secondary rounded-[4px] pointer-events-none z-30'></div>
