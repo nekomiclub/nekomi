@@ -1,6 +1,7 @@
 'use client'
 
 import { NextPage } from 'next';
+import { useSearchParams } from 'next/navigation'
 import { useRef, useState, useEffect } from 'react'
 import { GoogleLogo, AuthContinue } from '../assets/assets';
 import { firebaseApp } from './firebase'
@@ -21,6 +22,8 @@ import { routes } from '../routes';
 
 export const WithGoogle: NextPage = (props) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const { isAuth, roles, uid, username } = useAppSelector(state => state.user)
   const { reducer } = userSlice.actions;
   const dispatch = useAppDispatch();
@@ -50,7 +53,7 @@ export const WithGoogle: NextPage = (props) => {
       })
 
       dispatch(reducer({ isAuth: true, roles: tokenData.data.roles, uid: tokenData.data.uid, username: tokenData.data.username }))
-      router.replace(routes.home.path)
+      router.replace(searchParams.get('ref')!)
 
     } catch (e) {
       console.error(e)
@@ -155,79 +158,6 @@ const fvRulesSignup: IFormInputRules[] = [
     }
   }
 ]
-
-export const WithForm: NextPage<{ method: 'signin' | 'signup' }> = (props) => {
-  const ref = useRef<HTMLDivElement>(null)
-
-  const [fv] = useState(new FormValidator({
-    formId: 'auth-form',
-    throw: 'afterEach'
-  }))
-
-  const sendForm = async () => {
-    ref.current!.innerHTML = ''
-
-    const payload = {
-      username: (document.querySelector('#signin-username') as HTMLInputElement).value!,
-      password: (document.querySelector('#signin-password') as HTMLInputElement).value!
-    }
-
-    try {
-      await signin(payload)
-      const tokenData = await $api.post(`${env.apiUrl}/v1/decode`, {
-        method: 'access',
-        token: localStorage.getItem('token')
-      })
-    } catch (e) {
-      if (e instanceof AxiosError) {
-        const emsg = e.response?.data.msg;
-        let responseMsg = '';
-
-        if (emsg === 'User with provided username is not found') {
-          responseMsg = 'Користувач з цим нікнеймом не знайдений';
-        } else if (emsg === 'Password is incorrect') {
-          responseMsg = 'Пароль неправильний';
-        }
-
-
-        ref.current?.insertAdjacentHTML('beforeend', `<p class="text-red-400 max-w-[426px]">${responseMsg || emsg}</p>`)
-      } else {
-        // @ts-ignore
-        ref.current?.insertAdjacentHTML('beforeend', `<p class="text-red-400 max-w-[426px]">При авторизації виникла помилка - ${e.message || e.msg}</p>`)
-      }
-    }
-  }
-
-  useEffect(() => {
-    fv.init();
-  }, [])
-
-  return (
-    <div className='flex flex-col gap-[16px] w-full'>
-      <form action="none" onSubmit={e => fv.validate(e, props.method === 'signin' ? fvRulesSignin : fvRulesSignup, sendForm)} id='auth-form' className='w-full flex flex-col gap-[12px]'>
-        <div className='flex flex-col gap-[4px]'>
-          <input type="text" name='username' id='auth-username' placeholder='@username' className='auth-field' />
-        </div>
-        <div className='flex flex-col gap-[4px]'>
-          <input type="password" name='password' id='auth-password' placeholder='***' className='auth-field' />
-        </div>
-
-        {props.method === 'signup' ? <>
-          <div className='flex flex-col gap-[4px]'>
-            <input type="password" name='password' id='auth-password-confirm' placeholder='***' className='auth-field' />
-          </div>
-        </> : null}
-
-        <button type='submit' className='px-[24px] py-[16px] bg-dark w-full rounded-[4px] flex gap-[40px] items-center justify-center'>
-          <p className='text-white text-[24px] font-extralight'>Продовжити</p>
-          <AuthContinue width={32} height={32} />
-        </button>
-      </form>
-
-      <div ref={ref}></div>
-    </div>
-  );
-}
 
 export const logout = () => {
   console.log('logout')

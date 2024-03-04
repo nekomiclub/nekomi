@@ -1,6 +1,7 @@
 import { NextPage } from "next"
 import React from "react"
 import { TUserRoles } from './interfaces/ITokenData'
+import { devMode } from "./config"
 
 export type TRouteStatus = 'indev' | 'works' | 'clear'
 
@@ -63,7 +64,8 @@ export const routes: IRoutes = {
     access: []
   },
   authSignup: {
-    path: '/auth/signup',
+    path: devMode ? 'http://192.168.0.106:3000/continue' : 'https://account.fk.animee.club',
+    public: true,
     access: []
   },
   watch: {

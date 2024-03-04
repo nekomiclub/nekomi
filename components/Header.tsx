@@ -1,7 +1,7 @@
 'use client'
 
 import { NextPage } from 'next';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { HeaderAccount, HeaderLogout, HeaderSearch, Logo, IcoRating } from '../assets/assets';
 import { Popup } from 'react-uvc'
@@ -10,7 +10,7 @@ import { useDebounce } from 'use-debounce';
 import '../styles/components/serachPopup.scss'
 import { ITitle } from '../interfaces/ITitle';
 import $api from './http';
-import { env } from '../config';
+import { config, env } from '../config';
 import Loading from './Loading';
 import localizeTitle from './localizeTitle';
 import Link from 'next/link';
@@ -26,6 +26,7 @@ let firstFirstLoad = true;
 
 const Header: NextPage = (props) => {
   const router = useRouter();
+  const pathname = usePathname();
 
   const state = useAppSelector(state => state.user)
   const [userData, setUserData] = useState<ITokenData>(useAppSelector(state => state.user))
@@ -116,7 +117,7 @@ const Header: NextPage = (props) => {
                 </div>
               </button>
             </> : <>
-              <Link href={routes.authSignin.path}>
+              <Link href={`${routes.authSignin.path}?ref=${config.services.siteURL}${pathname}`}>
                 <HeaderAccount width={32} height={32} />
               </Link>
             </>}

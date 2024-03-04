@@ -21,6 +21,15 @@ export const env: IEnv = {
   wsPort: 8080
 }
 
+export const config = {
+  services: {
+    apiURL: devMode ? 'http://192.168.0.106' : 'https://api.animee.club',
+    fkUsapiURL: devMode ? 'http://192.168.0.106:45660' : 'https://usapi.fk.animee.club',
+    fkAccount: devMode ? 'http://192.168.0.106:3001' : 'https://account.fk.animee.club',
+    siteURL: devMode ? 'http://192.168.0.106:3001' : 'https://animee.club'
+  }
+}
+
 export const WS_URL = devMode ? `ws://192.168.0.106:${env.wsPort}` : `wss://api.animee.club:${env.wsPort}`;
 
 export const HIDE_IN_PROD = false;

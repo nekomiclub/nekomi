@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { NextPage } from 'next';
+import { useSearchParams } from 'next/navigation'
 import { GoogleLogo } from '../../assets/assets'
 
 import DefaultImg1 from '../../assets/defaultLargeImages/3.webp'
@@ -9,10 +10,12 @@ import Image from 'next/image';
 import { Logo } from '../../assets/assets';
 import Link from 'next/link';
 import { routes } from '../../routes';
-import { WithGoogle, WithForm } from '../../components/Auth'
+import { WithGoogle } from '../../components/Auth'
 import { HashImage } from 'hash-image';
 
 const AuthSignIn: NextPage = (props) => {
+  const searchParams = useSearchParams();
+
   return (
     <div className='relative h-screen'>
       <div className='fixed top-0 left-0 w-full h-full'>
@@ -32,20 +35,14 @@ const AuthSignIn: NextPage = (props) => {
 
           <div className='flex flex-col gap-[4px] w-full'>
             <WithGoogle />
+            <p className='text-white max-w-[400px]'>Авторизація через Google буде прибрана після 22 березня включно</p>
+            <Link href={`${routes.authSignup.path}?ref=${searchParams.get('ref')}`} className='w-full flex gap-[40px] max-[500px]:gap-[24px] max-[500px]:py-[8px] max-[500px]:px-[16px] py-[16px] px-[24px] bg-dark rounded-[2px] justify-center items-center'>
+              <p className='text-white text-[24px] max-[500px]:16px font-extralight'>Продовжити з Fullkekw</p>
+            </Link>
           </div>
-
-          <div className='w-full flex gap-[32px] items-center'>
-            <span className='block w-full h-[1px] bg-[#A1A1A1]/[.5]'></span>
-            <p className='uppercase text-white text-[24px] font-extralight'>ЧИ</p>
-            <span className='block w-full h-[1px] bg-[#A1A1A1]/[.5]'></span>
-          </div>
-
-          <p className='text-white text-[24px] max-[500px]:text-[16px] font-extralight max-w-[490px] text-center'>Авторизація через юзернейм/почту тимчасово недоступна</p>
-
-          {/* <WithForm method='signin' /> */}
         </div>
 
-        <p className='text-white text-[24px] max-[500px]:text-[16px] font-extralight text-center max-[500px]:pb-[32px]'>Нема акаунту? <Link href={routes.authSignup.path} className='text-purple font-bold'>Зареєструватися</Link></p>
+        <p className='text-white text-[24px] max-[500px]:text-[16px] font-extralight text-center max-[500px]:pb-[32px]'>Нема акаунту? <Link href={`${routes.authSignup.path}?ref=${searchParams.get('ref')}`} className='text-purple font-bold'>Зареєструватися</Link></p>
       </div>
     </div>
   );

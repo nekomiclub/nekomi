@@ -1,10 +1,11 @@
 'use client'
 
 import { NextPage } from 'next';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation'
+
 import { useState, useEffect } from 'react'
 import { Provider } from 'react-redux';
 import { setupStore } from '../store/store'
-import { usePathname } from 'next/navigation';
 import { IRoute, TRouteStatus, routes } from '../routes';
 import NotFound from '@/oops/404/page';
 import Loading from './Loading';
@@ -14,10 +15,12 @@ import { decode } from 'jsonwebtoken'
 import { ITokenData, TUserRoles } from '../interfaces/ITokenData';
 import { useAppDispatch } from '../hooks/redux';
 import userSlice from '../store/reducers/userSlice';
-import { WS_URL, env } from '../config';
+import { WS_URL, config, env } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 import axios from 'axios';
 import ServerUnavailable from '@/oops/ServerUnavailable';
+import { IUser } from '../interfaces/IUser';
+import { signin } from './authorization';
 
 const store = setupStore();
 
@@ -90,23 +93,59 @@ export const Routing: NextPage<{ children: any }> = ({ children }) => {
 }
 
 export const State: NextPage<{ children: any }> = ({ children }) => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
   const dispatch = useAppDispatch();
+
   const [ws, setWs] = useState<WebSocket>()
 
   useEffect(() => {
     if (typeof window === undefined) return;
 
-    const token = localStorage.getItem('token');
+    (async function () {
+      const signinToken = searchParams.get('signinPayload');
+      if (signinToken) {
+        try {
+          const res = await axios.post(`${config.services.fkUsapiURL}/token/decode`, {
+            token: signinToken,
+            method: 'access'
+          })
 
-    if (token) {
-      const payload = decode(token) as ITokenData;
+          const signinPayload = res.data as {
+            msg: string, info: any, verified: boolean, payload: {
+              id: string,
+              photoURL: string,
+              username: string
+            }
+          }
 
-      dispatch(userSlice.actions.reducer({ isAuth: true, ...payload }))
-    };
+          if (signinPayload.verified) {
+            await signin({
+              password: '~usapi',
+              username: signinPayload.payload.username,
+              token: signinToken
+            })
+          }
 
-    if (!ws) {
-      setWs(new WebSocket(WS_URL))
-    }
+          router.replace(`${config.services.siteURL}${pathname}`)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        const payload = decode(token) as ITokenData;
+
+        dispatch(userSlice.actions.reducer({ isAuth: true, ...payload }))
+      };
+
+      if (!ws) {
+        setWs(new WebSocket(WS_URL))
+      }
+    })()
   }, [])
 
   useEffect(() => {

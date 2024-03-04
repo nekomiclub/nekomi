@@ -1,7 +1,7 @@
 'use client'
 
 import { NextPage } from 'next';
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef, RefObject } from 'react'
 import { IUser, IUserList } from '../../../interfaces/IUser';
 import { IcoAccordionArrow, IcoArrow, IcoCalendar, IcoFolder, IcoHome, IcoSettings, IcoStats, IcoWatching } from '../../../assets/ico/Icos';
@@ -15,6 +15,7 @@ import { IcoEyeHidden, IcoEyeSuccess, IcoEyeVisible } from '../../../assets/ico/
 import './styles.scss'
 import { routes } from '../../../routes';
 import { HashImage } from 'hash-image';
+import { config } from '../../../config';
 
 type TTab = 'home' | 'stats' | 'library' | 'settings';
 
@@ -91,6 +92,7 @@ export const UserHeader: NextPage<{ user: IUser }> = ({ user }) => {
 
 export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' | 'list' }> = ({ user, children, type }) => {
   const params = useParams<{ username: string }>()
+  const router = useRouter();
   const state = useAppSelector(state => state.user)
   const [tab, setTab] = useState<TTab>('library')
   const [menuCollapsed, setMenuCollapsed] = useState(false)
@@ -162,7 +164,16 @@ export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' |
           </div>}
 
           {tab === 'settings' && <div className='w-full h-full flex items-center flex-col gap-[8px]'>
-            <h3 className='text-[24px] text-white font-bold'>Налаштування в розробці</h3>
+            <h3 className='text-[24px] text-white font-bold'>Налаштування</h3>
+            {/* <div className='w-full'>
+              <h4 className='text-white text-[24px] font-bold'>Міграція</h4>
+              <button className='w-full gradient--primary px-[24px] py-[16px] rounded-[4px]' onClick={() => router.push(`${routes.authSignup.path}/continue?${config.services.siteURL}`)}>
+                <p className='text-[24px] font-bold text-white'>Мігрувати акаунт</p>
+              </button>
+              <Link href={'#'} className='text-cyan-300'>
+                Чому треба мігрувати акаунт?
+              </Link>
+            </div> */}
           </div>}
         </div>
       </div>
