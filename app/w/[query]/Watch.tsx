@@ -13,6 +13,7 @@ import { IDubber } from '../../../interfaces/IDubber';
 import Link from 'next/link';
 import { animeGenres, config, genresDescription } from '../../../config';
 import Skeleton from 'react-loading-skeleton';
+import { LoadingImage } from '../../../components/GeneralComponents';
 
 interface IProps {
   title: ITitle,
@@ -35,8 +36,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
         <div className='wrapperNew pt-[192px]'>
           <div className='flex gap-[32px] z-[3]'>
             <div className='w-[600px] h-[850px] flex-shrink-0 relative'>
-              <Image src={title.poster} alt='...' fill loading='eager' className='w-full h-full rounded-[4px] opacity-0 duration-200 relative z-[4]' onLoad={e => e.currentTarget.setAttribute('style', 'opacity: 1')} />
-              <Skeleton width={'100%'} height={'100%'} baseColor='#181818' highlightColor='#222' className='absolute top-0 left-0 z-[2]' />
+              <LoadingImage src={title.poster} />
             </div>
 
             <div className='flex flex-col gap-[24px]'>

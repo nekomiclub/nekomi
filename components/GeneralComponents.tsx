@@ -6,13 +6,16 @@ import Link from 'next/link';
 import { routes } from '../routes';
 
 import '../styles/components/GeneralComponents.scss'
-import { HashImage } from 'hash-image';
+import Image from 'next/image';
+import Skeleton from 'react-loading-skeleton';
 
 export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
   return (
     <Link href={routes.watchTitle.path.replace('*', title.code)}>
       <div className='title-card w-full flex flex-col items-center justify-between relative h-[240px] rounded-[4px]'>
-        <HashImage src={title.poster} alt="poster" fill parentClassName='!absolute top-0 left-0 !w-full !h-full' />
+        <div className='absolute top-0 left-0 w-full h-full'>
+          <LoadingImage src={title.poster} />
+        </div>
 
         <div className='w-full flex justify-end relative z-[2]'>
           <div className='px-[4px] py-[2px] rounded-[2px] relative top-[2px] right-[4px] gradient--primary'>
@@ -25,5 +28,20 @@ export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
         </div>
       </div>
     </Link>
+  )
+}
+
+/** Must be wrapped in div with relative position and dimensions
+ * @example
+ * <div className="relative w-[32px] h-[32px]">
+ *  <LoadingImage src='' /> 
+ * </div>
+ */
+export const LoadingImage: NextPage<{ src: string, alt?: string, className?: string }> = ({ src, alt, className }) => {
+  return (
+    <>
+      <Image src={src} alt={alt || '...'} fill className={`duration-200 opacity-0 absolute top-0 left-0 z-[2] ${className ? className : ''}`} onLoad={e => e.currentTarget.style.opacity = '1'} />
+      <Skeleton width={'100%'} height={'100%'} className='absolute top-0 left-0' />
+    </>
   )
 }

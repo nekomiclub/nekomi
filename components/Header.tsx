@@ -20,6 +20,8 @@ import userSlice from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
 import { HashImage } from 'hash-image';
 import { parseTitleType } from './handlers';
+import Image from 'next/image';
+import Skeleton from 'react-loading-skeleton';
 
 // Debounced query fired twice with empty string
 let firstFirstLoad = true;
@@ -100,7 +102,10 @@ const Header: NextPage = () => {
 
             {isAuth ? <>
               <button className={`relative`} onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
-                <HashImage src={userAvatar} alt="..." width={40} height={40} parentClassName='rounded-[32px] overflow-hidden' />
+                <div className='relative w-[40px] h-[40px]'>
+                  <Image src={userAvatar} alt='...' fill className='rounded-[32px] duration-200 opacity-0 absolute top-0 left-0 z-[111]' onLoad={e => e.currentTarget.style.opacity = '1'} />
+                  <Skeleton width={'100%'} height={'100%'} className='absolute top-0 left-0 rounded-[32px]' />
+                </div>
 
                 <div className={`absolute top-[48px] right-0 bg-dark rounded-[2px] duration-200 ${userDetailsOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                   <div className='flex flex-col'>

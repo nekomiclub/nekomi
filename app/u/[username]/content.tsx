@@ -16,6 +16,9 @@ import './styles.scss'
 import { routes } from '../../../routes';
 import { HashImage } from 'hash-image';
 import { config } from '../../../config';
+import Image from 'next/image';
+import Skeleton from 'react-loading-skeleton';
+import { LoadingImage } from '../../../components/GeneralComponents';
 
 type TTab = 'home' | 'stats' | 'library' | 'settings';
 
@@ -63,7 +66,9 @@ export const UserHeader: NextPage<{ user: IUser }> = ({ user }) => {
   return (
     <>
       <div className='flex w-full items-center gap-[40px] pb-[16px] max-[550px]:flex-col'>
-        <HashImage src={user.avatar} alt={`Аватар ${user.username}`} width={128} height={128} parentClassName='rounded-[4px] overflow-hidden' />
+        <div className='relative w-[128px] h-[128px] rounded-[4px] overflow-hidden'>
+          <LoadingImage src={user.avatar} />
+        </div>
 
         <div className='flex flex-col gap-[4px]'>
           <div className='flex gap-[24px] items-center max-[550px]:justify-center'>
@@ -196,7 +201,7 @@ export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' |
 export const UserBackground: NextPage<{ src: string }> = ({ src }) => {
   return (
     <>
-      <HashImage src={src} alt="..." fill parentClassName='!h-full' initialHash='L025[Uj[fQj[j[fQfQfQfQfQfQfQ' />
+      <LoadingImage src={src} />
     </>
   )
 }

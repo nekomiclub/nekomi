@@ -12,13 +12,14 @@ import * as Provider from '../components/Providers'
 import axios from 'axios';
 import { env } from '../config';
 import ServerUnavailable from './oops/ServerUnavailable';
+import { SkeletonTheme } from 'react-loading-skeleton';
 
 export const metadata: Metadata = {
   title: 'Animee',
-  description: 'Animee - безкоштовний онлайн-кінотеатр аніме, з великою кількістю озвучення на українській мові!',
+  description: 'Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!',
   applicationName: 'Animee',
   metadataBase: new URL('https://animee.club'),
-  keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн'],
+  keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'анімі', 'анімі клаб', 'animee', 'animee club'],
   openGraph: {
     title: `Головна - animee`,
     description: `Поринь у світ україномовного аніме разом з animee!`,
@@ -42,7 +43,9 @@ export default async function RootLayout({
       <body id='root'>
         <Provider.Storage>
           <Provider.State>
-            {serverAvailable ? children : <ServerUnavailable />}
+            <SkeletonTheme baseColor='#181818' highlightColor='#222'>
+              {serverAvailable ? children : <ServerUnavailable />}
+            </SkeletonTheme>
           </Provider.State>
         </Provider.Storage>
       </body>
