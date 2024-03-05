@@ -1127,6 +1127,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     return data.find(el => el.id === titleId) || null;
   }
 
+  //! DEPRECATED
   function sendStat() {
     const req: IStatRecord = {
       selectedDub: currentDub.id,
@@ -1137,7 +1138,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     watchedSRef.current = 0;
 
     // Skip error (401)
-    $api.post(`${env.apiUrl}/v1/stat/record`, req).catch(e => null)
+    // $api.post(`${env.apiUrl}/v1/stat/record`, req).catch(e => null)
   }
 
   return (

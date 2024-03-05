@@ -81,14 +81,14 @@ const Footer: NextPage = (props) => {
           {/* FK section */}
           <ul className='flex flex-col gap-[4px]'>
             {/* Fullkekw */}
-            <Link href={routes.aboutFK.path}>
-              <p className='footer-link footer-link--disabled'>Fullkekw</p> {/* disabled */}
-            </Link>
+            {/* <Link href={routes.aboutFK.path}> */}
+            <p className='footer-link footer-link--disabled'>Fullkekw</p> {/* disabled */}
+            {/* </Link> */}
 
             {/* Join */}
-            <Link href={routes.joinFK.path}>
-              <p className='footer-link footer-link--disabled'>Хочу в FK</p> {/* disabled */}
-            </Link>
+            {/* <Link href={routes.joinFK.path}> */}
+            <p className='footer-link footer-link--disabled'>Хочу в FK</p> {/* disabled */}
+            {/* </Link> */}
 
             {/* Contacts */}
             <Link href={routes.contacts.path}>
@@ -117,24 +117,24 @@ const Footer: NextPage = (props) => {
           {/* Animee section */}
           <ul className='flex flex-col gap-[4px]'>
             {/* support */}
-            <Link href={routes.support.path}>
-              <p className='footer-link footer-link--disabled'>Підтримка проекту</p> {/* disabled */}
-            </Link>
+            {/* <Link href={routes.support.path}> */}
+            <p className='footer-link footer-link--disabled'>Підтримка проекту</p> {/* disabled */}
+            {/* </Link> */}
 
             {/* partners */}
-            <Link href={routes.partners.path}>
-              <p className='footer-link footer-link--disabled'>Партнери</p> {/* disabled */}
-            </Link>
+            {/* <Link href={routes.partners.path}> */}
+            <p className='footer-link footer-link--disabled'>Партнери</p> {/* disabled */}
+            {/* </Link> */}
 
             {/* faq */}
-            <Link href={routes.FAQ.path}>
-              <p className='footer-link footer-link--disabled'>FAQ</p> {/* disabled */}
-            </Link>
+            {/* <Link href={routes.FAQ.path}> */}
+            <p className='footer-link footer-link--disabled'>FAQ</p> {/* disabled */}
+            {/* </Link> */}
 
             {/* api */}
-            <Link href={routes.API.path}>
-              <p className='footer-link footer-link--disabled'>API</p> {/* disabled */}
-            </Link>
+            {/* <Link href={routes.API.path}> */}
+            <p className='footer-link footer-link--disabled'>API</p> {/* disabled */}
+            {/* </Link> */}
           </ul>
         </div>
 

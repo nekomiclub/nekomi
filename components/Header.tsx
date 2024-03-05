@@ -76,7 +76,7 @@ const Header: NextPage = (props) => {
 
   const signOut = () => {
     logout()
-    dispatch(userSlice.actions.reducer({ isAuth: false, roles: [], uid: '', username: '' }))
+    dispatch(userSlice.actions.reducer({ isAuth: false, isNewAccount: false, roles: [], uid: '', username: '' }))
     setUserDetailsOpened(false)
     setIsAuth(false)
   }

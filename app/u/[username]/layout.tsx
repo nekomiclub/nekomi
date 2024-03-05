@@ -65,7 +65,7 @@ export default async function Layout({ children, params }: IProps) {
     <main className='w-full min-h-screen h-full bg-dark flex flex-col justify-center items-center py-[120px]'>
 
       <div className='fixed w-full h-full top-0 left-0'>
-        <UserBackground src={DefaultBg.src} />
+        <UserBackground src={userData.profileBg || DefaultBg.src} />
       </div>
 
       <div className="wrapper max-w-[1170px]">

@@ -2,13 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 import { IReduxAction } from '../store'
 import { ITokenData } from "../../interfaces/ITokenData";
 
-// @ts-ignore
+/** 
+ * @prop isAuth - Is user authorized
+ * @prop isNewAccount - Temporary property, indicates if user migrate account to new provider
+ */
 interface ISlice extends ITokenData {
-  isAuth: boolean
+  isAuth: boolean,
+  isNewAccount: boolean
 }
 
 const initialState: ISlice = {
   isAuth: false,
+  isNewAccount: false,
   uid: '',
   roles: [],
   username: ''

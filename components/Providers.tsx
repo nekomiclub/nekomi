@@ -105,6 +105,8 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
 
     (async function () {
       const signinToken = searchParams.get('signinPayload');
+
+      // Handle signin token from SSO
       if (signinToken) {
         try {
           const res = await axios.post(`${config.services.fkUsapiURL}/token/decode`, {
@@ -139,7 +141,10 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
       if (token) {
         const payload = decode(token) as ITokenData;
 
-        dispatch(userSlice.actions.reducer({ isAuth: true, ...payload }))
+        const { data: user } = await axios.get<IUser>(`${config.services.apiURL}/v1/user/${payload.uid}`)
+
+
+        dispatch(userSlice.actions.reducer({ isAuth: true, isNewAccount: user.accountType === 'new', ...payload }))
       };
 
       if (!ws) {

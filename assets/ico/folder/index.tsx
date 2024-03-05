@@ -10,17 +10,17 @@ export const IcoFolderAdd = (props: { width?: number, height?: number, className
   if (props.solid) {
     return (
       <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22 19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H9L11 6H20C20.5304 6 21.0391 6.21071 21.4142 6.58579C21.7893 6.96086 22 7.46957 22 8V19Z" stroke="white" stroke-width="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M12 11V17" stroke="url(#paint1_linear_790_18731)" stroke-width="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M9 14H15" stroke="url(#paint2_linear_790_18731)" stroke-width="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M22 19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H9L11 6H20C20.5304 6 21.0391 6.21071 21.4142 6.58579C21.7893 6.96086 22 7.46957 22 8V19Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 11V17" stroke="url(#paint1_linear_790_18731)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9 14H15" stroke="url(#paint2_linear_790_18731)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     );
   } else {
     return (
       <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22 19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H9L11 6H20C20.5304 6 21.0391 6.21071 21.4142 6.58579C21.7893 6.96086 22 7.46957 22 8V19Z" stroke="url(#paint0_linear_790_18731)" stroke-width="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M12 11V17" stroke="url(#paint1_linear_790_18731)" stroke-width="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M9 14H15" stroke="url(#paint2_linear_790_18731)" stroke-width="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M22 19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H9L11 6H20C20.5304 6 21.0391 6.21071 21.4142 6.58579C21.7893 6.96086 22 7.46957 22 8V19Z" stroke="url(#paint0_linear_790_18731)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 11V17" stroke="url(#paint1_linear_790_18731)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9 14H15" stroke="url(#paint2_linear_790_18731)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         <defs>
           <linearGradient id="paint0_linear_790_18731" x1="2" y1="11.4706" x2="22.0046" y2="11.5658" gradientUnits="userSpaceOnUse">
             <stop stopColor="#FF416C" />
