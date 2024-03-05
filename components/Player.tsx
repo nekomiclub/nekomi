@@ -590,7 +590,7 @@ interface IPlayerSessionData {
 
 let previewShownTimeout;
 let isUnloadStatSended = false;
-const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, currentDubHandler: (dub: ITitleEpisodesDub) => void, titleId: string }> = ({ dubs, currentDubHandler, estimatedEps, titleId }) => {
+const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, currentDubberHandler: (dub: IDubber) => void, titleId: string }> = ({ dubs, currentDubberHandler, estimatedEps, titleId }) => {
   const pathname = usePathname()
 
   const [playerStarted, setPlayerStarted] = useState(false)
@@ -646,6 +646,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
       const res = await $api.get<IDubber>(`${env.apiUrl}/v1/dubber/${currentDub!.id}`)
       setCurrentDubber(res.data!)
+      currentDubberHandler(res.data!)
 
       dubs.forEach(async dub => {
         const res = await $api.get<IDubber>(`${env.apiUrl}/v1/dubber/${dub.id}`)
@@ -704,10 +705,10 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     (async function () {
       const res = await $api.get<IDubber>(`${env.apiUrl}/v1/dubber/${currentDub.id}`)
       setCurrentDubber(res.data!)
+      currentDubberHandler(res.data!)
     })()
 
     videoRef.current!.currentTime = playerMoment[0];
-    currentDubHandler(currentDub)
   }, [currentDub])
 
   useEffect(() => {

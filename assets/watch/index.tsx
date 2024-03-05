@@ -170,11 +170,13 @@ export const PlayerSettingsPrev = (props: { width?: number, height?: number, cla
 }
 
 import Monobank from './supportMonobank.png'
+/** @deprecated */
 export const IcoSupportMonobank = (props: { width?: number, height?: number, className?: string }) => {
   return <img src={Monobank.src} alt="Monobank logo" loading='lazy' className={props.className} width={props.width} height={props.height} />
 }
 
 import Diaka from './supportDiaka.png'
+/** @deprecated */
 export const IcoSupportDiaka = (props: { width?: number, height?: number, className?: string }) => {
   return <img src={Diaka.src} alt="Diaka logo" loading='lazy' className={props.className} width={props.width} height={props.height} />
 }

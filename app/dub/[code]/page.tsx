@@ -6,7 +6,7 @@ import { IDubber } from '../../../interfaces/IDubber';
 import NotFound from '@/oops/404/page';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
-import { IcoRating, IcoClock, IcoSupportInstagram, IcoSocialYoutube, IcoSocialTelegram, IcoSupportTiktok, IcoSupportBymeacoffe, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/assets';
+import { IcoRating, IcoClock, IcoSocialInstagram, IcoSocialYoutube, IcoSocialTelegram, IcoSocialTiktok, IcoSupportBymeacoffe, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/assets';
 import { IcoCalendar, IcoCrown, IcoLibrary, IcoPen, IcoPeople } from '../../../assets/ico/Icos';
 import Link from 'next/link';
 import { routes } from '../../../routes';
@@ -104,7 +104,7 @@ const Dubber: NextPage<IProps> = async ({ params, searchParams }) => {
               <div className='flex gap-[16px] items-stretch'>
                 <div className='flex items-center gap-[16px]'>
                   {dubberData.socials.instagram && <Link href={dubberData.socials.instagram} target='_blank'>
-                    <IcoSupportInstagram width={32} height={32} />
+                    <IcoSocialInstagram width={32} height={32} />
                   </Link>}
                   {dubberData.socials.youtube && <Link href={dubberData.socials.youtube} target='_blank'>
                     <IcoSocialYoutube width={32} height={32} />
@@ -113,7 +113,7 @@ const Dubber: NextPage<IProps> = async ({ params, searchParams }) => {
                     <IcoSocialTelegram width={32} height={32} />
                   </Link>}
                   {dubberData.socials.tiktok && <Link href={dubberData.socials.tiktok} target='_blank'>
-                    <IcoSupportTiktok width={32} height={32} />
+                    <IcoSocialTiktok width={32} height={32} />
                   </Link>}
                 </div>
 

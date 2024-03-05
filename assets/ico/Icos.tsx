@@ -1,5 +1,12 @@
 //* width={props.width || 24} height={props.height || 24} className={props.className}
 
+export interface IPropsIcon {
+  width?: number,
+  height?: number,
+  className?: string,
+  gradient?: 'primary' | 'secondary'
+}
+
 // export const Template = (props: { width?: number, height?: number, className?: string }) => {
 //   return (
 
@@ -191,10 +198,51 @@ export const IcoWatching = (props: { width?: number, height?: number, className?
   );
 }
 
-export const IcoInfo = (props: { width?: number, height?: number, className?: string }) => {
+
+
+//! ------------------ NEW ------------------
+
+//* `${gradient === 'primary' ? '' : gradient === 'secondary' ? '' : '#fff'`}
+
+/** New icon */
+export const IcoInfo = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
-    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M19.4159 12.15L13.3679 12.908L13.1519 13.912L14.3419 14.128C15.1159 14.314 15.2699 14.592 15.1019 15.366L13.1519 24.52C12.6419 26.886 13.4319 28 15.2859 28C16.7259 28 18.3939 27.336 19.1519 26.422L19.3839 25.324C18.8579 25.788 18.0839 25.974 17.5739 25.974C16.8479 25.974 16.5859 25.464 16.7699 24.566L19.4159 12.15ZM19.5979 6.64C19.5979 7.34017 19.3197 8.01167 18.8247 8.50676C18.3296 9.00186 17.6581 9.28 16.9579 9.28C16.2577 9.28 15.5862 9.00186 15.0911 8.50676C14.596 8.01167 14.3179 7.34017 14.3179 6.64C14.3179 5.93983 14.596 5.26833 15.0911 4.77324C15.5862 4.27814 16.2577 4 16.9579 4C17.6581 4 18.3296 4.27814 18.8247 4.77324C19.3197 5.26833 19.5979 5.93983 19.5979 6.64Z" fill="white" />
     </svg>
+  );
+}
+
+export const IcoNewStarRating = ({ className, gradient, height, width }: IPropsIcon) => {
+  return (
+    <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.2 3.46667L20.2667 10.1333C20.4 10.5333 20.8 10.8 21.2 10.9333L28.1333 12C29.3333 12 29.7334 13.3333 28.9334 14.1333L23.8667 19.3333C23.6 19.6 23.4667 20.1333 23.4667 20.5333L24.6667 27.7333C24.8 28.8 23.7333 29.7333 22.8 29.2L16.5333 25.7333C16.1333 25.4667 15.7333 25.4667 15.3333 25.7333L9.06668 29.2C8.13335 29.7333 6.93335 28.9333 7.20001 27.7333L8.40002 20.5333C8.53335 20.1333 8.26668 19.6 8.00001 19.3333L2.93335 14.1333C2.26668 13.3333 2.66668 12 3.73335 11.8667L10.6667 10.8C11.0667 10.8 11.4667 10.4 11.6 10L14.6667 3.33334C15.3333 2.4 16.6667 2.4 17.2 3.46667Z" fill={`${gradient === 'primary' ? 'url(#paint0_linear_115_1733)' : gradient === 'secondary' ? '' : '#fff'}`} />
+      <defs>
+        <linearGradient id="paint0_linear_115_1733" x1="2.60742" y1="16.0088" x2="29.3496" y2="16.0088" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF416C" />
+          <stop offset="1" stop-color="#FF4B2B" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+export const IcoNewClock = ({ className, gradient, height, width }: IPropsIcon) => {
+  return (
+    <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16.0001 29.3333C23.3639 29.3333 29.3334 23.3638 29.3334 16C29.3334 8.63619 23.3639 2.66666 16.0001 2.66666C8.63628 2.66666 2.66675 8.63619 2.66675 16C2.66675 23.3638 8.63628 29.3333 16.0001 29.3333Z" stroke={`${gradient === 'primary' ? 'url(#paint0_linear_115_1734)' : gradient === 'secondary' ? '' : '#fff'}`} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M16 8V16L21.3333 18.6667" stroke={`${gradient === 'primary' ? 'url(#paint1_linear_115_1734)' : gradient === 'secondary' ? '' : '#fff'}`} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <defs>
+        <linearGradient id="paint0_linear_115_1734" x1="2.66675" y1="16" x2="29.3334" y2="16" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF416C" />
+          <stop offset="1" stop-color="#FF4B2B" />
+        </linearGradient>
+        <linearGradient id="paint1_linear_115_1734" x1="16" y1="13.3333" x2="21.3333" y2="13.3333" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#FF416C" />
+          <stop offset="1" stop-color="#FF4B2B" />
+        </linearGradient>
+      </defs>
+    </svg>
+
   );
 }

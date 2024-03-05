@@ -1,3 +1,7 @@
+import { LoadingImage } from '../components/GeneralComponents';
+import SupportDiaka from './watch/supportDiaka.png'
+import SupportMonobank from './watch/supportMonobank.png'
+
 interface IAssetProps {
   width?: number,
   height?: number,
@@ -180,6 +184,7 @@ export const PlayerNext = (props: { width?: number, height?: number, className?:
   );
 }
 
+/** New icon */
 export const IcoSocialTelegram = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -199,7 +204,8 @@ export const IcoSocialTelegram = (props: { width?: number, height?: number, clas
   );
 }
 
-export const IcoSupportInstagram = (props: { width?: number, height?: number, className?: string }) => {
+/** New icon */
+export const IcoSocialInstagram = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_511_1444)">
@@ -218,7 +224,8 @@ export const IcoSupportInstagram = (props: { width?: number, height?: number, cl
   );
 }
 
-export const IcoSupportTiktok = (props: { width?: number, height?: number, className?: string }) => {
+/** New icon */
+export const IcoSocialTiktok = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_511_1433)">
@@ -237,6 +244,7 @@ export const IcoSupportTiktok = (props: { width?: number, height?: number, class
   );
 }
 
+/** New icon */
 export const IcoSocialYoutube = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -262,6 +270,7 @@ export const IcoSocialYoutube = (props: { width?: number, height?: number, class
   );
 }
 
+/** New icon */
 export const IcoSupportPatreon = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -282,6 +291,7 @@ export const IcoSupportPatreon = (props: { width?: number, height?: number, clas
   );
 }
 
+/** New icon */
 export const IcoSupportBymeacoffe = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -291,13 +301,31 @@ export const IcoSupportBymeacoffe = (props: { width?: number, height?: number, c
   );
 }
 
+/** New icon */
 export const IcoSupportPrivatbank = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 40} height={props.height || 40} className={props.className} viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M32.2367 8.25752V31.6865H29.0434C27.6709 20.098 20.388 12.8202 8.7633 11.4206V8.22953H32.2367V8.25752ZM0.5 0V19.4542H4.64566C15.514 19.4542 21.0322 24.9685 21.0322 35.8572V40H40.5V0H0.5Z" fill="#4EA524" />
       <path d="M16.1303 24.3247H0.5V39.972H16.1303V24.3247Z" fill="white" />
     </svg>
+  );
+}
 
+/** New icon */
+export const IcoSupportMonobank = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <div className={`relative ${props.width ? props.width : '32px'} ${props.height ? props.height : '32px'} ${props.className ? props.className : ''}`}>
+      <LoadingImage src={SupportMonobank.src} alt='monobank logo' />
+    </div>
+  );
+}
+
+/** New icon */
+export const IcoSupportDiaka = (props: { width?: number, height?: number, className?: string }) => {
+  return (
+    <div className={`relative ${props.width ? props.width : '32px'} ${props.height ? props.height : '32px'} ${props.className ? props.className : ''}`}>
+      <LoadingImage src={SupportDiaka.src} alt='diaka logo' />
+    </div>
   );
 }
 

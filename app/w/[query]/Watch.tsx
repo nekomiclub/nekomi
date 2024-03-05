@@ -1,19 +1,23 @@
 'use client'
 
 import { NextPage } from 'next';
-import { ITitle, TAnimeGenres } from '../../../interfaces/ITitle';
-import Header from '../../../components/Header';
-import { HashImage } from 'hash-image';
 import Image from 'next/image';
-import { IcoInfo } from '../../../assets/ico/Icos';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { RaceBy } from '@uiball/loaders'
+
+
+import { ITitle, ITitleEpisodesDub, TAnimeGenres } from '../../../interfaces/ITitle';
+import Header from '../../../components/Header';
+import { IcoInfo, IcoNewClock, IcoNewStarRating } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { getKeyByValue, parseTitleCountry, parseTitleDubbers, parseTitleStatus, parseTitleType } from '../../../components/handlers';
-import { useEffect } from 'react';
 import { IDubber } from '../../../interfaces/IDubber';
-import Link from 'next/link';
 import { animeGenres, config, genresDescription } from '../../../config';
-import Skeleton from 'react-loading-skeleton';
 import { LoadingImage } from '../../../components/GeneralComponents';
+import Player from '../../../components/Player';
+import { IcoSupportBymeacoffe, IcoSupportDiaka, IcoSocialInstagram, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/assets';
+import Footer from '../../../components/Footer';
 
 interface IProps {
   title: ITitle,
@@ -22,11 +26,13 @@ interface IProps {
 }
 
 const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
+  const [dubber, setDubber] = useState<IDubber>()
+
   return (
     <>
       <Header />
 
-      <div className='bg-dark pb-[180px]'>
+      <div className='bg-dark'>
         {/* Background */}
         <div className='absolute top-0 left-0 w-full h-screen z-[2]'>
           <div className='block w-full h-full absolute top-0 left-0 z-[2]' style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, .1), rgba(18, 18, 18, 1))', backdropFilter: 'blur(120px)' }}></div>
@@ -34,7 +40,8 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
         </div>
 
         <div className='wrapperNew pt-[192px]'>
-          <div className='flex gap-[32px] z-[3]'>
+          {/* Title heading */}
+          <div className='flex gap-[32px] z-[3] mb-[80px]'>
             <div className='w-[600px] h-[850px] flex-shrink-0 relative'>
               <LoadingImage src={title.poster} />
             </div>
@@ -169,7 +176,119 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
               </ul>
             </div>
           </div>
+
+          {/* Player & ep meta */}
+          {title.dubs?.length ? <div className='flex items-start gap-[40px]'>
+            <div className='flex flex-col gap-[24px] items-center w-full flex-1'>
+              <div className='h-[600px] w-full'>
+                <Player estimatedEps={title.estimatedEps} titleId={title.id} dubs={title.dubs} currentDubberHandler={setDubber} />
+              </div>
+
+              <div>
+
+              </div>
+            </div>
+
+            <div className='bg-grey px-[40px] py-[24px] flex flex-col gap-[24px] rounded-[4px]'>
+              {dubber ? <>
+                <div className='flex items-center gap-[40px]'>
+                  <div className='relative w-[128px] h-[128px] rounded-[128px] overflow-hidden'>
+                    <LoadingImage src={dubber.thumbURL} />
+                    <div className='bg-red-400 w-full h-full block'></div>
+                  </div>
+
+                  <div className='flex flex-col gap-[8px] items-center'>
+                    <p className='text-white text-[24px]'>Озвучено</p>
+                    <p className='text-white text-[24px] font-bold'>{dubber.name}</p>
+                  </div>
+                </div>
+
+                {/* Rating */}
+                <div className='flex gap-[24px] justify-center'>
+                  <Tooltip content={`Рейтинг ${dubber.name}`}>
+                    <div className='flex items-center gap-[8px]'>
+                      <IcoNewStarRating width={24} height={24} gradient='primary' />
+                      <p className='gradient--primary-text text-[24px] font-bold'>{dubber.rating}</p>
+                    </div>
+                  </Tooltip>
+
+                  {/* // TODO */}
+                  {/* <Tooltip content={`Відсоток переваги ${dubber.name}`}>
+                    <div className='flex items-center gap-[8px]'>
+                      <IcoNewClock width={24} height={24} gradient='primary' />
+                      <p className='gradient--primary-text text-[24px] font-bold'>0</p>
+                    </div>
+                  </Tooltip> */}
+                </div>
+
+                {/* Support */}
+                {(dubber?.support.bymeacoffee || dubber?.support.diaka || dubber?.support.monobank || dubber?.support.patreon || dubber?.support.privatbank) && <div className='flex flex-col items-center gap-[24px]'>
+                  <p className='text-white text-[24px] font-bold'>Дяка</p>
+                  <ul className='flex items-center gap-[8px]'>
+                    {dubber?.support.bymeacoffee && <>
+                      <Link href={dubber.support!.bymeacoffee} target='_blank'>
+                        <IcoSupportBymeacoffe height={40} width={40} />
+                      </Link>
+                    </>}
+                    {dubber?.support.patreon && <>
+                      <Link href={dubber.support!.patreon} target='_blank'>
+                        <IcoSupportPatreon height={40} width={40} />
+                      </Link>
+                    </>}
+                    {dubber?.support.privatbank && <>
+                      <Link href={dubber.support!.privatbank} target='_blank'>
+                        <IcoSupportPrivatbank height={40} width={40} />
+                      </Link>
+                    </>}
+                    {dubber?.support.monobank && <>
+                      <Link href={dubber.support!.monobank} target='_blank'>
+                        <IcoSupportMonobank height={40} width={40} />
+                      </Link>
+                    </>}
+                    {dubber?.support.diaka && <>
+                      <Link href={dubber.support!.diaka} target='_blank'>
+                        <IcoSupportDiaka height={40} width={40} />
+                      </Link>
+                    </>}
+                  </ul>
+                </div>}
+
+                {/* Socials */}
+                {(dubber?.socials.instagram || dubber?.socials.telegram || dubber?.socials.tiktok || dubber?.socials.youtube) && <div className='flex flex-col items-center gap-[24px]'>
+                  <p className='text-white text-[24px] font-bold'>Мережі</p>
+                  <ul className='flex items-center gap-[8px]'>
+                    {dubber?.socials.instagram && <>
+                      <Link href={dubber.socials!.instagram} target='_blank'>
+                        <IcoSocialInstagram height={40} width={40} />
+                      </Link>
+                    </>}
+                    {dubber?.socials.telegram && <>
+                      <Link href={dubber.socials!.telegram} target='_blank'>
+                        <IcoSocialTelegram height={40} width={40} />
+                      </Link>
+                    </>}
+                    {dubber?.socials.tiktok && <>
+                      <Link href={dubber.socials!.tiktok} target='_blank'>
+                        <IcoSocialTiktok height={40} width={40} />
+                      </Link>
+                    </>}
+                    {dubber?.socials.youtube && <>
+                      <Link href={dubber.socials!.youtube} target='_blank'>
+                        <IcoSocialYoutube height={40} width={40} />
+                      </Link>
+                    </>}
+                  </ul>
+                </div>}
+              </> : <div className='w-[300px] h-[200px] bg-grey flex justify-center items-center'>
+                <RaceBy color='#fff' size={128} />
+              </div>}
+            </div>
+          </div> : <div className='w-full h-[400px] bg-grey flex justify-center items-center rounded-[4px]'>
+            <h3 className='text-white text-[24px] font-bold'>Нажаль, для цього тайтлу озвучення не завантажені.</h3>
+          </div>}
         </div>
+
+        <Footer />
       </div>
     </>
   );

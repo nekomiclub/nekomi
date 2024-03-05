@@ -2,7 +2,7 @@
 
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react'
-import { Logo, IcoSocialTelegram, IcoSupportTiktok } from '../assets/assets';
+import { Logo, IcoSocialTelegram, IcoSocialTiktok } from '../assets/assets';
 import Link from 'next/link';
 
 import '../styles/components/Footer.scss'
@@ -70,7 +70,7 @@ const Footer: NextPage = (props) => {
               <IcoSocialTelegram width={32} height={32} />
             </Link>
             <Link href={'https://www.tiktok.com/@an1mee.club'} target='_blank'>
-              <IcoSupportTiktok width={32} height={32} />
+              <IcoSocialTiktok width={32} height={32} />
             </Link>
           </div>
 

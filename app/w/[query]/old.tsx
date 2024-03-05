@@ -7,7 +7,7 @@
 // import $api from '@/../components/http';
 // import { animeGenres, env, genresDescription } from '@/../config';
 // import Loading from '../../../components/Loading';
-// import { IcoSupportInstagram, Play, IcoRating, IcoSupportBymeacoffe, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSupportTiktok, IcoClock, IcoSocialYoutube } from '../../../assets/assets';
+// import { IcoSocialInstagram, Play, IcoRating, IcoSupportBymeacoffe, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSocialTiktok, IcoClock, IcoSocialYoutube } from '../../../assets/assets';
 // import BorderGradient, { WatchButton } from '../../../components/BorderGradient';
 // import Link from 'next/link';
 
@@ -438,7 +438,7 @@
 //                         <div className='flex gap-[8px] max-[600px]:gap-[16px] items-center'>
 //                           {selectedDubber?.socials.instagram && <>
 //                             <Link href={selectedDubber.socials!.instagram} target='_blank'>
-//                               <IcoSupportInstagram height={40} width={40} />
+//                               <IcoSocialInstagram height={40} width={40} />
 //                             </Link>
 //                           </>}
 
@@ -450,7 +450,7 @@
 
 //                           {selectedDubber?.socials.tiktok && <>
 //                             <Link href={selectedDubber.socials!.tiktok} target='_blank'>
-//                               <IcoSupportTiktok height={40} width={40} />
+//                               <IcoSocialTiktok height={40} width={40} />
 //                             </Link>
 //                           </>}
 
