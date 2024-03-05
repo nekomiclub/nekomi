@@ -76,33 +76,6 @@ export const animeGenres = {
   gourmet: 'Кулінарія',
 }
 
-export const dubsIDs = {
-  'Amanogawa': 'd979d465-1407-452f-8955-a7692480f9ac',
-  'Дідько Студіо': 'fd203550-19cc-4fd0-af4c-10050104a4d6',
-  'Кіото Аніме': '6f194501-fbb5-423c-a065-e8774a7486ce',
-  'InariTV (Дзузьки)': 'd92b0be9-5068-472a-b4b7-f0c77b3c7c3c',
-  'FanVoxUa': '4b792d83-e650-4fe8-a9fc-d9a283dfb6af',
-  'Студія Качур': 'bc08931d-a8d4-4bcb-9c82-3def865872d9',
-  'Студія Сокира': '8236263b-f434-4081-87cd-a5b8692b25dc',
-  'Lifecycle': 'fd9439bb-8cf9-4fbd-b7df-e9e20b64327e',
-  'Inari': '075fb2d0-73f3-4738-953b-59fd0484412c',
-  'Клан Кайзоку': '881f2bd1-429d-4f69-9159-2087f42a485b',
-  'Кізукі': '8ae494ce-0fc0-4898-8f09-5b51a3804386',
-  'Unimay': '2e259095-9b18-4032-9484-f968dc559025',
-  'VRDub': 'f9dfcc69-0028-4934-b0d7-50ab6ab2f841',
-  'Uamax Media': '825ec906-5dbc-4a11-9bd2-fb746ae3a17d',
-  'Bulbul Media': '19bcd0b8-1136-4ba7-a004-5c305346d22e',
-  'Espada studio': '3903c614-3f66-4c46-b4af-27e0ee6e137e',
-  'Ufdub': '319ec974-3116-43e9-8966-51237f0479ae',
-  'Кіцуне': '275342e8-a6be-47bc-86f6-c3084b9867f9',
-  'Лісовий Вітер': '1d8b59c1-3e11-49fc-99ab-f3e080a099bd',
-  'Справжня Козацька Озвучка (СКО)': 'c0bafd73-0a38-46f8-a5ef-b8e6aa150020',
-  'Hatoshi': '8257785e-372b-4aed-b19b-49bfc4808340',
-  'Робота Голосом': '057fe719-50ff-46cb-b0d4-dd052c0cd563',
-  'GlassMoon': '93476a61-c38f-41b2-8f75-19eaef8a047c',
-  'Субтитри': '254efe79-f62a-4911-8e79-bffad83a6278'
-}
-
 export const genresDescription: {
   genre: TAnimeGenres,
   description: string

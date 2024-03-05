@@ -12,7 +12,6 @@ import { ITitle } from '../interfaces/ITitle';
 import $api from './http';
 import { config, env } from '../config';
 import Loading from './Loading';
-import localizeTitle from './localizeTitle';
 import Link from 'next/link';
 import { routes } from '../routes';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
@@ -20,11 +19,12 @@ import { logout } from './authorization';
 import userSlice from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
 import { HashImage } from 'hash-image';
+import { parseTitleType } from './handlers';
 
 // Debounced query fired twice with empty string
 let firstFirstLoad = true;
 
-const Header: NextPage = (props) => {
+const Header: NextPage = () => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -83,7 +83,7 @@ const Header: NextPage = (props) => {
 
   return (
     <>
-      <header className='fixed top-0 left-0 w-full py-[16px] bg-dark/[.4] backdrop-blur-[10px] z-[110] duration-200'>
+      <header className={`fixed top-0 left-0 w-full py-[16px] bg-dark/[.4] backdrop-blur-[10px] z-[110] duration-200`}>
         <div className="wrapper flex-row items-center justify-between">
           <Link href={routes.home.path}>
             <Logo width={64} height={48} />
@@ -144,7 +144,7 @@ const Header: NextPage = (props) => {
                           <IcoRating width={16} height={16} />
                           <p className='text-[16px] font-bold gradient--primary-text'>{title.rating}</p>
                         </div>
-                        <p className='text-[16px] font-extralight text-white'>{localizeTitle(title).type}</p>
+                        <p className='text-[16px] font-extralight text-white'>{parseTitleType(title.type)}</p>
                         <p className='text-[16px] font-extralight text-white'>{title.year}</p>
                       </div>
 

@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { Play } from '../assets/assets';
-import '../app/w/[name]/styles.scss'
+import '../app/w/[query]/styles.scss'
 
 const BorderGradient: NextPage<{ children: any, width?: string, round?: string, className?: string, h?: string, w?: string }> = ({ children, round, width, className, w, h }) => {
   return (
