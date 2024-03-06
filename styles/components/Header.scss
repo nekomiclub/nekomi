@@ -1,0 +1,15 @@
+@import '../colors.scss';
+
+.header {
+  &-ico {
+    svg path {
+      transition: .2s ease-in-out;
+    }
+
+    &--active {
+      svg path {
+        fill: $purple;
+      }
+    }
+  }
+}

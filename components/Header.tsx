@@ -22,6 +22,10 @@ import { HashImage } from 'hash-image';
 import { parseTitleType } from './handlers';
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
+import { IcoNewAnimeeLogo, IcoNewArrow, IcoNewHome, IcoNewLibrary, IcoNewSearch, IcoNewUser } from '../assets/ico/Icos';
+
+import '../styles/components/Header.scss';
+import { LoadingImage } from './GeneralComponents';
 
 // Debounced query fired twice with empty string
 let firstFirstLoad = true;
@@ -85,27 +89,42 @@ const Header: NextPage = () => {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 w-full py-[16px] bg-dark/[.4] backdrop-blur-[10px] z-[110] duration-200`}>
-        <div className="wrapper flex-row items-center justify-between">
-          <Link href={routes.home.path}>
-            <Logo width={64} height={48} />
-          </Link>
+      <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200`}>
+        <div className="wrapperNew !flex-row items-center justify-between w-full">
+          <div className='flex items-center gap-[40px]'>
+            <Link href={routes.home.path}>
+              <IcoNewAnimeeLogo width={60} height={60} gradient='primary' />
+            </Link>
 
-          <Link href={routes.lib.path}>
-            <p className='text-[24px] text-white font-extralight'>Тека</p>
-          </Link>
+            <div className='flex items-center gap-[16px]'>
+              <Link href={routes.home.path} className={`header-ico ${pathname === routes.home.path ? 'header-ico--active' : ''}`}>
+                <IcoNewHome width={32} height={32} />
+              </Link>
 
-          <div className='flex items-center gap-[16px]'>
-            <button className='uvc-popup-trigger' data-uvc-popup-openid="search-popup" onClick={() => { popup.open() }}>
-              <HeaderSearch width={32} height={32} />
-            </button>
+              <Link href={routes.lib.path} className={`header-ico ${pathname === routes.lib.path ? 'header-ico--active' : ''}`}>
+                <IcoNewLibrary width={32} height={32} />
+              </Link>
 
-            {isAuth ? <>
-              <button className={`relative`} onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
-                <div className='relative w-[40px] h-[40px]'>
-                  {userAvatar && <Image src={userAvatar} alt='...' fill className='rounded-[32px] duration-200 opacity-0 absolute top-0 left-0 z-[111]' onLoad={e => e.currentTarget.style.opacity = '1'} />}
-                  <Skeleton width={'100%'} height={'100%'} className='absolute top-0 left-0 rounded-[32px]' />
+              <div className='flex items-center gap-[16px]'>
+                <button className='uvc-popup-trigger' data-uvc-popup-openid="search-popup" onClick={() => { popup.open() }}>
+                  <IcoNewSearch width={32} height={32} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {isAuth ? <>
+            <div className='flex items-center gap-[8px]'>
+              <button className={`relative flex items-center`}>
+                <div className='relative w-[40px] h-[40px] rounded-[32px] overflow-hidden'>
+                  <LoadingImage src={userAvatar} alt='...' />
                 </div>
+
+                <button className='px-[8px] py-[8px]' onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
+                  <IcoNewArrow width={16} height={16} />
+                </button>
+
+
 
                 <div className={`absolute top-[48px] right-0 bg-dark rounded-[2px] duration-200 ${userDetailsOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                   <div className='flex flex-col'>
@@ -121,12 +140,12 @@ const Header: NextPage = () => {
                   </div>
                 </div>
               </button>
-            </> : <>
-              <Link href={`${routes.authSignin.path}?ref=${config.services.siteURL}${pathname}`}>
-                <HeaderAccount width={32} height={32} />
-              </Link>
-            </>}
-          </div>
+            </div>
+          </> : <>
+            <Link href={`${routes.authSignin.path}?ref=${config.services.siteURL}${pathname}`}>
+              <IcoNewUser width={40} height={40} />
+            </Link>
+          </>}
         </div>
       </header>
 
