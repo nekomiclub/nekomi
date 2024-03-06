@@ -5,6 +5,7 @@ import 'react-uvc/dist/css/popup.css';
 
 import '../styles/globals.css';
 import '../styles/index.scss'
+import 'swiper/css';
 
 
 import { Metadata } from 'next'

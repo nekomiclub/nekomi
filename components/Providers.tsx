@@ -2,22 +2,22 @@
 
 import { NextPage } from 'next';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
-
 import { useState, useEffect } from 'react'
+import axios from 'axios';
 import { Provider } from 'react-redux';
+import { decode } from 'jsonwebtoken'
+
 import { setupStore } from '../store/store'
 import { IRoute, TRouteStatus, routes } from '../routes';
 import NotFound from '@/oops/404/page';
 import Loading from './Loading';
 import Indev from '@/oops/indev/page';
 import TechWorks from '@/oops/works/page';
-import { decode } from 'jsonwebtoken'
 import { ITokenData, TUserRoles } from '../interfaces/ITokenData';
 import { useAppDispatch } from '../hooks/redux';
 import userSlice from '../store/reducers/userSlice';
 import { WS_URL, config, env } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
-import axios from 'axios';
 import ServerUnavailable from '@/oops/ServerUnavailable';
 import { IUser } from '../interfaces/IUser';
 import { signin } from './authorization';

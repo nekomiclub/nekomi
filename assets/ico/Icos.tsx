@@ -219,14 +219,15 @@ export const IcoNewStarRating = ({ className, gradient, height, width }: IPropsI
       <path d="M17.2 3.46667L20.2667 10.1333C20.4 10.5333 20.8 10.8 21.2 10.9333L28.1333 12C29.3333 12 29.7334 13.3333 28.9334 14.1333L23.8667 19.3333C23.6 19.6 23.4667 20.1333 23.4667 20.5333L24.6667 27.7333C24.8 28.8 23.7333 29.7333 22.8 29.2L16.5333 25.7333C16.1333 25.4667 15.7333 25.4667 15.3333 25.7333L9.06668 29.2C8.13335 29.7333 6.93335 28.9333 7.20001 27.7333L8.40002 20.5333C8.53335 20.1333 8.26668 19.6 8.00001 19.3333L2.93335 14.1333C2.26668 13.3333 2.66668 12 3.73335 11.8667L10.6667 10.8C11.0667 10.8 11.4667 10.4 11.6 10L14.6667 3.33334C15.3333 2.4 16.6667 2.4 17.2 3.46667Z" fill={`${gradient === 'primary' ? 'url(#paint0_linear_115_1733)' : gradient === 'secondary' ? '' : '#fff'}`} />
       <defs>
         <linearGradient id="paint0_linear_115_1733" x1="2.60742" y1="16.0088" x2="29.3496" y2="16.0088" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
       </defs>
     </svg>
   );
 }
 
+/** @param gradient - primary */
 export const IcoNewClock = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -234,12 +235,12 @@ export const IcoNewClock = ({ className, gradient, height, width }: IPropsIcon) 
       <path d="M16 8V16L21.3333 18.6667" stroke={`${gradient === 'primary' ? 'url(#paint1_linear_115_1734)' : gradient === 'secondary' ? '' : '#fff'}`} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
       <defs>
         <linearGradient id="paint0_linear_115_1734" x1="2.66675" y1="16" x2="29.3334" y2="16" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
         <linearGradient id="paint1_linear_115_1734" x1="16" y1="13.3333" x2="21.3333" y2="13.3333" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#FF416C" />
-          <stop offset="1" stop-color="#FF4B2B" />
+          <stop stopColor="#FF416C" />
+          <stop offset="1" stopColor="#FF4B2B" />
         </linearGradient>
       </defs>
     </svg>

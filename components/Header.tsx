@@ -103,7 +103,7 @@ const Header: NextPage = () => {
             {isAuth ? <>
               <button className={`relative`} onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
                 <div className='relative w-[40px] h-[40px]'>
-                  <Image src={userAvatar} alt='...' fill className='rounded-[32px] duration-200 opacity-0 absolute top-0 left-0 z-[111]' onLoad={e => e.currentTarget.style.opacity = '1'} />
+                  {userAvatar && <Image src={userAvatar} alt='...' fill className='rounded-[32px] duration-200 opacity-0 absolute top-0 left-0 z-[111]' onLoad={e => e.currentTarget.style.opacity = '1'} />}
                   <Skeleton width={'100%'} height={'100%'} className='absolute top-0 left-0 rounded-[32px]' />
                 </div>
 

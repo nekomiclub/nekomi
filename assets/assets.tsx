@@ -314,7 +314,7 @@ export const IcoSupportPrivatbank = (props: { width?: number, height?: number, c
 /** New icon */
 export const IcoSupportMonobank = (props: { width?: number, height?: number, className?: string }) => {
   return (
-    <div className={`relative ${props.width ? props.width : '32px'} ${props.height ? props.height : '32px'} ${props.className ? props.className : ''}`}>
+    <div className={`relative ${props.width ? `w-[${props.width}px]` : '32px'} ${props.height ? `h-[${props.height}px]` : '32px'} ${props.className ? props.className : ''}`}>
       <LoadingImage src={SupportMonobank.src} alt='monobank logo' />
     </div>
   );
@@ -323,7 +323,7 @@ export const IcoSupportMonobank = (props: { width?: number, height?: number, cla
 /** New icon */
 export const IcoSupportDiaka = (props: { width?: number, height?: number, className?: string }) => {
   return (
-    <div className={`relative ${props.width ? props.width : '32px'} ${props.height ? props.height : '32px'} ${props.className ? props.className : ''}`}>
+    <div className={`relative ${props.width ? `w-[${props.width}px]` : '32px'} ${props.height ? `h-[${props.height}px]` : '32px'} ${props.className ? props.className : ''}`}>
       <LoadingImage src={SupportDiaka.src} alt='diaka logo' />
     </div>
   );

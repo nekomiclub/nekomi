@@ -103,3 +103,8 @@ export function parseTitleStatus(status: 'announcement' | 'ongoing' | 'out' | 'd
 export function getKeyByValue(object: Object, value: string): string | undefined {
   return Object.keys(object).find(key => object[key] === value);
 }
+
+/** @returns ID */
+export function createID(): string {
+  return (Math.random() + 1).toString(36).substring(8)
+}

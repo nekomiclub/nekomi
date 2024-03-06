@@ -670,10 +670,8 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
     const video = videoRef.current;
     const player = playerRef.current;
 
-    if (video && player) {
-      video.addEventListener('loadedmetadata', () => {
-        setVideoDuration(video.duration)
-      })
+    if (video) {
+      setVideoDuration(video.duration)
 
 
       video.addEventListener('timeupdate', e => {
@@ -1216,62 +1214,62 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
 
           {/* Duration range */}
           <div className='w-full max-w-[1360px] relative'>
-            {videoDuration ? <>
-              <Range
-                step={1}
-                min={0}
-                max={videoDuration + 2}
-                onChange={values => changeMoment(values)}
-                values={[Math.round(playerMoment[0])]}
-                renderTrack={({ props, children }) => (
-                  <div
-                    {...props}
-                    style={{
-                      ...props.style,
-                      zIndex: 33,
-                      position: 'relative'
-                    }}
-                    className='w-full h-[5px] bg-white/[.2] rounded-[4px] duration-200 hover:h-[10px]'
-                    id='player-duration'
-                  >
-                    {children}
-                  </div>
-                )}
-                renderThumb={({ props }) => (
-                  <div
-                    {...props}
-                    style={{
-                      ...props.style,
-                      touchAction: 'none',
-                      pointerEvents: 'none',
-                      zIndex: 33,
-                      position: 'relative'
-                    }}
-                    className={`w-[16px] h-[16px] rounded-[128px] gradient--secondary z-[33]`}
-                  />
-                )}
-              />
-
-              <div ref={durationRangePreviewRef} id='player-duration--preview' className={`absolute h-[135px] w-[240px] bg-black rounded-[4px] bottom-[300%] left-0 overflow-hidden opacity-0 invisible`}>
-                <div className={'flex justify-center w-full h-full'}>
-                  {videoProcessed ? <>
-                    <img src="" alt="..." loading='lazy' className='w-full h-full' id='player-previews--frame' />
-                  </> : <div className='flex w-ful h-full justify-center items-center flex-col gap-[4px]'>
-                    <OopsServerUnavailable height={60} width={60} />
-                    <span className='text-[12px] text-white text-center font-extralight'>Відео ще не оброблене.</span>
-                  </div>}
+            <Range
+              step={1}
+              min={0}
+              max={videoDuration || 0 + 2}
+              onChange={values => changeMoment(values)}
+              values={[Math.round(playerMoment[0])]}
+              renderTrack={({ props, children }) => (
+                <div
+                  {...props}
+                  key={'range-duration--track'}
+                  style={{
+                    ...props.style,
+                    zIndex: 33,
+                    position: 'relative'
+                  }}
+                  className='w-full h-[5px] bg-white/[.2] rounded-[4px] duration-200 hover:h-[10px]'
+                  id='player-duration'
+                >
+                  {children}
                 </div>
+              )}
+              renderThumb={({ props }) => (
+                <div
+                  {...props}
+                  key={'range-duration--thumb'}
+                  style={{
+                    ...props.style,
+                    touchAction: 'none',
+                    pointerEvents: 'none',
+                    zIndex: 33,
+                    position: 'relative'
+                  }}
+                  className={`w-[16px] h-[16px] rounded-[128px] gradient--secondary z-[33]`}
+                />
+              )}
+            />
 
-                <p className='text-[14px] font-extralight text-white w-full h-full absolute bottom-0 flex justify-center items-end'>00:00</p>
+            <div ref={durationRangePreviewRef} id='player-duration--preview' className={`absolute h-[135px] w-[240px] bg-black rounded-[4px] bottom-[300%] left-0 overflow-hidden opacity-0 invisible`}>
+              <div className={'flex justify-center w-full h-full'}>
+                {videoProcessed ? <>
+                  <img src="" alt="..." loading='lazy' className='w-full h-full' id='player-previews--frame' />
+                </> : <div className='flex w-ful h-full justify-center items-center flex-col gap-[4px]'>
+                  <OopsServerUnavailable height={60} width={60} />
+                  <span className='text-[12px] text-white text-center font-extralight'>Відео ще не оброблене.</span>
+                </div>}
               </div>
 
-              <div ref={progressRef} className='absolute top-0 left-0 h-full gradient--secondary rounded-[4px] pointer-events-none z-30'></div>
-              {/* <div ref={preloadRef} className='absolute top-0 left-0 h-[5px] gradient--secondary rounded-[4px] pointer-events-none z-30'></div> */}
-              <div className={`w-full absolute left-0 flex justify-between items-center top-[12px] duration-200 ${playerSize[0] <= 500 ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
-                <p className='text-white text-[14px] font-extralight'>{getHrsMinsSecs(playerMoment[0]).pretty}</p>
-                <p className='text-white text-[14px] font-extralight'>{getHrsMinsSecs(videoDuration).pretty}</p>
-              </div>
-            </> : null}
+              <p className='text-[14px] font-extralight text-white w-full h-full absolute bottom-0 flex justify-center items-end'>00:00</p>
+            </div>
+
+            <div ref={progressRef} className='absolute top-0 left-0 h-full gradient--secondary rounded-[4px] pointer-events-none z-30'></div>
+            {/* <div ref={preloadRef} className='absolute top-0 left-0 h-[5px] gradient--secondary rounded-[4px] pointer-events-none z-30'></div> */}
+            <div className={`w-full absolute left-0 flex justify-between items-center top-[12px] duration-200 ${playerSize[0] <= 500 ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
+              <p className='text-white text-[14px] font-extralight'>{getHrsMinsSecs(playerMoment[0]).pretty}</p>
+              <p className='text-white text-[14px] font-extralight'>{getHrsMinsSecs(videoDuration || 2).pretty}</p>
+            </div>
           </div>
 
           <div className='flex items-center gap-[12px]'>
@@ -1294,6 +1292,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
                     onChange={values => setPlayerVolume(values[0])}
                     renderTrack={({ props, children }) => (
                       <div
+                        key={`range-volume--track`}
                         {...props}
                         style={{
                           ...props.style,
@@ -1307,6 +1306,7 @@ const Player: NextPage<{ dubs: ITitleEpisodesDub[], estimatedEps: number, curren
                     renderThumb={({ props }) => (
                       <div
                         {...props}
+                        key={`range-volume--thumb`}
                         style={{
                           ...props.style,
                         }}

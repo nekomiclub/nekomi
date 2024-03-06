@@ -9,7 +9,7 @@ import Tooltip from '../../../components/Tooltip';
 import { useAppSelector } from '../../../hooks/redux';
 import gsap from 'gsap';
 import Link from 'next/link';
-import { IcoFilledCan, IcoFilledClock, IcoFilledHeart, IcoFilledPlans } from '../../../assets/ico/filled';
+import { IcoFilledCan, IcoFilledClock, IcoFilledHeart, IcoFilledPlans } from '../../../assets/ico/eye/filled';
 import { IcoEyeHidden, IcoEyeSuccess, IcoEyeVisible } from '../../../assets/ico/eye';
 
 import './styles.scss'

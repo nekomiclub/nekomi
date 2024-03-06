@@ -16,7 +16,6 @@ import { routes } from '../routes';
 import { PlayerVolume, PlayerVolumeMuted } from '../assets/watch';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import 'swiper/css';
 import { useIdleTimer } from 'react-idle-timer';
 import { HashImage } from 'hash-image';
 import Skeleton from 'react-loading-skeleton';
