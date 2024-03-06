@@ -10,16 +10,24 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { ITitle, ITitleEpisodesDub, TAnimeGenres } from '../../../interfaces/ITitle';
 import Header from '../../../components/Header';
-import { IcoInfo, IcoNewClock, IcoNewStarRating } from '../../../assets/ico/Icos';
+import { IcoInfo, IcoNewClock, IcoNewHeart, IcoNewHeartFilled, IcoNewPlay, IcoNewStarRating, IcoWatching } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { getKeyByValue, parseTitleCountry, parseTitleDubbers, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { IDubber } from '../../../interfaces/IDubber';
 import { animeGenres, config, genresDescription } from '../../../config';
-import { LoadingImage } from '../../../components/GeneralComponents';
+import { LoadingImage, NewWatchButton } from '../../../components/GeneralComponents';
 import Player from '../../../components/Player';
 import { IcoSupportBymeacoffe, IcoSupportDiaka, IcoSocialInstagram, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/assets';
 import Footer from '../../../components/Footer';
-import BorderGradient, { WatchButton } from '../../../components/BorderGradient';
+
+import './styles.scss';
+
+import { useAppSelector } from '../../../hooks/redux';
+import $api from '../../../components/http';
+import { IUser } from '../../../interfaces/IUser';
+import { IcoFilledClock, IcoFilledPlans } from '../../../assets/ico/eye/filled';
+import { IcoEyeSuccess } from '../../../assets/ico/eye';
+import { IcoFolderAdd } from '../../../assets/ico/folder';
 
 interface IProps {
   title: ITitle,
@@ -27,8 +35,98 @@ interface IProps {
   totalEps: number
 }
 
+type TitleLists = 'favorite' | 'watched' | 'watching' | 'delayed' | 'plans'
+
 const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
   const [dubber, setDubber] = useState<IDubber>()
+  const [titleLiked, setTitleLiked] = useState(false);
+  const [titleLists, setTitleLists] = useState<TitleLists[]>([])
+  const [isLibsSelectOpen, setIsLibsSelectOpen] = useState(false)
+
+  const user = useAppSelector(state => state.user)
+
+  useEffect(() => {
+    if (user.username) {
+      (async function () {
+        try {
+          const { data } = await $api.get<IUser>(`${config.services.apiURL}/v1/user/${user.username}`);
+          let lists: TitleLists[] = []
+
+          data.lists.forEach(list => {
+            if (list.titles.includes(title.id)) {
+              lists.push(list.id.split('-')[0] as TitleLists)
+            }
+          })
+
+          setTitleLists(lists);
+        } catch (e) {
+          console.error(e)
+        }
+      })()
+    }
+  }, [user])
+
+  async function changeTitleLiked() {
+    setTitleLiked(!titleLiked)
+
+    if (user.username) {
+      try {
+        $api.get<IUser>(`${config.services.apiURL}/v1/user/${user.username}`).catch(e => console.error(e)).then(res => {
+          const user = res!.data;
+
+          if (titleLiked) {
+            const list = user.lists.find(el => el.id.match(/^favorite/gi))!;
+            let tmpTitles = list.titles.filter(el => el !== title!.id);
+
+            list.titles = tmpTitles;
+            user.lists.find(el => el.id.match(/^favorite/gi))!.titles = list.titles;
+          } else {
+            user.lists.find(el => el.id.match(/^favorite/gi))!.titles.push(title!.id)
+          }
+
+          $api.patch(`${config.services.apiURL}/v1/user`, user)
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+
+  function changeTitleList(list: TitleLists) {
+    if (list === 'favorite') {
+      setTitleLiked(!titleLiked)
+    }
+
+    let lists: TitleLists[] = []
+
+    if (titleLists.includes(list)) {
+      lists = titleLists.filter(el => el !== list);
+    } else {
+      lists = [...titleLists, list];
+    }
+
+    try {
+      $api.get<IUser>(`${config.services.apiURL}/v1/user/${user.username}`).catch(e => console.error(e)).then(res => {
+        const user = res!.data;
+
+        user.lists.forEach(list => {
+          if (lists.includes(list.id.split('-')[0] as TitleLists)) {
+            list.titles.push(title.id)
+          } else {
+            list.titles = list.titles.filter(el => el !== title.id)
+          }
+
+          user.lists = [...user.lists.filter(el => el.id !== list.id), list]
+        })
+
+        $api.patch(`${config.services.apiURL}/v1/user`, user)
+      })
+    } catch (e) {
+      console.error(e)
+    }
+
+    setTitleLists(lists);
+  }
 
   return (
     <>
@@ -69,8 +167,50 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
               </div>
 
               {/* Play, save, like btns */}
-              <div className='flex gap-[8px]'>
+              <div className='flex gap-[8px] max-[600px]:flex-col'>
+                <NewWatchButton href='#player' gradient='primary' className='max-[600px]:w-full justify-center' />
 
+                <div className='flex gap-[8px]'>
+                  <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${user.isAuth ? 'title-like--auth' : 'bg-grey title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!user.isAuth} onClick={() => changeTitleLiked()}>
+                    <Tooltip content={user.isAuth ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
+                      <div className='relative'>
+                        <IcoNewHeart width={40} height={40} className='title-like-ico' />
+                        <IcoNewHeartFilled width={40} height={40} className={`title-like-filled`} gradient='primary' />
+                      </div>
+                    </Tooltip>
+                  </button>
+
+                  <div className='relative flex justify-center items w-full'>
+                    <button className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${user.isAuth ? 'title-add--auth' : 'bg-grey title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} disabled={!user.isAuth} onClick={() => setIsLibsSelectOpen(!isLibsSelectOpen)}>
+                      <Tooltip content={user.isAuth ? `Додати тайтл в теки` : 'Авторизуйтесь, для того щоб додавати тайтли в теки'}>
+                        <IcoFolderAdd width={40} height={40} />
+                      </Tooltip>
+                    </button>
+
+                    <div className={`absolute right-0 top-[80px] max-[430px]:top-[170px] bg-grey rounded-[2px] flex flex-col gap-[8px] py-[8px] w-max duration-200 z-[7] ${isLibsSelectOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('favorite')}>
+                        <IcoNewHeartFilled height={24} width={24} gradient='primary' className='flex-shrink-0' />
+                        <p className='text-[16px] text-white'>{titleLiked ? 'Вилучити з улюблених' : 'Додати в улюблені'}</p>
+                      </button>
+                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('watching')}>
+                        <IcoWatching height={24} width={24} className='flex-shrink-0' />
+                        <p className='text-[16px] text-white'>{titleLists.includes('watching') ? 'Вилучити з переглядаємих' : 'Додати в переглядаємі'}</p>
+                      </button>
+                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('plans')}>
+                        <IcoFilledPlans height={24} width={24} className='flex-shrink-0' />
+                        <p className='text-[16px] text-white'>{titleLists.includes('plans') ? 'Вилучити з планів' : 'Додати в плани'}</p>
+                      </button>
+                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('watched')}>
+                        <IcoEyeSuccess height={24} width={24} className='flex-shrink-0' />
+                        <p className='text-[16px] text-white'>{titleLists.includes('watched') ? 'Вилучити з переглянутих' : 'Додати в переглянуті'}</p>
+                      </button>
+                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('delayed')}>
+                        <IcoFilledClock height={24} width={24} className='flex-shrink-0' />
+                        <p className='text-[16px] text-white'>{titleLists.includes('delayed') ? 'Вилучити з відкладених' : 'Додати в відкладені'}</p>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Details */}

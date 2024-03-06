@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Play } from '../assets/assets';
 import '../app/w/[query]/styles.scss'
 
+/** @deprecated use .gradientNew (See README.md) */
 const BorderGradient: NextPage<{ children: any, width?: string, round?: string, className?: string, h?: string, w?: string }> = ({ children, round, width, className, w, h }) => {
   return (
     <div className={`gradient--primary-border ${h ? h : 'h-fit'}  ${w ? w : 'w-fit'}${className || ''}`} style={{ '--w': width || '1px', '--r': round || '4px' } as React.CSSProperties}>
@@ -11,6 +12,7 @@ const BorderGradient: NextPage<{ children: any, width?: string, round?: string, 
   );
 }
 
+/** @deprecated use NewWatchButton instead */
 export const WatchButton: React.FC<{ href: string }> = ({ href }) => {
   return <div className='flex gap-[8px]'>
     <BorderGradient round='2px' className='max-[600px]:w-full'>

@@ -8,6 +8,7 @@ import { routes } from '../routes';
 import '../styles/components/GeneralComponents.scss'
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
+import { IcoNewPlay } from '../assets/ico/Icos';
 
 export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
   return (
@@ -43,5 +44,17 @@ export const LoadingImage: NextPage<{ src: string, alt?: string, className?: str
       <Image src={src} alt={alt || '...'} fill className={`duration-200 opacity-0 absolute top-0 left-0 z-[2] ${className ? className : ''}`} onLoad={e => e.currentTarget.style.opacity = '1'} />
       <Skeleton width={'100%'} height={'100%'} className='absolute top-0 left-0' />
     </>
+  )
+}
+
+export const NewWatchButton: NextPage<{ href: string, className?: string, gradient: 'primary' | 'secondary' }> = ({ gradient, href, className }) => {
+  return (
+    <Link href={href} className={`gradientNew--${gradient}-border-4 newWatchButton-${gradient} px-[16px] py-[16px] flex items-center gap-[24px] ${className ? className : ''}`}>
+      <div className='relative'>
+        <IcoNewPlay width={40} height={40} gradient={gradient} className={`newWatchButton-${gradient}-icoGradient`} />
+        <IcoNewPlay width={40} height={40} className={`newWatchButton-${gradient}-icoWhite`} />
+      </div>
+      <p className='text-white text-[24px] font-bold uppercase'>дивитись</p>
+    </Link>
   )
 }

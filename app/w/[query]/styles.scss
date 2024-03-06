@@ -84,3 +84,42 @@
     flex-direction: column !important;
   }
 }
+
+.title {
+  &-like {
+    position: relative;
+
+    &-ico {
+      transition: .2s ease-in-out;
+      position: relative;
+    }
+
+    &-filled {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: .2s ease-in-out;
+      opacity: 0;
+    }
+
+    &--liked {
+      .title-like {
+        &-filled {
+          opacity: 1;
+        }
+
+        &-ico {
+          opacity: 0;
+        }
+      }
+    }
+
+    &--auth:hover {
+      .title-like {
+        &-filled {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
