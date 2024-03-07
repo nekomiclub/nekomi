@@ -28,6 +28,7 @@ import { IUser } from '../../../interfaces/IUser';
 import { IcoFilledClock, IcoFilledPlans } from '../../../assets/ico/eye/filled';
 import { IcoEyeSuccess } from '../../../assets/ico/eye';
 import { IcoFolderAdd } from '../../../assets/ico/folder';
+import { IUserState } from '../../../store/reducers/userSlice';
 
 interface IProps {
   title: ITitle,
@@ -65,32 +66,6 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
       })()
     }
   }, [user])
-
-  async function changeTitleLiked() {
-    setTitleLiked(!titleLiked)
-
-    if (user.username) {
-      try {
-        $api.get<IUser>(`${config.services.apiURL}/v1/user/${user.username}`).catch(e => console.error(e)).then(res => {
-          const user = res!.data;
-
-          if (titleLiked) {
-            const list = user.lists.find(el => el.id.match(/^favorite/gi))!;
-            let tmpTitles = list.titles.filter(el => el !== title!.id);
-
-            list.titles = tmpTitles;
-            user.lists.find(el => el.id.match(/^favorite/gi))!.titles = list.titles;
-          } else {
-            user.lists.find(el => el.id.match(/^favorite/gi))!.titles.push(title!.id)
-          }
-
-          $api.patch(`${config.services.apiURL}/v1/user`, user)
-        })
-      } catch (e) {
-        console.error(e)
-      }
-    }
-  }
 
   function changeTitleList(list: TitleLists) {
     if (list === 'favorite') {
@@ -171,14 +146,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                 <NewWatchButton href='#player' gradient='primary' className='max-[600px]:w-full justify-center' />
 
                 <div className='flex gap-[8px]'>
-                  <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${user.isAuth ? 'title-like--auth' : 'bg-grey title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!user.isAuth} onClick={() => changeTitleLiked()}>
-                    <Tooltip content={user.isAuth ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
-                      <div className='relative'>
-                        <IcoNewHeart width={40} height={40} className='title-like-ico' />
-                        <IcoNewHeartFilled width={40} height={40} className={`title-like-filled`} gradient='primary' />
-                      </div>
-                    </Tooltip>
-                  </button>
+                  <AddToFavorite user={user} setTitleLiked={setTitleLiked} titleId={title.id} titleLiked={titleLiked} />
 
                   <div className='relative flex justify-center items w-full'>
                     <button className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${user.isAuth ? 'title-add--auth' : 'bg-grey title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} disabled={!user.isAuth} onClick={() => setIsLibsSelectOpen(!isLibsSelectOpen)}>
@@ -348,6 +316,45 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
       </div>
     </>
   );
+}
+
+export const AddToFavorite: NextPage<{ user: IUserState, titleLiked: boolean, setTitleLiked: (state: boolean) => void, titleId: string }> = ({ user, titleLiked, setTitleLiked, titleId }) => {
+  async function changeTitleLiked() {
+    setTitleLiked(!titleLiked)
+
+    if (user.username) {
+      try {
+        $api.get<IUser>(`${config.services.apiURL}/v1/user/${user.username}`).catch(e => console.error(e)).then(res => {
+          const user = res!.data;
+
+          if (titleLiked) {
+            const list = user.lists.find(el => el.id.match(/^favorite/gi))!;
+            let tmpTitles = list.titles.filter(el => el !== titleId);
+
+            list.titles = tmpTitles;
+            user.lists.find(el => el.id.match(/^favorite/gi))!.titles = list.titles;
+          } else {
+            user.lists.find(el => el.id.match(/^favorite/gi))!.titles.push(titleId)
+          }
+
+          $api.patch(`${config.services.apiURL}/v1/user`, user)
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+
+  return (
+    <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${user.isAuth ? 'title-like--auth' : 'bg-grey title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!user.isAuth} onClick={() => changeTitleLiked()}>
+      <Tooltip content={user.isAuth ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
+        <div className='relative'>
+          <IcoNewHeart width={40} height={40} className='title-like-ico' gradient='primary' />
+          <IcoNewHeartFilled width={40} height={40} className={`title-like-filled`} gradient='primary' />
+        </div>
+      </Tooltip>
+    </button>
+  )
 }
 
 const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dubber, className }) => {

@@ -2,7 +2,7 @@
 const nextConfig = {
   images: {
     remotePatterns: [{
-      hostname: 'api.animee.club'
+      hostname: '*.animee.club'
     }, {
       hostname: '*.googleusercontent.com'
     }]

@@ -6,12 +6,12 @@ import { ITokenData } from "../../interfaces/ITokenData";
  * @prop isAuth - Is user authorized
  * @prop isNewAccount - Temporary property, indicates if user migrate account to new provider
  */
-interface ISlice extends ITokenData {
+export interface IUserState extends ITokenData {
   isAuth: boolean,
   isNewAccount: boolean
 }
 
-const initialState: ISlice = {
+const initialState: IUserState = {
   isAuth: false,
   isNewAccount: false,
   uid: '',
@@ -23,7 +23,7 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    reducer(state, action: IReduxAction<ISlice>) {
+    reducer(state, action: IReduxAction<IUserState>) {
       for (let key in action.payload) {
         state[key] = action.payload[key];
       }
