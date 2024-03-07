@@ -121,9 +121,9 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
               <LoadingImage src={title.poster} />
             </div>
 
-            <div className='flex flex-col gap-[24px]'>
-              <div className='flex flex-col gap-[8px] max-[600px]:gap-[0px]'>
-                <div className='flex items-center max-[600px]:flex-col-reverse justify-between w-full max-[600px]:gap-[24px]'>
+            <div className='flex flex-col gap-[24px] w-full'>
+              <div className='flex flex-col gap-[8px] max-[600px]:gap-[0px] w-full'>
+                <div className='flex items-center gap-[16px] max-[600px]:flex-col-reverse justify-between w-full max-[600px]:gap-[24px]'>
                   <h1 className='text-white text-[40px] font-bold max-[600px]:text-center max-[600px]:text-[32px]'>{title.names.ukr}</h1>
 
                   <div className='flex items-center gap-[8px]'>
@@ -149,7 +149,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <AddToFavorite user={user} setTitleLiked={setTitleLiked} titleId={title.id} titleLiked={titleLiked} />
 
                   <div className='relative flex justify-center items w-full'>
-                    <button className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${user.isAuth ? 'title-add--auth' : 'bg-grey title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} disabled={!user.isAuth} onClick={() => setIsLibsSelectOpen(!isLibsSelectOpen)}>
+                    <button className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${user.isAuth ? 'title-add--auth' : 'bg-grey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} disabled={!user.isAuth} onClick={() => setIsLibsSelectOpen(!isLibsSelectOpen)}>
                       <Tooltip content={user.isAuth ? `Додати тайтл в теки` : 'Авторизуйтесь, для того щоб додавати тайтли в теки'}>
                         <IcoFolderAdd width={40} height={40} />
                       </Tooltip>
@@ -346,7 +346,7 @@ export const AddToFavorite: NextPage<{ user: IUserState, titleLiked: boolean, se
   }
 
   return (
-    <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${user.isAuth ? 'title-like--auth' : 'bg-grey title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!user.isAuth} onClick={() => changeTitleLiked()}>
+    <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${user.isAuth ? 'title-like--auth' : 'bg-grey/[.3] title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!user.isAuth} onClick={() => changeTitleLiked()}>
       <Tooltip content={user.isAuth ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
         <div className='relative'>
           <IcoNewHeart width={40} height={40} className='title-like-ico' gradient='primary' />
@@ -359,17 +359,16 @@ export const AddToFavorite: NextPage<{ user: IUserState, titleLiked: boolean, se
 
 const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dubber, className }) => {
   return (
-    <div className={`bg-grey px-[40px] py-[24px] flex flex-col gap-[24px] rounded-[4px] w-fit max-[600px]:w-full ${className ? className : ''}`}>
+    <div className={`bg-grey px-[40px] py-[24px] flex flex-col gap-[24px] rounded-[4px] max-[600px]:w-full ${className ? className : ''}`}>
       {dubber ? <>
         <div className='flex items-center max-[600px]:flex-col gap-[40px]'>
-          <div className='relative w-[128px] h-[128px] rounded-[128px] overflow-hidden'>
+          <div className='relative w-[128px] h-[128px] rounded-[128px] overflow-hidden flex-shrink-0'>
             <LoadingImage src={dubber.thumbURL} />
-            <div className='bg-red-400 w-full h-full block'></div>
           </div>
 
           <div className='flex flex-col gap-[8px] items-center'>
             <p className='text-white text-[24px]'>Озвучено</p>
-            <p className='text-white text-[24px] font-bold'>{dubber.name}</p>
+            <p className='text-white text-[24px] font-bold text-center whitespace-nowrap'>{dubber.name}</p>
           </div>
         </div>
 

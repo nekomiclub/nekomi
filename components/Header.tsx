@@ -85,6 +85,7 @@ const Header: NextPage = () => {
     dispatch(userSlice.actions.reducer({ isAuth: false, isNewAccount: false, roles: [], uid: '', username: '' }))
     setUserDetailsOpened(false)
     setIsAuth(false)
+    router.refresh();
   }
 
   return (
@@ -173,8 +174,7 @@ const Header: NextPage = () => {
                       </div>
 
                       <div className='flex gap-[16px] max-[560px]:flex-col items-start max-[560px]:gap-[8px]'>
-                        {title.dubs?.length ? <span className='font-bold gradient--primary-text'>Має озвучку</span> : <span className='font-extralight text-white'>Озвучка відсутня</span>}
-                        {title.dubs?.length ? <span className='font-bold gradient--primary-text'>Тайтл оновлений</span> : <span className='font-extralight text-white'>Тайтл не оновлений</span>}
+                        {title.dubs?.length ? <span className='font-bold gradient--primary-text'>Має озвучення</span> : <span className='font-extralight text-white'>Озвучення відсутня</span>}
                       </div>
                     </div>
                   </div>

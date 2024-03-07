@@ -74,17 +74,6 @@
   }
 }
 
-#title-about {
-  flex-direction: row !important;
-  padding: 148px $wrapperSidePadding 100px;
-}
-
-@media only screen and (max-width: 1140px) {
-  #title-about {
-    flex-direction: column !important;
-  }
-}
-
 .title {
   &-like {
     position: relative;

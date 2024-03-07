@@ -52,8 +52,8 @@ export const WithGoogle: NextPage = (props) => {
         token: `bearer=${resData.token}`,
       })
 
-      dispatch(reducer({ isAuth: true, roles: tokenData.data.roles, uid: tokenData.data.uid, username: tokenData.data.username }))
-      router.replace(searchParams.get('ref')!)
+      dispatch(reducer({ isAuth: true, roles: tokenData.data.roles, isNewAccount: false, uid: tokenData.data.uid, username: tokenData.data.username }))
+      router.push(searchParams.get('ref')!)
 
     } catch (e) {
       console.error(e)

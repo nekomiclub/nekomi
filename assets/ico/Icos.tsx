@@ -259,8 +259,8 @@ export const IcoNewPlay = ({ className, gradient, height, width }: IPropsIcon) =
         <path d="M5.19995 25.2V6.8C5.19995 4.66666 7.46662 3.33333 9.19995 4.4L25.2 13.6C27.0666 14.6667 27.0666 17.4667 25.2 18.5333L9.19995 27.7333C7.46662 28.6667 5.19995 27.3333 5.19995 25.2Z" fill="url(#paint0_linear_133_1755)" />
         <defs>
           <linearGradient id="paint0_linear_133_1755" x1="5.19995" y1="16.0302" x2="26.6" y2="16.0302" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#FF416C" />
-            <stop offset="1" stop-color="#FF4B2B" />
+            <stop stopColor="#FF416C" />
+            <stop offset="1" stopColor="#FF4B2B" />
           </linearGradient>
         </defs>
       </svg>
@@ -270,8 +270,8 @@ export const IcoNewPlay = ({ className, gradient, height, width }: IPropsIcon) =
         <path d="M5.19995 25.2V6.8C5.19995 4.66666 7.46662 3.33333 9.19995 4.4L25.2 13.6C27.0666 14.6667 27.0666 17.4667 25.2 18.5333L9.19995 27.7333C7.46662 28.6667 5.19995 27.3333 5.19995 25.2Z" fill="url(#paint0_linear_133_1752)" />
         <defs>
           <linearGradient id="paint0_linear_133_1752" x1="5.19995" y1="16.0302" x2="26.6" y2="16.0302" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#FF9966" />
-            <stop offset="1" stop-color="#FF7D81" />
+            <stop stopColor="#FF9966" />
+            <stop offset="1" stopColor="#FF7D81" />
           </linearGradient>
         </defs>
       </svg>
@@ -293,8 +293,8 @@ export const IcoNewHeart = ({ className, gradient, height, width }: IPropsIcon) 
         <path d="M21.3 6.15C24.4687 6.15 27.0438 8.73125 27.0438 11.9187C27.0438 13.5562 26.3625 15.0312 25.275 16.0812L16 25.4438L6.5625 15.9125C5.575 14.875 4.9625 13.4687 4.9625 11.9187C4.9625 8.73125 7.53125 6.15 10.7063 6.15C13.0938 6.15 15.1375 7.6125 16.0063 9.7C16.8625 7.61875 18.9125 6.15 21.3 6.15ZM21.3 5.1875C19.1875 5.1875 17.25 6.175 16 7.8C14.75 6.175 12.8125 5.1875 10.7 5.1875C7.00625 5.1875 4 8.20625 4 11.9187C4 13.6625 4.6625 15.3187 5.86875 16.5812L15.3188 26.125L16 26.8125L16.6812 26.125L25.95 16.7625C27.2625 15.4938 28 13.7687 28 11.9187C28 8.20625 24.9937 5.1875 21.3 5.1875Z" fill="url(#paint0_linear_134_1758)" />
         <defs>
           <linearGradient id="paint0_linear_134_1758" x1="4" y1="16" x2="28" y2="16" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#FF416C" />
-            <stop offset="1" stop-color="#FF4B2B" />
+            <stop stopColor="#FF416C" />
+            <stop offset="1" stopColor="#FF4B2B" />
           </linearGradient>
         </defs>
       </svg>}
@@ -316,8 +316,8 @@ export const IcoNewHeartFilled = ({ className, gradient, height, width }: IProps
         <path d="M21.3 5.1875C19.1875 5.1875 17.25 6.175 16 7.8C14.75 6.175 12.8125 5.1875 10.7 5.1875C7.00625 5.1875 4 8.20625 4 11.9187C4 13.6625 4.6625 15.3187 5.86875 16.5812L15.3188 26.125L16 26.8125L16.6812 26.125L25.95 16.7625C27.2625 15.4938 28 13.7687 28 11.9187C28 8.20625 24.9937 5.1875 21.3 5.1875Z" fill="url(#paint0_linear_136_1771)" />
         <defs>
           <linearGradient id="paint0_linear_136_1771" x1="4" y1="16" x2="28" y2="16" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#FF416C" />
-            <stop offset="1" stop-color="#FF4B2B" />
+            <stop stopColor="#FF416C" />
+            <stop offset="1" stopColor="#FF4B2B" />
           </linearGradient>
         </defs>
       </svg>
@@ -331,13 +331,13 @@ export const IcoNewAnimeeLogo = ({ className, gradient, height, width }: IPropsI
   return (
     <>
       {gradient === 'primary' && <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g clip-path="url(#clip0_103_892)">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M78.9949 9.84375L44.7913 10.0034L44.8668 70.0109H80.0002V58.566H53.364V45.5679H76.0514V34.1232H53.364V21.2887H78.9949V9.84375ZM43.6265 9.91566L0 50.935L9.43064 54.9974L17.4513 47.2276L33.664 54.8637L34.0602 45.2033L33.2381 65.2523L44.3176 70.0249L44.1542 10.1429L43.6265 9.91566ZM24.2323 40.6587L34.6607 30.5566L34.0602 45.2033L24.2323 40.6587Z" fill="url(#paint0_linear_103_892)" />
+        <g clipPath="url(#clip0_103_892)">
+          <path fillRule="evenodd" clipRule="evenodd" d="M78.9949 9.84375L44.7913 10.0034L44.8668 70.0109H80.0002V58.566H53.364V45.5679H76.0514V34.1232H53.364V21.2887H78.9949V9.84375ZM43.6265 9.91566L0 50.935L9.43064 54.9974L17.4513 47.2276L33.664 54.8637L34.0602 45.2033L33.2381 65.2523L44.3176 70.0249L44.1542 10.1429L43.6265 9.91566ZM24.2323 40.6587L34.6607 30.5566L34.0602 45.2033L24.2323 40.6587Z" fill="url(#paint0_linear_103_892)" />
         </g>
         <defs>
           <linearGradient id="paint0_linear_103_892" x1="0" y1="39.9343" x2="80.0002" y2="39.9343" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#FF416C" />
-            <stop offset="1" stop-color="#FF4B2B" />
+            <stop stopColor="#FF416C" />
+            <stop offset="1" stopColor="#FF4B2B" />
           </linearGradient>
           <clipPath id="clip0_103_892">
             <rect width="80" height="80" fill="white" />

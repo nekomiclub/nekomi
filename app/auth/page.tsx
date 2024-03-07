@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { routes } from '../../routes';
 import { WithGoogle } from '../../components/Auth'
 import { HashImage } from 'hash-image';
+import { LoadingImage } from '../../components/GeneralComponents';
 
 const AuthSignIn: NextPage = (props) => {
   const searchParams = useSearchParams();
@@ -19,7 +20,7 @@ const AuthSignIn: NextPage = (props) => {
   return (
     <div className='relative h-screen'>
       <div className='fixed top-0 left-0 w-full h-full'>
-        <HashImage src={DefaultImg1.src} alt='...' fill parentClassName='!h-full' />
+        <LoadingImage src={DefaultImg1.src} />
       </div>
 
       <div className="container relative z-[3]">
