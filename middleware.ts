@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
   const { origin } = req.nextUrl
 
   //* Check access
-  const token = req.cookies.get('refreshToken')?.value;
+  const token = req.cookies.get('oldRefreshToken')?.value;
 
   if (!url.includes('_next') && !url.includes('.')) {
     const route = getRoute(url);

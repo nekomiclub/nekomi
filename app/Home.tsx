@@ -79,7 +79,7 @@ const Home: NextPage<IProps> = ({ headliner, watchingNow }) => {
                 },
               }}>
                 {watchingNow.map(title => {
-                  return <SwiperSlide className='w-full h-full bg-green-400' key={`watchingNow-${title.code}`}>
+                  return <SwiperSlide className='w-full h-full' key={`watchingNow-${title.code}`}>
                     <NewTitleCard title={title} />
                   </SwiperSlide>
                 })}

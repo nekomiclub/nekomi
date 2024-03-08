@@ -37,7 +37,7 @@ const UserLists: NextPage<IProps> = async ({ params, searchParams }) => {
     isErrored = true;
   }
 
-  const token = cookies().get('refreshToken')?.value;
+  const token = cookies().get('oldRefreshToken')?.value;
   // @ts-expect-error Need empty object
   let tokenPayload: ITokenData = {}
 

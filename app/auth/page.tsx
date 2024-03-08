@@ -37,13 +37,13 @@ const AuthSignIn: NextPage = (props) => {
           <div className='flex flex-col gap-[4px] w-full'>
             <WithGoogle />
             <p className='text-white max-w-[400px]'>Авторизація через Google буде прибрана після 22 березня включно</p>
-            <Link href={`${routes.authSignup.path}/continue?ref=${searchParams.get('ref')}`} className='w-full flex gap-[40px] max-[500px]:gap-[24px] max-[500px]:py-[8px] max-[500px]:px-[16px] py-[16px] px-[24px] bg-dark rounded-[2px] justify-center items-center'>
+            <Link href={`${routes.authSignup.path}?ref=${searchParams.get('ref')}`} className='w-full flex gap-[40px] max-[500px]:gap-[24px] max-[500px]:py-[8px] max-[500px]:px-[16px] py-[16px] px-[24px] bg-dark rounded-[2px] justify-center items-center'>
               <p className='text-white text-[24px] max-[500px]:16px font-extralight'>Продовжити з Fullkekw</p>
             </Link>
           </div>
         </div>
 
-        <p className='text-white text-[24px] max-[500px]:text-[16px] font-extralight text-center max-[500px]:pb-[32px]'>Нема акаунту? <Link href={`${routes.authSignup.path}/continue?ref=${searchParams.get('ref')}`} className='text-purple font-bold'>Зареєструватися</Link></p>
+        <p className='text-white text-[24px] max-[500px]:text-[16px] font-extralight text-center max-[500px]:pb-[32px]'>Нема акаунту? <Link href={`${routes.authSignup.path}?ref=${searchParams.get('ref')}`} className='text-purple font-bold'>Зареєструватися</Link></p>
       </div>
     </div>
   );
