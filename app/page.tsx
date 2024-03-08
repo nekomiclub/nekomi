@@ -32,7 +32,7 @@ const RSC: NextPage = async (props) => {
     headliner = {
       id: headlinerID,
       code: 'solo-leveling',
-      poster: '',
+      poster: 'https://media.animee.club/8ee6f087-7ce6-4a6a-8db4-7c2a6294a276',
       title: 'Тільки я візьму новий рівень',
       video: ''
     }
