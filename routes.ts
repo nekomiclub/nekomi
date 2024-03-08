@@ -64,7 +64,7 @@ export const routes: IRoutes = {
     access: []
   },
   authSignup: {
-    path: devMode ? 'http://192.168.0.106:3000/continue' : 'https://account.fk.animee.club',
+    path: devMode ? 'http://192.168.0.106:3000/continue' : 'https://account.animee.club',
     public: true,
     access: []
   },
