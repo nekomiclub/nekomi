@@ -43,7 +43,7 @@ const AuthSignIn: NextPage = (props) => {
           </div>
         </div>
 
-        <p className='text-white text-[24px] max-[500px]:text-[16px] font-extralight text-center max-[500px]:pb-[32px]'>Нема акаунту? <Link href={`${routes.authSignup.path}?ref=${searchParams.get('ref')}`} className='text-purple font-bold'>Зареєструватися</Link></p>
+        <p className='text-white text-[24px] max-[500px]:text-[16px] font-extralight text-center max-[500px]:pb-[32px]'>Нема акаунту? <Link href={`${routes.authSignup.path}/continue?ref=${searchParams.get('ref')}`} className='text-purple font-bold'>Зареєструватися</Link></p>
       </div>
     </div>
   );
