@@ -24,8 +24,8 @@ export const env: IEnv = {
 export const config = {
   services: {
     apiURL: devMode ? 'http://192.168.0.106' : 'https://api.animee.club',
-    fkUsapiURL: devMode ? 'http://192.168.0.106:45660' : 'https://usapi.fk.animee.club',
-    fkAccount: devMode ? 'http://192.168.0.106:3001' : 'https://account.fk.animee.club',
+    fkUsapiURL: devMode ? 'http://192.168.0.106:45660' : 'https://usapi.animee.club',
+    fkAccount: devMode ? 'http://192.168.0.106:3001' : 'https://account.animee.club',
     siteURL: devMode ? 'http://192.168.0.106:3001' : 'https://animee.club'
   }
 }
