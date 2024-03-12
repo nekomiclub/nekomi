@@ -6,7 +6,8 @@ const nextConfig = {
     }, {
       hostname: '*.googleusercontent.com'
     }]
-  }
+  },
+  reactStrictMode: false
 }
 
 module.exports = nextConfig

@@ -2,8 +2,7 @@
 
 import { NextPage } from 'next';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState, MouseEvent, useRef, useCallback } from 'react'
-import { getImageSize } from 'react-image-size';
+import { useEffect, useState, useRef, useCallback } from 'react'
 
 import { OopsServerUnavailable, Play, PlayerDubsList, PlayerNext } from '../assets/assets';
 import { ITitleEpisodeDubbed, ITitleEpisodesDub } from '../interfaces/ITitle';
