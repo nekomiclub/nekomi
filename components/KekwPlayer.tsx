@@ -2,16 +2,16 @@
 
 import { NextPage } from 'next';
 import { useState, useEffect, useRef, RefObject, KeyboardEvent } from 'react';
-
-
+import axios from 'axios';
+import * as loader from '@uiball/loaders';
 
 import { ITitle, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
-import axios from 'axios';
-import { IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
-import { IcoNewPlay } from '../assets/ico/Icos';
+import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
+import { IcoNewPlay, IcoNewSettings } from '../assets/ico/Icos';
 
 import '../styles/components/KekwPlayer.scss';
+import { useInView } from 'react-intersection-observer';
 
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
 
@@ -41,6 +41,9 @@ const KekwPlayer: NextPage<{
   // Refs
   const playerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  // System
+  const [inViewRef, inView, entry] = useInView()
 
 
 
@@ -143,11 +146,21 @@ const KekwPlayer: NextPage<{
     player.addEventListener('fullscreenchange', () => {
       setIsFullscreen(document.fullscreenElement ? true : false)
     })
+
+    video.addEventListener('leavepictureinpicture', () => {
+      setIsPip(false)
+    })
+
+    video.addEventListener('enterpictureinpicture', () => {
+      setIsPip(true)
+    })
   }, [])
 
   //* Handle video keyboard events
   useEffect(() => {
-    document.addEventListener('keydown', handler)
+    if (inView) {
+      document.addEventListener('keydown', handler)
+    }
 
     function handler(e: any) {
       const video = videoRef.current;
@@ -259,7 +272,7 @@ const KekwPlayer: NextPage<{
     return () => {
       document.removeEventListener('keydown', handler)
     }
-  }, [isPlaying, isMuted, videoMoment, isFullscreen, isPiP])
+  }, [isPlaying, isMuted, videoMoment, isFullscreen, isPiP, inView, duration])
 
   //* Change video src
   useEffect(() => {
@@ -293,44 +306,49 @@ const KekwPlayer: NextPage<{
 
 
   return (
-    // Wrapper
-    <div className='w-full h-full flex flex-col justify-between bg-black relative z-[5]' ref={playerRef}>
-      {/* Menu */}
-      <Menu ep={ep} setEp={setEp} dub={dub!} dubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setDub={setDub} />
+    // In view
+    <div className='w-full h-full' ref={inViewRef}>
+      {/* Wrapper */}
+      <div className='w-full h-full flex flex-col justify-between bg-black relative z-[5]' ref={playerRef}>
+        {/* Menu */}
+        <Menu ep={ep} setEp={setEp} dub={dub!} dubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setDub={setDub} />
 
-      {/* Bottom */}
-      <div className='flex justify-between gap-[24px] relative z-[10]'>
-        <div className='flex items-center gap-[16px]'>
-          {/* Play/Pause */}
-          <Play isPlaying={isPlaying} videoRef={videoRef} />
+        {/* Bottom */}
+        <div className='flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px]'>
+          <div className='flex items-center gap-[16px]'>
+            {/* Play/Pause */}
+            <Play isPlaying={isPlaying} videoRef={videoRef} />
 
-          {/* Volume */}
-          <Volume volume={volume} isMuted={isMuted} videoRef={videoRef} />
-        </div>
+            {/* Volume */}
+            <Volume volume={volume} isMuted={isMuted} videoRef={videoRef} />
+          </div>
 
-        {/* Range */}
-        <Timeline />
-
-        {/* Settings */}
-        <div className='flex items-center gap-[16px]'>
-          {/* PiP */}
-          <PiP isPiP={isPiP} videoRef={videoRef} />
+          {/* Range */}
+          <Timeline />
 
           {/* Settings */}
-          <Settings />
+          <div className='flex items-center gap-[16px]'>
+            {/* PiP */}
+            <PiP isPiP={isPiP} videoRef={videoRef} />
 
-          {/* Fullscreen */}
-          <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
+            {/* Settings */}
+            <Settings />
+
+            {/* Fullscreen */}
+            <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
+          </div>
         </div>
-      </div>
 
-      {/* Video */}
-      <div className='w-full h-full absolute top-0 left-0'>
-        {/* Loader */}
+        {/* Video */}
+        <div className='w-full h-full absolute top-0 left-0'>
+          {/* Loader */}
+          <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 ${isVideoLoading ? 'opacity-100' : 'opacity-0'}`}>
+            <loader.DotPulse color='#fff' size={80} />
+          </div>
 
-        <video src={videoSrc} preload='metadata' className='w-full h-full' controls={false} ref={videoRef}></video>
-      </div>
-    </div>
+          <video src={videoSrc} preload='metadata' className='w-full h-full' controls={false} ref={videoRef}></video>
+        </div>
+      </div></div>
   );
 }
 
@@ -359,7 +377,7 @@ const Menu: NextPage<{
 
   return (
     <div className='relative z-[10] px-[24px] py-[16px] flex gap-[4px]'>
-      <button className='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple'>
+      <button className='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus:bg-purple'>
         <IcoNewPlayerList width={40} height={40} />
       </button>
 
@@ -368,7 +386,7 @@ const Menu: NextPage<{
         <p className='text-white text-[12px] font-extralight text-center'>{dub ? dubbers.find(el => el.id === dub.id)!.name : '...'}</p>
       </div>
 
-      <button className='px-[16px] bg-dark rounded-[2px] duration-200 hover:bg-purple' onClick={() => nextEpisode()}>
+      <button className='px-[16px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus:bg-purple' onClick={() => nextEpisode()}>
         <IcoNewPlayerNext width={40} height={40} className={`kp-menu_nextBtn ${isLastEpisode ? 'kp-menu_nextBtn--lastEpisode' : ''}`} />
       </button>
     </div>
@@ -396,9 +414,9 @@ const Play: NextPage<{
   }
 
   return (
-    <button className='relative w-[60px] h-[60px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoNewPlay width={60} height={60} className={`duration-200 absolute top-0 left-0 ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
-      <IcoNewPlayerPause width={60} height={60} className={`duration-200 absolute top-0 left-0 ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
+    <button className='relative w-[68px] h-[68px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+      <IcoNewPlay width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
+      <IcoNewPlayerPause width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
     </button>
   );
 }
@@ -425,10 +443,10 @@ const Volume: NextPage<{
 
   return (
     <div className='relative flex items-center gap-[8px]'>
-      <button className='relative w-[40px] h-[40px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-        <IcoNewPlayerVolMin width={40} height={40} className={`duration-200 opacity-0 absolute top-0 left-0 ${volume < 30 && !isMuted ? 'opacity-100' : ''}`} />
-        <IcoNewPlayerVolNormal width={40} height={40} className={`duration-200 opacity-0 absolute top-0 left-0 ${volume >= 30 && !isMuted ? 'opacity-100' : ''}`} />
-        <IcoNewPlayerVolMuted width={40} height={40} className={`duration-200 opacity-0 absolute top-0 left-0 ${isMuted ? 'opacity-100' : ''}`} />
+      <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+        <IcoNewPlayerVolMin width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume < 30 && !isMuted ? 'opacity-100' : ''}`} />
+        <IcoNewPlayerVolNormal width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume >= 30 && !isMuted ? 'opacity-100' : ''}`} />
+        <IcoNewPlayerVolMuted width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${isMuted ? 'opacity-100' : ''}`} />
       </button>
     </div>
   );
@@ -443,10 +461,22 @@ const Timeline: NextPage = (props) => {
 }
 
 const Settings: NextPage = (props) => {
-  return (
-    <>
+  const [menuOpened, setMenuOpened] = useState(true);
 
-    </>
+  function toggleMenu() {
+    setMenuOpened(!menuOpened)
+  }
+
+  function getTitle() {
+    return menuOpened ? 'Закрити налаштування' : 'Відкрити налаштування'
+  }
+
+  return (
+    <div className='relative'>
+      <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => toggleMenu()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+        <IcoNewSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200 ${menuOpened ? 'rotate-45' : 'rotate-0'}`} />
+      </button>
+    </div>
   );
 }
 
@@ -474,8 +504,9 @@ const PiP: NextPage<{
   }
 
   return (
-    <button onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <p className='text-white'>pip</p>
+    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+      <IcoNewPlayerPiPEnter className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
+      <IcoNewPlayerPiPExit className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
     </button>
   );
 }
@@ -504,8 +535,9 @@ const Fullscreen: NextPage<{
   }
 
   return (
-    <button onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <p className='text-white'>fullscreen</p>
+    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+      <IcoNewPlayerFullExit className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
+      <IcoNewPlayerFullEnter className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
     </button>
   );
 }

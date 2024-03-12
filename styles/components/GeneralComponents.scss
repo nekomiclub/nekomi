@@ -18,7 +18,10 @@
     transition: .2s;
   }
 
-  &:hover {
+  &:hover,
+  &:focus {
+    outline: none;
+    
     .newTitle-card-blur {
       padding-top: 16px;
       padding-bottom: 16px;
@@ -71,7 +74,10 @@
     left: 0;
   }
 
-  &:hover {
+  &:hover,
+  &:focus {
+    outline: none;
+
     &::after {
       opacity: 1;
     }

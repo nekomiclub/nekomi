@@ -231,8 +231,8 @@ export const IcoNewStarRating = ({ className, gradient, height, width }: IPropsI
 export const IcoNewClock = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16.0001 29.3333C23.3639 29.3333 29.3334 23.3638 29.3334 16C29.3334 8.63619 23.3639 2.66666 16.0001 2.66666C8.63628 2.66666 2.66675 8.63619 2.66675 16C2.66675 23.3638 8.63628 29.3333 16.0001 29.3333Z" stroke={`${gradient === 'primary' ? 'url(#paint0_linear_115_1734)' : gradient === 'secondary' ? '' : '#fff'}`} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M16 8V16L21.3333 18.6667" stroke={`${gradient === 'primary' ? 'url(#paint1_linear_115_1734)' : gradient === 'secondary' ? '' : '#fff'}`} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M16.0001 29.3333C23.3639 29.3333 29.3334 23.3638 29.3334 16C29.3334 8.63619 23.3639 2.66666 16.0001 2.66666C8.63628 2.66666 2.66675 8.63619 2.66675 16C2.66675 23.3638 8.63628 29.3333 16.0001 29.3333Z" stroke={`${gradient === 'primary' ? 'url(#paint0_linear_115_1734)' : gradient === 'secondary' ? '' : '#fff'}`} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M16 8V16L21.3333 18.6667" stroke={`${gradient === 'primary' ? 'url(#paint1_linear_115_1734)' : gradient === 'secondary' ? '' : '#fff'}`} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <defs>
         <linearGradient id="paint0_linear_115_1734" x1="2.66675" y1="16" x2="29.3334" y2="16" gradientUnits="userSpaceOnUse">
           <stop stopColor="#FF416C" />
@@ -391,6 +391,29 @@ export const IcoNewUser = ({ className, gradient, height, width }: IPropsIcon) =
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M9.375 15.3125C9.375 21.1563 14.1562 25.9375 20 25.9375C25.8438 25.9375 30.625 21.1563 30.625 15.3125C30.625 9.46875 25.8438 4.6875 20 4.6875C14.1562 4.6875 9.375 9.46875 9.375 15.3125ZM28.125 15.3125C28.125 19.7813 24.4688 23.4375 20 23.4375C15.5312 23.4375 11.875 19.7813 11.875 15.3125C11.875 10.8437 15.5312 7.1875 20 7.1875C24.4688 7.1875 28.125 10.8437 28.125 15.3125Z" fill="white" />
       <path d="M7.625 37.3125C10.9375 34 15.3125 32.1875 20 32.1875C24.6875 32.1875 29.0625 34 32.375 37.3125L34.1562 35.5312C30.375 31.7812 25.3437 29.6875 20 29.6875C14.6562 29.6875 9.625 31.7812 5.84375 35.5312L7.625 37.3125Z" fill="white" />
+    </svg>
+  );
+}
+
+/** New icon */
+export const IcoNewSettings = ({ className, gradient, height, width }: IPropsIcon) => {
+  return (
+    <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8.05 2.25L0.25 16L8.05 29.75H23.925L31.75 16L23.95 2.25H8.05ZM22.775 27.75H9.225L2.55 16L9.225 4.25H22.775L29.45 16L22.775 27.75Z" fill="white" />
+      <path d="M16 8.75C12 8.75 8.75 12 8.75 16C8.75 20 12 23.25 16 23.25C20 23.25 23.25 20 23.25 16C23.25 12 20 8.75 16 8.75ZM16 21.25C13.1 21.25 10.75 18.9 10.75 16C10.75 13.1 13.1 10.75 16 10.75C18.9 10.75 21.25 13.1 21.25 16C21.25 18.9 18.9 21.25 16 21.25Z" fill="white" />
+    </svg>
+
+  );
+}
+
+/** New icon */
+export const IcoNewSpeed = ({ className, gradient, height, width }: IPropsIcon) => {
+  return (
+    <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14.1855 15.9395C14.1855 17.0345 15.074 17.9225 16.1685 17.9225C16.9375 17.9225 17.5965 17.4805 17.9255 16.841L17.931 16.846L21.551 10.315L15.196 14.212L15.202 14.218C14.5985 14.5585 14.1855 15.1975 14.1855 15.9395Z" fill="white" />
+      <path d="M24.1575 6.4905C22.1255 4.7145 19.5 3.5805 16.5 3.411V6.4245C19 6.5835 20.473 7.3775 21.952 8.6165L24.1575 6.4905Z" fill="white" />
+      <path d="M25.5729 15H28.5829C28.3809 12 27.2074 9.535 25.3854 7.515L23.2559 9.6315C24.5389 11.1015 25.3829 13 25.5729 15Z" fill="white" />
+      <path d="M25.587 16.5C25.2685 21.5 21.126 25.4655 16.066 25.4655C10.7985 25.4655 6.35547 21.1935 6.35547 15.9265C6.35547 10.9125 10.5 6.81 15 6.425V3.4115C8.49997 3.801 3.35547 9.27 3.35547 15.9395C3.35547 22.861 9.06547 28.4655 15.987 28.4655C22.703 28.4655 28.282 23 28.6025 16.5H25.587Z" fill="white" />
     </svg>
   );
 }
