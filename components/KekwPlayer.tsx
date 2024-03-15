@@ -1,7 +1,7 @@
 'use client'
 
 import { NextPage } from 'next';
-import { useState, useEffect, useRef, RefObject, KeyboardEvent } from 'react';
+import { useState, useEffect, useRef, RefObject, KeyboardEvent, ReactEventHandler } from 'react';
 import axios from 'axios';
 import * as loader from '@uiball/loaders';
 
@@ -14,6 +14,7 @@ import '../styles/components/KekwPlayer.scss';
 import { useInView } from 'react-intersection-observer';
 import { Range } from 'react-range';
 import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
+import { LoadingImage } from './GeneralComponents';
 
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
 
@@ -28,6 +29,9 @@ const KekwPlayer: NextPage<{
   const [quality, setQuality] = useState<TVideoQuality>('q1080')
   const [duration, setDuration] = useState(1)
   const [videoMoment, setVideoMoment] = useState(0);
+
+  const [hoveredMoment, setHoveredMoment] = useState(0);
+  const [previewOffset, setPreviewOffset] = useState(0);
 
   // Player states
   const [isPlaying, setIsPlaying] = useState(false)
@@ -45,6 +49,7 @@ const KekwPlayer: NextPage<{
   const videoRef = useRef<HTMLVideoElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
   const loadedRef = useRef<HTMLDivElement>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
 
   // System
   const [inViewRef, inView, entry] = useInView()
@@ -308,16 +313,19 @@ const KekwPlayer: NextPage<{
     }
   }, [duration, videoMoment])
 
-  //* Update progress due to timeupdate
+  //* Update progress due to timeupdate & change preview offset
   useEffect(() => {
     const video = videoRef.current;
+    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
 
-    if (!duration || !video) return;
+    if (!duration || !video || !timeline) return;
 
-    video.addEventListener('timeupdate', () => changeMoment(video.currentTime, true))
+    video.addEventListener('timeupdate', () => changeMoment(video.currentTime, true));
+    timeline.addEventListener('pointermove', e => movePreview(e.offsetX))
 
     return () => {
       video.removeEventListener('timeupdate', () => changeMoment(video.currentTime, true))
+      timeline.removeEventListener('pointermove', e => movePreview(e.offsetX))
     }
   }, [duration])
 
@@ -340,9 +348,9 @@ const KekwPlayer: NextPage<{
     }
   }, [ep, dub])
 
-  // useEffect(() => {
-  //   console.log(videoMoment)
-  // }, [videoMoment])
+  useEffect(() => {
+    console.log(previewOffset)
+  }, [previewOffset])
 
 
   //* Handlers
@@ -353,8 +361,9 @@ const KekwPlayer: NextPage<{
   function changeMoment(val: number, synthetic?: boolean) {
     const progress = progressRef.current;
     const video = videoRef.current;
+    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
 
-    if (!progress || !video) return
+    if (!progress || !video || !timeline) return
 
     if (!synthetic) {
       video.currentTime = val;
@@ -362,6 +371,8 @@ const KekwPlayer: NextPage<{
 
     setVideoMoment(val);
     moveProgress(val);
+
+    movePreview(val / duration * timeline.offsetWidth);
   }
 
   /** Move video progress (controlled by changeMoment) */
@@ -375,9 +386,33 @@ const KekwPlayer: NextPage<{
     progress.style.width = `${offset}%`;
   }
 
-  /** Move video preview (controlled by changeMoment) */
-  function movePreview(moment: number) {
+  /** Move & set video preview */
+  function movePreview(x: number) {
+    const preview = previewRef.current;
+    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
 
+    if (!preview || !timeline) return;
+
+    const timelineWidth = timeline.offsetWidth;
+    const previewWidth = preview.offsetWidth;
+    const halfPreviewWidth = previewWidth / 2;
+    const breakpoints = {
+      left: halfPreviewWidth,
+      right: timelineWidth - halfPreviewWidth
+    }
+
+    if (x <= breakpoints.left) {
+      // Left breakpoint
+      preview.style.translate = `0px`;
+      preview.style.left = `0px`;
+    } else if (x >= breakpoints.right) {
+      // Right breakpoint
+      preview.style.left = `${timelineWidth - halfPreviewWidth}px`;
+    } else {
+      // Free movement
+      preview.style.translate = `-${halfPreviewWidth}px`;
+      preview.style.left = `${x}px`;
+    }
   }
 
 
@@ -400,7 +435,7 @@ const KekwPlayer: NextPage<{
           </div>
 
           {/* Range */}
-          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} />
+          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} />
 
           {/* Settings */}
           <div className='flex items-center gap-[16px]'>
@@ -534,7 +569,9 @@ const Timeline: NextPage<{
   changeMoment: (val: number) => void,
   progressRef: RefObject<HTMLDivElement>,
   loadedRef: RefObject<HTMLDivElement>,
-}> = ({ duration, moment, loadedRef, progressRef, changeMoment }) => {
+  previewRef: RefObject<HTMLDivElement>,
+  hoveredMoment: number,
+}> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, changeMoment }) => {
   function renderThumb({ props }: IRenderThumbParams) {
     return <div
       {...props}
@@ -589,6 +626,10 @@ const Timeline: NextPage<{
       </div>
 
       {/* Preview */}
+      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[100%] left-0 bg-red-400`} id='kekwplayer-preview' ref={previewRef}>
+        <img src="" alt="..." className='w-[240px] h-[135px]' />
+        <p className='text-white'>{secondsToReadable(hoveredMoment).pretty}</p>
+      </div>
     </div>
   );
 }
