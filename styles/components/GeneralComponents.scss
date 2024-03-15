@@ -19,7 +19,7 @@
   }
 
   &:hover,
-  &:focus {
+  &:focus-visible {
     outline: none;
     
     .newTitle-card-blur {
@@ -75,7 +75,7 @@
   }
 
   &:hover,
-  &:focus {
+  &:focus-visible {
     outline: none;
 
     &::after {

@@ -1,0 +1,15 @@
+#kekwplayer {
+  &-timeline {
+    &_thumb {
+      opacity: 0;
+      transition: .2s ease-in-out opacity;
+      outline: none;
+    }
+
+    &:hover {
+      #kekwplayer-timeline_thumb {
+        opacity: 1;
+      }
+    }
+  }
+}

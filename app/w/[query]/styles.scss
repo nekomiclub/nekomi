@@ -105,7 +105,7 @@
 
     &--auth {
       &:hover,
-      &:focus {
+      &:focus-visible {
         .title-like {
           &-filled {
             opacity: 1;

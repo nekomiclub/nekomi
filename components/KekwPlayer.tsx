@@ -12,6 +12,8 @@ import { IcoNewPlay, IcoNewSettings } from '../assets/ico/Icos';
 
 import '../styles/components/KekwPlayer.scss';
 import { useInView } from 'react-intersection-observer';
+import { Range } from 'react-range';
+import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
 
@@ -24,7 +26,7 @@ const KekwPlayer: NextPage<{
   const [ep, setEp] = useState(1);
   const [dub, setDub] = useState<ITitleEpisodesDub>()
   const [quality, setQuality] = useState<TVideoQuality>('q1080')
-  const [duration, setDuration] = useState(0)
+  const [duration, setDuration] = useState(1)
   const [videoMoment, setVideoMoment] = useState(0);
 
   // Player states
@@ -41,6 +43,8 @@ const KekwPlayer: NextPage<{
   // Refs
   const playerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const progressRef = useRef<HTMLDivElement>(null)
+  const loadedRef = useRef<HTMLDivElement>(null)
 
   // System
   const [inViewRef, inView, entry] = useInView()
@@ -103,10 +107,6 @@ const KekwPlayer: NextPage<{
 
     video.addEventListener('contextmenu', e => {
       e.preventDefault();
-    })
-
-    video.addEventListener('timeupdate', () => {
-      setVideoMoment(video.currentTime)
     })
 
     video.addEventListener('dblclick', () => {
@@ -274,6 +274,53 @@ const KekwPlayer: NextPage<{
     }
   }, [isPlaying, isMuted, videoMoment, isFullscreen, isPiP, inView, duration])
 
+  //* Handle video buffering
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (!duration || !videoMoment || !video) return;
+
+    video.addEventListener('timeupdate', handler)
+    function handler() {
+      const video = videoRef.current;
+
+      if (!video) return;
+
+      const loaded = loadedRef.current;
+      const buffered = video.buffered;
+
+      if (buffered.length === 0 || !loaded) return;
+
+      for (let i = 0; i < buffered.length; i++) {
+        const start = buffered.start(i);
+        const end = buffered.end(i);
+
+        if (videoMoment >= start && videoMoment <= end) {
+          const offset = (end / duration) * 100
+
+          loaded.style.width = `${offset}%`
+        }
+      }
+    }
+
+    return () => {
+      video.removeEventListener('timeupdate', handler)
+    }
+  }, [duration, videoMoment])
+
+  //* Update progress due to timeupdate
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (!duration || !video) return;
+
+    video.addEventListener('timeupdate', () => changeMoment(video.currentTime, true))
+
+    return () => {
+      video.removeEventListener('timeupdate', () => changeMoment(video.currentTime, true))
+    }
+  }, [duration])
+
   //* Change video src
   useEffect(() => {
     if (!dub) return;
@@ -285,23 +332,52 @@ const KekwPlayer: NextPage<{
   //* Check if episode is last
   useEffect(() => {
     if (!dub) return;
+
+    const nextEp = dub.eps.find(el => el.order === ep);
+
+    if (!nextEp) {
+      setIsLastEpisode(true)
+    }
   }, [ep, dub])
 
-  useEffect(() => {
-    console.log(videoMoment)
-  }, [videoMoment])
+  // useEffect(() => {
+  //   console.log(videoMoment)
+  // }, [videoMoment])
 
 
-  // Handlers
-  function changeMoment(to: number) {
+  //* Handlers
+  /** 
+   * Change video moment 
+   * @param synthetic Defines if function called by user or not. If syntehic set to true, function will only update ranges & preview
+  */
+  function changeMoment(val: number, synthetic?: boolean) {
+    const progress = progressRef.current;
     const video = videoRef.current;
 
-    if (!video) return;
+    if (!progress || !video) return
 
-    console.log(`moment changed to ${to}`)
+    if (!synthetic) {
+      video.currentTime = val;
+    }
 
-    setVideoMoment(to);
-    video.currentTime = to;
+    setVideoMoment(val);
+    moveProgress(val);
+  }
+
+  /** Move video progress (controlled by changeMoment) */
+  function moveProgress(moment: number) {
+    const progress = progressRef.current;
+
+    if (!progress) return;
+
+    const offset = (moment / duration) * 100;
+
+    progress.style.width = `${offset}%`;
+  }
+
+  /** Move video preview (controlled by changeMoment) */
+  function movePreview(moment: number) {
+
   }
 
 
@@ -324,7 +400,7 @@ const KekwPlayer: NextPage<{
           </div>
 
           {/* Range */}
-          <Timeline />
+          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} />
 
           {/* Settings */}
           <div className='flex items-center gap-[16px]'>
@@ -342,7 +418,7 @@ const KekwPlayer: NextPage<{
         {/* Video */}
         <div className='w-full h-full absolute top-0 left-0'>
           {/* Loader */}
-          <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 ${isVideoLoading ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 touch-none pointer-events-none ${isVideoLoading ? 'opacity-100' : 'opacity-0'}`}>
             <loader.DotPulse color='#fff' size={80} />
           </div>
 
@@ -377,7 +453,7 @@ const Menu: NextPage<{
 
   return (
     <div className='relative z-[10] px-[24px] py-[16px] flex gap-[4px]'>
-      <button className='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus:bg-purple'>
+      <button className='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple'>
         <IcoNewPlayerList width={40} height={40} />
       </button>
 
@@ -386,7 +462,7 @@ const Menu: NextPage<{
         <p className='text-white text-[12px] font-extralight text-center'>{dub ? dubbers.find(el => el.id === dub.id)!.name : '...'}</p>
       </div>
 
-      <button className='px-[16px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus:bg-purple' onClick={() => nextEpisode()}>
+      <button className='px-[16px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={() => nextEpisode()}>
         <IcoNewPlayerNext width={40} height={40} className={`kp-menu_nextBtn ${isLastEpisode ? 'kp-menu_nextBtn--lastEpisode' : ''}`} />
       </button>
     </div>
@@ -414,7 +490,7 @@ const Play: NextPage<{
   }
 
   return (
-    <button className='relative w-[68px] h-[68px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+    <button className='relative w-[68px] h-[68px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
       <IcoNewPlay width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
       <IcoNewPlayerPause width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
     </button>
@@ -443,7 +519,7 @@ const Volume: NextPage<{
 
   return (
     <div className='relative flex items-center gap-[8px]'>
-      <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+      <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
         <IcoNewPlayerVolMin width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume < 30 && !isMuted ? 'opacity-100' : ''}`} />
         <IcoNewPlayerVolNormal width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume >= 30 && !isMuted ? 'opacity-100' : ''}`} />
         <IcoNewPlayerVolMuted width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${isMuted ? 'opacity-100' : ''}`} />
@@ -452,11 +528,68 @@ const Volume: NextPage<{
   );
 }
 
-const Timeline: NextPage = (props) => {
-  return (
-    <>
+const Timeline: NextPage<{
+  duration: number,
+  moment: number,
+  changeMoment: (val: number) => void,
+  progressRef: RefObject<HTMLDivElement>,
+  loadedRef: RefObject<HTMLDivElement>,
+}> = ({ duration, moment, loadedRef, progressRef, changeMoment }) => {
+  function renderThumb({ props }: IRenderThumbParams) {
+    return <div
+      {...props}
+      key={'kekwplayer-timeline_thumb'}
+      style={{
+        ...props.style,
+        touchAction: 'none',
+        pointerEvents: 'none',
+        position: 'relative',
+        zIndex: 13
+      }}
+      id='kekwplayer-timeline_thumb'
+      className={`w-[16px] h-[16px] gradientNew--primary rounded-[32px]`}
+    />
+  }
 
-    </>
+  function renderTrack({ props, children }: IRenderTrackParams) {
+    return <div
+      {...props}
+      key={'kekwplayer-timeline_track'}
+      style={{
+        ...props.style,
+        position: 'relative',
+        zIndex: 13
+      }}
+      className={`w-full h-[8px] rounded-[6px] z-[10] bg-dark/[.1]`}
+    >
+      {children}
+    </div>
+  }
+
+  return (
+    <div className='w-full h-full relative'>
+      {/* Range */}
+      <div className='w-full h-full relative flex flex-col justify-center'>
+        {/* Track */}
+        <div className='w-full relative' id='kekwplayer-timeline'>
+          <Range min={0} max={duration} step={1} onChange={val => changeMoment(val[0])} values={[moment]} renderTrack={renderTrack} renderThumb={renderThumb} />
+
+          {/* From start progress */}
+          <div className='h-full absolute top-0 left-0 touch-none pointer-events-none z-[11] gradientNew--secondary rounded-[6px]' ref={progressRef}></div>
+
+          {/* Downloading progress */}
+          <div className='h-full absolute top-0 touch-none pointer-events-none left-0 z-[10] bg-white/[.3] rounded-[6px]' ref={loadedRef}></div>
+        </div>
+
+        {/* Time */}
+        <div className='w-full flex justify-between absolute bottom-[4px] left-0'>
+          <p className='text-white'>{secondsToReadable(moment).pretty}</p>
+          <p className='text-white'>{secondsToReadable(duration).pretty}</p>
+        </div>
+      </div>
+
+      {/* Preview */}
+    </div>
   );
 }
 
@@ -473,7 +606,7 @@ const Settings: NextPage = (props) => {
 
   return (
     <div className='relative'>
-      <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => toggleMenu()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+      <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => toggleMenu()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
         <IcoNewSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200 ${menuOpened ? 'rotate-45' : 'rotate-0'}`} />
       </button>
     </div>
@@ -504,7 +637,7 @@ const PiP: NextPage<{
   }
 
   return (
-    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
       <IcoNewPlayerPiPEnter className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
       <IcoNewPlayerPiPExit className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
     </button>
@@ -535,11 +668,28 @@ const Fullscreen: NextPage<{
   }
 
   return (
-    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus:bg-purple rounded-[4px]' onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
       <IcoNewPlayerFullExit className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
       <IcoNewPlayerFullEnter className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
     </button>
   );
+}
+
+
+
+function secondsToReadable(time: number): { hrs: number, mins: number, secs: number, pretty: string } {
+  let mins = Math.floor(time / 60);
+  const secs = Math.floor(time - mins * 60);
+  let hrs = 0;
+
+  while (mins >= 60) {
+    hrs += 1;
+    mins -= 60;
+  }
+
+  const pretty = `${hrs ? hrs < 10 ? `0${hrs}:` : `${hrs}:` : ''}${mins < 10 ? `0${mins}:` : `${mins}:`}${secs < 10 ? `0${secs}` : secs}`
+
+  return { hrs, mins, secs, pretty }
 }
 
 export default KekwPlayer;

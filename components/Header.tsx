@@ -98,16 +98,16 @@ const Header: NextPage = () => {
             </Link>
 
             <div className='flex items-center gap-[16px]'>
-              <Link href={routes.home.path} className={`header-ico focus:outline-none ${pathname === routes.home.path ? 'header-ico--active' : 'duration-200 hover:bg-purple focus:bg-purple rounded-[2px]'}`}>
+              <Link href={routes.home.path} className={`header-ico focus-visible:outline-none ${pathname === routes.home.path ? 'header-ico--active' : 'duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]'}`}>
                 <IcoNewHome width={32} height={32} />
               </Link>
 
-              <Link href={routes.lib.path} className={`header-ico focus:outline-none ${pathname === routes.lib.path ? 'header-ico--active' : 'duration-200 hover:bg-purple focus:bg-purple rounded-[2px]'}`}>
+              <Link href={routes.lib.path} className={`header-ico focus-visible:outline-none ${pathname === routes.lib.path ? 'header-ico--active' : 'duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]'}`}>
                 <IcoNewLibrary width={32} height={32} />
               </Link>
 
               <div className='flex items-center gap-[16px]'>
-                <button className='uvc-popup-trigger duration-200 hover:bg-purple focus:bg-purple rounded-[2px]' data-uvc-popup-openid="search-popup" onClick={() => { popup.open() }}>
+                <button className='uvc-popup-trigger duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]' data-uvc-popup-openid="search-popup" onClick={() => { popup.open() }}>
                   <IcoNewSearch width={32} height={32} />
                 </button>
               </div>
@@ -121,7 +121,7 @@ const Header: NextPage = () => {
                   <LoadingImage src={userAvatar} alt='...' />
                 </div>
 
-                <button className='px-[8px] py-[8px] duration-200 hover:bg-purple focus:bg-purple rounded-[2px]' onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
+                <button className='px-[8px] py-[8px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]' onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
                   <IcoNewArrow width={16} height={16} />
                 </button>
 
