@@ -1,0 +1,23 @@
+.szh-slide {
+  .szh-menu {
+    transition: .2s ease-in-out;
+
+    &--state {
+      &-open {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+        touch-action: auto;
+      } 
+
+      &-closed {
+        transform: translateY(-30%);
+        opacity: 0;
+        visibility: hidden;
+        touch-action: none;
+        pointer-events: none;
+      }
+    }
+  }
+}

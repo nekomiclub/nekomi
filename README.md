@@ -12,6 +12,8 @@ Classes
   &-text // New text gradient
   &-border-* // New border gradient. *px - 2, 4
 .gradientNew--secondary // Secondary new background gradient
+
+.szh-slide // Slide transition for @szhsin/react-menu. Assing to parent el
 ```
 
 Handlers

@@ -124,6 +124,10 @@ button {
 
 html,
 body {
+  scroll-behavior: smooth;
+}
+
+* {
   &::-webkit-scrollbar {
     width: 2px;
   }
@@ -133,10 +137,8 @@ body {
   }
 
   &::-webkit-scrollbar-thumb {
-    background: $gradientPrimary;
+    background: $gradientNewPrimary;
   }
-
-  scroll-behavior: smooth;
 }
 
 .home-titleCard {

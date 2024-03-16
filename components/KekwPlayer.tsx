@@ -6,6 +6,7 @@ import axios from 'axios';
 import * as loader from '@uiball/loaders';
 import { Range } from 'react-range';
 import { getImageSize } from 'react-image-size'
+import * as RMen from '@szhsin/react-menu'
 
 import { ITitle, ITitleEpisodeDubbed, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
@@ -332,18 +333,21 @@ const KekwPlayer: NextPage<{
   useEffect(() => {
     if (!dub) return;
 
-    const nextEp = dub.eps.find(el => el.order === ep);
+    let nextEp = ep;
+    nextEp++;
 
     changePreivewFormat(dub)
 
-    if (!nextEp) {
+    if (!dub.eps.find(el => el.order === nextEp)) {
       setIsLastEpisode(true)
+    } else {
+      setIsLastEpisode(false)
     }
   }, [ep, dub])
 
   useEffect(() => {
-    console.log(previewOffset)
-  }, [previewOffset])
+    console.log(isLastEpisode)
+  }, [isLastEpisode])
 
 
   //* Handlers
@@ -450,7 +454,7 @@ const KekwPlayer: NextPage<{
       {/* Wrapper */}
       <div className='w-full h-full flex flex-col justify-between bg-black relative z-[5]' ref={playerRef}>
         {/* Menu */}
-        <Menu ep={ep} setEp={setEp} dub={dub!} dubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setDub={setDub} />
+        <Menu ep={ep} setEp={setEp} currentDub={dub!} totalDubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setCurrentDub={setDub} totalEps={title.estimatedEps} />
 
         {/* Bottom */}
         <div className='flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px]'>
@@ -503,31 +507,95 @@ const KekwPlayer: NextPage<{
 const Menu: NextPage<{
   ep: number,
   setEp: (state: number) => void,
-  dub: ITitleEpisodesDub,
-  setDub: (state: ITitleEpisodesDub) => void,
-  dubs: ITitleEpisodesDub[],
-  dubbers: IDubber[],
-  isLastEpisode: boolean
-}> = ({ ep, setEp, dub, dubbers, dubs, isLastEpisode, setDub }) => {
+  currentDub: ITitleEpisodesDub,
+  setCurrentDub: (state: ITitleEpisodesDub) => void,
+  totalDubs: ITitleEpisodesDub[],
+  dubbers: IDubber[]
+  isLastEpisode: boolean,
+  totalEps: number
+}> = ({ ep, setEp, dubbers, currentDub, isLastEpisode, setCurrentDub, totalDubs, totalEps }) => {
   function nextEpisode() {
     if (!isLastEpisode) {
       setEp(ep += 1)
     }
   }
 
+  function menuButton() {
+    return <button className='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple'>
+      <IcoNewPlayerList width={40} height={40} />
+    </button>
+  }
+
+  function MenuDubber({ dub, currId, dubbers }: { dub: ITitleEpisodesDub, currId: string, dubbers: IDubber[] }) {
+    let lastEp = 0;
+
+    dub.eps.forEach(el => {
+      if (el.order > lastEp) lastEp = el.order;
+    })
+
+    function setDub() {
+      setCurrentDub(dub);
+    }
+
+    return <RMen.MenuItem>
+      <button className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex gap-[8px] focus-visible:bg-purple w-fit rounded-[2px] ${dub.id === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
+        <p className='text-white'>{dubbers.find(el => el.id === dub.id)!.name}</p>
+
+        <div className='flex gap-[4px]'>
+          <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
+            <p className='text-white whitespace-nowrap'>{lastEp} / {totalEps}</p>
+          </div>
+
+          {dub.include2K && <div className='gradientNew--primary px-[4px] py-[2px] rounded-[2px]'>
+            <p className='text-white whitespace-nowrap'>SUB</p>
+          </div>}
+
+          {dub.includeSub && <div className='gradientNew--primary px-[4px] py-[2px] rounded-[2px]'>
+            <p className='text-white whitespace-nowrap'>4K</p>
+          </div>}
+        </div>
+      </button>
+    </RMen.MenuItem>
+  }
+
+  function MenuEpisode({ to }: { to: number }) {
+    function setEpisode(to: number) {
+      setEp(to)
+    }
+
+    return <RMen.MenuItem>
+      <button className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] w-full ${ep === to ? 'bg-purple' : ''}`} onClick={() => setEpisode(to)}>
+        <p className='text-white'>{to}</p>
+      </button>
+    </RMen.MenuItem>
+  }
+
   return (
     <div className='relative z-[10] px-[24px] py-[16px] flex gap-[4px]'>
-      <button className='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple'>
-        <IcoNewPlayerList width={40} height={40} />
-      </button>
+      <RMen.Menu className={'szh-slide w-full'} menuClassName={`px-[16px] py-[8px] bg-dark !flex gap-[8px] max-h-[200px] w-fit`} gap={8} menuButton={menuButton()}>
+        <div className='flex flex-col gap-[4px] overflow-y-scroll px-[4px] w-full'>
+          {currentDub && totalDubs.map(el => {
+            return <MenuDubber dub={el} currId={currentDub.id} dubbers={dubbers} key={`${el.id}_setdub`} />
+          })}
+        </div>
+
+        {/* Divider */}
+        <span className='w-[1px] h-auto bg-grey block'></span>
+
+        <div className='flex flex-col gap-[4px] overflow-y-scroll px-[8px]'>
+          {currentDub && currentDub.eps.map(el => {
+            return <MenuEpisode to={el.order} key={`${currentDub.id}_setep-${el.order}`} />
+          })}
+        </div>
+      </RMen.Menu>
 
       <div className='bg-dark flex flex-col justify-center gap-[2px] rounded-[2px] px-[16px]'>
         <p className='text-white font-bold text-center'>{ep <= 9 ? `0${ep}` : ep}</p>
-        <p className='text-white text-[12px] font-extralight text-center'>{dub ? dubbers.find(el => el.id === dub.id)!.name : '...'}</p>
+        <p className='text-white text-[12px] font-extralight text-center'>{currentDub ? dubbers.find(el => el.id === currentDub.id)!.name : '...'}</p>
       </div>
 
-      <button className='px-[16px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={() => nextEpisode()}>
-        <IcoNewPlayerNext width={40} height={40} className={`kp-menu_nextBtn ${isLastEpisode ? 'kp-menu_nextBtn--lastEpisode' : ''}`} />
+      <button className='px-[16px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={() => nextEpisode()} disabled={isLastEpisode}>
+        <IcoNewPlayerNext width={40} height={40} className={`kekwplayer-menu_nextBtn ${isLastEpisode ? 'kekwplayer-menu_nextBtn--lastEpisode' : ''}`} />
       </button>
     </div>
   );
