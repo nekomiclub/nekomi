@@ -20,6 +20,7 @@ import { LoadingImage } from './GeneralComponents';
 
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
 
+//! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
 const KekwPlayer: NextPage<{
   title: ITitle,
   dubs: IDubber[]
@@ -31,9 +32,7 @@ const KekwPlayer: NextPage<{
   const [quality, setQuality] = useState<TVideoQuality>('q1080')
   const [duration, setDuration] = useState(1)
   const [videoMoment, setVideoMoment] = useState(0);
-
   const [hoveredMoment, setHoveredMoment] = useState(0);
-  const [previewOffset, setPreviewOffset] = useState(0);
 
   const [isPreviewOld, setIsPreviewOld] = useState(false);
   const [isVideoProcessed, setIsVideoProcessed] = useState(true);
@@ -56,6 +55,7 @@ const KekwPlayer: NextPage<{
   const progressRef = useRef<HTMLDivElement>(null)
   const loadedRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
+  const volumeRef = useRef<HTMLDivElement>(null)
 
   // System
   const [inViewRef, inView, entry] = useInView()
@@ -139,7 +139,8 @@ const KekwPlayer: NextPage<{
       } else {
         setIsMuted(false);
       }
-      setVolume(video.volume);
+
+      setVolume(Math.floor(video.volume * 100));
     });
 
     player.addEventListener('fullscreenchange', () => {
@@ -375,6 +376,14 @@ const KekwPlayer: NextPage<{
     }
   }, [duration])
 
+  //* Change volume progress
+  useEffect(() => {
+    const ref = volumeRef.current;
+    if (!volume) return;
+
+    ref!.style.width = `${volume}px`
+  }, [volume])
+
   //* Change video src
   useEffect(() => {
     if (!dub) return;
@@ -517,7 +526,7 @@ const KekwPlayer: NextPage<{
             <Play isPlaying={isPlaying} videoRef={videoRef} />
 
             {/* Volume */}
-            <Volume volume={volume} isMuted={isMuted} videoRef={videoRef} />
+            <Volume volume={volume} isMuted={isMuted} videoRef={videoRef} volumeRef={volumeRef} />
           </div>
 
           {/* Range */}
@@ -562,14 +571,34 @@ const Menu: NextPage<{
   isLastEpisode: boolean,
   totalEps: number
 }> = ({ ep, setEp, dubbers, currentDub, isLastEpisode, setCurrentDub, totalDubs, totalEps }) => {
+  const isFirstOpen = useRef(true);
+
   function nextEpisode() {
     if (!isLastEpisode) {
       setEp(ep += 1)
     }
   }
 
+  // Prevent auto scrolling to top issue from react-menu component
+  function preventScrolling() {
+    if (isFirstOpen.current) {
+      let i = 0;
+
+      let int = setInterval(() => {
+        if (i === 20) {
+          clearInterval(int)
+          return;
+        }
+
+        window.scrollTo({ top: window.scrollY, behavior: 'instant' })
+        isFirstOpen.current = false;
+        i++;
+      }, 10)
+    }
+  }
+
   function menuButton() {
-    return <button className='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple'>
+    return <button className='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={() => preventScrolling()}>
       <IcoNewPlayerList width={40} height={40} />
     </button>
   }
@@ -680,11 +709,34 @@ const Play: NextPage<{
 const Volume: NextPage<{
   volume: number,
   isMuted: boolean,
-  videoRef: RefObject<HTMLVideoElement>
-}> = ({ isMuted, videoRef, volume }) => {
-  function changeMuted() {
-    const video = videoRef.current;
+  videoRef: RefObject<HTMLVideoElement>,
+  volumeRef: RefObject<HTMLDivElement>,
+}> = ({ isMuted, videoRef, volume, volumeRef }) => {
+  const video = videoRef.current;
 
+  //* Hhandle volume hover
+  useEffect(() => {
+    const volumeWrapper = document.querySelector('#kekwplayer-volume') as HTMLDivElement;
+    const volumeRange = document.querySelector('#kekwplayer-volume_range') as HTMLDivElement;
+
+    if (!volumeRange || !volumeWrapper) return;
+    const width = volumeRange.offsetWidth;
+
+    volumeRange.style.maxWidth = '0';
+    volumeRange.style.opacity = '0';
+
+    volumeWrapper.addEventListener('pointerenter', () => {
+      volumeRange.style.opacity = '1';
+      volumeRange.style.maxWidth = `${width}px`;
+    })
+
+    volumeWrapper.addEventListener('pointerleave', () => {
+      volumeRange.style.maxWidth = '0';
+      volumeRange.style.opacity = '0';
+    })
+  }, [])
+
+  function changeMuted() {
     if (!video) {
       console.error('Video is not found')
       return;
@@ -693,17 +745,69 @@ const Volume: NextPage<{
     video.muted = !video.muted;
   }
 
+  function setVolume(to: number) {
+    if (!video) {
+      console.error('Video is not found')
+      return;
+    };
+
+    video.volume = to / 100;
+  }
+
   function getTitle() {
     return isMuted ? 'Увімкнути звук (m)' : 'Вимкнути звук (m)'
   }
 
+  function renderThumb({ props }: IRenderThumbParams) {
+    return <div
+      {...props}
+      key={'kekwplayer-volume_thumb'}
+      style={{
+        ...props.style,
+        touchAction: 'none',
+        pointerEvents: 'none',
+        position: 'relative',
+        zIndex: 13,
+        outline: 'none'
+      }}
+      id='kekwplayer-volume_thumb'
+      className={`w-[16px] h-[16px] gradientNew--primary rounded-[32px]`}
+    />
+  }
+
+  function renderTrack({ props, children }: IRenderTrackParams) {
+    return <div
+      {...props}
+      key={'kekwplayer-volume_track'}
+      style={{
+        ...props.style,
+        position: 'relative',
+        zIndex: 13
+      }}
+      className={`w-full h-[8px] rounded-[6px] z-[10] bg-dark/[.1]`}
+    >
+      {children}
+    </div>
+  }
+
   return (
-    <div className='relative flex items-center gap-[8px]'>
+    <div className='relative flex items-center gap-[8px]' id='kekwplayer-volume'>
       <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
         <IcoNewPlayerVolMin width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume < 30 && !isMuted ? 'opacity-100' : ''}`} />
         <IcoNewPlayerVolNormal width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume >= 30 && !isMuted ? 'opacity-100' : ''}`} />
         <IcoNewPlayerVolMuted width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${isMuted ? 'opacity-100' : ''}`} />
       </button>
+
+      <div className='flex items-center gap-[16px] w-fit overflow-hidden opacity-0 duration-500' id='kekwplayer-volume_range'>
+        <div className='w-[100px] max-w-[100px] relative'>
+          <Range min={0} max={100} onChange={val => setVolume(val[0])} values={[volume]} renderThumb={renderThumb} renderTrack={renderTrack} />
+
+          {/* Volume progress */}
+          <div className='w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[11] gradientNew--secondary rounded-[6px]' ref={volumeRef}></div>
+        </div>
+
+        <p className='text-white'>{volume}</p>
+      </div>
     </div>
   );
 }
@@ -787,22 +891,21 @@ const Timeline: NextPage<{
   );
 }
 
+type TSettingPage = 'default' | 'quality' | 'speed' | 'volume' | 'subs'
 const Settings: NextPage = (props) => {
-  const [menuOpened, setMenuOpened] = useState(true);
+  const [page, setPage] = useState<TSettingPage>('default')
 
-  function toggleMenu() {
-    setMenuOpened(!menuOpened)
-  }
-
-  function getTitle() {
-    return menuOpened ? 'Закрити налаштування' : 'Відкрити налаштування'
+  function MenuButton() {
+    return <button className={'relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'}>
+      <IcoNewSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200`} />
+    </button>
   }
 
   return (
     <div className='relative'>
-      <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => toggleMenu()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-        <IcoNewSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200 ${menuOpened ? 'rotate-45' : 'rotate-0'}`} />
-      </button>
+      <RMen.Menu menuButton={MenuButton()}>
+
+      </RMen.Menu>
     </div>
   );
 }
