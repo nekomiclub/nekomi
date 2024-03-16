@@ -20,6 +20,10 @@
       }
     }
   }
+
+  &-preview {
+    transition: .2s ease-in-out opacity visibility;
+  }
 }
 
 .kekwplayer {

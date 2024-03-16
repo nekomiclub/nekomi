@@ -39,6 +39,7 @@ const KekwPlayer: NextPage<{
   const [isVideoProcessed, setIsVideoProcessed] = useState(true);
 
   // Player states
+  const [isCoverVisible, setIsCoverVisible] = useState(false) //! Must be true
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPiP, setIsPip] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -152,6 +153,58 @@ const KekwPlayer: NextPage<{
     video.addEventListener('enterpictureinpicture', () => {
       setIsPip(true)
     })
+
+    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
+    const preview = document.querySelector('#kekwplayer-preview') as HTMLDivElement
+    let isDragging = false
+    let touchTimeout: NodeJS.Timeout;
+
+    timeline.addEventListener('touchstart', () => {
+      clearTimeout(touchTimeout)
+      timelineTouchStartHandler()
+
+      touchTimeout = setTimeout(() => {
+        timelineTouchEndHandler();
+      }, 1000);
+    })
+
+    timeline.addEventListener('touchmove', () => {
+      clearTimeout(touchTimeout)
+      timelineTouchStartHandler()
+
+      touchTimeout = setTimeout(() => {
+        timelineTouchEndHandler();
+      }, 1000);
+    })
+
+    timeline.addEventListener('pointerenter', () => timelineTouchStartHandler())
+    timeline.addEventListener('pointerdown', () => {
+      isDragging = true;
+      timelineTouchStartHandler()
+    })
+
+
+
+    document.addEventListener('pointerup', () => {
+      isDragging = false;
+      timelineTouchEndHandler()
+    })
+    timeline.addEventListener('pointerleave', () => {
+      if (isDragging) return
+      timelineTouchEndHandler();
+    })
+
+
+
+    function timelineTouchStartHandler() {
+      preview.style.opacity = '1';
+      preview.style.visibility = 'visible';
+    }
+
+    function timelineTouchEndHandler() {
+      preview.style.opacity = '0';
+      preview.style.visibility = 'invisible';
+    }
   }, [])
 
   //* Handle video keyboard events
@@ -446,7 +499,12 @@ const KekwPlayer: NextPage<{
 
   return (
     // In view
-    <div className='w-full h-full' ref={inViewRef}>
+    <div className='w-full h-full relative' ref={inViewRef}>
+      {/* Cover */}
+      <button className={`absolute w-full h-full top-0 left-0 z-[7] bg-grey duration-200 flex justify-center items-center ${isCoverVisible ? '' : 'opacity-0 invisible'}`} onClick={() => setIsCoverVisible(false)}>
+        <IcoNewPlay width={256} height={256} gradient='secondary' />
+      </button>
+
       {/* Wrapper */}
       <div className='w-full h-full flex flex-col justify-between bg-black relative z-[5]' ref={playerRef}>
         {/* Menu */}
@@ -715,7 +773,7 @@ const Timeline: NextPage<{
       </div>
 
       {/* Preview */}
-      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0`} id='kekwplayer-preview' ref={previewRef}>
+      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0 opacity-0 invisible`} id='kekwplayer-preview' ref={previewRef}>
         <div className={`${isPreviewsOld ? 'w-[160px] h-[120px]' : 'w-[240px] h-[135px]'} bg-dark rounded-[4px] overflow-hidden`}>
           <img src="" alt="..." className={`w-full h-full ${isVideoProcessed ? '' : 'opacity-0 invisible !h-0'}`} />
           <div className={`${isVideoProcessed ? 'opacity-0 invisible h-0' : 'h-full'} flex flex-col items-center justify-center gap-[8px]`}>
