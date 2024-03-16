@@ -4,15 +4,16 @@ import { NextPage } from 'next';
 import { useState, useEffect, useRef, RefObject, KeyboardEvent, ReactEventHandler } from 'react';
 import axios from 'axios';
 import * as loader from '@uiball/loaders';
+import { Range } from 'react-range';
+import { getImageSize } from 'react-image-size'
 
-import { ITitle, ITitleEpisodesDub } from '../interfaces/ITitle';
+import { ITitle, ITitleEpisodeDubbed, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
 import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
 import { IcoNewPlay, IcoNewSettings } from '../assets/ico/Icos';
 
 import '../styles/components/KekwPlayer.scss';
 import { useInView } from 'react-intersection-observer';
-import { Range } from 'react-range';
 import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 import { LoadingImage } from './GeneralComponents';
 
@@ -32,6 +33,9 @@ const KekwPlayer: NextPage<{
 
   const [hoveredMoment, setHoveredMoment] = useState(0);
   const [previewOffset, setPreviewOffset] = useState(0);
+
+  const [isPreviewOld, setIsPreviewOld] = useState(false);
+  const [isVideoProcessed, setIsVideoProcessed] = useState(false);
 
   // Player states
   const [isPlaying, setIsPlaying] = useState(false)
@@ -60,27 +64,14 @@ const KekwPlayer: NextPage<{
   useEffect(() => {
     if (window === undefined) return;
 
-    const playerData = localStorage.getItem('kekwplayer_data')
-
-    if (playerData) {
-      // TODO Set data from local storage
-
-      try {
-        const data = JSON.parse(playerData);
-      } catch (e) {
-        console.error(e)
-        setDefault();
-      }
-    } else {
-      //* Set default data
-      setDefault();
-    }
-
-
-
     function setDefault() {
-      setDub(title!.dubs![0])
+      const dub = title!.dubs![0];
+
+      changePreivewFormat(dub);
+      setDub(dub)
     }
+
+    setDefault()
   }, [])
 
   //* Video events
@@ -343,6 +334,8 @@ const KekwPlayer: NextPage<{
 
     const nextEp = dub.eps.find(el => el.order === ep);
 
+    changePreivewFormat(dub)
+
     if (!nextEp) {
       setIsLastEpisode(true)
     }
@@ -354,6 +347,18 @@ const KekwPlayer: NextPage<{
 
 
   //* Handlers
+  /** Change preview format */
+  async function changePreivewFormat(dub: ITitleEpisodesDub) {
+    try {
+      const dimensions = await getImageSize(dub.eps.find(el => el.order === ep)!.framesURL![0]);
+
+      setIsPreviewOld(dimensions.height === 120 ? true : false)
+      setIsVideoProcessed(true)
+    } catch (e) {
+
+    }
+  }
+
   /** 
    * Change video moment 
    * @param synthetic Defines if function called by user or not. If syntehic set to true, function will only update ranges & preview
@@ -401,6 +406,7 @@ const KekwPlayer: NextPage<{
       right: timelineWidth - halfPreviewWidth
     }
 
+    // Move preview
     if (x <= breakpoints.left) {
       // Left breakpoint
       preview.style.translate = `0px`;
@@ -413,6 +419,28 @@ const KekwPlayer: NextPage<{
       preview.style.translate = `-${halfPreviewWidth}px`;
       preview.style.left = `${x}px`;
     }
+
+    const hoveredMoment = x / timelineWidth * duration;
+    setHoveredMoment(hoveredMoment);
+
+    // Set preview frame
+    if (!dub) return
+    const img = preview.querySelector('img') as HTMLImageElement;
+
+    const frames = dub.eps.find(el => el.order === ep)!.framesURL!
+    let previewIndex = Math.floor(hoveredMoment / 5);
+    const frameIndex = Math.floor(previewIndex / 25);
+    const frame = frames[frameIndex];
+    const imgWidth = img.offsetWidth;
+
+    while (previewIndex > 25) {
+      previewIndex -= 25;
+    }
+
+    const offset = previewIndex * imgWidth;
+
+    if (img.getAttribute('src') !== frame) img.setAttribute('src', frame);
+    img.style.objectPosition = `-${offset}px`
   }
 
 
@@ -435,7 +463,7 @@ const KekwPlayer: NextPage<{
           </div>
 
           {/* Range */}
-          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} />
+          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} />
 
           {/* Settings */}
           <div className='flex items-center gap-[16px]'>
@@ -459,7 +487,8 @@ const KekwPlayer: NextPage<{
 
           <video src={videoSrc} preload='metadata' className='w-full h-full' controls={false} ref={videoRef}></video>
         </div>
-      </div></div>
+      </div>
+    </div>
   );
 }
 
@@ -571,7 +600,8 @@ const Timeline: NextPage<{
   loadedRef: RefObject<HTMLDivElement>,
   previewRef: RefObject<HTMLDivElement>,
   hoveredMoment: number,
-}> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, changeMoment }) => {
+  isPreviewsOld: boolean
+}> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, isPreviewsOld, changeMoment }) => {
   function renderThumb({ props }: IRenderThumbParams) {
     return <div
       {...props}
@@ -626,8 +656,8 @@ const Timeline: NextPage<{
       </div>
 
       {/* Preview */}
-      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[100%] left-0 bg-red-400`} id='kekwplayer-preview' ref={previewRef}>
-        <img src="" alt="..." className='w-[240px] h-[135px]' />
+      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0 ${isPreviewsOld ? 'w-[160px]' : 'w-[240px]'}`} id='kekwplayer-preview' ref={previewRef}>
+        <img src="" alt="..." className={isPreviewsOld ? 'w-[160px] h-[120px]' : 'w-[240px] h-[135px]'} />
         <p className='text-white'>{secondsToReadable(hoveredMoment).pretty}</p>
       </div>
     </div>
