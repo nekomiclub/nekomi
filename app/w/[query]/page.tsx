@@ -58,7 +58,11 @@ const RSC: NextPage<IProps> = async ({ params, searchParams }) => {
       if (dub.eps.length > totalEps) totalEps = dub.eps.length;
     })
 
-    dubbers = await parseTitleDubbers(title.dubs!.map(el => el.id))
+    if (title.dubs?.length) {
+      dubbers = await parseTitleDubbers(title.dubs!.map(el => el.id))
+    } else {
+      dubbers = null
+    }
   } catch (e) {
     devMode ? console.error(e) : null;
     isErrored = true;

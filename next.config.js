@@ -5,6 +5,10 @@ const nextConfig = {
       hostname: '*.animee.club'
     }, {
       hostname: '*.googleusercontent.com'
+    }, {
+      hostname: 'anitube.in.ua'
+    }, {
+      hostname: '*.myanimelist.net'
     }]
   }
 }
