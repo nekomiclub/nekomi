@@ -11,7 +11,7 @@ import * as RMen from '@szhsin/react-menu'
 import { ITitle, ITitleEpisodeDubbed, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
 import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
-import { IcoNewPlay, IcoNewSettings } from '../assets/ico/Icos';
+import { IcoNewPlay, IcoNewServerUnavailable, IcoNewSettings } from '../assets/ico/Icos';
 
 import '../styles/components/KekwPlayer.scss';
 import { useInView } from 'react-intersection-observer';
@@ -36,7 +36,7 @@ const KekwPlayer: NextPage<{
   const [previewOffset, setPreviewOffset] = useState(0);
 
   const [isPreviewOld, setIsPreviewOld] = useState(false);
-  const [isVideoProcessed, setIsVideoProcessed] = useState(false);
+  const [isVideoProcessed, setIsVideoProcessed] = useState(true);
 
   // Player states
   const [isPlaying, setIsPlaying] = useState(false)
@@ -62,6 +62,7 @@ const KekwPlayer: NextPage<{
 
 
   // Effects
+  //* Initial effects. Assing dub, define previews format, check if frames are processed
   useEffect(() => {
     if (window === undefined) return;
 
@@ -345,13 +346,9 @@ const KekwPlayer: NextPage<{
     }
   }, [ep, dub])
 
-  useEffect(() => {
-    console.log(isLastEpisode)
-  }, [isLastEpisode])
-
 
   //* Handlers
-  /** Change preview format */
+  /** Defines previews format from 0 index frame of current dub (height 120 = old, 135 = new) */
   async function changePreivewFormat(dub: ITitleEpisodesDub) {
     try {
       const dimensions = await getImageSize(dub.eps.find(el => el.order === ep)!.framesURL![0]);
@@ -365,7 +362,7 @@ const KekwPlayer: NextPage<{
 
   /** 
    * Change video moment 
-   * @param synthetic Defines if function called by user or not. If syntehic set to true, function will only update ranges & preview
+   * @param synthetic Defines if function called by user or not. If syntehic set to true, function will only update ranges & moment
   */
   function changeMoment(val: number, synthetic?: boolean) {
     const progress = progressRef.current;
@@ -376,12 +373,11 @@ const KekwPlayer: NextPage<{
 
     if (!synthetic) {
       video.currentTime = val;
+      movePreview(val / duration * timeline.offsetWidth);
     }
 
     setVideoMoment(val);
     moveProgress(val);
-
-    movePreview(val / duration * timeline.offsetWidth);
   }
 
   /** Move video progress (controlled by changeMoment) */
@@ -428,7 +424,7 @@ const KekwPlayer: NextPage<{
     setHoveredMoment(hoveredMoment);
 
     // Set preview frame
-    if (!dub) return
+    if (!dub || !isVideoProcessed) return
     const img = preview.querySelector('img') as HTMLImageElement;
 
     const frames = dub.eps.find(el => el.order === ep)!.framesURL!
@@ -467,7 +463,7 @@ const KekwPlayer: NextPage<{
           </div>
 
           {/* Range */}
-          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} />
+          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} />
 
           {/* Settings */}
           <div className='flex items-center gap-[16px]'>
@@ -496,13 +492,7 @@ const KekwPlayer: NextPage<{
   );
 }
 
-// const Component: NextPage = (props) => {
-//   return (
-//     <>
 
-//     </>
-//   );
-// }
 
 const Menu: NextPage<{
   ep: number,
@@ -668,8 +658,9 @@ const Timeline: NextPage<{
   loadedRef: RefObject<HTMLDivElement>,
   previewRef: RefObject<HTMLDivElement>,
   hoveredMoment: number,
-  isPreviewsOld: boolean
-}> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, isPreviewsOld, changeMoment }) => {
+  isPreviewsOld: boolean,
+  isVideoProcessed: boolean,
+}> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, isPreviewsOld, isVideoProcessed, changeMoment }) => {
   function renderThumb({ props }: IRenderThumbParams) {
     return <div
       {...props}
@@ -724,8 +715,14 @@ const Timeline: NextPage<{
       </div>
 
       {/* Preview */}
-      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0 ${isPreviewsOld ? 'w-[160px]' : 'w-[240px]'}`} id='kekwplayer-preview' ref={previewRef}>
-        <img src="" alt="..." className={isPreviewsOld ? 'w-[160px] h-[120px]' : 'w-[240px] h-[135px]'} />
+      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0`} id='kekwplayer-preview' ref={previewRef}>
+        <div className={`${isPreviewsOld ? 'w-[160px] h-[120px]' : 'w-[240px] h-[135px]'} bg-dark rounded-[4px] overflow-hidden`}>
+          <img src="" alt="..." className={`w-full h-full ${isVideoProcessed ? '' : 'opacity-0 invisible !h-0'}`} />
+          <div className={`${isVideoProcessed ? 'opacity-0 invisible h-0' : 'h-full'} flex flex-col items-center justify-center gap-[8px]`}>
+            <IcoNewServerUnavailable width={60} height={60} />
+            <p className='text-white uppercase'>превью недоступні</p>
+          </div>
+        </div>
         <p className='text-white'>{secondsToReadable(hoveredMoment).pretty}</p>
       </div>
     </div>

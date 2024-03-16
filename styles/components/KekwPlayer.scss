@@ -6,9 +6,15 @@
       opacity: 0;
       transition: .2s ease-in-out opacity;
       outline: none;
+
+      &:hover,
+      &:focus-visible {
+        opacity: 1;
+      }
     }
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       #kekwplayer-timeline_thumb {
         opacity: 1;
       }
@@ -20,7 +26,9 @@
   &-menu {
     &_nextBtn {
       &--lastEpisode {
-        path, rect {
+
+        path,
+        rect {
           stroke: $lightGrey;
         }
       }
