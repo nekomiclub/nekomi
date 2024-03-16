@@ -176,9 +176,27 @@ export const IcoNewPlayerList = ({ className, gradient, height, width }: IPropsI
 
 export const IcoNewPlayerNext = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
-    <svg width={width || 32} height={height || 32} className={className ? className : ''} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M24 9.33334V22.6667" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M9.29572 7.02294C8.77109 6.60876 8 6.98243 8 7.65084V24.3492C8 25.0176 8.77109 25.3912 9.29572 24.9771L19.8713 16.6279C20.2771 16.3076 20.2771 15.6924 19.8713 15.3721L9.29572 7.02294Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <>
+      {!gradient && <svg width={width || 32} height={height || 32} className={className ? className : ''} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 9.33334V22.6667" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M9.29572 7.02294C8.77109 6.60876 8 6.98243 8 7.65084V24.3492C8 25.0176 8.77109 25.3912 9.29572 24.9771L19.8713 16.6279C20.2771 16.3076 20.2771 15.6924 19.8713 15.3721L9.29572 7.02294Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>}
+
+      {gradient === 'secondary' && <svg width={width || 32} height={height || 32} className={className ? className : ''} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M24 8.58333C24.4142 8.58333 24.75 8.91911 24.75 9.33333V22.6667C24.75 23.0809 24.4142 23.4167 24 23.4167C23.5858 23.4167 23.25 23.0809 23.25 22.6667V9.33333C23.25 8.91911 23.5858 8.58333 24 8.58333Z" fill="url(#paint0_linear_318_1045)" />
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M7.25 7.65084C7.25 6.35578 8.744 5.63182 9.76045 6.43427L9.76045 6.43427L20.336 14.7834C21.1222 15.404 21.1222 16.596 20.3361 17.2165C20.3361 17.2165 20.336 17.2165 20.336 17.2166L9.76045 25.5657L9.76042 25.5658C8.74409 26.368 7.25 25.6444 7.25 24.3492V7.65084ZM8.75227 7.63133C8.75148 7.63395 8.75 7.63997 8.75 7.65084V24.3492C8.75 24.3601 8.75148 24.3661 8.75227 24.3687C8.75311 24.3715 8.75416 24.3737 8.75556 24.3758C8.7587 24.3806 8.76586 24.3882 8.77816 24.3941C8.79047 24.4001 8.80089 24.401 8.80662 24.4005C8.80918 24.4003 8.81156 24.3998 8.81429 24.3987C8.81684 24.3977 8.82247 24.3951 8.83099 24.3884C8.831 24.3884 8.83101 24.3884 8.83102 24.3884L19.4066 16.0392L19.4066 16.0392C19.432 16.0192 19.432 15.9808 19.4066 15.9608L19.4066 15.9608L8.83099 7.6116C8.83099 7.61159 8.83099 7.61159 8.83099 7.61159C8.82246 7.60486 8.81682 7.60229 8.81427 7.60129C8.81155 7.60022 8.80918 7.59969 8.80663 7.59947C8.80091 7.59897 8.7905 7.59988 8.77819 7.60584C8.76588 7.61181 8.75872 7.61941 8.75558 7.6242C8.75417 7.62635 8.75311 7.62853 8.75227 7.63133Z" fill="url(#paint1_linear_318_1045)" />
+        <defs>
+          <linearGradient id="paint0_linear_318_1045" x1="23.25" y1="16" x2="24.75" y2="16" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF9966" />
+            <stop offset="1" stop-color="#FF7D81" />
+          </linearGradient>
+          <linearGradient id="paint1_linear_318_1045" x1="7.25" y1="16" x2="20.9256" y2="16" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF9966" />
+            <stop offset="1" stop-color="#FF7D81" />
+          </linearGradient>
+        </defs>
+      </svg>
+      }
+    </>
   );
 }

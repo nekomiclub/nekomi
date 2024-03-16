@@ -207,3 +207,10 @@ body {
   flex-direction: column;
   position: relative;
 }
+
+.break-ellipsis {
+  text-overflow: ellipsis;
+  word-break: break-all;
+  overflow:hidden;
+  white-space: nowrap
+}

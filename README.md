@@ -14,6 +14,7 @@ Classes
 .gradientNew--secondary // Secondary new background gradient
 
 .szh-slide // Slide transition for @szhsin/react-menu. Assing to parent el
+.break-ellipsis // Will break word with dots (lorem ips...). Works only with max-width
 ```
 
 Handlers

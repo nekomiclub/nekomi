@@ -1,6 +1,6 @@
 'use client'
 
-import { NextPage } from 'next';
+import next, { NextPage } from 'next';
 import { useState, useEffect, useRef, RefObject, KeyboardEvent, ReactEventHandler } from 'react';
 import axios from 'axios';
 import * as loader from '@uiball/loaders';
@@ -8,7 +8,7 @@ import { Range } from 'react-range';
 import { getImageSize } from 'react-image-size'
 import * as RMen from '@szhsin/react-menu'
 
-import { ITitle, ITitleEpisodeDubbed, ITitleEpisodesDub } from '../interfaces/ITitle';
+import { ITitle, ITitleEpisodeDubbed, ITitleEpisodeMeta, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
 import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
 import { IcoNewPlay, IcoNewServerUnavailable, IcoNewSettings } from '../assets/ico/Icos';
@@ -17,8 +17,10 @@ import '../styles/components/KekwPlayer.scss';
 import { useInView } from 'react-intersection-observer';
 import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 import { LoadingImage } from './GeneralComponents';
+import { timestampToDate, wordDeclination } from './handlers';
 
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
+type TEndScreen = 'clear' | 'epEnded' | 'titleEnded' | 'lastEp';
 
 //! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
 const KekwPlayer: NextPage<{
@@ -44,6 +46,8 @@ const KekwPlayer: NextPage<{
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [isLastEpisode, setIsLastEpisode] = useState(false)
+  const [endScreen, setEndScreen] = useState<TEndScreen>('clear')
+  const [isTimeToEndScreen, setIsTimeToEndScreen] = useState(false)
 
   // Video states
   const [videoSrc, setVideoSrc] = useState('');
@@ -326,18 +330,20 @@ const KekwPlayer: NextPage<{
     }
   }, [isPlaying, isMuted, videoMoment, isFullscreen, isPiP, inView, duration])
 
-  //* Handle video buffering
+  //* Handle video buffering & end screen
   useEffect(() => {
     const video = videoRef.current;
 
     if (!duration || !videoMoment || !video) return;
 
     video.addEventListener('timeupdate', handler)
+
     function handler() {
       const video = videoRef.current;
 
       if (!video) return;
 
+      //* Buffering
       const loaded = loadedRef.current;
       const buffered = video.buffered;
 
@@ -359,6 +365,38 @@ const KekwPlayer: NextPage<{
       video.removeEventListener('timeupdate', handler)
     }
   }, [duration, videoMoment])
+
+  //* Change end screen due to time & ep & dub
+  useEffect(() => {
+    if (duration < 10 || !videoMoment || !dub) return;
+
+    //* End screen
+    if (!dub) return;
+
+    if (videoMoment >= duration - 2) {
+      let nextEp = ep;
+      nextEp += 1;
+      setIsTimeToEndScreen(true)
+
+      const isNextEpExist = dub.eps.some(el => el.order === nextEp); // Last episode in dub
+      const isTitleEnded = title.estimatedEps === ep; // Title ended
+
+      if (isTitleEnded) {
+        setEndScreen('titleEnded')
+      } else if (isNextEpExist) {
+        setEndScreen('epEnded')
+      } else if (!isNextEpExist) {
+        setEndScreen('lastEp')
+      } else {
+        setEndScreen('clear')
+      }
+    } else {
+      if (endScreen !== 'clear') {
+        setIsTimeToEndScreen(false);
+        setEndScreen('clear')
+      }
+    }
+  }, [duration, videoMoment, ep, dub])
 
   //* Update progress due to timeupdate & change preview offset
   useEffect(() => {
@@ -389,7 +427,13 @@ const KekwPlayer: NextPage<{
     if (!dub) return;
 
     const epData = dub.eps.find(el => el.order === ep);
+
     setVideoSrc(epData?.source[quality])
+
+    if (endScreen !== 'clear') {
+      setIsTimeToEndScreen(false);
+      setEndScreen('clear')
+    }
   }, [quality, dub, ep])
 
   //* Check if episode is last
@@ -516,6 +560,18 @@ const KekwPlayer: NextPage<{
 
       {/* Wrapper */}
       <div className='w-full h-full flex flex-col justify-between bg-black relative z-[5]' ref={playerRef}>
+        {/* End screen wrapper */}
+        <div className='w-full h-full absolute top-0 left-0 flex justify-center items-center z-[7]'>
+          {/* Ep ended */}
+          <EpEndScreen endScreen={endScreen} ep={ep} setEp={setEp} title={title} isTime={isTimeToEndScreen} />
+
+          {/* Last ep in dub */}
+          <LastEpScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
+
+          {/* Title ended */}
+          <TitleEndScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
+        </div>
+
         {/* Menu */}
         <Menu ep={ep} setEp={setEp} currentDub={dub!} totalDubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setCurrentDub={setDub} totalEps={title.estimatedEps} />
 
@@ -557,6 +613,89 @@ const KekwPlayer: NextPage<{
       </div>
     </div>
   );
+}
+
+const EpEndScreen: NextPage<{
+  endScreen: TEndScreen,
+  title: ITitle,
+  ep: number,
+  isTime: boolean,
+  setEp: (val: number) => void,
+}> = ({ endScreen, ep, setEp, title, isTime }) => {
+  const [remain, setRemain] = useState(5)
+  const [epMeta, setEpMeta] = useState<ITitleEpisodeMeta | null>(null)
+  const [nextEp, setNextEp] = useState(ep)
+  const [date, setDate] = useState('')
+  const [int, setInt] = useState<NodeJS.Timeout>()
+
+  useEffect(() => {
+    const epMeta = title.epsMeta?.find(el => el.order === nextEp);
+
+    if (epMeta) {
+      const parsed = timestampToDate(epMeta.dateOut);
+
+      setEpMeta(epMeta)
+      setDate(`${parsed.day} ${parsed.localizedMonth.slice(0, 3)} ${parsed.year}`)
+    }
+  }, [ep])
+
+  useEffect(() => {
+    setRemain(5)
+    setNextEp(++ep)
+
+    clearInterval(int)
+
+    let rem = remain;
+    setInt(setInterval(() => {
+      if (isTime) {
+        if (rem > 1) {
+          setRemain(prev => --prev)
+          rem -= 1;
+        } else {
+          clearInterval(int);
+          skipEp();
+        }
+      } else {
+        clearInterval(int)
+      }
+    }, 1000))
+  }, [isTime])
+
+  function skipEp() {
+    setEp(nextEp)
+  }
+
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisiblabsolute-0 touch-none pointer-events-none'}`}>
+    <p className='text-white text-[32px] font-bold'>Епізод завершено</p>
+
+    <div className='bg-grey px-[40px] py-[16px] flex justify-between items-center duration-200 w-full'>
+      <div className='flex items-center gap-[32px] w-full'>
+        <p className='text-white text-[32px] font-bold'>#{nextEp}</p>
+        <div className='flex flex-col items-start gap-[8px] w-full'>
+          <div className='flex flex-col items-start gap-[4px] w-full'>
+            <p className='text-white text-[24px] break-ellipsis max-w-400px'>{epMeta?.names.ukr || 'Наступний епізод'}</p>
+            <p className='text-white font-extralight break-ellipsis max-w-300px'>{epMeta?.names.eng}</p>
+          </div>
+
+          <p className='text-white font-extralight'>{date}</p>
+        </div>
+      </div>
+
+      <button className='duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[8px] rounded-[4px]' onClick={() => skipEp()}>
+        <IcoNewPlayerNext width={80} height={80} />
+      </button>
+    </div>
+
+    <p className='text-white text-[24px] font-extralight'>Автоматично через: {remain} {wordDeclination(remain, ['секунду', 'секунди', 'секунд'])}</p>
+  </div>
+}
+
+const LastEpScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ endScreen }) => {
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] ${endScreen === 'lastEp' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}></div>
+}
+
+const TitleEndScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ endScreen }) => {
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] ${endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}></div>
 }
 
 
