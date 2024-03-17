@@ -25,8 +25,10 @@ type TEndScreen = 'clear' | 'epEnded' | 'titleEnded' | 'lastEp';
 //! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
 const KekwPlayer: NextPage<{
   title: ITitle,
-  dubs: IDubber[]
-}> = ({ title, dubs }) => {
+  dubs: IDubber[],
+  setCurrentDubber?: (state: IDubber) => void
+  setCurrentEp?: (state: number) => void
+}> = ({ title, dubs, setCurrentDubber, setCurrentEp }) => {
   // Player data
   const [volume, setVolume] = useState(50)
   const [ep, setEp] = useState(1);
@@ -436,9 +438,18 @@ const KekwPlayer: NextPage<{
     }
   }, [quality, dub, ep])
 
-  //* Check if episode is last
+  //* Check if episode is last & set out states
   useEffect(() => {
     if (!dub) return;
+
+    const currEpExist = dub.eps.some(el => el.order === ep);
+
+    if (!currEpExist) {
+      setEp(dub.eps[dub.eps.length - 1].order)
+      return;
+    }
+
+    setIsPlaying(false);
 
     let nextEp = ep;
     nextEp++;
@@ -449,6 +460,14 @@ const KekwPlayer: NextPage<{
       setIsLastEpisode(true)
     } else {
       setIsLastEpisode(false)
+    }
+
+    if (setCurrentDubber) {
+      setCurrentDubber(dubs.find(el => el.id === dub.id)!)
+    }
+
+    if (setCurrentEp) {
+      setCurrentEp(ep)
     }
   }, [ep, dub])
 
@@ -549,6 +568,10 @@ const KekwPlayer: NextPage<{
     img.style.objectPosition = `-${offset}px`
   }
 
+  useEffect(() => {
+    console.log(endScreen)
+  }, [endScreen])
+
 
   return (
     // In view
@@ -561,9 +584,9 @@ const KekwPlayer: NextPage<{
       {/* Wrapper */}
       <div className='w-full h-full flex flex-col justify-between bg-black relative z-[5]' ref={playerRef}>
         {/* End screen wrapper */}
-        <div className='w-full h-full absolute top-0 left-0 flex justify-center items-center z-[7]'>
+        <div className={'w-full h-full absolute top-0 left-0 flex justify-center items-center'}>
           {/* Ep ended */}
-          <EpEndScreen endScreen={endScreen} ep={ep} setEp={setEp} title={title} isTime={isTimeToEndScreen} />
+          <EpEndScreen endScreen={endScreen} ep={ep} setEp={setEp} title={title} isTime={isTimeToEndScreen} videoRef={videoRef} />
 
           {/* Last ep in dub */}
           <LastEpScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
@@ -619,9 +642,10 @@ const EpEndScreen: NextPage<{
   endScreen: TEndScreen,
   title: ITitle,
   ep: number,
-  isTime: boolean,
   setEp: (val: number) => void,
-}> = ({ endScreen, ep, setEp, title, isTime }) => {
+  isTime: boolean,
+  videoRef: RefObject<HTMLVideoElement>
+}> = ({ endScreen, ep, setEp, title, isTime, videoRef }) => {
   const [remain, setRemain] = useState(5)
   const [epMeta, setEpMeta] = useState<ITitleEpisodeMeta | null>(null)
   const [nextEp, setNextEp] = useState(ep)
@@ -647,7 +671,7 @@ const EpEndScreen: NextPage<{
 
     let rem = remain;
     setInt(setInterval(() => {
-      if (isTime) {
+      if (isTime && endScreen === 'epEnded') {
         if (rem > 1) {
           setRemain(prev => --prev)
           rem -= 1;
@@ -662,10 +686,18 @@ const EpEndScreen: NextPage<{
   }, [isTime])
 
   function skipEp() {
+    const video = videoRef.current;
+
+    if (!video) return;
+
     setEp(nextEp)
+
+    setTimeout(() => {
+      video.play()
+    }, 1000);
   }
 
-  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisiblabsolute-0 touch-none pointer-events-none'}`}>
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] z-[7] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] font-bold'>Епізод завершено</p>
 
     <div className='bg-grey px-[40px] py-[16px] flex justify-between items-center duration-200 w-full'>
@@ -690,12 +722,24 @@ const EpEndScreen: NextPage<{
   </div>
 }
 
-const LastEpScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ endScreen }) => {
-  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] ${endScreen === 'lastEp' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}></div>
+const LastEpScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ endScreen, isTime }) => {
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center gap-[24px] w-[800px] mx-[24px] z-[7] ${isTime && endScreen === 'lastEp' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
+    <p className='text-white text-[32px] font-bold'>Епізод завершено</p>
+    <p className='text-white text-[24px] font-extralight'>Це останній епізод в цьому озвученні</p>
+  </div>
 }
 
-const TitleEndScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ endScreen }) => {
-  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] ${endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}></div>
+const TitleEndScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ endScreen, isTime }) => {
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] gap-[24px] z-[7] ${isTime && endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
+    <p className='text-white text-[32px] font-bold'>Тайтл завершено!</p>
+
+    {/* //TODO */}
+    {/* <button className='gradientNew--primary-border-4 gradientNew--primary-hover flex gap-[16px] items-center px-[24px] py-[16px]'>
+      <p className='text-white text-[24px] font-bold uppercase'>Відмітити як “переглянуто”</p>
+    </button> */}
+
+    <p className='text-white text-[16px] font-extralight'>Дякуємо, що обрали animee!</p>
+  </div>
 }
 
 

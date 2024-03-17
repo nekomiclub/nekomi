@@ -76,7 +76,7 @@ export const LoadingImage: NextPage<{ src: string, alt?: string, className?: str
 
 export const NewWatchButton: NextPage<{ href: string, className?: string, gradient: 'primary' | 'secondary' }> = ({ gradient, href, className }) => {
   return (
-    <Link href={href} className={`gradientNew--${gradient}-border-4 newWatchButton newWatchButton--${gradient} px-[16px] py-[16px] flex items-center gap-[24px] ${className ? className : ''}`}>
+    <Link href={href} className={`gradientNew--${gradient}-border-4 gradientNew--${gradient}-hover newWatchButton newWatchButton--${gradient} px-[16px] py-[16px] flex items-center gap-[24px] ${className ? className : ''}`}>
       <div className='relative'>
         <IcoNewPlay width={40} height={40} gradient={gradient} className={`newWatchButton-icoGradient newWatchButton--${gradient}`} />
         <IcoNewPlay width={40} height={40} className={`newWatchButton-icoWhite newWatchButton--${gradient}`} />

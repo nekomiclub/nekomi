@@ -298,12 +298,11 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
           {title.dubs?.length ? <div className='flex items-start max-[1020px]:flex-col gap-[40px] z-[4] mb-[80px]'>
             <div className='flex flex-col gap-[24px] items-center w-full'>
               <div className='h-[600px] w-full'>
-                {/* <Player estimatedEps={title.estimatedEps} titleId={title.id} dubs={title.dubs} currentDubberHandler={setDubber} /> */}
-                <KekwPlayer title={title} dubs={dubbers!} />
+                <KekwPlayer title={title} dubs={dubbers!} setCurrentDubber={setDubber} />
               </div>
             </div>
 
-            {/* <DubberDetails dubber={dubber} /> */}
+            <DubberDetails dubber={dubber} />
           </div> : <div className='w-full h-[400px] bg-grey flex justify-center items-center rounded-[4px]'>
             <h3 className='text-white text-[24px] font-bold'>Нажаль, для цього тайтлу озвучення не завантажені.</h3>
           </div>}
