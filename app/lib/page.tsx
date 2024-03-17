@@ -5,7 +5,6 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState, useRef } from 'react'
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import { Sort } from '../../assets/lib';
 import { useDebounce } from 'use-debounce';
 import { ITitle } from '../../interfaces/ITitle';
 import $api from '../../components/http';

@@ -11,7 +11,7 @@ import * as RMen from '@szhsin/react-menu'
 import { ITitle, ITitleEpisodeDubbed, ITitleEpisodeMeta, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
 import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
-import { IcoNewPlay, IcoNewServerUnavailable, IcoNewSettings } from '../assets/ico/Icos';
+import { IcoPlay, IcoServerUnavailable, IcoSettings } from '../assets/ico/Icos';
 
 import '../styles/components/KekwPlayer.scss';
 import { useInView } from 'react-intersection-observer';
@@ -578,7 +578,7 @@ const KekwPlayer: NextPage<{
     <div className='w-full h-full relative' ref={inViewRef}>
       {/* Cover */}
       <button className={`absolute w-full h-full top-0 left-0 z-[7] bg-grey duration-200 flex justify-center items-center ${isCoverVisible ? '' : 'opacity-0 invisible'}`} onClick={() => setIsCoverVisible(false)}>
-        <IcoNewPlay width={256} height={256} gradient='secondary' />
+        <IcoPlay width={256} height={256} gradient='secondary' />
       </button>
 
       {/* Wrapper */}
@@ -883,7 +883,7 @@ const Play: NextPage<{
 
   return (
     <button className='relative w-[68px] h-[68px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoNewPlay width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
+      <IcoPlay width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
       <IcoNewPlayerPause width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
     </button>
   );
@@ -1064,7 +1064,7 @@ const Timeline: NextPage<{
         <div className={`${isPreviewsOld ? 'w-[160px] h-[120px]' : 'w-[240px] h-[135px]'} bg-dark rounded-[4px] overflow-hidden`}>
           <img src="" alt="..." className={`w-full h-full ${isVideoProcessed ? '' : 'opacity-0 invisible !h-0'}`} />
           <div className={`${isVideoProcessed ? 'opacity-0 invisible h-0' : 'h-full'} flex flex-col items-center justify-center gap-[8px]`}>
-            <IcoNewServerUnavailable width={60} height={60} />
+            <IcoServerUnavailable width={60} height={60} />
             <p className='text-white uppercase'>превью недоступні</p>
           </div>
         </div>
@@ -1080,7 +1080,7 @@ const Settings: NextPage = (props) => {
 
   function MenuButton() {
     return <button className={'relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'}>
-      <IcoNewSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200`} />
+      <IcoSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200`} />
     </button>
   }
 

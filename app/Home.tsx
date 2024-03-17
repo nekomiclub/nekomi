@@ -4,7 +4,7 @@ import { NextPage, Metadata } from 'next';
 import React, { useState, useEffect, useRef } from 'react'
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { LoadingImage, NewTitleCard, NewWatchButton } from '../components/GeneralComponents';
+import { LoadingImage, TitleCard, NewWatchButton } from '../components/GeneralComponents';
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
 import { AddToFavorite } from './w/[query]/Watch';
@@ -80,7 +80,7 @@ const Home: NextPage<IProps> = ({ headliner, watchingNow }) => {
               }}>
                 {watchingNow.map(title => {
                   return <SwiperSlide className='w-full h-full' key={`watchingNow-${title.code}`}>
-                    <NewTitleCard title={title} />
+                    <TitleCard title={title} />
                   </SwiperSlide>
                 })}
               </Swiper>

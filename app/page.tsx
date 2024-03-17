@@ -2,8 +2,9 @@ import { NextPage } from 'next';
 import Home, { IHomeHeadliner } from './Home';
 import { ITitle } from '../interfaces/ITitle';
 import { config, devMode, prodMode } from '../config';
-import { OopsServerUnavailable } from '../assets/assets';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { IcoServerUnavailable } from '../assets/ico/Icos';
+import ServerUnavailable from './oops/ServerUnavailable';
 
 const headlinerID = prodMode ? '1cbc1ef7-8d88-433a-908b-4df859770ab4' : '1cbc1ef7-8d88-433a-908b-4df859770ab4';
 const watchingNowIDS = [
@@ -46,11 +47,19 @@ const RSC: NextPage = async (props) => {
       watchingNow.push(data)
     }
   } catch (e) {
-    devMode ? console.error(e) : null
     errored = true;
+
+    if (e instanceof AxiosError) {
+      if (e.code === 'ECONNREFUSED') {
+        console.error('ERROR: Server is unavailable')
+        return
+      }
+
+      devMode ? console.error(e) : null
+    }
   }
 
-  return errored ? <OopsServerUnavailable /> : <Home headliner={headliner!} watchingNow={watchingNow} />
+  return errored ? <ServerUnavailable /> : <Home headliner={headliner!} watchingNow={watchingNow} />
 }
 
 export default RSC;

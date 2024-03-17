@@ -93,28 +93,6 @@ export const IcoPeople = (props: { width?: number, height?: number, className?: 
   );
 }
 
-export const IcoLibrary = (props: { width?: number, height?: number, className?: string }) => {
-  return (
-    <svg width={props.width || 32} height={props.height || 32} className={props.className} viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M28.5003 4H19.167C18.1798 4.00334 17.2291 4.37409 16.5003 5.04C15.7715 4.37409 14.8209 4.00334 13.8337 4H4.50033C4.1467 4 3.80756 4.14048 3.55752 4.39052C3.30747 4.64057 3.16699 4.97971 3.16699 5.33333V25.3333C3.16699 25.687 3.30747 26.0261 3.55752 26.2761C3.80756 26.5262 4.1467 26.6667 4.50033 26.6667H12.1777C12.8846 26.6683 13.5622 26.9491 14.063 27.448L15.5577 28.9427C15.5697 28.9547 15.5857 28.9587 15.5977 28.9707C15.7123 29.0773 15.8403 29.1707 15.9897 29.232H15.9923C16.3176 29.3667 16.683 29.3667 17.0083 29.232H17.011C17.1603 29.1707 17.2883 29.076 17.403 28.9707C17.415 28.9587 17.431 28.9547 17.443 28.9427L18.9377 27.448C19.4385 26.9491 20.1161 26.6683 20.823 26.6667H28.5003C28.8539 26.6667 29.1931 26.5262 29.4431 26.2761C29.6932 26.0261 29.8337 25.687 29.8337 25.3333V5.33333C29.8337 4.97971 29.6932 4.64057 29.4431 4.39052C29.1931 4.14048 28.8539 4 28.5003 4ZM27.167 24H20.823C19.7575 24.0031 18.717 24.3228 17.8337 24.9187V8C17.8337 7.26533 18.431 6.66667 19.167 6.66667H27.167V24Z" fill="url(#paint0_linear_735_26670)" />
-      <defs>
-        <linearGradient id="paint0_linear_735_26670" x1="3.16699" y1="15.9214" x2="29.8398" y2="16.0417" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#FF416C" />
-          <stop offset="1" stopColor="#FF4B2B" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
-
-export const IcoHome = (props: { width?: number, height?: number, className?: string }) => {
-  return (
-    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M21.146 8.5752L13.596 2.4402C12.671 1.6892 11.329 1.6892 10.404 2.4402L2.855 8.5742C2.59 8.7892 2.439 9.1072 2.439 9.4472V20.9902C2.439 21.6102 2.944 22.1202 3.564 22.1202H8.626C9.246 22.1202 9.751 21.6102 9.751 20.9902V13.6842H14.25V20.9902C14.25 21.6102 14.755 22.1202 15.375 22.1202H20.437C21.057 22.1202 21.562 21.6102 21.562 20.9902V9.4472C21.561 9.1072 21.41 8.7892 21.146 8.5752ZM20.436 20.9962H15.374V13.6792C15.374 13.0592 14.869 12.5602 14.249 12.5602H9.75C9.13 12.5602 8.625 13.0592 8.625 13.6792V20.9962H3.564V9.4472L11.114 3.3132C11.627 2.8952 12.374 2.8962 12.887 3.3132L20.437 9.4472L20.436 20.9962Z" fill="white" />
-    </svg>
-  );
-}
-
 export const IcoStats = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -131,23 +109,6 @@ export const IcoFolder = (props: { width?: number, height?: number, className?: 
   );
 }
 
-export const IcoSettings = (props: { width?: number, height?: number, className?: string }) => {
-  return (
-    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M6.0375 1.6875L0.1875 12L6.0375 22.3125H17.9437L23.8125 12L17.9625 1.6875H6.0375ZM17.0812 20.8125H6.91875L1.9125 12L6.91875 3.1875H17.0812L22.0875 12L17.0812 20.8125Z" fill="white" />
-      <path d="M12 6.5625C9 6.5625 6.5625 9 6.5625 12C6.5625 15 9 17.4375 12 17.4375C15 17.4375 17.4375 15 17.4375 12C17.4375 9 15 6.5625 12 6.5625ZM12 15.9375C9.825 15.9375 8.0625 14.175 8.0625 12C8.0625 9.825 9.825 8.0625 12 8.0625C14.175 8.0625 15.9375 9.825 15.9375 12C15.9375 14.175 14.175 15.9375 12 15.9375Z" fill="white" />
-    </svg>
-  );
-}
-
-export const IcoArrow = (props: { width?: number, height?: number, className?: string }) => {
-  return (
-    <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16.5 18.5906L15.5297 19.5L7.5 12L15.5297 4.5L16.5 5.40469L9.44531 12L16.5 18.5906Z" fill="white" />
-    </svg>
-  );
-}
-
 export const IcoAccordionArrow = (props: { width?: number, height?: number, className?: string }) => {
   return (
     <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -160,28 +121,6 @@ export const IcoAccordionArrow = (props: { width?: number, height?: number, clas
       </defs>
     </svg>
   );
-}
-
-export const IcoHeart = (props: { width?: number, height?: number, className?: string, solid?: boolean }) => {
-  if (props.solid) {
-    return (
-      <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20.8401 4.60999C20.3294 4.099 19.7229 3.69364 19.0555 3.41708C18.388 3.14052 17.6726 2.99817 16.9501 2.99817C16.2276 2.99817 15.5122 3.14052 14.8448 3.41708C14.1773 3.69364 13.5709 4.099 13.0601 4.60999L12.0001 5.66999L10.9401 4.60999C9.90843 3.5783 8.50915 2.9987 7.05012 2.9987C5.59109 2.9987 4.19181 3.5783 3.16012 4.60999C2.12843 5.64169 1.54883 7.04096 1.54883 8.49999C1.54883 9.95903 2.12843 11.3583 3.16012 12.39L4.22012 13.45L12.0001 21.23L19.7801 13.45L20.8401 12.39C21.3511 11.8792 21.7565 11.2728 22.033 10.6053C22.3096 9.93789 22.4519 9.22248 22.4519 8.49999C22.4519 7.77751 22.3096 7.0621 22.033 6.39464C21.7565 5.72718 21.3511 5.12075 20.8401 4.60999Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    )
-  } else {
-    return (
-      <svg width={props.width || 24} height={props.height || 24} className={props.className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20.8401 4.60999C20.3294 4.099 19.7229 3.69364 19.0555 3.41708C18.388 3.14052 17.6726 2.99817 16.9501 2.99817C16.2276 2.99817 15.5122 3.14052 14.8448 3.41708C14.1773 3.69364 13.5709 4.099 13.0601 4.60999L12.0001 5.66999L10.9401 4.60999C9.90843 3.5783 8.50915 2.9987 7.05012 2.9987C5.59109 2.9987 4.19181 3.5783 3.16012 4.60999C2.12843 5.64169 1.54883 7.04096 1.54883 8.49999C1.54883 9.95903 2.12843 11.3583 3.16012 12.39L4.22012 13.45L12.0001 21.23L19.7801 13.45L20.8401 12.39C21.3511 11.8792 21.7565 11.2728 22.033 10.6053C22.3096 9.93789 22.4519 9.22248 22.4519 8.49999C22.4519 7.77751 22.3096 7.0621 22.033 6.39464C21.7565 5.72718 21.3511 5.12075 20.8401 4.60999Z" stroke="url(#paint0_linear_790_18730)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <defs>
-          <linearGradient id="paint0_linear_790_18730" x1="1.54883" y1="11.5779" x2="22.4567" y2="11.6805" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#FF416C" />
-            <stop offset="1" stopColor="#FF4B2B" />
-          </linearGradient>
-        </defs>
-      </svg>
-    );
-  }
 }
 
 export const IcoWatching = (props: { width?: number, height?: number, className?: string }) => {
@@ -213,7 +152,7 @@ export const IcoInfo = ({ className, gradient, height, width }: IPropsIcon) => {
   );
 }
 
-export const IcoNewStarRating = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoStarRating = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M17.2 3.46667L20.2667 10.1333C20.4 10.5333 20.8 10.8 21.2 10.9333L28.1333 12C29.3333 12 29.7334 13.3333 28.9334 14.1333L23.8667 19.3333C23.6 19.6 23.4667 20.1333 23.4667 20.5333L24.6667 27.7333C24.8 28.8 23.7333 29.7333 22.8 29.2L16.5333 25.7333C16.1333 25.4667 15.7333 25.4667 15.3333 25.7333L9.06668 29.2C8.13335 29.7333 6.93335 28.9333 7.20001 27.7333L8.40002 20.5333C8.53335 20.1333 8.26668 19.6 8.00001 19.3333L2.93335 14.1333C2.26668 13.3333 2.66668 12 3.73335 11.8667L10.6667 10.8C11.0667 10.8 11.4667 10.4 11.6 10L14.6667 3.33334C15.3333 2.4 16.6667 2.4 17.2 3.46667Z" fill={`${gradient === 'primary' ? 'url(#paint0_linear_115_1733)' : gradient === 'secondary' ? '' : '#fff'}`} />
@@ -228,7 +167,7 @@ export const IcoNewStarRating = ({ className, gradient, height, width }: IPropsI
 }
 
 /** @param gradient - primary */
-export const IcoNewClock = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoClock = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M16.0001 29.3333C23.3639 29.3333 29.3334 23.3638 29.3334 16C29.3334 8.63619 23.3639 2.66666 16.0001 2.66666C8.63628 2.66666 2.66675 8.63619 2.66675 16C2.66675 23.3638 8.63628 29.3333 16.0001 29.3333Z" stroke={`${gradient === 'primary' ? 'url(#paint0_linear_115_1734)' : gradient === 'secondary' ? '' : '#fff'}`} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -248,7 +187,7 @@ export const IcoNewClock = ({ className, gradient, height, width }: IPropsIcon) 
 }
 
 /** New icon */
-export const IcoNewPlay = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoPlay = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <>
       {!gradient && <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -281,7 +220,7 @@ export const IcoNewPlay = ({ className, gradient, height, width }: IPropsIcon) =
 }
 
 /** New icon */
-export const IcoNewHeart = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoHeart = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <>
       {!gradient && <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -303,7 +242,7 @@ export const IcoNewHeart = ({ className, gradient, height, width }: IPropsIcon) 
 }
 
 /** New icon */
-export const IcoNewHeartFilled = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoHeartFilled = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <>
       {!gradient &&
@@ -327,7 +266,7 @@ export const IcoNewHeartFilled = ({ className, gradient, height, width }: IProps
 }
 
 /** New icon */
-export const IcoNewAnimeeLogo = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoAnimeeLogo = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <>
       {gradient === 'primary' && <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -349,7 +288,7 @@ export const IcoNewAnimeeLogo = ({ className, gradient, height, width }: IPropsI
 }
 
 /** New icon */
-export const IcoNewArrow = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoArrow = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M4.94333 5.47334L8 8.53L11.0567 5.47334L12 6.41667L8 10.4167L4 6.41667L4.94333 5.47334Z" fill="white" />
@@ -358,7 +297,7 @@ export const IcoNewArrow = ({ className, gradient, height, width }: IPropsIcon) 
 }
 
 /** New icon */
-export const IcoNewHome = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoHome = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M33.3333 13.3333L23.3333 4.56668C22.4166 3.74675 21.2299 3.29346 20 3.29346C18.7701 3.29346 17.5834 3.74675 16.6667 4.56668L6.66666 13.3333C6.13728 13.8068 5.71483 14.3876 5.42745 15.0371C5.14007 15.6866 4.99435 16.3898 5 17.1V31.6667C5 32.9928 5.52678 34.2645 6.46446 35.2022C7.40215 36.1399 8.67392 36.6667 10 36.6667H30C31.3261 36.6667 32.5979 36.1399 33.5355 35.2022C34.4732 34.2645 35 32.9928 35 31.6667V17.0833C35.0033 16.376 34.8564 15.6759 34.5691 15.0295C34.2818 14.383 33.8606 13.8049 33.3333 13.3333ZM23.3333 33.3333H16.6667V25C16.6667 24.558 16.8423 24.1341 17.1548 23.8215C17.4674 23.5089 17.8913 23.3333 18.3333 23.3333H21.6667C22.1087 23.3333 22.5326 23.5089 22.8452 23.8215C23.1577 24.1341 23.3333 24.558 23.3333 25V33.3333ZM31.6667 31.6667C31.6667 32.1087 31.4911 32.5326 31.1785 32.8452C30.8659 33.1578 30.442 33.3333 30 33.3333H26.6667V25C26.6667 23.6739 26.1399 22.4022 25.2022 21.4645C24.2645 20.5268 22.9927 20 21.6667 20H18.3333C17.0072 20 15.7355 20.5268 14.7978 21.4645C13.8601 22.4022 13.3333 23.6739 13.3333 25V33.3333H10C9.55797 33.3333 9.13405 33.1578 8.82149 32.8452C8.50893 32.5326 8.33333 32.1087 8.33333 31.6667V17.0833C8.33363 16.8467 8.38432 16.6128 8.48203 16.3973C8.57973 16.1818 8.72222 15.9895 8.9 15.8333L18.9 7.08334C19.2041 6.81615 19.5952 6.66879 20 6.66879C20.4048 6.66879 20.7958 6.81615 21.1 7.08334L31.1 15.8333C31.2778 15.9895 31.4203 16.1818 31.518 16.3973C31.6157 16.6128 31.6664 16.8467 31.6667 17.0833V31.6667Z" fill="white" />
@@ -368,7 +307,7 @@ export const IcoNewHome = ({ className, gradient, height, width }: IPropsIcon) =
 }
 
 /** New icon */
-export const IcoNewLibrary = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoLibrary = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M31.1667 8.5C30.8333 7.5 30.1667 6.66667 29.1667 6.16667C27.6667 5.33333 25.8333 5.16667 24.3333 6L19.6667 8.33333H10C6.33334 8.33333 3.33334 11.3333 3.33334 15V26.6667C3.33334 30.3333 6.33334 33.3333 10 33.3333H20H30C33.6667 33.3333 36.6667 30.3333 36.6667 26.6667V15C36.6667 11.6667 34.3333 9 31.1667 8.5ZM18.3333 30H10C8.16667 30 6.66667 28.5 6.66667 26.6667V15C6.66667 13.1667 8.16667 11.6667 10 11.6667H18.3333V30ZM25.5 27L21.6667 29V11L26 8.83334C26.6667 8.5 27.3333 8.83334 27.6667 8.83334C27.8333 9.16667 28.3333 9.5 28.3333 10.3333V22.5C28.3333 24.5 27.3333 26.1667 25.5 27ZM33.3333 26.6667C33.3333 28.5 31.8333 30 30 30H27C29.8333 28.5 31.6667 25.6667 31.6667 22.5V12.1667C32.6667 12.6667 33.3333 13.8333 33.3333 15V26.6667Z" fill="white" />
@@ -377,7 +316,7 @@ export const IcoNewLibrary = ({ className, gradient, height, width }: IPropsIcon
 }
 
 /** New icon */
-export const IcoNewSearch = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoSearch = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M26.9141 23.2812C28.0859 21.4375 28.7734 19.25 28.7734 16.8984C28.7734 10.3281 23.4531 5 16.8906 5C10.3203 5 5 10.3281 5 16.8984C5 23.4688 10.3203 28.7969 16.8828 28.7969C19.2656 28.7969 21.4844 28.0938 23.3437 26.8906L23.8828 26.5156L32.3672 35L35 32.3203L26.5234 23.8359L26.9141 23.2812ZM23.5469 10.25C25.3203 12.0234 26.2969 14.3828 26.2969 16.8906C26.2969 19.3984 25.3203 21.7578 23.5469 23.5313C21.7734 25.3047 19.4141 26.2812 16.9062 26.2812C14.3984 26.2812 12.0391 25.3047 10.2656 23.5313C8.49219 21.7578 7.51562 19.3984 7.51562 16.8906C7.51562 14.3828 8.49219 12.0234 10.2656 10.25C12.0391 8.47656 14.3984 7.5 16.9062 7.5C19.4141 7.5 21.7734 8.47656 23.5469 10.25Z" fill="white" />
@@ -386,7 +325,7 @@ export const IcoNewSearch = ({ className, gradient, height, width }: IPropsIcon)
 }
 
 /** New icon */
-export const IcoNewUser = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoUser = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M9.375 15.3125C9.375 21.1563 14.1562 25.9375 20 25.9375C25.8438 25.9375 30.625 21.1563 30.625 15.3125C30.625 9.46875 25.8438 4.6875 20 4.6875C14.1562 4.6875 9.375 9.46875 9.375 15.3125ZM28.125 15.3125C28.125 19.7813 24.4688 23.4375 20 23.4375C15.5312 23.4375 11.875 19.7813 11.875 15.3125C11.875 10.8437 15.5312 7.1875 20 7.1875C24.4688 7.1875 28.125 10.8437 28.125 15.3125Z" fill="white" />
@@ -396,7 +335,7 @@ export const IcoNewUser = ({ className, gradient, height, width }: IPropsIcon) =
 }
 
 /** New icon */
-export const IcoNewSettings = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoSettings = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M8.05 2.25L0.25 16L8.05 29.75H23.925L31.75 16L23.95 2.25H8.05ZM22.775 27.75H9.225L2.55 16L9.225 4.25H22.775L29.45 16L22.775 27.75Z" fill="white" />
@@ -419,7 +358,7 @@ export const IcoNewSpeed = ({ className, gradient, height, width }: IPropsIcon) 
 }
 
 /** New icon */
-export const IcoNewServerUnavailable = ({ className, gradient, height, width }: IPropsIcon) => {
+export const IcoServerUnavailable = ({ className, gradient, height, width }: IPropsIcon) => {
   return (
     <svg width={width || 32} height={height || 32} className={className} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path fill-rule="evenodd" clip-rule="evenodd" d="M7.93832 10.9908C8.83761 7.37261 12.1016 4.6875 16 4.6875C20.5341 4.6875 24.2207 8.31831 24.3108 12.8308C27.1665 13.4348 29.3125 15.9632 29.3125 19C29.3125 22.4866 26.4866 25.3125 23 25.3125H10C5.96141 25.3125 2.6875 22.0386 2.6875 18C2.6875 14.677 4.90604 11.882 7.93832 10.9908ZM16 5.3125C12.3358 5.3125 9.27566 7.8786 8.5049 11.3105C8.47939 11.4241 8.39285 11.5141 8.28034 11.544C5.4211 12.3047 3.3125 14.9029 3.3125 18C3.3125 21.6934 6.30659 24.6875 10 24.6875H23C26.1414 24.6875 28.6875 22.1414 28.6875 19C28.6875 16.1818 26.6349 13.8475 23.9434 13.3972C23.7889 13.3714 23.6775 13.2351 23.6827 13.0786C23.6834 13.0581 23.685 13.0376 23.6859 13.0255L23.6863 13.0207C23.6867 13.015 23.687 13.0109 23.6872 13.0078C23.6874 13.0034 23.6875 13.0013 23.6875 13C23.6875 8.75459 20.2454 5.3125 16 5.3125Z" fill="white" />

@@ -110,7 +110,7 @@ const UserList: NextPage = (props) => {
               {titles.length ? <>
                 <div className='user-library-titles gap-[16px]'>
                   {titles.map(title => {
-                    return <TitleCard title={title} key={title.id} />
+                    return <TitleCard className='!h-[240px]' title={title} key={title.id} />
                   })}
                 </div>
               </> : <div className='w-full h-full flex justify-center items-center'>

@@ -8,34 +8,12 @@ import { routes } from '../routes';
 import '../styles/components/GeneralComponents.scss'
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
-import { IcoNewPlay, IcoNewStarRating } from '../assets/ico/Icos';
+import { IcoPlay, IcoStarRating } from '../assets/ico/Icos';
 
-/** @deprecated use NewTitleCard instead */
-export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
+/** Card-link for title */
+export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
   return (
-    <Link href={routes.watchTitle.path.replace('*', title.code)}>
-      <div className='title-card w-full flex flex-col items-center justify-between relative h-[240px] rounded-[4px]'>
-        <div className='absolute top-0 left-0 w-full h-full'>
-          <LoadingImage src={title.poster} />
-        </div>
-
-        <div className='w-full flex justify-end relative z-[2]'>
-          <div className='px-[4px] py-[2px] rounded-[2px] relative top-[2px] right-[4px] gradient--primary'>
-            <p className='text-[12px] text-white font-bold'>{title.rating}</p>
-          </div>
-        </div>
-
-        <div className='title-card-blur bg-dark/[.2] backdrop-blur-[10px] px-[8px] py-[4px] w-full relative z-[2]'>
-          <p className='text-[16px] text-white text-center'>{title.names.ukr || title.code}</p>
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-export const NewTitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
-  return (
-    <Link href={`${routes.watch.path}/${title.code}`} className='newTitle-card w-full h-full'>
+    <Link href={`${routes.watch.path}/${title.code}`} className={`newTitle-card w-full h-full ${className ? className : ''}`}>
       <div className='relative w-full h-full flex flex-col items-end'>
         {/* Background */}
         <div className='absolute top-0 left-0 w-full h-full'>
@@ -44,7 +22,7 @@ export const NewTitleCard: NextPage<{ title: ITitle, className?: string }> = ({ 
 
         {/* Rating */}
         <div className='relative z-[2] m-[4px] flex items-center gap-[8px] p-[4px] gradientNew--secondary rounded-[2px]'>
-          <IcoNewStarRating width={24} height={24} />
+          <IcoStarRating width={24} height={24} />
           <p className='text-white font-bold'>{title.rating}</p>
         </div>
 
@@ -78,8 +56,8 @@ export const NewWatchButton: NextPage<{ href: string, className?: string, gradie
   return (
     <Link href={href} className={`gradientNew--${gradient}-border-4 gradientNew--${gradient}-hover newWatchButton newWatchButton--${gradient} px-[16px] py-[16px] flex items-center gap-[24px] ${className ? className : ''}`}>
       <div className='relative'>
-        <IcoNewPlay width={40} height={40} gradient={gradient} className={`newWatchButton-icoGradient newWatchButton--${gradient}`} />
-        <IcoNewPlay width={40} height={40} className={`newWatchButton-icoWhite newWatchButton--${gradient}`} />
+        <IcoPlay width={40} height={40} gradient={gradient} className={`newWatchButton-icoGradient newWatchButton--${gradient}`} />
+        <IcoPlay width={40} height={40} className={`newWatchButton-icoWhite newWatchButton--${gradient}`} />
       </div>
       <p className='text-white text-[24px] font-bold uppercase'>дивитись</p>
     </Link>

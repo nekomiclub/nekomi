@@ -141,19 +141,6 @@ body {
   }
 }
 
-.home-titleCard {
-  &-blur {
-    transition: .2s;
-  }
-
-  &:hover {
-    .home-titleCard-blur {
-      padding-top: 24px;
-      padding-bottom: 24px;
-    }
-  }
-}
-
 //* ------------ NEW -------------------
 
 // SVG TO DATA IMAGE https://www.svgbackgrounds.com/tools/svg-to-css/

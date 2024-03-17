@@ -20,7 +20,7 @@ export async function generateMetadata(
     const { data } = await axios.get<ITitle>(`${config.services.apiURL}/v1/title/${params.query}`)
 
     return {
-      title: `Дивитись ${data.names.ukr || data.names.eng} на animee`,
+      title: `${data.names.ukr || data.names.eng} на animee`,
       description: data.description,
       metadataBase: new URL(`https://api.animee.club`),
       keywords: [data.names.ukr, data.names.eng],
