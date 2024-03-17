@@ -18,9 +18,6 @@ import { animeGenres, config, genresDescription } from '../../../config';
 import { LoadingImage, NewWatchButton } from '../../../components/GeneralComponents';
 import { IcoSupportBymeacoffe, IcoSupportDiaka, IcoSocialInstagram, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/assets';
 import Footer from '../../../components/Footer';
-
-import './styles.scss';
-
 import { useAppSelector } from '../../../hooks/redux';
 import $api from '../../../components/http';
 import { IUser } from '../../../interfaces/IUser';
@@ -28,6 +25,8 @@ import { IcoEyeSuccess, IcoFilledClock, IcoFilledPlans } from '../../../assets/i
 import { IcoFolderAdd } from '../../../assets/ico/folder';
 import { IUserState } from '../../../store/reducers/userSlice';
 import KekwPlayer from '../../../components/KekwPlayer';
+
+import './styles.scss';
 
 interface IProps {
   title: ITitle,

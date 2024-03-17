@@ -14,9 +14,9 @@ import Loading from '../../components/Loading';
 import '../../styles/components/Lib.scss'
 import Link from 'next/link';
 import { routes } from '../../routes';
-import { Dropdown } from '../../assets/assets';
 import { UserLibDelayed } from '../../assets/user';
 import { Tooltip } from 'react-tooltip';
+import { IcoArrow } from '../../assets/ico/Icos';
 
 function randomInteger(min: number, max: number): number {
   return Math.floor(min + Math.random() * (max + 1 - min));
@@ -240,7 +240,7 @@ const Lib: NextPage = (props) => {
 
             <div className={`w-full flex justify-center items-center gap-[4px] duration-200 ${debouncedQuery ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
               <button onClick={() => page - 1 !== -1 ? setPage(prev => prev -= 1) : null}>
-                <Dropdown width={24} height={24} className='rotate-[90deg]' />
+                <IcoArrow width={24} height={24} className='rotate-[90deg]' />
               </button>
 
               <div className='px-[16px]'>
@@ -256,7 +256,7 @@ const Lib: NextPage = (props) => {
               </div>
 
               <button onClick={() => page + 1 !== pages ? setPage(prev => prev += 1) : null}>
-                <Dropdown width={24} height={24} className='-rotate-[90deg]' />
+                <IcoArrow width={24} height={24} className='-rotate-[90deg]' />
               </button>
             </div>
           </div>

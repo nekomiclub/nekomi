@@ -4,7 +4,6 @@
 
     &--state {
       &-open {
-        transform: translateY(0);
         opacity: 1;
         visibility: visible;
         pointer-events: all;
@@ -12,11 +11,34 @@
       } 
 
       &-closed {
-        transform: translateY(-30%);
         opacity: 0;
         visibility: hidden;
         touch-action: none;
         pointer-events: none;
+      }
+    }
+  }
+
+  &--toTop {
+    .szh-menu--state {
+      &-open {
+        transform: translateY(0);
+      } 
+
+      &-closed {
+        transform: translateY(30%);
+      }
+    }
+  }
+
+  &--toBottom {
+    .szh-menu--state {
+      &-open {
+        transform: translateY(0);
+      } 
+
+      &-closed {
+        transform: translateY(-30%);
       }
     }
   }

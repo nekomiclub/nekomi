@@ -1,7 +1,7 @@
 'use client'
 
 import next, { NextPage } from 'next';
-import { useState, useEffect, useRef, RefObject, KeyboardEvent, ReactEventHandler } from 'react';
+import { useState, useEffect, useRef, RefObject, memo } from 'react';
 import axios from 'axios';
 import * as loader from '@uiball/loaders';
 import { Range } from 'react-range';
@@ -11,7 +11,7 @@ import * as RMen from '@szhsin/react-menu'
 import { ITitle, ITitleEpisodeDubbed, ITitleEpisodeMeta, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
 import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
-import { IcoPlay, IcoServerUnavailable, IcoSettings } from '../assets/ico/Icos';
+import { IcoArrow, IcoPlay, IcoServerUnavailable, IcoSettings } from '../assets/ico/Icos';
 
 import '../styles/components/KekwPlayer.scss';
 import { useInView } from 'react-intersection-observer';
@@ -33,10 +33,13 @@ const KekwPlayer: NextPage<{
   const [volume, setVolume] = useState(50)
   const [ep, setEp] = useState(1);
   const [dub, setDub] = useState<ITitleEpisodesDub>()
-  const [quality, setQuality] = useState<TVideoQuality>('q1080')
   const [duration, setDuration] = useState(1)
   const [videoMoment, setVideoMoment] = useState(0);
   const [hoveredMoment, setHoveredMoment] = useState(0);
+
+  const [quality, setQuality] = useState<TVideoQuality>('q1080')
+  const [speed, setSpeed] = useState(1)
+  const [subs, setSubs] = useState() // TODO Subs system
 
   const [isPreviewOld, setIsPreviewOld] = useState(false);
   const [isVideoProcessed, setIsVideoProcessed] = useState(true);
@@ -66,6 +69,9 @@ const KekwPlayer: NextPage<{
   // System
   const [inViewRef, inView, entry] = useInView()
 
+  // Prev states
+  const prevDub = useRef<ITitleEpisodesDub>()
+  const prevEp = useRef(0)
 
 
   // Effects
@@ -112,6 +118,10 @@ const KekwPlayer: NextPage<{
 
     video.addEventListener('contextmenu', e => {
       e.preventDefault();
+    })
+
+    video.addEventListener('ratechange', () => {
+      setSpeed(video.playbackRate)
     })
 
     video.addEventListener('dblclick', () => {
@@ -424,24 +434,17 @@ const KekwPlayer: NextPage<{
     ref!.style.width = `${volume}px`
   }, [volume])
 
-  //* Change video src
+  //* Handle last episode, end screen after changing ep/dub & out states
   useEffect(() => {
     if (!dub) return;
 
-    const epData = dub.eps.find(el => el.order === ep);
-
-    setVideoSrc(epData?.source[quality])
-
+    // Handle end screen
     if (endScreen !== 'clear') {
       setIsTimeToEndScreen(false);
       setEndScreen('clear')
     }
-  }, [quality, dub, ep])
 
-  //* Check if episode is last & set out states
-  useEffect(() => {
-    if (!dub) return;
-
+    // Handle last episode
     const currEpExist = dub.eps.some(el => el.order === ep);
 
     if (!currEpExist) {
@@ -449,12 +452,8 @@ const KekwPlayer: NextPage<{
       return;
     }
 
-    setIsPlaying(false);
-
     let nextEp = ep;
     nextEp++;
-
-    changePreivewFormat(dub)
 
     if (!dub.eps.find(el => el.order === nextEp)) {
       setIsLastEpisode(true)
@@ -462,6 +461,13 @@ const KekwPlayer: NextPage<{
       setIsLastEpisode(false)
     }
 
+    // Pause video after changing ep/dub
+    setIsPlaying(false);
+
+    // Re-define previews format
+    changePreivewFormat(dub)
+
+    // Handle out states
     if (setCurrentDubber) {
       setCurrentDubber(dubs.find(el => el.id === dub.id)!)
     }
@@ -469,7 +475,28 @@ const KekwPlayer: NextPage<{
     if (setCurrentEp) {
       setCurrentEp(ep)
     }
+
+    // Set video src
+    const epData = dub.eps.find(el => el.order === ep);
+
+    if (dub !== prevDub.current && ep === prevEp.current) {
+      changeVideoSrc(epData!.source[quality], videoMoment)
+    } else {
+      changeVideoSrc(epData!.source[quality], 0)
+    }
+
+    prevDub.current = dub;
+    prevEp.current = ep;
   }, [ep, dub])
+
+  //* Handle quality changing
+  useEffect(() => {
+    if (!dub) return;
+
+    const epData = dub.eps.find(el => el.order === ep);
+
+    changeVideoSrc(epData!.source[quality], videoMoment)
+  }, [quality])
 
 
   //* Handlers
@@ -568,9 +595,22 @@ const KekwPlayer: NextPage<{
     img.style.objectPosition = `-${offset}px`
   }
 
-  useEffect(() => {
-    console.log(endScreen)
-  }, [endScreen])
+  /** Change video src (ep/dub & quality changing) & sync video with previous moment */
+  function changeVideoSrc(src: string, moment: number) {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    video.addEventListener('loadedmetadata', handler)
+
+    function handler() {
+      video!.currentTime = moment;
+      video!.play();
+      video!.removeEventListener('loadedmetadata', handler)
+    }
+
+    setVideoSrc(src)
+  }
 
 
   return (
@@ -617,7 +657,7 @@ const KekwPlayer: NextPage<{
             <PiP isPiP={isPiP} videoRef={videoRef} />
 
             {/* Settings */}
-            <Settings />
+            <Settings quality={quality} setQuality={setQuality} setSubs={setSubs} speed={speed} subs={subs} epData={dub?.eps.find(el => el.order === ep)} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
 
             {/* Fullscreen */}
             <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
@@ -743,8 +783,7 @@ const TitleEndScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ 
 }
 
 
-
-const Menu: NextPage<{
+const Menu = memo<{
   ep: number,
   setEp: (state: number) => void,
   currentDub: ITitleEpisodesDub,
@@ -753,7 +792,7 @@ const Menu: NextPage<{
   dubbers: IDubber[]
   isLastEpisode: boolean,
   totalEps: number
-}> = ({ ep, setEp, dubbers, currentDub, isLastEpisode, setCurrentDub, totalDubs, totalEps }) => {
+}>(function Menu({ ep, setEp, dubbers, currentDub, isLastEpisode, setCurrentDub, totalDubs, totalEps }) {
   const isFirstOpen = useRef(true);
 
   function nextEpisode() {
@@ -797,7 +836,7 @@ const Menu: NextPage<{
       setCurrentDub(dub);
     }
 
-    return <RMen.MenuItem>
+    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
       <button className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex gap-[8px] focus-visible:bg-purple w-fit rounded-[2px] ${dub.id === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
         <p className='text-white'>{dubbers.find(el => el.id === dub.id)!.name}</p>
 
@@ -823,7 +862,7 @@ const Menu: NextPage<{
       setEp(to)
     }
 
-    return <RMen.MenuItem>
+    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
       <button className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] w-full ${ep === to ? 'bg-purple' : ''}`} onClick={() => setEpisode(to)}>
         <p className='text-white'>{to}</p>
       </button>
@@ -832,7 +871,7 @@ const Menu: NextPage<{
 
   return (
     <div className='relative z-[10] px-[24px] py-[16px] flex gap-[4px]'>
-      <RMen.Menu className={'szh-slide w-full'} menuClassName={`px-[16px] py-[8px] bg-dark !flex gap-[8px] max-h-[200px] w-fit`} gap={8} menuButton={menuButton()}>
+      <RMen.Menu className={'szh-slide szh-slide--toBottom w-full'} menuClassName={`px-[16px] py-[8px] bg-dark !flex gap-[8px] max-h-[200px] w-fit`} gap={8} menuButton={menuButton()}>
         <div className='flex flex-col gap-[4px] overflow-y-scroll px-[4px] w-full'>
           {currentDub && totalDubs.map(el => {
             return <MenuDubber dub={el} currId={currentDub.id} dubbers={dubbers} key={`${el.id}_setdub`} />
@@ -859,7 +898,238 @@ const Menu: NextPage<{
       </button>
     </div>
   );
-}
+})
+
+
+type TSettingPage = 'default' | 'quality' | 'speed' | 'volume' | 'subs'
+const Settings = memo<{
+  quality: TVideoQuality,
+  setQuality: (state: TVideoQuality) => void,
+  speed: number,
+  subs: any,
+  setSubs: (state: any) => void,
+  epData: ITitleEpisodeDubbed | undefined,
+  isVideoProcessed: boolean,
+  videoRef: RefObject<HTMLVideoElement>
+}>(function Memoized({ quality, setQuality, setSubs, speed, subs, epData, isVideoProcessed, videoRef }) {
+  const [page, setPage] = useState<TSettingPage>('default')
+  const isFirstOpen = useRef(true);
+
+  function setSpeed(to: number) {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    video.playbackRate = to;
+  }
+
+  // Prevent auto scrolling to top issue from react-menu component
+  function preventScrolling() {
+    if (isFirstOpen.current) {
+      let i = 0;
+
+      let int = setInterval(() => {
+        if (i === 20) {
+          clearInterval(int)
+          return;
+        }
+
+        window.scrollTo({ top: window.scrollY, behavior: 'instant' })
+        isFirstOpen.current = false;
+        i++;
+      }, 10)
+    }
+  }
+
+  function MenuButton() {
+    return <button className={'relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'} onClick={() => preventScrolling()}>
+      <IcoSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200`} />
+    </button>
+  }
+
+  function ReturnButton({ label }: { label: string }) {
+    return <button className={`flex items-center gap-[16px] w-full duration-200 hover:bg-grey focus-visible:bg-grey`} onClick={() => setPage('default')}>
+      <IcoArrow width={24} height={24} className='rotate-[90deg]' />
+      <p className='text-white w-full'>{label}</p>
+    </button>
+  }
+
+  function parseQuality(quality: TVideoQuality) {
+    switch (quality) {
+      case 'q4k': {
+        return '4K'
+      }
+
+      case 'q2k': {
+        return '2K'
+      }
+
+      case 'q1080': {
+        return '1080'
+      }
+
+      case 'q720': {
+        return '720'
+      }
+
+      case 'q480': {
+        return '480'
+      }
+
+      case 'q240': {
+        return '240'
+      }
+    }
+  }
+
+  function QualityButton() {
+    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+      <button className={`flex items-center justify-between w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('quality')}>
+        <div className='flex items-center gap-[16px]'>
+          <p className='text-white'>Якість</p>
+        </div>
+
+        <div>
+          <p className='text-white'>{parseQuality(quality)}</p>
+        </div>
+      </button>
+    </RMen.MenuItem>
+  }
+
+  function SubsButton() {
+    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+      <button className={`flex items-center justify-between w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('subs')}>
+        <div className='flex items-center gap-[16px]'>
+          <p className='text-white'>Субтитри</p>
+        </div>
+
+        {/* // TODO Subs system */}
+        <div>
+          <p className='text-lightGrey'>Відсутні</p>
+        </div>
+      </button>
+    </RMen.MenuItem>
+  }
+
+  function SpeedButton() {
+    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+      <button className={`flex items-center justify-between w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('speed')}>
+        <div className='flex items-center gap-[16px]'>
+          <p className='text-white'>Швидкість</p>
+        </div>
+
+        <div>
+          <p className='text-white'>{speed}х</p>
+        </div>
+      </button>
+    </RMen.MenuItem>
+  }
+
+
+
+  function QualityMenu() {
+    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+      <div className={`flex flex-col gap-[16px]`}>
+        <ReturnButton label='Якість' />
+        <div className='flex flex-col gap-[4px]'>
+          {epData?.source.q2k && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q2k' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q1080')} disabled={!isVideoProcessed}>
+            <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>2K</p>
+          </button>}
+
+          {epData?.source.q1080 && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q1080' ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setQuality('q1080')}>
+            <p className='text-white'>1080</p>
+          </button>}
+
+          {epData?.source.q720 && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q720' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q720')} disabled={!isVideoProcessed}>
+            <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>720</p>
+          </button>}
+
+          {epData?.source.q480 && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q480' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q480')} disabled={!isVideoProcessed}>
+            <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>480</p>
+          </button>}
+
+          {epData?.source.q240 && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q240' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q240')} disabled={!isVideoProcessed}>
+            <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>240</p>
+          </button>}
+        </div>
+      </div>
+    </RMen.MenuItem>
+  }
+
+  function SubsMenu() {
+    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+      <div className={`flex flex-col gap-[16px]`}>
+        <ReturnButton label='Субтитри' />
+        <div className='flex flex-col gap-[4px]'>
+          <button className='px-[16px] py-[4px] rounded-[2px] bg-grey' disabled>
+            <p className='text-lightGrey'>Відсутні</p>
+          </button>
+        </div>
+      </div>
+    </RMen.MenuItem>
+  }
+
+  function SpeedMenu() {
+    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+      <div className={`flex flex-col gap-[16px]`}>
+        <ReturnButton label='Швидкість' />
+        <div className='flex flex-col gap-[4px]'>
+          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.25 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.25)}>
+            <p className={`text-white`}>0.25x</p>
+          </button>
+
+          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.5 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.5)}>
+            <p className={`text-white`}>0.5x</p>
+          </button>
+
+          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.75 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.75)}>
+            <p className={`text-white`}>0.75x</p>
+          </button>
+
+          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1)}>
+            <p className={`text-white`}>1x</p>
+          </button>
+
+          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.25 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.25)}>
+            <p className={`text-white`}>1.25x</p>
+          </button>
+
+          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.5 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.5)}>
+            <p className={`text-white`}>1.5x</p>
+          </button>
+
+          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.75 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.75)}>
+            <p className={`text-white`}>1.75x</p>
+          </button>
+
+          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 2 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(2)}>
+            <p className={`text-white`}>2x</p>
+          </button>
+        </div>
+      </div>
+    </RMen.MenuItem>
+  }
+
+  return (
+    <div className='relative'>
+      <RMen.Menu menuButton={MenuButton()} className={`w-full szh-slide szh-slide--toTop`} menuClassName={`px-[16px] py-[8px] bg-dark !flex flex-col gap-[4px] min-w-[260px] w-fit !-left-[300%]`} gap={16} direction='top'>
+        {epData && <>
+          {/* Buttons */}
+          {page === 'default' && <>
+            <QualityButton />
+            <SpeedButton />
+            <SubsButton />
+          </>}
+
+          {/* Menus */}
+          {page === 'quality' && <QualityMenu />}
+          {page === 'speed' && <SpeedMenu />}
+          {page === 'subs' && <SubsMenu />}
+        </>}
+      </RMen.Menu>
+    </div >
+  );
+})
 
 const Play: NextPage<{
   isPlaying: boolean,
@@ -1070,25 +1340,6 @@ const Timeline: NextPage<{
         </div>
         <p className='text-white'>{secondsToReadable(hoveredMoment).pretty}</p>
       </div>
-    </div>
-  );
-}
-
-type TSettingPage = 'default' | 'quality' | 'speed' | 'volume' | 'subs'
-const Settings: NextPage = (props) => {
-  const [page, setPage] = useState<TSettingPage>('default')
-
-  function MenuButton() {
-    return <button className={'relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'}>
-      <IcoSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200`} />
-    </button>
-  }
-
-  return (
-    <div className='relative'>
-      <RMen.Menu menuButton={MenuButton()}>
-
-      </RMen.Menu>
     </div>
   );
 }
