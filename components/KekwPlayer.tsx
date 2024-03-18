@@ -49,7 +49,7 @@ const KekwPlayer: NextPage<{
   const [isVideoProcessed, setIsVideoProcessed] = useState(true);
 
   // Player states
-  const [isCoverVisible, setIsCoverVisible] = useState(true)
+  const [isCoverVisible, setIsCoverVisible] = useState(false) //! TRUE
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPiP, setIsPip] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -89,8 +89,8 @@ const KekwPlayer: NextPage<{
   useIdleTimer({
     timeout: 3000,
     throttle: 500,
-    onIdle: () => setIsIdle(true),
-    onAction: () => setIsIdle(false)
+    // onIdle: () => setIsIdle(true),
+    // onAction: () => setIsIdle(false)
   })
 
 
@@ -602,9 +602,9 @@ const KekwPlayer: NextPage<{
     const epData = dub.eps.find(el => el.order === ep);
 
     if (dub !== prevDub.current && ep === prevEp.current) {
-      changeVideoSrc(epData!.source[quality], videoMoment)
+      changeVideoSrc(epData!.source[quality], videoMoment, true)
     } else {
-      changeVideoSrc(epData!.source[quality], 0)
+      changeVideoSrc(epData!.source[quality], 0, false)
     }
 
     prevDub.current = dub;
@@ -615,9 +615,10 @@ const KekwPlayer: NextPage<{
   useEffect(() => {
     if (!dub) return;
 
+    console.log('change quality')
     const epData = dub.eps.find(el => el.order === ep);
 
-    changeVideoSrc(epData!.source[quality], videoMoment)
+    changeVideoSrc(epData!.source[quality], videoMoment, true)
   }, [quality])
 
 
@@ -718,7 +719,7 @@ const KekwPlayer: NextPage<{
   }
 
   /** Change video src (ep/dub & quality changing) & sync video with previous moment */
-  function changeVideoSrc(src: string, moment: number) {
+  function changeVideoSrc(src: string, moment: number, autoplay: boolean) {
     const video = videoRef.current;
 
     if (!video) return;
@@ -726,8 +727,11 @@ const KekwPlayer: NextPage<{
     video.addEventListener('loadedmetadata', handler)
 
     function handler() {
+      if (autoplay) {
+        video!.play().catch(e => null);
+      }
+
       video!.currentTime = moment;
-      video!.play().catch(e => null);
       video!.removeEventListener('loadedmetadata', handler)
     }
 
@@ -737,7 +741,7 @@ const KekwPlayer: NextPage<{
 
   return (
     // In view
-    <div className='w-full h-full relative overflow-hidden' ref={inViewRef}>
+    <div className='w-full h-full relative overflow-hidden' ref={inViewRef} id="player">
       {/* Cover */}
       <button className={`absolute w-full h-full top-0 left-0 z-[7] bg-grey duration-200 flex justify-center items-center ${isCoverVisible ? '' : 'opacity-0 invisible'}`} onClick={() => setIsCoverVisible(false)}>
         <IcoPlay width={256} height={256} gradient='secondary' />
@@ -1020,8 +1024,8 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
   }
 
   return (
-    <div className={`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200 translate-y-0 ${isIdle ? '-translate-y-[100%]' : ''}`}>
-      <RMen.Menu className={'szh-slide szh-slide--toBottom w-full'} menuClassName={`px-[16px] py-[8px] bg-dark !flex gap-[8px] max-h-[200px] w-fit`} gap={8} menuButton={menuButton()}>
+    <div className={`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200 ${isIdle ? '-translate-y-[100%]' : 'translate-y-0'}`}>
+      <RMen.Menu className={'szh-slide szh-slide--toBottom w-full'} menuClassName={`px-[16px] py-[8px] bg-dark !flex gap-[8px] h-[200px] max-h-[200px] w-fit !left-0 !top-[76px]`} menuButton={menuButton()} direction='bottom'>
         <div className='flex flex-col gap-[4px] overflow-y-scroll px-[4px] w-full'>
           {currentDub && totalDubs.map(el => {
             return <MenuDubber dub={el} currId={currentDub.id} dubbers={dubbers} key={`${el.id}_setdub`} />
@@ -1286,7 +1290,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
 
   return (
     <div className='relative max-[460px]:hidden'>
-      <RMen.Menu menuButton={MenuButton()} className={`w-full szh-slide szh-slide--toTop`} menuClassName={`px-[16px] py-[8px] bg-dark !flex flex-col gap-[4px] min-w-[260px] w-fit !-left-[300%]`} gap={16} direction='top'>
+      <RMen.Menu menuButton={MenuButton()} className={`szh-slide szh-slide--toTop`} menuClassName={`px-[16px] py-[8px] bg-dark !flex flex-col gap-[4px] min-w-[260px] w-fit h-fit !-top-[230px] h-[156px] max-h-[156px] overflow-y-scroll`} gap={16} direction='bottom'>
         {epData && <>
           {/* Buttons */}
           {page === 'default' && <>
