@@ -5,7 +5,10 @@
     transition: .2s;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    
     .title-card-blur {
       padding-top: 16px;
       padding-bottom: 16px;
@@ -13,23 +16,7 @@
   }
 }
 
-.newTitle-card {
-  &-blur {
-    transition: .2s;
-  }
-
-  &:hover,
-  &:focus-visible {
-    outline: none;
-    
-    .newTitle-card-blur {
-      padding-top: 16px;
-      padding-bottom: 16px;
-    }
-  }
-}
-
-.newWatchButton {
+.watchButton {
   position: relative;
   transition: .2s ease-in-out;
 
@@ -49,7 +36,7 @@
   &:focus-visible {
     outline: none;
 
-    .newWatchButton-icoWhite {
+    .watchButton-icoWhite {
       opacity: 1;
     }
   }

@@ -15,7 +15,7 @@ import Tooltip from '../../../components/Tooltip';
 import { getKeyByValue, parseTitleCountry, parseTitleDubbers, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { IDubber } from '../../../interfaces/IDubber';
 import { animeGenres, config, genresDescription } from '../../../config';
-import { LoadingImage, NewWatchButton } from '../../../components/GeneralComponents';
+import { LoadingImage, WatchButton } from '../../../components/GeneralComponents';
 import { IcoSupportBymeacoffe, IcoSupportDiaka, IcoSocialInstagram, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/assets';
 import Footer from '../../../components/Footer';
 import { useAppSelector } from '../../../hooks/redux';
@@ -141,7 +141,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
 
               {/* Play, save, like btns */}
               <div className='flex gap-[8px] max-[600px]:flex-col'>
-                <NewWatchButton href='#player' gradient='primary' className='max-[600px]:w-full justify-center' />
+                <WatchButton href='#player' gradient='primary' className='max-[600px]:w-full justify-center' />
 
                 <div className='flex gap-[8px]'>
                   <AddToFavorite user={user} setTitleLiked={setTitleLiked} titleId={title.id} titleLiked={titleLiked} />
@@ -207,7 +207,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
 
                   <div className=''>
                     <Tooltip content={totalEps === title.estimatedEps ? 'Тайтл повністю озвучено' : 'Тайтл озвучено неповністю'}>
-                      <p className={`text-white text-[24px] ${totalEps === title.estimatedEps ? 'font-bold gradientNew--secondary-text' : ''}`}>
+                      <p className={`text-white text-[24px] ${totalEps === title.estimatedEps ? 'font-bold gradient--secondary-text' : ''}`}>
                         {totalEps} / {title.estimatedEps}
                       </p>
                     </Tooltip>

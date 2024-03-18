@@ -13,7 +13,7 @@ import { IcoPlay, IcoStarRating } from '../assets/ico/Icos';
 /** Card-link for title */
 export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
   return (
-    <Link href={`${routes.watch.path}/${title.code}`} className={`newTitle-card w-full h-full ${className ? className : ''}`}>
+    <Link href={`${routes.watch.path}/${title.code}`} className={`title-card w-full h-full ${className ? className : ''}`}>
       <div className='relative w-full h-full flex flex-col items-end'>
         {/* Background */}
         <div className='absolute top-0 left-0 w-full h-full'>
@@ -21,14 +21,14 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
         </div>
 
         {/* Rating */}
-        <div className='relative z-[2] m-[4px] flex items-center gap-[8px] p-[4px] gradientNew--secondary rounded-[2px]'>
+        <div className='relative z-[2] m-[4px] flex items-center gap-[8px] p-[4px] gradient--secondary rounded-[2px]'>
           <IcoStarRating width={24} height={24} />
           <p className='text-white font-bold'>{title.rating}</p>
         </div>
 
         {/* Title */}
         <div className='w-full h-full flex flex-col justify-end flex-1'>
-          <div className='newTitle-card-blur relative z-[2] w-full h-fit px-[16px] py-[8px] bg-dark/[.1] backdrop-blur-[32px] flex justify-center'>
+          <div className='title-card-blur relative z-[2] w-full h-fit px-[16px] py-[8px] bg-dark/[.1] backdrop-blur-[32px] flex justify-center'>
             <p className='text-white text-center'>{title.names.ukr}</p>
           </div>
         </div>
@@ -52,12 +52,12 @@ export const LoadingImage: NextPage<{ src: string, alt?: string, className?: str
   )
 }
 
-export const NewWatchButton: NextPage<{ href: string, className?: string, gradient: 'primary' | 'secondary' }> = ({ gradient, href, className }) => {
+export const WatchButton: NextPage<{ href: string, className?: string, gradient: 'primary' | 'secondary' }> = ({ gradient, href, className }) => {
   return (
-    <Link href={href} className={`gradientNew--${gradient}-border-4 gradientNew--${gradient}-hover newWatchButton newWatchButton--${gradient} px-[16px] py-[16px] flex items-center gap-[24px] ${className ? className : ''}`}>
+    <Link href={href} className={`gradient--${gradient}-border-4 gradient--${gradient}-hover watchButton watchButton--${gradient} px-[16px] py-[16px] flex items-center gap-[24px] ${className ? className : ''}`}>
       <div className='relative'>
-        <IcoPlay width={40} height={40} gradient={gradient} className={`newWatchButton-icoGradient newWatchButton--${gradient}`} />
-        <IcoPlay width={40} height={40} className={`newWatchButton-icoWhite newWatchButton--${gradient}`} />
+        <IcoPlay width={40} height={40} gradient={gradient} className={`watchButton-icoGradient watchButton--${gradient}`} />
+        <IcoPlay width={40} height={40} className={`watchButton-icoWhite watchButton--${gradient}`} />
       </div>
       <p className='text-white text-[24px] font-bold uppercase'>дивитись</p>
     </Link>

@@ -4,7 +4,7 @@ import { NextPage, Metadata } from 'next';
 import React, { useState, useEffect, useRef } from 'react'
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { LoadingImage, TitleCard, NewWatchButton } from '../components/GeneralComponents';
+import { LoadingImage, TitleCard, WatchButton } from '../components/GeneralComponents';
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
 import { AddToFavorite } from './w/[query]/Watch';
@@ -48,7 +48,7 @@ const Home: NextPage<IProps> = ({ headliner, watchingNow }) => {
             <h1 className='text-white text-[40px] font-bold uppercase'>{headliner.title}</h1>
 
             <div className='flex gap-[16px]'>
-              <NewWatchButton gradient='secondary' href={`${config.services.siteURL}/w/${headliner.code}`} className='w-full justify-center' />
+              <WatchButton gradient='secondary' href={`${config.services.siteURL}/w/${headliner.code}`} className='w-full justify-center' />
             </div>
           </div>
         </div>

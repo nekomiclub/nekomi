@@ -49,7 +49,7 @@ const KekwPlayer: NextPage<{
   const [isVideoProcessed, setIsVideoProcessed] = useState(true);
 
   // Player states
-  const [isCoverVisible, setIsCoverVisible] = useState(false) //! Must be true
+  const [isCoverVisible, setIsCoverVisible] = useState(true)
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPiP, setIsPip] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -89,8 +89,8 @@ const KekwPlayer: NextPage<{
   useIdleTimer({
     timeout: 3000,
     throttle: 500,
-    // onIdle: () => setIsIdle(true),
-    // onAction: () => setIsIdle(false)
+    onIdle: () => setIsIdle(true),
+    onAction: () => setIsIdle(false)
   })
 
 
@@ -157,7 +157,7 @@ const KekwPlayer: NextPage<{
       if (!video || !player) return;
 
       if (video.paused) {
-        video.play()
+        video.play().catch(e => null)
       } else {
         video.pause();
       }
@@ -278,7 +278,7 @@ const KekwPlayer: NextPage<{
 
         // Throttle playback (click can be double)
         if (video.paused) {
-          video.play()
+          video.play().catch(e => null)
         } else {
           video.pause();
         }
@@ -366,7 +366,7 @@ const KekwPlayer: NextPage<{
           if (isPlaying) {
             video.pause()
           } else {
-            video.play()
+            video.play().catch(e => null)
           }
 
           break;
@@ -727,7 +727,7 @@ const KekwPlayer: NextPage<{
 
     function handler() {
       video!.currentTime = moment;
-      video!.play();
+      video!.play().catch(e => null);
       video!.removeEventListener('loadedmetadata', handler)
     }
 
@@ -869,7 +869,7 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
     setEp(nextEp)
 
     setTimeout(() => {
-      video.play()
+      video.play().catch(e => null)
     }, 1000);
   }
 
@@ -918,7 +918,7 @@ const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
     <p className='text-white text-[32px] font-bold'>Тайтл завершено!</p>
 
     {/* //TODO */}
-    {/* <button className='gradientNew--primary-border-4 gradientNew--primary-hover flex gap-[16px] items-center px-[24px] py-[16px]'>
+    {/* <button className='gradient--primary-border-4 gradient--primary-hover flex gap-[16px] items-center px-[24px] py-[16px]'>
       <p className='text-white text-[24px] font-bold uppercase'>Відмітити як “переглянуто”</p>
     </button> */}
 
@@ -995,11 +995,11 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
             <p className='text-white whitespace-nowrap'>{lastEp} / {totalEps}</p>
           </div>
 
-          {dub.include2K && <div className='gradientNew--primary px-[4px] py-[2px] rounded-[2px]'>
+          {dub.include2K && <div className='gradient--primary px-[4px] py-[2px] rounded-[2px]'>
             <p className='text-white whitespace-nowrap'>SUB</p>
           </div>}
 
-          {dub.includeSub && <div className='gradientNew--primary px-[4px] py-[2px] rounded-[2px]'>
+          {dub.includeSub && <div className='gradient--primary px-[4px] py-[2px] rounded-[2px]'>
             <p className='text-white whitespace-nowrap'>4K</p>
           </div>}
         </div>
@@ -1322,7 +1322,7 @@ const Play: NextPage<IPlayProps> = ({ isPlaying, videoRef }) => {
     if (!video) return;
 
     if (video.paused) {
-      video.play();
+      video.play().catch(e => null);
     } else {
       video.pause()
     }
@@ -1411,7 +1411,7 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
         outline: 'none'
       }}
       id='kekwplayer-volume_thumb'
-      className={`w-[16px] h-[16px] gradientNew--primary rounded-[32px]`}
+      className={`w-[16px] h-[16px] gradient--primary rounded-[32px]`}
     />
   }
 
@@ -1443,7 +1443,7 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
           <Range min={0} max={100} onChange={val => setVolume(val[0])} values={[volume]} renderThumb={renderThumb} renderTrack={renderTrack} />
 
           {/* Volume progress */}
-          <div className='w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[11] gradientNew--secondary rounded-[6px]' ref={volumeRef}></div>
+          <div className='w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[11] gradient--secondary rounded-[6px]' ref={volumeRef}></div>
         </div>
 
         <p className='text-white'>{volume}</p>
@@ -1482,7 +1482,7 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
         zIndex: 13
       }}
       id='kekwplayer-timeline_thumb'
-      className={`w-[16px] h-[16px] gradientNew--primary rounded-[32px]`}
+      className={`w-[16px] h-[16px] gradient--primary rounded-[32px]`}
     />
   }
 
@@ -1510,7 +1510,7 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
           <Range min={0} max={duration} step={1} onChange={val => changeMoment(val[0])} values={[moment]} renderTrack={renderTrack} renderThumb={renderThumb} />
 
           {/* From start progress */}
-          <div className='h-full absolute top-0 left-0 touch-none pointer-events-none z-[11] gradientNew--secondary rounded-[6px]' ref={progressRef}></div>
+          <div className='h-full absolute top-0 left-0 touch-none pointer-events-none z-[11] gradient--secondary rounded-[6px]' ref={progressRef}></div>
 
           {/* Downloading progress */}
           <div className='h-full absolute top-0 touch-none pointer-events-none left-0 z-[10] bg-white/[.3] rounded-[6px]' ref={loadedRef}></div>
