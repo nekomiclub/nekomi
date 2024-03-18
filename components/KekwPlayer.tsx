@@ -10,14 +10,15 @@ import * as RMen from '@szhsin/react-menu'
 
 import { ITitle, ITitleEpisodeDubbed, ITitleEpisodeMeta, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
-import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
-import { IcoArrow, IcoPlay, IcoServerUnavailable, IcoSettings } from '../assets/ico/Icos';
+import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerQuality, IcoNewPlayerSubs, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
+import { IcoArrow, IcoPlay, IcoPlayerCenter, IcoPlayerStretch, IcoServerUnavailable, IcoSettings, IcoSpeed } from '../assets/ico/Icos';
 
 import '../styles/components/KekwPlayer.scss';
 import { useInView } from 'react-intersection-observer';
 import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 import { LoadingImage } from './GeneralComponents';
 import { timestampToDate, wordDeclination } from './handlers';
+import { useIdleTimer } from 'react-idle-timer';
 
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
 type TEndScreen = 'clear' | 'epEnded' | 'titleEnded' | 'lastEp';
@@ -36,10 +37,13 @@ const KekwPlayer: NextPage<{
   const [duration, setDuration] = useState(1)
   const [videoMoment, setVideoMoment] = useState(0);
   const [hoveredMoment, setHoveredMoment] = useState(0);
+  const [endScreen, setEndScreen] = useState<TEndScreen>('clear')
 
+  // Settings states
   const [quality, setQuality] = useState<TVideoQuality>('q1080')
   const [speed, setSpeed] = useState(1)
   const [subs, setSubs] = useState() // TODO Subs system
+  const [stretch, setStretch] = useState(false)
 
   const [isPreviewOld, setIsPreviewOld] = useState(false);
   const [isVideoProcessed, setIsVideoProcessed] = useState(true);
@@ -51,8 +55,9 @@ const KekwPlayer: NextPage<{
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [isLastEpisode, setIsLastEpisode] = useState(false)
-  const [endScreen, setEndScreen] = useState<TEndScreen>('clear')
   const [isTimeToEndScreen, setIsTimeToEndScreen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const [isIdle, setIsIdle] = useState(false)
 
   // Video states
   const [videoSrc, setVideoSrc] = useState('');
@@ -66,16 +71,31 @@ const KekwPlayer: NextPage<{
   const previewRef = useRef<HTMLDivElement>(null)
   const volumeRef = useRef<HTMLDivElement>(null)
 
+  const mobileSkipWrapper = useRef<HTMLDivElement>(null)
+  const mobilePrevSkipRef = useRef<HTMLDivElement>(null)
+  const mobileNextSkipRef = useRef<HTMLDivElement>(null)
+
+  const isMultiskipRef = useRef(false)
+  const skipTimeoutRef = useRef<NodeJS.Timeout>()
+
   // System
-  const [inViewRef, inView, entry] = useInView()
+  const [inViewRef, inView] = useInView()
 
   // Prev states
   const prevDub = useRef<ITitleEpisodesDub>()
   const prevEp = useRef(0)
 
+  // Idle timer
+  useIdleTimer({
+    timeout: 3000,
+    throttle: 500,
+    // onIdle: () => setIsIdle(true),
+    // onAction: () => setIsIdle(false)
+  })
+
 
   // Effects
-  //* Initial effects. Assing dub, define previews format, check if frames are processed
+  //* Initial effects. Assing dub, define previews format, check if frames are processed, define is client mobile
   useEffect(() => {
     if (window === undefined) return;
 
@@ -87,6 +107,12 @@ const KekwPlayer: NextPage<{
     }
 
     setDefault()
+
+    if (window.innerWidth <= 600 || window.innerHeight <= 400) {
+      setIsMobile(true)
+    } else {
+      setIsMobile(false)
+    }
   }, [])
 
   //* Video events
@@ -116,23 +142,20 @@ const KekwPlayer: NextPage<{
       setIsVideoLoading(true);
     })
 
-    video.addEventListener('contextmenu', e => {
-      e.preventDefault();
-    })
-
     video.addEventListener('ratechange', () => {
       setSpeed(video.playbackRate)
     })
 
-    video.addEventListener('dblclick', () => {
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(e => console.error(e));
-      } else {
-        player.requestFullscreen().catch(e => console.error(e));
-      }
+    player.addEventListener('contextmenu', e => {
+      e.preventDefault();
     })
 
     video.addEventListener('click', () => {
+      const video = videoRef.current;
+      const player = playerRef.current;
+
+      if (!video || !player) return;
+
       if (video.paused) {
         video.play()
       } else {
@@ -223,6 +246,105 @@ const KekwPlayer: NextPage<{
       preview.style.visibility = 'invisible';
     }
   }, [])
+
+  //* Handle video events with states
+  useEffect(() => {
+    const video = videoRef.current;
+    const player = playerRef.current;
+    const prevSkip = mobilePrevSkipRef.current;
+    const nextSkip = mobileNextSkipRef.current;
+    const skipWrapper = mobileSkipWrapper.current;
+
+    if (!video || !player || !prevSkip || !nextSkip || !skipWrapper) return;
+
+    video.addEventListener('dblclick', videoDbClickHandler)
+
+    nextSkip.addEventListener('dblclick', () => enterMultiskip(false))
+    prevSkip.addEventListener('dblclick', () => enterMultiskip(true))
+
+    nextSkip.addEventListener('click', () => skipMoment(false))
+    prevSkip.addEventListener('click', () => skipMoment(true))
+
+    skipWrapper.addEventListener('click', playMobile)
+
+
+
+    function playMobile() {
+      const video = videoRef.current;
+      const player = playerRef.current;
+
+      setTimeout(() => {
+        if (!video || !player || isMultiskipRef.current) return;
+
+        // Throttle playback (click can be double)
+        if (video.paused) {
+          video.play()
+        } else {
+          video.pause();
+        }
+      }, 200);
+    }
+
+    function videoDbClickHandler() {
+      const video = videoRef.current;
+      const player = playerRef.current;
+
+      if (!video || !player) return;
+
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(e => console.error(e));
+      } else {
+        player.requestFullscreen().catch(e => console.error(e));
+      }
+    }
+
+    function enterMultiskip(prev: boolean) {
+      const video = videoRef.current;
+
+      if (!video || isMultiskipRef.current) return;
+
+      const offset = prev ? video!.currentTime - 5 : video!.currentTime + 5;
+      isMultiskipRef.current = true;
+
+      video.currentTime = offset;
+
+      // Set timeout
+      skipTimeoutRef.current = setTimeout(() => {
+        isMultiskipRef.current = false;
+      }, 1000);
+    }
+
+    function skipMoment(prev: boolean) {
+      const video = videoRef.current;
+
+      if (!video || !isMultiskipRef.current) return;
+
+      const offset = prev ? video!.currentTime - 5 : video!.currentTime + 5;
+
+      video.currentTime = offset;
+
+      // Refresh timeout
+      clearTimeout(skipTimeoutRef.current)
+
+      skipTimeoutRef.current = setTimeout(() => {
+        isMultiskipRef.current = false;
+      }, 1000);
+    }
+
+
+
+    return () => {
+      video.removeEventListener('dblclick', videoDbClickHandler)
+
+      nextSkip.removeEventListener('dblclick', () => enterMultiskip(false))
+      prevSkip.removeEventListener('dblclick', () => enterMultiskip(true))
+
+      nextSkip.removeEventListener('click', () => skipMoment(false))
+      prevSkip.removeEventListener('click', () => skipMoment(true))
+
+      skipWrapper.removeEventListener('click', playMobile)
+    }
+  }, [isMobile])
 
   //* Handle video keyboard events
   useEffect(() => {
@@ -514,7 +636,7 @@ const KekwPlayer: NextPage<{
 
   /** 
    * Change video moment 
-   * @param synthetic Defines if function called by user or not. If syntehic set to true, function will only update ranges & moment
+   * @param synthetic Defines if function called by user or not. If syntehic set to true, function will only update ranges & moment, if not it will move preview & set new moment
   */
   function changeMoment(val: number, synthetic?: boolean) {
     const progress = progressRef.current;
@@ -538,7 +660,7 @@ const KekwPlayer: NextPage<{
 
     if (!progress) return;
 
-    const offset = (moment / duration) * 100;
+    const offset = moment / duration * 100;
 
     progress.style.width = `${offset}%`;
   }
@@ -615,7 +737,7 @@ const KekwPlayer: NextPage<{
 
   return (
     // In view
-    <div className='w-full h-full relative' ref={inViewRef}>
+    <div className='w-full h-full relative overflow-hidden' ref={inViewRef}>
       {/* Cover */}
       <button className={`absolute w-full h-full top-0 left-0 z-[7] bg-grey duration-200 flex justify-center items-center ${isCoverVisible ? '' : 'opacity-0 invisible'}`} onClick={() => setIsCoverVisible(false)}>
         <IcoPlay width={256} height={256} gradient='secondary' />
@@ -635,11 +757,17 @@ const KekwPlayer: NextPage<{
           <TitleEndScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
         </div>
 
+        {/* Mobile skip wrapper */}
+        <div className={isMobile ? 'w-full h-full absolute top-0 left-0 z-[10] flex' : 'hidden'} ref={mobileSkipWrapper}>
+          <div className='w-full h-full' ref={mobilePrevSkipRef}></div>
+          <div className='w-full h-full' ref={mobileNextSkipRef}></div>
+        </div>
+
         {/* Menu */}
-        <Menu ep={ep} setEp={setEp} currentDub={dub!} totalDubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setCurrentDub={setDub} totalEps={title.estimatedEps} />
+        <Menu ep={ep} setEp={setEp} currentDub={dub!} totalDubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setCurrentDub={setDub} totalEps={title.estimatedEps} isIdle={isIdle} />
 
         {/* Bottom */}
-        <div className='flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px]'>
+        <div className={`flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px] duration-200 translate-y-0 ${isIdle ? 'translate-y-[100%]' : ''}`}>
           <div className='flex items-center gap-[16px]'>
             {/* Play/Pause */}
             <Play isPlaying={isPlaying} videoRef={videoRef} />
@@ -649,7 +777,7 @@ const KekwPlayer: NextPage<{
           </div>
 
           {/* Range */}
-          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} />
+          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
 
           {/* Settings */}
           <div className='flex items-center gap-[16px]'>
@@ -657,7 +785,7 @@ const KekwPlayer: NextPage<{
             <PiP isPiP={isPiP} videoRef={videoRef} />
 
             {/* Settings */}
-            <Settings quality={quality} setQuality={setQuality} setSubs={setSubs} speed={speed} subs={subs} epData={dub?.eps.find(el => el.order === ep)} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
+            <Settings quality={quality} setQuality={setQuality} setSubs={setSubs} speed={speed} subs={subs} epData={dub?.eps.find(el => el.order === ep)} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} />
 
             {/* Fullscreen */}
             <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
@@ -671,21 +799,29 @@ const KekwPlayer: NextPage<{
             <loader.DotPulse color='#fff' size={80} />
           </div>
 
-          <video src={videoSrc} preload='metadata' className='w-full h-full' controls={false} ref={videoRef}></video>
+          <video src={videoSrc} preload='metadata' className={`w-full h-full ${stretch ? 'object-cover' : ''}`} controls={false} ref={videoRef}></video>
         </div>
       </div>
     </div>
   );
 }
 
-const EpEndScreen: NextPage<{
+
+//* -------------- EP ENDED END SCREEN COMPONENT --------------
+
+interface IEndScreenProps {
   endScreen: TEndScreen,
+  isTime: boolean
+}
+
+interface IEpEndScreenProps extends IEndScreenProps {
   title: ITitle,
   ep: number,
   setEp: (val: number) => void,
-  isTime: boolean,
   videoRef: RefObject<HTMLVideoElement>
-}> = ({ endScreen, ep, setEp, title, isTime, videoRef }) => {
+}
+
+const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title, isTime, videoRef }) => {
   const [remain, setRemain] = useState(5)
   const [epMeta, setEpMeta] = useState<ITitleEpisodeMeta | null>(null)
   const [nextEp, setNextEp] = useState(ep)
@@ -762,14 +898,22 @@ const EpEndScreen: NextPage<{
   </div>
 }
 
-const LastEpScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ endScreen, isTime }) => {
+
+//* -------------- LAST EP END SCREEN COMPONENT --------------
+
+
+const LastEpScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center gap-[24px] w-[800px] mx-[24px] z-[7] ${isTime && endScreen === 'lastEp' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] font-bold'>Епізод завершено</p>
     <p className='text-white text-[24px] font-extralight'>Це останній епізод в цьому озвученні</p>
   </div>
 }
 
-const TitleEndScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ endScreen, isTime }) => {
+
+//* -------------- TITLE END SCREEN COMPONENT --------------
+
+
+const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] gap-[24px] z-[7] ${isTime && endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] font-bold'>Тайтл завершено!</p>
 
@@ -783,7 +927,10 @@ const TitleEndScreen: NextPage<{ endScreen: TEndScreen, isTime: boolean }> = ({ 
 }
 
 
-const Menu = memo<{
+//* -------------- MENU COMPONENT --------------
+
+
+interface IMenuProps {
   ep: number,
   setEp: (state: number) => void,
   currentDub: ITitleEpisodesDub,
@@ -791,8 +938,11 @@ const Menu = memo<{
   totalDubs: ITitleEpisodesDub[],
   dubbers: IDubber[]
   isLastEpisode: boolean,
-  totalEps: number
-}>(function Menu({ ep, setEp, dubbers, currentDub, isLastEpisode, setCurrentDub, totalDubs, totalEps }) {
+  totalEps: number,
+  isIdle: boolean
+}
+
+const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, isLastEpisode, setCurrentDub, totalDubs, totalEps, isIdle }) {
   const isFirstOpen = useRef(true);
 
   function nextEpisode() {
@@ -837,7 +987,7 @@ const Menu = memo<{
     }
 
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex gap-[8px] focus-visible:bg-purple w-fit rounded-[2px] ${dub.id === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
+      <button className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex justify-between gap-[8px] focus-visible:bg-purple rounded-[2px] w-full ${dub.id === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
         <p className='text-white'>{dubbers.find(el => el.id === dub.id)!.name}</p>
 
         <div className='flex gap-[4px]'>
@@ -870,7 +1020,7 @@ const Menu = memo<{
   }
 
   return (
-    <div className='relative z-[10] px-[24px] py-[16px] flex gap-[4px]'>
+    <div className={`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200 translate-y-0 ${isIdle ? '-translate-y-[100%]' : ''}`}>
       <RMen.Menu className={'szh-slide szh-slide--toBottom w-full'} menuClassName={`px-[16px] py-[8px] bg-dark !flex gap-[8px] max-h-[200px] w-fit`} gap={8} menuButton={menuButton()}>
         <div className='flex flex-col gap-[4px] overflow-y-scroll px-[4px] w-full'>
           {currentDub && totalDubs.map(el => {
@@ -901,8 +1051,12 @@ const Menu = memo<{
 })
 
 
-type TSettingPage = 'default' | 'quality' | 'speed' | 'volume' | 'subs'
-const Settings = memo<{
+//* -------------- SETTINGS COMPONENT --------------
+
+
+type TSettingPage = 'default' | 'quality' | 'speed' | 'volume' | 'subs';
+
+interface ISettingsProps {
   quality: TVideoQuality,
   setQuality: (state: TVideoQuality) => void,
   speed: number,
@@ -911,7 +1065,11 @@ const Settings = memo<{
   epData: ITitleEpisodeDubbed | undefined,
   isVideoProcessed: boolean,
   videoRef: RefObject<HTMLVideoElement>
-}>(function Memoized({ quality, setQuality, setSubs, speed, subs, epData, isVideoProcessed, videoRef }) {
+  stretch: boolean,
+  setStretch: (state: boolean) => void,
+}
+
+const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, setSubs, speed, subs, epData, isVideoProcessed, videoRef, stretch, setStretch }) {
   const [page, setPage] = useState<TSettingPage>('default')
   const isFirstOpen = useRef(true);
 
@@ -986,6 +1144,7 @@ const Settings = memo<{
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
       <button className={`flex items-center justify-between w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('quality')}>
         <div className='flex items-center gap-[16px]'>
+          <IcoNewPlayerQuality width={24} height={24} />
           <p className='text-white'>Якість</p>
         </div>
 
@@ -1000,6 +1159,7 @@ const Settings = memo<{
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
       <button className={`flex items-center justify-between w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('subs')}>
         <div className='flex items-center gap-[16px]'>
+          <IcoNewPlayerSubs width={24} height={24} />
           <p className='text-white'>Субтитри</p>
         </div>
 
@@ -1015,12 +1175,26 @@ const Settings = memo<{
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
       <button className={`flex items-center justify-between w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('speed')}>
         <div className='flex items-center gap-[16px]'>
+          <IcoSpeed width={24} height={24} />
           <p className='text-white'>Швидкість</p>
         </div>
 
         <div>
           <p className='text-white'>{speed}х</p>
         </div>
+      </button>
+    </RMen.MenuItem>
+  }
+
+  function StretchButton() {
+    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+      <button className={`flex items-center gap-[16px] w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setStretch(!stretch)}>
+        <div className='relative w-[24px] h-[24px]'>
+          <IcoPlayerStretch width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-0 invisible' : 'opacity-100 visible'}`} />
+          <IcoPlayerCenter width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
+        </div>
+
+        <p className='text-white'>{stretch ? 'Центрувати' : 'Розтягнути'} відео</p>
       </button>
     </RMen.MenuItem>
   }
@@ -1111,13 +1285,14 @@ const Settings = memo<{
   }
 
   return (
-    <div className='relative'>
+    <div className='relative max-[460px]:hidden'>
       <RMen.Menu menuButton={MenuButton()} className={`w-full szh-slide szh-slide--toTop`} menuClassName={`px-[16px] py-[8px] bg-dark !flex flex-col gap-[4px] min-w-[260px] w-fit !-left-[300%]`} gap={16} direction='top'>
         {epData && <>
           {/* Buttons */}
           {page === 'default' && <>
             <QualityButton />
             <SpeedButton />
+            <StretchButton />
             <SubsButton />
           </>}
 
@@ -1131,10 +1306,16 @@ const Settings = memo<{
   );
 })
 
-const Play: NextPage<{
+
+//* -------------- PLAY COMPONENT --------------
+
+
+interface IPlayProps {
   isPlaying: boolean,
   videoRef: RefObject<HTMLVideoElement>
-}> = ({ isPlaying, videoRef }) => {
+}
+
+const Play: NextPage<IPlayProps> = ({ isPlaying, videoRef }) => {
   function changePlaying() {
     const video = videoRef.current;
 
@@ -1152,19 +1333,25 @@ const Play: NextPage<{
   }
 
   return (
-    <button className='relative w-[68px] h-[68px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoPlay width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
-      <IcoNewPlayerPause width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
+    <button className='relative w-[68px] h-[68px] max-[460px]:w-[40px] max-[460px]:h-[40px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+      <IcoPlay width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:w-[40px] max-[460px]:h-[40px] ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
+      <IcoNewPlayerPause width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:w-[40px] max-[460px]:h-[40px] ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
     </button>
   );
 }
 
-const Volume: NextPage<{
+
+//* -------------- VOLUME COMPONENT --------------
+
+
+interface IVolumeProps {
   volume: number,
   isMuted: boolean,
   videoRef: RefObject<HTMLVideoElement>,
   volumeRef: RefObject<HTMLDivElement>,
-}> = ({ isMuted, videoRef, volume, volumeRef }) => {
+}
+
+const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }) => {
   const video = videoRef.current;
 
   //* Hhandle volume hover
@@ -1244,7 +1431,7 @@ const Volume: NextPage<{
   }
 
   return (
-    <div className='relative flex items-center gap-[8px]' id='kekwplayer-volume'>
+    <div className='relative flex items-center gap-[8px] max-[600px]:hidden' id='kekwplayer-volume'>
       <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
         <IcoNewPlayerVolMin width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume < 30 && !isMuted ? 'opacity-100' : ''}`} />
         <IcoNewPlayerVolNormal width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume >= 30 && !isMuted ? 'opacity-100' : ''}`} />
@@ -1265,7 +1452,11 @@ const Volume: NextPage<{
   );
 }
 
-const Timeline: NextPage<{
+
+//* -------------- TIMELINE COMPONENT --------------
+
+
+interface ITimelineProps {
   duration: number,
   moment: number,
   changeMoment: (val: number) => void,
@@ -1275,7 +1466,10 @@ const Timeline: NextPage<{
   hoveredMoment: number,
   isPreviewsOld: boolean,
   isVideoProcessed: boolean,
-}> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, isPreviewsOld, isVideoProcessed, changeMoment }) => {
+  videoRef: RefObject<HTMLVideoElement>
+}
+
+const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, isPreviewsOld, isVideoProcessed, changeMoment, videoRef }) => {
   function renderThumb({ props }: IRenderThumbParams) {
     return <div
       {...props}
@@ -1324,7 +1518,7 @@ const Timeline: NextPage<{
 
         {/* Time */}
         <div className='w-full flex justify-between absolute bottom-[4px] left-0'>
-          <p className='text-white'>{secondsToReadable(moment).pretty}</p>
+          <p className='text-white'>{secondsToReadable(videoRef.current?.currentTime || 0).pretty}</p>
           <p className='text-white'>{secondsToReadable(duration).pretty}</p>
         </div>
       </div>
@@ -1344,10 +1538,16 @@ const Timeline: NextPage<{
   );
 }
 
-const PiP: NextPage<{
+
+//* -------------- PIP COMPONENT --------------
+
+
+interface IPiPProps {
   isPiP: boolean,
   videoRef: RefObject<HTMLVideoElement>,
-}> = ({ isPiP, videoRef }) => {
+}
+
+const PiP: NextPage<IPiPProps> = ({ isPiP, videoRef }) => {
   function changePiP() {
     const video = videoRef.current;
 
@@ -1368,17 +1568,23 @@ const PiP: NextPage<{
   }
 
   return (
-    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px] max-[600px]:hidden' onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
       <IcoNewPlayerPiPEnter className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
       <IcoNewPlayerPiPExit className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
     </button>
   );
 }
 
-const Fullscreen: NextPage<{
+
+//* -------------- FULLSCREEN COMPONENT --------------
+
+
+interface IFullscreenProps {
   isFullscreen: boolean,
   playerRef: RefObject<HTMLDivElement>
-}> = ({ isFullscreen, playerRef }) => {
+}
+
+const Fullscreen: NextPage<IFullscreenProps> = ({ isFullscreen, playerRef }) => {
   function changeFullscreen() {
     const player = playerRef.current
 
@@ -1399,9 +1605,9 @@ const Fullscreen: NextPage<{
   }
 
   return (
-    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoNewPlayerFullExit className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
-      <IcoNewPlayerFullEnter className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
+    <button className='relative w-[48px] h-[48px] max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+      <IcoNewPlayerFullExit className={`absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 opacity-0 ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
+      <IcoNewPlayerFullEnter className={`absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 opacity-0 ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
     </button>
   );
 }
