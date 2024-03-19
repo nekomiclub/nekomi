@@ -23,6 +23,13 @@ import { useIdleTimer } from 'react-idle-timer';
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
 type TEndScreen = 'clear' | 'epEnded' | 'titleEnded' | 'lastEp';
 
+interface IKekwPlayerLocalDataItem {
+  id: string,
+  dub: string,
+  ep: number,
+  moment: number
+}
+
 //! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
 const KekwPlayer: NextPage<{
   title: ITitle,
@@ -38,6 +45,7 @@ const KekwPlayer: NextPage<{
   const [videoMoment, setVideoMoment] = useState(0);
   const [hoveredMoment, setHoveredMoment] = useState(0);
   const [endScreen, setEndScreen] = useState<TEndScreen>('clear')
+  const [localData, setLocalData] = useState<IKekwPlayerLocalDataItem>()
 
   // Settings states
   const [quality, setQuality] = useState<TVideoQuality>('q1080')
@@ -58,6 +66,7 @@ const KekwPlayer: NextPage<{
   const [isTimeToEndScreen, setIsTimeToEndScreen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [isIdle, setIsIdle] = useState(false)
+  const [isContinueMenuOpen, setIsContinueMenuOpen] = useState(false)
 
   // Video states
   const [videoSrc, setVideoSrc] = useState('');
@@ -97,16 +106,30 @@ const KekwPlayer: NextPage<{
   // Effects
   //* Initial effects. Assing dub, define previews format, check if frames are processed, define is client mobile
   useEffect(() => {
-    if (window === undefined) return;
+    const video = videoRef.current;
 
-    function setDefault() {
-      const dub = title!.dubs![0];
+    if (window === undefined || !video) return;
 
-      changePreivewFormat(dub);
-      setDub(dub)
+    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+    const localRecord = localData?.find(el => el.id === title.id)
+    const dub = title!.dubs![0];
+
+    if (localRecord) {
+      setLocalData(localRecord)
+      setIsContinueMenuOpen(true)
+    } else {
+      localData.push({
+        dub: dub.id,
+        ep,
+        id: title.id,
+        moment: 0
+      })
+
+      localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
     }
 
-    setDefault()
+    changePreivewFormat(dub);
+    setDub(dub)
 
     if (window.innerWidth <= 600 || window.innerHeight <= 400) {
       setIsMobile(true)
@@ -569,18 +592,17 @@ const KekwPlayer: NextPage<{
     // Handle last episode
     const currEpExist = dub.eps.some(el => el.order === ep);
 
-    if (!currEpExist) {
-      setEp(dub.eps[dub.eps.length - 1].order)
-      return;
-    }
+    if (currEpExist) {
+      let nextEp = ep;
+      nextEp++;
 
-    let nextEp = ep;
-    nextEp++;
-
-    if (!dub.eps.find(el => el.order === nextEp)) {
-      setIsLastEpisode(true)
+      if (!dub.eps.find(el => el.order === nextEp)) {
+        setIsLastEpisode(true)
+      } else {
+        setIsLastEpisode(false)
+      }
     } else {
-      setIsLastEpisode(false)
+      setEp(dub.eps[dub.eps.length - 1].order)
     }
 
     // Pause video after changing ep/dub
@@ -615,7 +637,6 @@ const KekwPlayer: NextPage<{
   useEffect(() => {
     if (!dub) return;
 
-    console.log('change quality')
     const epData = dub.eps.find(el => el.order === ep);
 
     changeVideoSrc(epData!.source[quality], videoMoment, true)
@@ -636,7 +657,7 @@ const KekwPlayer: NextPage<{
   }
 
   /** 
-   * Change video moment 
+   * Change video moment & writes new moment to local storage
    * @param synthetic Defines if function called by user or not. If syntehic set to true, function will only update ranges & moment, if not it will move preview & set new moment
   */
   function changeMoment(val: number, synthetic?: boolean) {
@@ -653,6 +674,16 @@ const KekwPlayer: NextPage<{
 
     setVideoMoment(val);
     moveProgress(val);
+
+    // Write player data to local storage
+    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+    const localRecord = localData?.find(el => el.id === title.id)
+
+    if (val !== 0 && localRecord) {
+      localRecord.moment = val;
+
+      localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
+    }
   }
 
   /** Move video progress (controlled by changeMoment) */
@@ -738,6 +769,22 @@ const KekwPlayer: NextPage<{
     setVideoSrc(src)
   }
 
+  /** Write player data from local storage */
+  function loadLocalData() {
+    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+    const localRecord = localData.find(el => el.id === title.id)
+
+    if (localRecord) {
+      const dub = title.dubs?.find(el => el.id === localRecord.dub) || title!.dubs![0];
+
+      changePreivewFormat(dub);
+      setDub(dub)
+      setEp(localRecord.ep)
+    }
+
+    setIsContinueMenuOpen(false)
+  }
+
 
   return (
     // In view
@@ -767,8 +814,34 @@ const KekwPlayer: NextPage<{
           <div className='w-full h-full' ref={mobileNextSkipRef}></div>
         </div>
 
+        {/* Continue wrapper */}
+        <div className={`w-full h-full z-[10] absolute top-0 left-0 flex justify-center items-center duration-200 ${isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible touch-none pointer-events-none'}`}>
+          <div className='w-[800px] mx-[24px] rounded-[4px] bg-dark flex flex-col items-center gap-[24px] py-[40px] px-[24px]'>
+            <div className='flex flex-col gap-[16px]'>
+              <p className='text-white text-[32px] font-bold text-center'>Продовжити перегляд</p>
+              <p className='text-white text-[24px] text-center'>{dubs.find(el => el.id === localData?.dub)?.name || 'Команда невідома'}</p>
+            </div>
+
+            <div className='flex items-center gap-[32px] w-full bg-grey px-[40px] py-[24px] rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple cursor-pointer' role='button' onClick={() => loadLocalData()}>
+              <p className='text-white text-[32px] font-bold'>#{localData?.ep}</p>
+              <div className='flex flex-col items-start gap-[8px] w-full'>
+                <div className='flex flex-col items-start gap-[4px] w-full'>
+                  <p className='text-white text-[24px] break-ellipsis max-w-400px'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
+                  <p className='text-white font-extralight break-ellipsis max-w-300px'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.eng}</p>
+                </div>
+              </div>
+
+              <p className='text-white text-[24px]'>{secondsToReadable(localData?.moment || 0).pretty}</p>
+            </div>
+
+            <button onClick={() => setIsContinueMenuOpen(false)}>
+              <p className='text-white font-extralight'>Почати з початку?</p>
+            </button>
+          </div>
+        </div>
+
         {/* Menu */}
-        <Menu ep={ep} setEp={setEp} currentDub={dub!} totalDubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setCurrentDub={setDub} totalEps={title.estimatedEps} isIdle={isIdle} />
+        <Menu ep={ep} setEp={setEp} currentDub={dub!} totalDubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setCurrentDub={setDub} totalEps={title.estimatedEps} isIdle={isIdle} titleId={title.id} />
 
         {/* Bottom */}
         <div className={`flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px] duration-200 translate-y-0 ${isIdle ? 'translate-y-[100%]' : ''}`}>
@@ -943,15 +1016,26 @@ interface IMenuProps {
   dubbers: IDubber[]
   isLastEpisode: boolean,
   totalEps: number,
-  isIdle: boolean
+  isIdle: boolean,
+  titleId: string
 }
 
-const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, isLastEpisode, setCurrentDub, totalDubs, totalEps, isIdle }) {
+const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, isLastEpisode, setCurrentDub, totalDubs, totalEps, isIdle, titleId }) {
   const isFirstOpen = useRef(true);
 
   function nextEpisode() {
     if (!isLastEpisode) {
       setEp(ep += 1)
+
+      // Write player data to local storage
+      const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+      const localRecord = localData?.find(el => el.id === titleId)
+
+      if (localRecord) {
+        localRecord.ep = ep;
+
+        localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
+      }
     }
   }
 
@@ -988,6 +1072,18 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
 
     function setDub() {
       setCurrentDub(dub);
+
+      console.log(`change dub to ${dub.id}`)
+
+      // Write player data to local storage
+      const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+      const localRecord = localData?.find(el => el.id === titleId)
+
+      if (localRecord) {
+        localRecord.dub = dub.id;
+
+        localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
+      }
     }
 
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
@@ -1014,6 +1110,17 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
   function MenuEpisode({ to }: { to: number }) {
     function setEpisode(to: number) {
       setEp(to)
+
+      // Write player data to local storage
+      const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+      const localRecord = localData?.find(el => el.id === titleId)
+
+      console.log(localData)
+      if (localRecord) {
+        localRecord.ep = to;
+
+        localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
+      }
     }
 
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
