@@ -57,7 +57,7 @@ const KekwPlayer: NextPage<{
   const [isVideoProcessed, setIsVideoProcessed] = useState(true);
 
   // Player states
-  const [isCoverVisible, setIsCoverVisible] = useState(false) //! TRUE
+  const [isCoverVisible, setIsCoverVisible] = useState(true) //! TRUE
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPiP, setIsPip] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -98,8 +98,8 @@ const KekwPlayer: NextPage<{
   useIdleTimer({
     timeout: 3000,
     throttle: 500,
-    // onIdle: () => setIsIdle(true),
-    // onAction: () => setIsIdle(false)
+    onIdle: () => setIsIdle(true),
+    onAction: () => setIsIdle(false)
   })
 
 
@@ -780,6 +780,18 @@ const KekwPlayer: NextPage<{
       changePreivewFormat(dub);
       setDub(dub)
       setEp(localRecord.ep)
+      let i = 0;
+
+      let int = setInterval(() => {
+        if (i < 5) {
+          changeMoment(localRecord.moment)
+          videoRef.current!.play();
+          i++
+        } else {
+          i = 0;
+          clearInterval(int)
+        }
+      }, 100)
     }
 
     setIsContinueMenuOpen(false)
@@ -815,17 +827,17 @@ const KekwPlayer: NextPage<{
         </div>
 
         {/* Continue wrapper */}
-        <div className={`w-full h-full z-[10] absolute top-0 left-0 flex justify-center items-center duration-200 ${isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible touch-none pointer-events-none'}`}>
+        <div className={`w-full h-full z-[15] absolute top-0 left-0 flex justify-center items-center duration-200 bg-dark/[.5] backdrop-blur-[32px] ${isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible touch-none pointer-events-none'}`}>
           <div className='w-[800px] mx-[24px] rounded-[4px] bg-dark flex flex-col items-center gap-[24px] py-[40px] px-[24px]'>
             <div className='flex flex-col gap-[16px]'>
-              <p className='text-white text-[32px] font-bold text-center'>Продовжити перегляд</p>
-              <p className='text-white text-[24px] text-center'>{dubs.find(el => el.id === localData?.dub)?.name || 'Команда невідома'}</p>
+              <p className='text-white text-[32px] font-bold text-center max-[680px]:text-[24px]'>Продовжити перегляд</p>
+              <p className='text-white text-[24px] text-center max-[680px]:text-[16px]'>{dubs.find(el => el.id === localData?.dub)?.name || 'Команда невідома'}</p>
             </div>
 
-            <div className='flex items-center gap-[32px] w-full bg-grey px-[40px] py-[24px] rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple cursor-pointer' role='button' onClick={() => loadLocalData()}>
-              <p className='text-white text-[32px] font-bold'>#{localData?.ep}</p>
+            <div className='flex items-center max-[680px]:flex-col max-[680px]:items-center gap-[32px] w-full bg-grey px-[40px] py-[24px] rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple cursor-pointer' role='button' onClick={() => loadLocalData()}>
+              <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>#{localData?.ep}</p>
               <div className='flex flex-col items-start gap-[8px] w-full'>
-                <div className='flex flex-col items-start gap-[4px] w-full'>
+                <div className='flex flex-col items-start max-[680px]:items-center gap-[4px] w-full'>
                   <p className='text-white text-[24px] break-ellipsis max-w-400px'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
                   <p className='text-white font-extralight break-ellipsis max-w-300px'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.eng}</p>
                 </div>
@@ -906,7 +918,12 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
   const [int, setInt] = useState<NodeJS.Timeout>()
 
   useEffect(() => {
+    let nextEp = ep;
+    nextEp += 1
+
     const epMeta = title.epsMeta?.find(el => el.order === nextEp);
+
+    setNextEp(nextEp)
 
     if (epMeta) {
       const parsed = timestampToDate(epMeta.dateOut);
@@ -918,7 +935,6 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
 
   useEffect(() => {
     setRemain(5)
-    setNextEp(++ep)
 
     clearInterval(int)
 
@@ -951,15 +967,15 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
   }
 
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] z-[7] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
-    <p className='text-white text-[32px] font-bold'>Епізод завершено</p>
+    <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Епізод завершено</p>
 
-    <div className='bg-grey px-[40px] py-[16px] flex justify-between items-center duration-200 w-full'>
-      <div className='flex items-center gap-[32px] w-full'>
+    <div className='bg-grey px-[40px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 w-full'>
+      <div className='flex items-center max-[680px]:flex-col gap-[32px] w-full'>
         <p className='text-white text-[32px] font-bold'>#{nextEp}</p>
         <div className='flex flex-col items-start gap-[8px] w-full'>
           <div className='flex flex-col items-start gap-[4px] w-full'>
-            <p className='text-white text-[24px] break-ellipsis max-w-400px'>{epMeta?.names.ukr || 'Наступний епізод'}</p>
-            <p className='text-white font-extralight break-ellipsis max-w-300px'>{epMeta?.names.eng}</p>
+            <p className='text-white text-[24px] break-ellipsis max-w-400px max-[680px]:max-w-[300px]'>{epMeta?.names.ukr || 'Наступний епізод'}</p>
+            <p className='text-white font-extralight break-ellipsis max-w-300px max-[680px]:max-w-[260px]'>{epMeta?.names.eng}</p>
           </div>
 
           <p className='text-white font-extralight'>{date}</p>
@@ -981,8 +997,8 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
 
 const LastEpScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center gap-[24px] w-[800px] mx-[24px] z-[7] ${isTime && endScreen === 'lastEp' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
-    <p className='text-white text-[32px] font-bold'>Епізод завершено</p>
-    <p className='text-white text-[24px] font-extralight'>Це останній епізод в цьому озвученні</p>
+    <p className='text-white text-[32px] max-[680px]:text-[24px] font-bold'>Епізод завершено</p>
+    <p className='text-white text-[24px] text-center max-[680px]:text-[16px] font-extralight'>Це останній епізод в цьому озвученні</p>
   </div>
 }
 
@@ -992,7 +1008,7 @@ const LastEpScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
 
 const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] gap-[24px] z-[7] ${isTime && endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
-    <p className='text-white text-[32px] font-bold'>Тайтл завершено!</p>
+    <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Тайтл завершено!</p>
 
     {/* //TODO */}
     {/* <button className='gradient--primary-border-4 gradient--primary-hover flex gap-[16px] items-center px-[24px] py-[16px]'>
@@ -1025,14 +1041,17 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
 
   function nextEpisode() {
     if (!isLastEpisode) {
-      setEp(ep += 1)
+      let nextEp = ep;
+      nextEp += 1;
+
+      setEp(nextEp)
 
       // Write player data to local storage
       const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
       const localRecord = localData?.find(el => el.id === titleId)
 
       if (localRecord) {
-        localRecord.ep = ep;
+        localRecord.ep = nextEp;
 
         localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
       }
@@ -1072,8 +1091,6 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
 
     function setDub() {
       setCurrentDub(dub);
-
-      console.log(`change dub to ${dub.id}`)
 
       // Write player data to local storage
       const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
@@ -1115,7 +1132,6 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
       const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
       const localRecord = localData?.find(el => el.id === titleId)
 
-      console.log(localData)
       if (localRecord) {
         localRecord.ep = to;
 
@@ -1628,7 +1644,7 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
         </div>
 
         {/* Time */}
-        <div className='w-full flex justify-between absolute bottom-[4px] left-0'>
+        <div className='w-full flex justify-between absolute bottom-[4px] max-[460px]:-bottom-[8px] left-0'>
           <p className='text-white'>{secondsToReadable(videoRef.current?.currentTime || 0).pretty}</p>
           <p className='text-white'>{secondsToReadable(duration).pretty}</p>
         </div>

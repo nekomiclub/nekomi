@@ -297,6 +297,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
               <div className='h-[600px] w-full'>
                 <KekwPlayer title={title} dubs={dubbers!} setCurrentDubber={setDubber} />
               </div>
+
             </div>
 
             <DubberDetails dubber={dubber} />
