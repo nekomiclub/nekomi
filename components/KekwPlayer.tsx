@@ -797,6 +797,11 @@ const KekwPlayer: NextPage<{
     setIsContinueMenuOpen(false)
   }
 
+  /** Deletes kekwplayer_data from local storage */
+  function deleteLocalData() {
+    localStorage.removeItem('kekwplayer_data')
+  }
+
 
   return (
     // In view
@@ -847,7 +852,7 @@ const KekwPlayer: NextPage<{
             </div>
 
             <button onClick={() => setIsContinueMenuOpen(false)}>
-              <p className='text-white font-extralight'>Почати з початку?</p>
+              <p className='text-white font-extralight' onClick={() => deleteLocalData()}>Почати з початку?</p>
             </button>
           </div>
         </div>
@@ -966,7 +971,7 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
     }, 1000);
   }
 
-  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] z-[7] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] z-[20] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Епізод завершено</p>
 
     <div className='bg-grey px-[40px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 w-full'>
@@ -974,8 +979,8 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
         <p className='text-white text-[32px] font-bold'>#{nextEp}</p>
         <div className='flex flex-col items-start gap-[8px] w-full'>
           <div className='flex flex-col items-start gap-[4px] w-full'>
-            <p className='text-white text-[24px] break-ellipsis max-w-400px max-[680px]:max-w-[300px]'>{epMeta?.names.ukr || 'Наступний епізод'}</p>
-            <p className='text-white font-extralight break-ellipsis max-w-300px max-[680px]:max-w-[260px]'>{epMeta?.names.eng}</p>
+            <p className='text-white text-[24px] break-ellipsis max-w-400px max-[680px]:max-w-[260px]'>{epMeta?.names.ukr || 'Наступний епізод'}</p>
+            <p className='text-white font-extralight break-ellipsis max-w-300px max-[680px]:max-w-[240px]'>{epMeta?.names.eng}</p>
           </div>
 
           <p className='text-white font-extralight'>{date}</p>
@@ -987,7 +992,7 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
       </button>
     </div>
 
-    <p className='text-white text-[24px] font-extralight'>Автоматично через: {remain} {wordDeclination(remain, ['секунду', 'секунди', 'секунд'])}</p>
+    <p className='text-white text-[24px] font-extralight text-center'>Автоматично через: {remain} {wordDeclination(remain, ['секунду', 'секунди', 'секунд'])}</p>
   </div>
 }
 

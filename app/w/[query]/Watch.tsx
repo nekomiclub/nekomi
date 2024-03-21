@@ -54,6 +54,10 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
           data.lists.forEach(list => {
             if (list.titles.includes(title.id)) {
               lists.push(list.id.split('-')[0] as TitleLists)
+
+              if (list.id.includes('favorite')) {
+                setTitleLiked(true)
+              }
             }
           })
 
