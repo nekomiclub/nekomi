@@ -108,3 +108,46 @@ export function getKeyByValue(object: Object, value: string): string | undefined
 export function createID(): string {
   return (Math.random() + 1).toString(36).substring(8)
 }
+
+/** Timestamp to date
+ * @returns localizedMonth is month on ukranian
+ */
+export function timestampToDate(timestamp: number): { day: number, month: number, year: number, localizedMonth: string } {
+  const month = new Date(timestamp).getMonth();
+  const months: string[] = [
+    "Січень",
+    "Лютий",
+    "Березень",
+    "Квітень",
+    "Травень",
+    "Червень",
+    "Липень",
+    "Серпень",
+    "Вересень",
+    "Жовтень",
+    "Листопад",
+    "Грудень"
+  ];
+  const localizedMonth = months[month - 1]
+
+  return {
+    day: new Date(timestamp).getDate(),
+    localizedMonth,
+    month,
+    year: new Date(timestamp).getFullYear()
+  }
+}
+
+/** Word declination
+ * @example
+ * wordDeclination(1, ['чашка', 'чашки', 'чашок']) => чашка
+ * wordDeclination(2, ['чашка', 'чашки', 'чашок']) => чашки
+ */
+export function wordDeclination(number: number, words_arr: string[]) {
+  number = Math.abs(number);
+  if (Number.isInteger(number)) {
+    let options = [2, 0, 1, 1, 1, 2];
+    return words_arr[(number % 100 > 4 && number % 100 < 20) ? 2 : options[(number % 10 < 5) ? number % 10 : 5]];
+  }
+  return words_arr[1];
+}

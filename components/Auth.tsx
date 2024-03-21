@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import { useSearchParams } from 'next/navigation'
 import { useRef, useState, useEffect } from 'react'
-import { GoogleLogo, AuthContinue } from '../assets/assets';
+import { GoogleLogo } from '../assets/assets';
 import { firebaseApp } from './firebase'
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { FormValidator, IFormInputRules } from 'react-uvc'

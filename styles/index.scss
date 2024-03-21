@@ -79,6 +79,28 @@ button {
   outline: none;
 }
 
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+* {
+  &::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $grey;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $gradientNewPrimary;
+  }
+}
+
+//* ------------ NEW -------------------
+
+// SVG TO DATA IMAGE https://www.svgbackgrounds.com/tools/svg-to-css/
 .gradient {
   &--primary {
     background: $gradientPrimary;
@@ -90,88 +112,47 @@ button {
       -webkit-text-fill-color: transparent;
     }
 
-    &-border {
-      position: relative;
-
-      * {
-        z-index: 2;
-        position: relative;
-      }
-
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: var(--r);
-        border: var(--w) solid transparent;
-        z-index: 1;
-        background: $gradientPrimary border-box;
-
-        mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: destination-out;
-        mask-composite: exclude;
-      }
-    }
-  }
-
-  &--secondary {
-    background: $gradientSecondary;
-  }
-}
-
-html,
-body {
-  &::-webkit-scrollbar {
-    width: 2px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: $grey;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: $gradientPrimary;
-  }
-
-  scroll-behavior: smooth;
-}
-
-.home-titleCard {
-  &-blur {
-    transition: .2s;
-  }
-
-  &:hover {
-    .home-titleCard-blur {
-      padding-top: 24px;
-      padding-bottom: 24px;
-    }
-  }
-}
-
-//* ------------ NEW -------------------
-
-// SVG TO DATA IMAGE https://www.svgbackgrounds.com/tools/svg-to-css/
-.gradientNew {
-  &--primary {
-    background: $gradientPrimary;
-
-    &-text {
-      background: $gradientPrimary;
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
     &-border-2 {
+      border: 1px solid $gradientNewPrimaryFallback;
+      border-radius: 2px;
+
       border-image: url('data:image/svg+xml,<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="99" height="99" rx="1.5" stroke="url(%23paint0_linear_131_1742)"/><defs><linearGradient id="paint0_linear_131_1742" x1="0" y1="50" x2="100" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="%23FF416C"/><stop offset="1" stop-color="%23FF4B2B"/></linearGradient></defs></svg>') 2 / 2px stretch;
     }
 
     &-border-4 {
+      border: 1px solid $gradientNewPrimaryFallback;
+      border-radius: 4px;
+
       border-image: url('data:image/svg+xml,<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="99" height="99" rx="3.5" stroke="url(%23paint0_linear_131_1744)"/><defs><linearGradient id="paint0_linear_131_1744" x1="0" y1="50" x2="100" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="%23FF416C"/><stop offset="1" stop-color="%23FF4B2B"/></linearGradient></defs></svg>') 4 / 4px stretch;
+    }
+
+    &-hover {
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: .2s ease-in-out;
+        border-radius: 4px;
+        z-index: 1;
+        background: $gradientNewPrimary;
+      }
+    
+      &:hover,
+      &:focus-visible {
+        &::after {
+          opacity: 1;
+        }
+      }
+    
+      * {
+        z-index: 2;
+      }
     }
   }
 
@@ -186,11 +167,45 @@ body {
     }
 
     &-border-2 {
+      border: 1px solid $gradientNewSecondaryFallback;
+      border-radius: 2px;
+
       border-image: url('data:image/svg+xml,<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="99" height="99" rx="1.5" stroke="url(%23paint0_linear_172_1802)"/><defs><linearGradient id="paint0_linear_172_1802" x1="0" y1="50" x2="100" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="%23FF9966"/><stop offset="1" stop-color="%23FF7D81"/></linearGradient></defs></svg>') 2 / 2px stretch;
     }
 
     &-border-4 {
+      
+      border: 1px solid $gradientNewSecondaryFallback;
+      border-radius: 4px;
+
       border-image: url('data:image/svg+xml,<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="99" height="99" rx="3.5" stroke="url(%23paint0_linear_172_1803)"/><defs><linearGradient id="paint0_linear_172_1803" x1="0" y1="50" x2="100" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="%23FF9966"/><stop offset="1" stop-color="%23FF7D81"/></linearGradient></defs></svg>') 4 / 4px stretch;
+    }
+
+    &-hover {
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: .2s ease-in-out;
+        border-radius: 4px;
+        z-index: 1;
+        background: $gradientNewSecondary;
+      }
+
+      &:hover,
+      &:focus-visible {
+        &::after {
+          opacity: 1;
+        }
+      }
+    
+      * {
+        z-index: 2;
+      }
     }
   }
 }
@@ -204,4 +219,11 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+}
+
+.break-ellipsis {
+  text-overflow: ellipsis;
+  word-break: break-all;
+  overflow:hidden;
+  white-space: nowrap
 }

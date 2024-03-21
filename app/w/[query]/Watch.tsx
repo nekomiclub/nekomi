@@ -10,25 +10,23 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { ITitle, ITitleEpisodesDub, TAnimeGenres } from '../../../interfaces/ITitle';
 import Header from '../../../components/Header';
-import { IcoInfo, IcoNewClock, IcoNewHeart, IcoNewHeartFilled, IcoNewPlay, IcoNewStarRating, IcoWatching } from '../../../assets/ico/Icos';
+import { IcoInfo, IcoClock, IcoHeart, IcoHeartFilled, IcoPlay, IcoStarRating, IcoWatching } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { getKeyByValue, parseTitleCountry, parseTitleDubbers, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { IDubber } from '../../../interfaces/IDubber';
 import { animeGenres, config, genresDescription } from '../../../config';
-import { LoadingImage, NewWatchButton } from '../../../components/GeneralComponents';
-import Player from '../../../components/Player';
+import { LoadingImage, WatchButton } from '../../../components/GeneralComponents';
 import { IcoSupportBymeacoffe, IcoSupportDiaka, IcoSocialInstagram, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/assets';
 import Footer from '../../../components/Footer';
-
-import './styles.scss';
-
 import { useAppSelector } from '../../../hooks/redux';
 import $api from '../../../components/http';
 import { IUser } from '../../../interfaces/IUser';
-import { IcoFilledClock, IcoFilledPlans } from '../../../assets/ico/eye/filled';
-import { IcoEyeSuccess } from '../../../assets/ico/eye';
+import { IcoEyeSuccess, IcoFilledClock, IcoFilledPlans } from '../../../assets/ico/eye';
 import { IcoFolderAdd } from '../../../assets/ico/folder';
 import { IUserState } from '../../../store/reducers/userSlice';
+import KekwPlayer from '../../../components/KekwPlayer';
+
+import './styles.scss';
 
 interface IProps {
   title: ITitle,
@@ -56,6 +54,10 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
           data.lists.forEach(list => {
             if (list.titles.includes(title.id)) {
               lists.push(list.id.split('-')[0] as TitleLists)
+
+              if (list.id.includes('favorite')) {
+                setTitleLiked(true)
+              }
             }
           })
 
@@ -127,7 +129,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <h1 className='text-white text-[40px] font-bold max-[600px]:text-center max-[600px]:text-[32px]'>{title.names.ukr}</h1>
 
                   <div className='flex items-center gap-[8px]'>
-                    <IcoNewStarRating width={24} height={24} gradient='primary' className='max-[600px]:w-[32px] max-[600px]:h-[32px]' />
+                    <IcoStarRating width={24} height={24} gradient='primary' className='max-[600px]:w-[32px] max-[600px]:h-[32px]' />
                     <p className='gradient--primary-text font-bold max-[600px]:text-[24px]'>{title.rating}</p>
                   </div>
                 </div>
@@ -143,7 +145,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
 
               {/* Play, save, like btns */}
               <div className='flex gap-[8px] max-[600px]:flex-col'>
-                <NewWatchButton href='#player' gradient='primary' className='max-[600px]:w-full justify-center' />
+                <WatchButton href='#player' gradient='primary' className='max-[600px]:w-full justify-center' />
 
                 <div className='flex gap-[8px]'>
                   <AddToFavorite user={user} setTitleLiked={setTitleLiked} titleId={title.id} titleLiked={titleLiked} />
@@ -157,7 +159,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
 
                     <div className={`absolute right-0 top-[80px] max-[430px]:top-[170px] bg-grey rounded-[2px] flex flex-col gap-[8px] py-[8px] w-max duration-200 z-[7] ${isLibsSelectOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                       <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('favorite')}>
-                        <IcoNewHeartFilled height={24} width={24} gradient='primary' className='flex-shrink-0' />
+                        <IcoHeartFilled height={24} width={24} gradient='primary' className='flex-shrink-0' />
                         <p className='text-[16px] text-white'>{titleLiked ? 'Вилучити з улюблених' : 'Додати в улюблені'}</p>
                       </button>
                       <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('watching')}>
@@ -209,7 +211,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
 
                   <div className=''>
                     <Tooltip content={totalEps === title.estimatedEps ? 'Тайтл повністю озвучено' : 'Тайтл озвучено неповністю'}>
-                      <p className={`text-white text-[24px] ${totalEps === title.estimatedEps ? 'font-bold gradientNew--secondary-text' : ''}`}>
+                      <p className={`text-white text-[24px] ${totalEps === title.estimatedEps ? 'font-bold gradient--secondary-text' : ''}`}>
                         {totalEps} / {title.estimatedEps}
                       </p>
                     </Tooltip>
@@ -297,8 +299,9 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
           {title.dubs?.length ? <div className='flex items-start max-[1020px]:flex-col gap-[40px] z-[4] mb-[80px]'>
             <div className='flex flex-col gap-[24px] items-center w-full'>
               <div className='h-[600px] w-full'>
-                <Player estimatedEps={title.estimatedEps} titleId={title.id} dubs={title.dubs} currentDubberHandler={setDubber} />
+                <KekwPlayer title={title} dubs={dubbers!} setCurrentDubber={setDubber} />
               </div>
+
             </div>
 
             <DubberDetails dubber={dubber} />
@@ -349,8 +352,8 @@ export const AddToFavorite: NextPage<{ user: IUserState, titleLiked: boolean, se
     <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${user.isAuth ? 'title-like--auth' : 'bg-grey/[.3] title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!user.isAuth} onClick={() => changeTitleLiked()}>
       <Tooltip content={user.isAuth ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
         <div className='relative'>
-          <IcoNewHeart width={40} height={40} className='title-like-ico' gradient='primary' />
-          <IcoNewHeartFilled width={40} height={40} className={`title-like-filled`} gradient='primary' />
+          <IcoHeart width={40} height={40} className='title-like-ico' gradient='primary' />
+          <IcoHeartFilled width={40} height={40} className={`title-like-filled`} gradient='primary' />
         </div>
       </Tooltip>
     </button>
@@ -376,7 +379,7 @@ const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dub
         <div className='flex gap-[24px] justify-center'>
           <Tooltip content={`Рейтинг ${dubber.name}`}>
             <div className='flex items-center gap-[8px]'>
-              <IcoNewStarRating width={24} height={24} gradient='primary' />
+              <IcoStarRating width={24} height={24} gradient='primary' />
               <p className='gradient--primary-text text-[24px] font-bold'>{dubber.rating}</p>
             </div>
           </Tooltip>
@@ -384,7 +387,7 @@ const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dub
           {/* // TODO */}
           {/* <Tooltip content={`Відсоток переваги ${dubber.name}`}>
                     <div className='flex items-center gap-[8px]'>
-                      <IcoNewClock width={24} height={24} gradient='primary' />
+                      <IcoClock width={24} height={24} gradient='primary' />
                       <p className='gradient--primary-text text-[24px] font-bold'>0</p>
                     </div>
                   </Tooltip> */}

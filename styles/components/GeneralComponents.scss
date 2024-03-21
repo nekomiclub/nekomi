@@ -5,7 +5,10 @@
     transition: .2s;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    
     .title-card-blur {
       padding-top: 16px;
       padding-bottom: 16px;
@@ -13,51 +16,9 @@
   }
 }
 
-.newTitle-card {
-  &-blur {
-    transition: .2s;
-  }
-
-  &:hover {
-    .newTitle-card-blur {
-      padding-top: 16px;
-      padding-bottom: 16px;
-    }
-  }
-}
-
-.newWatchButton {
+.watchButton {
   position: relative;
   transition: .2s ease-in-out;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: .2s ease-in-out;
-    border-radius: 4px;
-    z-index: 1;
-  }
-
-  &--primary {
-    &::after {
-      background: $gradientNewPrimary;
-    }
-  }
-
-  &--secondary {
-    &::after {
-      background: $gradientNewSecondary;
-    }
-  }
-
-  * {
-    z-index: 2;
-  }
 
   &-icoWhite {
     position: relative;
@@ -71,12 +32,11 @@
     left: 0;
   }
 
-  &:hover {
-    &::after {
-      opacity: 1;
-    }
+  &:hover,
+  &:focus-visible {
+    outline: none;
 
-    .newWatchButton-icoWhite {
+    .watchButton-icoWhite {
       opacity: 1;
     }
   }

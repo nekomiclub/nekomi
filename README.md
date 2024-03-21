@@ -8,10 +8,18 @@ Classes
   &-border // DEPRECATED. Primary gradient for border 
 .gradient--secondary // Secondary background gradient
 
-.gradientNew--primary // Primary new background gradient
+.gradient--primary // New background gradient
   &-text // New text gradient
   &-border-* // New border gradient. *px - 2, 4
-.gradientNew--secondary // Secondary new background gradient
+  &-hover // Fills background on hover and focus-visible
+
+.gradient--secondary // New background gradient
+  &-hover // Fills background on hover and focus-visible
+
+.szh-slide // Slide transition for @szhsin/react-menu. Assing to parent el
+  &--toTop // Appears from bottom
+  &--toBottom // Appears from top
+.break-ellipsis // Will break word with dots (lorem ips...). Works only with max-width
 ```
 
 Handlers

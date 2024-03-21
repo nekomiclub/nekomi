@@ -103,10 +103,13 @@
       }
     }
 
-    &--auth:hover {
-      .title-like {
-        &-filled {
-          opacity: 1;
+    &--auth {
+      &:hover,
+      &:focus-visible {
+        .title-like {
+          &-filled {
+            opacity: 1;
+          }
         }
       }
     }

@@ -7,6 +7,9 @@ import '../styles/globals.css';
 import '../styles/index.scss'
 import 'swiper/css';
 
+import '../styles/components/szhsin/react-menu-transitions.scss';
+
+
 
 import { Metadata } from 'next'
 import * as Provider from '../components/Providers'

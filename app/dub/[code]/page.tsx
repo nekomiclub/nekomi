@@ -6,12 +6,9 @@ import { IDubber } from '../../../interfaces/IDubber';
 import NotFound from '@/oops/404/page';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
-import { IcoRating, IcoClock, IcoSocialInstagram, IcoSocialYoutube, IcoSocialTelegram, IcoSocialTiktok, IcoSupportBymeacoffe, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/assets';
-import { IcoCalendar, IcoCrown, IcoLibrary, IcoPen, IcoPeople } from '../../../assets/ico/Icos';
+import { IcoSocialInstagram, IcoSocialYoutube, IcoSocialTelegram, IcoSocialTiktok, IcoSupportBymeacoffe, IcoSupportPatreon, IcoSupportPrivatbank, IcoSupportMonobank, IcoSupportDiaka } from '../../../assets/assets';
 import Link from 'next/link';
 import { routes } from '../../../routes';
-import { IcoSupportDiaka, IcoSupportMonobank } from '../../../assets/watch';
-import BorderGradient from '../../../components/BorderGradient';
 
 import './styles.scss';
 import Tooltip from '../../../components/Tooltip';
@@ -88,7 +85,7 @@ const Dubber: NextPage<IProps> = async ({ params, searchParams }) => {
               </div>
 
               {/* Description * crew */}
-              <div className='flex gap-[16px] items-stretch max-[770px]:flex-col-reverse'>
+              <div className='flex gap-[16px] items-stretch w-full max-[770px]:flex-col-reverse'>
                 <div className='w-full'>
                   <p className='text-[16px] text-white font-extralight text-justify'>{dubberData.description}</p>
                 </div>

@@ -4,13 +4,12 @@ import { NextPage } from 'next';
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef, RefObject } from 'react'
 import { IUser, IUserList } from '../../../interfaces/IUser';
-import { IcoAccordionArrow, IcoArrow, IcoCalendar, IcoFolder, IcoHome, IcoSettings, IcoStats, IcoWatching } from '../../../assets/ico/Icos';
+import { IcoAccordionArrow, IcoArrow, IcoCalendar, IcoFolderPlain, IcoHome, IcoSettings, IcoStats, IcoWatching } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { useAppSelector } from '../../../hooks/redux';
 import gsap from 'gsap';
 import Link from 'next/link';
-import { IcoFilledCan, IcoFilledClock, IcoFilledHeart, IcoFilledPlans } from '../../../assets/ico/eye/filled';
-import { IcoEyeHidden, IcoEyeSuccess, IcoEyeVisible } from '../../../assets/ico/eye';
+import { IcoEyeHidden, IcoEyeSuccess, IcoEyeVisible, IcoFilledClock, IcoFilledHeart, IcoFilledPlans } from '../../../assets/ico/eye';
 
 import './styles.scss'
 import { routes } from '../../../routes';
@@ -26,7 +25,7 @@ export const SidebarItem: NextPage<{ currTab: TTab, tab: TTab, setTab: (tab: TTa
   return (
     <button className={`user-sidebar-item flex gap-[16px] items-center px-[8px] py-[4px] rounded-[2px] duration-200 hover:bg-dark/[.2] ${currTab === tab ? 'bg-dark/[.4]' : ''}`} onClick={() => setTab(tab)}>
       {tab === 'home' && <IcoHome width={24} height={24} />}
-      {tab === 'library' && <IcoFolder width={24} height={24} />}
+      {tab === 'library' && <IcoFolderPlain width={24} height={24} />}
       {tab === 'stats' && <IcoStats width={24} height={24} />}
       {tab === 'settings' && <IcoSettings width={24} height={24} />}
 

@@ -10,7 +10,8 @@ const nextConfig = {
     }, {
       hostname: '*.myanimelist.net'
     }]
-  }
+  },
+  reactStrictMode: false
 }
 
 module.exports = nextConfig

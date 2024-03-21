@@ -1,0 +1,45 @@
+.szh-slide {
+  .szh-menu {
+    transition: .2s ease-in-out;
+
+    &--state {
+      &-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+        touch-action: auto;
+      } 
+
+      &-closed {
+        opacity: 0;
+        visibility: hidden;
+        touch-action: none;
+        pointer-events: none;
+      }
+    }
+  }
+
+  &--toTop {
+    .szh-menu--state {
+      &-open {
+        transform: translateY(0);
+      } 
+
+      &-closed {
+        transform: translateY(30%);
+      }
+    }
+  }
+
+  &--toBottom {
+    .szh-menu--state {
+      &-open {
+        transform: translateY(0);
+      } 
+
+      &-closed {
+        transform: translateY(-30%);
+      }
+    }
+  }
+}

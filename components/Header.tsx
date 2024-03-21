@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState, useRef } from 'react'
-import { HeaderAccount, HeaderLogout, HeaderSearch, Logo, IcoRating } from '../assets/assets';
+import { HeaderAccount, HeaderLogout } from '../assets/assets';
 import { Popup } from 'react-uvc'
 import { useDebounce } from 'use-debounce';
 
@@ -22,7 +22,7 @@ import { HashImage } from 'hash-image';
 import { parseTitleType } from './handlers';
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
-import { IcoNewAnimeeLogo, IcoNewArrow, IcoNewHome, IcoNewLibrary, IcoNewSearch, IcoNewUser } from '../assets/ico/Icos';
+import { IcoAnimeeLogo, IcoArrow, IcoHome, IcoLibrary, IcoSearch, IcoStarRating, IcoUser } from '../assets/ico/Icos';
 
 import '../styles/components/Header.scss';
 import { LoadingImage } from './GeneralComponents';
@@ -94,21 +94,21 @@ const Header: NextPage = () => {
         <div className="wrapperNew !flex-row items-center justify-between w-full">
           <div className='flex items-center gap-[40px]'>
             <Link href={routes.home.path}>
-              <IcoNewAnimeeLogo width={60} height={60} gradient='primary' />
+              <IcoAnimeeLogo width={60} height={60} gradient='primary' />
             </Link>
 
             <div className='flex items-center gap-[16px]'>
-              <Link href={routes.home.path} className={`header-ico ${pathname === routes.home.path ? 'header-ico--active' : ''}`}>
-                <IcoNewHome width={32} height={32} />
+              <Link href={routes.home.path} className={`header-ico focus-visible:outline-none ${pathname === routes.home.path ? 'header-ico--active' : 'duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]'}`}>
+                <IcoHome width={32} height={32} />
               </Link>
 
-              <Link href={routes.lib.path} className={`header-ico ${pathname === routes.lib.path ? 'header-ico--active' : ''}`}>
-                <IcoNewLibrary width={32} height={32} />
+              <Link href={routes.lib.path} className={`header-ico focus-visible:outline-none ${pathname === routes.lib.path ? 'header-ico--active' : 'duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]'}`}>
+                <IcoLibrary width={32} height={32} />
               </Link>
 
               <div className='flex items-center gap-[16px]'>
-                <button className='uvc-popup-trigger' data-uvc-popup-openid="search-popup" onClick={() => { popup.open() }}>
-                  <IcoNewSearch width={32} height={32} />
+                <button className='uvc-popup-trigger duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]' data-uvc-popup-openid="search-popup" onClick={() => { popup.open() }}>
+                  <IcoSearch width={32} height={32} />
                 </button>
               </div>
             </div>
@@ -116,13 +116,13 @@ const Header: NextPage = () => {
 
           {isAuth ? <>
             <div className='flex items-center gap-[8px]'>
-              <button className={`relative flex items-center`}>
+              <button className={`relative flex items-center gap-[4pxT]`}>
                 <div className='relative w-[40px] h-[40px] rounded-[32px] overflow-hidden'>
                   <LoadingImage src={userAvatar} alt='...' />
                 </div>
 
-                <button className='px-[8px] py-[8px]' onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
-                  <IcoNewArrow width={16} height={16} />
+                <button className='px-[8px] py-[8px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]' onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
+                  <IcoArrow width={16} height={16} />
                 </button>
 
 
@@ -144,7 +144,7 @@ const Header: NextPage = () => {
             </div>
           </> : <>
             <Link href={`${routes.authSignin.path}?ref=${config.services.siteURL}${pathname}`}>
-              <IcoNewUser width={40} height={40} />
+              <IcoUser width={40} height={40} />
             </Link>
           </>}
         </div>
@@ -166,7 +166,7 @@ const Header: NextPage = () => {
 
                       <div className='flex items-center gap-[16px] w-full'>
                         <div className='flex items-center gap-[4px]'>
-                          <IcoRating width={16} height={16} />
+                          <IcoStarRating width={16} height={16} gradient='primary' />
                           <p className='text-[16px] font-bold gradient--primary-text'>{title.rating}</p>
                         </div>
                         <p className='text-[16px] font-extralight text-white'>{parseTitleType(title.type)}</p>
