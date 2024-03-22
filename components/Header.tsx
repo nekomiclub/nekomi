@@ -10,7 +10,7 @@ import { useDebounce } from 'use-debounce';
 import '../styles/components/serachPopup.scss'
 import { ITitle } from '../interfaces/ITitle';
 import $api from './http';
-import { config, env } from '../config';
+import { config } from '../config';
 import Loading from './Loading';
 import Link from 'next/link';
 import { routes } from '../routes';
@@ -58,7 +58,7 @@ const Header: NextPage = () => {
     if (!state.username) return;
 
     if (state.isAuth) {
-      $api.get(`${env.apiUrl}/v1/user/${state.uid}`).catch(e => console.error(e)).then(res => setUserAvatar(res!.data!.avatar))
+      $api.get(`${config.services.apiURL}/v1/user/${state.uid}`).catch(e => console.error(e)).then(res => setUserAvatar(res!.data!.avatar))
     }
 
     setIsAuth(state.isAuth)
@@ -75,7 +75,7 @@ const Header: NextPage = () => {
     }
 
     (async function () {
-      const res = await $api.get<{ results: ITitle[] }>(`${env.apiUrl}/v1/titles/search?query=${debouncedQuery}`)
+      const res = await $api.get<{ results: ITitle[] }>(`${config.services.apiURL}/v1/titles/search?query=${debouncedQuery}`)
       setSearchResults(res.data.results)
     })()
   }, [debouncedQuery])
@@ -143,7 +143,7 @@ const Header: NextPage = () => {
               </button>
             </div>
           </> : <>
-            <Link href={`${routes.authSignin.path}?ref=${config.services.siteURL}${pathname}`}>
+            <Link href={`${config.services.fkAccount}/continue?ref=${config.services.siteURL}${pathname}`}>
               <IcoUser width={40} height={40} />
             </Link>
           </>}

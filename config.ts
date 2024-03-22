@@ -5,32 +5,21 @@ export const prodMode = process.env.NODE_ENV === 'production';
 
 interface IEnv {
   NODE_ENV: 'development' | 'production' | 'test',
-  FIREBASE_APIKEY: string,
-  FIREBASE_APPID: string,
-  FIREBASE_MSI: string,
-  apiUrl: string,
-  wsPort: number
 }
 // @ts-ignore
 export const env: IEnv = {
   NODE_ENV: process.env.NODE_ENV,
-  FIREBASE_APIKEY: 'AIzaSyAonyJixltRbgINqakQYPqkj_yuAb2g4rI',
-  FIREBASE_APPID: '1:563218119856:web:c0dca24f5df0531d754f75',
-  FIREBASE_MSI: '563218119856',
-  apiUrl: devMode ? 'http://192.168.0.106' : 'https://api.animee.club',
-  wsPort: 8080
 }
 
 export const config = {
   services: {
     apiURL: devMode ? 'http://192.168.0.106' : 'https://api.animee.club',
+    apiWS: devMode ? 'ws://192.168.0.106:8080' : 'wss://api.animee.club:8080',
     fkUsapiURL: devMode ? 'http://192.168.0.106:45660' : 'https://usapi.animee.club',
     fkAccount: devMode ? 'http://192.168.0.106:3000' : 'https://account.animee.club',
     siteURL: devMode ? 'http://192.168.0.106:3001' : 'https://animee.club'
   }
 }
-
-export const WS_URL = devMode ? `ws://192.168.0.106:${env.wsPort}` : `wss://api.animee.club:${env.wsPort}`;
 
 export const HIDE_IN_PROD = false;
 

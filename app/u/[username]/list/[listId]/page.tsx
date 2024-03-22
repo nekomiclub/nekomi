@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { IUser, IUserList, TUserListType } from '../../../../../interfaces/IUser';
-import { env } from '../../../../../config';
+import { config } from '../../../../../config';
 import $api from '../../../../../components/http';
 import { IcoArrow, IcoSettings } from '../../../../../assets/ico/Icos';
 import Tooltip from '../../../../../components/Tooltip';
@@ -34,7 +34,7 @@ const UserList: NextPage = (props) => {
 
   useEffect(() => {
     try {
-      $api.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`).then(res => {
+      $api.get<IUser>(`${config.services.apiURL}/v1/user/${params.username}`).then(res => {
         setUser(res.data)
 
         const list = res.data.lists.find(el => el.id === params.listId);
@@ -62,7 +62,7 @@ const UserList: NextPage = (props) => {
     if (!list) return;
 
     list.titles.forEach(title => {
-      $api.get<ITitle>(`${env.apiUrl}/v1/title/${title}`).catch(e => console.error(e)).then(res => {
+      $api.get<ITitle>(`${config.services.apiURL}/v1/title/${title}`).catch(e => console.error(e)).then(res => {
         setRawTitles(prev => [...prev.filter(el => el.id !== res!.data.id), res!.data])
       })
     })

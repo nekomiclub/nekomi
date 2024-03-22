@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import { IUser, IUserList } from '../../../interfaces/IUser';
 import { LibItem, UserListsContent } from './content';
-import { env } from '../../../config';
+import { config } from '../../../config';
 import axios from 'axios';
 import { cookies, headers } from 'next/headers';
 import { decode } from 'jsonwebtoken';
@@ -20,7 +20,7 @@ const UserLists: NextPage<IProps> = async ({ params, searchParams }) => {
   let user: IUser = {}
 
   try {
-    await axios.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`).then(res => {
+    await axios.get<IUser>(`${config.services.apiURL}/v1/user/${params.username}`).then(res => {
       const data = res.data;
       let tmpLists: IUserList[] = []
       tmpLists.unshift(data!.lists.slice(data.lists.findIndex(el => el.id.match(/watching/g)))[0])

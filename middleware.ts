@@ -5,11 +5,10 @@ import { routes } from './routes'
 import { getRoute } from './components/Providers';
 import { decode } from 'jsonwebtoken';
 import { ITokenData, TUserRoles } from './interfaces/ITokenData';
+import { config as cfg } from './config'
 
-function redirToAuth(url: string, origin: string) {
-  if (url === routes.authSignin.path) return;
-
-  return res.redirect(`${origin}${routes.authSignin.path}`)
+function redirToAuth() {
+  return res.redirect(`${cfg.services.fkAccount}/continue?ref=${cfg.services.siteURL}`)
 }
 
 export async function middleware(req: NextRequest) {
@@ -29,14 +28,14 @@ export async function middleware(req: NextRequest) {
 
     //* Redirect if token is not provided
     if (!token) {
-      return redirToAuth(url, origin)
+      return res.redirect(`${cfg.services.fkAccount}/continue?ref=${cfg.services.siteURL}`)
     }
 
     const payload = decode(token) as ITokenData
 
     //* Redirect if token expired
     if (payload.exp! * 1000 <= + new Date()) {
-      return redirToAuth(url, origin)
+      return res.redirect(`${cfg.services.fkAccount}/continue?ref=${cfg.services.siteURL}`)
     }
 
     //* Pass if required roles are not provided
@@ -51,7 +50,7 @@ export async function middleware(req: NextRequest) {
       if (route.access?.some(el => el === role)) grantAccess = true;
     })
 
-    if (!grantAccess) return redirToAuth(url, origin);
+    if (!grantAccess) return res.redirect(`${cfg.services.fkAccount}/continue?ref=${cfg.services.siteURL}`);
   }
 
   return res.next();

@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 import '../styles/components/Footer.scss'
 import { routes } from '../routes';
-import { WS_URL, devMode, env } from '../config';
+import { config, devMode } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 
 let isFirstOpen = true;
@@ -17,7 +17,7 @@ const Footer: NextPage = (props) => {
 
   useEffect(() => {
     if (typeof window !== undefined && !ws) {
-      setWs(new WebSocket(WS_URL))
+      setWs(new WebSocket(config.services.apiWS))
     }
   }, [])
 
@@ -47,7 +47,7 @@ const Footer: NextPage = (props) => {
       if (isFirstOpen) {
         isFirstOpen = false;
         ws.close();
-        setWs(new WebSocket(WS_URL))
+        setWs(new WebSocket(config.services.apiWS))
       }
     }
   }, [ws])

@@ -1,9 +1,9 @@
 import axios, { AxiosError } from 'axios';
-import { env } from '../config'
+import { config } from '../config'
 
 export const $api = axios.create({
   withCredentials: true,
-  baseURL: env.apiUrl,
+  baseURL: config.services.apiURL,
 })
 
 $api.interceptors.request.use(cfg => {
@@ -35,7 +35,7 @@ $api.interceptors.response.use(cfg => {
     triedRefresh = true;
 
     try {
-      const newToken = await axios.get<{ token: string }>(`${env.apiUrl}/v1/auth/refresh`, { withCredentials: true })
+      const newToken = await axios.get<{ token: string }>(`${config.services.apiURL}/v1/auth/refresh`, { withCredentials: true })
       localStorage.setItem('token', newToken.data.token);
 
       return $api.request(originalRequest!)

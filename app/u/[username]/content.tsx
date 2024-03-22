@@ -168,28 +168,7 @@ export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' |
           </div>}
 
           {tab === 'settings' && <div className='w-full h-full flex items-center flex-col gap-[8px]'>
-            <h3 className='text-[24px] text-white font-bold'>Налаштування</h3>
-            <div className='w-full flex flex-col gap-[16px]'>
-              <h4 className='text-white text-[24px] font-bold'>Міграція</h4>
-              <div className='flex flex-col gap-[8px]'>
-                <Tooltip content={state.isNewAccount ? 'Дякуємо за міграцію акаунту' : `Через оновлення авторизації на проектах Fullkekw, вам необхідно до 22 березня мігрувати свій акаунт на fullkekw-account. Для цього натисніть на цю кнопку, та увійдіть через пошту до якої прив'язаний цей акаунт.`} fitWrapper>
-                  <button className={`w-full ${state.isNewAccount ? 'gradient--primary' : 'bg-purple'} px-[24px] py-[16px] rounded-[4px]`} onClick={() => router.push(`${routes.authSignup.path}/continue?${config.services.siteURL}`)}>
-                    <p className='text-[16px] font-bold text-white'>
-                      {state.isNewAccount ? 'Акаунт мігровано!' : 'Мігрувати акаунт'}
-                    </p>
-                  </button>
-                </Tooltip>
-              </div>
-            </div>
-
-            {/* <div className='w-full flex flex-col gap-[16px]'>
-              <h4 className='text-white text-[24px] font-bold'>Фон профілю</h4>
-              <div className='flex flex-col gap-[8px]'>
-                <ul className='user-library-titles gap-[16px]'>
-
-                </ul>
-              </div>
-            </div> */}
+            <h3 className='text-[24px] text-white font-bold'>Налаштування в розробці</h3>
           </div>}
         </div>
       </div>

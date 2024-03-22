@@ -16,7 +16,7 @@ import TechWorks from '@/oops/works/page';
 import { ITokenData, TUserRoles } from '../interfaces/ITokenData';
 import { useAppDispatch } from '../hooks/redux';
 import userSlice from '../store/reducers/userSlice';
-import { WS_URL, config, env } from '../config';
+import { config } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 import ServerUnavailable from '@/oops/ServerUnavailable';
 import { IUser } from '../interfaces/IUser';
@@ -148,7 +148,7 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
       };
 
       if (!ws) {
-        setWs(new WebSocket(WS_URL))
+        setWs(new WebSocket(config.services.apiWS))
       }
     })()
   }, [])

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { IUser } from "../../../interfaces/IUser";
-import { env } from "../../../config";
+import { config } from "../../../config";
 import { Metadata, ResolvingMetadata } from "next";
 import NotFound from "@/oops/404/page";
 import Header from "../../../components/Header";
@@ -25,7 +25,7 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const { data } = await axios.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`);
+    const { data } = await axios.get<IUser>(`${config.services.apiURL}/v1/user/${params.username}`);
 
     return {
       title: `@${data.username} - animee`,
@@ -53,7 +53,7 @@ export default async function Layout({ children, params }: IProps) {
   let isErrored = false;
 
   try {
-    const { data } = await axios.get<IUser>(`${env.apiUrl}/v1/user/${params.username}`);
+    const { data } = await axios.get<IUser>(`${config.services.apiURL}/v1/user/${params.username}`);
     userData = data;
   } catch (e) {
     isErrored = true

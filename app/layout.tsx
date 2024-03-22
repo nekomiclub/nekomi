@@ -14,7 +14,7 @@ import '../styles/components/szhsin/react-menu-transitions.scss';
 import { Metadata } from 'next'
 import * as Provider from '../components/Providers'
 import axios from 'axios';
-import { env } from '../config';
+import { config } from '../config';
 import ServerUnavailable from './oops/ServerUnavailable';
 import { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -40,7 +40,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   let serverAvailable = false;
-  await axios.get(`${env.apiUrl}/v1/uptime`).then(() => serverAvailable = true).catch(() => serverAvailable = false)
+  await axios.get(`${config.services.apiURL}/v1/uptime`).then(() => serverAvailable = true).catch(() => serverAvailable = false)
 
   return (
     <html lang="ua">

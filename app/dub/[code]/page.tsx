@@ -1,6 +1,6 @@
 import type { NextPage, Metadata, ResolvingMetadata } from 'next';
 
-import { env } from '../../../config';
+import { config } from '../../../config';
 import axios from 'axios';
 import { IDubber } from '../../../interfaces/IDubber';
 import NotFound from '@/oops/404/page';
@@ -24,7 +24,7 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const { data } = await axios.get<IDubber>(`${env.apiUrl}/v1/dubber/${params.code}`);
+    const { data } = await axios.get<IDubber>(`${config.services.apiURL}/v1/dubber/${params.code}`);
 
     return {
       title: `${data.name} на animee`,
@@ -53,7 +53,7 @@ const Dubber: NextPage<IProps> = async ({ params, searchParams }) => {
   let isErrored = false
 
   try {
-    const res = await axios.get<IDubber>(`${env.apiUrl}/v1/dubber/${params.code}`);
+    const res = await axios.get<IDubber>(`${config.services.apiURL}/v1/dubber/${params.code}`);
     dubberData = res.data
   } catch (e) {
     isErrored = true;

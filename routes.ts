@@ -18,8 +18,6 @@ interface IRoutes {
   oopsWorks: IRoute,
   oops404: IRoute,
   oopsRestricted: IRoute,
-  authSignin: IRoute,
-  authSignup: IRoute,
   watch: IRoute,
   watchTitle: IRoute,
   aboutFK: IRoute,
@@ -58,15 +56,6 @@ export const routes: IRoutes = {
   oopsRestricted: {
     path: '/oops/restricted',
     public: true,
-  },
-  authSignin: {
-    path: '/auth',
-    access: []
-  },
-  authSignup: {
-    path: `${config.services.fkAccount}/continue`,
-    public: true,
-    access: []
   },
   watch: {
     path: '/w',
