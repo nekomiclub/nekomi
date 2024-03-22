@@ -128,7 +128,7 @@ export function timestampToDate(timestamp: number): { day: number, month: number
     "Листопад",
     "Грудень"
   ];
-  const localizedMonth = months[month - 1]
+  const localizedMonth = months[month]
 
   return {
     day: new Date(timestamp).getDate(),

@@ -81,7 +81,7 @@ const UserList: NextPage = (props) => {
         <div className='flex justify-between items-center gap-[16px] w-full'>
           <Tooltip content='Повернутися назад'>
             <Link href={routes.user.path.replace('*', params.username)}>
-              <IcoArrow width={24} height={24} />
+              <IcoArrow width={24} height={24} className='rotate-[90deg]' />
             </Link>
           </Tooltip>
 

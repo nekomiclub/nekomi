@@ -143,7 +143,7 @@ export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' |
       <div className='flex pt-[8px] gap-[8px] w-full max-[550px]:flex-col'>
         <div className='flex flex-col gap-[4px]' ref={root}>
           <button onClick={() => setMenuCollapsed(!menuCollapsed)} className={`w-full flex justify-end px-[8px] py-[4px] duration-200 hover:bg-dark/[.2] max-[550px]:hidden`}>
-            <IcoArrow width={24} height={24} className={`duration-200 ${menuCollapsed ? 'rotate-[180deg]' : ''}`} />
+            <IcoArrow width={24} height={24} className={`duration-200 ${menuCollapsed ? '-rotate-[90deg]' : 'rotate-[90deg]'}`} />
           </button>
 
           <SidebarItem currTab={tab} tab='home' setTab={setTab} />
