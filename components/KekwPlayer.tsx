@@ -642,6 +642,15 @@ const KekwPlayer: NextPage<{
     changeVideoSrc(epData!.source[quality], videoMoment, true)
   }, [quality])
 
+  //* Handle idle/active
+  useEffect(() => {
+    if (isIdle && isFullscreen) {
+      document.querySelector('body')!.style.cursor = 'none';
+    } else {
+      document.querySelector('body')!.style.cursor = 'auto';
+    }
+  }, [isIdle])
+
 
   //* Handlers
   /** Defines previews format from 0 index frame of current dub (height 120 = old, 135 = new) */

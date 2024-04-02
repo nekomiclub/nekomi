@@ -9,6 +9,8 @@ const nextConfig = {
       hostname: 'anitube.in.ua'
     }, {
       hostname: '*.myanimelist.net'
+    }, {
+      hostname: '192.168.0.106'
     }]
   },
   reactStrictMode: false
