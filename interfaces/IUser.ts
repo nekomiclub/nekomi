@@ -1,38 +1,84 @@
-import { TAuthProviders, TUserRoles } from "./ITokenData"
-
 export interface IUser {
-  uid: string,
-  username: string,
-  password: string,
-  email: string,
-  avatar: string,
-  profileBg: string | null,
-  badgesIDs: string[] | null,
-  settings: IUserSettings,
-  stats: IUserStats,
-  lists: IUserList[],
-  providers: TAuthProviders[],
-  roles: TUserRoles[],
+  /** User ID */
+  id: string
+
+  /** User ID
+   * @deprecated 1.1.0
+   */
+  uid: string
+
+  /** User username */
+  username: string
+
+  /** User password
+   * * userDTO will hide this field
+   * @deprecated in 1.1.0 fullkekw usapi will manage this
+   */
+  password: string
+
+  /** User email
+   * * userDTO will hide this field
+   * May be deprecated in future
+   */
+  email: string
+
+  /** User avatar URL
+   * @deprecated in 1.1.0 fullkekw usapi will manage this
+   */
+  avatar: string
+
+  /** Profile background
+   * @deprecated due to possible future updates
+   */
+  profileBg: string | null
+
+  /** User badges
+   * @deprecated due to possible future updates
+   */
+  badgesIDs: string[] | null
+
+  /** User settings
+   * * userDTO will hide this field (in future only owner can get this object)
+   * May be deprecated in future
+   */
+  settings: IUserSettings
+
+  /** User stats
+   * @deprecated due to possible future updates
+   */
+  stats: IUserStats
+
+  /** User lists
+   * May be deprecated in future
+   */
+  lists: IUserList[]
+
+  /** User auth providers
+   * * userDTO will hide this field
+   * @deprecated in 1.1.0 fullkekw usapi will manage this
+   */
+  providers: TAuthProviders[]
+
+  /** User roles
+   * * userDTO will hide this field
+   */
+  roles: string[]
+
+  /** User account type
+   * * userDTO will hide this field
+   * @deprecated impact on nothing, was actual for migration
+   */
   accountType: 'old' | 'new'
 }
 
+/** User settings interface */
 export interface IUserSettings {
-  notCreated?: undefined
+  void?: void
 }
 
-export interface IUserList {
-  titles: string[],
-  createdAt: number,
-  immortal: boolean,
-  hidden: boolean,
-  thumb: string,
-  description: string,
-  name: string,
-  id: string
-}
-
-export type TUserListType = 'favorite' | 'watched' | 'delayed' | 'plans' | 'threwn' | 'user';
-
+/** User stats interface
+ * @deprecated due to possible future updates
+ */
 export interface IUserStats {
   createdAt: number,
   titles: {
@@ -48,6 +94,43 @@ export interface IUserStats {
     watchedTitles: IUserStatsWatchedTitles[] | null
   }
 }
+
+/** User watched titles stat interface
+ * @deprecated due to possible future updates
+ */
+interface IUserStatsWatchedTitles {
+  title: string,
+  dubs: IUserStatsWatchedTitlesDub[]
+}
+
+/** User watched title dubs interface
+ * @deprecated due to possible future updates
+ */
+interface IUserStatsWatchedTitlesDub {
+  id: string,
+  totalWatch: number
+}
+
+export interface IUserList {
+  titles: string[],
+  createdAt: number,
+  immortal: boolean,
+  hidden: boolean,
+  thumb: string,
+  description: string,
+  name: string,
+  id: string
+}
+
+/** User auth providers type
+ * @deprecated in 1.1.0 fullkekw usapi will manage this
+ */
+export type TAuthProviders = 'google' | 'telegram' | 'animee' | 'fullkekw'
+
+/** User roles
+ * @deprecated in 1.1.0 roles system will be refactored
+ */
+export type TUserRoles = 'root' | 'admin' | 'moderator' | 'dubber' | 'subber' | 'subscriber' | 'editor' | 'user'
 
 interface IUserStatsWatchedTitles {
   title: string,

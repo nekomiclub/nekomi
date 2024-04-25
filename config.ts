@@ -1,27 +1,42 @@
+import ip from 'ip';
 import { TAnimeGenres } from "./interfaces/ITitle";
 
 export const devMode = process.env.NODE_ENV === 'development'
 export const prodMode = process.env.NODE_ENV === 'production';
 
-interface IEnv {
-  NODE_ENV: 'development' | 'production' | 'test',
-}
-// @ts-ignore
-export const env: IEnv = {
-  NODE_ENV: process.env.NODE_ENV,
-}
+/** Development machine IP */
+const devIP = '192.168.0.106'
 
+/** Site config */
 export const config = {
+  /** @deprecated use config.URL instead */
   services: {
     apiURL: devMode ? 'http://192.168.0.106' : 'https://api.animee.club',
     apiWS: devMode ? 'ws://192.168.0.106:8080' : 'wss://api.animee.club:8080',
     fkUsapiURL: devMode ? 'http://192.168.0.106:45660' : 'https://usapi.animee.club',
     fkAccount: devMode ? 'http://192.168.0.106:3000' : 'https://account.animee.club',
     siteURL: devMode ? 'http://192.168.0.106:3001' : 'https://animee.club'
+  },
+
+  devIP: '192.168.0.106',
+
+  URL: {
+    /** Animee-core URL */
+    apiHTTP: prodMode ? `https://api.animee.club` : `http://${devIP}`,
+
+    /** Animee-core websocket URL */
+    apiWS: prodMode ? `wss://api.animee.club:8080` : `http://${devIP}:8080`,
+
+    /** Fullkekw userapi URL */
+    fkUsapi: prodMode ? `https://usapi.animee.club` : `http://${devIP}:45660`,
+
+    /** Fullkekw account URL */
+    fkAccount: prodMode ? `https://account.animee.club` : `http://${devIP}:3000`,
+
+    /** Site own url */
+    baseURL: prodMode ? `https://animee.club` : `http://${devIP}:3001`,
   }
 }
-
-export const HIDE_IN_PROD = false;
 
 export const animeGenres = {
   chinese: 'Китайські',

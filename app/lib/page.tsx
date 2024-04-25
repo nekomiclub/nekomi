@@ -7,7 +7,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useDebounce } from 'use-debounce';
 import { ITitle } from '../../interfaces/ITitle';
-import $api from '../../components/http';
+import $api from '../../components/httpOld';
 import Loading from '../../components/Loading';
 
 import '../../styles/components/Lib.scss'

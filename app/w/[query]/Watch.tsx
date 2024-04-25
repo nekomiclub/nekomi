@@ -19,7 +19,7 @@ import { LoadingImage, WatchButton } from '../../../components/GeneralComponents
 import { IcoSupportBymeacoffe, IcoSupportDiaka, IcoSocialInstagram, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/assets';
 import Footer from '../../../components/Footer';
 import { useAppSelector } from '../../../hooks/redux';
-import $api from '../../../components/http';
+import $api from '../../../components/httpOld';
 import { IUser } from '../../../interfaces/IUser';
 import { IcoEyeSuccess, IcoFilledClock, IcoFilledPlans } from '../../../assets/ico/eye';
 import { IcoFolderAdd } from '../../../assets/ico/folder';

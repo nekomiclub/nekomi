@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: 'Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!',
   applicationName: 'Animee',
   metadataBase: new URL('https://animee.club'),
-  keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'анімі', 'анімі клаб', 'animee', 'animee club'],
+  keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'анімі', 'аніме', 'анімі клаб', 'animee', 'animee club'],
   openGraph: {
     title: `Головна - animee`,
     description: `Поринь у світ україномовного аніме разом з animee!`,
@@ -39,6 +39,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Check server availability
   let serverAvailable = false;
   await axios.get(`${config.services.apiURL}/v1/uptime`).then(() => serverAvailable = true).catch(() => serverAvailable = false)
 

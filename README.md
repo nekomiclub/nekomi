@@ -1,5 +1,7 @@
 # ANIMEE.CLUB
 
+## [Tree](./docs/tree.md)
+
 ## Notes
 Classes
 ```scss
@@ -21,8 +23,6 @@ Classes
   &--toBottom // Appears from top
 .break-ellipsis // Will break word with dots (lorem ips...). Works only with max-width
 ```
-
-Handlers
 
 *See ./components/handlers.ts*
 ## Dependencies

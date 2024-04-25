@@ -2,10 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { IReduxAction } from '../store'
 import { ITokenData } from "../../interfaces/ITokenData";
 
-/** 
- * @prop isAuth - Is user authorized
- * @prop isNewAccount - Temporary property, indicates if user migrate account to new provider
- */
 export interface IUserState extends ITokenData {
   isAuth: boolean,
   isNewAccount: boolean

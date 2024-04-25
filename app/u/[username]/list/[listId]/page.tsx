@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { IUser, IUserList, TUserListType } from '../../../../../interfaces/IUser';
 import { config } from '../../../../../config';
-import $api from '../../../../../components/http';
+import $api from '../../../../../components/httpOld';
 import { IcoArrow, IcoSettings } from '../../../../../assets/ico/Icos';
 import Tooltip from '../../../../../components/Tooltip';
 import Loading from '../../../../../components/Loading';

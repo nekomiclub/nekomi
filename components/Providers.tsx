@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Provider } from 'react-redux';
 import { decode } from 'jsonwebtoken'
 
@@ -20,10 +20,13 @@ import { config } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 import ServerUnavailable from '@/oops/ServerUnavailable';
 import { IUser } from '../interfaces/IUser';
-import { signin } from './authorization';
+import { $api } from './http';
 
 const store = setupStore();
 
+
+
+/** Get route object by path */
 export function getRoute(path: string): IRoute | null {
   let route: IRoute | null = null
 
@@ -46,7 +49,51 @@ export function getRoute(path: string): IRoute | null {
   return route;
 }
 
+
+
+/** Setting up reduxjs storage & fetch user data */
 export const Storage: NextPage<{ children: any }> = ({ children }) => {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const signinToken = searchParams.get('signinPayload');
+
+    (async function () {
+      // Authorize
+      if (signinToken) {
+        try {
+          await $api.post(`/user/signin`, {
+            session: signinToken
+          })
+        } catch (e) {
+          if (e instanceof AxiosError) {
+            console.error(`An HTTP error occured while authorizing.\nError occured at - Providers/Storage.\nError - ${e.code}: ${e.response?.data.msg}.`)
+          } else {
+            // @ts-ignore
+            const emsg = e?.message || e?.msg;
+
+            console.error(`An error occured while authorizing.\nError occured at - Providers/Storage.\nError message - ${emsg}`)
+          }
+        }
+      }
+
+      try {
+        const user = await $api.get<IUser>(`/user/*`)
+
+
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          console.error(`An HTTP error occured while fetching user.\nError occured at - Providers/Storage.\nError - ${e.code}: ${e.response?.data.msg}.`)
+        } else {
+          // @ts-ignore
+          const emsg = e?.message || e?.msg;
+
+          console.error(`An error occured while fetching user.\nError occured at - Providers/Storage.\nError message - ${emsg}`)
+        }
+      }
+    })()
+  }, [])
+
   return (
     <Provider store={store}>
       {children}
@@ -54,6 +101,9 @@ export const Storage: NextPage<{ children: any }> = ({ children }) => {
   );
 }
 
+
+
+/** 404 fallback (next does not find path but it reserved) */
 export const Routing: NextPage<{ children: any }> = ({ children }) => {
   const path = usePathname();
   const [isExist, setIsExist] = useState(true)
@@ -63,9 +113,7 @@ export const Routing: NextPage<{ children: any }> = ({ children }) => {
   useEffect(() => {
     const route = getRoute(path)
 
-    console.log('routing provider')
-
-    //* Route is not exist
+    //* Route does not exist
     if (!route) return setIsExist(false)
 
     setMode(route.status || 'clear')
@@ -92,8 +140,10 @@ export const Routing: NextPage<{ children: any }> = ({ children }) => {
   );
 }
 
+
+
+/** Setting up websocket */
 export const State: NextPage<{ children: any }> = ({ children }) => {
-  const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -104,49 +154,6 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
     if (typeof window === undefined) return;
 
     (async function () {
-      const signinToken = searchParams.get('signinPayload');
-
-      // Handle signin token from SSO
-      if (signinToken) {
-        try {
-          const res = await axios.post(`${config.services.fkUsapiURL}/token/decode`, {
-            token: signinToken,
-            method: 'access'
-          })
-
-          const signinPayload = res.data as {
-            msg: string, info: any, verified: boolean, payload: {
-              id: string,
-              photoURL: string,
-              username: string
-            }
-          }
-
-          if (signinPayload.verified) {
-            await signin({
-              password: '~usapi',
-              username: signinPayload.payload.username,
-              token: signinToken
-            })
-          }
-
-          router.replace(`${config.services.siteURL}${pathname}`)
-        } catch (e) {
-          console.error(e)
-        }
-      }
-
-      const token = localStorage.getItem('token');
-
-      if (token) {
-        const payload = decode(token) as ITokenData;
-
-        const { data: user } = await axios.get<IUser>(`${config.services.apiURL}/v1/user/${payload.uid}`)
-
-
-        dispatch(userSlice.actions.reducer({ isAuth: true, isNewAccount: user.accountType === 'new', ...payload }))
-      };
-
       if (!ws) {
         setWs(new WebSocket(config.services.apiWS))
       }

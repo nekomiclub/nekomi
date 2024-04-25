@@ -9,13 +9,11 @@ import { useDebounce } from 'use-debounce';
 
 import '../styles/components/serachPopup.scss'
 import { ITitle } from '../interfaces/ITitle';
-import $api from './http';
 import { config } from '../config';
 import Loading from './Loading';
 import Link from 'next/link';
 import { routes } from '../routes';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import { logout } from './authorization';
 import userSlice from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
 import { HashImage } from 'hash-image';
@@ -26,6 +24,8 @@ import { IcoAnimeeLogo, IcoArrow, IcoHome, IcoLibrary, IcoSearch, IcoStarRating,
 
 import '../styles/components/Header.scss';
 import { LoadingImage } from './GeneralComponents';
+import axios from 'axios';
+import { $api } from './http';
 
 // Debounced query fired twice with empty string
 let firstFirstLoad = true;
@@ -57,9 +57,9 @@ const Header: NextPage = () => {
   useEffect(() => {
     if (!state.username) return;
 
-    if (state.isAuth) {
-      $api.get(`${config.services.apiURL}/v1/user/${state.uid}`).catch(e => console.error(e)).then(res => setUserAvatar(res!.data!.avatar))
-    }
+    // if (state.isAuth) {
+    //   $api.get(`${config.services.apiURL}/v1/user/${state.uid}`).catch(e => console.error(e)).then(res => setUserAvatar(res!.data!.avatar))
+    // }
 
     setIsAuth(state.isAuth)
     setUserData(state)
@@ -75,13 +75,12 @@ const Header: NextPage = () => {
     }
 
     (async function () {
-      const res = await $api.get<{ results: ITitle[] }>(`${config.services.apiURL}/v1/titles/search?query=${debouncedQuery}`)
+      const res = await $api.get<{ results: ITitle[] }>(`/v1/titles/search?query=${debouncedQuery}`)
       setSearchResults(res.data.results)
     })()
   }, [debouncedQuery])
 
   const signOut = () => {
-    logout()
     dispatch(userSlice.actions.reducer({ isAuth: false, isNewAccount: false, roles: [], uid: '', username: '' }))
     setUserDetailsOpened(false)
     setIsAuth(false)
@@ -143,7 +142,7 @@ const Header: NextPage = () => {
               </button>
             </div>
           </> : <>
-            <Link href={`${config.services.fkAccount}/continue?ref=${config.services.siteURL}${pathname}`}>
+            <Link href={`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}/${pathname}`}>
               <IcoUser width={40} height={40} />
             </Link>
           </>}
