@@ -1,31 +1,30 @@
 'use client'
 
+import '../styles/components/Header.scss';
+import '../styles/components/serachPopup.scss'
+
 import { NextPage } from 'next';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { HeaderAccount, HeaderLogout } from '../assets/assets';
 import { Popup } from 'react-uvc'
 import { useDebounce } from 'use-debounce';
+import Link from 'next/link';
+import { HashImage } from 'hash-image';
 
-import '../styles/components/serachPopup.scss'
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
 import Loading from './Loading';
-import Link from 'next/link';
 import { routes } from '../routes';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import userSlice from '../store/reducers/userSlice';
+import userSlice, { IUserState, defaultUserState } from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
-import { HashImage } from 'hash-image';
 import { parseTitleType } from './handlers';
-import Image from 'next/image';
-import Skeleton from 'react-loading-skeleton';
 import { IcoAnimeeLogo, IcoArrow, IcoHome, IcoLibrary, IcoSearch, IcoStarRating, IcoUser } from '../assets/ico/Icos';
-
-import '../styles/components/Header.scss';
 import { LoadingImage } from './GeneralComponents';
-import axios from 'axios';
 import { $api } from './http';
+import { AxiosError } from 'axios';
+
 
 // Debounced query fired twice with empty string
 let firstFirstLoad = true;
@@ -34,36 +33,23 @@ const Header: NextPage = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const state = useAppSelector(state => state.user)
-  const [userData, setUserData] = useState<ITokenData>(useAppSelector(state => state.user))
+  const user = useAppSelector(state => state.user)
   const dispatch = useAppDispatch();
 
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery] = useDebounce(searchQuery, 350)
-  const [userDetailsOpened, setUserDetailsOpened] = useState(false)
-  const [searchResults, setSearchResults] = useState<ITitle[]>([])
-  const [isAuth, setIsAuth] = useState(state.isAuth)
   const [popup] = useState(new Popup({
     id: 'search-popup'
   }))
 
+  const [userDetailsOpened, setUserDetailsOpened] = useState(false)
+  const [searchResults, setSearchResults] = useState<ITitle[]>([])
+
   const firstLoad = useRef(true)
-  const [userAvatar, setUserAvatar] = useState('')
 
   useEffect(() => {
     popup.init()
   }, [])
-
-  useEffect(() => {
-    if (!state.username) return;
-
-    // if (state.isAuth) {
-    //   $api.get(`${config.services.apiURL}/v1/user/${state.uid}`).catch(e => console.error(e)).then(res => setUserAvatar(res!.data!.avatar))
-    // }
-
-    setIsAuth(state.isAuth)
-    setUserData(state)
-  }, [state])
 
   useEffect(() => {
     if (!debouncedQuery.length && firstLoad.current && firstFirstLoad) {
@@ -80,10 +66,23 @@ const Header: NextPage = () => {
     })()
   }, [debouncedQuery])
 
-  const signOut = () => {
-    dispatch(userSlice.actions.reducer({ isAuth: false, isNewAccount: false, roles: [], uid: '', username: '' }))
+  /** Exit from account (animee only) */
+  async function signOut() {
+    try {
+      await $api.get('/user/logout')
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        console.error(`An HTTP error occured while exiting account.\nError occured at - Providers/Storage.\nError - ${e.code}: ${e.response?.data.msg}.`)
+      } else {
+        // @ts-ignore
+        const emsg = e?.message || e?.msg;
+
+        console.error(`An error occured while exiting account.\nError occured at - Providers/Storage.\nError message - ${emsg}`)
+      }
+    }
+
+    dispatch(userSlice.actions.reducer(defaultUserState))
     setUserDetailsOpened(false)
-    setIsAuth(false)
     router.refresh();
   }
 
@@ -113,14 +112,14 @@ const Header: NextPage = () => {
             </div>
           </div>
 
-          {isAuth ? <>
+          {user.id ? <>
             <div className='flex items-center gap-[8px]'>
-              <button className={`relative flex items-center gap-[4pxT]`}>
+              <button className={`relative flex items-center gap-[4pxT]`} onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
                 <div className='relative w-[40px] h-[40px] rounded-[32px] overflow-hidden'>
-                  <LoadingImage src={userAvatar} alt='...' />
+                  <LoadingImage src={user.avatarURL!} alt='...' />
                 </div>
 
-                <button className='px-[8px] py-[8px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]' onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
+                <button className='px-[8px] py-[8px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]'>
                   <IcoArrow width={16} height={16} />
                 </button>
 
@@ -128,7 +127,7 @@ const Header: NextPage = () => {
 
                 <div className={`absolute top-[48px] right-0 bg-dark rounded-[2px] duration-200 ${userDetailsOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                   <div className='flex flex-col'>
-                    <Link className='flex items-center gap-[8px] px-[16px] py-[8px] duration-200 hover:bg-white/[.1]' href={`${routes.user.path.replace('/*', '')}/${userData.username}`}>
+                    <Link className='flex items-center gap-[8px] px-[16px] py-[8px] duration-200 hover:bg-white/[.1]' href={`${routes.user.path.replace('/*', '')}/${user.username}`}>
                       <HeaderAccount width={24} height={24} className='flex-shrink-0' />
                       <p className='text-[16px] text-white font-bold'>Акаунт</p>
                     </Link>

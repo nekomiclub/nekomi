@@ -2,7 +2,7 @@
 
 import { NextPage } from 'next';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import axios, { AxiosError } from 'axios';
 import { Provider } from 'react-redux';
 import { decode } from 'jsonwebtoken'
@@ -19,7 +19,7 @@ import userSlice from '../store/reducers/userSlice';
 import { config } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 import ServerUnavailable from '@/oops/ServerUnavailable';
-import { IUser } from '../interfaces/IUser';
+import { IUsapiUser, IUser } from '../interfaces/IUser';
 import { $api } from './http';
 
 const store = setupStore();
@@ -51,49 +51,8 @@ export function getRoute(path: string): IRoute | null {
 
 
 
-/** Setting up reduxjs storage & fetch user data */
+/** Setting up reduxjs storage */
 export const Storage: NextPage<{ children: any }> = ({ children }) => {
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const signinToken = searchParams.get('signinPayload');
-
-    (async function () {
-      // Authorize
-      if (signinToken) {
-        try {
-          await $api.post(`/user/signin`, {
-            session: signinToken
-          })
-        } catch (e) {
-          if (e instanceof AxiosError) {
-            console.error(`An HTTP error occured while authorizing.\nError occured at - Providers/Storage.\nError - ${e.code}: ${e.response?.data.msg}.`)
-          } else {
-            // @ts-ignore
-            const emsg = e?.message || e?.msg;
-
-            console.error(`An error occured while authorizing.\nError occured at - Providers/Storage.\nError message - ${emsg}`)
-          }
-        }
-      }
-
-      try {
-        const user = await $api.get<IUser>(`/user/*`)
-
-
-      } catch (e) {
-        if (e instanceof AxiosError) {
-          console.error(`An HTTP error occured while fetching user.\nError occured at - Providers/Storage.\nError - ${e.code}: ${e.response?.data.msg}.`)
-        } else {
-          // @ts-ignore
-          const emsg = e?.message || e?.msg;
-
-          console.error(`An error occured while fetching user.\nError occured at - Providers/Storage.\nError message - ${emsg}`)
-        }
-      }
-    })()
-  }, [])
-
   return (
     <Provider store={store}>
       {children}
@@ -142,13 +101,65 @@ export const Routing: NextPage<{ children: any }> = ({ children }) => {
 
 
 
-/** Setting up websocket */
+/** Setting up websocket & fetch user data */
 export const State: NextPage<{ children: any }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const dispatch = useAppDispatch();
 
   const [ws, setWs] = useState<WebSocket>()
+
+  const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
+
+  // Fetch user
+  useEffect(() => {
+    const signinToken = searchParams.get('signinPayload');
+
+    (async function () {
+      // Authorize
+      if (signinToken) {
+        try {
+          await $api.post(`/user/signin`, {
+            session: signinToken
+          })
+        } catch (e) {
+          if (e instanceof AxiosError) {
+            console.error(`An HTTP error occured while authorizing.\nError occured at - Providers/Storage.\nError - ${e.code}: ${e.response?.data.msg}.`)
+          } else {
+            // @ts-ignore
+            const emsg = e?.message || e?.msg;
+
+            console.error(`An error occured while authorizing.\nError occured at - Providers/Storage.\nError message - ${emsg}`)
+          }
+        }
+      }
+
+      try {
+        const user = await $api.get<IUser>(`/user/*`);
+        const usapiData = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${user.data.id}`)
+
+        dispatch(userSlice.actions.reducer({
+          id: user.data.id,
+          username: usapiData.data.user.username,
+          avatarURL: usapiData.data.user.photoURL,
+          roles: user.data.roles
+        }))
+
+        router.replace(`${config.URL.baseURL}/${pathname}`)
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          // Session can be not provided, ignore it 
+        } else {
+          // @ts-ignore
+          const emsg = e?.message || e?.msg;
+
+          console.error(`An error occured while fetching user.\nError occured at - Providers/Storage.\nError message - ${emsg}`)
+        }
+      }
+    })()
+  }, [])
+
+
 
   useEffect(() => {
     if (typeof window === undefined) return;

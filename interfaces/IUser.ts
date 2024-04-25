@@ -141,3 +141,21 @@ interface IUserStatsWatchedTitlesDub {
   id: string,
   totalWatch: number
 }
+
+/** Fullkekw usapi user */
+export interface IUsapiUser {
+  /** User ID */
+  id: string
+
+  /** Username */
+  username: string
+
+  /** Email. */
+  email: string
+
+  /** Photo URL */
+  photoURL: string
+
+  /** Creation timestamp */
+  createdAt: number
+}
