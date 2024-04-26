@@ -51,8 +51,12 @@ export async function generateMetadata(
 
 
 
+interface IProps extends IRSCProps<{ username: string }> {
+  children: React.ReactElement
+}
+
 // Layout
-export default async function Layout({ children, params }: IRSCProps<{ username: string }>) {
+export default async function Layout({ children, params }: IProps) {
   // @ts-expect-error Need empty object
   let userData: IExtendedUser = {}
   let isErrored = false;

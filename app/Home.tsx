@@ -7,7 +7,6 @@ import Footer from '../components/Footer';
 import { LoadingImage, TitleCard, WatchButton } from '../components/GeneralComponents';
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
-import { AddToFavorite } from './w/[query]/Watch';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import Skeleton from 'react-loading-skeleton';
 

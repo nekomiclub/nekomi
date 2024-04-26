@@ -9,10 +9,9 @@
  */
 export interface IRSCProps<A = null, B = null> {
   params: {
-    [key: string]: string | undefined
+    [key: string]: string | never
   } | A,
   searchParams: {
-    [key: string]: string | undefined
-  } | B,
-  children: React.ReactNode,
+    [key: string]: string | never
+  } | B
 }

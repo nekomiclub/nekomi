@@ -37,7 +37,18 @@ CSR components
 User list
 
 **page.tsx**
+RSC lists layout
 
+------------------------------------------
+
+## /w/[query]
+Watch title
+
+**page.tsx**
+RSC, fetch title data, set metadata & parse dubbers
+
+**Watch.tsx**
+CSR layout
 
 
 [Back](../README.md)

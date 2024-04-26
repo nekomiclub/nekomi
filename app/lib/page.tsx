@@ -7,7 +7,6 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useDebounce } from 'use-debounce';
 import { ITitle } from '../../interfaces/ITitle';
-import $api from '../../components/httpOld';
 import Loading from '../../components/Loading';
 
 import '../../styles/components/Lib.scss'
@@ -17,6 +16,7 @@ import { UserLibDelayed } from '../../assets/user';
 import { Tooltip } from 'react-tooltip';
 import { IcoArrow } from '../../assets/ico/Icos';
 import { config } from '../../config';
+import { $api } from '../../components/http';
 
 function randomInteger(min: number, max: number): number {
   return Math.floor(min + Math.random() * (max + 1 - min));
@@ -108,7 +108,7 @@ const Lib: NextPage = (props) => {
   useEffect(() => {
     setLib()
 
-    $api.get<{ results: ITitle[], total: number }>(`${config.services.apiURL}/v1/titles`).catch(e => console.error(e)).then(res => {
+    $api.get<{ results: ITitle[], total: number }>(`/v1/titles`).catch(e => console.error(e)).then(res => {
       setPages(Math.round(res!.data.total / titlesPerPage))
       setTotalTitles(res!.data.total)
     })
@@ -122,7 +122,7 @@ const Lib: NextPage = (props) => {
     }
 
     (async function () {
-      const res = await $api.get<{ results: ITitle[] }>(`${config.services.apiURL}/v1/titles/search?query=${debouncedQuery}`)
+      const res = await $api.get<{ results: ITitle[] }>(`/v1/titles/search?query=${debouncedQuery}`)
       setTitles(res.data.results)
     })()
   }, [debouncedQuery])
