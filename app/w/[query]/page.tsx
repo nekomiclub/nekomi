@@ -6,24 +6,21 @@ import { config, devMode } from "../../../config";
 import axios from "axios";
 import { IDubber } from "../../../interfaces/IDubber";
 import { parseTitleDubbers } from "../../../components/handlers";
-
-interface IProps {
-  params: { query: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
+import { IRSCProps } from "../../../interfaces/IRSC";
+import { $api } from "../../../components/http";
 
 export async function generateMetadata(
-  { params, searchParams }: IProps,
+  { params, searchParams }: IRSCProps<{ query: string }>,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
     const { data } = await axios.get<ITitle>(`${config.services.apiURL}/v1/title/${params.query}`)
 
     return {
-      title: `${data.names.ukr || data.names.eng} на animee`,
+      title: data.names.ukr || data.names.eng,
       description: data.description,
       metadataBase: new URL(`https://api.animee.club`),
-      keywords: [data.names.ukr, data.names.eng],
+      keywords: [data.names.ukr, data.names.eng, ...data.names.alt || []],
       openGraph: {
         title: `${data.names.ukr || data.names.eng} на animee`,
         description: data.description,
@@ -43,14 +40,16 @@ export async function generateMetadata(
 }
 
 
-const RSC: NextPage<IProps> = async ({ params, searchParams }) => {
+
+// Fetch title
+const RSC: NextPage<IRSCProps<{ query: string }>> = async ({ params, searchParams }) => {
   let title: ITitle | null = null;
   let isErrored = false;
   let totalEps = 0;
   let dubbers: IDubber[] | null = null
 
   try {
-    const { data: payload } = await axios.get<ITitle>(`${config.services.apiURL}/v1/title/${params.query}`)
+    const { data: payload } = await $api.get<ITitle>(`/v1/title/${params.query}`)
 
     title = payload;
 

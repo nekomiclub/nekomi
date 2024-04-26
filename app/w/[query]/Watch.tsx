@@ -19,7 +19,6 @@ import { LoadingImage, WatchButton } from '../../../components/GeneralComponents
 import { IcoSupportBymeacoffe, IcoSupportDiaka, IcoSocialInstagram, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/assets';
 import Footer from '../../../components/Footer';
 import { useAppSelector } from '../../../hooks/redux';
-import $api from '../../../components/httpOld';
 import { IUser } from '../../../interfaces/IUser';
 import { IcoEyeSuccess, IcoFilledClock, IcoFilledPlans } from '../../../assets/ico/eye';
 import { IcoFolderAdd } from '../../../assets/ico/folder';
@@ -27,6 +26,7 @@ import { IUserState } from '../../../store/reducers/userSlice';
 import KekwPlayer from '../../../components/KekwPlayer';
 
 import './styles.scss';
+import { $api } from '../../../components/http';
 
 interface IProps {
   title: ITitle,
@@ -42,34 +42,44 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
   const [titleLists, setTitleLists] = useState<TitleLists[]>([])
   const [isLibsSelectOpen, setIsLibsSelectOpen] = useState(false)
 
-  const user = useAppSelector(state => state.user)
+  const state = useAppSelector(state => state.user)
+  const [user, setUser] = useState<IUser>()
 
   useEffect(() => {
-    if (user.username) {
-      (async function () {
-        try {
-          const { data } = await $api.get<IUser>(`${config.services.apiURL}/v1/user/${user.username}`);
-          let lists: TitleLists[] = []
+    // Pass if user if not authorized
+    if (!state.id) return
 
-          data.lists.forEach(list => {
-            if (list.titles.includes(title.id)) {
-              lists.push(list.id.split('-')[0] as TitleLists)
+    // Define titles that already in user lists
+    (async function () {
+      try {
+        const { data } = await $api.get<IUser>(`/user/${state.id}`);
+        setUser(data);
 
-              if (list.id.includes('favorite')) {
-                setTitleLiked(true)
-              }
+        let lists: TitleLists[] = []
+
+        data.lists.forEach(list => {
+          if (list.titles.includes(title.id)) {
+            lists.push(list.id.split('-')[0] as TitleLists)
+
+            if (list.id.includes('favorite')) {
+              setTitleLiked(true)
             }
-          })
+          }
+        })
 
-          setTitleLists(lists);
-        } catch (e) {
-          console.error(e)
-        }
-      })()
+        setTitleLists(lists);
+      } catch (e) {
+        console.error(e)
+      }
+    })()
+  }, [state])
+
+  async function changeTitleList(list: TitleLists) {
+    if (!user) {
+      console.error(`User is undefined`)
+      return
     }
-  }, [user])
 
-  function changeTitleList(list: TitleLists) {
     if (list === 'favorite') {
       setTitleLiked(!titleLiked)
     }
@@ -83,20 +93,10 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
     }
 
     try {
-      $api.get<IUser>(`${config.services.apiURL}/v1/user/${user.username}`).catch(e => console.error(e)).then(res => {
-        const user = res!.data;
-
-        user.lists.forEach(list => {
-          if (lists.includes(list.id.split('-')[0] as TitleLists)) {
-            list.titles.push(title.id)
-          } else {
-            list.titles = list.titles.filter(el => el !== title.id)
-          }
-
-          user.lists = [...user.lists.filter(el => el.id !== list.id), list]
-        })
-
-        $api.patch(`${config.services.apiURL}/v1/user`, user)
+      await $api.patch('/user', {
+        method: 'editFolderItem',
+        titleId: title.id,
+        folderId: user.lists.find(el => el.id.includes(list))!.id
       })
     } catch (e) {
       console.error(e)
@@ -148,11 +148,18 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                 <WatchButton href='#player' gradient='primary' className='max-[600px]:w-full justify-center' />
 
                 <div className='flex gap-[8px]'>
-                  <AddToFavorite user={user} setTitleLiked={setTitleLiked} titleId={title.id} titleLiked={titleLiked} />
+                  <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${state.id ? 'title-like--auth' : 'bg-grey/[.3] title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!state.id} onClick={() => changeTitleList('favorite')}>
+                    <Tooltip content={state.id ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
+                      <div className='relative'>
+                        <IcoHeart width={40} height={40} className='title-like-ico' gradient='primary' />
+                        <IcoHeartFilled width={40} height={40} className={`title-like-filled`} gradient='primary' />
+                      </div>
+                    </Tooltip>
+                  </button>
 
                   <div className='relative flex justify-center items w-full'>
-                    <button className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${user.isAuth ? 'title-add--auth' : 'bg-grey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} disabled={!user.isAuth} onClick={() => setIsLibsSelectOpen(!isLibsSelectOpen)}>
-                      <Tooltip content={user.isAuth ? `Додати тайтл в теки` : 'Авторизуйтесь, для того щоб додавати тайтли в теки'}>
+                    <button className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${state.id ? 'title-add--auth' : 'bg-grey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} disabled={!state.id} onClick={() => setIsLibsSelectOpen(!isLibsSelectOpen)}>
+                      <Tooltip content={state.id ? `Додати тайтл в теки` : 'Авторизуйтесь, для того щоб додавати тайтли в теки'}>
                         <IcoFolderAdd width={40} height={40} />
                       </Tooltip>
                     </button>
@@ -319,45 +326,6 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
       </div>
     </>
   );
-}
-
-export const AddToFavorite: NextPage<{ user: IUserState, titleLiked: boolean, setTitleLiked: (state: boolean) => void, titleId: string }> = ({ user, titleLiked, setTitleLiked, titleId }) => {
-  async function changeTitleLiked() {
-    setTitleLiked(!titleLiked)
-
-    if (user.username) {
-      try {
-        $api.get<IUser>(`${config.services.apiURL}/v1/user/${user.username}`).catch(e => console.error(e)).then(res => {
-          const user = res!.data;
-
-          if (titleLiked) {
-            const list = user.lists.find(el => el.id.match(/^favorite/gi))!;
-            let tmpTitles = list.titles.filter(el => el !== titleId);
-
-            list.titles = tmpTitles;
-            user.lists.find(el => el.id.match(/^favorite/gi))!.titles = list.titles;
-          } else {
-            user.lists.find(el => el.id.match(/^favorite/gi))!.titles.push(titleId)
-          }
-
-          $api.patch(`${config.services.apiURL}/v1/user`, user)
-        })
-      } catch (e) {
-        console.error(e)
-      }
-    }
-  }
-
-  return (
-    <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${user.isAuth ? 'title-like--auth' : 'bg-grey/[.3] title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!user.isAuth} onClick={() => changeTitleLiked()}>
-      <Tooltip content={user.isAuth ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
-        <div className='relative'>
-          <IcoHeart width={40} height={40} className='title-like-ico' gradient='primary' />
-          <IcoHeartFilled width={40} height={40} className={`title-like-filled`} gradient='primary' />
-        </div>
-      </Tooltip>
-    </button>
-  )
 }
 
 const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dubber, className }) => {
