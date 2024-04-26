@@ -159,3 +159,6 @@ export interface IUsapiUser {
   /** Creation timestamp */
   createdAt: number
 }
+
+/** Merged IUser and IUsapiUser interface */
+export interface IExtendedUser extends IUser, IUsapiUser { }

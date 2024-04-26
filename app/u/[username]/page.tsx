@@ -1,53 +1,60 @@
 import { NextPage } from 'next';
-import { IUser, IUserList } from '../../../interfaces/IUser';
+import axios from 'axios';
+import { decode } from 'jsonwebtoken';
+import { cookies, headers } from 'next/headers';
+
+import { IExtendedUser, IUsapiUser, IUser, IUserList } from '../../../interfaces/IUser';
 import { LibItem, UserListsContent } from './content';
 import { config } from '../../../config';
-import axios from 'axios';
-import { cookies, headers } from 'next/headers';
-import { decode } from 'jsonwebtoken';
-import { ITokenData } from '../../../interfaces/ITokenData';
+import { ISessionCookieData, ITokenData } from '../../../interfaces/ITokenData';
+import { IRSCProps } from '../../../interfaces/IRSC';
+import { $api } from '../../../components/http';
 
-interface IProps {
-  params: { username: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
 
-const UserLists: NextPage<IProps> = async ({ params, searchParams }) => {
+
+/** User RSC lists */
+const UserLists: NextPage<IRSCProps<{ username: string }>> = async ({ params, searchParams }) => {
   let isErrored = false;
+  let emsg = ''
 
   const { username } = params;
   // @ts-expect-error Need empty object
-  let user: IUser = {}
+  let user: IExtendedUser = {}
+  let isOwner = false;
 
   try {
-    await axios.get<IUser>(`${config.services.apiURL}/v1/user/${params.username}`).then(res => {
-      const data = res.data;
-      let tmpLists: IUserList[] = []
-      tmpLists.unshift(data!.lists.slice(data.lists.findIndex(el => el.id.match(/watching/g)))[0])
-      tmpLists.unshift(data!.lists.slice(data.lists.findIndex(el => el.id.match(/favorite/g)))[0])
+    const { data: usapiData } = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${params.username}`)
+    const { data } = await $api.get<IUser>(`/user/${usapiData.user.id}`)
 
-      user.lists = [...tmpLists, ...data.lists.filter(el => !tmpLists.some(list => el.id === list.id))]
-      user = data;
-    })
+    user = Object.assign({ ...data, ...usapiData.user })
   } catch (e) {
     isErrored = true;
   }
 
-  if (!user.uid) {
+  if (!user.id) {
+    emsg = 'User id is not found at /u/[username]/page.tsx'
     isErrored = true;
   }
 
-  const token = cookies().get('oldRefreshToken')?.value;
-  // @ts-expect-error Need empty object
-  let tokenPayload: ITokenData = {}
+  const token = cookies().get('SEC_31N')?.value;
 
   if (token) {
-    tokenPayload = decode(token)! as ITokenData;
+    try {
+      const payload = decode(token) as ISessionCookieData;
+
+      if (payload.userId === user.id) {
+        isOwner = true
+      } else {
+        isOwner = false
+      }
+    } catch (e) {
+      isOwner = false
+      isErrored = true;
+      emsg = `An error occured while decoding token at /u/[username]/page.tsx - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`
+    }
   }
 
-  const isOwner = tokenPayload.username === username;
-
-  return isErrored ? <p className='text-[24px] text-white font-bold'>Йой, ви не повинні були цього бачити! Створіть будь ласка тікет з темою: UserLists data fetch error та прікріпіть лог консолі (F12 - Консоль)</p> : (
+  return isErrored ? <p className='text-[24px] text-white font-bold'>Отакої. Створіть в діскорді animee тікет про це, будь ласка! Помилка - {emsg}</p> : (
     <>
       <UserListsContent user={user} isOwner={isOwner} />
     </>

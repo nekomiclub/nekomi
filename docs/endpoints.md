@@ -3,6 +3,8 @@
 [Back](../README.md)
 
 ## /
+Home endpoint
+
 **layout.tsx**
 Root layout. Includes global metadata, server availablity check, state provider & skeleton theme
 
@@ -14,5 +16,28 @@ Home RSC. Fetch titles, set metadata & etc.
 
 **Home.tsx**
 Page layout
+
+------------------------------------------
+
+## /u/[username]
+User profile endpoint
+
+**layout.tsx**
+Layout. Provides metadata & fetch user data. Set initial layout with header, bg & content
+
+**page.tsx**
+RSC lists fetching & defining if user is account owner by session cookie
+
+**content.tsx**
+CSR components
+
+------------------------------------------
+
+## /u/[username]/list/[listId]
+User list
+
+**page.tsx**
+
+
 
 [Back](../README.md)

@@ -141,7 +141,7 @@ const Header: NextPage = () => {
               </button>
             </div>
           </> : <>
-            <Link href={`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}/${pathname}`}>
+            <Link href={`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}${pathname}`}>
               <IcoUser width={40} height={40} />
             </Link>
           </>}

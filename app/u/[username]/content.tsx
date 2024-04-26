@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef, RefObject } from 'react'
-import { IUser, IUserList } from '../../../interfaces/IUser';
+import { IExtendedUser, IUser, IUserList } from '../../../interfaces/IUser';
 import { IcoAccordionArrow, IcoArrow, IcoCalendar, IcoFolderPlain, IcoHome, IcoSettings, IcoStats, IcoWatching } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { useAppSelector } from '../../../hooks/redux';
@@ -21,6 +21,9 @@ import { LoadingImage } from '../../../components/GeneralComponents';
 
 type TTab = 'home' | 'stats' | 'library' | 'settings';
 
+
+
+/** Profile CSR sidebar item */
 export const SidebarItem: NextPage<{ currTab: TTab, tab: TTab, setTab: (tab: TTab) => void }> = ({ setTab, tab, currTab }) => {
   return (
     <button className={`user-sidebar-item flex gap-[16px] items-center px-[8px] py-[4px] rounded-[2px] duration-200 hover:bg-dark/[.2] ${currTab === tab ? 'bg-dark/[.4]' : ''}`} onClick={() => setTab(tab)}>
@@ -39,6 +42,9 @@ export const SidebarItem: NextPage<{ currTab: TTab, tab: TTab, setTab: (tab: TTa
   )
 }
 
+
+
+/** Profile CSR list item */
 export const LibItem: NextPage<{ list: IUserList, isOwner: boolean, link: string }> = ({ list, isOwner, link }) => {
   return (
     <>
@@ -61,29 +67,27 @@ export const LibItem: NextPage<{ list: IUserList, isOwner: boolean, link: string
   )
 }
 
-export const UserHeader: NextPage<{ user: IUser }> = ({ user }) => {
+
+
+/** User CSR header */
+export const UserHeader: NextPage<{ user: IExtendedUser }> = ({ user }) => {
   return (
     <>
       <div className='flex w-full items-center gap-[40px] pb-[16px] max-[550px]:flex-col'>
         <div className='relative w-[128px] h-[128px] rounded-[4px] overflow-hidden'>
-          <LoadingImage src={user.avatar} />
+          <LoadingImage src={user.photoURL} />
         </div>
 
         <div className='flex flex-col gap-[4px]'>
           <div className='flex gap-[24px] items-center max-[550px]:justify-center'>
             <h1 className='text-[32px] text-white font-bold'>@{user.username}</h1>
-
-            {/* Badges */}
-            <div className='flex items-center gap-[4px]'></div>
           </div>
 
           <div className='flex items-center gap-[8px] max-[550px]:justify-center'>
-            {/* Level */}
-            {/* <div className='flex items-center gap-[8px]'></div> */}
-
             <Tooltip content={`Дата створення акаунту`}>
               <div className='flex items-center gap-[8px]'>
                 <IcoCalendar className='user-created' />
+                {/* May be deprecated in future */}
                 <p className='text-[16px] text-white font-extralight'>{new Date(user.stats.createdAt).toLocaleString('uk').split(',')[0]}</p>
               </div>
             </Tooltip>
@@ -94,8 +98,10 @@ export const UserHeader: NextPage<{ user: IUser }> = ({ user }) => {
   )
 }
 
-export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' | 'list' }> = ({ user, children, type }) => {
-  const params = useParams<{ username: string }>()
+
+
+/**  */
+export const UserContent: NextPage<{ user: IExtendedUser, children: any }> = ({ user, children }) => {
   const router = useRouter();
   const state = useAppSelector(state => state.user)
   const [tab, setTab] = useState<TTab>('library')
@@ -104,9 +110,17 @@ export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' |
   const root = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!state.uid) return;
+    // Pass if user is not authorized
+    if (!state.id) {
+      setIsOwner(false);
+      return;
+    }
 
-    setIsOwner(state.username === params.username)
+    if (state.id === user.id) {
+      setIsOwner(true)
+    } else {
+      setIsOwner(false)
+    }
   }, [state])
 
   useEffect(() => {
@@ -176,15 +190,17 @@ export const UserContent: NextPage<{ user: IUser, children: any, type: 'lists' |
   );
 }
 
+
+
+/** User CSR background */
 export const UserBackground: NextPage<{ src: string }> = ({ src }) => {
-  return (
-    <>
-      <LoadingImage src={src} />
-    </>
-  )
+  return <LoadingImage src={src} />
 }
 
-export const UserListsContent: NextPage<{ user: IUser, isOwner: boolean }> = ({ user, isOwner }) => {
+
+
+/** User CSR lists */
+export const UserListsContent: NextPage<{ user: IExtendedUser, isOwner: boolean }> = ({ user, isOwner }) => {
   return (
     <>
       {user.lists.some(el => !el.hidden) || isOwner ? <>

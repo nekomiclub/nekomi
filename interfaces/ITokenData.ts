@@ -8,3 +8,10 @@ export interface ITokenData {
   iat?: number,
   exp?: number
 }
+
+/** Fullkekw usapi token saved in cookies */
+export interface ISessionCookieData {
+  sessionId: string,
+  timestamp: number,
+  userId: string
+}

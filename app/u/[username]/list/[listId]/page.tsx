@@ -3,73 +3,79 @@
 import { NextPage } from 'next';
 import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { IUser, IUserList, TUserListType } from '../../../../../interfaces/IUser';
+import { Jelly } from '@uiball/loaders'
+import Link from 'next/link';
+
+import { IUsapiUser, IUser, IUserList } from '../../../../../interfaces/IUser';
 import { config } from '../../../../../config';
-import $api from '../../../../../components/httpOld';
 import { IcoArrow, IcoSettings } from '../../../../../assets/ico/Icos';
 import Tooltip from '../../../../../components/Tooltip';
 import Loading from '../../../../../components/Loading';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../../../assets/ico/eye';
 import { useAppSelector } from '../../../../../hooks/redux';
-import Link from 'next/link';
 import { routes } from '../../../../../routes';
 import { ITitle } from '../../../../../interfaces/ITitle';
-import { Jelly } from '@uiball/loaders'
-import { ITokenData } from '../../../../../interfaces/ITokenData';
 import { TitleCard } from '../../../../../components/GeneralComponents';
+import { $api } from '../../../../../components/http';
+import axios from 'axios';
 
 const UserList: NextPage = (props) => {
   const [isErrored, setIsErrored] = useState(false)
-  const [user, setUser] = useState<IUser>()
   const [list, setList] = useState<IUserList>()
   const [listNotFound, setListNotFound] = useState(false)
-  const [listType, setListType] = useState<TUserListType>()
   const params = useParams<{ username: string, listId: string }>()
   const [isOwner, setIsOwner] = useState(false);
   const [rawTitles, setRawTitles] = useState<ITitle[]>([])
   const [titles, setTitles] = useState<ITitle[]>([])
 
   const state = useAppSelector(state => state.user)
-  const [userData, setUserData] = useState<ITokenData>()
 
+  // Fetch list
   useEffect(() => {
     try {
-      $api.get<IUser>(`${config.services.apiURL}/v1/user/${params.username}`).then(res => {
-        setUser(res.data)
+      (async function () {
+        const { data: usapiData } = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${params.username}`)
+        const { data } = await $api.get<IUser>(`/user/${usapiData.user.id}`)
 
-        const list = res.data.lists.find(el => el.id === params.listId);
+        const list = data.lists.find(el => el.id === params.listId);
 
         if (list) {
-          setList(res.data.lists.find(el => el.id === params.listId))
+          setList(data.lists.find(el => el.id === params.listId))
         } else {
           setListNotFound(true)
         }
-      })
+      })()
     } catch (e) {
       console.error(e)
       setIsErrored(true)
     }
   }, [])
 
+  // Define if user is account owner
   useEffect(() => {
-    if (!state.username) return;
+    if (!state.id) {
+      setIsOwner(false)
+      return
+    };
 
-    setUserData(state)
-    setIsOwner(state.username === params.username)
+    if (state.username === params.username) {
+      setIsOwner(true);
+    }
   }, [state])
 
+
+  // Fetch titles
   useEffect(() => {
     if (!list) return;
 
     list.titles.forEach(title => {
-      $api.get<ITitle>(`${config.services.apiURL}/v1/title/${title}`).catch(e => console.error(e)).then(res => {
+      axios.get<ITitle>(`${config.URL.apiHTTP}/v1/title/${title}`).catch(e => console.error(e)).then(res => {
         setRawTitles(prev => [...prev.filter(el => el.id !== res!.data.id), res!.data])
       })
     })
-
-    setListType(list?.id.split('-')[0]! as TUserListType)
   }, [list])
 
+  // Idk but it works
   useEffect(() => {
     if (rawTitles.length !== list?.titles.length) return;
     setTitles(rawTitles.reverse());

@@ -1,35 +1,37 @@
+import './styles.scss'
+
 import axios from "axios";
-import { IUser } from "../../../interfaces/IUser";
-import { config } from "../../../config";
+import { headers } from 'next/headers'
 import { Metadata, ResolvingMetadata } from "next";
+import { HashImage } from "hash-image";
+
+import { IExtendedUser, IUsapiUser, IUser } from "../../../interfaces/IUser";
+import { config } from "../../../config";
 import NotFound from "@/oops/404/page";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import { UserHeader, UserContent, UserBackground } from "./content";
-import { headers } from 'next/headers'
 
 
 import DefaultBg from '../../../assets/defaultLargeImages/1.webp'
-import './styles.scss'
 import { getRoute } from "../../../components/Providers";
-import { HashImage } from "hash-image";
+import { $api } from '../../../components/http';
+import { IRSCProps } from '../../../interfaces/IRSC';
 
-interface IProps {
-  children: React.ReactNode,
-  params: { username: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
 
+
+// Generate metadata
 export async function generateMetadata(
-  { params, searchParams }: IProps,
+  { params, searchParams }: IRSCProps<{ username: string }>,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const { data } = await axios.get<IUser>(`${config.services.apiURL}/v1/user/${params.username}`);
+    const { data: usapiData } = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${params.username}`)
+    const { data } = await $api.get(`/user/${usapiData.user.id}`)
 
     return {
-      title: `@${data.username} - animee`,
-      description: `Сторінка @${data.username}`,
+      title: `@${data.username}`,
+      description: `Сторінка @${data.username} на animee.club`,
       metadataBase: new URL(`https://api.animee.club`),
       openGraph: {
         title: `@${data.username} - animee`,
@@ -37,7 +39,7 @@ export async function generateMetadata(
         url: `https://animee.club/w/${data.username}`,
         siteName: 'Animee',
         type: 'profile',
-        images: data.avatar
+        images: usapiData.user.photoURL
       }
     }
   } catch (e) {
@@ -47,14 +49,20 @@ export async function generateMetadata(
   }
 }
 
-export default async function Layout({ children, params }: IProps) {
-  // @ts-ignore
-  let userData: IUser = {};
+
+
+// Layout
+export default async function Layout({ children, params }: IRSCProps<{ username: string }>) {
+  // @ts-expect-error Need empty object
+  let userData: IExtendedUser = {}
   let isErrored = false;
 
+  // Fetch user
   try {
-    const { data } = await axios.get<IUser>(`${config.services.apiURL}/v1/user/${params.username}`);
-    userData = data;
+    const { data: usapiData } = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${params.username}`)
+    const { data } = await $api.get<IUser>(`/user/${usapiData.user.id}`)
+
+    userData = Object.assign({ ...data, ...usapiData.user })
   } catch (e) {
     isErrored = true
   }
@@ -65,7 +73,7 @@ export default async function Layout({ children, params }: IProps) {
     <main className='w-full min-h-screen h-full bg-dark flex flex-col justify-center items-center py-[120px]'>
 
       <div className='fixed w-full h-full top-0 left-0'>
-        <UserBackground src={userData.profileBg || DefaultBg.src} />
+        <UserBackground src={DefaultBg.src} />
       </div>
 
       <div className="wrapper max-w-[1170px]">
@@ -76,7 +84,8 @@ export default async function Layout({ children, params }: IProps) {
             <span className='block w-full h-[1px] rounded-[2px] bg-white/[.2]'></span>
 
             <div className="flex pt-[8px] gap-[8px]">
-              <UserContent user={userData} type="lists">
+              <UserContent user={userData}>
+                {/* Here children is page.tsx */}
                 {children}
               </UserContent>
             </div>
