@@ -375,7 +375,7 @@ const KekwPlayer: NextPage<{
       document.addEventListener('keydown', handler)
     }
 
-    function handler(e: any) {
+    function handler(e: KeyboardEvent) {
       const video = videoRef.current;
       const player = playerRef.current;
 
@@ -384,6 +384,17 @@ const KekwPlayer: NextPage<{
       const key = e.code;
 
       switch (key) {
+        case 'Space': {
+          if (isPlaying) {
+            video.pause()
+          } else {
+            video.play().catch(e => null)
+          }
+
+          e.preventDefault();
+          break;
+        }
+
         // Play
         case 'KeyK': {
           if (isPlaying) {
@@ -621,7 +632,7 @@ const KekwPlayer: NextPage<{
     }
 
     // Set video src
-    const epData = dub.eps.find(el => el.order === ep);
+    const epData = dub.eps.find(el => el.order === ep || el.order === dub.eps[0].order);
 
     if (dub !== prevDub.current && ep === prevEp.current) {
       changeVideoSrc(epData!.source[quality], videoMoment, true)
@@ -789,18 +800,7 @@ const KekwPlayer: NextPage<{
       changePreivewFormat(dub);
       setDub(dub)
       setEp(localRecord.ep)
-      let i = 0;
-
-      let int = setInterval(() => {
-        if (i < 5) {
-          changeMoment(localRecord.moment)
-          videoRef.current!.play();
-          i++
-        } else {
-          i = 0;
-          clearInterval(int)
-        }
-      }, 100)
+      changeMoment(localRecord.moment)
     }
 
     setIsContinueMenuOpen(false)

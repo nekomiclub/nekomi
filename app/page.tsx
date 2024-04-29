@@ -43,8 +43,8 @@ const RSC: NextPage = async (props) => {
     for (const i in watchingNowIDS) {
       const id = watchingNowIDS[i];
 
-      const { data } = await axios.get<ITitle>(`${config.services.apiURL}/v1/title/${id}`);
-      watchingNow.push(data)
+      const { data } = await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${id}`);
+      watchingNow.push(data.title)
     }
   } catch (e) {
     errored = true;

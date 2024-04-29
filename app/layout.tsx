@@ -41,7 +41,7 @@ export default async function RootLayout({
 }) {
   // Check server availability
   let serverAvailable = false;
-  await axios.get(`${config.services.apiURL}/v1/uptime`).then(() => serverAvailable = true).catch(() => serverAvailable = false)
+  await axios.get(`${config.URL.apiHTTP}/v1/uptime`).then(() => serverAvailable = true).catch(() => serverAvailable = false)
 
   return (
     <html lang="ua">

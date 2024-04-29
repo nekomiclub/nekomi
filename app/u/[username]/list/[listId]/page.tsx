@@ -69,8 +69,8 @@ const UserList: NextPage = (props) => {
     if (!list) return;
 
     list.titles.forEach(title => {
-      axios.get<ITitle>(`${config.URL.apiHTTP}/v1/title/${title}`).catch(e => console.error(e)).then(res => {
-        setRawTitles(prev => [...prev.filter(el => el.id !== res!.data.id), res!.data])
+      axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${title}`).catch(e => console.error(e)).then(res => {
+        setRawTitles(prev => [...prev.filter(el => el.id !== res!.data.title.id), res!.data.title])
       })
     })
   }, [list])

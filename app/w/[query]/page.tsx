@@ -14,7 +14,8 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const { data } = await axios.get<ITitle>(`${config.services.apiURL}/v1/title/${params.query}`)
+    const res = await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${params.query}`)
+    const data = res.data.title
 
     return {
       title: data.names.ukr || data.names.eng,
@@ -49,11 +50,11 @@ const RSC: NextPage<IRSCProps<{ query: string }>> = async ({ params, searchParam
   let dubbers: IDubber[] | null = null
 
   try {
-    const { data: payload } = await $api.get<ITitle>(`/v1/title/${params.query}`)
+    const res = await $api.get<{ title: ITitle }>(`/title/${params.query}`)
 
-    title = payload;
+    title = res.data.title;
 
-    payload.dubs?.forEach(dub => {
+    title.dubs?.forEach(dub => {
       if (dub.eps.length > totalEps) totalEps = dub.eps.length;
     })
 
