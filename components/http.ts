@@ -10,7 +10,7 @@ export const $api = axios.create({
 })
 
 $api.interceptors.request.use(async cfg => {
-  cfg.headers['CSRF_TOKEN'] = signCSRF();
+  cfg.headers['X-CSRF-Token'] = signCSRF();
 
   return cfg;
 })
