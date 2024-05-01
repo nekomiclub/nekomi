@@ -122,6 +122,8 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
           await $api.post(`/user/signin`, {
             session: signinToken
           })
+
+          router.replace(`${config.URL.baseURL}/${pathname}`)
         } catch (e) {
           if (e instanceof AxiosError) {
             console.error(`An HTTP error occured while authorizing.\nError occured at - Providers/Storage.\nError - ${e.code}: ${e.response?.data.msg}.`)
@@ -144,8 +146,6 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
           avatarURL: usapiData.data.user.photoURL,
           roles: user.data.roles
         }))
-
-        router.replace(`${config.URL.baseURL}/${pathname}`)
       } catch (e) {
         if (e instanceof AxiosError) {
           // Session can be not provided, ignore it 
