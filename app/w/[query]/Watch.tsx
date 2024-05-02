@@ -292,8 +292,8 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                     {dubbers && dubbers.map((dub, i) => {
                       let immutableI = i;
 
-                      return <Link href={`${config.services.siteURL}/dub/${dub.code}`} target='_blank' key={`dubber-${dub.code}`}>
-                        <p className='text-white text-[24px] font-bold'>{dub.name}{++immutableI < title.genres.length ? ',' : ''}</p>
+                      return <Link href={`${config.URL.baseURL}/dub/${dub.code}`} target='_blank' key={`dubber-${dub.code}`}>
+                        <p className='text-white text-[24px] font-bold'>{dub.name}{++immutableI < dubbers.length ? ',' : ''}</p>
                       </Link>
                     })}
                   </div>

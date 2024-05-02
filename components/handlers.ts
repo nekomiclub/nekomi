@@ -6,7 +6,7 @@ import axios from "axios";
  * @returns Array of dubbers objects
  */
 export async function parseTitleDubbers(queries: string[]): Promise<IDubber[]> {
-  const { data } = await axios.post<{ results: IDubber[] }>(`${config.services.apiURL}/v1/dubber/parse`, {
+  const { data } = await axios.post<{ results: IDubber[] }>(`${config.URL.apiHTTP}/v1/dubber/parse`, {
     queries
   })
 

@@ -102,8 +102,6 @@ const KekwPlayer: NextPage<{
     onAction: () => setIsIdle(false)
   })
 
-  useEffect(() => console.log(videoSrc), [videoSrc])
-
   // Effects
   //* Initial effects. Assing dub, define previews format, check if frames are processed, define is client mobile
   useEffect(() => {
@@ -1126,7 +1124,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
 
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
       <button className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex justify-between gap-[8px] focus-visible:bg-purple rounded-[2px] w-full ${dub.id === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
-        <p className='text-white'>{dubbers.find(el => el.id === dub.id)!.name}</p>
+        <p className='text-white'>{dubbers.find(el => el.id === dub.id)?.name}</p>
 
         <div className='flex gap-[4px]'>
           <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
