@@ -535,49 +535,59 @@ const KekwPlayer: NextPage<{
 
   //* Change end screen due to time & ep & dub
   useEffect(() => {
-    if (duration < 10 || !videoMoment || !dub) return;
+    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
+
+    if (timeline) {
+      // Change preview frame
+      timeline.addEventListener('pointermove', pointermoveHandler)
+    };
 
     //* End screen
-    if (!dub) return;
+    if (duration > 10 && videoMoment && dub) {
+      if (videoMoment >= duration - 2) {
+        let nextEp = ep;
+        nextEp += 1;
+        setIsTimeToEndScreen(true)
 
-    if (videoMoment >= duration - 2) {
-      let nextEp = ep;
-      nextEp += 1;
-      setIsTimeToEndScreen(true)
+        const isNextEpExist = dub.eps.some(el => el.order === nextEp); // Last episode in dub
+        const isTitleEnded = title.estimatedEps === ep; // Title ended
 
-      const isNextEpExist = dub.eps.some(el => el.order === nextEp); // Last episode in dub
-      const isTitleEnded = title.estimatedEps === ep; // Title ended
-
-      if (isTitleEnded) {
-        setEndScreen('titleEnded')
-      } else if (isNextEpExist) {
-        setEndScreen('epEnded')
-      } else if (!isNextEpExist) {
-        setEndScreen('lastEp')
+        if (isTitleEnded) {
+          setEndScreen('titleEnded')
+        } else if (isNextEpExist) {
+          setEndScreen('epEnded')
+        } else if (!isNextEpExist) {
+          setEndScreen('lastEp')
+        } else {
+          setEndScreen('clear')
+        }
       } else {
-        setEndScreen('clear')
+        if (endScreen !== 'clear') {
+          setIsTimeToEndScreen(false);
+          setEndScreen('clear')
+        }
       }
-    } else {
-      if (endScreen !== 'clear') {
-        setIsTimeToEndScreen(false);
-        setEndScreen('clear')
-      }
+    };
+
+    function pointermoveHandler(e: PointerEvent) {
+      movePreview(e.offsetX)
+    }
+
+    return () => {
+      timeline.removeEventListener('pointermove', pointermoveHandler)
     }
   }, [duration, videoMoment, ep, dub])
 
   //* Update progress due to timeupdate & change preview offset
   useEffect(() => {
     const video = videoRef.current;
-    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
 
-    if (!duration || !video || !timeline) return;
+    if (!duration || !video) return;
 
     video.addEventListener('timeupdate', () => changeMoment(video.currentTime, true));
-    timeline.addEventListener('pointermove', e => movePreview(e.offsetX))
 
     return () => {
       video.removeEventListener('timeupdate', () => changeMoment(video.currentTime, true))
-      timeline.removeEventListener('pointermove', e => movePreview(e.offsetX))
     }
   }, [duration])
 
@@ -770,7 +780,7 @@ const KekwPlayer: NextPage<{
 
     const offset = previewIndex * imgWidth;
 
-    if (img.getAttribute('src') !== frame) img.setAttribute('src', frame);
+    img.setAttribute('src', frame)
     img.style.objectPosition = `-${offset}px`
   }
 
