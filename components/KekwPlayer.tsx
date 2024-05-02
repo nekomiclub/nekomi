@@ -102,6 +102,7 @@ const KekwPlayer: NextPage<{
     onAction: () => setIsIdle(false)
   })
 
+  useEffect(() => console.log(videoSrc), [videoSrc])
 
   // Effects
   //* Initial effects. Assing dub, define previews format, check if frames are processed, define is client mobile
@@ -632,7 +633,13 @@ const KekwPlayer: NextPage<{
     }
 
     // Set video src
-    const epData = dub.eps.find(el => el.order === ep || el.order === dub.eps[0].order);
+    let epData = dub.eps.find(el => el.order === ep);
+
+    // Set epsiode to first in array if current is not available
+    if (!epData) {
+      setEp(dub.eps[0].order)
+      return
+    }
 
     if (dub !== prevDub.current && ep === prevEp.current) {
       changeVideoSrc(epData!.source[quality], videoMoment, true)
