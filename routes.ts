@@ -22,8 +22,6 @@ export interface IRoute {
 
 interface IRoutes {
   home: IRoute,
-  oopsIndev: IRoute,
-  oops404: IRoute,
   watch: IRoute,
   watchTitle: IRoute,
   contacts: IRoute,
@@ -41,12 +39,6 @@ interface IRoutes {
 export const routes: IRoutes = {
   home: {
     path: '/'
-  },
-  oopsIndev: {
-    path: '/oops/indev',
-  },
-  oops404: {
-    path: '/oops/404',
   },
   watch: {
     path: '/w',

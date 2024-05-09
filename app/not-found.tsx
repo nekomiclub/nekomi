@@ -1,9 +1,8 @@
 import { headers } from 'next/headers'
 
-import NotFound from './oops/404/page';
 import { config } from '../config';
 import { getRoute } from '../components/ServerComponents';
-import Indev from './oops/indev/page';
+import { IndevScreen, NotFoundScreen } from '../components/OopsComponents';
 
 export default function Error({
   error,
@@ -16,14 +15,14 @@ export default function Error({
   const route = getRoute(pathname)
 
   if (!route) {
-    return <NotFound />
+    return <NotFoundScreen />
   }
 
   return <>
     {
       route.status === 'indev'
-        ? <Indev />
-        : <NotFound />
+        ? <IndevScreen />
+        : <NotFoundScreen />
     }
   </>
 }

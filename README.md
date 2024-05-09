@@ -26,7 +26,9 @@ Classes
 .break-ellipsis // Will break word with dots (lorem ips...). Require max-width specified
 ```
 
-Each request has x-url header, that contains current url
+Each request has x-url header, that contains current url.
+Server unavailable screen logic placed in ```./layout.tsx```
+404 route fallback to define if route simple not added placed in ```./not-found.tsx```
 
 *See ./components/handlers.ts*
 ## Dependencies
