@@ -4,7 +4,13 @@ import type { NextRequest, NextResponse } from 'next/server'
 
 
 export async function middleware(req: NextRequest) {
-  return res.next();
+  // Set current URL header
+  const headers = new Headers(req.headers);
+  headers.set('x-url', req.url)
+
+  return res.next({
+    headers
+  });
 }
 
 export const config = {

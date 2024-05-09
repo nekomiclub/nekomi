@@ -8,7 +8,8 @@ app
 - [/info](./endpoints.md#)
 - [/lib](./endpoints.md#)
 - [/oops](./endpoints.md#)
-- [/u](./endpoints.md#)
-- [/w](./endpoints.md#)
+- [/u](./endpoints.md#uusername)
+- [/w](./endpoints.md#wquery)
+- [/polling](./endpoints.md#polling)
 
 [Back](../README.md)

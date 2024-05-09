@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import { ITitle } from '../interfaces/ITitle';
 import Link from 'next/link';
-import { routes } from '../routes';
+import { IRoute, routes } from '../routes';
 
 import '../styles/components/GeneralComponents.scss'
 import Image from 'next/image';

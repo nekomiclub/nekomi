@@ -156,7 +156,7 @@ const Header: NextPage = () => {
             {searchResults ? <>
               {searchResults.length ? searchResults.map(title => {
                 return <Link href={`${routes.watch.path}/${title.code}`} onClick={() => document.documentElement.style.overflow = 'visible'} key={title.id}>
-                  <div className='px-[16px] py-[8px] duration-200 w-fit rounded-[4px] hover:bg-grey flex items-start gap-[16px]'>
+                  <div className='px-[16px] py-[8px] duration-200 w-fit rounded-[4px] hover:bg-darkGrey flex items-start gap-[16px]'>
                     <HashImage src={title.poster} alt={`Poster for ${title.code}`} width={60} height={80} parentClassName='shrink-0' style={{ visibility: 'inherit' }} />
 
                     <div className='flex flex-col gap-[4px]'>

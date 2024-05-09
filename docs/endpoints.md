@@ -50,5 +50,9 @@ RSC, fetch title data, set metadata & parse dubbers
 **Watch.tsx**
 CSR layout
 
+------------------------------------------
+
+## /polling
+Services status page. Depends on fk-uptime service
 
 [Back](../README.md)

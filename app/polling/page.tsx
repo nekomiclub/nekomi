@@ -4,13 +4,13 @@ import { config } from '../../config';
 import Link from 'next/link';
 
 /** Service statuses arr */
-export const ServiceStatuses = ['online', 'overloaded', 'indev', 'partial', 'outOfOrder', 'offline'] as const;
+const UptimeStatuses = ['online', 'overloaded', 'indev', 'partial', 'outOfOrder', 'offline'] as const;
 
 /** Type implementation of ServiceStatuses arr */
-export type TServiceStatus = typeof ServiceStatuses[number];
+type TServiceStatus = typeof UptimeStatuses[number];
 
 /** Uptime.json services record */
-export interface IServicesStamp {
+interface IServicesStamp {
   timestamp: number,
   fk_site: IServiceStamp,
   fk_userapi: IServiceStamp,
@@ -23,7 +23,7 @@ export interface IServicesStamp {
   animee_bot: IServiceStamp,
 }
 
-export interface IServiceStamp {
+interface IServiceStamp {
   timestamp: number,
   status: TServiceStatus,
 
@@ -55,7 +55,7 @@ const Card: NextPage<{
     color = '#E74C3C'
   }
 
-  return <div className='bg-mediumGrey px-[16px] py-[8px] rounded-[2px] flex gap-[16px] items-center max-[540px]:w-full'>
+  return <div className='bg-grey px-[16px] py-[8px] rounded-[2px] flex gap-[16px] items-center max-[540px]:w-full'>
     <ServerIco color={color} height={64} width={64} />
 
     <div className='flex flex-col gap-[4px]'>
@@ -71,6 +71,8 @@ const Card: NextPage<{
     </div>
   </div>
 }
+
+
 
 const RSC: NextPage = async (props) => {
   let isErrored = false;
@@ -116,7 +118,7 @@ const RSC: NextPage = async (props) => {
   return (
     <main className='h-full min-h-screen bg-dark w-full flex justify-center items-center'>
       <div className="wrapper justify-center items-center">
-        <div className='bg-grey px-[24px] py-[16px] my-[40px] flex flex-col gap-[40px] w-full max-w-[1200px]'>
+        <div className='bg-darkGrey px-[24px] py-[16px] my-[40px] flex flex-col gap-[40px] w-full max-w-[1200px]'>
           {isErrored ? <p className='text-red-400'>{emsg}</p> : <>
             {/* Fullkekw services */}
             <div className='flex flex-col gap-[24px]'>

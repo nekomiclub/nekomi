@@ -3,12 +3,20 @@ import React from "react"
 import { TUserRoles } from './interfaces/ITokenData'
 import { config, devMode } from "./config"
 
-export type TRouteStatus = 'indev' | 'works' | 'clear'
+export type TRouteStatus = 'clear' | 'indev'
 
 export interface IRoute {
-  public?: boolean,
-  access?: TUserRoles[],
-  path: string,
+  /** Route path */
+  path: string
+
+  /** Route required roles. If undefined route will be public
+   * @default undefined
+   */
+  roles?: string[]
+
+  /** Page status 
+   * @default clear
+  */
   status?: TRouteStatus
 }
 
@@ -20,116 +28,69 @@ interface IRoutes {
   oopsRestricted: IRoute,
   watch: IRoute,
   watchTitle: IRoute,
-  aboutFK: IRoute,
-  joinFK: IRoute,
   contacts: IRoute,
   agreement: IRoute,
   privatePolicy: IRoute,
   copyright: IRoute,
-  support: IRoute,
-  partners: IRoute,
-  FAQ: IRoute,
-  API: IRoute,
   user: IRoute,
   userList: IRoute,
   dubber: IRoute,
   lib: IRoute,
   polling: IRoute,
+  rickroll: IRoute,
 }
 
 export const routes: IRoutes = {
   home: {
-    public: true,
-    path: '/',
+    path: '/'
   },
   oopsIndev: {
     path: '/oops/indev',
-    public: true,
   },
   oopsWorks: {
     path: '/oops/works',
-    public: true,
   },
   oops404: {
     path: '/oops/404',
-    public: true,
   },
   oopsRestricted: {
     path: '/oops/restricted',
-    public: true,
   },
   watch: {
     path: '/w',
-    public: true,
   },
   watchTitle: {
     path: '/w/*',
-    public: true,
-  },
-  aboutFK: {
-    path: '/fk/about',
-    public: true,
-    status: 'indev'
   },
   agreement: {
     path: '/info/agreement',
-    public: true,
-  },
-  API: {
-    path: '/api',
-    public: true,
-    status: 'indev'
   },
   contacts: {
     path: '/info/contacts',
-    public: true,
   },
   copyright: {
     path: '/info/copyright',
-    public: true,
-  },
-  FAQ: {
-    path: '/info/faq',
-    public: true,
-    status: 'indev'
-  },
-  joinFK: {
-    path: '/fk/join',
-    public: true,
-    status: 'indev'
-  },
-  partners: {
-    path: '/info/partners',
-    public: true,
-    status: 'indev'
   },
   privatePolicy: {
     path: '/info/policy',
-    public: true,
-  },
-  support: {
-    path: '/support',
-    status: 'indev',
-    access: ['admin']
   },
   user: {
     path: '/u/*',
-    public: true,
   },
   userList: {
     path: '/u/*/list/*',
-    public: true,
   },
   dubber: {
     path: '/dub/*',
-    public: true,
   },
   lib: {
     path: '/lib',
-    public: true,
   },
   polling: {
     path: '/polling',
-    public: true,
+  },
+  rickroll: {
+    path: '/rickroll',
+    status: 'indev'
   },
 }

@@ -18,14 +18,20 @@ Classes
 .gradient--secondary // New background gradient
   &-hover // Fills background on hover and focus-visible
 
+// @deprecated
 .szh-slide // Slide transition for @szhsin/react-menu. Assing to parent el
   &--toTop // Appears from bottom
   &--toBottom // Appears from top
-.break-ellipsis // Will break word with dots (lorem ips...). Works only with max-width
+
+.break-ellipsis // Will break word with dots (lorem ips...). Require max-width specified
 ```
+
+Each request has x-url header, that contains current url
 
 *See ./components/handlers.ts*
 ## Dependencies
 - animee-core
 - animee-media
 - fk-usapi
+- fk-authority
+- fk-uptime (/polling)

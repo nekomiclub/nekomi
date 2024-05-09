@@ -148,7 +148,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                 <WatchButton href='#player' gradient='primary' className='max-[600px]:w-full justify-center' />
 
                 <div className='flex gap-[8px]'>
-                  <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${state.id ? 'title-like--auth' : 'bg-grey/[.3] title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!state.id} onClick={() => changeTitleList('favorite')}>
+                  <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${state.id ? 'title-like--auth' : 'bg-darkGrey/[.3] title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!state.id} onClick={() => changeTitleList('favorite')}>
                     <Tooltip content={state.id ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
                       <div className='relative'>
                         <IcoHeart width={40} height={40} className='title-like-ico' gradient='primary' />
@@ -158,13 +158,13 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   </button>
 
                   <div className='relative flex justify-center items w-full'>
-                    <button className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${state.id ? 'title-add--auth' : 'bg-grey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} disabled={!state.id} onClick={() => setIsLibsSelectOpen(!isLibsSelectOpen)}>
+                    <button className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${state.id ? 'title-add--auth' : 'bg-darkGrey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} disabled={!state.id} onClick={() => setIsLibsSelectOpen(!isLibsSelectOpen)}>
                       <Tooltip content={state.id ? `Додати тайтл в теки` : 'Авторизуйтесь, для того щоб додавати тайтли в теки'}>
                         <IcoFolderAdd width={40} height={40} />
                       </Tooltip>
                     </button>
 
-                    <div className={`absolute right-0 top-[80px] max-[430px]:top-[170px] bg-grey rounded-[2px] flex flex-col gap-[8px] py-[8px] w-max duration-200 z-[7] ${isLibsSelectOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+                    <div className={`absolute right-0 top-[80px] max-[430px]:top-[170px] bg-darkGrey rounded-[2px] flex flex-col gap-[8px] py-[8px] w-max duration-200 z-[7] ${isLibsSelectOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                       <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('favorite')}>
                         <IcoHeartFilled height={24} width={24} gradient='primary' className='flex-shrink-0' />
                         <p className='text-[16px] text-white'>{titleLiked ? 'Вилучити з улюблених' : 'Додати в улюблені'}</p>
@@ -312,7 +312,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
             </div>
 
             <DubberDetails dubber={dubber} />
-          </div> : <div className='w-full h-[400px] bg-grey flex justify-center items-center rounded-[4px]'>
+          </div> : <div className='w-full h-[400px] bg-darkGrey flex justify-center items-center rounded-[4px]'>
             <h3 className='text-white text-[24px] font-bold'>Нажаль, для цього тайтлу озвучення не завантажені.</h3>
           </div>}
 
@@ -330,7 +330,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
 
 const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dubber, className }) => {
   return (
-    <div className={`bg-grey px-[40px] py-[24px] flex flex-col gap-[24px] rounded-[4px] max-[600px]:w-full ${className ? className : ''}`}>
+    <div className={`bg-darkGrey px-[40px] py-[24px] flex flex-col gap-[24px] rounded-[4px] max-[600px]:w-full ${className ? className : ''}`}>
       {dubber ? <>
         <div className='flex items-center max-[600px]:flex-col gap-[40px]'>
           <div className='relative w-[128px] h-[128px] rounded-[128px] overflow-hidden flex-shrink-0'>
@@ -419,7 +419,7 @@ const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dub
             </>}
           </ul>
         </div>}
-      </> : <div className='w-[300px] h-[200px] bg-grey flex justify-center items-center'>
+      </> : <div className='w-[300px] h-[200px] bg-darkGrey flex justify-center items-center'>
         <RaceBy color='#fff' size={128} />
       </div>}
     </div>

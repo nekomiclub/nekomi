@@ -41,18 +41,20 @@ export default async function RootLayout({
 }) {
   // Check server availability
   let serverAvailable = false;
-  await axios.get(`${config.URL.apiHTTP}/v1/uptime`).then(() => serverAvailable = true).catch(() => serverAvailable = false)
+  await axios.options(config.URL.apiHTTP).then(() => serverAvailable = true).catch(() => serverAvailable = false)
 
   return (
     <html lang="ua">
       <body id='root'>
-        <Provider.Storage>
-          <Provider.State>
-            <SkeletonTheme baseColor='#181818' highlightColor='#222'>
-              {serverAvailable ? children : <ServerUnavailable />}
-            </SkeletonTheme>
-          </Provider.State>
-        </Provider.Storage>
+        {serverAvailable ? <>
+          <Provider.Storage>
+            <Provider.State>
+              <SkeletonTheme baseColor='#181818' highlightColor='#222'>
+                {children}
+              </SkeletonTheme>
+            </Provider.State>
+          </Provider.Storage>
+        </> : <ServerUnavailable />}
       </body>
     </html>
   )

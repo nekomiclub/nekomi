@@ -830,7 +830,7 @@ const KekwPlayer: NextPage<{
     // In view
     <div className='w-full h-full relative overflow-hidden' ref={inViewRef} id="player">
       {/* Cover */}
-      <button className={`absolute w-full h-full top-0 left-0 z-[7] bg-grey duration-200 flex justify-center items-center ${isCoverVisible ? '' : 'opacity-0 invisible'}`} onClick={() => setIsCoverVisible(false)}>
+      <button className={`absolute w-full h-full top-0 left-0 z-[7] bg-darkGrey duration-200 flex justify-center items-center ${isCoverVisible ? '' : 'opacity-0 invisible'}`} onClick={() => setIsCoverVisible(false)}>
         <IcoPlay width={256} height={256} gradient='secondary' />
       </button>
 
@@ -862,7 +862,7 @@ const KekwPlayer: NextPage<{
               <p className='text-white text-[24px] text-center max-[680px]:text-[16px]'>{dubs.find(el => el.id === localData?.dub)?.name || 'Команда невідома'}</p>
             </div>
 
-            <div className='flex items-center max-[680px]:flex-col max-[680px]:items-center gap-[32px] w-full bg-grey px-[40px] py-[24px] rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple cursor-pointer' role='button' onClick={() => loadLocalData()}>
+            <div className='flex items-center max-[680px]:flex-col max-[680px]:items-center gap-[32px] w-full bg-darkGrey px-[40px] py-[24px] rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple cursor-pointer' role='button' onClick={() => loadLocalData()}>
               <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>#{localData?.ep}</p>
               <div className='flex flex-col items-start gap-[8px] w-full'>
                 <div className='flex flex-col items-start max-[680px]:items-center gap-[4px] w-full'>
@@ -997,7 +997,7 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] z-[20] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Епізод завершено</p>
 
-    <div className='bg-grey px-[40px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 w-full'>
+    <div className='bg-darkGrey px-[40px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 w-full'>
       <div className='flex items-center max-[680px]:flex-col gap-[32px] w-full'>
         <p className='text-white text-[32px] font-bold'>#{nextEp}</p>
         <div className='flex flex-col items-start gap-[8px] w-full'>
@@ -1184,7 +1184,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
         </div>
 
         {/* Divider */}
-        <span className='w-[1px] h-auto bg-grey block'></span>
+        <span className='w-[1px] h-auto bg-darkGrey block'></span>
 
         <div className='flex flex-col gap-[4px] overflow-y-scroll px-[8px]'>
           {currentDub && currentDub.eps.map(el => {
@@ -1261,7 +1261,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
   }
 
   function ReturnButton({ label }: { label: string }) {
-    return <button className={`flex items-center gap-[16px] w-full duration-200 hover:bg-grey focus-visible:bg-grey`} onClick={() => setPage('default')}>
+    return <button className={`flex items-center gap-[16px] w-full duration-200 hover:bg-darkGrey focus-visible:bg-darkGrey`} onClick={() => setPage('default')}>
       <IcoArrow width={24} height={24} className='rotate-[90deg]' />
       <p className='text-white w-full'>{label}</p>
     </button>
@@ -1297,7 +1297,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
 
   function QualityButton() {
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`flex items-center justify-between w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('quality')}>
+      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('quality')}>
         <div className='flex items-center gap-[16px]'>
           <IcoNewPlayerQuality width={24} height={24} />
           <p className='text-white'>Якість</p>
@@ -1312,7 +1312,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
 
   function SubsButton() {
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`flex items-center justify-between w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('subs')}>
+      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('subs')}>
         <div className='flex items-center gap-[16px]'>
           <IcoNewPlayerSubs width={24} height={24} />
           <p className='text-white'>Субтитри</p>
@@ -1328,7 +1328,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
 
   function SpeedButton() {
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`flex items-center justify-between w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('speed')}>
+      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('speed')}>
         <div className='flex items-center gap-[16px]'>
           <IcoSpeed width={24} height={24} />
           <p className='text-white'>Швидкість</p>
@@ -1343,7 +1343,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
 
   function StretchButton() {
     return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`flex items-center gap-[16px] w-full bg-grey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setStretch(!stretch)}>
+      <button className={`flex items-center gap-[16px] w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setStretch(!stretch)}>
         <div className='relative w-[24px] h-[24px]'>
           <IcoPlayerStretch width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-0 invisible' : 'opacity-100 visible'}`} />
           <IcoPlayerCenter width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
@@ -1361,23 +1361,23 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
       <div className={`flex flex-col gap-[16px]`}>
         <ReturnButton label='Якість' />
         <div className='flex flex-col gap-[4px]'>
-          {epData?.source.q2k && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q2k' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q1080')} disabled={!isVideoProcessed}>
+          {epData?.source.q2k && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q2k' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q1080')} disabled={!isVideoProcessed}>
             <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>2K</p>
           </button>}
 
-          {epData?.source.q1080 && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q1080' ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setQuality('q1080')}>
+          {epData?.source.q1080 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q1080' ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setQuality('q1080')}>
             <p className='text-white'>1080</p>
           </button>}
 
-          {epData?.source.q720 && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q720' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q720')} disabled={!isVideoProcessed}>
+          {epData?.source.q720 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q720' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q720')} disabled={!isVideoProcessed}>
             <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>720</p>
           </button>}
 
-          {epData?.source.q480 && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q480' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q480')} disabled={!isVideoProcessed}>
+          {epData?.source.q480 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q480' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q480')} disabled={!isVideoProcessed}>
             <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>480</p>
           </button>}
 
-          {epData?.source.q240 && <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q240' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q240')} disabled={!isVideoProcessed}>
+          {epData?.source.q240 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q240' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q240')} disabled={!isVideoProcessed}>
             <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>240</p>
           </button>}
         </div>
@@ -1390,7 +1390,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
       <div className={`flex flex-col gap-[16px]`}>
         <ReturnButton label='Субтитри' />
         <div className='flex flex-col gap-[4px]'>
-          <button className='px-[16px] py-[4px] rounded-[2px] bg-grey' disabled>
+          <button className='px-[16px] py-[4px] rounded-[2px] bg-darkGrey' disabled>
             <p className='text-lightGrey'>Відсутні</p>
           </button>
         </div>
@@ -1403,35 +1403,35 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
       <div className={`flex flex-col gap-[16px]`}>
         <ReturnButton label='Швидкість' />
         <div className='flex flex-col gap-[4px]'>
-          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.25 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.25)}>
+          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.25 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.25)}>
             <p className={`text-white`}>0.25x</p>
           </button>
 
-          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.5 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.5)}>
+          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.5 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.5)}>
             <p className={`text-white`}>0.5x</p>
           </button>
 
-          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.75 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.75)}>
+          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.75 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.75)}>
             <p className={`text-white`}>0.75x</p>
           </button>
 
-          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1)}>
+          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1)}>
             <p className={`text-white`}>1x</p>
           </button>
 
-          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.25 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.25)}>
+          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.25 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.25)}>
             <p className={`text-white`}>1.25x</p>
           </button>
 
-          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.5 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.5)}>
+          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.5 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.5)}>
             <p className={`text-white`}>1.5x</p>
           </button>
 
-          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.75 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.75)}>
+          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.75 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.75)}>
             <p className={`text-white`}>1.75x</p>
           </button>
 
-          <button className={`w-full bg-grey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 2 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(2)}>
+          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 2 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(2)}>
             <p className={`text-white`}>2x</p>
           </button>
         </div>

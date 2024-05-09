@@ -5,7 +5,7 @@ import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 
 const DeveloperCard: React.FC<{ username: string, name?: string, avatar: string }> = ({ avatar, username, name }) => {
-  return <div className='px-[24px] py-[16px] rounded-[4px] bg-grey w-full flex flex-col gap-[24px]'>
+  return <div className='px-[24px] py-[16px] rounded-[4px] bg-darkGrey w-full flex flex-col gap-[24px]'>
     <div className='flex gap-[24px] items-center'>
       <img src={avatar} alt={`${username}'s avatar`} loading='lazy' className='w-[128px] h-[128px] rounded-[2px]' />
 

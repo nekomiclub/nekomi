@@ -4,21 +4,21 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-
-    // Or if using `src` directory:
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
         dark: '#121212',
-        grey: '#181818',
+        darkGrey: '#181818',
         lightGrey: '#747474',
-        mediumGrey: '#222222',
-        blue: '#2980b9',
+        grey: '#222222',
         purple: '#6C5CE7',
         white: '#ffffff',
-        orange: '#F39C12'
+        orange: '#F39C12',
+        green: '#2ecc71',
+        red: '#e74c3c',
+        gradientPrimaryFallback: '#FF464E',
+        gradientSecondaryFallback: '#FF9966',
       }
     },
   },

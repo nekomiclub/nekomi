@@ -217,7 +217,7 @@ const Lib: NextPage = (props) => {
 
       <main className='lib min-h-screen h-full bg-dark pt-[200px]'>
         <div className="wrapper gap-[24px] items-start">
-          <div className='w-full bg-grey rounded-[2px] px-[32px] py-[24px] flex flex-col items-center gap-[24px]'>
+          <div className='w-full bg-darkGrey rounded-[2px] px-[32px] py-[24px] flex flex-col items-center gap-[24px]'>
             <div className='flex items-center justify-between w-full'>
               <p className='text-[32px] text-white font-bold'>Тека</p>
 

@@ -12,7 +12,7 @@ const TechWorks: NextPage = (props) => {
         <OopsTechWorks width={256} height={256} className='mb-[50px]' />
         <div className='flex flex-col gap-[8px] mb-[100px] items-center'>
           <h1 className='uppercase text-[40px] text-white text-center'>ТЕХНІЧНІ РОБОТИ</h1>
-          <h3 className='text-[24px] text-white uppercase text-center'>СЛІДКУЙТЕ ЗА ОНОВЛЕННЯМИ В <Link className='text-blue' href={'https://t.me/an1meeClub'} target='_blank'>ТЕЛЕГРАМ</Link></h3>
+          <h3 className='text-[24px] text-white uppercase text-center'>СЛІДКУЙТЕ ЗА ОНОВЛЕННЯМИ В <Link className='text-purple' href={'https://t.me/an1meeClub'} target='_blank'>ТЕЛЕГРАМ</Link></h3>
         </div>
         <ReturnToHome />
       </div>

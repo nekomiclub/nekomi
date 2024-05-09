@@ -68,7 +68,7 @@ const Dubber: NextPage<IProps> = async ({ params, searchParams }) => {
 
         <div className='py-[200px]'>
           <div className="wrapper h-full items-center justify-center">
-            <div className='flex flex-col gap-[32px] relative items-center rounded-[4px] bg-grey px-[32px] py-[24px] w-full'>
+            <div className='flex flex-col gap-[32px] relative items-center rounded-[4px] bg-darkGrey px-[32px] py-[24px] w-full'>
               <div className='relative h-[64px] w-[128px]'>
                 <img src={dubberData.thumbURL} alt={`${dubberData.name} image`} loading='lazy' className='absolute left-0 -top-[80px] w-[128px] h-[128px] rounded-[4px]' />
               </div>

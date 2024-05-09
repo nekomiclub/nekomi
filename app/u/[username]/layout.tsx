@@ -14,7 +14,6 @@ import { UserHeader, UserContent, UserBackground } from "./content";
 
 
 import DefaultBg from '../../../assets/defaultLargeImages/1.webp'
-import { getRoute } from "../../../components/Providers";
 import { $api } from '../../../components/http';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
