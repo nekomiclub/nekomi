@@ -23,9 +23,7 @@ export interface IRoute {
 interface IRoutes {
   home: IRoute,
   oopsIndev: IRoute,
-  oopsWorks: IRoute,
   oops404: IRoute,
-  oopsRestricted: IRoute,
   watch: IRoute,
   watchTitle: IRoute,
   contacts: IRoute,
@@ -47,14 +45,8 @@ export const routes: IRoutes = {
   oopsIndev: {
     path: '/oops/indev',
   },
-  oopsWorks: {
-    path: '/oops/works',
-  },
   oops404: {
     path: '/oops/404',
-  },
-  oopsRestricted: {
-    path: '/oops/restricted',
   },
   watch: {
     path: '/w',

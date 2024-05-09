@@ -4,7 +4,7 @@ import { ITitle } from '../interfaces/ITitle';
 import { config, devMode, prodMode } from '../config';
 import axios, { AxiosError } from 'axios';
 import { IcoServerUnavailable } from '../assets/ico/Icos';
-import ServerUnavailable from './oops/ServerUnavailable';
+import Link from 'next/link';
 
 const headlinerID = prodMode ? '1cbc1ef7-8d88-433a-908b-4df859770ab4' : '1cbc1ef7-8d88-433a-908b-4df859770ab4';
 const watchingNowIDS = [
@@ -15,6 +15,8 @@ const watchingNowIDS = [
   prodMode ? 'edf0bdb7-89cc-4461-87d1-e1a5ad09acae' : 'fc6868df-bd76-494e-840f-f7ff3dd67e2d',
   prodMode ? 'fa55ff3c-8351-45ac-a7b8-4769861b0174' : 'a4e72457-0c7f-46c1-8dfc-878540d31c7b'
 ]
+
+
 
 const RSC: NextPage = async (props) => {
   let headliner: IHomeHeadliner | null = null;
@@ -47,8 +49,6 @@ const RSC: NextPage = async (props) => {
       watchingNow.push(data.title)
     }
   } catch (e) {
-    errored = true;
-
     if (e instanceof AxiosError) {
       if (e.code === 'ECONNREFUSED') {
         console.error('ERROR: Server is unavailable')
@@ -59,7 +59,7 @@ const RSC: NextPage = async (props) => {
     }
   }
 
-  return errored ? <ServerUnavailable /> : <Home headliner={headliner!} watchingNow={watchingNow} />
+  return <Home headliner={headliner!} watchingNow={watchingNow} />
 }
 
 export default RSC;
