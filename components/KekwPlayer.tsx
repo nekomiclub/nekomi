@@ -115,7 +115,7 @@ const KekwPlayer: NextPage<{
 
     if (localRecord) {
       setLocalData(localRecord)
-      setIsContinueMenuOpen(true)
+      setIsContinueMenuOpen(false)
     } else {
       localData.push({
         dub: dub.id,
@@ -815,7 +815,6 @@ const KekwPlayer: NextPage<{
       changePreivewFormat(dub);
       setDub(dub)
       setEp(localRecord.ep)
-      changeMoment(localRecord.moment)
     }
 
     setIsContinueMenuOpen(false)

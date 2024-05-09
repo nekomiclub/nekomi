@@ -34,6 +34,7 @@ interface IRoutes {
   userList: IRoute,
   dubber: IRoute,
   lib: IRoute,
+  polling: IRoute,
 }
 
 export const routes: IRoutes = {
@@ -125,6 +126,10 @@ export const routes: IRoutes = {
   },
   lib: {
     path: '/lib',
+    public: true,
+  },
+  polling: {
+    path: '/polling',
     public: true,
   },
 }

@@ -35,6 +35,9 @@ export const config = {
 
     /** Site own url */
     baseURL: prodMode ? `https://animee.club` : `http://${devIP}:3001`,
+
+    /** Fullkekw uptime */
+    uptime: prodMode ? `https://uptime.animee.club` : `http://${devIP}:45322`,
   },
 
   /** CSRF Private key */

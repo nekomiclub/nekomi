@@ -94,6 +94,11 @@ const Footer: NextPage = (props) => {
             <Link href={routes.contacts.path}>
               <p className='footer-link'>Контакти</p>
             </Link>
+
+            {/* Services */}
+            <Link href={routes.polling.path} target='_blank'>
+              <p className='footer-link'>Сервіси</p>
+            </Link>
           </ul>
 
           {/* Policy section */}
