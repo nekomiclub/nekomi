@@ -1,13 +1,12 @@
 import './styles.scss'
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { headers } from 'next/headers'
 import { Metadata, ResolvingMetadata } from "next";
 import { HashImage } from "hash-image";
 
 import { IExtendedUser, IUsapiUser, IUser } from "../../../interfaces/IUser";
-import { config } from "../../../config";
-import NotFound from "@/oops/404/page";
+import { config, devMode } from "../../../config";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import { UserHeader, UserContent, UserBackground } from "./content";
@@ -16,6 +15,7 @@ import { UserHeader, UserContent, UserBackground } from "./content";
 import DefaultBg from '../../../assets/defaultLargeImages/1.webp'
 import { $api } from '../../../components/http';
 import { IRSCProps } from '../../../interfaces/IRSC';
+import { HappenedWrongScreen } from '../../../components/OopsComponents';
 
 
 
@@ -59,6 +59,7 @@ export default async function Layout({ children, params }: IProps) {
   // @ts-expect-error Need empty object
   let userData: IExtendedUser = {}
   let isErrored = false;
+  let emsg = ''
 
   // Fetch user
   try {
@@ -67,10 +68,25 @@ export default async function Layout({ children, params }: IProps) {
 
     userData = Object.assign({ ...data, ...usapiData.user })
   } catch (e) {
-    isErrored = true
+    isErrored = true;
+
+    if (e instanceof AxiosError) {
+      if (e.code === 'ECONNREFUSED') {
+        emsg = 'АПІ юзерів не відповідає'
+        console.error('ERROR: Server is unavailable')
+      } else if (e.response?.data?.code === 404) {
+        emsg = `Юзер не знайдений`
+      } else {
+        emsg = `[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`
+      }
+    } else {
+      emsg = `An error occured at home page - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`
+    }
+
+    devMode ? console.error(emsg) : null;
   }
 
-  return isErrored ? <NotFound /> : <>
+  return isErrored ? <HappenedWrongScreen cause={emsg} /> : <>
     <Header />
 
     <main className='w-full min-h-screen h-full bg-dark flex flex-col justify-center items-center py-[120px]'>

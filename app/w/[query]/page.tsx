@@ -1,13 +1,13 @@
 import { NextPage, Metadata, ResolvingMetadata } from "next";
 import { ITitle } from "../../../interfaces/ITitle";
-import NotFound from "@/oops/404/page";
 import Watch from "./Watch";
 import { config, devMode } from "../../../config";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { IDubber } from "../../../interfaces/IDubber";
 import { parseTitleDubbers } from "../../../components/handlers";
 import { IRSCProps } from "../../../interfaces/IRSC";
 import { $api } from "../../../components/http";
+import { HappenedWrongScreen } from "../../../components/OopsComponents";
 
 export async function generateMetadata(
   { params, searchParams }: IRSCProps<{ query: string }>,
@@ -44,8 +44,10 @@ export async function generateMetadata(
 
 // Fetch title
 const RSC: NextPage<IRSCProps<{ query: string }>> = async ({ params, searchParams }) => {
-  let title: ITitle | null = null;
   let isErrored = false;
+  let emsg = ''
+
+  let title: ITitle | null = null;
   let totalEps = 0;
   let dubbers: IDubber[] | null = null
 
@@ -64,11 +66,22 @@ const RSC: NextPage<IRSCProps<{ query: string }>> = async ({ params, searchParam
       dubbers = null
     }
   } catch (e) {
-    devMode ? console.error(e) : null;
     isErrored = true;
+
+    if (e instanceof AxiosError) {
+      if (e.response?.data?.code === 404) {
+        emsg = `Тайтл не знайдено`
+      } else {
+        emsg = `[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`
+      }
+    } else {
+      emsg = `An error occured at home page - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`
+    }
+
+    devMode ? console.error(emsg) : null;
   }
 
-  return isErrored ? <NotFound /> : <Watch title={title!} dubbers={dubbers} totalEps={totalEps} />
+  return isErrored ? <HappenedWrongScreen cause={emsg} /> : <Watch title={title!} dubbers={dubbers} totalEps={totalEps} />
 }
 
 export default RSC;

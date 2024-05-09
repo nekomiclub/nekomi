@@ -5,6 +5,7 @@ import { config, devMode, prodMode } from '../config';
 import axios, { AxiosError } from 'axios';
 import { IcoServerUnavailable } from '../assets/ico/Icos';
 import Link from 'next/link';
+import { HappenedWrongScreen } from '../components/OopsComponents';
 
 const headlinerID = prodMode ? '1cbc1ef7-8d88-433a-908b-4df859770ab4' : '1cbc1ef7-8d88-433a-908b-4df859770ab4';
 const watchingNowIDS = [
@@ -22,6 +23,7 @@ const RSC: NextPage = async (props) => {
   let headliner: IHomeHeadliner | null = null;
   let watchingNow: ITitle[] = [];
   let errored = false;
+  let emsg = ''
 
   if (devMode) {
     headliner = {
@@ -49,17 +51,23 @@ const RSC: NextPage = async (props) => {
       watchingNow.push(data.title)
     }
   } catch (e) {
+    errored = true;
+
     if (e instanceof AxiosError) {
       if (e.code === 'ECONNREFUSED') {
+        emsg = 'Server offline'
         console.error('ERROR: Server is unavailable')
-        return
+      } else {
+        emsg = `[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`
       }
 
       devMode ? console.error(e) : null
+    } else {
+      emsg = `An error occured at home page - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`
     }
   }
 
-  return <Home headliner={headliner!} watchingNow={watchingNow} />
+  return errored ? <HappenedWrongScreen cause={emsg} /> : <Home headliner={headliner!} watchingNow={watchingNow} />
 }
 
 export default RSC;
