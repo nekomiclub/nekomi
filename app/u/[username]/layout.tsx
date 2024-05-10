@@ -72,7 +72,7 @@ export default async function Layout({ children, params }: IProps) {
 
     if (e instanceof AxiosError) {
       if (e.code === 'ECONNREFUSED') {
-        emsg = 'АПІ юзерів не відповідає'
+        emsg = 'fk-usapi не відповідає'
         console.error('ERROR: Server is unavailable')
       } else if (e.response?.data?.code === 404) {
         emsg = `Юзер не знайдений`

@@ -87,9 +87,6 @@ const KekwPlayer: NextPage<{
   const isMultiskipRef = useRef(false)
   const skipTimeoutRef = useRef<NodeJS.Timeout>()
 
-  // System
-  const [inViewRef, inView] = useInView()
-
   // Prev states
   const prevDub = useRef<ITitleEpisodesDub>()
   const prevEp = useRef(0)
@@ -154,6 +151,11 @@ const KekwPlayer: NextPage<{
 
     video.addEventListener('loadeddata', () => {
       setIsVideoLoading(false);
+
+      // Hide cover when video loaded
+      if (isCoverVisible) {
+        setIsCoverVisible(false);
+      }
     })
 
     video.addEventListener('playing', () => {
@@ -370,7 +372,7 @@ const KekwPlayer: NextPage<{
 
   //* Handle video keyboard events
   useEffect(() => {
-    if (inView) {
+    if (isFullscreen) {
       document.addEventListener('keydown', handler)
     }
 
@@ -495,7 +497,7 @@ const KekwPlayer: NextPage<{
     return () => {
       document.removeEventListener('keydown', handler)
     }
-  }, [isPlaying, isMuted, videoMoment, isFullscreen, isPiP, inView, duration])
+  }, [isPlaying, isMuted, videoMoment, isFullscreen, isPiP, duration])
 
   //* Handle video buffering & end screen
   useEffect(() => {
@@ -828,7 +830,7 @@ const KekwPlayer: NextPage<{
 
   return (
     // In view
-    <div className='w-full h-full relative overflow-hidden' ref={inViewRef} id="player">
+    <div className='w-full h-full relative overflow-hidden' id="player">
       {/* Cover */}
       <button className={`absolute w-full h-full top-0 left-0 z-[7] bg-darkGrey duration-200 flex justify-center items-center ${isCoverVisible ? '' : 'opacity-0 invisible'}`} onClick={() => setIsCoverVisible(false)}>
         <IcoPlay width={256} height={256} gradient='secondary' />
