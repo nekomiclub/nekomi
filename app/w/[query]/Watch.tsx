@@ -306,7 +306,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
           {title.dubs?.length ? <div className='flex items-start max-[1020px]:flex-col gap-[40px] z-[4] mb-[80px]'>
             <div className='flex flex-col gap-[24px] items-center w-full'>
               <div className='h-[600px] w-full'>
-                <KekwPlayer title={title} dubs={dubbers!} setCurrentDubber={setDubber} />
+                <KekwPlayer title={title} dubs={dubbers!} setOutDubber={setDubber} />
               </div>
 
             </div>

@@ -19,9 +19,12 @@ import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 import { LoadingImage } from './GeneralComponents';
 import { timestampToDate, wordDeclination } from './handlers';
 import { useIdleTimer } from 'react-idle-timer';
+import { devMode } from '../config';
+import { clearTimeout } from 'timers';
 
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
 type TEndScreen = 'clear' | 'epEnded' | 'titleEnded' | 'lastEp';
+type TStage = 'setup' | 'operational'
 
 interface IKekwPlayerLocalDataItem {
   id: string,
@@ -34,9 +37,15 @@ interface IKekwPlayerLocalDataItem {
 const KekwPlayer: NextPage<{
   title: ITitle,
   dubs: IDubber[],
-  setCurrentDubber?: (state: IDubber) => void
-  setCurrentEp?: (state: number) => void
-}> = ({ title, dubs, setCurrentDubber, setCurrentEp }) => {
+  /** Player will change this state with current dubber */
+  setOutDubber?: (state: IDubber) => void
+  /** Player will change this state with current episode */
+  setOutEp?: (state: number) => void
+}> = ({ title, dubs, setOutDubber, setOutEp }) => {
+  const [stage, setStage] = useState<TStage>('setup')
+
+
+
   // Player data
   const [volume, setVolume] = useState(50)
   const [ep, setEp] = useState(1);
@@ -54,10 +63,10 @@ const KekwPlayer: NextPage<{
   const [stretch, setStretch] = useState(false)
 
   const [isPreviewOld, setIsPreviewOld] = useState(false);
-  const [isVideoProcessed, setIsVideoProcessed] = useState(true);
+  const [isVideoProcessed, setIsVideoProcessed] = useState(true); // Specify if video procesed by the server (qualities & frames)
 
   // Player states
-  const [isCoverVisible, setIsCoverVisible] = useState(true) //! TRUE
+  const [isCoverVisible, setIsCoverVisible] = useState(false) //! TMP, must be TRUE
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPiP, setIsPip] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -69,7 +78,6 @@ const KekwPlayer: NextPage<{
   const [isContinueMenuOpen, setIsContinueMenuOpen] = useState(false)
 
   // Video states
-  const [videoSrc, setVideoSrc] = useState('');
   const [isVideoLoading, setIsVideoLoading] = useState(true);
 
   // Refs
@@ -87,10 +95,6 @@ const KekwPlayer: NextPage<{
   const isMultiskipRef = useRef(false)
   const skipTimeoutRef = useRef<NodeJS.Timeout>()
 
-  // Prev states
-  const prevDub = useRef<ITitleEpisodesDub>()
-  const prevEp = useRef(0)
-
   // Idle timer
   useIdleTimer({
     timeout: 3000,
@@ -99,34 +103,10 @@ const KekwPlayer: NextPage<{
     onAction: () => setIsIdle(false)
   })
 
-  // Effects
-  //* Initial effects. Assing dub, define previews format, check if frames are processed, define is client mobile
+  //! -------------- DEFAULT EFFECTS --------------
+  //* Player vitals
   useEffect(() => {
-    const video = videoRef.current;
-
-    if (window === undefined || !video) return;
-
-    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
-    const localRecord = localData?.find(el => el.id === title.id)
-    const dub = title!.dubs![0];
-
-    if (localRecord) {
-      setLocalData(localRecord)
-      setIsContinueMenuOpen(false)
-    } else {
-      localData.push({
-        dub: dub.id,
-        ep,
-        id: title.id,
-        moment: 0
-      })
-
-      localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
-    }
-
-    changePreivewFormat(dub);
-    setDub(dub)
-
+    // Define if client is mobile
     if (window.innerWidth <= 600 || window.innerHeight <= 400) {
       setIsMobile(true)
     } else {
@@ -134,46 +114,162 @@ const KekwPlayer: NextPage<{
     }
   }, [])
 
-  //* Video events
+  //* Handle video loading
   useEffect(() => {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    video.addEventListener('loadstart', () => {
+      setIsVideoLoading(true)
+    })
+
+    video.addEventListener('loadeddata', () => {
+      setIsVideoLoading(false)
+    })
+  }, [])
+
+
+
+  //! -------------- SETUP STAGE --------------
+  // Setup with user progress or default
+  useEffect(() => {
+    if (stage !== 'setup') return;
+
+    const video = videoRef.current;
+
+    if (window === undefined || !video) return;
+
+    const progress = getPlayerProgress()
+
+    if (progress) {
+      // Progress is present, purpose it to init with
+
+      if (setOutDubber) setOutDubber(dubs.find(el => el.id === progress.dub)!);
+      if (setOutEp) setOutEp(progress.ep);
+
+      setLocalData(progress);
+      setIsContinueMenuOpen(true);
+    } else {
+      // Progress is missing, set default data
+
+      loadDefault();
+    }
+  }, [stage])
+
+
+
+  /** Load user progress */
+  async function loadProgress() {
+    const progress = getPlayerProgress();
+
+    // Load default if progress missing
+    if (!progress) {
+      return loadDefault();
+    }
+
+    const dub = title.dubs!.find(el => el.id === progress.dub);
+    const ep = dub?.eps.find(el => el.order === progress.ep)
+
+    if (!dub || !ep) {
+      return loadDefault();
+    }
+
+    await changeDub(dub, ep.order, progress.moment);
+    setIsContinueMenuOpen(false);
+    setStage('operational')
+  }
+
+  /** Delete title from user progress & proceed */
+  async function passProgress() {
+    await loadDefault();
+    deletePlayerProgress();
+    setIsContinueMenuOpen(false);
+  }
+
+  /** Setup with default player states */
+  async function loadDefault() {
+    const dub = title.dubs![0];
+    const ep = dub.eps[0].order;
+
+    await changeDub(dub, ep, 0);
+    setStage('operational')
+  }
+
+
+
+  //! -------------- OPERATIONAL STAGE --------------
+  useEffect(() => {
+    if (stage !== 'operational') return;
+
+    const video = videoRef.current;
+
+    if (!video) return;
+  }, [stage])
+
+  //* Handle video events
+  useEffect(() => {
+    /*
+    - Loading
+    - Playback rate
+    - Timeupdate
+    - Pausing by clicking
+    - Playing
+    - Volume changing
+    - Fullscreen
+    - PiP
+    - Full timeline control (moving preview box, handle dragging)
+  */
+
+    if (stage !== 'operational') return;
+
     const video = videoRef.current;
     const player = playerRef.current;
 
     if (!video || !player) return;
 
-    video.addEventListener('loadstart', () => {
-      setIsVideoLoading(true);
-    })
-
-    video.addEventListener('durationchange', () => {
-      setDuration(Math.floor(video.duration))
-    })
-
-    video.addEventListener('loadeddata', () => {
-      setIsVideoLoading(false);
-
-      // Hide cover when video loaded
-      if (isCoverVisible) {
-        setIsCoverVisible(false);
-      }
+    // Handle loading 
+    video.addEventListener('waiting', () => {
+      setIsVideoLoading(true)
     })
 
     video.addEventListener('playing', () => {
-      setIsVideoLoading(false);
+      setIsVideoLoading(false)
     })
 
-    video.addEventListener('waiting', () => {
-      setIsVideoLoading(true);
-    })
-
+    // Handle playback rate
     video.addEventListener('ratechange', () => {
       setSpeed(video.playbackRate)
     })
 
+    // Hide context menu
     player.addEventListener('contextmenu', e => {
       e.preventDefault();
     })
 
+    // Handle playback progress & buffering
+    video.addEventListener('timeupdate', () => {
+      changeMoment(video.currentTime, true)
+
+      //* Buffering
+      const loaded = loadedRef.current;
+      const buffered = video.buffered;
+
+      if (buffered.length !== 0 && loaded) {
+        for (let i = 0; i < buffered.length; i++) {
+          const start = buffered.start(i);
+          const end = buffered.end(i);
+
+          if (videoMoment >= start && videoMoment <= end) {
+            const offset = (end / duration) * 100
+
+            loaded.style.width = `${offset}%`
+          }
+        }
+      };
+    })
+
+    // Handle pausing by clicking
     video.addEventListener('click', () => {
       const video = videoRef.current;
       const player = playerRef.current;
@@ -187,8 +283,12 @@ const KekwPlayer: NextPage<{
       }
     })
 
-    //* Events
+    // Handle isPlaying state
     video.addEventListener('play', () => {
+      setIsPlaying(true)
+    })
+
+    video.addEventListener('playing', () => {
       setIsPlaying(true)
     })
 
@@ -196,6 +296,7 @@ const KekwPlayer: NextPage<{
       setIsPlaying(false)
     })
 
+    // Handle volume. Mute if volume equal 0, unmute either
     video.addEventListener('volumechange', () => {
       if (video.volume === 0 || video.muted) {
         setIsMuted(true);
@@ -206,10 +307,12 @@ const KekwPlayer: NextPage<{
       setVolume(Math.floor(video.volume * 100));
     });
 
+    // Handle fullscreen
     player.addEventListener('fullscreenchange', () => {
       setIsFullscreen(document.fullscreenElement ? true : false)
     })
 
+    // Handle PiP
     video.addEventListener('leavepictureinpicture', () => {
       setIsPip(false)
     })
@@ -218,8 +321,12 @@ const KekwPlayer: NextPage<{
       setIsPip(true)
     })
 
+    // Handle progressbar actions
     const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
     const preview = document.querySelector('#kekwplayer-preview') as HTMLDivElement
+
+    if (!timeline || !preview) return;
+
     let isDragging = false
     let touchTimeout: NodeJS.Timeout;
 
@@ -247,8 +354,6 @@ const KekwPlayer: NextPage<{
       timelineTouchStartHandler()
     })
 
-
-
     document.addEventListener('pointerup', () => {
       isDragging = false;
       timelineTouchEndHandler()
@@ -257,6 +362,9 @@ const KekwPlayer: NextPage<{
       if (isDragging) return
       timelineTouchEndHandler();
     })
+
+    // Move preview box
+    timeline.addEventListener('pointermove', e => movePreview(e.offsetX))
 
 
 
@@ -269,10 +377,12 @@ const KekwPlayer: NextPage<{
       preview.style.opacity = '0';
       preview.style.visibility = 'invisible';
     }
-  }, [])
+  }, [stage])
 
-  //* Handle video events with states
+  //* Handle clicking (multi/skip, entering via dbclick)
   useEffect(() => {
+    if (stage !== 'operational') return;
+
     const video = videoRef.current;
     const player = playerRef.current;
     const prevSkip = mobilePrevSkipRef.current;
@@ -281,6 +391,7 @@ const KekwPlayer: NextPage<{
 
     if (!video || !player || !prevSkip || !nextSkip || !skipWrapper) return;
 
+    // Enter fullscreen
     video.addEventListener('dblclick', videoDbClickHandler)
 
     nextSkip.addEventListener('dblclick', () => enterMultiskip(false))
@@ -288,26 +399,6 @@ const KekwPlayer: NextPage<{
 
     nextSkip.addEventListener('click', () => skipMoment(false))
     prevSkip.addEventListener('click', () => skipMoment(true))
-
-    skipWrapper.addEventListener('click', playMobile)
-
-
-
-    function playMobile() {
-      const video = videoRef.current;
-      const player = playerRef.current;
-
-      setTimeout(() => {
-        if (!video || !player || isMultiskipRef.current) return;
-
-        // Throttle playback (click can be double)
-        if (video.paused) {
-          video.play().catch(e => null)
-        } else {
-          video.pause();
-        }
-      }, 200);
-    }
 
     function videoDbClickHandler() {
       const video = videoRef.current;
@@ -354,29 +445,30 @@ const KekwPlayer: NextPage<{
         isMultiskipRef.current = false;
       }, 1000);
     }
+  }, [stage])
 
-
-
-    return () => {
-      video.removeEventListener('dblclick', videoDbClickHandler)
-
-      nextSkip.removeEventListener('dblclick', () => enterMultiskip(false))
-      prevSkip.removeEventListener('dblclick', () => enterMultiskip(true))
-
-      nextSkip.removeEventListener('click', () => skipMoment(false))
-      prevSkip.removeEventListener('click', () => skipMoment(true))
-
-      skipWrapper.removeEventListener('click', playMobile)
-    }
-  }, [isMobile])
-
-  //* Handle video keyboard events
+  //* Handle cursor visibility in idle/active modes
   useEffect(() => {
+    if (stage !== 'operational') return;
+
+    // Hide cursor in fullscreen mode
+    if (isIdle && isFullscreen) {
+      document.querySelector('body')!.style.cursor = 'none';
+    } else {
+      document.querySelector('body')!.style.cursor = 'auto';
+    }
+  }, [stage, isIdle])
+
+  // //* Handle keyboard
+  useEffect(() => {
+    if (stage !== 'operational') return;
+
+    // Keyboard events must work only in fullscreen mode
     if (isFullscreen) {
-      document.addEventListener('keydown', handler)
+      document.addEventListener('keydown', handleKeyboard)
     }
 
-    function handler(e: KeyboardEvent) {
+    function handleKeyboard(e: KeyboardEvent) {
       const video = videoRef.current;
       const player = playerRef.current;
 
@@ -385,8 +477,9 @@ const KekwPlayer: NextPage<{
       const key = e.code;
 
       switch (key) {
+        // Play/pause
         case 'Space': {
-          if (isPlaying) {
+          if (!video.paused) {
             video.pause()
           } else {
             video.play().catch(e => null)
@@ -396,9 +489,9 @@ const KekwPlayer: NextPage<{
           break;
         }
 
-        // Play
+        // Play/pause
         case 'KeyK': {
-          if (isPlaying) {
+          if (!video.paused) {
             video.pause()
           } else {
             video.play().catch(e => null)
@@ -409,13 +502,13 @@ const KekwPlayer: NextPage<{
 
         // Skip prev 10s
         case 'KeyJ': {
-          let curr = videoMoment;
+          let curr = video.currentTime;
           curr -= 10;
 
           if (curr >= 0) {
-            changeMoment(curr)
+            changeMoment(video.currentTime - 10)
           } else {
-            changeMoment(0);
+            changeMoment(0)
           }
 
           break;
@@ -423,13 +516,13 @@ const KekwPlayer: NextPage<{
 
         // Skip prev 5s
         case 'ArrowLeft': {
-          let curr = videoMoment;
+          let curr = video.currentTime;
           curr -= 5;
 
           if (curr >= 0) {
-            changeMoment(curr)
+            changeMoment(video.currentTime - 5)
           } else {
-            changeMoment(0);
+            changeMoment(0)
           }
 
           break;
@@ -437,13 +530,13 @@ const KekwPlayer: NextPage<{
 
         // Skip next 10s
         case 'KeyL': {
-          let curr = videoMoment;
+          let curr = video.currentTime;
           curr += 10;
 
           if (curr >= duration) {
-            changeMoment(duration)
+            changeMoment(video.duration)
           } else {
-            changeMoment(curr);
+            changeMoment(video.currentTime + 10)
           }
 
           break;
@@ -451,24 +544,13 @@ const KekwPlayer: NextPage<{
 
         // Skip next 5s
         case 'ArrowRight': {
-          let curr = videoMoment;
+          let curr = video.currentTime;
           curr += 5;
 
-          if (curr >= duration) {
-            changeMoment(duration)
+          if (curr >= video.duration) {
+            changeMoment(video.duration)
           } else {
-            changeMoment(curr);
-          }
-
-          break;
-        }
-
-        // PiP
-        case 'KeyP': {
-          if (isPiP) {
-            document.exitPictureInPicture().catch(e => console.error(e))
-          } else {
-            video.requestPictureInPicture().catch(e => console.error(e));
+            changeMoment(video.currentTime + 5)
           }
 
           break;
@@ -476,7 +558,7 @@ const KekwPlayer: NextPage<{
 
         // Fullscreen
         case 'KeyF': {
-          if (isFullscreen) {
+          if (document.fullscreenElement) {
             document.exitFullscreen().catch(e => console.error(e))
           } else {
             player.requestFullscreen().catch(e => console.error(e))
@@ -495,19 +577,27 @@ const KekwPlayer: NextPage<{
     }
 
     return () => {
-      document.removeEventListener('keydown', handler)
+      document.removeEventListener('keydown', handleKeyboard)
     }
-  }, [isPlaying, isMuted, videoMoment, isFullscreen, isPiP, duration])
+  }, [stage, isFullscreen])
 
-  //* Handle video buffering & end screen
+  //* Handle quality changing
+  useEffect(() => {
+    if (stage !== 'operational' || !dub) return;
+
+    changeVideoSrc(dub.eps.find(el => el.order === ep)!.source[quality], videoMoment)
+  }, [stage, quality])
+
+  //* Handle video buffering & end screens
   useEffect(() => {
     const video = videoRef.current;
 
     if (!duration || !videoMoment || !video) return;
 
-    video.addEventListener('timeupdate', handler)
+    // Hand;e buffering
+    video.addEventListener('timeupdate', timeupdateHandler)
 
-    function handler() {
+    function timeupdateHandler() {
       const video = videoRef.current;
 
       if (!video) return;
@@ -530,21 +620,7 @@ const KekwPlayer: NextPage<{
       }
     }
 
-    return () => {
-      video.removeEventListener('timeupdate', handler)
-    }
-  }, [duration, videoMoment])
-
-  //* Change end screen due to time & ep & dub
-  useEffect(() => {
-    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
-
-    if (timeline) {
-      // Change preview frame
-      timeline.addEventListener('pointermove', pointermoveHandler)
-    };
-
-    //* End screen
+    // Handle end screens
     if (duration > 10 && videoMoment && dub) {
       if (videoMoment >= duration - 2) {
         let nextEp = ep;
@@ -571,160 +647,160 @@ const KekwPlayer: NextPage<{
       }
     };
 
-    function pointermoveHandler(e: PointerEvent) {
-      movePreview(e.offsetX)
-    }
-
     return () => {
-      timeline.removeEventListener('pointermove', pointermoveHandler)
+      video.removeEventListener('timeupdate', timeupdateHandler)
     }
-  }, [duration, videoMoment, ep, dub])
-
-  //* Update progress due to timeupdate & change preview offset
-  useEffect(() => {
-    const video = videoRef.current;
-
-    if (!duration || !video) return;
-
-    video.addEventListener('timeupdate', () => changeMoment(video.currentTime, true));
-
-    return () => {
-      video.removeEventListener('timeupdate', () => changeMoment(video.currentTime, true))
-    }
-  }, [duration])
-
-  //* Change volume progress
-  useEffect(() => {
-    const ref = volumeRef.current;
-    if (!volume) return;
-
-    ref!.style.width = `${volume}px`
-  }, [volume])
-
-  //* Handle last episode, end screen after changing ep/dub & out states
-  useEffect(() => {
-    if (!dub) return;
-
-    // Handle end screen
-    if (endScreen !== 'clear') {
-      setIsTimeToEndScreen(false);
-      setEndScreen('clear')
-    }
-
-    // Handle last episode
-    const currEpExist = dub.eps.some(el => el.order === ep);
-
-    if (currEpExist) {
-      let nextEp = ep;
-      nextEp++;
-
-      if (!dub.eps.find(el => el.order === nextEp)) {
-        setIsLastEpisode(true)
-      } else {
-        setIsLastEpisode(false)
-      }
-    } else {
-      setEp(dub.eps[dub.eps.length - 1].order)
-    }
-
-    // Pause video after changing ep/dub
-    setIsPlaying(false);
-
-    // Re-define previews format
-    changePreivewFormat(dub)
-
-    // Handle out states
-    if (setCurrentDubber) {
-      setCurrentDubber(dubs.find(el => el.id === dub.id)!)
-    }
-
-    if (setCurrentEp) {
-      setCurrentEp(ep)
-    }
-
-    // Set video src
-    let epData = dub.eps.find(el => el.order === ep);
-
-    // Set epsiode to first in array if current is not available
-    if (!epData) {
-      setEp(dub.eps[0].order)
-      return
-    }
-
-    if (dub !== prevDub.current && ep === prevEp.current) {
-      changeVideoSrc(epData!.source[quality], videoMoment, true)
-    } else {
-      changeVideoSrc(epData!.source[quality], 0, false)
-    }
-
-    prevDub.current = dub;
-    prevEp.current = ep;
-  }, [ep, dub])
-
-  //* Handle quality changing
-  useEffect(() => {
-    if (!dub) return;
-
-    const epData = dub.eps.find(el => el.order === ep);
-
-    changeVideoSrc(epData!.source[quality], videoMoment, true)
-  }, [quality])
-
-  //* Handle idle/active
-  useEffect(() => {
-    if (isIdle && isFullscreen) {
-      document.querySelector('body')!.style.cursor = 'none';
-    } else {
-      document.querySelector('body')!.style.cursor = 'auto';
-    }
-  }, [isIdle])
+  }, [duration, videoMoment])
 
 
-  //* Handlers
-  /** Defines previews format from 0 index frame of current dub (height 120 = old, 135 = new) */
-  async function changePreivewFormat(dub: ITitleEpisodesDub) {
-    try {
-      const dimensions = await getImageSize(dub.eps.find(el => el.order === ep)!.framesURL![0]);
 
-      setIsPreviewOld(dimensions.height === 120 ? true : false)
-      setIsVideoProcessed(true)
-    } catch (e) {
+  //* -------------- HANDLERS --------------
+  /** Get user progress */
+  function getPlayerProgress(): IKekwPlayerLocalDataItem | null {
+    const data = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
 
-    }
+    if (!data) return null;
+
+    const currentTitle = data.find(el => el.id === title.id)
+
+    if (!currentTitle) return null;
+
+    return currentTitle
   }
 
-  /** 
-   * Change video moment & writes new moment to local storage
-   * @param synthetic Defines if function called by user or not. If syntehic set to true, function will only update ranges & moment, if not it will move preview & set new moment
-  */
-  function changeMoment(val: number, synthetic?: boolean) {
-    const progress = progressRef.current;
-    const video = videoRef.current;
-    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
+  /** Update user progress */
+  function updatePlayerProgress(payload: IKekwPlayerLocalDataItem) {
+    if (devMode) console.log(`[Player]: Progress patched`);
 
-    if (!progress || !video || !timeline) return
+    let items = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+    items = items.filter(el => el.id !== payload.id);
+    items.push(payload)
 
-    if (!synthetic) {
-      video.currentTime = val;
-      movePreview(val / duration * timeline.offsetWidth);
+    localStorage.setItem('kekwplayer_data', JSON.stringify(items))
+  }
+
+  /** Delete user progress */
+  function deletePlayerProgress() {
+    const data = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+
+    if (!data) return;
+
+    if (devMode) console.log(`[Player]: Progress deleted (nope)`);
+    // updatePlayerProgress(data.filter(el => el.id !== title.id))
+  }
+
+  /** Change dub, ep & moment
+   * Will re-define previews format & change video src
+   * Will set default dub & ep if they are not found
+   * 
+   * @default moment 0
+   */
+  async function changeDub(dub: ITitleEpisodesDub, ep: number, moment?: number) {
+    // Set optional vars
+    moment = moment || 0;
+
+    // Set first dub in array if id not found
+    if (!title.dubs?.find(el => el.id === dub.id)) {
+      dub = title.dubs![0]
     }
 
-    setVideoMoment(val);
-    moveProgress(val);
+    if (!dub.eps.find(el => el.order === ep)) {
+      ep = dub.eps[0].order
+    }
 
-    // Write player data to local storage
-    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
-    const localRecord = localData?.find(el => el.id === title.id)
+    setDub(dub);
+    setEp(ep);
 
-    if (val !== 0 && localRecord) {
-      localRecord.moment = val;
+    await Promise.all([
+      await definePreviewFormat(dub.eps.find(el => el.order === ep)!.framesURL![0]),
+      await changeVideoSrc(dub.eps.find(el => el.order === ep)!.source[quality], moment),
+    ])
 
-      localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
+    // Set out states
+    if (setOutDubber) setOutDubber(dubs.find(el => el.id === dub.id)!);
+    if (setOutEp) setOutEp(ep);
+
+    // Check if episode is last
+    const nextEp = Number(ep) + 1;
+
+    if (!dub.eps.find(el => el.order === nextEp)) {
+      setIsLastEpisode(true)
+    } else {
+      setIsLastEpisode(false)
+    }
+
+    // Reset progress moment
+    updatePlayerProgress({
+      dub: dub.id,
+      ep,
+      id: title.id,
+      moment
+    })
+  }
+
+  /** Change video src & moment */
+  async function changeVideoSrc(src: string, moment?: number) {
+    // Set optional vars
+    moment = moment || 0;
+
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    video.setAttribute('src', src);
+
+    await new Promise((res, rej) => {
+      video.addEventListener('loadedmetadata', () => {
+        res(true)
+        setDuration(video.duration)
+      })
+    })
+
+    changeMoment(moment);
+    video.play();
+  }
+
+  /** Change video moment
+   * Will set moment equal duration if moment greater that it
+   * Will update user progress after 5s of progress
+   * 
+   * @param synthetic Specifies if function called by user interaction. In synthetic action preview box will not move & new moment will not be set
+   */
+  function changeMoment(moment: number, synthetic?: boolean) {
+    const video = videoRef.current;
+    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
+    const progress = progressRef.current;
+
+
+    if (!video || !progress || !timeline) return;
+    const duration = video.duration;
+
+    // Validate moment
+    if (moment > duration) {
+      moment = duration;
+    }
+
+    if (!synthetic) {
+      video.currentTime = moment;
+      movePreview(moment / duration * timeline.offsetWidth)
+    }
+
+    setVideoMoment(moment);
+    moveProgress(moment, duration);
+
+    // Save progress
+    if (moment > 5) {
+      updatePlayerProgress({
+        dub: dub?.id || '',
+        ep,
+        id: title.id,
+        moment
+      })
     }
   }
 
   /** Move video progress (controlled by changeMoment) */
-  function moveProgress(moment: number) {
+  function moveProgress(moment: number, duration: number) {
     const progress = progressRef.current;
 
     if (!progress) return;
@@ -786,46 +862,18 @@ const KekwPlayer: NextPage<{
     img.style.objectPosition = `-${offset}px`
   }
 
-  /** Change video src (ep/dub & quality changing) & sync video with previous moment */
-  function changeVideoSrc(src: string, moment: number, autoplay: boolean) {
-    const video = videoRef.current;
+  /** Defines previews format from 0 index frame of current dub (height 120 = old, 135 = new) */
+  async function definePreviewFormat(frameURL: string) {
+    try {
+      const dimensions = await getImageSize(frameURL);
 
-    if (!video) return;
-
-    video.addEventListener('loadedmetadata', handler)
-
-    function handler() {
-      if (autoplay) {
-        video!.play().catch(e => null);
-      }
-
-      video!.currentTime = moment;
-      video!.removeEventListener('loadedmetadata', handler)
+      setIsPreviewOld(dimensions.height === 120 ? true : false)
+      setIsVideoProcessed(true)
+    } catch (e) {
+      console.error(e)
     }
-
-    setVideoSrc(src)
   }
 
-  /** Write player data from local storage */
-  function loadLocalData() {
-    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
-    const localRecord = localData.find(el => el.id === title.id)
-
-    if (localRecord) {
-      const dub = title.dubs?.find(el => el.id === localRecord.dub) || title!.dubs![0];
-
-      changePreivewFormat(dub);
-      setDub(dub)
-      setEp(localRecord.ep)
-    }
-
-    setIsContinueMenuOpen(false)
-  }
-
-  /** Deletes kekwplayer_data from local storage */
-  function deleteLocalData() {
-    localStorage.removeItem('kekwplayer_data')
-  }
 
 
   return (
@@ -864,26 +912,26 @@ const KekwPlayer: NextPage<{
               <p className='text-white text-[24px] text-center max-[680px]:text-[16px]'>{dubs.find(el => el.id === localData?.dub)?.name || 'Команда невідома'}</p>
             </div>
 
-            <div className='flex items-center max-[680px]:flex-col max-[680px]:items-center gap-[32px] w-full bg-darkGrey px-[40px] py-[24px] rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple cursor-pointer' role='button' onClick={() => loadLocalData()}>
+            <div className='flex items-center max-[680px]:flex-col max-[680px]:items-center gap-[32px] w-full bg-darkGrey px-[40px] py-[24px] rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple cursor-pointer' role='button' onClick={() => loadProgress()}>
               <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>#{localData?.ep}</p>
               <div className='flex flex-col items-start gap-[8px] w-full'>
                 <div className='flex flex-col items-start max-[680px]:items-center gap-[4px] w-full'>
-                  <p className='text-white text-[24px] break-ellipsis max-w-400px'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
-                  <p className='text-white font-extralight break-ellipsis max-w-300px'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.eng}</p>
+                  <p className='text-white text-[24px] break-ellipsis max-w-[80%]'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
+                  <p className='text-white font-extralight break-ellipsis max-w-[80%]'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.eng}</p>
                 </div>
               </div>
 
               <p className='text-white text-[24px]'>{secondsToReadable(localData?.moment || 0).pretty}</p>
             </div>
 
-            <button onClick={() => setIsContinueMenuOpen(false)}>
-              <p className='text-white font-extralight' onClick={() => deleteLocalData()}>Почати з початку?</p>
+            <button onClick={() => passProgress()}>
+              <p className='text-white font-extralight' onClick={() => console.log('delete local data')}>Почати з початку?</p>
             </button>
           </div>
         </div>
 
         {/* Menu */}
-        <Menu ep={ep} setEp={setEp} currentDub={dub!} totalDubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} setCurrentDub={setDub} totalEps={title.estimatedEps} isIdle={isIdle} titleId={title.id} />
+        <Menu ep={ep} changeDub={changeDub} currentDub={dub!} totalDubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} totalEps={title.estimatedEps} isIdle={isIdle} titleId={title.id} />
 
         {/* Bottom */}
         <div className={`flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px] duration-200 translate-y-0 ${isIdle ? 'translate-y-[100%]' : ''}`}>
@@ -918,7 +966,7 @@ const KekwPlayer: NextPage<{
             <loader.DotPulse color='#fff' size={80} />
           </div>
 
-          <video src={videoSrc} preload='metadata' className={`w-full h-full ${stretch ? 'object-cover' : ''}`} controls={false} ref={videoRef}></video>
+          <video src={''} preload='auto' controlsList='nodownload' className={`w-full h-full ${stretch ? 'object-cover' : ''}`} controls={false} ref={videoRef}></video>
         </div>
       </div>
     </div>
@@ -1055,9 +1103,8 @@ const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
 
 interface IMenuProps {
   ep: number,
-  setEp: (state: number) => void,
+  changeDub: (dub: ITitleEpisodesDub, ep: number, moment?: number) => void,
   currentDub: ITitleEpisodesDub,
-  setCurrentDub: (state: ITitleEpisodesDub) => void,
   totalDubs: ITitleEpisodesDub[],
   dubbers: IDubber[]
   isLastEpisode: boolean,
@@ -1066,7 +1113,7 @@ interface IMenuProps {
   titleId: string
 }
 
-const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, isLastEpisode, setCurrentDub, totalDubs, totalEps, isIdle, titleId }) {
+const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpisode, changeDub, totalDubs, totalEps, isIdle, titleId }) {
   const isFirstOpen = useRef(true);
 
   function nextEpisode() {
@@ -1074,7 +1121,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
       let nextEp = ep;
       nextEp += 1;
 
-      setEp(nextEp)
+      changeDub(currentDub, nextEp, 0)
 
       // Write player data to local storage
       const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
@@ -1112,7 +1159,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
     </button>
   }
 
-  function MenuDubber({ dub, currId, dubbers }: { dub: ITitleEpisodesDub, currId: string, dubbers: IDubber[] }) {
+  function MenuDubber({ dub, currId, dubbers, ep }: { dub: ITitleEpisodesDub, currId: string, dubbers: IDubber[], ep: number }) {
     let lastEp = 0;
 
     dub.eps.forEach(el => {
@@ -1120,7 +1167,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
     })
 
     function setDub() {
-      setCurrentDub(dub);
+      changeDub(dub, ep, 0)
 
       // Write player data to local storage
       const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
@@ -1156,7 +1203,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
 
   function MenuEpisode({ to }: { to: number }) {
     function setEpisode(to: number) {
-      setEp(to)
+      changeDub(currentDub, to, 0)
 
       // Write player data to local storage
       const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
@@ -1181,7 +1228,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
       <RMen.Menu className={'szh-slide szh-slide--toBottom w-full'} menuClassName={`px-[16px] py-[8px] bg-dark !flex gap-[8px] h-[200px] max-h-[200px] w-fit !left-0 !top-[76px]`} menuButton={menuButton()} direction='bottom'>
         <div className='flex flex-col gap-[4px] overflow-y-scroll px-[4px] w-full'>
           {currentDub && totalDubs.map(el => {
-            return <MenuDubber dub={el} currId={currentDub.id} dubbers={dubbers} key={`${el.id}_setdub`} />
+            return <MenuDubber dub={el} currId={currentDub.id} dubbers={dubbers} key={`${el.id}_setdub`} ep={ep} />
           })}
         </div>
 
@@ -1200,7 +1247,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, setEp, dubbers, currentDub, is
         <p className='text-white text-[12px] font-extralight text-center'>{currentDub ? dubbers.find(el => el.id === currentDub.id)!.name : '...'}</p>
       </div>
 
-      <button className='px-[16px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={() => nextEpisode()} disabled={isLastEpisode}>
+      <button className={`px-[16px] bg-dark rounded-[2px] duration-200 ${!isLastEpisode && 'hover:bg-purple focus-visible:bg-purple'}`} onClick={() => nextEpisode()} disabled={isLastEpisode}>
         <IcoNewPlayerNext width={40} height={40} className={`kekwplayer-menu_nextBtn ${isLastEpisode ? 'kekwplayer-menu_nextBtn--lastEpisode' : ''}`} />
       </button>
     </div>
@@ -1511,7 +1558,7 @@ interface IVolumeProps {
 const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }) => {
   const video = videoRef.current;
 
-  //* Hhandle volume hover
+  //* Handle volume hover
   useEffect(() => {
     const volumeWrapper = document.querySelector('#kekwplayer-volume') as HTMLDivElement;
     const volumeRange = document.querySelector('#kekwplayer-volume_range') as HTMLDivElement;
@@ -1532,6 +1579,16 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
       volumeRange.style.opacity = '0';
     })
   }, [])
+
+  //* Handle volume progress
+  useEffect(() => {
+    const ref = volumeRef.current;
+    if (!volume) return;
+
+    ref!.style.width = `${volume}px`
+  }, [volume])
+
+
 
   function changeMuted() {
     if (!video) {
