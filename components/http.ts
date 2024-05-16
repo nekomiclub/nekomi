@@ -6,7 +6,8 @@ import { config, prodMode } from '../config';
 /** Axios HTTP instance with creds for animee-api only */
 export const $api = axios.create({
   withCredentials: true,
-  baseURL: config.URL.apiHTTP
+  baseURL: config.URL.apiHTTP,
+  timeout: 10000,
 })
 
 $api.interceptors.request.use(async cfg => {

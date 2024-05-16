@@ -6,14 +6,13 @@ import axios from 'axios';
 import * as loader from '@uiball/loaders';
 import { Range } from 'react-range';
 import { getImageSize } from 'react-image-size'
-import * as RMen from '@szhsin/react-menu'
+import * as UMenu from 'uvc-menu';
 
 import { ITitle, ITitleEpisodeDubbed, ITitleEpisodeMeta, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
 import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerQuality, IcoNewPlayerSubs, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
 import { IcoArrow, IcoPlay, IcoPlayerCenter, IcoPlayerStretch, IcoServerUnavailable, IcoSettings, IcoSpeed } from '../assets/ico/Icos';
 
-import '../styles/components/KekwPlayer.scss';
 import { useInView } from 'react-intersection-observer';
 import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 import { LoadingImage } from './GeneralComponents';
@@ -21,6 +20,14 @@ import { timestampToDate, wordDeclination } from './handlers';
 import { useIdleTimer } from 'react-idle-timer';
 import { devMode } from '../config';
 import { clearTimeout } from 'timers';
+
+
+
+
+import '../styles/components/KekwPlayer.scss';
+import 'uvc-menu/css';
+
+
 
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
 type TEndScreen = 'clear' | 'epEnded' | 'titleEnded' | 'lastEp';
@@ -96,12 +103,12 @@ const KekwPlayer: NextPage<{
   const skipTimeoutRef = useRef<NodeJS.Timeout>()
 
   // Idle timer
-  useIdleTimer({
-    timeout: 3000,
-    throttle: 500,
-    onIdle: () => setIsIdle(true),
-    onAction: () => setIsIdle(false)
-  })
+  // useIdleTimer({
+  //   timeout: 3000,
+  //   throttle: 500,
+  //   onIdle: () => setIsIdle(true),
+  //   onAction: () => setIsIdle(false)
+  // })
 
   //! -------------- DEFAULT EFFECTS --------------
   //* Player vitals
@@ -140,6 +147,7 @@ const KekwPlayer: NextPage<{
 
     if (window === undefined || !video) return;
 
+    //! TMP
     const progress = getPlayerProgress()
 
     if (progress) {
@@ -670,8 +678,6 @@ const KekwPlayer: NextPage<{
 
   /** Update user progress */
   function updatePlayerProgress(payload: IKekwPlayerLocalDataItem) {
-    if (devMode) console.log(`[Player]: Progress patched`);
-
     let items = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
     items = items.filter(el => el.id !== payload.id);
     items.push(payload)
@@ -757,7 +763,12 @@ const KekwPlayer: NextPage<{
     })
 
     changeMoment(moment);
-    video.play();
+
+    try {
+      await video.play()
+    } catch (e) {
+
+    }
   }
 
   /** Change video moment
@@ -1135,31 +1146,11 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
     }
   }
 
-  // Prevent auto scrolling to top issue from react-menu component
-  function preventScrolling() {
-    if (isFirstOpen.current) {
-      let i = 0;
-
-      let int = setInterval(() => {
-        if (i === 20) {
-          clearInterval(int)
-          return;
-        }
-
-        window.scrollTo({ top: window.scrollY, behavior: 'instant' })
-        isFirstOpen.current = false;
-        i++;
-      }, 10)
-    }
+  function MenuButton() {
+    return <IcoNewPlayerList width={40} height={40} />
   }
 
-  function menuButton() {
-    return <button className='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={() => preventScrolling()}>
-      <IcoNewPlayerList width={40} height={40} />
-    </button>
-  }
-
-  function MenuDubber({ dub, currId, dubbers, ep }: { dub: ITitleEpisodesDub, currId: string, dubbers: IDubber[], ep: number }) {
+  function MenuDubber({ dub, currId }: { dub: ITitleEpisodesDub, currId: string }) {
     let lastEp = 0;
 
     dub.eps.forEach(el => {
@@ -1168,81 +1159,53 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
 
     function setDub() {
       changeDub(dub, ep, 0)
-
-      // Write player data to local storage
-      const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
-      const localRecord = localData?.find(el => el.id === titleId)
-
-      if (localRecord) {
-        localRecord.dub = dub.id;
-
-        localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
-      }
     }
 
-    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex justify-between gap-[8px] focus-visible:bg-purple rounded-[2px] w-full ${dub.id === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
-        <p className='text-white'>{dubbers.find(el => el.id === dub.id)?.name}</p>
+    return <UMenu.MenuItem className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex justify-between gap-[8px] focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${dub.id === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
+      <p className='text-white'>{dubbers.find(el => el.id === dub.id)?.name}</p>
 
-        <div className='flex gap-[4px]'>
-          <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
-            <p className='text-white whitespace-nowrap'>{lastEp} / {totalEps}</p>
-          </div>
-
-          {dub.include2K && <div className='gradient--primary px-[4px] py-[2px] rounded-[2px]'>
-            <p className='text-white whitespace-nowrap'>SUB</p>
-          </div>}
-
-          {dub.includeSub && <div className='gradient--primary px-[4px] py-[2px] rounded-[2px]'>
-            <p className='text-white whitespace-nowrap'>4K</p>
-          </div>}
+      <div className='flex gap-[4px]'>
+        <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
+          <p className='text-white whitespace-nowrap'>{lastEp} / {totalEps}</p>
         </div>
-      </button>
-    </RMen.MenuItem>
+      </div>
+    </UMenu.MenuItem>
   }
 
   function MenuEpisode({ to }: { to: number }) {
     function setEpisode(to: number) {
       changeDub(currentDub, to, 0)
-
-      // Write player data to local storage
-      const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
-      const localRecord = localData?.find(el => el.id === titleId)
-
-      if (localRecord) {
-        localRecord.ep = to;
-
-        localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
-      }
     }
 
-    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] w-full ${ep === to ? 'bg-purple' : ''}`} onClick={() => setEpisode(to)}>
-        <p className='text-white'>{to}</p>
-      </button>
-    </RMen.MenuItem>
+    return <UMenu.MenuItem className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] w-full ${ep === to ? 'bg-purple' : ''} cursor-pointer`} onClick={() => setEpisode(to)}>
+      <p className='text-white'>{to}</p>
+    </UMenu.MenuItem>
   }
 
   return (
     <div className={`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200 ${isIdle ? '-translate-y-[100%]' : 'translate-y-0'}`}>
-      <RMen.Menu className={'szh-slide szh-slide--toBottom w-full'} menuClassName={`px-[16px] py-[8px] bg-dark !flex gap-[8px] h-[200px] max-h-[200px] w-fit !left-0 !top-[76px]`} menuButton={menuButton()} direction='bottom'>
-        <div className='flex flex-col gap-[4px] overflow-y-scroll px-[4px] w-full'>
-          {currentDub && totalDubs.map(el => {
-            return <MenuDubber dub={el} currId={currentDub.id} dubbers={dubbers} key={`${el.id}_setdub`} ep={ep} />
-          })}
+      <UMenu.Menu trigger={<MenuButton />} triggerClassName='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' direction='bottom' align='start'>
+        <div className='px-[16px] py-[8px] bg-dark rounded-[2px] flex gap-[8px]'>
+          {/* Dubs */}
+          <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
+            {totalDubs?.map(dub => {
+              return <MenuDubber dub={dub} currId={currentDub?.id} key={`dub-${dub.id}`} />
+            })}
+          </UMenu.MenuList>
+
+          {/* Divider */}
+          <span className='w-[1px] h-auto bg-darkGrey block'></span>
+
+          {/* Eps */}
+          <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
+            {currentDub?.eps.sort((a, b) => a.order - b.order).map(ep => {
+              return <MenuEpisode to={ep.order} key={`ep-${ep.order}`} />
+            })}
+          </UMenu.MenuList>
         </div>
+      </UMenu.Menu>
 
-        {/* Divider */}
-        <span className='w-[1px] h-auto bg-darkGrey block'></span>
-
-        <div className='flex flex-col gap-[4px] overflow-y-scroll px-[8px]'>
-          {currentDub && currentDub.eps.map(el => {
-            return <MenuEpisode to={el.order} key={`${currentDub.id}_setep-${el.order}`} />
-          })}
-        </div>
-      </RMen.Menu>
-
-      <div className='bg-dark flex flex-col justify-center gap-[2px] rounded-[2px] px-[16px]'>
+      <div className='bg-dark flex flex-col justify-center gap-[2px] rounded-[2px] px-[16px]' >
         <p className='text-white font-bold text-center'>{ep <= 9 ? `0${ep}` : ep}</p>
         <p className='text-white text-[12px] font-extralight text-center'>{currentDub ? dubbers.find(el => el.id === currentDub.id)!.name : '...'}</p>
       </div>
@@ -1255,10 +1218,11 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
 })
 
 
+
 //* -------------- SETTINGS COMPONENT --------------
 
 
-type TSettingPage = 'default' | 'quality' | 'speed' | 'volume' | 'subs';
+type TSettingPage = 'list' | 'quality' | 'speed';
 
 interface ISettingsProps {
   quality: TVideoQuality,
@@ -1274,8 +1238,135 @@ interface ISettingsProps {
 }
 
 const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, setSubs, speed, subs, epData, isVideoProcessed, videoRef, stretch, setStretch }) {
-  const [page, setPage] = useState<TSettingPage>('default')
-  const isFirstOpen = useRef(true);
+  const [page, setPage] = useState<TSettingPage>('list')
+  const listsRef = useRef<HTMLDivElement>(null)
+
+  const qualityRef = useRef<HTMLDivElement>(null)
+  const speedRef = useRef<HTMLDivElement>(null)
+
+  const menuPx = 8; //! Edit only this var to change menu padding
+  const menuPy = 4; //! Edit only this var to change menu padding
+  const menuWidth = 260; //! Edit only this var to change menu width
+
+  // Set default placement
+  useEffect(() => {
+    const menu = document.querySelector('#kp-settings_menu') as HTMLDivElement | undefined
+    const lists = listsRef.current;
+    const quality = qualityRef.current;
+    const speed = speedRef.current;
+
+    if (!lists || !quality || !menu || !speed) return;
+
+    menu.style.width = `${menuWidth}px`
+    menu.style.right = `-${menuWidth / 4}px`
+
+    reset()
+
+    lists.style.bottom = `${menuPy}px`
+    lists.style.left = `${menuPx}px`
+    lists.style.width = `${menuWidth - (menuPx * 2)}px`
+
+    quality.style.bottom = `${menuPy}px`
+    quality.style.left = `${menuPx}px`
+    quality.style.width = `${menuWidth - (menuPx * 2)}px`
+
+    speed.style.bottom = `${menuPy}px`
+    speed.style.left = `${menuPx}px`
+    speed.style.width = `${menuWidth - (menuPx * 2)}px`
+  }, [])
+
+  // Change page
+  useEffect(() => {
+    const menu = document.querySelector('#kp-settings_menu') as HTMLDivElement | undefined
+    const lists = listsRef.current;
+    const quality = qualityRef.current;
+    const speed = speedRef.current;
+
+    if (!menu || !lists || !quality || !speed) return;
+
+    // Reset
+    reset()
+
+    if (page === 'list') {
+      lists.style.transform = 'translateX(0)';
+      lists.style.opacity = '1';
+      lists.style.visibility = 'visible';
+
+      menu.style.height = `${lists.offsetHeight + (menuPy * 2)}px`
+    } else if (page === 'quality') {
+      quality.style.transform = 'translateX(0)';
+      quality.style.opacity = '1';
+      quality.style.visibility = 'visible';
+
+      menu.style.height = `${quality.offsetHeight + (menuPy * 2)}px`;
+    } else if (page === 'speed') {
+      speed.style.transform = 'translateX(0)';
+      speed.style.opacity = '1';
+      speed.style.visibility = 'visible';
+
+      menu.style.height = `${speed.offsetHeight + (menuPy * 2)}px`;
+    }
+  }, [page])
+
+  /** Reset menus position */
+  function reset() {
+    const menu = document.querySelector('#kp-settings_menu') as HTMLDivElement | undefined
+    const lists = listsRef.current;
+    const quality = qualityRef.current;
+    const speed = speedRef.current;
+
+    if (!menu || !lists || !quality || !speed) return;
+
+    lists.style.transform = `translateX(-${menuWidth + 24}px)`;
+    lists.style.opacity = '0';
+    lists.style.visibility = 'hidden';
+
+    quality.style.transform = `translateX(${menuWidth + 24}px)`;
+    quality.style.opacity = '0';
+    quality.style.visibility = 'hidden';
+
+    speed.style.transform = `translateX(${menuWidth + 24}px)`;
+    speed.style.opacity = '0';
+    speed.style.visibility = 'hidden';
+  }
+
+  return (
+    <div className='relative max-[460px]:hidden'>
+      <UMenu.Menu trigger={<MenuButton />} direction='top' align='end' className={`px-[${menuPx}px] py-[${menuPy}px] bg-dark rounded-[2px] overflow-hidden`} id='kp-settings_menu'>
+        {/* List */}
+        <div ref={listsRef} className={`absolute bottom-0 left-0 duration-200 max-h-[200px] overflow-y-scroll`}>
+          <UMenu.MenuList className={`flex flex-col gap-[4px]`}>
+            <QualityButton />
+            <SpeedButton />
+            <StretchButton />
+          </UMenu.MenuList>
+        </div>
+
+        {/* Quality menu */}
+        <div className={`absolute bottom-0 left-0 duration-200 max-h-[200px] overflow-y-scroll`} ref={qualityRef}>
+          <QualityMenu />
+        </div>
+
+        {/* Speed menu */}
+        <div className={`absolute bottom-0 left-0 duration-200 max-h-[200px] overflow-y-scroll`} ref={speedRef}>
+          <SpeedMenu />
+        </div>
+      </UMenu.Menu>
+    </div>
+  )
+
+  function MenuButton() {
+    return <div className={'relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'}>
+      <IcoSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200`} />
+    </div>
+  }
+
+  function ReturnButton({ label }: { label: string }) {
+    return <button className={`flex items-center gap-[16px] w-full duration-200 hover:bg-darkGrey focus-visible:bg-darkGrey`} onClick={() => setPage('list')}>
+      <IcoArrow width={24} height={24} className='rotate-[90deg]' />
+      <p className='text-white w-full'>{label}</p>
+    </button>
+  }
 
   function setSpeed(to: number) {
     const video = videoRef.current;
@@ -1283,37 +1374,6 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
     if (!video) return;
 
     video.playbackRate = to;
-  }
-
-  // Prevent auto scrolling to top issue from react-menu component
-  function preventScrolling() {
-    if (isFirstOpen.current) {
-      let i = 0;
-
-      let int = setInterval(() => {
-        if (i === 20) {
-          clearInterval(int)
-          return;
-        }
-
-        window.scrollTo({ top: window.scrollY, behavior: 'instant' })
-        isFirstOpen.current = false;
-        i++;
-      }, 10)
-    }
-  }
-
-  function MenuButton() {
-    return <button className={'relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'} onClick={() => preventScrolling()}>
-      <IcoSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200`} />
-    </button>
-  }
-
-  function ReturnButton({ label }: { label: string }) {
-    return <button className={`flex items-center gap-[16px] w-full duration-200 hover:bg-darkGrey focus-visible:bg-darkGrey`} onClick={() => setPage('default')}>
-      <IcoArrow width={24} height={24} className='rotate-[90deg]' />
-      <p className='text-white w-full'>{label}</p>
-    </button>
   }
 
   function parseQuality(quality: TVideoQuality) {
@@ -1345,7 +1405,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
   }
 
   function QualityButton() {
-    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+    return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
       <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('quality')}>
         <div className='flex items-center gap-[16px]'>
           <IcoNewPlayerQuality width={24} height={24} />
@@ -1356,57 +1416,11 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
           <p className='text-white'>{parseQuality(quality)}</p>
         </div>
       </button>
-    </RMen.MenuItem>
+    </UMenu.MenuItem>
   }
-
-  function SubsButton() {
-    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('subs')}>
-        <div className='flex items-center gap-[16px]'>
-          <IcoNewPlayerSubs width={24} height={24} />
-          <p className='text-white'>Субтитри</p>
-        </div>
-
-        {/* // TODO Subs system */}
-        <div>
-          <p className='text-lightGrey'>Відсутні</p>
-        </div>
-      </button>
-    </RMen.MenuItem>
-  }
-
-  function SpeedButton() {
-    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('speed')}>
-        <div className='flex items-center gap-[16px]'>
-          <IcoSpeed width={24} height={24} />
-          <p className='text-white'>Швидкість</p>
-        </div>
-
-        <div>
-          <p className='text-white'>{speed}х</p>
-        </div>
-      </button>
-    </RMen.MenuItem>
-  }
-
-  function StretchButton() {
-    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <button className={`flex items-center gap-[16px] w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setStretch(!stretch)}>
-        <div className='relative w-[24px] h-[24px]'>
-          <IcoPlayerStretch width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-0 invisible' : 'opacity-100 visible'}`} />
-          <IcoPlayerCenter width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
-        </div>
-
-        <p className='text-white'>{stretch ? 'Центрувати' : 'Розтягнути'} відео</p>
-      </button>
-    </RMen.MenuItem>
-  }
-
-
 
   function QualityMenu() {
-    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+    return <UMenu.MenuItem onClick={(e) => e.stopPropagation()}>
       <div className={`flex flex-col gap-[16px]`}>
         <ReturnButton label='Якість' />
         <div className='flex flex-col gap-[4px]'>
@@ -1431,24 +1445,26 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
           </button>}
         </div>
       </div>
-    </RMen.MenuItem>
+    </UMenu.MenuItem>
   }
 
-  function SubsMenu() {
-    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
-      <div className={`flex flex-col gap-[16px]`}>
-        <ReturnButton label='Субтитри' />
-        <div className='flex flex-col gap-[4px]'>
-          <button className='px-[16px] py-[4px] rounded-[2px] bg-darkGrey' disabled>
-            <p className='text-lightGrey'>Відсутні</p>
-          </button>
+  function SpeedButton() {
+    return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
+      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('speed')}>
+        <div className='flex items-center gap-[16px]'>
+          <IcoSpeed width={24} height={24} />
+          <p className='text-white'>Швидкість</p>
         </div>
-      </div>
-    </RMen.MenuItem>
+
+        <div>
+          <p className='text-white'>{speed}х</p>
+        </div>
+      </button>
+    </UMenu.MenuItem>
   }
 
   function SpeedMenu() {
-    return <RMen.MenuItem onClick={(e) => { e.stopPropagation = true; e.keepOpen = true }}>
+    return <UMenu.MenuItem onClick={(e) => e.stopPropagation()}>
       <div className={`flex flex-col gap-[16px]`}>
         <ReturnButton label='Швидкість' />
         <div className='flex flex-col gap-[4px]'>
@@ -1485,29 +1501,21 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
           </button>
         </div>
       </div>
-    </RMen.MenuItem>
+    </UMenu.MenuItem>
   }
 
-  return (
-    <div className='relative max-[460px]:hidden'>
-      <RMen.Menu menuButton={MenuButton()} className={`szh-slide szh-slide--toTop`} menuClassName={`px-[16px] py-[8px] bg-dark !flex flex-col gap-[4px] min-w-[260px] w-fit h-fit !-top-[230px] h-[156px] max-h-[156px] overflow-y-scroll`} gap={16} direction='bottom'>
-        {epData && <>
-          {/* Buttons */}
-          {page === 'default' && <>
-            <QualityButton />
-            <SpeedButton />
-            <StretchButton />
-            <SubsButton />
-          </>}
+  function StretchButton() {
+    return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
+      <button className={`flex items-center gap-[16px] w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setStretch(!stretch)}>
+        <div className='relative w-[24px] h-[24px]'>
+          <IcoPlayerStretch width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-0 invisible' : 'opacity-100 visible'}`} />
+          <IcoPlayerCenter width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
+        </div>
 
-          {/* Menus */}
-          {page === 'quality' && <QualityMenu />}
-          {page === 'speed' && <SpeedMenu />}
-          {page === 'subs' && <SubsMenu />}
-        </>}
-      </RMen.Menu>
-    </div >
-  );
+        <p className='text-white'>{stretch ? 'Центрувати' : 'Розтягнути'} відео</p>
+      </button>
+    </UMenu.MenuItem>
+  }
 })
 
 
