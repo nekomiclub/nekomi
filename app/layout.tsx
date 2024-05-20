@@ -19,9 +19,10 @@ import { headers } from 'next/headers';
 import * as Provider from '../components/Providers'
 import { config } from '../config';
 import { SkeletonTheme } from 'react-loading-skeleton';
-import { IcoInternet, IcoOffline, IcoServerUnavailable } from '../assets/ico/Icos';
 import { routes } from '../routes';
 import { getRoute } from '../components/ServerComponents';
+import { IcoInternet, IcoOffline } from '../assets/Icons';
+import { ILayoutProps, IRSCProps } from '../interfaces/IRSC';
 
 export const metadata: Metadata = {
   title: 'Animee',
@@ -66,11 +67,7 @@ const ServerUnavailable: NextPage = (props) => {
   );
 }
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function Layout({ children, params }: ILayoutProps) {
   const pathname = headers().get('x-url')!.replace(config.URL.baseURL, '')
   const route = getRoute(pathname)
 

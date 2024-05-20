@@ -3,28 +3,25 @@ import type { NextPage, Metadata, ResolvingMetadata } from 'next';
 import { config } from '../../../config';
 import axios from 'axios';
 import { IDubber } from '../../../interfaces/IDubber';
-import NotFound from '@/oops/404/page';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
-import { IcoSocialInstagram, IcoSocialYoutube, IcoSocialTelegram, IcoSocialTiktok, IcoSupportBymeacoffe, IcoSupportPatreon, IcoSupportPrivatbank, IcoSupportMonobank, IcoSupportDiaka } from '../../../assets/assets';
 import Link from 'next/link';
 import { routes } from '../../../routes';
 
 import './styles.scss';
 import Tooltip from '../../../components/Tooltip';
 import { DubStats, DubCrew } from './clientContent';
-
-interface IProps {
-  params: { code: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
+import { NotFoundScreen } from '../../../components/OopsComponents';
+import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/Social';
+import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/Support';
+import { IRSCProps } from '../../../interfaces/IRSC';
 
 export async function generateMetadata(
-  { params, searchParams }: IProps,
+  { params }: IRSCProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const { data } = await axios.get<IDubber>(`${config.services.apiURL}/v1/dubber/${params.code}`);
+    const { data } = await axios.get<IDubber>(`${config.URL.apiHTTP}/v1/dubber/${params.code}`);
 
     return {
       title: `${data.name} на animee`,
@@ -47,7 +44,7 @@ export async function generateMetadata(
   }
 }
 
-const Dubber: NextPage<IProps> = async ({ params, searchParams }) => {
+export default async function RSC({ params }: IRSCProps<{ code: string }>) {
   // @ts-ignore
   let dubberData: IDubber = {};
   let isErrored = false
@@ -63,7 +60,7 @@ const Dubber: NextPage<IProps> = async ({ params, searchParams }) => {
 
   return (
     <div className="w-full min-h-screen h-full bg-dark">
-      {isErrored ? <NotFound /> : <>
+      {isErrored ? <NotFoundScreen /> : <>
         <Header />
 
         <div className='py-[200px]'>
@@ -119,7 +116,7 @@ const Dubber: NextPage<IProps> = async ({ params, searchParams }) => {
                 <div className='flex items-center gap-[16px]'>
                   {dubberData?.support.bymeacoffee && <>
                     <Link href={dubberData.support!.bymeacoffee} target='_blank'>
-                      <IcoSupportBymeacoffe height={32} width={32} />
+                      <IcoSupportByMeACoffee height={32} width={32} />
                     </Link>
                   </>}
 
@@ -193,5 +190,3 @@ const Dubber: NextPage<IProps> = async ({ params, searchParams }) => {
     </div>
   );
 }
-
-export default Dubber;

@@ -2,17 +2,18 @@
 
 import { NextPage } from 'next';
 import Tooltip from '../../../components/Tooltip';
-import { IcoCalendar, IcoClock, IcoCrown, IcoPen, IcoPeople, IcoStarRating } from '../../../assets/ico/Icos';
 import { IDubber } from '../../../interfaces/IDubber';
 import Link from 'next/link';
 import { routes } from '../../../routes';
+import { IcoClockOutlined } from '../../../assets/Clock';
+import { IcoCalendar, IcoCrown, IcoPen, IcoPeople, IcoStarRating } from '../../../assets/Icons';
 
 export const DubStats: NextPage<{ dubberData: IDubber }> = ({ dubberData }) => {
   return (
     <>
       <Tooltip content='Рейтинг'>
         <div className='flex gap-[8px] items-center'>
-          <IcoStarRating width={24} height={24} gradient='primary' />
+          <IcoStarRating width={24} height={24} fill='#FF464E' />
           <p className='font-bold text-[16px] gradient--primary-text'>{dubberData.rating}</p>
         </div>
       </Tooltip>
@@ -26,7 +27,7 @@ export const DubStats: NextPage<{ dubberData: IDubber }> = ({ dubberData }) => {
 
       <Tooltip content='Середній відсоток вибору озвучення'>
         <div className='flex gap-[8px] items-center'>
-          <IcoClock width={24} height={24} gradient='primary' />
+          <IcoClockOutlined width={24} height={24} fill='#FF464E' />
           <p className='font-bold text-[16px] gradient--primary-text'>-</p>
         </div>
       </Tooltip>

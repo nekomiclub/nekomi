@@ -11,23 +11,25 @@ import * as Menu from 'uvc-menu';
 
 import { ITitle, ITitleEpisodesDub, TAnimeGenres } from '../../../interfaces/ITitle';
 import Header from '../../../components/Header';
-import { IcoInfo, IcoClock, IcoHeart, IcoHeartFilled, IcoPlay, IcoStarRating, IcoWatching } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { getKeyByValue, parseTitleCountry, parseTitleDubbers, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { IDubber } from '../../../interfaces/IDubber';
 import { animeGenres, config, genresDescription } from '../../../config';
 import { LoadingImage, WatchButton } from '../../../components/GeneralComponents';
-import { IcoSupportBymeacoffe, IcoSupportDiaka, IcoSocialInstagram, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/assets';
 import Footer from '../../../components/Footer';
 import { useAppSelector } from '../../../hooks/redux';
 import { IUser } from '../../../interfaces/IUser';
-import { IcoEyeSuccess, IcoFilledCan, IcoFilledClock, IcoFilledPlans } from '../../../assets/ico/eye';
-import { IcoFolderAdd } from '../../../assets/ico/folder';
 import { IUserState } from '../../../store/reducers/userSlice';
 import KekwPlayer from '../../../components/KekwPlayer';
 
 import './styles.scss';
 import { $api } from '../../../components/http';
+import { IcoCan, IcoInfo, IcoStack, IcoStarRating, IcoWatched } from '../../../assets/Icons';
+import { IcoHeartFilled, IcoHeartOutlined } from '../../../assets/Heart';
+import { IcoFolderAdd } from '../../../assets/Folder';
+import { IcoClockFilled } from '../../../assets/Clock';
+import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/Support';
+import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/Social';
 
 interface IProps {
   title: ITitle,
@@ -136,7 +138,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <h1 className='text-white text-[40px] font-bold max-[600px]:text-center max-[600px]:text-[32px]'>{title.names.ukr}</h1>
 
                   <div className='flex items-center gap-[8px]'>
-                    <IcoStarRating width={24} height={24} gradient='primary' className='max-[600px]:w-[32px] max-[600px]:h-[32px]' />
+                    <IcoStarRating width={24} height={24} fill='#FF464E' className='max-[600px]:w-[32px] max-[600px]:h-[32px]' />
                     <p className='gradient--primary-text font-bold max-[600px]:text-[24px]'>{title.rating}</p>
                   </div>
                 </div>
@@ -158,8 +160,8 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${state.id ? 'title-like--auth' : 'bg-darkGrey/[.3] title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!state.id} onClick={() => changeTitleList('favorite')}>
                     <Tooltip content={state.id ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
                       <div className='relative'>
-                        <IcoHeart width={40} height={40} className='title-like-ico' gradient='primary' />
-                        <IcoHeartFilled width={40} height={40} className={`title-like-filled`} gradient='primary' />
+                        <IcoHeartOutlined width={40} height={40} className='title-like-ico' fill='#FF464E' />
+                        <IcoHeartFilled width={40} height={40} className={`title-like-filled`} fill='#FF464E' />
                       </div>
                     </Tooltip>
                   </button>
@@ -167,7 +169,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <Menu.Menu trigger={
                     <div className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${state.id ? 'title-add--auth' : 'bg-darkGrey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} onClick={() => state.id ? setIsLibsSelectOpen(!isLibsSelectOpen) : null}>
                       <Tooltip content={state.id ? `Додати тайтл в теки` : 'Авторизуйтесь, для того щоб додавати тайтли в теки'}>
-                        <IcoFolderAdd width={40} height={40} />
+                        <IcoFolderAdd width={40} height={40} fill='#FF464E' />
                       </Tooltip>
                     </div>
                   } align='start' direction='bottom' className='rounded-[2px] overflow-hidden'>
@@ -328,11 +330,11 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
     const state = titleLists.includes(changeTo);
 
     return <Menu.MenuItem onClick={() => changeTitleList(changeTo)} className='shrink-0 flex gap-[16px] px-[8px] py-[4px] duration-200 hover:bg-grey focus-visible:bg-grey cursor-pointer'>
-      {changeTo === 'watched' && <IcoEyeSuccess width={24} height={24} />}
-      {changeTo === 'watching' && <IcoFilledPlans width={24} height={24} />}
-      {changeTo === 'delayed' && <IcoFilledCan width={24} height={24} />}
+      {changeTo === 'watched' && <IcoWatched width={24} height={24} />}
+      {changeTo === 'watching' && <IcoStack width={24} height={24} />}
+      {changeTo === 'delayed' && <IcoCan width={24} height={24} />}
       {changeTo === 'favorite' && <IcoHeartFilled width={24} height={24} />}
-      {changeTo === 'plans' && <IcoFilledClock width={24} height={24} />}
+      {changeTo === 'plans' && <IcoClockFilled width={24} height={24} />}
 
       <p className='text-white whitespace-nowrap'>{state ? textOut : textIn}</p>
     </Menu.MenuItem>
@@ -358,7 +360,7 @@ const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dub
         <div className='flex gap-[24px] justify-center'>
           <Tooltip content={`Рейтинг ${dubber.name}`}>
             <div className='flex items-center gap-[8px]'>
-              <IcoStarRating width={24} height={24} gradient='primary' />
+              <IcoStarRating width={24} height={24} fill='#FF464E' />
               <p className='gradient--primary-text text-[24px] font-bold'>{dubber.rating}</p>
             </div>
           </Tooltip>
@@ -378,7 +380,7 @@ const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dub
           <ul className='flex items-center gap-[8px]'>
             {dubber?.support.bymeacoffee && <>
               <Link href={dubber.support!.bymeacoffee} target='_blank'>
-                <IcoSupportBymeacoffe height={40} width={40} />
+                <IcoSupportByMeACoffee height={40} width={40} />
               </Link>
             </>}
             {dubber?.support.patreon && <>

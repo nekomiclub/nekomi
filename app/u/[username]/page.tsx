@@ -12,8 +12,7 @@ import { $api } from '../../../components/http';
 
 
 
-/** User RSC lists */
-const UserLists: NextPage<IRSCProps<{ username: string }>> = async ({ params, searchParams }) => {
+export default async function RSC({ params }: IRSCProps<{ username: string }>) {
   let isErrored = false;
   let emsg = ''
 
@@ -58,8 +57,5 @@ const UserLists: NextPage<IRSCProps<{ username: string }>> = async ({ params, se
     <>
       <UserListsContent user={user} isOwner={isOwner} />
     </>
-
   );
 }
-
-export default UserLists;

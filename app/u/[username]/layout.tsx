@@ -14,14 +14,14 @@ import { UserHeader, UserContent, UserBackground } from "./content";
 
 import DefaultBg from '../../../assets/defaultLargeImages/1.webp'
 import { $api } from '../../../components/http';
-import { IRSCProps } from '../../../interfaces/IRSC';
+import { ILayoutProps, IRSCProps } from '../../../interfaces/IRSC';
 import { HappenedWrongScreen } from '../../../components/OopsComponents';
 
 
 
 // Generate metadata
 export async function generateMetadata(
-  { params, searchParams }: IRSCProps<{ username: string }>,
+  { params }: IRSCProps<{ username: string }>,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
@@ -50,12 +50,7 @@ export async function generateMetadata(
 
 
 
-interface IProps extends IRSCProps<{ username: string }> {
-  children: React.ReactElement
-}
-
-// Layout
-export default async function Layout({ children, params }: IProps) {
+export default async function Layout({ params, children }: ILayoutProps<{ username: string }>) {
   // @ts-expect-error Need empty object
   let userData: IExtendedUser = {}
   let isErrored = false;

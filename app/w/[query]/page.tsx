@@ -10,7 +10,7 @@ import { $api } from "../../../components/http";
 import { HappenedWrongScreen } from "../../../components/OopsComponents";
 
 export async function generateMetadata(
-  { params, searchParams }: IRSCProps<{ query: string }>,
+  { params }: IRSCProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
@@ -43,7 +43,7 @@ export async function generateMetadata(
 
 
 // Fetch title
-const RSC: NextPage<IRSCProps<{ query: string }>> = async ({ params, searchParams }) => {
+export default async function RSC({ params }: IRSCProps<{ query: string }>) {
   let isErrored = false;
   let emsg = ''
 
@@ -83,5 +83,3 @@ const RSC: NextPage<IRSCProps<{ query: string }>> = async ({ params, searchParam
 
   return isErrored ? <HappenedWrongScreen cause={emsg} /> : <Watch title={title!} dubbers={dubbers} totalEps={totalEps} />
 }
-
-export default RSC;

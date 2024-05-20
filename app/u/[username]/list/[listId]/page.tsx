@@ -8,16 +8,15 @@ import Link from 'next/link';
 
 import { IUsapiUser, IUser, IUserList } from '../../../../../interfaces/IUser';
 import { config } from '../../../../../config';
-import { IcoArrow, IcoSettings } from '../../../../../assets/ico/Icos';
 import Tooltip from '../../../../../components/Tooltip';
-import Loading from '../../../../../components/Loading';
-import { IcoEyeHidden, IcoEyeVisible } from '../../../../../assets/ico/eye';
 import { useAppSelector } from '../../../../../hooks/redux';
 import { routes } from '../../../../../routes';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { TitleCard } from '../../../../../components/GeneralComponents';
 import { $api } from '../../../../../components/http';
 import axios from 'axios';
+import { IcoEyeHidden, IcoEyeVisible } from '../../../../../assets/Eye';
+import { IcoArrow, IcoSettings } from '../../../../../assets/Icons';
 
 const UserList: NextPage = (props) => {
   const [isErrored, setIsErrored] = useState(false)

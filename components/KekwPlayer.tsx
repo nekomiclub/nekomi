@@ -10,8 +10,6 @@ import * as UMenu from 'uvc-menu';
 
 import { ITitle, ITitleEpisodeDubbed, ITitleEpisodeMeta, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
-import { IcoNewPlayerFullEnter, IcoNewPlayerFullExit, IcoNewPlayerList, IcoNewPlayerNext, IcoNewPlayerPause, IcoNewPlayerPiPEnter, IcoNewPlayerPiPExit, IcoNewPlayerQuality, IcoNewPlayerSubs, IcoNewPlayerVolMin, IcoNewPlayerVolMuted, IcoNewPlayerVolNormal } from '../assets/ico/new/player';
-import { IcoArrow, IcoPlay, IcoPlayerCenter, IcoPlayerStretch, IcoServerUnavailable, IcoSettings, IcoSpeed } from '../assets/ico/Icos';
 
 import { useInView } from 'react-intersection-observer';
 import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
@@ -26,6 +24,11 @@ import { clearTimeout } from 'timers';
 
 import '../styles/components/KekwPlayer.scss';
 import 'uvc-menu/css';
+import { IcoPlayerCenter, IcoPlayerList, IcoPlayerNext, IcoPlayerPause, IcoPlayerQuality, IcoPlayerStretch } from '../assets/Player';
+import { IcoArrow, IcoPlay, IcoServerUnavailable, IcoSettings, IcoSpeed } from '../assets/Icons';
+import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
+import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '../assets/PlayerPiP';
+import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '../assets/PlayerFullscreen';
 
 
 
@@ -1068,7 +1071,7 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
       </div>
 
       <button className='duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[8px] rounded-[4px]' onClick={() => skipEp()}>
-        <IcoNewPlayerNext width={80} height={80} />
+        <IcoPlayerNext width={80} height={80} />
       </button>
     </div>
 
@@ -1143,7 +1146,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
   }
 
   function MenuButton() {
-    return <IcoNewPlayerList width={40} height={40} />
+    return <IcoPlayerList width={40} height={40} />
   }
 
   function MenuDubber({ dub, currId }: { dub: ITitleEpisodesDub, currId: string }) {
@@ -1207,7 +1210,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
       </div>
 
       <button className={`px-[16px] bg-dark rounded-[2px] duration-200 ${!isLastEpisode && 'hover:bg-purple focus-visible:bg-purple'}`} onClick={() => nextEpisode()} disabled={isLastEpisode}>
-        <IcoNewPlayerNext width={40} height={40} className={`kekwplayer-menu_nextBtn ${isLastEpisode ? 'kekwplayer-menu_nextBtn--lastEpisode' : ''}`} />
+        <IcoPlayerNext width={40} height={40} className={`kekwplayer-menu_nextBtn ${isLastEpisode ? 'kekwplayer-menu_nextBtn--lastEpisode' : ''}`} />
       </button>
     </div>
   );
@@ -1404,7 +1407,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
     return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
       <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('quality')}>
         <div className='flex items-center gap-[16px]'>
-          <IcoNewPlayerQuality width={24} height={24} />
+          <IcoPlayerQuality width={24} height={24} />
           <p className='text-white'>Якість</p>
         </div>
 
@@ -1543,7 +1546,7 @@ const Play: NextPage<IPlayProps> = ({ isPlaying, videoRef }) => {
   return (
     <button className='relative w-[68px] h-[68px] max-[460px]:w-[40px] max-[460px]:h-[40px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
       <IcoPlay width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:w-[40px] max-[460px]:h-[40px] ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
-      <IcoNewPlayerPause width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:w-[40px] max-[460px]:h-[40px] ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
+      <IcoPlayerPause width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:w-[40px] max-[460px]:h-[40px] ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
     </button>
   );
 }
@@ -1651,9 +1654,9 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
   return (
     <div className='relative flex items-center gap-[8px] max-[600px]:hidden' id='kekwplayer-volume'>
       <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-        <IcoNewPlayerVolMin width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume < 30 && !isMuted ? 'opacity-100' : ''}`} />
-        <IcoNewPlayerVolNormal width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume >= 30 && !isMuted ? 'opacity-100' : ''}`} />
-        <IcoNewPlayerVolMuted width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${isMuted ? 'opacity-100' : ''}`} />
+        <IcoPlayerVolumeMin width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume < 30 && !isMuted ? 'opacity-100' : ''}`} />
+        <IcoPlayerVolumeNormal width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume >= 30 && !isMuted ? 'opacity-100' : ''}`} />
+        <IcoPlayerVolumeMuted width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${isMuted ? 'opacity-100' : ''}`} />
       </button>
 
       <div className='flex items-center gap-[16px] w-fit overflow-hidden opacity-0 duration-500' id='kekwplayer-volume_range'>
@@ -1787,8 +1790,8 @@ const PiP: NextPage<IPiPProps> = ({ isPiP, videoRef }) => {
 
   return (
     <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px] max-[600px]:hidden' onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoNewPlayerPiPEnter className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
-      <IcoNewPlayerPiPExit className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
+      <IcoPlayerPiPEnter className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
+      <IcoPlayerPiPExit className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
     </button>
   );
 }
@@ -1824,8 +1827,8 @@ const Fullscreen: NextPage<IFullscreenProps> = ({ isFullscreen, playerRef }) => 
 
   return (
     <button className='relative w-[48px] h-[48px] max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoNewPlayerFullExit className={`absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 opacity-0 ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
-      <IcoNewPlayerFullEnter className={`absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 opacity-0 ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
+      <IcoPlayerFullscreenExit className={`absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 opacity-0 ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
+      <IcoPlayerFullscreenEnter className={`absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 opacity-0 ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
     </button>
   );
 }

@@ -55,4 +55,16 @@ CSR layout
 ## /polling
 Services status page. Depends on fk-uptime service
 
+------------------------------------------
+
+## /dev
+Dev endpoints. In prod mode layout will throw 404 screen
+
+------------------------------------------
+
+## /dev/icons
+List of all animee icons
+
+------------------------------------------
+
 [Back](../README.md)

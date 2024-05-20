@@ -4,12 +4,10 @@ import { NextPage } from 'next';
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef, RefObject } from 'react'
 import { IExtendedUser, IUser, IUserList } from '../../../interfaces/IUser';
-import { IcoAccordionArrow, IcoArrow, IcoCalendar, IcoFolderPlain, IcoHome, IcoSettings, IcoStats, IcoWatching } from '../../../assets/ico/Icos';
 import Tooltip from '../../../components/Tooltip';
 import { useAppSelector } from '../../../hooks/redux';
 import gsap from 'gsap';
 import Link from 'next/link';
-import { IcoEyeHidden, IcoEyeSuccess, IcoEyeVisible, IcoFilledClock, IcoFilledHeart, IcoFilledPlans } from '../../../assets/ico/eye';
 
 import './styles.scss'
 import { routes } from '../../../routes';
@@ -18,6 +16,11 @@ import { config } from '../../../config';
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import { LoadingImage } from '../../../components/GeneralComponents';
+import { IcoArrow, IcoCalendar, IcoCan, IcoHome, IcoInfo, IcoSettings, IcoStack, IcoWatched } from '../../../assets/Icons';
+import { IcoFolderPlain } from '../../../assets/Folder';
+import { IcoHeartFilled } from '../../../assets/Heart';
+import { IcoClockFilled } from '../../../assets/Clock';
+import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 
 type TTab = 'home' | 'stats' | 'library' | 'settings';
 
@@ -29,7 +32,7 @@ export const SidebarItem: NextPage<{ currTab: TTab, tab: TTab, setTab: (tab: TTa
     <button className={`user-sidebar-item flex gap-[16px] items-center px-[8px] py-[4px] rounded-[2px] duration-200 hover:bg-dark/[.2] ${currTab === tab ? 'bg-dark/[.4]' : ''}`} onClick={() => setTab(tab)}>
       {tab === 'home' && <IcoHome width={24} height={24} />}
       {tab === 'library' && <IcoFolderPlain width={24} height={24} />}
-      {tab === 'stats' && <IcoStats width={24} height={24} />}
+      {tab === 'stats' && <IcoInfo width={24} height={24} />}
       {tab === 'settings' && <IcoSettings width={24} height={24} />}
 
       <p className='text-[16px] text-white'>
@@ -49,11 +52,11 @@ export const LibItem: NextPage<{ list: IUserList, isOwner: boolean, link: string
   return (
     <>
       {!list.hidden || list.hidden && isOwner ? <Link className='px-[16px] pt-[24px] pb-[8px] flex items-center flex-col gap-[16px] border border-white rounded-[2px] duration-200 hover:bg-dark/[.1]' href={link}>
-        {list.id.match(/^fav/gi) && <IcoFilledHeart width={128} height={128} />}
-        {list.id.match(/^watched/gi) && <IcoEyeSuccess width={128} height={128} />}
-        {list.id.match(/^plans/gi) && <IcoFilledPlans width={128} height={128} />}
-        {list.id.match(/^delayed/gi) && <IcoFilledClock width={128} height={128} />}
-        {list.id.match(/^watching/gi) && <IcoWatching width={128} height={128} />}
+        {list.id.match(/^fav/gi) && <IcoHeartFilled width={128} height={128} fill='#FF464E' />}
+        {list.id.match(/^watched/gi) && <IcoWatched width={128} height={128} fill='#FF464E' />}
+        {list.id.match(/^plans/gi) && <IcoClockFilled width={128} height={128} fill='#FF464E' />}
+        {list.id.match(/^delayed/gi) && <IcoCan width={128} height={128} fill='#FF464E' />}
+        {list.id.match(/^watching/gi) && <IcoStack width={128} height={128} fill='#FF464E' />}
 
         <div className='flex items-center gap-[8px]'>
           <p className='text-[16px] text-white font-extralight'>{list.name} ({list.titles.length})</p>

@@ -3,7 +3,6 @@ import Home, { IHomeHeadliner } from './Home';
 import { ITitle } from '../interfaces/ITitle';
 import { config, devMode, prodMode } from '../config';
 import axios, { AxiosError } from 'axios';
-import { IcoServerUnavailable } from '../assets/ico/Icos';
 import Link from 'next/link';
 import { HappenedWrongScreen } from '../components/OopsComponents';
 

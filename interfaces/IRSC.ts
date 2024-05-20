@@ -1,17 +1,31 @@
 /**
- * RSC params interface
+ * RSC interface
  * 
  * Generics
  * 
- * A - extends params
+ * A - query params
  * 
- * B - extends searchParams
+ * B - search params
  */
-export interface IRSCProps<A = null, B = null> {
-  params: {
-    [key: string]: string | never
-  } | A,
-  searchParams: {
-    [key: string]: string | never
-  } | B
+export interface IRSCProps<A = {
+  [param: string]: string
+}, B = {
+  [searchParam: string]: string
+}> {
+  params: A | never,
+  searchParams: B | never,
+}
+
+/**
+ * Layout interface
+ * 
+ * Generics
+ * 
+ * A - query params
+ */
+export interface ILayoutProps<A = {
+  [param: string]: string
+}> {
+  params: A,
+  children: React.ReactElement
 }

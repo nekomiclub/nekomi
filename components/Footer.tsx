@@ -2,13 +2,14 @@
 
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react'
-import { Logo, IcoSocialTelegram, IcoSocialTiktok } from '../assets/assets';
 import Link from 'next/link';
 
 import '../styles/components/Footer.scss'
 import { routes } from '../routes';
 import { config, devMode } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
+import { IcoAnimeeLogo } from '../assets/Icons';
+import { IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
 
 let isFirstOpen = true;
 const Footer: NextPage = (props) => {
@@ -57,7 +58,7 @@ const Footer: NextPage = (props) => {
       <div className="wrapper flex-col items-center gap-[32px]">
         <div className='flex justify-between w-full items-center max-[600px]:flex-col max-[600px]:gap-[32px]'>
           <div className='flex gap-[24px] items-center'>
-            <Logo width={128} height={96} className='max-[670px]:w-[64px] max-[670px]:h-[48px]' />
+            <IcoAnimeeLogo width={128} height={96} className='max-[670px]:w-[64px] max-[670px]:h-[48px]' />
 
             <div className='flex flex-col gap-[4px]'>
               <p className='uppercase text-[32px] text-white font-extralight max-[670px]:text-[24px]'>ANIMEE.CLUB</p>

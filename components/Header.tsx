@@ -6,7 +6,6 @@ import '../styles/components/serachPopup.scss'
 import { NextPage } from 'next';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState, useRef } from 'react'
-import { HeaderAccount, HeaderLogout } from '../assets/assets';
 import { Popup } from 'react-uvc'
 import { useDebounce } from 'use-debounce';
 import Link from 'next/link';
@@ -14,16 +13,15 @@ import { HashImage } from 'hash-image';
 
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
-import Loading from './Loading';
 import { routes } from '../routes';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import userSlice, { IUserState, defaultUserState } from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
 import { parseTitleType } from './handlers';
-import { IcoAnimeeLogo, IcoArrow, IcoHome, IcoLibrary, IcoSearch, IcoStarRating, IcoUser } from '../assets/ico/Icos';
 import { LoadingImage } from './GeneralComponents';
 import { $api } from './http';
 import { AxiosError } from 'axios';
+import { IcoAnimeeLogo, IcoArrow, IcoExit, IcoHome, IcoLibrary, IcoSearch, IcoStarRating, IcoUser } from '../assets/Icons';
 
 
 // Debounced query fired twice with empty string
@@ -92,7 +90,7 @@ const Header: NextPage = () => {
         <div className="wrapperNew !flex-row items-center justify-between w-full">
           <div className='flex items-center gap-[40px]'>
             <Link href={routes.home.path}>
-              <IcoAnimeeLogo width={60} height={60} gradient='primary' />
+              <IcoAnimeeLogo width={60} height={60} fill='#FF464E' />
             </Link>
 
             <div className='flex items-center gap-[16px]'>
@@ -128,12 +126,12 @@ const Header: NextPage = () => {
                 <div className={`absolute top-[48px] right-0 bg-dark rounded-[2px] duration-200 ${userDetailsOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                   <div className='flex flex-col'>
                     <Link className='flex items-center gap-[8px] px-[16px] py-[8px] duration-200 hover:bg-white/[.1]' href={`${routes.user.path.replace('/*', '')}/${user.username}`}>
-                      <HeaderAccount width={24} height={24} className='flex-shrink-0' />
+                      <IcoUser width={24} height={24} className='flex-shrink-0' />
                       <p className='text-[16px] text-white font-bold'>Акаунт</p>
                     </Link>
 
                     <button className='flex items-center gap-[8px] px-[16px] py-[8px] duration-200 hover:bg-white/[.1]' onClick={() => signOut()}>
-                      <HeaderLogout width={24} height={24} />
+                      <IcoExit width={24} height={24} />
                       <p className='text-[16px] text-white font-bold'>Вийти</p>
                     </button>
                   </div>
@@ -164,7 +162,7 @@ const Header: NextPage = () => {
 
                       <div className='flex items-center gap-[16px] w-full'>
                         <div className='flex items-center gap-[4px]'>
-                          <IcoStarRating width={16} height={16} gradient='primary' />
+                          <IcoStarRating width={16} height={16} fill='#FF464E' />
                           <p className='text-[16px] font-bold gradient--primary-text'>{title.rating}</p>
                         </div>
                         <p className='text-[16px] font-extralight text-white'>{parseTitleType(title.type)}</p>

@@ -4,7 +4,7 @@ import CatImg from '../assets/oopsIndevCat.png';
 import Image from 'next/image';
 import Link from 'next/link';
 import { routes } from '../routes';
-import { IcoGhost, IcoHome } from '../assets/ico/Icos';
+import { IcoGhost, IcoHome } from '../assets/Icons';
 
 const ReturnHome = () => {
   return (

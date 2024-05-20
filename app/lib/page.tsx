@@ -7,16 +7,14 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useDebounce } from 'use-debounce';
 import { ITitle } from '../../interfaces/ITitle';
-import Loading from '../../components/Loading';
-
 import '../../styles/components/Lib.scss'
 import Link from 'next/link';
 import { routes } from '../../routes';
-import { UserLibDelayed } from '../../assets/user';
 import { Tooltip } from 'react-tooltip';
-import { IcoArrow } from '../../assets/ico/Icos';
 import { config } from '../../config';
 import { $api } from '../../components/http';
+import { IcoArrow } from '../../assets/Icons';
+import { IcoClockFilled } from '../../assets/Clock';
 
 function randomInteger(min: number, max: number): number {
   return Math.floor(min + Math.random() * (max + 1 - min));
@@ -34,8 +32,8 @@ const LibItem: NextPage<{ title: ITitle }> = ({ title }) => {
           <p className='text-[16px] text-white font-bold'>{title.rating || '-'}</p>
         </div>
 
-        <div className={`flex items-center justify-center relative px-[4px] py-[4px] rounded-[2px] ${title.country !== 'null' ? 'bg-green-600' : 'bg-red-400'}`} data-tooltip-id={`${title.code}-tt--isUpdated`} data-tooltip-content={title.country !== 'null' ? 'Цей тайтл оновлений' : 'Цей тайтл ще не оновлений'}>
-          <UserLibDelayed width={24} height={24} className='lib-card--isUpdated' />
+        <div className={`flex items-center justify-center relative px-[4px] py-[4px] rounded-[2px] ${title.country !== 'null' ? 'bg-green' : 'bg-red'}`} data-tooltip-id={`${title.code}-tt--isUpdated`} data-tooltip-content={title.country !== 'null' ? 'Цей тайтл оновлений' : 'Цей тайтл ще не оновлений'}>
+          <IcoClockFilled width={24} height={24} className='lib-card--isUpdated' />
           <Tooltip id={`${title.code}-tt--isUpdated`} />
         </div>
       </div>
@@ -235,7 +233,7 @@ const Lib: NextPage = (props) => {
                 {titles.map(title => {
                   return <LibItem title={title} key={title.id} />
                 })}
-              </> : <Loading />}
+              </> : <p>Завантажуємо...</p>}
             </div>
 
             <div className={`w-full flex justify-center items-center gap-[4px] duration-200 ${debouncedQuery ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>

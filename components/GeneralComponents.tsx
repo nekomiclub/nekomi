@@ -8,7 +8,7 @@ import { IRoute, routes } from '../routes';
 import '../styles/components/GeneralComponents.scss'
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
-import { IcoPlay, IcoStarRating } from '../assets/ico/Icos';
+import { IcoPlay, IcoStarRating } from '../assets/Icons';
 
 /** Card-link for title */
 export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
@@ -56,7 +56,7 @@ export const WatchButton: NextPage<{ href: string, className?: string, gradient:
   return (
     <Link href={href} className={`gradient--${gradient}-border-4 gradient--${gradient}-hover watchButton watchButton--${gradient} px-[16px] py-[16px] flex items-center gap-[24px] ${className ? className : ''}`}>
       <div className='relative'>
-        <IcoPlay width={40} height={40} gradient={gradient} className={`watchButton-icoGradient watchButton--${gradient}`} />
+        <IcoPlay width={40} height={40} fill={gradient === 'primary' ? '#FF464E' : '#FF9966'} className={`watchButton-icoGradient watchButton--${gradient}`} />
         <IcoPlay width={40} height={40} className={`watchButton-icoWhite watchButton--${gradient}`} />
       </div>
       <p className='text-white text-[24px] font-bold uppercase'>дивитись</p>
