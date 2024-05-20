@@ -73,7 +73,6 @@ const KekwPlayer: NextPage<{
   const [isVideoProcessed, setIsVideoProcessed] = useState(true); // Specify if video procesed by the server (qualities & frames)
 
   // Player states
-  const [isCoverVisible, setIsCoverVisible] = useState(false) //! TMP, must be TRUE
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPiP, setIsPip] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -81,7 +80,7 @@ const KekwPlayer: NextPage<{
   const [isLastEpisode, setIsLastEpisode] = useState(false)
   const [isTimeToEndScreen, setIsTimeToEndScreen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const [isIdle, setIsIdle] = useState(false)
+  const [isIdle, setIsIdle] = useState(true)
   const [isContinueMenuOpen, setIsContinueMenuOpen] = useState(false)
 
   // Video states
@@ -103,15 +102,15 @@ const KekwPlayer: NextPage<{
   const skipTimeoutRef = useRef<NodeJS.Timeout>()
 
   // Idle timer
-  // useIdleTimer({
-  //   timeout: 3000,
-  //   throttle: 500,
-  //   onIdle: () => setIsIdle(true),
-  //   onAction: () => setIsIdle(false)
-  // })
+  useIdleTimer({
+    timeout: 3000,
+    throttle: 500,
+    onIdle: () => setIsIdle(true),
+    onAction: () => setIsIdle(false)
+  })
 
   //! -------------- DEFAULT EFFECTS --------------
-  //* Player vitals
+  //* Player vitals, video loading handling & stats saving
   useEffect(() => {
     // Define if client is mobile
     if (window.innerWidth <= 600 || window.innerHeight <= 400) {
@@ -119,20 +118,22 @@ const KekwPlayer: NextPage<{
     } else {
       setIsMobile(false)
     }
-  }, [])
 
-  //* Handle video loading
-  useEffect(() => {
     const video = videoRef.current;
 
-    if (!video) return;
+    if (video) {
+      video.addEventListener('loadstart', () => {
+        setIsVideoLoading(true)
+      })
 
-    video.addEventListener('loadstart', () => {
-      setIsVideoLoading(true)
-    })
+      video.addEventListener('loadeddata', () => {
+        setIsVideoLoading(false)
+      })
+    };
 
-    video.addEventListener('loadeddata', () => {
-      setIsVideoLoading(false)
+    // Send stats
+    window.addEventListener('beforeunload', () => {
+
     })
   }, [])
 
@@ -879,7 +880,7 @@ const KekwPlayer: NextPage<{
       const dimensions = await getImageSize(frameURL);
 
       setIsPreviewOld(dimensions.height === 120 ? true : false)
-      setIsVideoProcessed(true)
+      setIsVideoProcessed(false) // !TMP must be true
     } catch (e) {
       console.error(e)
     }
@@ -890,11 +891,6 @@ const KekwPlayer: NextPage<{
   return (
     // In view
     <div className='w-full h-full relative overflow-hidden' id="player">
-      {/* Cover */}
-      <button className={`absolute w-full h-full top-0 left-0 z-[7] bg-darkGrey duration-200 flex justify-center items-center ${isCoverVisible ? '' : 'opacity-0 invisible'}`} onClick={() => setIsCoverVisible(false)}>
-        <IcoPlay width={256} height={256} gradient='secondary' />
-      </button>
-
       {/* Wrapper */}
       <div className='w-full h-full flex flex-col justify-between bg-black relative z-[5]' ref={playerRef}>
         {/* End screen wrapper */}
@@ -1425,7 +1421,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
         <ReturnButton label='Якість' />
         <div className='flex flex-col gap-[4px]'>
           {epData?.source.q2k && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q2k' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q1080')} disabled={!isVideoProcessed}>
-            <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>2K</p>
+            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>2K</p>
           </button>}
 
           {epData?.source.q1080 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q1080' ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setQuality('q1080')}>
@@ -1433,15 +1429,15 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
           </button>}
 
           {epData?.source.q720 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q720' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q720')} disabled={!isVideoProcessed}>
-            <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>720</p>
+            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>720</p>
           </button>}
 
           {epData?.source.q480 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q480' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q480')} disabled={!isVideoProcessed}>
-            <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>480</p>
+            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>480</p>
           </button>}
 
           {epData?.source.q240 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q240' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q240')} disabled={!isVideoProcessed}>
-            <p className={`text-white ${isVideoProcessed ? '' : 'text-lightGrey'}`}>240</p>
+            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>240</p>
           </button>}
         </div>
       </div>
@@ -1481,7 +1477,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
           </button>
 
           <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1)}>
-            <p className={`text-white`}>1x</p>
+            <p className={`text-white`}>Нормальна</p>
           </button>
 
           <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.25 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.25)}>
@@ -1751,7 +1747,7 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
           <img src="" alt="..." className={`w-full h-full ${isVideoProcessed ? '' : 'opacity-0 invisible !h-0'}`} />
           <div className={`${isVideoProcessed ? 'opacity-0 invisible h-0' : 'h-full'} flex flex-col items-center justify-center gap-[8px]`}>
             <IcoServerUnavailable width={60} height={60} />
-            <p className='text-white uppercase'>превью недоступні</p>
+            <p className='text-white uppercase text-center'>превью недоступні</p>
           </div>
         </div>
         <p className='text-white'>{secondsToReadable(hoveredMoment).pretty}</p>
