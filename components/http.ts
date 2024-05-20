@@ -24,6 +24,7 @@ export function signCSRF(): string {
   const alg = 'RS256'
 
   return KJUR.jws.JWS.sign(alg, { alg }, {
-    origin: 'animee.club'
+    origin: config.domain,
+    expire: new Date().getTime() + config.CSRF_EXPIRE
   }, config.CSRF)
 }

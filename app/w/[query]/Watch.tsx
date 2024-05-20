@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { RaceBy } from '@uiball/loaders'
 import { Swiper, SwiperSlide } from 'swiper/react';
+import * as Menu from 'uvc-menu';
 
 
 import { ITitle, ITitleEpisodesDub, TAnimeGenres } from '../../../interfaces/ITitle';
@@ -20,7 +21,7 @@ import { IcoSupportBymeacoffe, IcoSupportDiaka, IcoSocialInstagram, IcoSupportMo
 import Footer from '../../../components/Footer';
 import { useAppSelector } from '../../../hooks/redux';
 import { IUser } from '../../../interfaces/IUser';
-import { IcoEyeSuccess, IcoFilledClock, IcoFilledPlans } from '../../../assets/ico/eye';
+import { IcoEyeSuccess, IcoFilledCan, IcoFilledClock, IcoFilledPlans } from '../../../assets/ico/eye';
 import { IcoFolderAdd } from '../../../assets/ico/folder';
 import { IUserState } from '../../../store/reducers/userSlice';
 import KekwPlayer from '../../../components/KekwPlayer';
@@ -72,6 +73,12 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
         console.error(e)
       }
     })()
+
+    // const menu = document.querySelector('#menu-editList') as HTMLDivElement;
+
+    // if (menu) {
+    //   menu.style.left = `-${menu.offsetWidth / 2}px`
+    // }
   }, [state])
 
   async function changeTitleList(list: TitleLists) {
@@ -157,36 +164,21 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                     </Tooltip>
                   </button>
 
-                  <div className='relative flex justify-center items w-full'>
-                    <button className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${state.id ? 'title-add--auth' : 'bg-darkGrey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} disabled={!state.id} onClick={() => setIsLibsSelectOpen(!isLibsSelectOpen)}>
+                  <Menu.Menu trigger={
+                    <div className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${state.id ? 'title-add--auth' : 'bg-darkGrey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} onClick={() => state.id ? setIsLibsSelectOpen(!isLibsSelectOpen) : null}>
                       <Tooltip content={state.id ? `Додати тайтл в теки` : 'Авторизуйтесь, для того щоб додавати тайтли в теки'}>
                         <IcoFolderAdd width={40} height={40} />
                       </Tooltip>
-                    </button>
-
-                    <div className={`absolute right-0 top-[80px] max-[430px]:top-[170px] bg-darkGrey rounded-[2px] flex flex-col gap-[8px] py-[8px] w-max duration-200 z-[7] ${isLibsSelectOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('favorite')}>
-                        <IcoHeartFilled height={24} width={24} gradient='primary' className='flex-shrink-0' />
-                        <p className='text-[16px] text-white'>{titleLiked ? 'Вилучити з улюблених' : 'Додати в улюблені'}</p>
-                      </button>
-                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('watching')}>
-                        <IcoWatching height={24} width={24} className='flex-shrink-0' />
-                        <p className='text-[16px] text-white'>{titleLists.includes('watching') ? 'Вилучити з переглядаємих' : 'Додати в переглядаємі'}</p>
-                      </button>
-                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('plans')}>
-                        <IcoFilledPlans height={24} width={24} className='flex-shrink-0' />
-                        <p className='text-[16px] text-white'>{titleLists.includes('plans') ? 'Вилучити з планів' : 'Додати в плани'}</p>
-                      </button>
-                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('watched')}>
-                        <IcoEyeSuccess height={24} width={24} className='flex-shrink-0' />
-                        <p className='text-[16px] text-white'>{titleLists.includes('watched') ? 'Вилучити з переглянутих' : 'Додати в переглянуті'}</p>
-                      </button>
-                      <button className='flex items-center gap-[8px] duration-200 px-[16px] py-[4px] hover:bg-white/[.2]' onClick={() => changeTitleList('delayed')}>
-                        <IcoFilledClock height={24} width={24} className='flex-shrink-0' />
-                        <p className='text-[16px] text-white'>{titleLists.includes('delayed') ? 'Вилучити з відкладених' : 'Додати в відкладені'}</p>
-                      </button>
                     </div>
-                  </div>
+                  } align='start' direction='bottom' className='rounded-[2px] overflow-hidden'>
+                    <Menu.MenuList className={`flex flex-col bg-darkGrey ${state.id ? '' : 'hidden'}`}>
+                      <MenuEditInLists changeTo='watching' textIn='В Переглядаємі' textOut='З Переглядаємих' />
+                      <MenuEditInLists changeTo='favorite' textIn='В Улюблені' textOut='З Улюблених' />
+                      <MenuEditInLists changeTo='plans' textIn='В Плани' textOut='З Планів' />
+                      <MenuEditInLists changeTo='watched' textIn='В Переглянуті' textOut='З Переглянутих' />
+                      <MenuEditInLists changeTo='delayed' textIn='В Відкладені' textOut='З Відкладених' />
+                    </Menu.MenuList>
+                  </Menu.Menu>
                 </div>
               </div>
 
@@ -326,6 +318,25 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
       </div>
     </>
   );
+
+  // Components
+  /** Menu edit in lists component
+   * @param textIn Text to add title in list
+   * @param textOut Text to remove title from list
+   */
+  function MenuEditInLists({ changeTo, textIn, textOut }: { changeTo: TitleLists, textIn: string, textOut: string }) {
+    const state = titleLists.includes(changeTo);
+
+    return <Menu.MenuItem onClick={() => changeTitleList(changeTo)} className='shrink-0 flex gap-[16px] px-[8px] py-[4px] duration-200 hover:bg-grey focus-visible:bg-grey cursor-pointer'>
+      {changeTo === 'watched' && <IcoEyeSuccess width={24} height={24} />}
+      {changeTo === 'watching' && <IcoFilledPlans width={24} height={24} />}
+      {changeTo === 'delayed' && <IcoFilledCan width={24} height={24} />}
+      {changeTo === 'favorite' && <IcoHeartFilled width={24} height={24} />}
+      {changeTo === 'plans' && <IcoFilledClock width={24} height={24} />}
+
+      <p className='text-white whitespace-nowrap'>{state ? textOut : textIn}</p>
+    </Menu.MenuItem>
+  }
 }
 
 const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dubber, className }) => {
