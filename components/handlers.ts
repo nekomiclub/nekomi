@@ -151,3 +151,31 @@ export function wordDeclination(number: number, words_arr: string[]) {
   }
   return words_arr[1];
 }
+
+/** Turn number to string & add zero before number if it less than 10
+ * @version re-1.0.0
+ */
+export function addZeroIfNumberSingle(num: number): string {
+  return num <= 9 ? `0${num}` : `${num}`;
+}
+
+/** Get full UTC0 time
+ * @requires addZeroIfNumberSingle()
+ * @version re-1.0.0
+ */
+export function getUTC() {
+  const now = new Date();
+
+  return {
+    y: now.getUTCFullYear(),
+    m: now.getUTCMonth() + 1,
+    d: now.getUTCDate(),
+    hrs: now.getUTCHours(),
+    mins: now.getUTCMinutes(),
+    secs: now.getUTCSeconds(),
+    ms: now.getUTCMilliseconds(),
+    date: `${now.getUTCFullYear()}.${addZeroIfNumberSingle(now.getUTCMonth() + 1)}.${addZeroIfNumberSingle(now.getUTCDate())}`,
+    time: `${addZeroIfNumberSingle(now.getUTCHours())}:${addZeroIfNumberSingle(now.getUTCMinutes())}`,
+    timestamp: now.getTime()
+  };
+}

@@ -72,24 +72,24 @@ export default async function Layout({ children, params }: ILayoutProps) {
   const route = getRoute(pathname)
 
   // Check is server online
-  let serverOnline = false;
+  let isServerOnline = false;
 
   try {
     await axios.options(config.URL.apiHTTP)
-    serverOnline = true;
+    isServerOnline = true;
   } catch (e) {
-    serverOnline = false
+    isServerOnline = false
   }
 
   // Pass polling page anyway
   if (route?.path === '/polling') {
-    serverOnline = true;
+    isServerOnline = true;
   }
 
   return (
     <html lang="ua">
       <body id='root'>
-        {serverOnline ? <>
+        {isServerOnline ? <>
           <Provider.Storage>
             <Provider.State>
               <SkeletonTheme baseColor='#181818' highlightColor='#222'>

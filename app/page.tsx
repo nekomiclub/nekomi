@@ -4,7 +4,8 @@ import { ITitle } from '../interfaces/ITitle';
 import { config, devMode, prodMode } from '../config';
 import axios, { AxiosError } from 'axios';
 import Link from 'next/link';
-import { HappenedWrongScreen } from '../components/OopsComponents';
+import { HappenedWrongScreen, NotFoundScreen } from '../components/OopsComponents';
+import { getUTC } from '../components/handlers';
 
 const headlinerID = prodMode ? '1cbc1ef7-8d88-433a-908b-4df859770ab4' : '1cbc1ef7-8d88-433a-908b-4df859770ab4';
 const watchingNowIDS = [
@@ -21,8 +22,6 @@ const watchingNowIDS = [
 const RSC: NextPage = async (props) => {
   let headliner: IHomeHeadliner | null = null;
   let watchingNow: ITitle[] = [];
-  let errored = false;
-  let emsg = ''
 
   if (devMode) {
     headliner = {
@@ -50,23 +49,28 @@ const RSC: NextPage = async (props) => {
       watchingNow.push(data.title)
     }
   } catch (e) {
-    errored = true;
-
     if (e instanceof AxiosError) {
-      if (e.code === 'ECONNREFUSED') {
-        emsg = 'Server offline'
-        console.error('ERROR: Server is unavailable')
-      } else {
-        emsg = `[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`
-      }
+      const code = e.response?.data?.code || 500;
 
-      devMode ? console.error(e) : null
+      devMode ? console.error(e.response?.data) : null;
+
+      if (code === 404) {
+        return <NotFoundScreen />
+      } else if (code === 400) {
+        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
+      } else {
+        return <HappenedWrongScreen cause={e.message} />
+      }
     } else {
-      emsg = `An error occured at home page - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`
+      const date = `${getUTC().date} ${getUTC().time}`
+      const at = `/RSC`;
+
+      console.error(`[${date}]: Server error occured at ${at} - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
+      return <HappenedWrongScreen cause={`Server error occured at ${at}. See logs at ${date}`} />;
     }
   }
 
-  return errored ? <HappenedWrongScreen cause={emsg} /> : <Home headliner={headliner!} watchingNow={watchingNow} />
+  return <Home headliner={headliner!} watchingNow={watchingNow} />
 }
 
 export default RSC;

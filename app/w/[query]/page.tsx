@@ -4,10 +4,10 @@ import Watch from "./Watch";
 import { config, devMode } from "../../../config";
 import axios, { AxiosError } from "axios";
 import { IDubber } from "../../../interfaces/IDubber";
-import { parseTitleDubbers } from "../../../components/handlers";
+import { getUTC, parseTitleDubbers } from "../../../components/handlers";
 import { IRSCProps } from "../../../interfaces/IRSC";
 import { $api } from "../../../components/http";
-import { HappenedWrongScreen } from "../../../components/OopsComponents";
+import { HappenedWrongScreen, NotFoundScreen } from "../../../components/OopsComponents";
 
 export async function generateMetadata(
   { params }: IRSCProps,
@@ -32,8 +32,6 @@ export async function generateMetadata(
       }
     }
   } catch (e) {
-    devMode ? console.error(e) : null;
-
     return {
       title: 'Аніме не знайдено'
     }
@@ -44,9 +42,6 @@ export async function generateMetadata(
 
 // Fetch title
 export default async function RSC({ params }: IRSCProps<{ query: string }>) {
-  let isErrored = false;
-  let emsg = ''
-
   let title: ITitle | null = null;
   let totalEps = 0;
   let dubbers: IDubber[] | null = null
@@ -66,20 +61,24 @@ export default async function RSC({ params }: IRSCProps<{ query: string }>) {
       dubbers = null
     }
   } catch (e) {
-    isErrored = true;
-
     if (e instanceof AxiosError) {
-      if (e.response?.data?.code === 404) {
-        emsg = `Тайтл не знайдено`
+      const code = e.response?.data?.code || 500;
+
+      devMode ? console.error(e.response?.data) : null;
+
+      if (code === 404) {
+        return <NotFoundScreen />
+      } else if (code === 400) {
+        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
       } else {
-        emsg = `[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`
+        return <HappenedWrongScreen cause={e.message} />
       }
     } else {
-      emsg = `An error occured at home page - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`
+      const date = `${getUTC().date} ${getUTC().time}`
+      console.error(`[${date}]: Server error occured at w/query - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
+      return <HappenedWrongScreen cause={`Server error occured at w/query. See logs at ${date}`} />;
     }
-
-    devMode ? console.error(emsg) : null;
   }
 
-  return isErrored ? <HappenedWrongScreen cause={emsg} /> : <Watch title={title!} dubbers={dubbers} totalEps={totalEps} />
+  return <Watch title={title!} dubbers={dubbers} totalEps={totalEps} />
 }

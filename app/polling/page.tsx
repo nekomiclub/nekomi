@@ -1,7 +1,9 @@
 import axios, { AxiosError } from 'axios';
 import { NextPage } from 'next';
-import { config } from '../../config';
+import { config, devMode } from '../../config';
 import Link from 'next/link';
+import { HappenedWrongScreen, NotFoundScreen } from '../../components/OopsComponents';
+import { getUTC } from '../../components/handlers';
 
 /** Service statuses arr */
 const UptimeStatuses = ['online', 'overloaded', 'indev', 'partial', 'outOfOrder', 'offline'] as const;
@@ -101,17 +103,23 @@ const RSC: NextPage = async (props) => {
     updated = `${timestamp.getUTCHours()}:${timestamp.getUTCMinutes()}`
   } catch (e) {
     if (e instanceof AxiosError) {
-      if (e.code === 'ECONNREFUSED') {
-        isUptimeUnavailable = true;
+      const code = e.response?.data?.code || 500;
+
+      devMode ? console.error(e.response?.data) : null;
+
+      if (code === 404) {
+        return <NotFoundScreen />
+      } else if (code === 400) {
+        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
       } else {
-        isErrored = true;
-        // @ts-expect-error It might be
-        emsg = JSON.stringify(e?.message || e?.msg || e, null, 2);
+        return <HappenedWrongScreen cause={e.message} />
       }
     } else {
-      isErrored = true;
-      // @ts-expect-error It might be
-      emsg = JSON.stringify(e?.message || e?.msg || e, null, 2);
+      const date = `${getUTC().date} ${getUTC().time}`
+      const at = `/RSC`;
+
+      console.error(`[${date}]: Server error occured at ${at} - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
+      return <HappenedWrongScreen cause={`Server error occured at ${at}. See logs at ${date}`} />;
     }
   }
 
