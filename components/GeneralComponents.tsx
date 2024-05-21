@@ -9,6 +9,7 @@ import '../styles/components/GeneralComponents.scss'
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import { IcoPlay, IcoStarRating } from '../assets/Icons';
+import { useState } from 'react';
 
 /** Card-link for title */
 export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
@@ -44,10 +45,12 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
  * </div>
  */
 export const LoadingImage: NextPage<{ src: string, alt?: string, className?: string, priority?: boolean, loading?: 'lazy' | 'eager' }> = ({ src, alt, className, loading, priority }) => {
+  const [loaded, setLoaded] = useState(false)
+
   return (
     <>
-      <Image src={src || ''} alt={alt || '...'} fill priority={priority || false} loading={loading || 'lazy'} className={`duration-200 opacity-0 absolute top-0 left-0 z-[2] ${className ? className : ''}`} onLoad={e => e.currentTarget.style.opacity = '1'} />
-      <Skeleton width={'100%'} height={'100%'} className='absolute top-0 left-0' />
+      <Image src={src || ''} alt={alt || '...'} fill priority={priority || false} loading={loading || 'lazy'} className={`duration-200 opacity-0 absolute top-0 left-0 z-[2] ${className ? className : ''}`} onLoad={e => { e.currentTarget.style.opacity = '1'; setLoaded(true) }} />
+      <Skeleton width={'100%'} height={'100%'} className={`absolute top-0 left-0 duration-200 ${loaded ? 'opacity-0' : ''}`} />
     </>
   )
 }

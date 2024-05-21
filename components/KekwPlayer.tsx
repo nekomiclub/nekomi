@@ -23,7 +23,6 @@ import { clearTimeout } from 'timers';
 
 
 import '../styles/components/KekwPlayer.scss';
-import 'uvc-menu/css';
 import { IcoPlayerCenter, IcoPlayerList, IcoPlayerNext, IcoPlayerPause, IcoPlayerQuality, IcoPlayerStretch } from '../assets/Player';
 import { IcoArrow, IcoPlay, IcoServerUnavailable, IcoSettings, IcoSpeed } from '../assets/Icons';
 import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';

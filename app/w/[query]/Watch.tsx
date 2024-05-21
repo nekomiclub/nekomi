@@ -157,6 +157,22 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                 <WatchButton href='#player' gradient='primary' className='max-[600px]:w-full justify-center' />
 
                 <div className='flex gap-[8px]'>
+                  <Menu.Menu trigger={
+                    <div className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${state.id ? 'title-add--auth' : 'bg-darkGrey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} onClick={() => state.id ? setIsLibsSelectOpen(!isLibsSelectOpen) : null}>
+                      <Tooltip content={state.id ? `Додати тайтл в теки` : 'Авторизуйтесь, для того щоб додавати тайтли в теки'}>
+                        <IcoFolderAdd width={40} height={40} fill='#FF464E' />
+                      </Tooltip>
+                    </div>
+                  } align='center' direction='bottom' className='rounded-[2px] overflow-hidden' closeAfter='outMenu' disabled={!state.id} animation='slide'>
+                    <Menu.MenuList className={`flex flex-col bg-darkGrey`}>
+                      <MenuEditInLists changeTo='watching' textIn='В Переглядаємі' textOut='З Переглядаємих' />
+                      <MenuEditInLists changeTo='favorite' textIn='В Улюблені' textOut='З Улюблених' />
+                      <MenuEditInLists changeTo='plans' textIn='В Плани' textOut='З Планів' />
+                      <MenuEditInLists changeTo='watched' textIn='В Переглянуті' textOut='З Переглянутих' />
+                      <MenuEditInLists changeTo='delayed' textIn='В Відкладені' textOut='З Відкладених' />
+                    </Menu.MenuList>
+                  </Menu.Menu>
+
                   <button className={`title-like px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center ${state.id ? 'title-like--auth' : 'bg-darkGrey/[.3] title-like--notAuth'} ${titleLiked ? 'title-like--liked' : ''}`} disabled={!state.id} onClick={() => changeTitleList('favorite')}>
                     <Tooltip content={state.id ? `${titleLiked ? 'Видалити тайтл з улюбленого' : 'Додати тайтл в улюблене'}` : 'Авторизуйтесь, для того щоб додавати тайтли в улюблене'}>
                       <div className='relative'>
@@ -165,22 +181,6 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                       </div>
                     </Tooltip>
                   </button>
-
-                  <Menu.Menu trigger={
-                    <div className={`title-add px-[16px] py-[16px] rounded-[4px] max-[600px]:w-full flex justify-center relative ${state.id ? 'title-add--auth' : 'bg-darkGrey/[.3] title-add--notAuth'} ${titleLiked ? 'title-add--liked' : ''}`} onClick={() => state.id ? setIsLibsSelectOpen(!isLibsSelectOpen) : null}>
-                      <Tooltip content={state.id ? `Додати тайтл в теки` : 'Авторизуйтесь, для того щоб додавати тайтли в теки'}>
-                        <IcoFolderAdd width={40} height={40} fill='#FF464E' />
-                      </Tooltip>
-                    </div>
-                  } align='start' direction='bottom' className='rounded-[2px] overflow-hidden'>
-                    <Menu.MenuList className={`flex flex-col bg-darkGrey ${state.id ? '' : 'hidden'}`}>
-                      <MenuEditInLists changeTo='watching' textIn='В Переглядаємі' textOut='З Переглядаємих' />
-                      <MenuEditInLists changeTo='favorite' textIn='В Улюблені' textOut='З Улюблених' />
-                      <MenuEditInLists changeTo='plans' textIn='В Плани' textOut='З Планів' />
-                      <MenuEditInLists changeTo='watched' textIn='В Переглянуті' textOut='З Переглянутих' />
-                      <MenuEditInLists changeTo='delayed' textIn='В Відкладені' textOut='З Відкладених' />
-                    </Menu.MenuList>
-                  </Menu.Menu>
                 </div>
               </div>
 

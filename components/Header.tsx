@@ -10,6 +10,7 @@ import { Popup } from 'react-uvc'
 import { useDebounce } from 'use-debounce';
 import Link from 'next/link';
 import { HashImage } from 'hash-image';
+import * as Menu from 'uvc-menu';
 
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
@@ -21,7 +22,8 @@ import { parseTitleType } from './handlers';
 import { LoadingImage } from './GeneralComponents';
 import { $api } from './http';
 import { AxiosError } from 'axios';
-import { IcoAnimeeLogo, IcoArrow, IcoExit, IcoHome, IcoLibrary, IcoSearch, IcoStarRating, IcoUser } from '../assets/Icons';
+import { IcoAnimeeLogo, IcoArrow, IcoBell, IcoExit, IcoHome, IcoLibrary, IcoSearch, IcoSettings, IcoStarRating, IcoUser } from '../assets/Icons';
+import { IcoFolderPlain } from '../assets/Folder';
 
 
 // Debounced query fired twice with empty string
@@ -64,24 +66,29 @@ const Header: NextPage = () => {
     })()
   }, [debouncedQuery])
 
-  /** Exit from account (animee only) */
+  /** Exit from account */
   async function signOut() {
     try {
       await $api.get('/user/logout')
     } catch (e) {
       if (e instanceof AxiosError) {
-        console.error(`An HTTP error occured while exiting account.\nError occured at - Providers/Storage.\nError - ${e.code}: ${e.response?.data.msg}.`)
+        console.error(`An HTTP error occured while exiting account.\nError occured at - Header component.\nError - ${e.code}: ${e.response?.data.msg}.`)
       } else {
         // @ts-ignore
         const emsg = e?.message || e?.msg;
 
-        console.error(`An error occured while exiting account.\nError occured at - Providers/Storage.\nError message - ${emsg}`)
+        console.error(`An error occured while exiting account.\nError occured at - Header component.\nError message - ${emsg}`)
       }
     }
 
     dispatch(userSlice.actions.reducer(defaultUserState))
     setUserDetailsOpened(false)
     router.refresh();
+  }
+
+  /** Sign in account */
+  function signIn() {
+    router.push(`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}${pathname}`)
   }
 
   return (
@@ -94,16 +101,16 @@ const Header: NextPage = () => {
             </Link>
 
             <div className='flex items-center gap-[16px]'>
-              <Link href={routes.home.path} className={`header-ico focus-visible:outline-none ${pathname === routes.home.path ? 'header-ico--active' : 'duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]'}`}>
+              <Link href={routes.home.path} className={`header-ico focus-visible:outline-none ${pathname === routes.home.path ? 'header-ico--active' : ''}`} title='На головну'>
                 <IcoHome width={32} height={32} />
               </Link>
 
-              <Link href={routes.lib.path} className={`header-ico focus-visible:outline-none ${pathname === routes.lib.path ? 'header-ico--active' : 'duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]'}`}>
+              <Link href={routes.lib.path} className={`header-ico focus-visible:outline-none ${pathname === routes.lib.path ? 'header-ico--active' : ''}`} title='В теку тайтлів'>
                 <IcoLibrary width={32} height={32} />
               </Link>
 
               <div className='flex items-center gap-[16px]'>
-                <button className='uvc-popup-trigger duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]' data-uvc-popup-openid="search-popup" onClick={() => { popup.open() }}>
+                <button className='uvc-popup-trigger header-ico duration-200' data-uvc-popup-openid="search-popup" onClick={() => { popup.open() }} title='Пошук'>
                   <IcoSearch width={32} height={32} />
                 </button>
               </div>
@@ -111,40 +118,68 @@ const Header: NextPage = () => {
           </div>
 
           {user.id ? <>
-            <div className='flex items-center gap-[8px]'>
-              <button className={`relative flex items-center gap-[4pxT]`} onClick={() => setUserDetailsOpened(!userDetailsOpened)}>
-                <div className='relative w-[40px] h-[40px] rounded-[32px] overflow-hidden'>
-                  <LoadingImage src={user.avatarURL!} alt='...' />
-                </div>
+            {/* User authorized */}
 
-                <button className='px-[8px] py-[8px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[2px]'>
-                  <IcoArrow width={16} height={16} />
-                </button>
+            <Menu.Menu trigger={
+              <div className='flex items-center gap-[16px]'>
+                {/* // TODO */}
+                {/* <IcoBell width={40} height={40} /> */}
 
-
-
-                <div className={`absolute top-[48px] right-0 bg-dark rounded-[2px] duration-200 ${userDetailsOpened ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-                  <div className='flex flex-col'>
-                    <Link className='flex items-center gap-[8px] px-[16px] py-[8px] duration-200 hover:bg-white/[.1]' href={`${routes.user.path.replace('/*', '')}/${user.username}`}>
-                      <IcoUser width={24} height={24} className='flex-shrink-0' />
-                      <p className='text-[16px] text-white font-bold'>Акаунт</p>
-                    </Link>
-
-                    <button className='flex items-center gap-[8px] px-[16px] py-[8px] duration-200 hover:bg-white/[.1]' onClick={() => signOut()}>
-                      <IcoExit width={24} height={24} />
-                      <p className='text-[16px] text-white font-bold'>Вийти</p>
-                    </button>
+                <div className='flex justify-center items-center gap-[8px]'>
+                  <div className='relative w-[60px] h-[60px] rounded-[4px] overflow-hidden'>
+                    <LoadingImage src={user.avatarURL!} loading='eager' priority />
                   </div>
+
+                  <IcoArrow width={24} height={24} />
                 </div>
-              </button>
-            </div>
+              </div>
+            } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden !top-[70px]' align='end' animation='slide'>
+              <Menu.MenuList>
+                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={() => router.push(`${config.URL.baseURL}/u/${user.username}`)}>
+                  <IcoUser width={24} height={24} />
+                  <p className='text-white w-full'>Профіль</p>
+                </Menu.MenuItem>
+                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={() => router.push(`${config.URL.baseURL}/u/${user.username}`)}>
+                  <IcoFolderPlain width={24} height={24} />
+                  <p className='text-white w-full'>Теки</p>
+                </Menu.MenuItem>
+
+                {/* // TODO */}
+                {/* <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button'>
+                  <IcoSettings width={24} height={24} />
+                  <p className='text-lightGrey w-full'>Налаштування</p>
+                </Menu.MenuItem> */}
+
+                {/* Divider */}
+                <Menu.MenuItem className='w-full h-[1px]'>
+                  <span className='w-full h-full block bg-grey'></span>
+                </Menu.MenuItem>
+
+                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={signOut}>
+                  <IcoExit width={24} height={24} fill='#FF464E' />
+                  <p className='text-white text-center w-full font-bold'>Вийти</p>
+                </Menu.MenuItem>
+              </Menu.MenuList>
+            </Menu.Menu>
           </> : <>
-            <Link href={`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}${pathname}`}>
-              <IcoUser width={40} height={40} />
-            </Link>
+            {/* User not authorized */}
+
+            <Menu.Menu trigger={
+              <div className='flex justify-center items-center gap-[8px]'>
+                <IcoUser width={40} height={40} />
+                <IcoArrow width={24} height={24} />
+              </div>
+            } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden' align='end' animation='slide'>
+              <Menu.MenuList>
+                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={signIn}>
+                  <IcoExit width={24} height={24} fill='#FF464E' />
+                  <p className='text-white text-center w-full'>Увійти</p>
+                </Menu.MenuItem>
+              </Menu.MenuList>
+            </Menu.Menu>
           </>}
-        </div>
-      </header>
+        </div >
+      </header >
 
       <div className="uvc-popup-close flex flex-col justify-center items-center px-[24px] py-[24px] cursor-pointer" id="uvc-popup-layer" onClick={() => popup.close()}>
         <div className="uvc-popup-dialog max-h-[800px] max-[500px]:max-h-[600px] max-w-[800px] w-full bg-dark rounded-[4px] overflow-y-scroll search-scroll z-[10] cursor-default duration-200" onClick={e => e.stopPropagation()} data-uvc-popup-id="search-popup">

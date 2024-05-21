@@ -2,13 +2,22 @@
 
 .header {
   &-ico {
-    svg path {
-      transition: .2s ease-in-out;
+    svg {
+      &:hover,
+      &:focus-visible {
+        path {
+          fill: $gradientNewPrimaryFallback;
+        }
+      }
+
+      path {
+        transition: .1s ease-in-out;
+      }
     }
 
     &--active {
       svg path {
-        fill: $purple;
+        fill: $gradientNewPrimaryFallback;
       }
     }
   }
