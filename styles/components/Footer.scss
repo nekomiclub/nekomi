@@ -2,30 +2,20 @@
 @import '../index.scss';
 
 .footer {
-  &-link {
-    font-size: 16px;
-    color: $white;
-    font-weight: 200;
-    transition: .2s ease-in-out;
-    position: relative;
-
-    &:hover {
-      font-weight: 600;
-    }
-
-    &--disabled {
-      color: rgba($color: $white, $alpha: .5);
-
-      &:hover {
-        font-weight: 200;
+  &-socialItem {
+    svg {
+      path, rect {
+        transition: .1s ease-in-out;
       }
     }
 
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  .footer-link {
-    text-align: center;
+    &:hover,
+    &:focus-visible {
+      svg {
+        path, rect {
+          fill: $gradientNewPrimaryFallback;
+        }
+      }
+    }
   }
 }

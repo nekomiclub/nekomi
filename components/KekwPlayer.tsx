@@ -7,27 +7,22 @@ import * as loader from '@uiball/loaders';
 import { Range } from 'react-range';
 import { getImageSize } from 'react-image-size'
 import * as UMenu from 'uvc-menu';
+import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
+import { useIdleTimer } from 'react-idle-timer';
 
 import { ITitle, ITitleEpisodeDubbed, ITitleEpisodeMeta, ITitleEpisodesDub } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
-
-import { useInView } from 'react-intersection-observer';
-import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 import { LoadingImage } from './GeneralComponents';
 import { timestampToDate, wordDeclination } from './handlers';
-import { useIdleTimer } from 'react-idle-timer';
 import { devMode } from '../config';
 import { clearTimeout } from 'timers';
-
-
-
-
-import '../styles/components/KekwPlayer.scss';
 import { IcoPlayerCenter, IcoPlayerList, IcoPlayerNext, IcoPlayerPause, IcoPlayerQuality, IcoPlayerStretch } from '../assets/Player';
 import { IcoArrow, IcoPlay, IcoServerUnavailable, IcoSettings, IcoSpeed } from '../assets/Icons';
 import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
 import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '../assets/PlayerPiP';
 import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '../assets/PlayerFullscreen';
+
+import '../styles/components/KekwPlayer.scss';
 
 
 
@@ -1096,11 +1091,6 @@ const LastEpScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
 const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] gap-[24px] z-[7] ${isTime && endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Тайтл завершено!</p>
-
-    {/* //TODO */}
-    {/* <button className='gradient--primary-border-4 gradient--primary-hover flex gap-[16px] items-center px-[24px] py-[16px]'>
-      <p className='text-white text-[24px] font-bold uppercase'>Відмітити як “переглянуто”</p>
-    </button> */}
 
     <p className='text-white text-[16px] font-extralight'>Дякуємо, що обрали animee!</p>
   </div>

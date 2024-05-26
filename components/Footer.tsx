@@ -9,7 +9,7 @@ import { routes } from '../routes';
 import { config, devMode } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 import { IcoAnimeeLogo } from '../assets/Icons';
-import { IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
+import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
 
 let isFirstOpen = true;
 const Footer: NextPage = (props) => {
@@ -54,100 +54,67 @@ const Footer: NextPage = (props) => {
   }, [ws])
 
   return (
-    <footer className='relative py-[16px] w-full bg-dark'>
-      <div className="wrapper flex-col items-center gap-[32px]">
-        <div className='flex justify-between w-full items-center max-[600px]:flex-col max-[600px]:gap-[32px]'>
-          <div className='flex gap-[24px] items-center'>
-            <IcoAnimeeLogo width={128} height={96} className='max-[670px]:w-[64px] max-[670px]:h-[48px]' />
+    <footer className='relative w-full bg-dark'>
+      <div className="wrapper min-[1260px]:!flex-row justify-between items-start !px-[32px] !py-[40px] max-[1260px]:gap-[40px] max-[1260px]:items-center max-[760px]:items-start">
+        {/* Left */}
+        <div className='flex gap-[16px] items-center max-[760px]:w-full max-[760px]:justify-center max-[560px]:flex-col'>
+          <IcoAnimeeLogo width={128} height={128} fill='#FF464E' />
 
+          <div className='flex flex-col gap-[16px]'>
             <div className='flex flex-col gap-[4px]'>
-              <p className='uppercase text-[32px] text-white font-extralight max-[670px]:text-[24px]'>ANIMEE.CLUB</p>
-              <p className='text-[16px] text-white font-extralight'>Поринь у світ україномовного аніме!</p>
+              <p className='text-[32px] font-bold gradient--primary-text max-[560px]:text-center'>ANIMEE.CLUB</p>
+              <p className='text-white max-[560px]:text-center'>Поринь у світ україномовного аніме!</p>
+            </div>
+
+            <div className='flex items-center gap-[16px] max-[560px]:justify-between'>
+              <Link href={`/`} className='footer-socialItem'>
+                <IcoSocialTelegram width={32} height={32} />
+              </Link>
+
+              <Link href={`/`} className='footer-socialItem'>
+                <IcoSocialTiktok width={32} height={32} />
+              </Link>
+
+              <Link href={`/`} className='footer-socialItem'>
+                <IcoSocialDiscord width={32} height={32} />
+              </Link>
             </div>
           </div>
-
-          <div className='flex gap-[8px]'>
-            <Link href={'https://t.me/an1meeClub'} target='_blank'>
-              <IcoSocialTelegram width={32} height={32} />
-            </Link>
-            <Link href={'https://www.tiktok.com/@an1mee.club'} target='_blank'>
-              <IcoSocialTiktok width={32} height={32} />
-            </Link>
-          </div>
-
-          <p className='text-white text-[16px]'>Онлайн: <span className='font-bold text-white'>{online}</span></p>
         </div>
 
-        <div className='flex gap-[24px] w-full max-[670px]:flex-col max-[670px]:items-center'>
-          {/* FK section */}
+        {/* Center */}
+        <div className='flex gap-[24px] max-[760px]:flex-col'>
           <ul className='flex flex-col gap-[4px]'>
-            {/* Fullkekw */}
-            {/* <Link href={routes.aboutFK.path}> */}
-            <p className='footer-link footer-link--disabled'>Fullkekw</p> {/* disabled */}
-            {/* </Link> */}
-
-            {/* Join */}
-            {/* <Link href={routes.joinFK.path}> */}
-            <p className='footer-link footer-link--disabled'>Хочу в FK</p> {/* disabled */}
-            {/* </Link> */}
-
-            {/* Contacts */}
-            <Link href={routes.contacts.path}>
-              <p className='footer-link'>Контакти</p>
-            </Link>
-
-            {/* Services */}
-            <Link href={routes.polling.path} target='_blank'>
-              <p className='footer-link'>Сервіси</p>
-            </Link>
+            <FooterLink href={routes.contacts.path} text='Контакти' />
+            <FooterLink href={routes.polling.path} text='Сервіси' />
           </ul>
 
-          {/* Policy section */}
           <ul className='flex flex-col gap-[4px]'>
-            {/* agreement */}
-            <Link href={routes.agreement.path}>
-              <p className='footer-link'>Угода користувача</p>
-            </Link>
-
-            {/* policy */}
-            <Link href={routes.privatePolicy.path}>
-              <p className='footer-link'>Політика конфіденційності</p>
-            </Link>
-
-            {/* copyright */}
-            <Link href={routes.copyright.path}>
-              <p className='footer-link'>Правовласникам</p>
-            </Link>
+            <FooterLink href={routes.agreement.path} text='Угода користувача / Agreement' />
+            <FooterLink href={routes.privatePolicy.path} text='Політика конфіденційності / Privacy policy' />
+            <FooterLink href={routes.copyright.path} text='Правовласникам / Copyright' />
           </ul>
 
-          {/* Animee section */}
           <ul className='flex flex-col gap-[4px]'>
-            {/* support */}
-            {/* <Link href={routes.support.path}> */}
-            <p className='footer-link footer-link--disabled'>Підтримка проекту</p> {/* disabled */}
-            {/* </Link> */}
-
-            {/* partners */}
-            {/* <Link href={routes.partners.path}> */}
-            <p className='footer-link footer-link--disabled'>Партнери</p> {/* disabled */}
-            {/* </Link> */}
-
-            {/* faq */}
-            {/* <Link href={routes.FAQ.path}> */}
-            <p className='footer-link footer-link--disabled'>FAQ</p> {/* disabled */}
-            {/* </Link> */}
-
-            {/* api */}
-            {/* <Link href={routes.API.path}> */}
-            <p className='footer-link footer-link--disabled'>API</p> {/* disabled */}
-            {/* </Link> */}
+            <FooterLink href={routes.rickroll.path} text='Rickroll' disabled />
           </ul>
         </div>
 
-        <p className='text-[16px] text-white/[.3] font-extralight text-center'>animee.club by fullkekw © 2023 - {new Date().getFullYear()}</p>
+        {/* Right */}
+        <div className='flex justify-center max-[760px]:w-full'>
+          <p className='text-white'>Онлайн: <b className='font-bold gradient--primary-text'>{online}</b></p>
+        </div>
       </div>
     </footer>
   );
+
+  function FooterLink({ href, text, disabled }: { href: string, text: string, disabled?: boolean }) {
+    return <li>
+      <Link href={href} aria-disabled={disabled} target='_blank'>
+        <p className={`${disabled ? 'text-lightGrey' : 'text-white duration-100 hover:text-gradientPrimaryFallback focus-visible:text-gradientPrimaryFallback'}`}>{text}</p>
+      </Link>
+    </li>
+  }
 }
 
 export default Footer;

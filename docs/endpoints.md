@@ -67,4 +67,14 @@ List of all animee icons
 
 ------------------------------------------
 
+## /dev/screen/*
+400 - User error
+404 - Not found
+indev - Page in development
+unavailable - Server unavailable
+
+------------------------------------------
+
+
+
 [Back](../README.md)

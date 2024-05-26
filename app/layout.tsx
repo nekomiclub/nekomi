@@ -22,6 +22,7 @@ import { routes } from '../routes';
 import { getRoute } from '../components/ServerComponents';
 import { IcoInternet, IcoOffline } from '../assets/Icons';
 import { ILayoutProps, IRSCProps } from '../interfaces/IRSC';
+import { ServerUnavailable } from '../components/OopsComponents';
 
 export const metadata: Metadata = {
   title: 'Animee',
@@ -40,31 +41,6 @@ export const metadata: Metadata = {
 }
 
 
-
-const ServerUnavailable: NextPage = (props) => {
-  return (
-    <div className="bg-dark min-h-screen h-full w-full flex justify-center items-center">
-      <div className="wrapper">
-        <div className='flex flex-col gap-[80px] items-center'>
-          <div className='flex flex-col justify-center items-center'>
-            <IcoOffline width={256} height={256} className='max-[700px]:w-[128px] max-[700px]:h-[128px]' />
-            <div className='flex flex-col gap-[16px]'>
-              <h1 className='text-center text-white text-[40px] max-[700px]:text-[24px]'>Здається, з сервером щось не те...</h1>
-              <p className='text-center text-white'>
-                Якщо в телеграмі <a href="https://t.me/an1meeClub" className='text-purple'>animee</a> нема сповіщення про роботи, створіть будь ласка тікет в <a href="https://discord.gg/UmDfKTpsh5" className='text-purple'>діскорді</a>
-              </p>
-            </div>
-          </div>
-
-          <Link href={routes.polling.path} className='p-[8px] rounded-[2px] bg- bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple flex gap-[16px] items-center'>
-            <IcoInternet />
-            <p className='text-white uppercase'>статус сервісів</p>
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default async function Layout({ children, params }: ILayoutProps) {
   const pathname = headers().get('x-url')!.replace(config.URL.baseURL, '')

@@ -100,20 +100,14 @@ const RSC: NextPage = async (props) => {
     }
 
     const timestamp = new Date(data.timestamp);
+
     updated = `${timestamp.getUTCHours()}:${timestamp.getUTCMinutes()}`
+    isUptimeUnavailable = false;
   } catch (e) {
     if (e instanceof AxiosError) {
-      const code = e.response?.data?.code || 500;
+      isUptimeUnavailable = true;
 
       devMode ? console.error(e.response?.data) : null;
-
-      if (code === 404) {
-        return <NotFoundScreen />
-      } else if (code === 400) {
-        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
-      } else {
-        return <HappenedWrongScreen cause={e.message} />
-      }
     } else {
       const date = `${getUTC().date} ${getUTC().time}`
       const at = `/RSC`;
