@@ -130,10 +130,10 @@ const Header: NextPage = () => {
                     <LoadingImage src={user.avatarURL!} loading='eager' priority />
                   </div>
 
-                  <IcoArrow width={24} height={24} />
+                  <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-90' : 'rotate-0'}`} />
                 </div>
               </div>
-            } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden !top-[70px]' align='end' animation='slide'>
+            } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden !top-[70px]' align='end' animation='slide' state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
               <Menu.MenuList>
                 <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={() => router.push(`${config.URL.baseURL}/u/${user.username}`)}>
                   <IcoUser width={24} height={24} />
@@ -167,7 +167,8 @@ const Header: NextPage = () => {
             <Menu.Menu trigger={
               <div className='flex justify-center items-center gap-[8px]'>
                 <IcoUser width={40} height={40} />
-                <IcoArrow width={24} height={24} />
+
+                <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-90' : 'rotate-0'}`} />
               </div>
             } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden' align='end' animation='slide'>
               <Menu.MenuList>

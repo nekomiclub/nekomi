@@ -890,8 +890,8 @@ const KekwPlayer: NextPage<{
     <div className='w-full h-full relative overflow-hidden' id="player">
       {/* Wrapper */}
       <div className='w-full h-full flex flex-col justify-between bg-black relative z-[5]' ref={playerRef}>
-        {/* End screen wrapper */}
-        <div className={'w-full h-full absolute top-0 left-0 flex justify-center items-center'}>
+        {/* Screen wrapper */}
+        <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center z-[15] bg-dark/[.5] backdrop-blur-[32px] duration-200 px-[24px] ${isTimeToEndScreen || isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
           {/* Ep ended */}
           <EpEndScreen endScreen={endScreen} ep={ep} setEp={setEp} title={title} isTime={isTimeToEndScreen} videoRef={videoRef} />
 
@@ -900,38 +900,15 @@ const KekwPlayer: NextPage<{
 
           {/* Title ended */}
           <TitleEndScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
+
+          {/* Continue progress */}
+          {localData && <ContinueProgressScreen loadProgress={loadProgress} passProgress={passProgress} dubs={dubs} localData={localData} isTime={isContinueMenuOpen} title={title} />}
         </div>
 
         {/* Mobile skip wrapper */}
         <div className={isMobile ? 'w-full h-full absolute top-0 left-0 z-[10] flex' : 'hidden'} ref={mobileSkipWrapper}>
           <div className='w-full h-full' ref={mobilePrevSkipRef}></div>
           <div className='w-full h-full' ref={mobileNextSkipRef}></div>
-        </div>
-
-        {/* Continue wrapper */}
-        <div className={`w-full h-full z-[15] absolute top-0 left-0 flex justify-center items-center duration-200 bg-dark/[.5] backdrop-blur-[32px] ${isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible touch-none pointer-events-none'}`}>
-          <div className='w-[800px] mx-[24px] rounded-[4px] bg-dark flex flex-col items-center gap-[24px] py-[40px] px-[24px]'>
-            <div className='flex flex-col gap-[16px]'>
-              <p className='text-white text-[32px] font-bold text-center max-[680px]:text-[24px]'>Продовжити перегляд</p>
-              <p className='text-white text-[24px] text-center max-[680px]:text-[16px]'>{dubs.find(el => el.id === localData?.dub)?.name || 'Команда невідома'}</p>
-            </div>
-
-            <div className='flex items-center max-[680px]:flex-col max-[680px]:items-center gap-[32px] w-full bg-darkGrey px-[40px] py-[24px] rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple cursor-pointer' role='button' onClick={() => loadProgress()}>
-              <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>#{localData?.ep}</p>
-              <div className='flex flex-col items-start gap-[8px] w-full'>
-                <div className='flex flex-col items-start max-[680px]:items-center gap-[4px] w-full'>
-                  <p className='text-white text-[24px] break-ellipsis max-w-[80%]'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
-                  <p className='text-white font-extralight break-ellipsis max-w-[80%]'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.eng}</p>
-                </div>
-              </div>
-
-              <p className='text-white text-[24px]'>{secondsToReadable(localData?.moment || 0).pretty}</p>
-            </div>
-
-            <button onClick={() => passProgress()}>
-              <p className='text-white font-extralight' onClick={() => console.log('delete local data')}>Почати з початку?</p>
-            </button>
-          </div>
         </div>
 
         {/* Menu */}
@@ -976,6 +953,46 @@ const KekwPlayer: NextPage<{
     </div>
   );
 }
+
+
+
+//* -------------- CONTINUE PROGRESS SCREEN --------------
+
+const ContinueProgressScreen: NextPage<{
+  isTime: boolean,
+  localData: IKekwPlayerLocalDataItem,
+  loadProgress: () => void,
+  passProgress: () => void,
+  dubs: IDubber[],
+  title: ITitle
+}> = ({ isTime, localData, dubs, loadProgress, passProgress, title }) => {
+  return (
+    <div className={`max-w-[800px] w-full bg-dark px-[24px] py-[40px] rounded-[4px] flex flex-col gap-[24px] items-center ${isTime ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute'}`}>
+      <div className='flex flex-col gap-[8px]'>
+        <p className='text-white text-[24px] font-bold text-center'>Продовжити перегляд</p>
+        <p className='text-white text-[24px] text-center'>{dubs.find(el => el.id === localData?.dub)?.name || 'Команда невідома'}</p>
+      </div>
+
+      <div className='px-[24px] py-[16px] w-full bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple flex items-center justify-between gap-[24px] cursor-pointer' role='button' onClick={() => loadProgress()}>
+
+        <p className='text-white text-[32px] font-bold'>#{localData?.ep}</p>
+
+        <div className='flex flex-col gap-[4px]'>
+          <p className='text-white text-[24px]'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
+        </div>
+
+        <p className='text-white text-[24px] flex-shrink-0'>{secondsToReadable(localData?.moment || 0).pretty}</p>
+
+      </div>
+
+      <button onClick={() => passProgress()}>
+        <p className='text-white font-extralight'>Почати з початку?</p>
+      </button>
+    </div>
+  )
+}
+
+
 
 
 //* -------------- EP ENDED END SCREEN COMPONENT --------------
@@ -1048,25 +1065,16 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
     }, 1000);
   }
 
-  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] z-[20] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] z-[20] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Епізод завершено</p>
 
-    <div className='bg-darkGrey px-[40px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 w-full'>
+    <div className='bg-darkGrey px-[24px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 hover:bg-purple focus-visible:bg-purple w-full rounded-[2px]' role='button' onClick={() => skipEp()}>
       <div className='flex items-center max-[680px]:flex-col gap-[32px] w-full'>
         <p className='text-white text-[32px] font-bold'>#{nextEp}</p>
-        <div className='flex flex-col items-start gap-[8px] w-full'>
-          <div className='flex flex-col items-start gap-[4px] w-full'>
-            <p className='text-white text-[24px] break-ellipsis max-w-400px max-[680px]:max-w-[260px]'>{epMeta?.names.ukr || 'Наступний епізод'}</p>
-            <p className='text-white font-extralight break-ellipsis max-w-300px max-[680px]:max-w-[240px]'>{epMeta?.names.eng}</p>
-          </div>
-
-          <p className='text-white font-extralight'>{date}</p>
+        <div className='flex flex-col items-start gap-[4px] w-full'>
+          <p className='text-white text-[24px]'>{epMeta?.names.ukr || 'Наступний епізод'}</p>
         </div>
       </div>
-
-      <button className='duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[8px] rounded-[4px]' onClick={() => skipEp()}>
-        <IcoPlayerNext width={80} height={80} />
-      </button>
     </div>
 
     <p className='text-white text-[24px] font-extralight text-center'>Автоматично через: {remain} {wordDeclination(remain, ['секунду', 'секунди', 'секунд'])}</p>
@@ -1078,7 +1086,7 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
 
 
 const LastEpScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
-  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center gap-[24px] w-[800px] mx-[24px] z-[7] ${isTime && endScreen === 'lastEp' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center gap-[24px] w-[800px] z-[7] ${isTime && endScreen === 'lastEp' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] max-[680px]:text-[24px] font-bold'>Епізод завершено</p>
     <p className='text-white text-[24px] text-center max-[680px]:text-[16px] font-extralight'>Це останній епізод в цьому озвученні</p>
   </div>
@@ -1089,7 +1097,7 @@ const LastEpScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
 
 
 const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
-  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] mx-[24px] gap-[24px] z-[7] ${isTime && endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
+  return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] gap-[24px] z-[7] ${isTime && endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Тайтл завершено!</p>
 
     <p className='text-white text-[16px] font-extralight'>Дякуємо, що обрали animee!</p>
