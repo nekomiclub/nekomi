@@ -130,7 +130,7 @@ const Header: NextPage = () => {
                     <LoadingImage src={user.avatarURL!} loading='eager' priority />
                   </div>
 
-                  <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-90' : 'rotate-0'}`} />
+                  <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
                 </div>
               </div>
             } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden !top-[70px]' align='end' animation='slide' state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
@@ -168,7 +168,7 @@ const Header: NextPage = () => {
               <div className='flex justify-center items-center gap-[8px]'>
                 <IcoUser width={40} height={40} />
 
-                <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-90' : 'rotate-0'}`} />
+                <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
               </div>
             } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden' align='end' animation='slide'>
               <Menu.MenuList>

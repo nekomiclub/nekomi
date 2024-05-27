@@ -9,7 +9,7 @@ import '../styles/components/GeneralComponents.scss'
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import { IcoPlay, IcoStarRating } from '../assets/Icons';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 /** Card-link for title */
 export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {

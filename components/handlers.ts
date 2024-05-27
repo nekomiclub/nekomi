@@ -1,6 +1,8 @@
+import axios from "axios";
+import jwt from 'jsonwebtoken';
+
 import { IDubber } from "../interfaces/IDubber";
 import { config } from "../config";
-import axios from "axios";
 
 /** Send parse dubbers request. Accept any query (id, code, name).
  * @returns Array of dubbers objects
@@ -178,4 +180,53 @@ export function getUTC() {
     time: `${addZeroIfNumberSingle(now.getUTCHours())}:${addZeroIfNumberSingle(now.getUTCMinutes())}`,
     timestamp: now.getTime()
   };
+}
+
+interface ITokenPayload<T> {
+  /** Can be null if method not provided */
+  verified: boolean | null
+
+  /** Token headers */
+  headers: jwt.JwtHeader | null
+
+  /** Token payload */
+  payload: T
+}
+
+const JWTHeaders = ['iss', 'sub', 'aud', 'exp', 'nbf', 'iat', 'jti'];
+
+/** Decode JWT token */
+export function decodeToken<T = any>(token: string): ITokenPayload<T> {
+  try {
+    const decoded = jwt.decode(token);
+    let payload: any = {};
+    let headers: any = {};
+    let verified: boolean | null = null;
+
+    if (typeof decoded === 'string') {
+      payload = decoded;
+    } else {
+      for (const key in decoded) {
+        if (!JWTHeaders.includes(key)) {
+          payload[key] = decoded[key];
+        } else {
+          headers[key] = decoded[key];
+        }
+      }
+    }
+
+    // if (method) {
+    //   verified = verifyToken(token, method);
+    // }
+
+    return {
+      headers,
+      payload,
+      verified
+    };
+  } catch (e) {
+    const emsg = `An error occured while decoding token: ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`;
+
+    throw new Error(emsg);
+  }
 }

@@ -43,6 +43,12 @@ export const config = {
     uptime: prodMode ? `https://uptime.animee.club` : `http://${devIP}:45322`,
   },
 
+  /** Site vatiables */
+  vars: {
+    /** Animee security cookie */
+    animeeCookie: 'SEC_31N'
+  },
+
   /** 
    * !SENSETIVE
    * CSRF Private key 
