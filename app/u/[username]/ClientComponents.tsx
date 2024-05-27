@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import { useState, useEffect } from 'react'
 
 import { IExtendedUser, IUser, IUserLib } from '../../../interfaces/IUser';
-import { LoadingImage } from '../../../components/GeneralComponents';
+import { LoadingImage, copyToClipboard } from '../../../components/GeneralComponents';
 import { IcoCalendar, IcoCan, IcoChain, IcoSettings, IcoStack, IcoUser, IcoWatched } from '../../../assets/Icons';
 import Tooltip from '../../../components/Tooltip';
 import { addZeroIfNumberSingle } from '../../../components/handlers';
@@ -26,6 +26,17 @@ import { IcoClockFilled } from '../../../assets/Clock';
  * @param primaryPage Defines if current page primary. If not, at the menu will appear button navigates to primary page
  */
 export const UserHeader: NextPage<{ user: IExtendedUser, isOwner: boolean, primaryPage?: boolean }> = ({ user, primaryPage, isOwner }) => {
+  const [urlCopied, setUrlCopied] = useState(false)
+
+  function copyProfileURL() {
+    copyToClipboard(`${config.URL.baseURL}/u/${user.username}`);
+    setUrlCopied(true);
+
+    setTimeout(() => {
+      setUrlCopied(false);
+    }, 3000);
+  }
+
   return (
     <div className='bg-dark'>
       {/* Image */}
@@ -62,8 +73,8 @@ export const UserHeader: NextPage<{ user: IExtendedUser, isOwner: boolean, prima
 
             {/* Settings */}
             <div className='flex gap-[8px]'>
-              <Tooltip content='Копіювати посилання на профіль'>
-                <button className='p-[16px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px] max-[600px]:p-[12px]'>
+              <Tooltip content={urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на профіль'}>
+                <button className={`p-[16px] duration-200 ${urlCopied ? 'bg-green' : 'hover:bg-purple focus-visible:bg-purple'} rounded-[4px] max-[600px]:p-[12px]`} onClick={() => copyProfileURL()}>
                   <IcoChain width={32} height={32} className='max-[600px]:w-[24px] max-[600px]:h-[24px]' />
                 </button>
               </Tooltip>
@@ -76,7 +87,7 @@ export const UserHeader: NextPage<{ user: IExtendedUser, isOwner: boolean, prima
 
               {!primaryPage && <Link href={`${config.URL.baseURL}/u/${user.username}`}>
                 <Tooltip content='На головну профілю'>
-                  <button className='p-[16px] duration-200 bg-darkGrey hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback rounded-[4px] max-[600px]:p-[12px]'>
+                  <button className={`p-[16px] duration-200 bg-darkGrey hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback rounded-[4px] max-[600px]:p-[12px]`}>
                     <IcoUser width={32} height={32} className='max-[600px]:w-[24px] max-[600px]:h-[24px]' />
                   </button>
                 </Tooltip>
