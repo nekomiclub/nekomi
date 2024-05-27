@@ -1,4 +1,4 @@
-import { NextPage } from 'next';
+import { Metadata, NextPage, ResolvingMetadata } from 'next';
 import { IRSCProps } from '../../../../../interfaces/IRSC';
 import { cookies } from 'next/headers';
 import { config, devMode } from '../../../../../config';
@@ -12,6 +12,21 @@ import Footer from '../../../../../components/Footer';
 import { UserHeader } from '../../ClientComponents';
 import { UserLib, UserLibOthers } from './ClientComponents';
 import { ITitle } from '../../../../../interfaces/ITitle';
+
+export function generateMetadata(
+  { params }: IRSCProps<{ username: string }>,
+  parent: ResolvingMetadata
+): Metadata {
+  return {
+    title: `Тека @${params.username}`,
+    description: ``,
+    openGraph: {
+      title: `Тека @${params.username}`,
+      description: ``
+    },
+    robots: 'noindex,nofollow'
+  }
+}
 
 const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ params }) => {
   const { username } = params;

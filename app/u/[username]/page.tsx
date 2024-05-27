@@ -1,4 +1,4 @@
-import { NextPage } from 'next';
+import { Metadata, NextPage, ResolvingMetadata } from 'next';
 import axios, { AxiosError } from 'axios';
 import { cookies } from 'next/headers'
 
@@ -18,6 +18,32 @@ import Tooltip from '../../../components/Tooltip';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 
 import './styles.scss';
+
+export async function generateMetadata(
+  { params }: IRSCProps<{ username: string }>,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    const { data: usapiUser } = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${params.username}`);
+
+    return {
+      title: `@${params.username}`,
+      description: `Профіль ${params.username}`,
+      openGraph: {
+        type: 'profile',
+        title: `@${params.username}`,
+        images: usapiUser.user.photoURL,
+        description: `Профіль ${params.username}`
+      }
+    }
+  } catch (e) {
+    return {
+      title: 'Юзер не знайдений'
+    }
+  }
+}
+
+
 
 const RSC: NextPage<IRSCProps<{ username: string }>> = async ({ params }) => {
   const { username } = params;
