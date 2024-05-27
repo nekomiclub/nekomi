@@ -30,7 +30,7 @@ export const UserHeader: NextPage<{ user: IExtendedUser, isOwner: boolean, prima
     <div className='bg-dark'>
       {/* Image */}
       <div className='w-full h-[400px] flex justify-center items-center bg-darkGrey'>
-        <p className='text-[60px] gradient--primary-text font-bold uppercase max-[600px]:text-[40px]'>animee.club</p>
+        <p className='text-[60px] gradient--primary-text font-bold uppercase max-[600px]:text-[40px] select-none'>animee.club</p>
       </div>
 
       <div className={`wrapperNew h-[128px] max-[820px]:h-[270px]`}>
@@ -110,46 +110,49 @@ export const UserSectionLibs: NextPage<{ user: IExtendedUser, isOwner: boolean }
       <UserDivider label='Теки' hidden={false} isOwner={isOwner} />
 
       <div className='grid gap-[16px]' style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))' }}>
-        <LibCard lib={user.libs.find(el => el.type === 'favorite')!} isOwner={isOwner} />
-        <LibCard lib={user.libs.find(el => el.type === 'watching')!} isOwner={isOwner} />
-        <LibCard lib={user.libs.find(el => el.type === 'plans')!} isOwner={isOwner} />
-        <LibCard lib={user.libs.find(el => el.type === 'watched')!} isOwner={isOwner} />
-        <LibCard lib={user.libs.find(el => el.type === 'delayed')!} isOwner={isOwner} />
+        {user.libs.some(el => !el.settings.hidden) ? <>
+          <UserLibCard lib={user.libs.find(el => el.type === 'favorite')!} isOwner={isOwner} username={user.username} />
+          <UserLibCard lib={user.libs.find(el => el.type === 'watching')!} isOwner={isOwner} username={user.username} />
+          <UserLibCard lib={user.libs.find(el => el.type === 'plans')!} isOwner={isOwner} username={user.username} />
+          <UserLibCard lib={user.libs.find(el => el.type === 'watched')!} isOwner={isOwner} username={user.username} />
+          <UserLibCard lib={user.libs.find(el => el.type === 'delayed')!} isOwner={isOwner} username={user.username} />
+        </> : <p className='text-lightGrey'>Всі теки цього користувача приватні</p>}
       </div>
     </div>
   );
+}
 
-  function LibCard({ lib, isOwner }: { lib: IUserLib, isOwner: boolean }) {
-    return (
-      <>
-        {!lib.settings.hidden || isOwner ? <Link href={'#'} className='p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey'>
-          {lib.type === 'favorite' && <IcoHeartFilled width={128} height={128} fill='#FF464E' className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
-          {lib.type === 'watching' && <IcoStack width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
-          {lib.type === 'plans' && <IcoClockFilled width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
-          {lib.type === 'watched' && <IcoWatched width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
-          {lib.type === 'delayed' && <IcoCan width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
+/** User lib card */
+export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: string }> = ({ lib, isOwner, username }) => {
+  return (
+    <>
+      {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${username}/lib/${lib.id}`} className='p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey'>
+        {lib.type === 'favorite' && <IcoHeartFilled width={128} height={128} fill='#FF464E' className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
+        {lib.type === 'watching' && <IcoStack width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
+        {lib.type === 'plans' && <IcoClockFilled width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
+        {lib.type === 'watched' && <IcoWatched width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
+        {lib.type === 'delayed' && <IcoCan width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
 
-          <div className='flex items-center gap-[8px]'>
-            <p className='text-white text-center text-[24px]'>
-              {lib.type === 'favorite' && `Улюблені (${lib.titles.length})`}
-              {lib.type === 'watching' && `Переглядаю (${lib.titles.length})`}
-              {lib.type === 'plans' && `Плани (${lib.titles.length})`}
-              {lib.type === 'watched' && `Переглянуті (${lib.titles.length})`}
-              {lib.type === 'delayed' && `Відкладені (${lib.titles.length})`}
-            </p>
+        <div className='flex items-center gap-[8px]'>
+          <p className='text-white text-center text-[24px]'>
+            {lib.type === 'favorite' && `Улюблені (${lib.titles.length})`}
+            {lib.type === 'watching' && `Переглядаю (${lib.titles.length})`}
+            {lib.type === 'plans' && `Плани (${lib.titles.length})`}
+            {lib.type === 'watched' && `Переглянуті (${lib.titles.length})`}
+            {lib.type === 'delayed' && `Відкладені (${lib.titles.length})`}
+          </p>
 
-            {isOwner ? <>
-              {lib.settings.hidden ? <Tooltip content='Прихована тека'>
-                <IcoEyeHidden width={24} height={24} />
-              </Tooltip> : <Tooltip content='Публічна тека'>
-                <IcoEyeVisible width={24} height={24} />
-              </Tooltip>}
-            </> : <></>}
-          </div>
-        </Link> : <></>}
-      </>
-    )
-  }
+          {isOwner ? <>
+            {lib.settings.hidden ? <Tooltip content='Прихована тека'>
+              <IcoEyeHidden width={24} height={24} />
+            </Tooltip> : <Tooltip content='Публічна тека'>
+              <IcoEyeVisible width={24} height={24} />
+            </Tooltip>}
+          </> : <></>}
+        </div>
+      </Link> : <></>}
+    </>
+  )
 }
 
 export const UserSectionStats: NextPage<{ user: IExtendedUser, isOwner: boolean }> = ({ isOwner, user }) => {
