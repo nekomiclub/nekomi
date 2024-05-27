@@ -10,16 +10,8 @@ import { config } from '../config';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import Skeleton from 'react-loading-skeleton';
 
-export interface IHomeHeadliner {
-  title: string,
-  code: string,
-  poster: string,
-  video: string,
-  id: string
-}
-
 interface IProps {
-  headliner: IHomeHeadliner,
+  headliner: ITitle,
   watchingNow: ITitle[]
 }
 
@@ -44,7 +36,7 @@ const Home: NextPage<IProps> = ({ headliner, watchingNow }) => {
 
         <div className='wrapperNew z-[3] min-h-screen h-full justify-center'>
           <div className='max-w-[600px] flex flex-col gap-[16px]'>
-            <h1 className='text-white text-[40px] font-bold uppercase'>{headliner.title}</h1>
+            <h1 className='text-white text-[40px] font-bold uppercase'>{headliner.names.ukr}</h1>
 
             <div className='flex gap-[16px]'>
               <WatchButton gradient='secondary' href={`${config.services.siteURL}/w/${headliner.code}`} className='w-full justify-center' />
