@@ -6,6 +6,7 @@ import { IExtendedUser, IUserLib } from '../../../../../interfaces/IUser';
 import { UserDivider, UserLibCard } from '../../ClientComponents';
 import { TitleCardNew } from '../../../../../components/GeneralComponents';
 import { ITitle } from '../../../../../interfaces/ITitle';
+import { getUTC } from '../../../../../components/handlers';
 
 // export const ClientComponents: NextPage = (props) => {
 //   return (
@@ -23,7 +24,7 @@ export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle
 
       {isOwner || !lib.settings.hidden ? <div className='grid gap-[16px]' style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
         {titles.map(title => {
-          return <TitleCardNew title={title} key={title.id} />
+          return <TitleCardNew title={title} key={`${title.id}-${Math.random().toFixed(3).split('.')[1]}`} />
         })}
       </div> : <p className='text-lightGrey text-center'>Ця тека приватна</p>}
     </div>

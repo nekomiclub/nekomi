@@ -9,7 +9,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import * as Menu from 'uvc-menu';
 
 
-import { ITitle, ITitleEpisodesDub, TAnimeGenres } from '../../../interfaces/ITitle';
+import { ITitle } from '../../../interfaces/ITitle';
 import Header from '../../../components/Header';
 import Tooltip from '../../../components/Tooltip';
 import { getKeyByValue, parseTitleCountry, parseTitleDubbers, parseTitleStatus, parseTitleType } from '../../../components/handlers';
@@ -223,16 +223,16 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <p className='text-white text-[24px] min-w-[180px]'>Жанри:</p>
 
                   <div className='flex gap-[8px] flex-wrap'>
-                    {title.genres.map((genre, i) => {
+                    {title.genres?.length ? title.genres?.map((genre, i) => {
                       let immutableI = i;
 
                       return <Tooltip content={genresDescription.find(el => el.genre === genre)?.description || 'Опис цього жанру ще не написаний.'} key={`genre-${i}`}>
                         <Link href={'#'}>
                           {/* LINK FOR GENRE */}
-                          <p className='text-white text-[24px] font-bold'>{animeGenres[genre]}{++immutableI < title.genres.length ? ',' : ''}</p>
+                          <p className='text-white text-[24px] font-bold'>{animeGenres[genre]}{++immutableI < title.genres?.length! ? ',' : ''}</p>
                         </Link>
                       </Tooltip>
-                    })}
+                    }) : <p className='text-white text-[24px]'>Відсутні</p>}
                   </div>
                 </li>
 
@@ -258,7 +258,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <p className='text-white text-[24px] min-w-[180px]'>Студії:</p>
 
                   <div className='flex gap-[8px] flex-wrap'>
-                    {title.studios.map((studio, i) => {
+                    {title.studios.length ? title.studios.map((studio, i) => {
                       let immutableI = i;
 
                       // TODO navigate to lib with that studio
@@ -267,7 +267,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                           <p className='text-white text-[24px] font-bold'>{studio}{++immutableI < title.studios.length ? ',' : ''}</p>
                         </Link>
                       </Tooltip>
-                    })}
+                    }) : <p className='text-white text-[24px]'>Відсутні</p>}
                   </div>
                 </li>
 
@@ -283,13 +283,13 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <p className='text-white text-[24px] min-w-[180px]'>Озвучено:</p>
 
                   <div className='flex gap-[8px] flex-wrap'>
-                    {dubbers && dubbers.map((dub, i) => {
+                    {dubbers?.length ? dubbers.map((dub, i) => {
                       let immutableI = i;
 
                       return <Link href={`${config.URL.baseURL}/dub/${dub.code}`} target='_blank' key={`dubber-${dub.code}`}>
                         <p className='text-white text-[24px] font-bold'>{dub.name}{++immutableI < dubbers.length ? ',' : ''}</p>
                       </Link>
-                    })}
+                    }) : <p className='text-white text-[24px]'>Відсутні</p>}
                   </div>
                 </li>
               </ul>

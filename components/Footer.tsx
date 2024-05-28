@@ -67,15 +67,15 @@ const Footer: NextPage = (props) => {
             </div>
 
             <div className='flex items-center gap-[16px] max-[560px]:justify-between'>
-              <Link href={`/`} className='footer-socialItem'>
+              <Link href={`https://t.me/an1meeClub`} target='_blank' className='footer-socialItem'>
                 <IcoSocialTelegram width={32} height={32} />
               </Link>
 
-              <Link href={`/`} className='footer-socialItem'>
+              <Link href={`https://www.tiktok.com/@an1mee.club`} target='_blank' className='footer-socialItem'>
                 <IcoSocialTiktok width={32} height={32} />
               </Link>
 
-              <Link href={`/`} className='footer-socialItem'>
+              <Link href={`https://discord.gg/UmDfKTpsh5`} target='_blank' className='footer-socialItem'>
                 <IcoSocialDiscord width={32} height={32} />
               </Link>
             </div>

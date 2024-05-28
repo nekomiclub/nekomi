@@ -689,8 +689,7 @@ const KekwPlayer: NextPage<{
 
     if (!data) return;
 
-    if (devMode) console.log(`[Player]: Progress deleted (nope)`);
-    // updatePlayerProgress(data.filter(el => el.id !== title.id))
+    localStorage.setItem('kekwplayer_data', JSON.stringify(data.filter(el => el.id !== title.id)))
   }
 
   /** Change dub, ep & moment

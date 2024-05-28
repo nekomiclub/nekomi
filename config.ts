@@ -1,5 +1,5 @@
 import ip from 'ip';
-import { TAnimeGenres } from "./interfaces/ITitle";
+import { TAnimeGenre } from './interfaces/ITitle';
 
 export const devMode = process.env.NODE_ENV === 'development'
 export const prodMode = process.env.NODE_ENV === 'production';
@@ -102,7 +102,7 @@ export const animeGenres = {
 }
 
 export const genresDescription: {
-  genre: TAnimeGenres,
+  genre: TAnimeGenre,
   description: string
 }[] = [
     {

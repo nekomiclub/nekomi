@@ -139,7 +139,7 @@ const Header: NextPage = () => {
                   <IcoUser width={24} height={24} />
                   <p className='text-white w-full'>Профіль</p>
                 </Menu.MenuItem>
-                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={() => router.push(`${config.URL.baseURL}/u/${user.username}`)}>
+                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={() => router.push(`${config.URL.baseURL}/u/${user.username}#user-libs`)}>
                   <IcoFolderPlain width={24} height={24} />
                   <p className='text-white w-full'>Теки</p>
                 </Menu.MenuItem>

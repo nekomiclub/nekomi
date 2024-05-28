@@ -114,6 +114,7 @@ export const TitleCardNew: NextPage<{ title: ITitle }> = ({ title }) => {
     })
 
     card.addEventListener('mouseenter', () => {
+      console.log(inactiveHeight)
       bottom.style.maxHeight = `${activeHeight}px`;
     })
   }, [])
@@ -122,7 +123,7 @@ export const TitleCardNew: NextPage<{ title: ITitle }> = ({ title }) => {
     <Link href={`${config.URL.baseURL}/w/${title.code}`} className='flex flex-col justify-end relative min-w-[200px] w-full h-[240px] rounded-[4px] overflow-hidden' ref={cardRef}>
       <LoadingImage src={title.poster} />
 
-      <div className={`pt-[${topOffset}px] pb-[${bottomOffset}px] px-[8px] bg-dark/[.8] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px]`} ref={bottomRef}>
+      <div className={`px-[8px] bg-dark/[.8] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px]`} style={{ paddingTop: `${topOffset}px`, paddingBottom: `${bottomOffset}px` }} ref={bottomRef}>
         <div className='flex flex-col gap-[4px]'>
           <p className='titleCardNew-heading text-white font-bold'>{title.names.ukr}</p>
 

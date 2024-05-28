@@ -117,7 +117,7 @@ export const UserDivider: NextPage<{ label: string, hidden: boolean, isOwner: bo
 
 export const UserSectionLibs: NextPage<{ user: IExtendedUser, isOwner: boolean }> = ({ isOwner, user }) => {
   return (
-    <div className='flex flex-col gap-[24px]'>
+    <div className='flex flex-col gap-[24px]' id='user-libs'>
       <UserDivider label='Теки' hidden={false} isOwner={isOwner} />
 
       <div className='grid gap-[16px]' style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))' }}>
