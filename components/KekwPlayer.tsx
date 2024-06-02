@@ -1157,8 +1157,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
     }
 
     return <UMenu.MenuItem className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex justify-between gap-[8px] focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${dub.id === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
-      {/* <p className='text-white'>{dubbers.find(el => el.id === dub.id)?.name}</p> */}
-      <p className='text-white whitespace-nowrap'>Справжня козацька озвучка (СКО)</p>
+      <p className='text-white whitespace-nowrap'>{dubbers.find(el => el.id === dub.id)?.name}</p>
 
       <div className='flex gap-[4px]'>
         <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
