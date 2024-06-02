@@ -114,7 +114,6 @@ export const TitleCardNew: NextPage<{ title: ITitle }> = ({ title }) => {
     })
 
     card.addEventListener('mouseenter', () => {
-      console.log(inactiveHeight)
       bottom.style.maxHeight = `${activeHeight}px`;
     })
   }, [])
