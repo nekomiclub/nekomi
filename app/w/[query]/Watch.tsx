@@ -58,11 +58,11 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
         const { data } = await $api.get<IUser>(`/user/${state.id}`);
         setUser(data);
 
-        let lists: TitleLists[] = []
+        let libs: TitleLists[] = []
 
-        data.lists.forEach(list => {
+        data.libs.forEach(list => {
           if (list.titles.includes(title.id)) {
-            lists.push(list.id.split('-')[0] as TitleLists)
+            libs.push(list.id.split('-')[0] as TitleLists)
 
             if (list.id.includes('favorite')) {
               setTitleLiked(true)
@@ -70,17 +70,11 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
           }
         })
 
-        setTitleLists(lists);
+        setTitleLists(libs);
       } catch (e) {
         console.error(e)
       }
     })()
-
-    // const menu = document.querySelector('#menu-editList') as HTMLDivElement;
-
-    // if (menu) {
-    //   menu.style.left = `-${menu.offsetWidth / 2}px`
-    // }
   }, [state])
 
   async function changeTitleList(list: TitleLists) {
@@ -93,25 +87,25 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
       setTitleLiked(!titleLiked)
     }
 
-    let lists: TitleLists[] = []
+    let libs: TitleLists[] = []
 
     if (titleLists.includes(list)) {
-      lists = titleLists.filter(el => el !== list);
+      libs = titleLists.filter(el => el !== list);
     } else {
-      lists = [...titleLists, list];
+      libs = [...titleLists, list];
     }
 
     try {
       await $api.patch('/user', {
         method: 'editFolderItem',
         titleId: title.id,
-        folderId: user.lists.find(el => el.id.includes(list))!.id
+        folderId: user.libs.find(el => el.id.includes(list))!.id
       })
     } catch (e) {
       console.error(e)
     }
 
-    setTitleLists(lists);
+    setTitleLists(libs);
   }
 
   return (
