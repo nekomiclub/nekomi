@@ -26,7 +26,7 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
         {/* Rating */}
         <div className='relative z-[2] m-[4px] flex items-center gap-[8px] p-[4px] gradient--secondary rounded-[2px]'>
           <IcoStarRating width={24} height={24} />
-          <p className='text-white font-bold'>{title.rating}</p>
+          <p className='text-white font-bold'>{title.rating.IMDB || '-'}</p>
         </div>
 
         {/* Title */}
@@ -143,7 +143,7 @@ export const TitleCardNew: NextPage<{ title: ITitle }> = ({ title }) => {
 
           <div className='flex items-center gap-[4px]'>
             <IcoStarRating width={12} height={12} fill='#FF464E' />
-            <p className='text-gradientPrimaryFallback text-[12px] font-bold'>{title.newRating.IMDB}</p>
+            <p className='text-gradientPrimaryFallback text-[12px] font-bold'>{title.rating.IMDB || '-'}</p>
           </div>
         </div>
       </div>

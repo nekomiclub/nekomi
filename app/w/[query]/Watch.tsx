@@ -47,7 +47,6 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
 
   const state = useAppSelector(state => state.user)
   const [user, setUser] = useState<IUser>()
-
   useEffect(() => {
     // Pass if user if not authorized
     if (!state.id) return
@@ -133,7 +132,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
 
                   <div className='flex items-center gap-[8px]'>
                     <IcoStarRating width={24} height={24} fill='#FF464E' className='max-[600px]:w-[32px] max-[600px]:h-[32px]' />
-                    <p className='gradient--primary-text font-bold max-[600px]:text-[24px]'>{title.rating}</p>
+                    <p className='gradient--primary-text font-bold max-[600px]:text-[24px]'>{title.rating.IMDB || '-'}</p>
                   </div>
                 </div>
                 <h3 className='text-white text-[32px] font-extralight max-[600px]:text-center max-[600px]:text-[24px]'>{title.names.eng}</h3>
@@ -205,9 +204,9 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <p className='text-white text-[24px] min-w-[180px]'>Епізоди:</p>
 
                   <div className=''>
-                    <Tooltip content={totalEps === title.estimatedEps ? 'Тайтл повністю озвучено' : 'Тайтл озвучено неповністю'}>
-                      <p className={`text-white text-[24px] ${totalEps === title.estimatedEps ? 'font-bold gradient--secondary-text' : ''}`}>
-                        {totalEps} / {title.estimatedEps}
+                    <Tooltip content={totalEps === title.episodesCount ? 'Тайтл повністю озвучено' : 'Тайтл озвучено неповністю'}>
+                      <p className={`text-white text-[24px] ${totalEps === title.episodesCount ? 'font-bold gradient--secondary-text' : ''}`}>
+                        {totalEps} / {title.episodesCount}
                       </p>
                     </Tooltip>
                   </div>
@@ -291,7 +290,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
           </div>
 
           {/* Player & ep meta */}
-          {title.dubs?.length ? <div className='flex items-start max-[1020px]:flex-col gap-[40px] z-[4] mb-[80px]'>
+          {title.episodes.length ? <div className='flex items-start max-[1020px]:flex-col gap-[40px] z-[4] mb-[80px]'>
             <div className='flex flex-col gap-[24px] items-center w-full'>
               <div className='h-[600px] w-full'>
                 <KekwPlayer title={title} dubs={dubbers!} setOutDubber={setDubber} />

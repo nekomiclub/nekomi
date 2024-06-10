@@ -2,32 +2,10 @@ export interface IUser {
   /** ID */
   id: string
 
-  /** Username
-   * Managed by fk-usapi
-   */
-  username: string
-
-  /** Avatar
-   * Managed by fk-usapi
-   */
-  avatar: string
-
-  /** User stats
-   * @deprecated will be refactored into statistics
-   * @since 1.1.1
-   */
-  stats: IUserStats
-
   /** Statistics
    * Inherit stats
    */
   statistics: IUserStatistics
-
-  /** User lists
-   * @deprecated will be refactored into libs
-   * @since 1.1.1
-   */
-  lists: IUserList[]
 
   /** Titles libs
    * Inherit lists
@@ -50,7 +28,7 @@ export interface IUserStatistics {
 }
 
 /** User lib type */
-export type TUserLibType = 'favorite' | 'watching' | 'watched' | 'delayed' | 'plans' | 'custom'
+type TUserLibType = 'favorite' | 'watching' | 'watched' | 'delayed' | 'plans' | 'custom'
 
 /** User titles lib */
 export interface IUserLib {
@@ -80,59 +58,6 @@ export interface IUserLib {
 }
 
 
-/** User settings interface
- * @deprecated will appear in future
- */
-export interface IUserSettings {
-  void?: void
-}
-
-/** User stats interface
- * @deprecated refactored into IUserStatistics
- */
-export interface IUserStats {
-  createdAt: number,
-  titles: {
-    watched: number,
-    favorites: number,
-    plans: number,
-    delayed: number,
-    threwn: number
-  },
-  player: {
-    totalWatched: number,
-    popularDub: string | null,
-    watchedTitles: IUserStatsWatchedTitles[] | null
-  }
-}
-
-/** User watched titles stat interface
- * @deprecated refactored into IUserStatistics
- */
-interface IUserStatsWatchedTitles {
-  title: string,
-  dubs: IUserStatsWatchedTitlesDub[]
-}
-
-/** User watched title dubs interface
- * @deprecated refactored into IUserStatistics
- */
-interface IUserStatsWatchedTitlesDub {
-  id: string,
-  totalWatch: number
-}
-
-/** @deprecated refactored into IUserLibs */
-export interface IUserList {
-  titles: string[],
-  createdAt: number,
-  immortal: boolean,
-  hidden: boolean,
-  thumb: string,
-  description: string,
-  name: string,
-  id: string
-}
 
 /** Fullkekw usapi user */
 export interface IUsapiUser {

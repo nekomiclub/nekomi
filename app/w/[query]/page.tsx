@@ -51,14 +51,28 @@ export default async function RSC({ params }: IRSCProps<{ query: string }>) {
 
     title = res.data.title;
 
-    title.dubs?.forEach(dub => {
-      if (dub.eps.length > totalEps) totalEps = dub.eps.length;
+    title.episodes.forEach(ep => {
+      if (ep.order > totalEps) totalEps = ep.order;
     })
 
-    if (title.dubs?.length) {
-      dubbers = await parseTitleDubbers(title.dubs!.map(el => el.id))
+    if (title.episodes.length) {
+      const uniqueDubbers: string[] = []
+
+      title.episodes.forEach(ep => uniqueDubbers.includes(ep.dubberID) ? null : uniqueDubbers.push(ep.dubberID))
+
+      dubbers = await parseTitleDubbers(uniqueDubbers)
     } else {
       dubbers = null
+    }
+
+    if (title.episodesCount === null) {
+      let maxEp = 0;
+
+      title.episodes.forEach(ep => {
+        if (ep.order > maxEp) maxEp = ep.order;
+      })
+
+      title.episodesCount = maxEp;
     }
   } catch (e) {
     if (e instanceof AxiosError) {

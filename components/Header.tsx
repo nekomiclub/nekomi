@@ -199,14 +199,14 @@ const Header: NextPage = () => {
                       <div className='flex items-center gap-[16px] w-full'>
                         <div className='flex items-center gap-[4px]'>
                           <IcoStarRating width={16} height={16} fill='#FF464E' />
-                          <p className='text-[16px] font-bold gradient--primary-text'>{title.rating}</p>
+                          <p className='text-[16px] font-bold gradient--primary-text'>{title.rating.IMDB || '-'}</p>
                         </div>
                         <p className='text-[16px] font-extralight text-white'>{parseTitleType(title.type)}</p>
                         <p className='text-[16px] font-extralight text-white'>{title.year}</p>
                       </div>
 
                       <div className='flex gap-[16px] max-[560px]:flex-col items-start max-[560px]:gap-[8px]'>
-                        {title.dubs?.length ? <span className='font-bold gradient--primary-text'>Має озвучення</span> : <span className='font-extralight text-white'>Озвучення відсутня</span>}
+                        {title.episodes.length ? <span className='font-bold gradient--primary-text'>Має озвучення</span> : <span className='font-extralight text-white'>Озвучення відсутнє</span>}
                       </div>
                     </div>
                   </div>

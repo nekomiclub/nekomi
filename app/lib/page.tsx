@@ -29,10 +29,10 @@ const LibItem: NextPage<{ title: ITitle }> = ({ title }) => {
 
       <div className='w-full flex justify-end items-center px-[8px] py-[8px] gap-[8px]'>
         <div className='px-[8px] py-[4px] rounded-[2px] gradient--primary relative '>
-          <p className='text-[16px] text-white font-bold'>{title.rating || '-'}</p>
+          <p className='text-[16px] text-white font-bold'>{title.rating.IMDB || '-'}</p>
         </div>
 
-        <div className={`flex items-center justify-center relative px-[4px] py-[4px] rounded-[2px] ${title.country !== 'null' ? 'bg-green' : 'bg-red'}`} data-tooltip-id={`${title.code}-tt--isUpdated`} data-tooltip-content={title.country !== 'null' ? 'Цей тайтл оновлений' : 'Цей тайтл ще не оновлений'}>
+        <div className={`flex items-center justify-center relative px-[4px] py-[4px] rounded-[2px] ${title.country !== 'Other' ? 'bg-green' : 'bg-red'}`} data-tooltip-id={`${title.code}-tt--isUpdated`} data-tooltip-content={title.country !== 'Other' ? 'Цей тайтл оновлений' : 'Цей тайтл ще не оновлений'}>
           <IcoClockFilled width={24} height={24} className='lib-card--isUpdated' />
           <Tooltip id={`${title.code}-tt--isUpdated`} />
         </div>

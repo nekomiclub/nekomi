@@ -10,7 +10,7 @@ import * as UMenu from 'uvc-menu';
 import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 import { useIdleTimer } from 'react-idle-timer';
 
-import { ITitle, ITitleEpisodeDubbed, ITitleEpisodeMeta, ITitleEpisodesDub } from '../interfaces/ITitle';
+import { ITitle, ITitleEpisode, ITitleEpisodeMeta } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
 import { LoadingImage } from './GeneralComponents';
 import { timestampToDate, wordDeclination } from './handlers';
@@ -52,8 +52,7 @@ const KekwPlayer: NextPage<{
 
   // Player data
   const [volume, setVolume] = useState(50)
-  const [ep, setEp] = useState(1);
-  const [dub, setDub] = useState<ITitleEpisodesDub>()
+  const [dubbedEp, setDubbedEp] = useState<ITitleEpisode>(title.episodes[0])
   const [duration, setDuration] = useState(1)
   const [videoMoment, setVideoMoment] = useState(0);
   const [hoveredMoment, setHoveredMoment] = useState(0);
@@ -67,7 +66,7 @@ const KekwPlayer: NextPage<{
   const [stretch, setStretch] = useState(false)
 
   const [isPreviewOld, setIsPreviewOld] = useState(false);
-  const [isVideoProcessed, setIsVideoProcessed] = useState(true); // Specify if video procesed by the server (qualities & frames)
+  const [isVideoProcessed, setIsVideoProcessed] = useState(false); // Specify if video procesed by the server (qualities & frames)
 
   // Player states
   const [isPlaying, setIsPlaying] = useState(false)
@@ -98,6 +97,8 @@ const KekwPlayer: NextPage<{
   const isMultiskipRef = useRef(false)
   const skipTimeoutRef = useRef<NodeJS.Timeout>()
 
+  const titleMaxEpisode = useRef(0)
+
   // Idle timer
   useIdleTimer({
     timeout: 3000,
@@ -115,6 +116,10 @@ const KekwPlayer: NextPage<{
     } else {
       setIsMobile(false)
     }
+
+    title.episodes.forEach(ep => {
+      if (ep.order > titleMaxEpisode.current) titleMaxEpisode.current = ep.order
+    })
 
     const video = videoRef.current;
 
@@ -174,14 +179,13 @@ const KekwPlayer: NextPage<{
       return loadDefault();
     }
 
-    const dub = title.dubs!.find(el => el.id === progress.dub);
-    const ep = dub?.eps.find(el => el.order === progress.ep)
+    const dubbedEp = title.episodes.find(el => el.dubberID === progress.dub && el.order === progress.ep);
 
-    if (!dub || !ep) {
+    if (!dubbedEp) {
       return loadDefault();
     }
 
-    await changeDub(dub, ep.order, progress.moment);
+    await changeDub(dubbedEp, progress.moment);
     setIsContinueMenuOpen(false);
     setStage('operational')
   }
@@ -195,10 +199,9 @@ const KekwPlayer: NextPage<{
 
   /** Setup with default player states */
   async function loadDefault() {
-    const dub = title.dubs![0];
-    const ep = dub.eps[0].order;
+    const dubbedEp = title.episodes[0];
 
-    await changeDub(dub, ep, 0);
+    await changeDub(dubbedEp, 0);
     setStage('operational')
   }
 
@@ -465,7 +468,7 @@ const KekwPlayer: NextPage<{
     }
   }, [stage, isIdle])
 
-  // //* Handle keyboard
+  //* Handle keyboard
   useEffect(() => {
     if (stage !== 'operational') return;
 
@@ -589,9 +592,9 @@ const KekwPlayer: NextPage<{
 
   //* Handle quality changing
   useEffect(() => {
-    if (stage !== 'operational' || !dub) return;
+    if (stage !== 'operational' || !dubbedEp) return;
 
-    changeVideoSrc(dub.eps.find(el => el.order === ep)!.source[quality], videoMoment)
+    changeVideoSrc(dubbedEp.qualities[quality], videoMoment)
   }, [stage, quality])
 
   //* Handle video buffering & end screens
@@ -627,14 +630,14 @@ const KekwPlayer: NextPage<{
     }
 
     // Handle end screens
-    if (duration > 10 && videoMoment && dub) {
+    if (duration > 10 && videoMoment && dubbedEp) {
       if (videoMoment >= duration - 2) {
-        let nextEp = ep;
+        let nextEp = dubbedEp.order;
         nextEp += 1;
         setIsTimeToEndScreen(true)
 
-        const isNextEpExist = dub.eps.some(el => el.order === nextEp); // Last episode in dub
-        const isTitleEnded = title.estimatedEps === ep; // Title ended
+        const isNextEpExist = title.episodes.some(el => el.order === nextEp && el.dubberID === dubbedEp.dubberID); // Last episode in dub
+        const isTitleEnded = title.episodesCount === dubbedEp.order; // Title ended
 
         if (isTitleEnded) {
           setEndScreen('titleEnded')
@@ -698,35 +701,31 @@ const KekwPlayer: NextPage<{
    * 
    * @default moment 0
    */
-  async function changeDub(dub: ITitleEpisodesDub, ep: number, moment?: number) {
+  async function changeDub(dubbedEp: ITitleEpisode, moment?: number) {
     // Set optional vars
     moment = moment || 0;
 
     // Set first dub in array if id not found
-    if (!title.dubs?.find(el => el.id === dub.id)) {
-      dub = title.dubs![0]
+    if (!title.episodes.find(el => el.dubberID === dubbedEp.dubberID && el.order === dubbedEp.order)) {
+      dubbedEp = title.episodes[0]
     }
 
-    if (!dub.eps.find(el => el.order === ep)) {
-      ep = dub.eps[0].order
-    }
-
-    setDub(dub);
-    setEp(ep);
+    console.log(dubbedEp)
+    setDubbedEp(dubbedEp)
 
     await Promise.all([
-      await definePreviewFormat(dub.eps.find(el => el.order === ep)!.framesURL![0]),
-      await changeVideoSrc(dub.eps.find(el => el.order === ep)!.source[quality], moment),
+      await definePreviewFormat(dubbedEp.frames[0]),
+      await changeVideoSrc(dubbedEp.qualities[quality], moment),
     ])
 
     // Set out states
-    if (setOutDubber) setOutDubber(dubs.find(el => el.id === dub.id)!);
-    if (setOutEp) setOutEp(ep);
+    if (setOutDubber) setOutDubber(dubs.find(el => el.id === dubbedEp.dubberID)!);
+    if (setOutEp) setOutEp(dubbedEp.order);
 
     // Check if episode is last
-    const nextEp = Number(ep) + 1;
+    const nextEp = Number(dubbedEp.order) + 1;
 
-    if (!dub.eps.find(el => el.order === nextEp)) {
+    if (!title.episodes.some(el => el.dubberID === dubbedEp.dubberID && el.order === nextEp)) {
       setIsLastEpisode(true)
     } else {
       setIsLastEpisode(false)
@@ -734,8 +733,8 @@ const KekwPlayer: NextPage<{
 
     // Reset progress moment
     updatePlayerProgress({
-      dub: dub.id,
-      ep,
+      dub: dubbedEp.dubberID,
+      ep: dubbedEp.order,
       id: title.id,
       moment
     })
@@ -799,8 +798,8 @@ const KekwPlayer: NextPage<{
     // Save progress
     if (moment > 5) {
       updatePlayerProgress({
-        dub: dub?.id || '',
-        ep,
+        dub: dubbedEp.dubberID,
+        ep: dubbedEp.order,
         id: title.id,
         moment
       })
@@ -851,11 +850,12 @@ const KekwPlayer: NextPage<{
     setHoveredMoment(hoveredMoment);
 
     // Set preview frame
-    if (!dub || !isVideoProcessed) return
+    if (!dubbedEp || !isVideoProcessed) return
     const img = preview.querySelector('img') as HTMLImageElement;
 
-    const frames = dub.eps.find(el => el.order === ep)!.framesURL!
     let previewIndex = Math.floor(hoveredMoment / 5);
+
+    const frames = dubbedEp.frames;
     const frameIndex = Math.floor(previewIndex / 25);
     const frame = frames[frameIndex];
     const imgWidth = img.offsetWidth;
@@ -876,9 +876,9 @@ const KekwPlayer: NextPage<{
       const dimensions = await getImageSize(frameURL);
 
       setIsPreviewOld(dimensions.height === 120 ? true : false)
-      setIsVideoProcessed(false) // !TMP must be true
+      setIsVideoProcessed(true)
     } catch (e) {
-      console.error(e)
+      setIsVideoProcessed(false)
     }
   }
 
@@ -892,7 +892,7 @@ const KekwPlayer: NextPage<{
         {/* Screen wrapper */}
         <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center z-[15] bg-dark/[.5] backdrop-blur-[32px] duration-200 px-[24px] ${isTimeToEndScreen || isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
           {/* Ep ended */}
-          <EpEndScreen endScreen={endScreen} ep={ep} setEp={setEp} title={title} isTime={isTimeToEndScreen} videoRef={videoRef} />
+          <EpEndScreen endScreen={endScreen} dubbedEp={dubbedEp} setDubbedEp={setDubbedEp} title={title} isTime={isTimeToEndScreen} videoRef={videoRef} />
 
           {/* Last ep in dub */}
           <LastEpScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
@@ -911,7 +911,7 @@ const KekwPlayer: NextPage<{
         </div>
 
         {/* Menu */}
-        <Menu ep={ep} changeDub={changeDub} currentDub={dub!} totalDubs={title.dubs!} dubbers={dubs} isLastEpisode={isLastEpisode} totalEps={title.estimatedEps} isIdle={isIdle} titleId={title.id} />
+        <Menu ep={dubbedEp.order} changeDub={changeDub} currentDub={dubbedEp} totalDubs={title.episodes} dubbers={dubs} isLastEpisode={isLastEpisode} totalEps={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} />
 
         {/* Bottom */}
         <div className={`flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px] duration-200 translate-y-0 ${isIdle ? 'translate-y-[100%]' : ''}`}>
@@ -932,7 +932,7 @@ const KekwPlayer: NextPage<{
             <PiP isPiP={isPiP} videoRef={videoRef} />
 
             {/* Settings */}
-            <Settings quality={quality} setQuality={setQuality} setSubs={setSubs} speed={speed} subs={subs} epData={dub?.eps.find(el => el.order === ep)} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} />
+            <Settings quality={quality} setQuality={setQuality} setSubs={setSubs} speed={speed} subs={subs} epData={dubbedEp} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} />
 
             {/* Fullscreen */}
             <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
@@ -977,7 +977,7 @@ const ContinueProgressScreen: NextPage<{
         <p className='text-white text-[32px] font-bold'>#{localData?.ep}</p>
 
         <div className='flex flex-col gap-[4px]'>
-          <p className='text-white text-[24px]'>{title.epsMeta?.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
+          <p className='text-white text-[24px]'>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
         </div>
 
         <p className='text-white text-[24px] flex-shrink-0'>{secondsToReadable(localData?.moment || 0).pretty}</p>
@@ -1003,23 +1003,23 @@ interface IEndScreenProps {
 
 interface IEpEndScreenProps extends IEndScreenProps {
   title: ITitle,
-  ep: number,
-  setEp: (val: number) => void,
+  dubbedEp: ITitleEpisode,
+  setDubbedEp: (dubbedEp: ITitleEpisode) => void,
   videoRef: RefObject<HTMLVideoElement>
 }
 
-const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title, isTime, videoRef }) => {
+const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, dubbedEp, setDubbedEp, title, isTime, videoRef }) => {
   const [remain, setRemain] = useState(5)
   const [epMeta, setEpMeta] = useState<ITitleEpisodeMeta | null>(null)
-  const [nextEp, setNextEp] = useState(ep)
+  const [nextEp, setNextEp] = useState(dubbedEp.order)
   const [date, setDate] = useState('')
   const [int, setInt] = useState<NodeJS.Timeout>()
 
   useEffect(() => {
-    let nextEp = ep;
+    let nextEp = dubbedEp.order;
     nextEp += 1
 
-    const epMeta = title.epsMeta?.find(el => el.order === nextEp);
+    const epMeta = title.episodesMeta.find(el => el.order === nextEp);
 
     setNextEp(nextEp)
 
@@ -1029,7 +1029,7 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
       setEpMeta(epMeta)
       setDate(`${parsed.day} ${parsed.localizedMonth.slice(0, 3)} ${parsed.year}`)
     }
-  }, [ep])
+  }, [dubbedEp])
 
   useEffect(() => {
     setRemain(5)
@@ -1057,7 +1057,8 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, ep, setEp, title,
 
     if (!video) return;
 
-    setEp(nextEp)
+    dubbedEp.order = nextEp;
+    setDubbedEp(dubbedEp)
 
     setTimeout(() => {
       video.play().catch(e => null)
@@ -1109,9 +1110,9 @@ const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
 
 interface IMenuProps {
   ep: number,
-  changeDub: (dub: ITitleEpisodesDub, ep: number, moment?: number) => void,
-  currentDub: ITitleEpisodesDub,
-  totalDubs: ITitleEpisodesDub[],
+  changeDub: (dubbedEp: ITitleEpisode, moment?: number) => void,
+  currentDub: ITitleEpisode,
+  totalDubs: ITitleEpisode[],
   dubbers: IDubber[]
   isLastEpisode: boolean,
   totalEps: number,
@@ -1120,14 +1121,18 @@ interface IMenuProps {
 }
 
 const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpisode, changeDub, totalDubs, totalEps, isIdle, titleId }) {
-  const isFirstOpen = useRef(true);
+  const uniqueTotalDubs: ITitleEpisode[] = [];
+
+  totalDubs.forEach(dub => {
+    if (!uniqueTotalDubs.some(el => el.dubberID === dub.dubberID)) uniqueTotalDubs.push(dub);
+  })
 
   function nextEpisode() {
     if (!isLastEpisode) {
       let nextEp = ep;
       nextEp += 1;
 
-      changeDub(currentDub, nextEp, 0)
+      changeDub(totalDubs.find(el => el.dubberID === currentDub.dubberID && el.order === nextEp)!, 0)
 
       // Write player data to local storage
       const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
@@ -1145,19 +1150,19 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
     return <IcoPlayerList width={40} height={40} />
   }
 
-  function MenuDubber({ dub, currId }: { dub: ITitleEpisodesDub, currId: string }) {
+  function MenuDubber({ dubbedEp, currId }: { dubbedEp: ITitleEpisode, currId: string }) {
     let lastEp = 0;
 
-    dub.eps.forEach(el => {
-      if (el.order > lastEp) lastEp = el.order;
+    totalDubs.forEach(dub => {
+      if (dub.order > lastEp) lastEp = dub.order;
     })
 
     function setDub() {
-      changeDub(dub, ep, 0)
+      changeDub(dubbedEp, 0)
     }
 
-    return <UMenu.MenuItem className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex justify-between gap-[8px] focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${dub.id === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
-      <p className='text-white whitespace-nowrap'>{dubbers.find(el => el.id === dub.id)?.name}</p>
+    return <UMenu.MenuItem className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex justify-between gap-[8px] focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${dubbedEp.dubberID === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
+      <p className='text-white whitespace-nowrap'>{dubbers.find(el => el.id === dubbedEp.dubberID)?.name}</p>
 
       <div className='flex gap-[4px]'>
         <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
@@ -1169,7 +1174,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
 
   function MenuEpisode({ to }: { to: number }) {
     function setEpisode(to: number) {
-      changeDub(currentDub, to, 0)
+      changeDub(totalDubs.find(el => el.dubberID === currentDub.dubberID && el.order === to)!, 0)
     }
 
     return <UMenu.MenuItem className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] w-full ${ep === to ? 'bg-purple' : ''} cursor-pointer`} onClick={() => setEpisode(to)}>
@@ -1183,8 +1188,8 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
         <div className='px-[16px] py-[8px] bg-dark rounded-[2px] flex gap-[8px]'>
           {/* Dubs */}
           <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
-            {totalDubs?.map(dub => {
-              return <MenuDubber dub={dub} currId={currentDub?.id} key={`dub-${dub.id}`} />
+            {uniqueTotalDubs.map(dub => {
+              return <MenuDubber dubbedEp={dub} currId={currentDub?.dubberID} key={`dub-${dub.dubberID}`} />
             })}
           </UMenu.MenuList>
 
@@ -1193,8 +1198,8 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
 
           {/* Eps */}
           <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
-            {currentDub?.eps.sort((a, b) => a.order - b.order).map(ep => {
-              return <MenuEpisode to={ep.order} key={`ep-${ep.order}`} />
+            {totalDubs.map(el => el.dubberID === currentDub.dubberID ? el : undefined).filter(el => el !== undefined).sort((a, b) => a!.order - b!.order).map(ep => {
+              return <MenuEpisode to={ep?.order || 0} key={`ep-${ep?.order || 0}`} />
             })}
           </UMenu.MenuList>
         </div>
@@ -1202,7 +1207,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
 
       <div className='bg-dark flex flex-col justify-center gap-[2px] rounded-[2px] px-[16px]' >
         <p className='text-white font-bold text-center'>{ep <= 9 ? `0${ep}` : ep}</p>
-        <p className='text-white text-[12px] font-extralight text-center'>{currentDub ? dubbers.find(el => el.id === currentDub.id)!.name : '...'}</p>
+        <p className='text-white text-[12px] font-extralight text-center'>{currentDub ? dubbers.find(el => el.id === currentDub.dubberID)!.name : '...'}</p>
       </div>
 
       <button className={`px-[16px] bg-dark rounded-[2px] duration-200 ${!isLastEpisode && 'hover:bg-purple focus-visible:bg-purple'}`} onClick={() => nextEpisode()} disabled={isLastEpisode}>
@@ -1225,7 +1230,7 @@ interface ISettingsProps {
   speed: number,
   subs: any,
   setSubs: (state: any) => void,
-  epData: ITitleEpisodeDubbed | undefined,
+  epData: ITitleEpisode | undefined,
   isVideoProcessed: boolean,
   videoRef: RefObject<HTMLVideoElement>
   stretch: boolean,
@@ -1419,23 +1424,23 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
       <div className={`flex flex-col gap-[16px]`}>
         <ReturnButton label='Якість' />
         <div className='flex flex-col gap-[4px]'>
-          {epData?.source.q2k && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q2k' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q1080')} disabled={!isVideoProcessed}>
-            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>2K</p>
+          {epData?.qualities.q4k && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q4k' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q1080')} disabled={!isVideoProcessed}>
+            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>4K</p>
           </button>}
 
-          {epData?.source.q1080 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q1080' ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setQuality('q1080')}>
+          {epData?.qualities.q1080 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q1080' ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setQuality('q1080')}>
             <p className='text-white'>1080</p>
           </button>}
 
-          {epData?.source.q720 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q720' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q720')} disabled={!isVideoProcessed}>
+          {epData?.qualities.q720 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q720' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q720')} disabled={!isVideoProcessed}>
             <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>720</p>
           </button>}
 
-          {epData?.source.q480 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q480' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q480')} disabled={!isVideoProcessed}>
+          {epData?.qualities.q480 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q480' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q480')} disabled={!isVideoProcessed}>
             <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>480</p>
           </button>}
 
-          {epData?.source.q240 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q240' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q240')} disabled={!isVideoProcessed}>
+          {epData?.qualities.q240 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q240' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q240')} disabled={!isVideoProcessed}>
             <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>240</p>
           </button>}
         </div>

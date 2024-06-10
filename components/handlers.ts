@@ -23,19 +23,19 @@ export async function parseTitleDubbers(queries: string[]): Promise<IDubber[]> {
  */
 export function parseTitleCountry(country: string): string {
   switch (country) {
-    case 'japan': {
+    case 'Japan': {
       return 'Японія'
     }
 
-    case 'china': {
+    case 'Chine': {
       return 'Китай'
     }
 
-    case 'south corea': {
+    case 'South Corea': {
       return 'Східна Корея'
     }
 
-    case 'null': {
+    case 'Other': {
       return 'Країна ще неоновлена / невідома'
     }
   }

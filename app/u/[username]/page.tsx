@@ -6,7 +6,7 @@ import { IRSCProps } from '../../../interfaces/IRSC';
 import { config, devMode } from '../../../config';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/OopsComponents';
 import { decodeToken, getUTC, wordDeclination } from '../../../components/handlers';
-import { IExtendedUser, IUsapiUser, IUser, IUserLib, TUserLibType } from '../../../interfaces/IUser';
+import { IExtendedUser, IUsapiUser, IUser, IUserLib } from '../../../interfaces/IUser';
 import { UserDivider, UserHeader, UserSectionLibs, UserSectionStats, UserSectionTakePart } from './ClientComponents';
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoClockFilled } from '../../../assets/Clock';
