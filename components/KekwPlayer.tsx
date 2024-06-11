@@ -372,9 +372,6 @@ const KekwPlayer: NextPage<{
       timelineTouchEndHandler();
     })
 
-    // Move preview box
-    timeline.addEventListener('pointermove', e => movePreview(e.offsetX))
-
 
 
     function timelineTouchStartHandler() {
@@ -387,6 +384,25 @@ const KekwPlayer: NextPage<{
       preview.style.visibility = 'invisible';
     }
   }, [stage])
+
+  //* Handle video events
+  useEffect(() => {
+    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
+    const preview = document.querySelector('#kekwplayer-preview') as HTMLDivElement
+
+    if (!timeline || !preview) return;
+
+    // Move preview box
+    timeline.addEventListener('pointermove', handlePointerMove)
+
+    function handlePointerMove(e: MouseEvent) {
+      movePreview(e.offsetX)
+    }
+
+    return () => {
+      timeline.removeEventListener('pointermove', handlePointerMove)
+    }
+  }, [stage, dubbedEp])
 
   //* Handle clicking (multi/skip, entering via dbclick)
   useEffect(() => {
@@ -710,7 +726,6 @@ const KekwPlayer: NextPage<{
       dubbedEp = title.episodes[0]
     }
 
-    console.log(dubbedEp)
     setDubbedEp(dubbedEp)
 
     await Promise.all([
@@ -881,7 +896,6 @@ const KekwPlayer: NextPage<{
       setIsVideoProcessed(false)
     }
   }
-
 
 
   return (
@@ -1153,8 +1167,8 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
   function MenuDubber({ dubbedEp, currId }: { dubbedEp: ITitleEpisode, currId: string }) {
     let lastEp = 0;
 
-    totalDubs.forEach(dub => {
-      if (dub.order > lastEp) lastEp = dub.order;
+    totalDubs.filter(el => el.dubberID === dubbedEp.dubberID).forEach(ep => {
+      if (ep.order > lastEp) lastEp = ep.order
     })
 
     function setDub() {

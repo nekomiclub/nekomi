@@ -340,7 +340,7 @@ const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dub
       {dubber ? <>
         <div className='flex items-center max-[600px]:flex-col gap-[40px]'>
           <div className='relative w-[128px] h-[128px] rounded-[128px] overflow-hidden flex-shrink-0'>
-            <LoadingImage src={dubber.thumbURL} />
+            <LoadingImage src={dubber.thumbURL} className='rounded-[128px]' />
           </div>
 
           <div className='flex flex-col gap-[8px] items-center'>
@@ -357,14 +357,6 @@ const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dub
               <p className='gradient--primary-text text-[24px] font-bold'>{dubber.rating}</p>
             </div>
           </Tooltip>
-
-          {/* // TODO */}
-          {/* <Tooltip content={`Відсоток переваги ${dubber.name}`}>
-                    <div className='flex items-center gap-[8px]'>
-                      <IcoClock width={24} height={24} gradient='primary' />
-                      <p className='gradient--primary-text text-[24px] font-bold'>0</p>
-                    </div>
-                  </Tooltip> */}
         </div>
 
         {/* Support */}
