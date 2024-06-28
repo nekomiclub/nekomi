@@ -2,7 +2,7 @@
 
 import { NextPage } from 'next';
 import { useState, useEffect } from 'react'
-import { IExtendedUser, IUserLib } from '../../../../../interfaces/IUser';
+import { IUser, IUserLib } from '../../../../../interfaces/IUser';
 import { UserDivider, UserLibCard } from '../../ClientComponents';
 import { TitleCardNew } from '../../../../../components/GeneralComponents';
 import { ITitle } from '../../../../../interfaces/ITitle';
@@ -32,7 +32,7 @@ export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle
 }
 
 /** User other libs */
-export const UserLibOthers: NextPage<{ user: IExtendedUser, isOwner: boolean, currentLibID: string }> = ({ isOwner, user, currentLibID }) => {
+export const UserLibOthers: NextPage<{ user: IUser, isOwner: boolean, currentLibID: string }> = ({ isOwner, user, currentLibID }) => {
   return (
     <div className='flex flex-col gap-[24px]'>
       <UserDivider label={'Інші теки'} isOwner={isOwner} hidden={false} />

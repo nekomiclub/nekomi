@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { config, devMode } from '../../../../../config';
 import { decodeToken, getUTC } from '../../../../../components/handlers';
 import { ISessionCookieData } from '../../../../../interfaces/ITokenData';
-import { IExtendedUser, IUsapiUser, IUser } from '../../../../../interfaces/IUser';
+import { IUsapiUser, IUser } from '../../../../../interfaces/IUser';
 import axios, { AxiosError } from 'axios';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../../../components/OopsComponents';
 import Header from '../../../../../components/Header';
@@ -12,6 +12,7 @@ import Footer from '../../../../../components/Footer';
 import { UserHeader } from '../../ClientComponents';
 import { UserLib, UserLibOthers } from './ClientComponents';
 import { ITitle } from '../../../../../interfaces/ITitle';
+import { $api } from '../../../../../components/http';
 
 export function generateMetadata(
   { params }: IRSCProps<{ username: string }>,
@@ -43,14 +44,13 @@ const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ para
   }
 
   let isOwner = false;
-  let user: IExtendedUser | null = null
+  let user: IUser | null = null
 
   try {
-    const { data: usapiUser } = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${username}`);
-    const { data: animeeUser } = await axios.get<IUser>(`${config.URL.apiHTTP}/user/${usapiUser.user.id}`);
+    const { data } = await $api.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${username}?detailed=true`);
 
-    user = Object.assign({ ...animeeUser, ...usapiUser.user })
-    isOwner = user!.id === userId;
+    user = data.user;
+    isOwner = user.id === userId;
   } catch (e) {
     if (e instanceof AxiosError) {
       const code = e.response?.data?.code || 500;

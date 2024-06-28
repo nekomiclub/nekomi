@@ -54,12 +54,12 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
     // Define titles that already in user lists
     (async function () {
       try {
-        const { data } = await $api.get<IUser>(`/user/${state.id}`);
-        setUser(data);
+        const { data } = await $api.get<{ user: IUser }>(`/user/${state.id}`);
+        setUser(data.user);
 
         let libs: TitleLists[] = []
 
-        data.libs.forEach(list => {
+        data.user.libs.forEach(list => {
           if (list.titles.includes(title.id)) {
             libs.push(list.id.split('-')[0] as TitleLists)
 

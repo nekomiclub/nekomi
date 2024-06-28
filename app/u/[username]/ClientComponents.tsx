@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import { useState, useEffect } from 'react'
 
-import { IExtendedUser, IUser, IUserLib } from '../../../interfaces/IUser';
+import { IUser, IUserLib } from '../../../interfaces/IUser';
 import { LoadingImage, copyToClipboard } from '../../../components/GeneralComponents';
 import { IcoCalendar, IcoCan, IcoChain, IcoSettings, IcoStack, IcoUser, IcoWatched } from '../../../assets/Icons';
 import Tooltip from '../../../components/Tooltip';
@@ -25,7 +25,7 @@ import { IcoClockFilled } from '../../../assets/Clock';
 /** User header
  * @param primaryPage Defines if current page primary. If not, at the menu will appear button navigates to primary page
  */
-export const UserHeader: NextPage<{ user: IExtendedUser, isOwner: boolean, primaryPage?: boolean }> = ({ user, primaryPage, isOwner }) => {
+export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?: boolean }> = ({ user, primaryPage, isOwner }) => {
   const [urlCopied, setUrlCopied] = useState(false)
 
   function copyProfileURL() {
@@ -49,7 +49,7 @@ export const UserHeader: NextPage<{ user: IExtendedUser, isOwner: boolean, prima
         <div className={`flex gap-[32px] w-full relative -top-[128px] max-[820px]:flex-col max-[820px]:items-center`}>
           {/* Avatar */}
           <div className={`w-[256px] h-[256px] relative flex-shrink-0`}>
-            <LoadingImage src={user.photoURL} />
+            <LoadingImage src={user.avatar} />
           </div>
 
           {/* Container */}
@@ -115,7 +115,7 @@ export const UserDivider: NextPage<{ label: string, hidden: boolean, isOwner: bo
   );
 }
 
-export const UserSectionLibs: NextPage<{ user: IExtendedUser, isOwner: boolean }> = ({ isOwner, user }) => {
+export const UserSectionLibs: NextPage<{ user: IUser, isOwner: boolean }> = ({ isOwner, user }) => {
   return (
     <div className='flex flex-col gap-[24px]' id='user-libs'>
       <UserDivider label='Теки' hidden={false} isOwner={isOwner} />
@@ -166,7 +166,7 @@ export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: 
   )
 }
 
-export const UserSectionStats: NextPage<{ user: IExtendedUser, isOwner: boolean }> = ({ isOwner, user }) => {
+export const UserSectionStats: NextPage<{ user: IUser, isOwner: boolean }> = ({ isOwner, user }) => {
   return (
     <div className="flex flex-col gap-[24px]">
       <UserDivider label='Статистика' hidden={false} isOwner={isOwner} />
@@ -175,7 +175,7 @@ export const UserSectionStats: NextPage<{ user: IExtendedUser, isOwner: boolean 
   );
 }
 
-export const UserSectionTakePart: NextPage<{ user: IExtendedUser, isOwner: boolean }> = ({ isOwner, user }) => {
+export const UserSectionTakePart: NextPage<{ user: IUser, isOwner: boolean }> = ({ isOwner, user }) => {
   return (
     <div className="flex flex-col gap-[24px]">
       <UserDivider label='Команди озвучення' hidden={false} isOwner={isOwner} />

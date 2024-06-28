@@ -6,7 +6,7 @@ import { IRSCProps } from '../../../interfaces/IRSC';
 import { config, devMode } from '../../../config';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/OopsComponents';
 import { decodeToken, getUTC, wordDeclination } from '../../../components/handlers';
-import { IExtendedUser, IUsapiUser, IUser, IUserLib } from '../../../interfaces/IUser';
+import { IUsapiUser, IUser, IUserLib } from '../../../interfaces/IUser';
 import { UserDivider, UserHeader, UserSectionLibs, UserSectionStats, UserSectionTakePart } from './ClientComponents';
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoClockFilled } from '../../../assets/Clock';
@@ -18,13 +18,14 @@ import Tooltip from '../../../components/Tooltip';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 
 import './styles.scss';
+import { $api } from '../../../components/http';
 
 export async function generateMetadata(
   { params }: IRSCProps<{ username: string }>,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const { data: usapiUser } = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${params.username}`);
+    const { data } = await axios.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${params.username}`);
 
     return {
       title: `@${params.username}`,
@@ -32,7 +33,7 @@ export async function generateMetadata(
       openGraph: {
         type: 'profile',
         title: `@${params.username}`,
-        images: usapiUser.user.photoURL,
+        images: data.user.avatar,
         description: `Профіль ${params.username}`
       }
     }
@@ -60,14 +61,13 @@ const RSC: NextPage<IRSCProps<{ username: string }>> = async ({ params }) => {
   }
 
   let isOwner = false;
-  let user: IExtendedUser | null = null
+  let user: IUser | null = null
 
   try {
-    const { data: usapiUser } = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${username}`);
-    const { data: animeeUser } = await axios.get<IUser>(`${config.URL.apiHTTP}/user/${usapiUser.user.id}`);
+    const { data } = await $api.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${username}?detailed=true`);
 
-    user = Object.assign({ ...animeeUser, ...usapiUser.user })
-    isOwner = user!.id === userId;
+    user = data.user;
+    isOwner = user.id === userId;
   } catch (e) {
     if (e instanceof AxiosError) {
       const code = e.response?.data?.code || 500;

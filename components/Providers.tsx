@@ -68,14 +68,14 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
       }
 
       try {
-        const user = await $api.get<IUser>(`/user/*`);
-        const usapiData = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${user.data.id}`)
+        const { data } = await $api.get<{ user: IUser }>(`/user/*`);
+        const usapiData = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${data.user.id}`)
 
         dispatch(userSlice.actions.reducer({
-          id: user.data.id,
+          id: data.user.id,
           username: usapiData.data.user.username,
           avatarURL: usapiData.data.user.photoURL,
-          roles: user.data.roles
+          roles: data.user.roles
         }))
       } catch (e) {
         if (e instanceof AxiosError) {
