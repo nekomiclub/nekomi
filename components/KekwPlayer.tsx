@@ -201,7 +201,7 @@ const KekwPlayer: NextPage<{
   async function loadDefault() {
     const dubbedEp = title.episodes[0];
 
-    await changeDub(dubbedEp, 0);
+    await changeDub(dubbedEp, 0, true);
     setStage('operational')
   }
 
@@ -717,7 +717,7 @@ const KekwPlayer: NextPage<{
    * 
    * @default moment 0
    */
-  async function changeDub(dubbedEp: ITitleEpisode, moment?: number) {
+  async function changeDub(dubbedEp: ITitleEpisode, moment?: number, stopPlayback?: boolean) {
     // Set optional vars
     moment = moment || 0;
 
@@ -728,9 +728,11 @@ const KekwPlayer: NextPage<{
 
     setDubbedEp(dubbedEp)
 
+    if (!stopPlayback) console.log('playing...')
+
     await Promise.all([
       await definePreviewFormat(dubbedEp.frames[0]),
-      await changeVideoSrc(dubbedEp.qualities[quality], moment),
+      await changeVideoSrc(dubbedEp.qualities[quality], moment, stopPlayback),
     ])
 
     // Set out states
@@ -756,7 +758,7 @@ const KekwPlayer: NextPage<{
   }
 
   /** Change video src & moment */
-  async function changeVideoSrc(src: string, moment?: number) {
+  async function changeVideoSrc(src: string, moment?: number, stopPlayback?: boolean) {
     // Set optional vars
     moment = moment || 0;
 
@@ -775,10 +777,12 @@ const KekwPlayer: NextPage<{
 
     changeMoment(moment);
 
-    try {
-      await video.play()
-    } catch (e) {
+    if (!stopPlayback) {
+      try {
+        await video.play()
+      } catch (e) {
 
+      }
     }
   }
 
@@ -1221,7 +1225,7 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
 
       <div className='bg-dark flex flex-col justify-center gap-[2px] rounded-[2px] px-[16px]' >
         <p className='text-white font-bold text-center'>{ep <= 9 ? `0${ep}` : ep}</p>
-        <p className='text-white text-[12px] font-extralight text-center'>{currentDub ? dubbers.find(el => el.id === currentDub.dubberID)!.name : '...'}</p>
+        <p className='text-white text-[12px] font-extralight text-center'>{currentDub ? dubbers.find(el => el.id === currentDub.dubberID)?.name : '...'}</p>
       </div>
 
       <button className={`px-[16px] bg-dark rounded-[2px] duration-200 ${!isLastEpisode && 'hover:bg-purple focus-visible:bg-purple'}`} onClick={() => nextEpisode()} disabled={isLastEpisode}>

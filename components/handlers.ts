@@ -4,17 +4,6 @@ import jwt from 'jsonwebtoken';
 import { IDubber } from "../interfaces/IDubber";
 import { config } from "../config";
 
-/** Send parse dubbers request. Accept any query (id, code, name).
- * @returns Array of dubbers objects
- */
-export async function parseTitleDubbers(queries: string[]): Promise<IDubber[]> {
-  const { data } = await axios.post<{ results: IDubber[] }>(`${config.URL.apiHTTP}/v1/dubber/parse`, {
-    queries
-  })
-
-  return data.results;
-}
-
 /** Parse country.
  * @example
  * parseTitleCountry('japan') => 'Японія'

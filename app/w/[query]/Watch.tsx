@@ -12,7 +12,7 @@ import * as Menu from 'uvc-menu';
 import { ITitle } from '../../../interfaces/ITitle';
 import Header from '../../../components/Header';
 import Tooltip from '../../../components/Tooltip';
-import { getKeyByValue, parseTitleCountry, parseTitleDubbers, parseTitleStatus, parseTitleType } from '../../../components/handlers';
+import { getKeyByValue, parseTitleCountry, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { IDubber } from '../../../interfaces/IDubber';
 import { animeGenres, config, genresDescription } from '../../../config';
 import { LoadingImage, WatchButton } from '../../../components/GeneralComponents';
@@ -33,7 +33,7 @@ import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutub
 
 interface IProps {
   title: ITitle,
-  dubbers: IDubber[] | null,
+  dubbers: IDubber[],
   totalEps: number
 }
 

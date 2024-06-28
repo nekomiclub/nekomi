@@ -4,7 +4,7 @@ import Watch from "./Watch";
 import { config, devMode } from "../../../config";
 import axios, { AxiosError } from "axios";
 import { IDubber } from "../../../interfaces/IDubber";
-import { getUTC, parseTitleDubbers } from "../../../components/handlers";
+import { getUTC } from "../../../components/handlers";
 import { IRSCProps } from "../../../interfaces/IRSC";
 import { $api } from "../../../components/http";
 import { HappenedWrongScreen, NotFoundScreen } from "../../../components/OopsComponents";
@@ -44,12 +44,12 @@ export async function generateMetadata(
 export default async function RSC({ params }: IRSCProps<{ query: string }>) {
   let title: ITitle | null = null;
   let totalEps = 0;
-  let dubbers: IDubber[] | null = null
+  let dubbers: IDubber[] = []
 
   try {
-    const res = await $api.get<{ title: ITitle }>(`/title/${params.query}`)
+    const { data } = await $api.get<{ title: ITitle }>(`/title/${params.query}`)
 
-    title = res.data.title;
+    title = data.title;
 
     title.episodes.forEach(ep => {
       if (ep.order > totalEps) totalEps = ep.order;
@@ -60,9 +60,13 @@ export default async function RSC({ params }: IRSCProps<{ query: string }>) {
 
       title.episodes.forEach(ep => uniqueDubbers.includes(ep.dubberID) ? null : uniqueDubbers.push(ep.dubberID))
 
-      dubbers = await parseTitleDubbers(uniqueDubbers)
+      const { data } = await $api.post<{ results: IDubber[] }>(`/v1/dubber/parse`, {
+        queries: uniqueDubbers
+      })
+
+      dubbers = data.results
     } else {
-      dubbers = null
+      dubbers = []
     }
 
     if (title.episodesCount === null) {

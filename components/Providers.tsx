@@ -68,16 +68,25 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
       }
 
       try {
+        // Verify
+        await $api.get('/user/validate');
+
         const { data } = await $api.get<{ user: IUser }>(`/user/*`);
-        const usapiData = await axios.get<{ user: IUsapiUser }>(`${config.URL.fkUsapi}/user/${data.user.id}`)
 
         dispatch(userSlice.actions.reducer({
           id: data.user.id,
-          username: usapiData.data.user.username,
-          avatarURL: usapiData.data.user.photoURL,
+          username: data.user.username,
+          avatarURL: data.user.avatar,
           roles: data.user.roles
         }))
       } catch (e) {
+        dispatch(userSlice.actions.reducer({
+          id: null,
+          username: null,
+          avatarURL: null,
+          roles: []
+        }))
+
         if (e instanceof AxiosError) {
           // Session can be not provided, ignore it 
         } else {

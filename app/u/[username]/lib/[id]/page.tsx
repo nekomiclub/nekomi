@@ -47,7 +47,7 @@ const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ para
   let user: IUser | null = null
 
   try {
-    const { data } = await $api.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${username}?detailed=true`);
+    const { data } = await $api.get<{ user: IUser }>(`/user/${username}?detailed=true`);
 
     user = data.user;
     isOwner = user.id === userId;
