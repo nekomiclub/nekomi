@@ -23,6 +23,8 @@ import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '../assets/PlayerPiP';
 import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '../assets/PlayerFullscreen';
 
 import '../styles/components/KekwPlayer.scss';
+import { useAppSelector } from '../hooks/redux';
+import { $api } from './http';
 
 
 
@@ -47,6 +49,7 @@ const KekwPlayer: NextPage<{
   setOutEp?: (state: number) => void
 }> = ({ title, dubs, setOutDubber, setOutEp }) => {
   const [stage, setStage] = useState<TStage>('setup')
+  const user = useAppSelector(state => state.user);
 
 
 
@@ -89,6 +92,7 @@ const KekwPlayer: NextPage<{
   const loadedRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
   const volumeRef = useRef<HTMLDivElement>(null)
+  const viewtimeRef = useRef(0)
 
   const mobileSkipWrapper = useRef<HTMLDivElement>(null)
   const mobilePrevSkipRef = useRef<HTMLDivElement>(null)
@@ -108,7 +112,7 @@ const KekwPlayer: NextPage<{
   })
 
   //! -------------- DEFAULT EFFECTS --------------
-  //* Player vitals, video loading handling & stats saving
+  //* Player vitals, video loading handling
   useEffect(() => {
     // Define if client is mobile
     if (window.innerWidth <= 600 || window.innerHeight <= 400) {
@@ -132,12 +136,23 @@ const KekwPlayer: NextPage<{
         setIsVideoLoading(false)
       })
     };
-
-    // Send stats
-    window.addEventListener('beforeunload', () => {
-
-    })
   }, [])
+
+  //* Save user stats
+  useEffect(() => {
+    if (!user.id) return
+
+    // Increase viewtime
+    window.addEventListener('beforeunload', () => {
+      // Ignore patching less than 5 seconds of viewtime
+      if (viewtimeRef.current < 5) return;
+
+      $api.patch('/user', {
+        method: 'increaseViewtime',
+        viewtime: viewtimeRef.current
+      }).catch(e => console.error(e))
+    })
+  }, [user])
 
 
 
@@ -237,13 +252,16 @@ const KekwPlayer: NextPage<{
 
     if (!video || !player) return;
 
-    // Handle loading 
+    let viewtimeInterval: NodeJS.Timeout
+
+    // Handle loading & isPlaying
     video.addEventListener('waiting', () => {
       setIsVideoLoading(true)
     })
 
     video.addEventListener('playing', () => {
       setIsVideoLoading(false)
+      setIsPlaying(true)
     })
 
     // Handle playback rate
@@ -294,14 +312,16 @@ const KekwPlayer: NextPage<{
 
     // Handle isPlaying state
     video.addEventListener('play', () => {
-      setIsPlaying(true)
-    })
+      viewtimeInterval = setInterval(() => {
+        viewtimeRef.current += 1;
+      }, 1000)
 
-    video.addEventListener('playing', () => {
       setIsPlaying(true)
     })
 
     video.addEventListener('pause', () => {
+      clearInterval(viewtimeInterval);
+
       setIsPlaying(false)
     })
 
@@ -727,8 +747,6 @@ const KekwPlayer: NextPage<{
     }
 
     setDubbedEp(dubbedEp)
-
-    if (!stopPlayback) console.log('playing...')
 
     await Promise.all([
       await definePreviewFormat(dubbedEp.frames[0]),

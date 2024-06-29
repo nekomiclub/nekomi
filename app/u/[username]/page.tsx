@@ -120,6 +120,8 @@ const RSC: NextPage<IRSCProps<{ username: string }>> = async ({ params }) => {
   );
 
   function StatCard({ label, value, className }: { label: 'favs' | 'watched' | 'watching' | 'timeSpent', value: number, className?: string }) {
+    if (label === 'timeSpent') value = Math.ceil(value / 60);
+
     return (
       <div className={`card-grid ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] min-w-[360px] max-[600px]:min-w-[260px] flex items-center max-[600px]:flex-col ${className ? className : ''}`}>
         <div className='flex-shrink-0'>
