@@ -1,12 +1,16 @@
 'use client'
 
 import { NextPage } from 'next';
+import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { IUser, IUserLib } from '../../../../../interfaces/IUser';
 import { UserDivider, UserLibCard } from '../../ClientComponents';
-import { TitleCardNew } from '../../../../../components/GeneralComponents';
+import { TitleCardNew, copyToClipboard } from '../../../../../components/GeneralComponents';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { getUTC } from '../../../../../components/handlers';
+import Tooltip from '../../../../../components/Tooltip';
+import { IcoChain } from '../../../../../assets/Icons';
+import { config } from '../../../../../config';
 
 // export const ClientComponents: NextPage = (props) => {
 //   return (
@@ -18,9 +22,35 @@ import { getUTC } from '../../../../../components/handlers';
 
 /** User lib section */
 export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle[] }> = ({ isOwner, lib, titles }) => {
+  const pathname = usePathname();
+  const [urlCopied, setUrlCopied] = useState(false)
+
+  function copyLibURL() {
+    copyToClipboard(`${config.URL.baseURL}${pathname}`);
+    setUrlCopied(true);
+
+    setTimeout(() => {
+      setUrlCopied(false);
+    }, 3000);
+  }
+
   return (
     <div className='flex flex-col gap-[24px]'>
-      <UserDivider label={lib.settings.name} isOwner={isOwner} hidden={lib.settings.hidden} />
+      <div className='flex items-center w-full'>
+        <div className='w-full flex-1'>
+          <UserDivider label={`${lib.settings.name} (${lib.titles.length})`} isOwner={isOwner} hidden={lib.settings.hidden} />
+        </div>
+
+        <div className='flex gap-[8px]'>
+          <Tooltip content={urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на теку'}>
+            <button className={`p-[8px] duration-200 ${urlCopied ? 'bg-green' : 'hover:bg-purple focus-visible:bg-purple'} rounded-[4px]`} onClick={() => copyLibURL()}>
+              <IcoChain width={24} height={24} className='max-[600px]:w-[24px] max-[600px]:h-[24px]' />
+            </button>
+          </Tooltip>
+
+          {/* Settings */}
+        </div>
+      </div>
 
       {isOwner || !lib.settings.hidden ? <div className='grid gap-[16px]' style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
         {titles.map(title => {

@@ -120,7 +120,7 @@ export const TitleCardNew: NextPage<{ title: ITitle }> = ({ title }) => {
 
   return (
     <Link href={`${config.URL.baseURL}/w/${title.code}`} className='flex flex-col justify-end relative min-w-[200px] w-full h-[240px] rounded-[4px] overflow-hidden' ref={cardRef}>
-      <LoadingImage src={title.poster} />
+      <LoadingImage src={title.poster} className='rounded-b-[4px]' />
 
       <div className={`px-[8px] bg-dark/[.8] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px]`} style={{ paddingTop: `${topOffset}px`, paddingBottom: `${bottomOffset}px` }} ref={bottomRef}>
         <div className='flex flex-col gap-[4px]'>
@@ -135,7 +135,7 @@ export const TitleCardNew: NextPage<{ title: ITitle }> = ({ title }) => {
           </p>
         </div>
 
-        <div className='flex items-center justify-between'>
+        <div className='flex items-center justify-between rounded-b-[4px]'>
           <div className='flex items-center gap-[4px]'>
             <IcoClockOutlined width={12} height={12} />
             <p className='text-white text-[12px]'>{title.episodesCount}</p>
