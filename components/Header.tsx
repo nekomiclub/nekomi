@@ -204,10 +204,6 @@ const Header: NextPage = () => {
                         <p className='text-[16px] font-extralight text-white'>{parseTitleType(title.type)}</p>
                         <p className='text-[16px] font-extralight text-white'>{title.year}</p>
                       </div>
-
-                      <div className='flex gap-[16px] max-[560px]:flex-col items-start max-[560px]:gap-[8px]'>
-                        {title.episodes.length ? <span className='font-bold gradient--primary-text'>Має озвучення</span> : <span className='font-extralight text-white'>Озвучення відсутнє</span>}
-                      </div>
                     </div>
                   </div>
                 </Link>

@@ -47,7 +47,7 @@ export default async function RSC({ params }: IRSCProps<{ query: string }>) {
   let dubbers: IDubber[] = []
 
   try {
-    const { data } = await $api.get<{ title: ITitle }>(`/title/${params.query}`)
+    const { data } = await $api.get<{ title: ITitle }>(`/title/${params.query}?detailed=true`)
 
     title = data.title;
 
