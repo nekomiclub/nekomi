@@ -405,22 +405,41 @@ const KekwPlayer: NextPage<{
     }
   }, [stage])
 
-  //* Handle video events
+  //* Handle video events & save progress
   useEffect(() => {
     const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
     const preview = document.querySelector('#kekwplayer-preview') as HTMLDivElement
+    const video = videoRef.current;
 
-    if (!timeline || !preview) return;
+    if (!timeline || !preview || !video) return;
 
     // Move preview box
-    timeline.addEventListener('pointermove', handlePointerMove)
+    timeline.addEventListener('pointermove', handlePointerMove);
+    video.addEventListener('timeupdate', handleTimeupdate)
 
     function handlePointerMove(e: MouseEvent) {
       movePreview(e.offsetX)
     }
 
+    // Save progress
+    function handleTimeupdate(e: Event) {
+      const moment = (e.target as HTMLVideoElement).currentTime;
+
+      if (moment > 5) {
+        updatePlayerProgress({
+          dub: dubbedEp.dubberID,
+          ep: dubbedEp.order,
+          id: title.id,
+          moment
+        })
+      }
+    }
+
+
+
     return () => {
       timeline.removeEventListener('pointermove', handlePointerMove)
+      video.removeEventListener('timeupdate', handleTimeupdate)
     }
   }, [stage, dubbedEp])
 
@@ -806,7 +825,6 @@ const KekwPlayer: NextPage<{
 
   /** Change video moment
    * Will set moment equal duration if moment greater that it
-   * Will update user progress after 5s of progress
    * 
    * @param synthetic Specifies if function called by user interaction. In synthetic action preview box will not move & new moment will not be set
    */
@@ -831,16 +849,6 @@ const KekwPlayer: NextPage<{
 
     setVideoMoment(moment);
     moveProgress(moment, duration);
-
-    // Save progress
-    if (moment > 5) {
-      updatePlayerProgress({
-        dub: dubbedEp.dubberID,
-        ep: dubbedEp.order,
-        id: title.id,
-        moment
-      })
-    }
   }
 
   /** Move video progress (controlled by changeMoment) */
