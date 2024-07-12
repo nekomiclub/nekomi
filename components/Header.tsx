@@ -135,13 +135,17 @@ const Header: NextPage = () => {
               </div>
             } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden !top-[70px]' align='end' animation='slide' state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
               <Menu.MenuList>
-                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={() => router.push(`${config.URL.baseURL}/u/${user.username}`)}>
-                  <IcoUser width={24} height={24} />
-                  <p className='text-white w-full'>Профіль</p>
+                <Menu.MenuItem>
+                  <Link href={`${config.URL.baseURL}/u/${user.username}`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
+                    <IcoUser width={24} height={24} />
+                    <p className='text-white w-full'>Профіль</p>
+                  </Link>
                 </Menu.MenuItem>
-                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={() => router.push(`${config.URL.baseURL}/u/${user.username}#user-libs`)}>
-                  <IcoFolderPlain width={24} height={24} />
-                  <p className='text-white w-full'>Теки</p>
+                <Menu.MenuItem>
+                  <Link href={`${config.URL.baseURL}/u/${user.username}#user-libs`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
+                    <IcoFolderPlain width={24} height={24} />
+                    <p className='text-white w-full'>Теки</p>
+                  </Link>
                 </Menu.MenuItem>
 
                 {/* // TODO */}
