@@ -5,32 +5,25 @@ import Link from 'next/link';
 import { HappenedWrongScreen, NotFoundScreen } from '../../components/OopsComponents';
 import { getUTC } from '../../components/handlers';
 
-/** Service statuses arr */
-const UptimeStatuses = ['online', 'overloaded', 'indev', 'partial', 'outOfOrder', 'offline'] as const;
+export type TPollCode = 'fk-authority' | 'fk-userapi' | 'animee-site' | 'animee-core' | 'animee-media' | 'animee-uploads' | 'animee-bot'
 
-/** Type implementation of ServiceStatuses arr */
-type TServiceStatus = typeof UptimeStatuses[number];
+/** Poll stamp */
+export interface IStamp {
+  id: string
 
-/** Uptime.json services record */
-interface IServicesStamp {
-  timestamp: number,
-  fk_site: IServiceStamp,
-  fk_userapi: IServiceStamp,
-  fk_authority: IServiceStamp,
-  fk_uptime: IServiceStamp,
-  animee_site: IServiceStamp,
-  animee_api: IServiceStamp,
-  animee_media: IServiceStamp,
-  animee_uploads: IServiceStamp,
-  animee_bot: IServiceStamp,
+  timestamp: number
+
+  services: IStampService[]
 }
 
-interface IServiceStamp {
-  timestamp: number,
-  status: TServiceStatus,
+export type TStampServiceStatus = 'online' | 'offline' | 'disabled' | 'development'
 
-  /** Custom prop */
-  title?: string
+export interface IStampService {
+  name: string
+
+  code: TPollCode
+
+  status: TStampServiceStatus
 }
 
 
@@ -45,13 +38,13 @@ const ServerIco: NextPage<{ color?: string, height?: number, width?: number }> =
 
 const Card: NextPage<{
   title: string,
-  status: TServiceStatus
+  status: TStampServiceStatus
 }> = ({ status, title }) => {
   let color = '';
 
   if (status === 'online') {
     color = '#2ECC71'
-  } else if (status === 'indev' || status === 'overloaded' || status === 'partial') {
+  } else if (status === 'development') {
     color = '#F39C12'
   } else {
     color = '#E74C3C'
@@ -64,11 +57,9 @@ const Card: NextPage<{
       <p className='text-[24px] text-white uppercase'>{title}</p>
       <p className={`text-[16px]`} style={{ color }}>
         {status === 'online' && 'Працює'}
-        {status === 'indev' && 'В розробці'}
-        {status === 'overloaded' && 'Перенавантаження'}
-        {status === 'partial' && 'Обмежений доступ'}
-        {status === 'outOfOrder' && 'Не працює'}
-        {status === 'offline' && 'Вимкнено'}
+        {status === 'offline' && 'Не працює'}
+        {status === 'disabled' && 'Вимкнено'}
+        {status === 'development' && 'В розробці'}
       </p>
     </div>
   </div>
@@ -77,31 +68,20 @@ const Card: NextPage<{
 
 
 const RSC: NextPage = async (props) => {
-  let isErrored = false;
   let isUptimeUnavailable = false;
-  let emsg: any = ''
-  let fkStamp: IServiceStamp[] = []
-  let animeeStamp: IServiceStamp[] = [];
+  let fkStamp: IStampService[] = []
+  let animeeStamp: IStampService[] = [];
   let updated = 'Не оновлено';
 
   try {
-    const { data } = await axios.get<IServicesStamp>(`${config.URL.uptime}/uptime`);
+    const { data } = await axios.get<{ snappedAt: string, stamp: IStamp }>(`${config.URL.uptime}`);
 
-    for (const key in data) {
-      const val = data[key] as IServiceStamp;
+    data.stamp.services.forEach(service => {
+      if (service.code.includes('fullkekw')) fkStamp.push(service);
+      if (service.code.includes('animee')) animeeStamp.push(service);
+    })
 
-      if (key.includes('animee')) {
-        val.title = key.split('_')[1];
-        animeeStamp.push(val)
-      } else if (key.includes('fk')) {
-        val.title = key.split('_')[1];
-        fkStamp.push(val)
-      }
-    }
-
-    const timestamp = new Date(data.timestamp);
-
-    updated = `${timestamp.getUTCHours()}:${timestamp.getUTCMinutes()}`
+    updated = `${data.snappedAt} UTC-0`;
     isUptimeUnavailable = false;
   } catch (e) {
     if (e instanceof AxiosError) {
@@ -121,47 +101,45 @@ const RSC: NextPage = async (props) => {
     <main className='h-full min-h-screen bg-dark w-full flex justify-center items-center'>
       <div className="wrapper justify-center items-center">
         <div className='bg-darkGrey px-[24px] py-[16px] my-[40px] flex flex-col gap-[40px] w-full max-w-[1200px]'>
-          {isErrored ? <p className='text-red-400'>{emsg}</p> : <>
-            {/* Fullkekw services */}
-            <div className='flex flex-col gap-[24px]'>
-              <div className='flex items-center gap-[16px]'>
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M16.0001 14.6667C14.5267 14.6667 13.3334 15.86 13.3334 17.3333C13.3334 18.8067 14.5267 20 16.0001 20C17.4734 20 18.6667 18.8067 18.6667 17.3333C18.6667 15.86 17.4734 14.6667 16.0001 14.6667ZM24.0001 17.3333C24.0001 12.9133 20.4201 9.33333 16.0001 9.33333C11.5801 9.33333 8.00008 12.9133 8.00008 17.3333C8.00008 20.2933 9.60675 22.8667 11.9934 24.2533L13.3401 21.9333C11.7467 21.0067 10.6667 19.3067 10.6667 17.3333C10.6667 14.3867 13.0534 12 16.0001 12C18.9467 12 21.3334 14.3867 21.3334 17.3333C21.3334 19.3067 20.2534 21.0067 18.6601 21.9267L20.0067 24.2467C22.3934 22.8667 24.0001 20.2933 24.0001 17.3333ZM16.0001 4C8.63341 4 2.66675 9.96667 2.66675 17.3333C2.66675 22.26 5.34675 26.5533 9.32675 28.86L10.6601 26.5533C7.48008 24.7133 5.33341 21.2733 5.33341 17.3333C5.33341 11.44 10.1067 6.66667 16.0001 6.66667C21.8934 6.66667 26.6667 11.44 26.6667 17.3333C26.6667 21.2733 24.5201 24.7133 21.3401 26.56L22.6734 28.8667C26.6534 26.5533 29.3334 22.26 29.3334 17.3333C29.3334 9.96667 23.3601 4 16.0001 4Z" fill="white" />
-                </svg>
-                <h3 className='text-[24px] text-white'>Статус сервісів Fullkekw</h3>
-              </div>
-
-              <div className='flex gap-[8px] flex-wrap justify-center'>
-                {fkStamp.map(serv => {
-                  return <Card status={serv.status} title={serv.title!} key={`serv-${serv.title}`} />
-                })}
-
-                {isUptimeUnavailable && <p className='text-lightGrey'>Інформація недоступна</p>}
-              </div>
+          {/* Fullkekw services */}
+          <div className='flex flex-col gap-[24px]'>
+            <div className='flex items-center gap-[16px]'>
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.0001 14.6667C14.5267 14.6667 13.3334 15.86 13.3334 17.3333C13.3334 18.8067 14.5267 20 16.0001 20C17.4734 20 18.6667 18.8067 18.6667 17.3333C18.6667 15.86 17.4734 14.6667 16.0001 14.6667ZM24.0001 17.3333C24.0001 12.9133 20.4201 9.33333 16.0001 9.33333C11.5801 9.33333 8.00008 12.9133 8.00008 17.3333C8.00008 20.2933 9.60675 22.8667 11.9934 24.2533L13.3401 21.9333C11.7467 21.0067 10.6667 19.3067 10.6667 17.3333C10.6667 14.3867 13.0534 12 16.0001 12C18.9467 12 21.3334 14.3867 21.3334 17.3333C21.3334 19.3067 20.2534 21.0067 18.6601 21.9267L20.0067 24.2467C22.3934 22.8667 24.0001 20.2933 24.0001 17.3333ZM16.0001 4C8.63341 4 2.66675 9.96667 2.66675 17.3333C2.66675 22.26 5.34675 26.5533 9.32675 28.86L10.6601 26.5533C7.48008 24.7133 5.33341 21.2733 5.33341 17.3333C5.33341 11.44 10.1067 6.66667 16.0001 6.66667C21.8934 6.66667 26.6667 11.44 26.6667 17.3333C26.6667 21.2733 24.5201 24.7133 21.3401 26.56L22.6734 28.8667C26.6534 26.5533 29.3334 22.26 29.3334 17.3333C29.3334 9.96667 23.3601 4 16.0001 4Z" fill="white" />
+              </svg>
+              <h3 className='text-[24px] text-white'>Статус сервісів Fullkekw</h3>
             </div>
 
-            {/* Animee services */}
-            <div className='flex flex-col gap-[24px]'>
-              <div className='flex items-center gap-[16px]'>
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M16.0001 14.6667C14.5267 14.6667 13.3334 15.86 13.3334 17.3333C13.3334 18.8067 14.5267 20 16.0001 20C17.4734 20 18.6667 18.8067 18.6667 17.3333C18.6667 15.86 17.4734 14.6667 16.0001 14.6667ZM24.0001 17.3333C24.0001 12.9133 20.4201 9.33333 16.0001 9.33333C11.5801 9.33333 8.00008 12.9133 8.00008 17.3333C8.00008 20.2933 9.60675 22.8667 11.9934 24.2533L13.3401 21.9333C11.7467 21.0067 10.6667 19.3067 10.6667 17.3333C10.6667 14.3867 13.0534 12 16.0001 12C18.9467 12 21.3334 14.3867 21.3334 17.3333C21.3334 19.3067 20.2534 21.0067 18.6601 21.9267L20.0067 24.2467C22.3934 22.8667 24.0001 20.2933 24.0001 17.3333ZM16.0001 4C8.63341 4 2.66675 9.96667 2.66675 17.3333C2.66675 22.26 5.34675 26.5533 9.32675 28.86L10.6601 26.5533C7.48008 24.7133 5.33341 21.2733 5.33341 17.3333C5.33341 11.44 10.1067 6.66667 16.0001 6.66667C21.8934 6.66667 26.6667 11.44 26.6667 17.3333C26.6667 21.2733 24.5201 24.7133 21.3401 26.56L22.6734 28.8667C26.6534 26.5533 29.3334 22.26 29.3334 17.3333C29.3334 9.96667 23.3601 4 16.0001 4Z" fill="white" />
-                </svg>
-                <h3 className='text-[24px] text-white'>Статус сервісів Animee</h3>
-              </div>
+            <div className='flex gap-[8px] flex-wrap justify-center'>
+              {fkStamp.map(serv => {
+                return <Card status={serv.status} title={serv.name} key={`serv-${serv.code}`} />
+              })}
 
-              <div className='flex gap-[8px] flex-wrap justify-center'>
-                {animeeStamp.map(serv => {
-                  return <Card status={serv.status} title={serv.title!} key={`serv-${serv.title}`} />
-                })}
-
-                {isUptimeUnavailable && <p className='text-lightGrey'>Інформація недоступна</p>}
-              </div>
+              {isUptimeUnavailable && <p className='text-lightGrey'>Інформація недоступна</p>}
             </div>
-          </>}
+          </div>
+
+          {/* Animee services */}
+          <div className='flex flex-col gap-[24px]'>
+            <div className='flex items-center gap-[16px]'>
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.0001 14.6667C14.5267 14.6667 13.3334 15.86 13.3334 17.3333C13.3334 18.8067 14.5267 20 16.0001 20C17.4734 20 18.6667 18.8067 18.6667 17.3333C18.6667 15.86 17.4734 14.6667 16.0001 14.6667ZM24.0001 17.3333C24.0001 12.9133 20.4201 9.33333 16.0001 9.33333C11.5801 9.33333 8.00008 12.9133 8.00008 17.3333C8.00008 20.2933 9.60675 22.8667 11.9934 24.2533L13.3401 21.9333C11.7467 21.0067 10.6667 19.3067 10.6667 17.3333C10.6667 14.3867 13.0534 12 16.0001 12C18.9467 12 21.3334 14.3867 21.3334 17.3333C21.3334 19.3067 20.2534 21.0067 18.6601 21.9267L20.0067 24.2467C22.3934 22.8667 24.0001 20.2933 24.0001 17.3333ZM16.0001 4C8.63341 4 2.66675 9.96667 2.66675 17.3333C2.66675 22.26 5.34675 26.5533 9.32675 28.86L10.6601 26.5533C7.48008 24.7133 5.33341 21.2733 5.33341 17.3333C5.33341 11.44 10.1067 6.66667 16.0001 6.66667C21.8934 6.66667 26.6667 11.44 26.6667 17.3333C26.6667 21.2733 24.5201 24.7133 21.3401 26.56L22.6734 28.8667C26.6534 26.5533 29.3334 22.26 29.3334 17.3333C29.3334 9.96667 23.3601 4 16.0001 4Z" fill="white" />
+              </svg>
+              <h3 className='text-[24px] text-white'>Статус сервісів Animee</h3>
+            </div>
+
+            <div className='flex gap-[8px] flex-wrap justify-center'>
+              {animeeStamp.map(serv => {
+                return <Card status={serv.status} title={serv.name} key={`serv-${serv.code}`} />
+              })}
+
+              {isUptimeUnavailable && <p className='text-lightGrey'>Інформація недоступна</p>}
+            </div>
+          </div>
 
           <div className='w-full flex flex-col gap-[8px]'>
             <p className='text-white text-center'>Якщо якийсь сервіс недоступний (не вимкнений) та в телеграмах <a href="https://t.me/an1meeClub" target='_blank' className='text-purple'>animee</a> чи <a href="https://t.me/fullkekw" target='_blank' className='text-purple'>fullkekw</a> нема сповіщення про роботи, будь ласка створіть тікет на <a href="https://discord.gg/UmDfKTpsh5" target='_blank' className='text-purple'>діскорд сервері</a></p>
-            <p className='text-lightGrey text-center'>Оновлено: {updated} UTC-0</p>
+            <p className='text-lightGrey text-center'>Оновлено в: {updated}</p>
             <Link href={'/'} className='text-purple'>На головну</Link>
           </div>
         </div>

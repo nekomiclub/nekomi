@@ -1,6 +1,6 @@
 {
   "name": "animee",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 192.168.0.106 --port 3001",
