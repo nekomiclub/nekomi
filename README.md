@@ -17,8 +17,6 @@ Classes
 
 .gradient--secondary // New background gradient
   &-hover // Fills background on hover and focus-visible
-
-.break-ellipsis // Will break word with dots (lorem ips...). Require max-width specified
 ```
 
 Each request has x-url header, that contains current url.

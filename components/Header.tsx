@@ -9,7 +9,6 @@ import { useEffect, useMemo, useState, useRef } from 'react'
 import { Popup } from 'react-uvc'
 import { useDebounce } from 'use-debounce';
 import Link from 'next/link';
-import { HashImage } from 'hash-image';
 import * as Menu from 'uvc-menu';
 
 import { ITitle } from '../interfaces/ITitle';
@@ -195,7 +194,10 @@ const Header: NextPage = () => {
               {searchResults.length ? searchResults.map(title => {
                 return <Link href={`${routes.watch.path}/${title.code}`} onClick={() => document.documentElement.style.overflow = 'visible'} key={title.id}>
                   <div className='px-[16px] py-[8px] duration-200 w-fit rounded-[4px] hover:bg-darkGrey flex items-start gap-[16px]'>
-                    <HashImage src={title.poster} alt={`Poster for ${title.code}`} width={60} height={80} parentClassName='shrink-0' style={{ visibility: 'inherit' }} />
+                    {/* <HashImage src={title.poster} alt={`Poster for ${title.code}`} width={60} height={80} parentClassName='shrink-0' style={{ visibility: 'inherit' }} /> */}
+                    <div className='relative w-[60px] h-[80px] shrink-0'>
+                      <LoadingImage src={title.poster} className='rounded-[2px]' />
+                    </div>
 
                     <div className='flex flex-col gap-[4px]'>
                       <p className='text-[24px] font-extralight text-white'>{title.names.ukr || title.code}</p>

@@ -18,7 +18,7 @@
     "axios": "^1.6.2",
     "eslint": "8.53.0",
     "eslint-config-next": "14.0.2",
-    "hash-image": "^1.1.2",
+    "gsap": "^3.12.5",
     "jsonwebtoken": "^9.0.2",
     "jsrsasign": "^11.1.0",
     "next": "14.0.2",
