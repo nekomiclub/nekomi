@@ -12,7 +12,7 @@ import * as Menu from 'uvc-menu';
 import { ITitle } from '../../../interfaces/ITitle';
 import Header from '../../../components/Header';
 import Tooltip from '../../../components/Tooltip';
-import { getKeyByValue, parseTitleCountry, parseTitleStatus, parseTitleType } from '../../../components/handlers';
+import { getKeyByValue, parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { IDubber } from '../../../interfaces/IDubber';
 import { animeGenres, config, genresDescription } from '../../../config';
 import { LoadingImage, WatchButton } from '../../../components/GeneralComponents';
@@ -240,6 +240,14 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                 </li>
 
                 <li className='flex'>
+                  <p className='text-white text-[24px] min-w-[180px]'>Сезон:</p>
+
+                  <div className=''>
+                    <p className='text-white text-[24px]'>{parseTitleSeason(title.season)} {title.year}</p>
+                  </div>
+                </li>
+
+                <li className='flex'>
                   <p className='text-white text-[24px] min-w-[180px]'>Тип:</p>
 
                   <div className=''>
@@ -255,11 +263,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                       let immutableI = i;
 
                       // TODO navigate to lib with that studio
-                      return <Tooltip content='Це посилання поки що нікуди не веде' key={`stu-${i}`}>
-                        <Link href={'#'} target='_blank'>
-                          <p className='text-white text-[24px] font-bold'>{studio}{++immutableI < title.studios.length ? ',' : ''}</p>
-                        </Link>
-                      </Tooltip>
+                      return <p className='text-white text-[24px]' key={`stu-${i}`}>{studio}{++immutableI < title.studios.length ? ',' : ''}</p>
                     }) : <p className='text-white text-[24px]'>Відсутні</p>}
                   </div>
                 </li>
@@ -293,7 +297,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
           {title.episodes.length ? <div className='flex items-start max-[1020px]:flex-col gap-[40px] z-[4] mb-[80px]'>
             <div className='flex flex-col gap-[24px] items-center w-full'>
               <div className='h-[600px] w-full'>
-                <KekwPlayer title={title} dubs={dubbers!} setOutDubber={setDubber} />
+                <KekwPlayer title={title} dubbers={dubbers!} setOutDubber={setDubber} />
               </div>
 
             </div>

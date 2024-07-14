@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
-    "@szhsin/react-menu": "^4.1.0",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "20.9.0",
     "@types/react": "18.2.37",
@@ -19,10 +18,7 @@
     "axios": "^1.6.2",
     "eslint": "8.53.0",
     "eslint-config-next": "14.0.2",
-    "firebase": "^10.7.1",
-    "gsap": "^3.12.4",
     "hash-image": "^1.1.2",
-    "ip": "^2.0.1",
     "jsonwebtoken": "^9.0.2",
     "jsrsasign": "^11.1.0",
     "next": "14.0.2",
@@ -40,7 +36,7 @@
     "swiper": "^11.0.5",
     "typescript": "5.2.2",
     "use-debounce": "^10.0.0",
-    "uvc-menu": "^1.2.1"
+    "uvc-menu": "^1.2.3"
   },
   "devDependencies": {
     "@types/ip": "^1.1.3",

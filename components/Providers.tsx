@@ -5,7 +5,6 @@ import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect, use } from 'react'
 import axios, { AxiosError } from 'axios';
 import { Provider } from 'react-redux';
-import { decode } from 'jsonwebtoken'
 
 import { setupStore } from '../store/store'
 import { IRoute, TRouteStatus, routes } from '../routes';

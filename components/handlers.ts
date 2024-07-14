@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import { IDubber } from "../interfaces/IDubber";
 import { config } from "../config";
+import { TAnimeSeason } from "../interfaces/ITitle";
 
 /** Parse country.
  * @example
@@ -80,6 +81,30 @@ export function parseTitleStatus(status: 'announcement' | 'ongoing' | 'out' | 'd
 
     case ('out'): {
       return 'Вийшов'
+    }
+  }
+}
+
+/** Parse title season
+ * @example
+ * parseTitleSeason('summer') => 'Літо'
+ */
+export function parseTitleSeason(season: TAnimeSeason): string {
+  switch (season) {
+    case ('autumn'): {
+      return 'Осінь'
+    }
+
+    case ('spring'): {
+      return 'Весна'
+    }
+
+    case ('summer'): {
+      return 'Літо'
+    }
+
+    case ('winter'): {
+      return 'Зима'
     }
   }
 }

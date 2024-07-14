@@ -39,15 +39,19 @@ interface IKekwPlayerLocalDataItem {
   moment: number
 }
 
-//! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
-const KekwPlayer: NextPage<{
-  title: ITitle,
-  dubs: IDubber[],
+interface IKekwPlayerProps {
+  title: ITitle
+  dubbers: IDubber[]
+
   /** Player will change this state with current dubber */
   setOutDubber?: (state: IDubber) => void
+
   /** Player will change this state with current episode */
   setOutEp?: (state: number) => void
-}> = ({ title, dubs, setOutDubber, setOutEp }) => {
+}
+
+//! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
+const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, setOutEp }) => {
   const [stage, setStage] = useState<TStage>('setup')
   const user = useAppSelector(state => state.user);
 
@@ -55,9 +59,9 @@ const KekwPlayer: NextPage<{
 
   // Player data
   const [volume, setVolume] = useState(50)
-  const [dubbedEp, setDubbedEp] = useState<ITitleEpisode>(title.episodes[0])
+  const [episode, setEpisode] = useState<ITitleEpisode>(title.episodes[0])
   const [duration, setDuration] = useState(1)
-  const [videoMoment, setVideoMoment] = useState(0);
+  const [moment, setMoment] = useState(0);
   const [hoveredMoment, setHoveredMoment] = useState(0);
   const [endScreen, setEndScreen] = useState<TEndScreen>('clear')
   const [localData, setLocalData] = useState<IKekwPlayerLocalDataItem>()
@@ -65,10 +69,9 @@ const KekwPlayer: NextPage<{
   // Settings states
   const [quality, setQuality] = useState<TVideoQuality>('q1080')
   const [speed, setSpeed] = useState(1)
-  const [subs, setSubs] = useState() // TODO Subs system
   const [stretch, setStretch] = useState(false)
 
-  const [isPreviewOld, setIsPreviewOld] = useState(false);
+  const [isPreviewOld, setIsPreviewOld] = useState(false); // Specify video previews dimensions
   const [isVideoProcessed, setIsVideoProcessed] = useState(false); // Specify if video procesed by the server (qualities & frames)
 
   // Player states
@@ -79,7 +82,7 @@ const KekwPlayer: NextPage<{
   const [isLastEpisode, setIsLastEpisode] = useState(false)
   const [isTimeToEndScreen, setIsTimeToEndScreen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const [isIdle, setIsIdle] = useState(true)
+  const [isIdle, setIsIdle] = useState(false) // TODO true
   const [isContinueMenuOpen, setIsContinueMenuOpen] = useState(false)
 
   // Video states
@@ -104,12 +107,12 @@ const KekwPlayer: NextPage<{
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  useIdleTimer({
-    timeout: 3000,
-    throttle: 500,
-    onIdle: () => setIsIdle(true),
-    onAction: () => setIsIdle(false)
-  })
+  // useIdleTimer({
+  //   timeout: 3000,
+  //   throttle: 500,
+  //   onIdle: () => setIsIdle(true),
+  //   onAction: () => setIsIdle(false)
+  // })
 
   //! -------------- DEFAULT EFFECTS --------------
   //* Player vitals, video loading handling
@@ -171,8 +174,8 @@ const KekwPlayer: NextPage<{
     if (progress) {
       // Progress is present, purpose it to init with
 
-      if (setOutDubber) setOutDubber(dubs.find(el => el.id === progress.dub)!);
-      if (setOutEp) setOutEp(progress.ep);
+      setOutDubber ? setOutDubber(dubbers.find(el => el.id === progress.dub)!) : null;
+      setOutEp ? setOutEp(progress.ep) : null;
 
       setLocalData(progress);
       setIsContinueMenuOpen(true);
@@ -194,13 +197,13 @@ const KekwPlayer: NextPage<{
       return loadDefault();
     }
 
-    const dubbedEp = title.episodes.find(el => el.dubberID === progress.dub && el.order === progress.ep);
+    const episode = title.episodes.find(el => el.dubberID === progress.dub && el.order === progress.ep);
 
-    if (!dubbedEp) {
+    if (!episode) {
       return loadDefault();
     }
 
-    await changeDub(dubbedEp, progress.moment);
+    await changeEpisode(episode, progress.moment);
     setIsContinueMenuOpen(false);
     setStage('operational')
   }
@@ -214,9 +217,9 @@ const KekwPlayer: NextPage<{
 
   /** Setup with default player states */
   async function loadDefault() {
-    const dubbedEp = title.episodes[0];
+    const episode = title.episodes[0];
 
-    await changeDub(dubbedEp, 0, true);
+    await changeEpisode(episode, 0, true);
     setStage('operational')
   }
 
@@ -287,7 +290,7 @@ const KekwPlayer: NextPage<{
           const start = buffered.start(i);
           const end = buffered.end(i);
 
-          if (videoMoment >= start && videoMoment <= end) {
+          if (moment >= start && moment <= end) {
             const offset = (end / duration) * 100
 
             loaded.style.width = `${offset}%`
@@ -427,8 +430,8 @@ const KekwPlayer: NextPage<{
 
       if (moment > 5) {
         updatePlayerProgress({
-          dub: dubbedEp.dubberID,
-          ep: dubbedEp.order,
+          dub: episode.dubberID,
+          ep: episode.order,
           id: title.id,
           moment
         })
@@ -441,7 +444,7 @@ const KekwPlayer: NextPage<{
       timeline.removeEventListener('pointermove', handlePointerMove)
       video.removeEventListener('timeupdate', handleTimeupdate)
     }
-  }, [stage, dubbedEp])
+  }, [stage, episode])
 
   //* Handle clicking (multi/skip, entering via dbclick)
   useEffect(() => {
@@ -647,16 +650,16 @@ const KekwPlayer: NextPage<{
 
   //* Handle quality changing
   useEffect(() => {
-    if (stage !== 'operational' || !dubbedEp) return;
+    if (stage !== 'operational' || !episode) return;
 
-    changeVideoSrc(dubbedEp.qualities[quality], videoMoment)
+    changeVideoSrc(episode.qualities[quality], moment)
   }, [stage, quality])
 
   //* Handle video buffering & end screens
   useEffect(() => {
     const video = videoRef.current;
 
-    if (!duration || !videoMoment || !video) return;
+    if (!duration || !moment || !video) return;
 
     // Hand;e buffering
     video.addEventListener('timeupdate', timeupdateHandler)
@@ -676,7 +679,7 @@ const KekwPlayer: NextPage<{
         const start = buffered.start(i);
         const end = buffered.end(i);
 
-        if (videoMoment >= start && videoMoment <= end) {
+        if (moment >= start && moment <= end) {
           const offset = (end / duration) * 100
 
           loaded.style.width = `${offset}%`
@@ -685,14 +688,14 @@ const KekwPlayer: NextPage<{
     }
 
     // Handle end screens
-    if (duration > 10 && videoMoment && dubbedEp) {
-      if (videoMoment >= duration - 2) {
-        let nextEp = dubbedEp.order;
+    if (duration > 10 && moment && episode) {
+      if (moment >= duration - 2) {
+        let nextEp = episode.order;
         nextEp += 1;
         setIsTimeToEndScreen(true)
 
-        const isNextEpExist = title.episodes.some(el => el.order === nextEp && el.dubberID === dubbedEp.dubberID); // Last episode in dub
-        const isTitleEnded = title.episodesCount === dubbedEp.order; // Title ended
+        const isNextEpExist = title.episodes.some(el => el.order === nextEp && el.dubberID === episode.dubberID); // Last episode in dub
+        const isTitleEnded = title.episodesCount === episode.order; // Title ended
 
         if (isTitleEnded) {
           setEndScreen('titleEnded')
@@ -714,7 +717,7 @@ const KekwPlayer: NextPage<{
     return () => {
       video.removeEventListener('timeupdate', timeupdateHandler)
     }
-  }, [duration, videoMoment])
+  }, [duration, moment])
 
 
 
@@ -756,30 +759,30 @@ const KekwPlayer: NextPage<{
    * 
    * @default moment 0
    */
-  async function changeDub(dubbedEp: ITitleEpisode, moment?: number, stopPlayback?: boolean) {
+  async function changeEpisode(episode: ITitleEpisode, moment?: number, stopPlayback?: boolean) {
     // Set optional vars
     moment = moment || 0;
 
     // Set first dub in array if id not found
-    if (!title.episodes.find(el => el.dubberID === dubbedEp.dubberID && el.order === dubbedEp.order)) {
-      dubbedEp = title.episodes[0]
+    if (!title.episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)) {
+      episode = title.episodes[0]
     }
 
-    setDubbedEp(dubbedEp)
+    setEpisode(episode)
 
     await Promise.all([
-      await definePreviewFormat(dubbedEp.frames[0]),
-      await changeVideoSrc(dubbedEp.qualities[quality], moment, stopPlayback),
+      await definePreviewFormat(episode.frames[0]),
+      await changeVideoSrc(episode.qualities[quality], moment, stopPlayback),
     ])
 
     // Set out states
-    if (setOutDubber) setOutDubber(dubs.find(el => el.id === dubbedEp.dubberID)!);
-    if (setOutEp) setOutEp(dubbedEp.order);
+    if (setOutDubber) setOutDubber(dubbers.find(el => el.id === episode.dubberID)!);
+    if (setOutEp) setOutEp(episode.order);
 
     // Check if episode is last
-    const nextEp = Number(dubbedEp.order) + 1;
+    const nextEp = Number(episode.order) + 1;
 
-    if (!title.episodes.some(el => el.dubberID === dubbedEp.dubberID && el.order === nextEp)) {
+    if (!title.episodes.some(el => el.dubberID === episode.dubberID && el.order === nextEp)) {
       setIsLastEpisode(true)
     } else {
       setIsLastEpisode(false)
@@ -787,8 +790,8 @@ const KekwPlayer: NextPage<{
 
     // Reset progress moment
     updatePlayerProgress({
-      dub: dubbedEp.dubberID,
-      ep: dubbedEp.order,
+      dub: episode.dubberID,
+      ep: episode.order,
       id: title.id,
       moment
     })
@@ -847,7 +850,7 @@ const KekwPlayer: NextPage<{
       movePreview(moment / duration * timeline.offsetWidth)
     }
 
-    setVideoMoment(moment);
+    setMoment(moment);
     moveProgress(moment, duration);
   }
 
@@ -895,12 +898,12 @@ const KekwPlayer: NextPage<{
     setHoveredMoment(hoveredMoment);
 
     // Set preview frame
-    if (!dubbedEp || !isVideoProcessed) return
+    if (!episode || !isVideoProcessed) return
     const img = preview.querySelector('img') as HTMLImageElement;
 
     let previewIndex = Math.floor(hoveredMoment / 5);
 
-    const frames = dubbedEp.frames;
+    const frames = episode.frames;
     const frameIndex = Math.floor(previewIndex / 25);
     const frame = frames[frameIndex];
     const imgWidth = img.offsetWidth;
@@ -936,7 +939,7 @@ const KekwPlayer: NextPage<{
         {/* Screen wrapper */}
         <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center z-[15] bg-dark/[.5] backdrop-blur-[32px] duration-200 px-[24px] ${isTimeToEndScreen || isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
           {/* Ep ended */}
-          <EpEndScreen endScreen={endScreen} dubbedEp={dubbedEp} setDubbedEp={setDubbedEp} title={title} isTime={isTimeToEndScreen} videoRef={videoRef} />
+          <EpEndScreen endScreen={endScreen} episode={episode} setEpisode={setEpisode} title={title} isTime={isTimeToEndScreen} videoRef={videoRef} />
 
           {/* Last ep in dub */}
           <LastEpScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
@@ -945,7 +948,7 @@ const KekwPlayer: NextPage<{
           <TitleEndScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
 
           {/* Continue progress */}
-          {localData && <ContinueProgressScreen loadProgress={loadProgress} passProgress={passProgress} dubs={dubs} localData={localData} isTime={isContinueMenuOpen} title={title} />}
+          {localData && <ContinueProgressScreen loadProgress={loadProgress} passProgress={passProgress} dubbers={dubbers} localData={localData} isTime={isContinueMenuOpen} title={title} />}
         </div>
 
         {/* Mobile skip wrapper */}
@@ -955,7 +958,7 @@ const KekwPlayer: NextPage<{
         </div>
 
         {/* Menu */}
-        <Menu ep={dubbedEp.order} changeDub={changeDub} currentDub={dubbedEp} totalDubs={title.episodes} dubbers={dubs} isLastEpisode={isLastEpisode} totalEps={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} />
+        <Menu order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
 
         {/* Bottom */}
         <div className={`flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px] duration-200 translate-y-0 ${isIdle ? 'translate-y-[100%]' : ''}`}>
@@ -968,7 +971,7 @@ const KekwPlayer: NextPage<{
           </div>
 
           {/* Range */}
-          <Timeline duration={duration} moment={videoMoment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
+          <Timeline duration={duration} moment={moment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
 
           {/* Settings */}
           <div className='flex items-center gap-[16px]'>
@@ -976,7 +979,7 @@ const KekwPlayer: NextPage<{
             <PiP isPiP={isPiP} videoRef={videoRef} />
 
             {/* Settings */}
-            <Settings quality={quality} setQuality={setQuality} setSubs={setSubs} speed={speed} subs={subs} epData={dubbedEp} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} />
+            <Settings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} />
 
             {/* Fullscreen */}
             <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
@@ -1006,14 +1009,14 @@ const ContinueProgressScreen: NextPage<{
   localData: IKekwPlayerLocalDataItem,
   loadProgress: () => void,
   passProgress: () => void,
-  dubs: IDubber[],
+  dubbers: IDubber[],
   title: ITitle
-}> = ({ isTime, localData, dubs, loadProgress, passProgress, title }) => {
+}> = ({ isTime, localData, dubbers, loadProgress, passProgress, title }) => {
   return (
     <div className={`max-w-[800px] w-full bg-dark px-[24px] py-[40px] rounded-[4px] flex flex-col gap-[24px] items-center ${isTime ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute'}`}>
       <div className='flex flex-col gap-[8px]'>
         <p className='text-white text-[24px] font-bold text-center'>Продовжити перегляд</p>
-        <p className='text-white text-[24px] text-center'>{dubs.find(el => el.id === localData?.dub)?.name || 'Команда невідома'}</p>
+        <p className='text-white text-[24px] text-center'>{dubbers.find(el => el.id === localData?.dub)?.name || 'Команда невідома'}</p>
       </div>
 
       <div className='px-[24px] py-[16px] w-full bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple flex items-center justify-between gap-[24px] cursor-pointer' role='button' onClick={() => loadProgress()}>
@@ -1047,20 +1050,20 @@ interface IEndScreenProps {
 
 interface IEpEndScreenProps extends IEndScreenProps {
   title: ITitle,
-  dubbedEp: ITitleEpisode,
-  setDubbedEp: (dubbedEp: ITitleEpisode) => void,
+  episode: ITitleEpisode,
+  setEpisode: (episode: ITitleEpisode) => void,
   videoRef: RefObject<HTMLVideoElement>
 }
 
-const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, dubbedEp, setDubbedEp, title, isTime, videoRef }) => {
+const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, episode, setEpisode, title, isTime, videoRef }) => {
   const [remain, setRemain] = useState(5)
   const [epMeta, setEpMeta] = useState<ITitleEpisodeMeta | null>(null)
-  const [nextEp, setNextEp] = useState(dubbedEp.order)
+  const [nextEp, setNextEp] = useState(episode.order)
   const [date, setDate] = useState('')
   const [int, setInt] = useState<NodeJS.Timeout>()
 
   useEffect(() => {
-    let nextEp = dubbedEp.order;
+    let nextEp = episode.order;
     nextEp += 1
 
     const epMeta = title.episodesMeta.find(el => el.order === nextEp);
@@ -1073,7 +1076,7 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, dubbedEp, setDubb
       setEpMeta(epMeta)
       setDate(`${parsed.day} ${parsed.localizedMonth.slice(0, 3)} ${parsed.year}`)
     }
-  }, [dubbedEp])
+  }, [episode])
 
   useEffect(() => {
     setRemain(5)
@@ -1101,8 +1104,8 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, dubbedEp, setDubb
 
     if (!video) return;
 
-    dubbedEp.order = nextEp;
-    setDubbedEp(dubbedEp)
+    episode.order = nextEp;
+    setEpisode(episode)
 
     setTimeout(() => {
       video.play().catch(e => null)
@@ -1153,30 +1156,35 @@ const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
 
 
 interface IMenuProps {
-  ep: number,
-  changeDub: (dubbedEp: ITitleEpisode, moment?: number) => void,
-  currentDub: ITitleEpisode,
-  totalDubs: ITitleEpisode[],
-  dubbers: IDubber[]
-  isLastEpisode: boolean,
-  totalEps: number,
-  isIdle: boolean,
+  /** Episode order */
+  order: number
+
+  /** Current episode */
+  episode: ITitleEpisode
+
+  /** Total episodes */
+  episodes: ITitleEpisode[]
+
+  /** Change episode handler */
+  changeEpisode: (episode: ITitleEpisode, moment?: number) => void
+
+  moment: number
+  episodesCount: number
+  isIdle: boolean
+  isLastEpisode: boolean
   titleId: string
+  dubbers: IDubber[]
 }
 
-const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpisode, changeDub, totalDubs, totalEps, isIdle, titleId }) {
-  const uniqueTotalDubs: ITitleEpisode[] = [];
-
-  totalDubs.forEach(dub => {
-    if (!uniqueTotalDubs.some(el => el.dubberID === dub.dubberID)) uniqueTotalDubs.push(dub);
-  })
+const Menu = memo<IMenuProps>(function Menu({ order, dubbers, episode, isLastEpisode, changeEpisode, episodes, episodesCount, isIdle, titleId, moment }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   function nextEpisode() {
     if (!isLastEpisode) {
-      let nextEp = ep;
+      let nextEp = order;
       nextEp += 1;
 
-      changeDub(totalDubs.find(el => el.dubberID === currentDub.dubberID && el.order === nextEp)!, 0)
+      changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === nextEp)!, 0)
 
       // Write player data to local storage
       const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
@@ -1190,68 +1198,64 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
     }
   }
 
-  function MenuButton() {
-    return <IcoPlayerList width={40} height={40} />
-  }
-
-  function MenuDubber({ dubbedEp, currId }: { dubbedEp: ITitleEpisode, currId: string }) {
-    let lastEp = 0;
-
-    totalDubs.filter(el => el.dubberID === dubbedEp.dubberID).forEach(ep => {
-      if (ep.order > lastEp) lastEp = ep.order
-    })
-
-    function setDub() {
-      changeDub(dubbedEp, 0)
+  useEffect(() => {
+    if (isIdle) {
+      setIsMenuOpen(false)
     }
+  }, [isIdle])
 
-    return <UMenu.MenuItem className={`px-[8px] py-[4px] duration-200 hover:bg-purple flex justify-between gap-[8px] focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${dubbedEp.dubberID === currId ? 'bg-purple' : ''}`} onClick={() => setDub()}>
-      <p className='text-white whitespace-nowrap'>{dubbers.find(el => el.id === dubbedEp.dubberID)?.name}</p>
 
-      <div className='flex gap-[4px]'>
-        <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
-          <p className='text-white whitespace-nowrap'>{lastEp} / {totalEps}</p>
-        </div>
-      </div>
-    </UMenu.MenuItem>
-  }
-
-  function MenuEpisode({ to }: { to: number }) {
-    function setEpisode(to: number) {
-      changeDub(totalDubs.find(el => el.dubberID === currentDub.dubberID && el.order === to)!, 0)
-    }
-
-    return <UMenu.MenuItem className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] w-full ${ep === to ? 'bg-purple' : ''} cursor-pointer`} onClick={() => setEpisode(to)}>
-      <p className='text-white'>{to}</p>
-    </UMenu.MenuItem>
-  }
 
   return (
     <div className={`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200 ${isIdle ? '-translate-y-[100%]' : 'translate-y-0'}`}>
-      <UMenu.Menu trigger={<MenuButton />} triggerClassName='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' direction='bottom' align='start'>
-        <div className='px-[16px] py-[8px] bg-dark rounded-[2px] flex gap-[8px]'>
-          {/* Dubs */}
-          <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
-            {uniqueTotalDubs.map(dub => {
-              return <MenuDubber dubbedEp={dub} currId={currentDub?.dubberID} key={`dub-${dub.dubberID}`} />
-            })}
-          </UMenu.MenuList>
+      <UMenu.Menu trigger={<IcoPlayerList width={40} height={40} />} triggerClassName='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' className='px-[16px] py-[8px] bg-dark rounded-[2px] flex gap-[8px]' direction='bottom' align='start' statePriority='outer' stateSetter={setIsMenuOpen} state={isMenuOpen}>
+        {/* Dubbers */}
+        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
+          {dubbers.map(dubber => {
+            const dubberEpisodes = episodes.filter(el => el.dubberID === dubber.id).sort((a, b) => a.order - b.order)
+            let lastEpisode = 0;
 
-          {/* Divider */}
-          <span className='w-[1px] h-auto bg-darkGrey block'></span>
+            dubberEpisodes.forEach(ep => ep.order > lastEpisode ? lastEpisode = ep.order : null);
 
-          {/* Eps */}
-          <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
-            {totalDubs.map(el => el.dubberID === currentDub.dubberID ? el : undefined).filter(el => el !== undefined).sort((a, b) => a!.order - b!.order).map(ep => {
-              return <MenuEpisode to={ep?.order || 0} key={`ep-${ep?.order || 0}`} />
-            })}
-          </UMenu.MenuList>
-        </div>
+            function selectDubber() {
+              // Set same ep or if not found set first in array
+              const sameEpisode = dubberEpisodes.find(el => el.order === episode.order);
+
+              return changeEpisode(sameEpisode || dubberEpisodes[0], sameEpisode ? moment : 0)
+            }
+
+            return <UMenu.MenuItem className={`px-[8px] py-[4px] duration-200 flex justify-between gap-[8px] hover:bg-purple focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${episode.dubberID === dubber.id ? 'bg-purple' : ''}`} onClick={selectDubber} key={`menu-dubs_list--${dubber.id}`}>
+              <p className='text-white whitespace-nowrap'>{dubber.name}</p>
+
+              <div className='flex gap-[4px]'>
+                <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
+                  <p className='text-white whitespace-nowrap'>{lastEpisode} / {episodesCount}</p>
+                </div>
+              </div>
+            </UMenu.MenuItem>
+          })}
+        </UMenu.MenuList>
+
+        {/* Divider */}
+        <span className='w-[1px] h-auto bg-darkGrey block'></span>
+
+        {/* Episodes */}
+        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
+          {episodes.filter(el => el.dubberID === episode.dubberID).sort((a, b) => a.order - b.order).map(episode => {
+            function setEpisode() {
+              changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)!, 0)
+            }
+
+            return <UMenu.MenuItem className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] w-full ${episode.order === order ? 'bg-purple' : ''} cursor-pointer`} onClick={setEpisode} key={`menu-eps_list--${episode.order}`}>
+              <p className='text-white'>{episode.order}</p>
+            </UMenu.MenuItem>
+          })}
+        </UMenu.MenuList>
       </UMenu.Menu>
 
       <div className='bg-dark flex flex-col justify-center gap-[2px] rounded-[2px] px-[16px]' >
-        <p className='text-white font-bold text-center'>{ep <= 9 ? `0${ep}` : ep}</p>
-        <p className='text-white text-[12px] font-extralight text-center'>{currentDub ? dubbers.find(el => el.id === currentDub.dubberID)?.name : '...'}</p>
+        <p className='text-white font-bold text-center'>{order <= 9 ? `0${order}` : order}</p>
+        <p className='text-white text-[12px] font-extralight text-center'>{episode ? dubbers.find(el => el.id === episode.dubberID)?.name : '...'}</p>
       </div>
 
       <button className={`px-[16px] bg-dark rounded-[2px] duration-200 ${!isLastEpisode && 'hover:bg-purple focus-visible:bg-purple'}`} onClick={() => nextEpisode()} disabled={isLastEpisode}>
@@ -1259,7 +1263,64 @@ const Menu = memo<IMenuProps>(function Menu({ ep, dubbers, currentDub, isLastEpi
       </button>
     </div>
   );
+
+
+
+  // function MenuDubber({ dubber }: { dubber: IDubber }) {
+  // const dubberEpisodes = episodes.filter(el => el.dubberID === dubber.id).sort((a, b) => a.order - b.order)
+  // let lastEpisode = 0;
+
+  //   dubberEpisodes.forEach(ep => ep.order > lastEpisode ? lastEpisode = ep.order : null);
+
+  // function selectDubber() {
+  //   // Set same ep or if not found set first in array
+  //   const sameEpisode = dubberEpisodes.find(el => el.order === episode.order);
+
+  //   return changeEpisode(sameEpisode || dubberEpisodes[0], sameEpisode ? 0 : 0) // TODO Set same moment if same episode founded 
+  // }
+
+  //   return <UMenu.MenuItem className={`px-[8px] py-[4px] duration-200 flex justify-between gap-[8px] hover:bg-purple focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${episode.dubberID === dubber.id ? 'bg-purple' : ''}`} onClick={selectDubber}>
+  //     <p className='text-white whitespace-nowrap'>{dubber.name}</p>
+
+  //     <div className='flex gap-[4px]'>
+  //       <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
+  //         <p className='text-white whitespace-nowrap'>{lastEpisode} / {episodesCount}</p>
+  //       </div>
+  //     </div>
+  //   </UMenu.MenuItem>
+  // }
+
+  // function MenuEpisode({ order }: { order: number }) {
+  // function setEpisode() {
+  //   changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === order)!, 0)
+  // }
+
+  // return <UMenu.MenuItem className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] w-full ${episode.order === order ? 'bg-purple' : ''} cursor-pointer`} onClick={setEpisode}>
+  //   <p className='text-white'>{order}</p>
+  // </UMenu.MenuItem>
+  // }
 })
+
+//<UMenu.Menu trigger={<IcoPlayerList width={40} height={40} />} triggerClassName='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' //direction='bottom' align='start' statePriority='outer' stateSetter={setIsMenuOpen} state={isMenuOpen}>
+//        <div className='px-[16px] py-[8px] bg-dark rounded-[2px] flex gap-[8px]'>
+//          {/* Dubbers */}
+//          <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
+//            {dubbers.map(dubber => {
+//              return <MenuDubber dubber={dubber} key={`menu-dubs_list--${dubber.id}`} />
+//            })}
+//          </UMenu.MenuList>
+//
+//          {/* Divider */}
+//          <span className='w-[1px] h-auto bg-darkGrey block'></span>
+//
+//  {/* Episodes */}
+//  <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
+//    {episodes.filter(el => el.dubberID === episode.dubberID).sort((a, b) => a.order - b.order).map(episode => {
+//      return <MenuEpisode order={episode.order} key={`menu-eps_list--${episode.order}`} />
+//    })}
+//  </UMenu.MenuList>
+//        </div>
+//      </UMenu.Menu>
 
 
 
@@ -1272,8 +1333,6 @@ interface ISettingsProps {
   quality: TVideoQuality,
   setQuality: (state: TVideoQuality) => void,
   speed: number,
-  subs: any,
-  setSubs: (state: any) => void,
   epData: ITitleEpisode | undefined,
   isVideoProcessed: boolean,
   videoRef: RefObject<HTMLVideoElement>
@@ -1281,7 +1340,7 @@ interface ISettingsProps {
   setStretch: (state: boolean) => void,
 }
 
-const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, setSubs, speed, subs, epData, isVideoProcessed, videoRef, stretch, setStretch }) {
+const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, speed, epData, isVideoProcessed, videoRef, stretch, setStretch }) {
   const [page, setPage] = useState<TSettingPage>('list')
   const listsRef = useRef<HTMLDivElement>(null)
 

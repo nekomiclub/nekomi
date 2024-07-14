@@ -1,4 +1,3 @@
-import ip from 'ip';
 import { TAnimeGenre } from './interfaces/ITitle';
 
 export const devMode = process.env.NODE_ENV === 'development'
