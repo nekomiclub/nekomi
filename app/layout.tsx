@@ -1,7 +1,7 @@
 // Packages styles
 import 'react-loading-skeleton/dist/skeleton.css'
-import 'react-uvc/dist/css/popup.css';
 import 'uvc-menu/css';
+import 'uvc-popup/css'
 import 'swiper/css';
 
 import '../styles/globals.css';
