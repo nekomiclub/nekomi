@@ -62,31 +62,17 @@ const Header: NextPage = () => {
     setSearchPopupID(createUVCID());
   }, [])
 
-  /** Exit from account */
-  async function signOut() {
-    try {
-      await $api.get('/user/logout')
-    } catch (e) {
-      if (e instanceof AxiosError) {
-        console.error(`An HTTP error occured while exiting account.\nError occured at - Header component.\nError - ${e.code}: ${e.response?.data.msg}.`)
-      } else {
-        // @ts-ignore
-        const emsg = e?.message || e?.msg;
+  useEffect(() => {
+    if (!searchPopupID) return;
 
-        console.error(`An error occured while exiting account.\nError occured at - Header component.\nError message - ${emsg}`)
-      }
-    }
+    (document.querySelector(`[data-uvc-popup-target="${searchPopupID}"]`) as HTMLButtonElement).addEventListener('click', () => {
+      setTimeout(() => {
+        (document.querySelector('#search-searchBar') as HTMLInputElement).focus();
+      }, 200);
+    })
+  }, [searchPopupID])
 
-    dispatch(userSlice.actions.reducer(defaultUserState))
-    setUserDetailsOpened(false)
-    router.refresh();
-  }
-
-  /** Sign in account */
-  function signIn() {
-    router.push(`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}${pathname}`)
-  }
-
+  // Set / update placeholders
   useEffect(() => {
     if (!placeholderSearchQuery) return;
     if (placeholderSearchQuery.length !== 0 && isHintShowed) setIsHintShowed(false);
@@ -100,6 +86,7 @@ const Header: NextPage = () => {
     ])
   }, [placeholderSearchQuery])
 
+  // Handle search
   useEffect(() => {
     (async function () {
       try {
@@ -143,11 +130,38 @@ const Header: NextPage = () => {
     })()
   }, [debouncedSearchQuery])
 
+
+
+  /** Exit from account */
+  async function signOut() {
+    try {
+      await $api.get('/user/logout')
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        console.error(`An HTTP error occured while exiting account.\nError occured at - Header component.\nError - ${e.code}: ${e.response?.data.msg}.`)
+      } else {
+        // @ts-ignore
+        const emsg = e?.message || e?.msg;
+
+        console.error(`An error occured while exiting account.\nError occured at - Header component.\nError message - ${emsg}`)
+      }
+    }
+
+    dispatch(userSlice.actions.reducer(defaultUserState))
+    setUserDetailsOpened(false)
+    router.refresh();
+  }
+
+  /** Sign in account */
+  function signIn() {
+    router.push(`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}${pathname}`)
+  }
+
   return (
     <>
       <Layer className='bg-dark/[.1] backdrop-blur-[64px] z-[1000] fixed px-[24px] py-[32px]'>
         <Popup id={searchPopupID} className='bg-dark w-[800px] max-w-[800px] rounded-[4px]'>
-          <input type="text" className='px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full' placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} />
+          <input type="text" className='px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full' placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id='search-searchBar' />
 
           <div className='px-[16px] py-[16px] w-full'>
             {/* Hint */}
