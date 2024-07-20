@@ -1,0 +1,15 @@
+@import '../../../styles/colors.scss';
+
+.contacts {
+  &-contact {
+    path, rect {
+      transition: .1s ease-in-out;
+    }
+
+    &:hover {
+      path, rect {
+        fill: $gradientNewPrimaryFallback;
+      }
+    }
+  }
+}

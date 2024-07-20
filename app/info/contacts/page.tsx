@@ -1,73 +1,90 @@
-import { NextPage } from 'next';
+import { Metadata, NextPage, ResolvingMetadata } from 'next';
+import { IRSCProps } from '../../../interfaces/IRSC';
+import { LoadingImage } from '../../../components/GeneralComponents';
+
+import UnniiiverseAvatar from '../../../assets/unniiiverseAvatar.png';
 import Link from 'next/link';
-import React from 'react'
+import { IcoSocialGithub, IcoSocialTelegram } from '../../../assets/Social';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 
-const DeveloperCard: React.FC<{ username: string, name?: string, avatar: string }> = ({ avatar, username, name }) => {
-  return <div className='px-[24px] py-[16px] rounded-[4px] bg-darkGrey w-full flex flex-col gap-[24px]'>
-    <div className='flex gap-[24px] items-center'>
-      <img src={avatar} alt={`${username}'s avatar`} loading='lazy' className='w-[128px] h-[128px] rounded-[2px]' />
+import './styles.scss';
 
-      <div className='flex flex-col gap-[8px]'>
-        <div className='flex flex-col gap-[4px]'>
-          <p className='text-[24px] font-bold text-white'>{name || `@${username}`}</p>
-          {name ? <p className='text-[16px] text-white font-extralight'>@{username}</p> : null}
-        </div>
-      </div>
-    </div>
 
-    <div className='flex gap-[24px]'>
-      <div className='flex flex-col gap-[16px]'>
-        <h3 className='text-[24px] text-white font-bold'>Стек</h3>
 
-        <ul>
-          <li className='text-[16px] text-white font-extralight'>Засновник Fullkekw</li>
-          <li className='text-[16px] text-white font-extralight'>Full-stack developer</li>
-          <li className='text-[16px] text-white font-extralight'>Дизайнер</li>
-          <li className='text-[16px] text-white font-extralight'>Контент-мейкер</li>
-          <li className='text-[16px] text-white font-extralight'>Редактор</li>
-        </ul>
-      </div>
-
-      <span className='w-[1px] h-full bg-white/[.2] block'></span>
-
-      <div className='flex flex-col gap-[16px]'>
-        <h3 className='text-[24px] text-white font-bold'>Мережі</h3>
-
-        <ul>
-          <li className='text-[16px] text-white font-bold gradient--primary-text'><Link href={'https://t.me/unniiiverse'} target='_blank'>Telegram</Link></li>
-          <li className='text-[16px] text-white font-bold gradient--primary-text'><Link href={'https://github.com/unniiiverse'} target='_blank'>Github</Link></li>
-        </ul>
-      </div>
-    </div>
-  </div>
+export function generateMetadata(): Metadata {
+  return {
+    title: 'Контакти розробників'
+  }
 }
 
-const Contacts: NextPage = (props) => {
+const RSC: NextPage<IRSCProps> = (props) => {
   return (
-    <div className='w-full min-h-screen h-full bg-dark pt-[120px] flex gap-[120px] flex-col'>
+    <>
       <Header />
 
-      <div className="wrapper h-full justify-center items-center">
-        <h2 className='text-[24px] text-white mb-[24px] text-center'>Контакти розробників animee</h2>
+      <div className="w-full h-full min-h-screen bg-dark">
+        <div className="wrapper justify-center items-center w-full min-h-screen h-full px-[24px]">
+          <div className='px-[24px] py-[24px] bg-darkGrey rounded-[4px] flex flex-col gap-[16px] w-full max-w-[600px]'>
+            {/* Header */}
+            <div className='flex items-center gap-[16px] max-[460px]:flex-col'>
+              <div className='relative w-[128px] h-[128px] shrink-0'>
+                <LoadingImage src={UnniiiverseAvatar.src} />
+              </div>
 
-        <div className='flex justify-center gap-[16px] max-w-[1170px] w-full'>
-          <div className='flex flex-col gap-[8px] w-fit'>
-            <DeveloperCard avatar='https://avatars.githubusercontent.com/u/83117340?v=4' username='unniiiverse' name='Mykhailo' />
+              <div className='w-full flex flex-col items-center gap-[4px]'>
+                <h3 className='text-white text-[32px] font-bold uppercase'>mykhailo</h3>
+                <p className='text-lightGrey'>@unniiiverse</p>
+              </div>
+            </div>
+
+            {/* Description */}
+            <p className='text-white'>Засновник та головний розробник Fullkekw & Animee.club</p>
+
+            {/* Stack */}
+            <div className='flex gap-[16px] items-center'>
+              <h4 className='text-white text-[24px] font-bold'>Стек</h4>
+
+              <div className='w-full h-[3px] gradient--primary'></div>
+            </div>
+
+            <ul className='flex flex-col gap-[8px]'>
+              <li>
+                <p className='text-white'>Software Engineer</p>
+              </li>
+
+              <li>
+                <p className='text-white'>SMM</p>
+              </li>
+            </ul>
+
+            {/* Contacts */}
+            <div className='flex gap-[16px] items-center'>
+              <h4 className='text-white text-[24px] font-bold'>Контакти</h4>
+
+              <div className='w-full h-[3px] bg-grey'></div>
+            </div>
+
+            <ul className='flex items-center gap-[16px] justify-center w-full'>
+              <li>
+                <Link href={'https://t.me/unniiiverse'} target='_blank'>
+                  <IcoSocialTelegram className='contacts-contact' />
+                </Link>
+              </li>
+
+              <li>
+                <Link href={'https://github.com/unniiiverse'} target='_blank'>
+                  <IcoSocialGithub className='contacts-contact' />
+                </Link>
+              </li>
+            </ul>
           </div>
-          {/* 
-          <span className='w-[1px] h-full bg-white/[.2] block'></span>
-
-          <div className='flex flex-col gap-[8px] w-full'>
-
-          </div> */}
         </div>
       </div>
 
       <Footer />
-    </div>
+    </>
   );
 }
 
-export default Contacts;
+export default RSC;

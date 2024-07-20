@@ -90,7 +90,6 @@ const Header: NextPage = () => {
   useEffect(() => {
     (async function () {
       try {
-
         const engines: TSearchEngine[] = [];
         let query = debouncedSearchQuery;
 
@@ -344,7 +343,7 @@ const Header: NextPage = () => {
             </div>
           </Link>}
         </> : <div className='flex gap-[16px]'>
-          <div className='w-[128px] h-[160px] bg-darkGrey rounded-[2px] max-[700px]:w-[80px] max-[700px]:h-[120px]'></div>
+          <div className='relative w-[128px] h-[160px] bg-darkGrey rounded-[2px] max-[700px]:w-[80px] max-[700px]:h-[120px] shrink-0'></div>
 
           <div className='flex flex-col gap-[8px] w-full'>
             <div className={`h-[32px] bg-darkGrey rounded-[2px] max-[700px]:h-[24px]`} style={{ width: `${randomNumber(20, 70)}%` }}></div>
