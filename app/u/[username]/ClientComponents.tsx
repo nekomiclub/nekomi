@@ -48,9 +48,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
         {/* Profile */}
         <div className={`flex gap-[32px] w-full relative -top-[128px] max-[820px]:flex-col max-[820px]:items-center`}>
           {/* Avatar */}
-          <div className={`w-[256px] h-[256px] relative flex-shrink-0`}>
-            <LoadingImage src={user.avatar} />
-          </div>
+          <LoadingImage src={user.avatar} width='256px' height='256px' parentClassName='shrink-0' />
 
           {/* Container */}
           <div className={`flex justify-between items-center w-full relative top-[64px] max-[820px]:top-0`}>

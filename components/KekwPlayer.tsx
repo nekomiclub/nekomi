@@ -12,7 +12,6 @@ import { useIdleTimer } from 'react-idle-timer';
 
 import { ITitle, ITitleEpisode, ITitleEpisodeMeta } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
-import { LoadingImage } from './GeneralComponents';
 import { timestampToDate, wordDeclination } from './handlers';
 import { devMode } from '../config';
 import { clearTimeout } from 'timers';

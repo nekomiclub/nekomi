@@ -13,47 +13,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { animeGenres, config } from '../config';
 import { IcoClockOutlined } from '../assets/Clock';
 
-/** Card-link for title */
-export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
-  return (
-    <Link href={`${routes.watch.path}/${title.code}`} className={`title-card w-full h-full ${className ? className : ''}`}>
-      <div className='relative w-full h-full flex flex-col items-end'>
-        {/* Background */}
-        <div className='absolute top-0 left-0 w-full h-full'>
-          <LoadingImage src={title.poster} alt={`${title.code} poster`} />
-        </div>
-
-        {/* Rating */}
-        <div className='relative z-[2] m-[4px] flex items-center gap-[8px] p-[4px] gradient--secondary rounded-[2px]'>
-          <IcoStarRating width={24} height={24} />
-          <p className='text-white font-bold'>{title.rating.IMDB || '-'}</p>
-        </div>
-
-        {/* Title */}
-        <div className='w-full h-full flex flex-col justify-end flex-1'>
-          <div className='title-card-blur relative z-[2] w-full h-fit px-[16px] py-[8px] bg-dark/[.1] backdrop-blur-[32px] flex justify-center'>
-            <p className='text-white text-center'>{title.names.ukr}</p>
-          </div>
-        </div>
-      </div>
-    </Link>
-  )
-}
-
 /** Must be wrapped in div with relative position and dimensions
  * @example
  * <div className="relative w-[32px] h-[32px]">
  *  <LoadingImage src='' /> 
  * </div>
  */
-export const LoadingImage: NextPage<{ src: string, alt?: string, className?: string, priority?: boolean, loading?: 'lazy' | 'eager' }> = ({ src, alt, className, loading, priority }) => {
+export const LoadingImage: NextPage<{ src: string, alt?: string, className?: string, parentClassName?: string, priority?: boolean, loading?: 'lazy' | 'eager', width: string, height: string }> = ({ src, alt, className, loading, priority, height, width, parentClassName }) => {
   const [loaded, setLoaded] = useState(false)
 
   return (
-    <>
+    <div className={`relative ${parentClassName ? parentClassName : ''}`} style={{ width, height }}>
       <Image src={src || ''} alt={alt || '...'} fill priority={priority || false} loading={loading || 'lazy'} className={`duration-200 opacity-0 absolute top-0 left-0 z-[2] ${className ? className : ''}`} onLoad={e => { e.currentTarget.style.opacity = '1'; setLoaded(true) }} />
       <Skeleton width={'100%'} height={'100%'} className={`absolute top-0 left-0 duration-200 ${loaded ? 'opacity-0' : ''}`} />
-    </>
+    </div>
   )
 }
 
@@ -70,7 +43,7 @@ export const WatchButton: NextPage<{ href: string, className?: string, gradient:
 }
 
 /** New title card */
-export const TitleCardNew: NextPage<{ title: ITitle }> = ({ title }) => {
+export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -120,7 +93,7 @@ export const TitleCardNew: NextPage<{ title: ITitle }> = ({ title }) => {
 
   return (
     <Link href={`${config.URL.baseURL}/w/${title.code}`} className='flex flex-col justify-end relative min-w-[200px] w-full h-[240px] rounded-[4px] overflow-hidden' ref={cardRef}>
-      <LoadingImage src={title.poster} className='rounded-b-[4px]' />
+      <LoadingImage src={title.poster} className='rounded-b-[4px]' width='100%' height='100%' />
 
       <div className={`px-[8px] bg-dark/[.8] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px]`} style={{ paddingTop: `${topOffset}px`, paddingBottom: `${bottomOffset}px` }} ref={bottomRef}>
         <div className='flex flex-col gap-[4px]'>

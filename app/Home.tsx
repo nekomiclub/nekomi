@@ -30,7 +30,7 @@ const Home: NextPage<IProps> = ({ headliner, watchingNow }) => {
         {/* Background */}
 
         <div className='w-full h-full absolute'>
-          <LoadingImage src={headliner.poster} className='object-cover' priority loading='eager' />
+          <LoadingImage src={headliner.poster} className='object-cover' priority loading='eager' width='100%' height='100%' />
           <div className='w-full h-full bg-dark/[.3] z-[2] absolute top-0 left-0'></div>
         </div>
 
@@ -50,7 +50,7 @@ const Home: NextPage<IProps> = ({ headliner, watchingNow }) => {
 
             <div className='relative'>
               <Skeleton className={`w-full h-full z-[2] absolute rounded-none duration-200 ${swiperLoaded ? 'opacity-0 invisible touch-none' : ''}`} containerClassName='h-0 block' />
-              <Swiper className='w-full h-[200px] z-[1] relative' slidesPerView={5.5} spaceBetween={8} onInit={() => setSwiperLoaded(true)} breakpoints={{
+              <Swiper className='w-full z-[1] relative' slidesPerView={5.5} spaceBetween={8} onInit={() => setSwiperLoaded(true)} breakpoints={{
                 320: {
                   slidesPerView: 1.5,
                   centeredSlides: true

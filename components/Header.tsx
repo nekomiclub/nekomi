@@ -228,9 +228,7 @@ const Header: NextPage = () => {
                 {/* <IcoBell width={40} height={40} /> */}
 
                 <div className='flex justify-center items-center gap-[8px]'>
-                  <div className='relative w-[60px] h-[60px] rounded-[4px] overflow-hidden'>
-                    <LoadingImage src={user.avatarURL!} loading='eager' priority />
-                  </div>
+                  <LoadingImage src={user.avatarURL!} loading='eager' priority width='60px' height='60px' parentClassName='overflow-hidden rounded-[4px]' />
 
                   <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
                 </div>
@@ -296,9 +294,7 @@ const Header: NextPage = () => {
       <>
         {result?.item ? <>
           {result.type === 'title' && <Link href={`${config.URL.baseURL}/${routes.watch.path}/${(result.item as ITitle).code}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
-            <div className='relative w-[128px] h-[160px] rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]'>
-              <LoadingImage src={(result.item as ITitle).poster} loading='lazy' />
-            </div>
+            <LoadingImage src={(result.item as ITitle).poster} loading='lazy' width='128px' height='160px' parentClassName='rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]' />
 
             <div className='flex flex-col gap-[8px]'>
               <p className='text-white text-[20px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]' title={(result.item as ITitle).names.ukr}>{(result.item as ITitle).names.ukr}</p>
@@ -329,9 +325,7 @@ const Header: NextPage = () => {
           </Link>}
 
           {(result.type === 'dubber' || result.type === 'user') && <Link href={result.type === 'user' ? `${config.URL.baseURL}/${routes.user.path.replace('/*', '')}/${(result.item as IUser).username}` : `${config.URL.baseURL}/${routes.dubber.path.replace('/*', '')}/${(result.item as IDubber).code}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
-            <div className='relative w-[128px] h-[128px] rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]'>
-              <LoadingImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).thumbURL} />
-            </div>
+            <LoadingImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).thumbURL} width='128px' height='128px' parentClassName='rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]' />
 
             <div className='flex flex-col gap-[8px]'>
               <p className='text-white text-[24px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]'>{result.type === 'user' ? `@${(result.item as IUser).username}` : (result.item as IDubber).name}</p>

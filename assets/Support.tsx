@@ -47,16 +47,12 @@ export const IcoSupportPrivatbank = ({ className, fill, height, width }: IAssetP
 
 export const IcoSupportMonobank = ({ width, className, height }: { width?: number, height?: number, className?: string }) => {
   return (
-    <div className={`relative ${width ? `w-[${width}px]` : '32px'} ${height ? `h-[${height}px]` : '32px'} ${className ? className : ''}`}>
-      <LoadingImage src={SupportMonobank.src} alt='monobank logo' />
-    </div>
+    <LoadingImage src={SupportMonobank.src} alt='monobank logo' width={width ? `${width}px` : '32px'} height={height ? `${height}px` : '32px'} parentClassName={className ? className : ''} />
   );
 }
 
 export const IcoSupportDiaka = ({ width, className, height }: { width?: number, height?: number, className?: string }) => {
   return (
-    <div className={`relative ${width ? `w-[${width}px]` : '32px'} ${height ? `h-[${height}px]` : '32px'} ${className ? className : ''}`}>
-      <LoadingImage src={SupportDiaka.src} alt='diaka logo' />
-    </div>
+    <LoadingImage src={SupportDiaka.src} alt='diaka logo' width={width ? `${width}px` : '32px'} height={height ? `${height}px` : '32px'} parentClassName={className ? className : ''} />
   );
 }

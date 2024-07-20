@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { IUser, IUserLib } from '../../../../../interfaces/IUser';
 import { UserDivider, UserLibCard } from '../../ClientComponents';
-import { TitleCardNew, copyToClipboard } from '../../../../../components/GeneralComponents';
+import { TitleCard, copyToClipboard } from '../../../../../components/GeneralComponents';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { getUTC } from '../../../../../components/handlers';
 import Tooltip from '../../../../../components/Tooltip';
@@ -54,7 +54,7 @@ export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle
 
       {isOwner || !lib.settings.hidden ? <div className='grid gap-[16px]' style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
         {titles.map(title => {
-          return <TitleCardNew title={title} key={`${title.id}-${Math.random().toFixed(3).split('.')[1]}`} />
+          return <TitleCard title={title} key={`${title.id}-${Math.random().toFixed(3).split('.')[1]}`} />
         })}
       </div> : <p className='text-lightGrey text-center'>Ця тека приватна</p>}
     </div>

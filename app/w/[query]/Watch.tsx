@@ -121,9 +121,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
         <div className='wrapperNew !pt-[192px]'>
           {/* Title heading */}
           <div className='flex max-[980px]:flex-col max-[980px]:items-center gap-[32px] z-[3] mb-[80px]'>
-            <div className='w-[600px] h-[850px] max-[1260px]:w-[400px] max-[1260px]:h-[550px] flex-shrink-0 relative'>
-              <LoadingImage src={title.poster} />
-            </div>
+            <LoadingImage src={title.poster} width='650px' height='850px' parentClassName='max-[1260px]:!w-[400px] max-[1260px]:!h-[550px] shrink-0' />
 
             <div className='flex flex-col gap-[24px] w-full'>
               <div className='flex flex-col gap-[8px] max-[600px]:gap-[0px] w-full'>
@@ -343,9 +341,7 @@ const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dub
     <div className={`bg-darkGrey px-[40px] py-[24px] flex flex-col gap-[24px] rounded-[4px] max-[600px]:w-full ${className ? className : ''}`}>
       {dubber ? <>
         <div className='flex items-center max-[600px]:flex-col gap-[40px]'>
-          <div className='relative w-[128px] h-[128px] rounded-[128px] overflow-hidden flex-shrink-0'>
-            <LoadingImage src={dubber.thumbURL} className='rounded-[128px]' />
-          </div>
+          <LoadingImage src={dubber.thumbURL} width='128px' height='128px' parentClassName='shrink-0 rounded-[128px] overflow-hidden' />
 
           <div className='flex flex-col gap-[8px] items-center'>
             <p className='text-white text-[24px]'>Озвучено</p>

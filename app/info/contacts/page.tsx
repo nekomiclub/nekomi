@@ -28,9 +28,7 @@ const RSC: NextPage<IRSCProps> = (props) => {
           <div className='px-[24px] py-[24px] bg-darkGrey rounded-[4px] flex flex-col gap-[16px] w-full max-w-[600px]'>
             {/* Header */}
             <div className='flex items-center gap-[16px] max-[460px]:flex-col'>
-              <div className='relative w-[128px] h-[128px] shrink-0'>
-                <LoadingImage src={UnniiiverseAvatar.src} />
-              </div>
+              <LoadingImage src={UnniiiverseAvatar.src} width='128px' height='128px' parentClassName='shrink-0' />
 
               <div className='w-full flex flex-col items-center gap-[4px]'>
                 <h3 className='text-white text-[32px] font-bold uppercase'>mykhailo</h3>
