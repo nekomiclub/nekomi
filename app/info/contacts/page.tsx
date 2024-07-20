@@ -1,8 +1,8 @@
 import { Metadata, NextPage, ResolvingMetadata } from 'next';
 import { IRSCProps } from '../../../interfaces/IRSC';
-import { LoadingImage } from '../../../components/GeneralComponents';
+import { LoadingImage } from '../../../components/Components';
 
-import UnniiiverseAvatar from '../../../assets/unniiiverseAvatar.png';
+import UnniiiverseAvatar from '../../../assets/img/unniiiverseAvatar.png';
 import Link from 'next/link';
 import { IcoSocialGithub, IcoSocialTelegram } from '../../../assets/Social';
 import Header from '../../../components/Header';

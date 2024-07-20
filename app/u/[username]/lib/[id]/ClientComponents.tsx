@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { IUser, IUserLib } from '../../../../../interfaces/IUser';
 import { UserDivider, UserLibCard } from '../../ClientComponents';
-import { TitleCard, copyToClipboard } from '../../../../../components/GeneralComponents';
+import { TitleCard, copyToClipboard } from '../../../../../components/Components';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { getUTC } from '../../../../../components/handlers';
 import Tooltip from '../../../../../components/Tooltip';

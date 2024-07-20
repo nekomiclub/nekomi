@@ -4,7 +4,7 @@ import { ITitle } from '../interfaces/ITitle';
 import { config, devMode, prodMode } from '../config';
 import axios, { AxiosError } from 'axios';
 import Link from 'next/link';
-import { HappenedWrongScreen, NotFoundScreen } from '../components/OopsComponents';
+import { HappenedWrongScreen, NotFoundScreen } from '../components/Components';
 import { getUTC } from '../components/handlers';
 
 export const metadata: Metadata = {

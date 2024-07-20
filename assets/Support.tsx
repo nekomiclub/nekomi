@@ -1,4 +1,4 @@
-import { LoadingImage } from "../components/GeneralComponents";
+import { LoadingImage } from "../components/Components";
 import { IAssetProps } from "./Icons";
 
 import SupportMonobank from './img/monobank.png'

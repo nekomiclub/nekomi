@@ -13,7 +13,7 @@
     &:focus-visible {
       svg {
         path, rect {
-          fill: $gradientNewPrimaryFallback;
+          fill: $gradientPrimaryFallback;
         }
       }
     }

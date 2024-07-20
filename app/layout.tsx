@@ -21,7 +21,7 @@ import { routes } from '../routes';
 import { getRoute } from '../components/ServerComponents';
 import { IcoInternet, IcoOffline } from '../assets/Icons';
 import { ILayoutProps, IRSCProps } from '../interfaces/IRSC';
-import { ServerUnavailable } from '../components/OopsComponents';
+import { ServerUnavailable } from '../components/Components';
 import { signCSRF } from '../components/http';
 
 export const metadata: Metadata = {

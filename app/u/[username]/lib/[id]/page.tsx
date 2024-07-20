@@ -6,7 +6,7 @@ import { decodeToken, getUTC } from '../../../../../components/handlers';
 import { ISessionCookieData } from '../../../../../interfaces/ITokenData';
 import { IUsapiUser, IUser } from '../../../../../interfaces/IUser';
 import axios, { AxiosError } from 'axios';
-import { HappenedWrongScreen, NotFoundScreen } from '../../../../../components/OopsComponents';
+import { HappenedWrongScreen, NotFoundScreen } from '../../../../../components/Components';
 import Header from '../../../../../components/Header';
 import Footer from '../../../../../components/Footer';
 import { UserHeader } from '../../ClientComponents';

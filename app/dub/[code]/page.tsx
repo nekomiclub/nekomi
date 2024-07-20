@@ -11,7 +11,7 @@ import { routes } from '../../../routes';
 import './styles.scss';
 import Tooltip from '../../../components/Tooltip';
 import { DubStats, DubCrew } from './clientContent';
-import { HappenedWrongScreen, NotFoundScreen } from '../../../components/OopsComponents';
+import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/Social';
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/Support';
 import { IRSCProps } from '../../../interfaces/IRSC';

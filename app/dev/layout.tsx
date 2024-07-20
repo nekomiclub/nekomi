@@ -1,5 +1,5 @@
 import React from "react"
-import { NotFoundScreen } from "../../components/OopsComponents"
+import { NotFoundScreen } from "../../components/Components"
 import { devMode } from "../../config"
 import { ILayoutProps, IRSCProps } from "../../interfaces/IRSC"
 

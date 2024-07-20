@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { config, devMode } from '../../../config';
-import { HappenedWrongScreen, NotFoundScreen } from '../../../components/OopsComponents';
+import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { decodeToken, getUTC, wordDeclination } from '../../../components/handlers';
 import { IUsapiUser, IUser, IUserLib } from '../../../interfaces/IUser';
 import { UserDivider, UserHeader, UserSectionLibs, UserSectionStats, UserSectionTakePart } from './ClientComponents';

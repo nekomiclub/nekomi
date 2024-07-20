@@ -1,7 +1,6 @@
 'use client'
 
 import '../styles/components/Header.scss';
-import '../styles/components/serachPopup.scss'
 
 import { NextPage } from 'next';
 import { useRouter, usePathname } from 'next/navigation';
@@ -18,7 +17,7 @@ import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import userSlice, { IUserState, defaultUserState } from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
 import { getUTC, parseTitleType, randomNumber } from './handlers';
-import { LoadingImage } from './GeneralComponents';
+import { LoadingImage } from './Components';
 import { $api } from './http';
 import { AxiosError } from 'axios';
 import { IcoAnimeeLogo, IcoArrow, IcoBell, IcoExit, IcoGhost, IcoHome, IcoInfo, IcoLibrary, IcoMicrophone, IcoSearch, IcoSettings, IcoStarRating, IcoUser } from '../assets/Icons';
@@ -205,10 +204,6 @@ const Header: NextPage = () => {
             <div className='flex items-center gap-[16px]'>
               <Link href={routes.home.path} className={`header-ico focus-visible:outline-none ${pathname === routes.home.path ? 'header-ico--active' : ''}`} title='На головну'>
                 <IcoHome width={32} height={32} />
-              </Link>
-
-              <Link href={routes.lib.path} className={`header-ico focus-visible:outline-none ${pathname === routes.lib.path ? 'header-ico--active' : ''}`} title='В теку тайтлів'>
-                <IcoLibrary width={32} height={32} />
               </Link>
 
               <div className='flex items-center gap-[16px]'>

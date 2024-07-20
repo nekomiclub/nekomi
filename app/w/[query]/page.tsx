@@ -7,7 +7,7 @@ import { IDubber } from "../../../interfaces/IDubber";
 import { getUTC } from "../../../components/handlers";
 import { IRSCProps } from "../../../interfaces/IRSC";
 import { $api } from "../../../components/http";
-import { HappenedWrongScreen, NotFoundScreen } from "../../../components/OopsComponents";
+import { HappenedWrongScreen, NotFoundScreen } from "../../../components/Components";
 
 export async function generateMetadata(
   { params }: IRSCProps,

@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import { useState, useEffect } from 'react'
 
 import { IUser, IUserLib } from '../../../interfaces/IUser';
-import { LoadingImage, copyToClipboard } from '../../../components/GeneralComponents';
+import { LoadingImage, copyToClipboard } from '../../../components/Components';
 import { IcoCalendar, IcoCan, IcoChain, IcoSettings, IcoStack, IcoUser, IcoWatched } from '../../../assets/Icons';
 import Tooltip from '../../../components/Tooltip';
 import { addZeroIfNumberSingle } from '../../../components/handlers';

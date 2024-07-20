@@ -15,7 +15,7 @@ import Tooltip from '../../../components/Tooltip';
 import { getKeyByValue, parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { IDubber } from '../../../interfaces/IDubber';
 import { animeGenres, config, genresDescription } from '../../../config';
-import { LoadingImage, WatchButton } from '../../../components/GeneralComponents';
+import { LoadingImage, WatchButton } from '../../../components/Components';
 import Footer from '../../../components/Footer';
 import { useAppSelector } from '../../../hooks/redux';
 import { IUser } from '../../../interfaces/IUser';

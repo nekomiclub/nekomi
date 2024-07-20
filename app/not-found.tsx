@@ -2,7 +2,7 @@ import { headers } from 'next/headers'
 
 import { config } from '../config';
 import { getRoute } from '../components/ServerComponents';
-import { IndevScreen, NotFoundScreen } from '../components/OopsComponents';
+import { IndevScreen, NotFoundScreen } from '../components/Components';
 
 export default function Error({
   error,

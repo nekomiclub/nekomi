@@ -4,7 +4,7 @@ import { NextPage, Metadata } from 'next';
 import React, { useState, useEffect, useRef } from 'react'
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { LoadingImage, TitleCard, WatchButton } from '../components/GeneralComponents';
+import { LoadingImage, TitleCard, WatchButton } from '../components/Components';
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
 import { SwiperSlide, Swiper } from 'swiper/react';

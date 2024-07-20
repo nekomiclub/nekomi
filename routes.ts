@@ -31,7 +31,6 @@ interface IRoutes {
   user: IRoute,
   userList: IRoute,
   dubber: IRoute,
-  lib: IRoute,
   polling: IRoute,
   rickroll: IRoute,
 }
@@ -66,9 +65,6 @@ export const routes: IRoutes = {
   },
   dubber: {
     path: '/dub/*',
-  },
-  lib: {
-    path: '/lib',
   },
   polling: {
     path: '/polling',

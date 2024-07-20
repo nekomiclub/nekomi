@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import { config, devMode } from '../../config';
 import Link from 'next/link';
-import { HappenedWrongScreen, NotFoundScreen } from '../../components/OopsComponents';
+import { HappenedWrongScreen, NotFoundScreen } from '../../components/Components';
 import { getUTC } from '../../components/handlers';
 
 export type TPollCode = 'fk-authority' | 'fk-userapi' | 'animee-site' | 'animee-core' | 'animee-media' | 'animee-uploads' | 'animee-bot'

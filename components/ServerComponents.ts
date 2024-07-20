@@ -1,4 +1,8 @@
+import { NextPage } from 'next';
+import { Tooltip as RT } from 'react-tooltip'
 import { IRoute, routes } from "../routes";
+import { createID } from './handlers';
+
 
 /** Get route object by it's path */
 export function getRoute(path: string): IRoute | null {
