@@ -159,8 +159,8 @@ const Header: NextPage = () => {
 
   return (
     <>
-      <Layer className='bg-dark/[.1] backdrop-blur-[64px] z-[1000] fixed px-[24px] py-[32px]'>
-        <Popup id={searchPopupID} className='bg-dark w-[800px] max-w-[800px] rounded-[4px]'>
+      <Layer className='bg-dark/[.1] backdrop-blur-[64px] z-[1000] fixed max-[700px]:items-start'>
+        <Popup id={searchPopupID} className='bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]'>
           <input type="text" className='px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full' placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id='search-searchBar' />
 
           <div className='px-[16px] py-[16px] w-full'>
@@ -297,30 +297,30 @@ const Header: NextPage = () => {
       <>
         {result?.item ? <>
           {result.type === 'title' && <Link href={`${config.URL.baseURL}/${routes.watch.path}/${(result.item as ITitle).code}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
-            <div className='relative w-[128px] h-[160px] rounded-[2px] overflow-hidden shrink-0'>
-              <LoadingImage src={(result.item as ITitle).poster} />
+            <div className='relative w-[128px] h-[160px] rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]'>
+              <LoadingImage src={(result.item as ITitle).poster} loading='lazy' />
             </div>
 
             <div className='flex flex-col gap-[8px]'>
-              <p className='text-white text-[20px] font-bold text-ellipsis line-clamp-[2] pr-[2px]' title={(result.item as ITitle).names.ukr}>{(result.item as ITitle).names.ukr}</p>
-              <p className='text-lightGrey text-ellipsis line-clamp-[2] pr-[2px]' title={(result.item as ITitle).names.eng}>{(result.item as ITitle).names.eng}</p>
+              <p className='text-white text-[20px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]' title={(result.item as ITitle).names.ukr}>{(result.item as ITitle).names.ukr}</p>
+              <p className='text-lightGrey text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[12px]' title={(result.item as ITitle).names.eng}>{(result.item as ITitle).names.eng}</p>
 
               {/* Details */}
               <div className='flex items-center gap-[8px]'>
                 <div className='flex items-center gap-[8px]'>
                   <IcoStarRating width={16} height={16} fill='#FF464E' />
-                  <p className='gradient--primary-text font-bold'>{
+                  <p className='gradient--primary-text font-bold max-[700px]:text-[12px]'>{
                     Number((result.item as ITitle).rating.IMDB) > 0 ? (result.item as ITitle).rating.IMDB?.toFixed(1) : '—'
                   }</p>
                 </div>
 
                 <span className='text-lightGrey text-[12px]'>•</span>
 
-                <p className='text-white'>{parseTitleType((result.item as ITitle).type)}</p>
+                <p className='text-white max-[700px]:text-[12px]'>{parseTitleType((result.item as ITitle).type)}</p>
 
                 <span className='text-lightGrey text-[12px]'>•</span>
 
-                <p className='text-white'>{
+                <p className='text-white max-[700px]:text-[12px]'>{
                   Number((result.item as ITitle).episodesCount) > 0 ? (result.item as ITitle).episodesCount : '—'
                 } / {
                     (result.item as ITitle).episodes.length ? (result.item as ITitle).episodes.sort((a, b) => a.order - b.order)[0].order : '—'
@@ -330,25 +330,25 @@ const Header: NextPage = () => {
           </Link>}
 
           {(result.type === 'dubber' || result.type === 'user') && <Link href={result.type === 'user' ? `${config.URL.baseURL}/${routes.user.path.replace('/*', '')}/${(result.item as IUser).username}` : `${config.URL.baseURL}/${routes.dubber.path.replace('/*', '')}/${(result.item as IDubber).code}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
-            <div className='relative w-[128px] h-[128px] rounded-[2px] overflow-hidden shrink-0'>
+            <div className='relative w-[128px] h-[128px] rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]'>
               <LoadingImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).thumbURL} />
             </div>
 
             <div className='flex flex-col gap-[8px]'>
-              <p className='text-white text-[24px] font-bold text-ellipsis line-clamp-[2] pr-[2px]'>{result.type === 'user' ? `@${(result.item as IUser).username}` : (result.item as IDubber).name}</p>
+              <p className='text-white text-[24px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]'>{result.type === 'user' ? `@${(result.item as IUser).username}` : (result.item as IDubber).name}</p>
 
               <div className='flex items-center gap-[8px]'>
                 {result.type === 'user' ? <IcoUser width={16} height={16} fill='#747474' /> : <IcoMicrophone width={16} height={16} fill='#747474' />}
-                <p className='text-lightGrey'>{result.type === 'user' ? 'Юзер' : 'Команда озвучення'}</p>
+                <p className='text-lightGrey max-[700px]:text-[12px]'>{result.type === 'user' ? 'Юзер' : 'Команда озвучення'}</p>
               </div>
             </div>
           </Link>}
         </> : <div className='flex gap-[16px]'>
-          <div className='w-[128px] h-[160px] bg-darkGrey rounded-[2px]'></div>
+          <div className='w-[128px] h-[160px] bg-darkGrey rounded-[2px] max-[700px]:w-[80px] max-[700px]:h-[120px]'></div>
 
-          <div className='flex flex-col gap-[8px]'>
-            <div className={`h-[32px] bg-darkGrey rounded-[2px]`} style={{ width: `${randomNumber(50, 400)}px` }}></div>
-            <div className={`h-[24px] bg-darkGrey rounded-[2px]`} style={{ width: `${randomNumber(30, 128)}px` }}></div>
+          <div className='flex flex-col gap-[8px] w-full'>
+            <div className={`h-[32px] bg-darkGrey rounded-[2px] max-[700px]:h-[24px]`} style={{ width: `${randomNumber(20, 70)}%` }}></div>
+            <div className={`h-[24px] bg-darkGrey rounded-[2px] max-[700px]:h-[16px]`} style={{ width: `${randomNumber(10, 50)}%` }}></div>
           </div>
         </div>}
       </>
