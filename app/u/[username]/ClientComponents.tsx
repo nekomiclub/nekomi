@@ -44,7 +44,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
         <p className='text-[60px] gradient--primary-text font-bold uppercase max-[600px]:text-[40px] select-none'>animee.club</p>
       </div>
 
-      <div className={`wrapperNew h-[128px] max-[820px]:h-[270px]`}>
+      <div className={`wrapper h-[128px] max-[820px]:h-[270px]`}>
         {/* Profile */}
         <div className={`flex gap-[32px] w-full relative -top-[128px] max-[820px]:flex-col max-[820px]:items-center`}>
           {/* Avatar */}

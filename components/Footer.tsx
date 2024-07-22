@@ -55,7 +55,7 @@ const Footer: NextPage = (props) => {
 
   return (
     <footer className='relative w-full bg-dark'>
-      <div className="wrapperNew min-[1260px]:!flex-row justify-between items-start !px-[32px] !py-[40px] max-[1260px]:gap-[40px] max-[1260px]:items-center max-[760px]:items-start">
+      <div className="wrapper min-[1260px]:!flex-row justify-between items-start !px-[32px] !py-[40px] max-[1260px]:gap-[40px] max-[1260px]:items-center max-[760px]:items-start">
         {/* Left */}
         <div className='flex gap-[16px] items-center max-[760px]:w-full max-[760px]:justify-center max-[560px]:flex-col'>
           <IcoAnimeeLogo width={128} height={128} fill='#FF464E' />

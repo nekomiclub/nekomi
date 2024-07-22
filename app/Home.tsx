@@ -16,10 +16,6 @@ interface IProps {
 }
 
 const Home: NextPage<IProps> = ({ headliner, watchingNow }) => {
-  const [ongoingTitles, setOngoingTitles] = useState<ITitle[]>([])
-  const [updatedRecentlyTitles, setUpdatedRecentlyTitles] = useState<ITitle[]>([])
-  const [newRealises, setNewRealises] = useState<ITitle[]>([])
-
   const [swiperLoaded, setSwiperLoaded] = useState(false)
 
   return (
@@ -30,11 +26,11 @@ const Home: NextPage<IProps> = ({ headliner, watchingNow }) => {
         {/* Background */}
 
         <div className='w-full h-full absolute'>
+          <div className='w-full h-full bg-black/[.3] absolute top-0 left-0 z-[3]'></div>
           <LoadingImage src={headliner.poster} className='object-cover' priority loading='eager' width='100%' height='100%' />
-          <div className='w-full h-full bg-dark/[.3] z-[2] absolute top-0 left-0'></div>
         </div>
 
-        <div className='wrapperNew z-[3] min-h-screen h-full justify-center'>
+        <div className='wrapper z-[3] min-h-screen h-full justify-center'>
           <div className='max-w-[600px] flex flex-col gap-[16px]'>
             <h1 className='text-white text-[40px] font-bold uppercase'>{headliner.names.ukr}</h1>
 
@@ -44,7 +40,7 @@ const Home: NextPage<IProps> = ({ headliner, watchingNow }) => {
           </div>
         </div>
 
-        <div className="wrapperNew">
+        <div className="wrapper">
           <div className='w-full flex flex-col gap-[24px] relative -top-[140px] z-[4]'>
             <h3 className='text-white text-[24px] font-bold'>Переглядають зараз</h3>
 

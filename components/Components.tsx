@@ -45,7 +45,7 @@ export const WatchButton: NextPage<{ href: string, className?: string, gradient:
   )
 }
 
-/** New title card */
+/** Title card */
 export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -70,6 +70,8 @@ export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
     })
 
     bottom.style.maxHeight = `${inactiveHeight}px`;
+    bottom.style.paddingTop = `${topOffset}px`
+    bottom.style.paddingBottom = `${bottomOffset}px`
 
     card.addEventListener('mouseleave', () => {
       bottom.style.maxHeight = `${inactiveHeight}px`;
@@ -96,18 +98,18 @@ export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
 
   return (
     <Link href={`${config.URL.baseURL}/w/${title.code}`} className='flex flex-col justify-end relative min-w-[200px] w-full h-[240px] rounded-[4px] overflow-hidden' ref={cardRef}>
-      <LoadingImage src={title.poster} className='rounded-b-[4px]' width='100%' height='100%' />
+      <LoadingImage src={title.poster} className='rounded-b-[4px]' parentClassName='!absolute top-0 left-0' width='100%' height='100%' />
 
-      <div className={`px-[8px] bg-dark/[.8] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px]`} style={{ paddingTop: `${topOffset}px`, paddingBottom: `${bottomOffset}px` }} ref={bottomRef}>
+      <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark/[.8]`} ref={bottomRef}>
         <div className='flex flex-col gap-[4px]'>
           <p className='titleCardNew-heading text-white font-bold text-ellipsis line-clamp-[2]' title={title.names.ukr}>{title.names.ukr}</p>
 
           <p className='text-lightGrey text-[12px] whitespace-break-spaces'>
-            {title.genres?.slice(0, 3).map((genre, i) => {
+            {title.genres.length ? title.genres.slice(0, 3).map((genre, i) => {
               let immutableI = i;
 
               return `${animeGenres[genre]}${++immutableI < title.genres?.slice(0, 3).length! ? ' • ' : ''}`
-            })}
+            }) : `Жанри відсутні`}
           </p>
         </div>
 

@@ -100,7 +100,7 @@ const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ para
       <div className='w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]'>
         <UserHeader user={user!} isOwner={isOwner} />
 
-        <div className="wrapperNew gap-[40px]">
+        <div className="wrapper gap-[40px]">
           {/* Lib */}
           <UserLib lib={lib} isOwner={isOwner} titles={titles} />
 

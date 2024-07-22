@@ -118,7 +118,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
           <Image src={title.poster} alt='...' fill priority loading='eager' className='w-full h-full opacity-0 duration-200' onLoad={e => e.currentTarget.setAttribute('style', 'opacity: 1')} />
         </div>
 
-        <div className='wrapperNew !pt-[192px]'>
+        <div className='wrapper !pt-[192px]'>
           {/* Title heading */}
           <div className='flex max-[980px]:flex-col max-[980px]:items-center gap-[32px] z-[3] mb-[80px]'>
             <LoadingImage src={title.poster} width='650px' height='850px' parentClassName='max-[1260px]:!w-[400px] max-[1260px]:!h-[550px] shrink-0' />
@@ -126,14 +126,14 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
             <div className='flex flex-col gap-[24px] w-full'>
               <div className='flex flex-col gap-[8px] max-[600px]:gap-[0px] w-full'>
                 <div className='flex items-center gap-[16px] max-[600px]:flex-col-reverse justify-between w-full max-[600px]:gap-[24px]'>
-                  <h1 className='text-white text-[40px] font-bold max-[600px]:text-center max-[600px]:text-[32px]'>{title.names.ukr}</h1>
+                  <h1 className='text-white text-[40px] font-bold max-[600px]:text-center max-[600px]:text-[32px] text-ellipsis line-clamp-[3]' title={title.names.ukr}>{title.names.ukr}</h1>
 
                   <div className='flex items-center gap-[8px]'>
                     <IcoStarRating width={24} height={24} fill='#FF464E' className='max-[600px]:w-[32px] max-[600px]:h-[32px]' />
-                    <p className='gradient--primary-text font-bold max-[600px]:text-[24px]'>{title.rating.IMDB || '-'}</p>
+                    <p className='gradient--primary-text font-bold max-[600px]:text-[24px]'>{title.rating.IMDB || '—'}</p>
                   </div>
                 </div>
-                <h3 className='text-white text-[32px] font-extralight max-[600px]:text-center max-[600px]:text-[24px]'>{title.names.eng}</h3>
+                <h3 className='text-white text-[32px] font-extralight max-[600px]:text-center max-[600px]:text-[24px] text-ellipsis line-clamp-[2]' title={title.names.eng}>{title.names.eng}</h3>
               </div>
 
               {/* Description */}
@@ -202,9 +202,9 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <p className='text-white text-[24px] min-w-[180px]'>Епізоди:</p>
 
                   <div className=''>
-                    <Tooltip content={totalEps === title.episodesCount ? 'Тайтл повністю озвучено' : 'Тайтл озвучено неповністю'}>
-                      <p className={`text-white text-[24px] ${totalEps === title.episodesCount ? 'font-bold gradient--secondary-text' : ''}`}>
-                        {totalEps} / {title.episodesCount}
+                    <Tooltip content={(totalEps > 0 && Number(title.episodesCount) > 0) && (totalEps >= Number(title.episodesCount)) ? 'Тайтл повністю озвучено' : 'Тайтл озвучено неповністю'}>
+                      <p className={`text-white text-[24px] ${totalEps === Number(title.episodesCount) ? 'font-bold gradient--secondary-text' : ''}`}>
+                        {totalEps || '—'} / {Number(title.episodesCount) || '—'}
                       </p>
                     </Tooltip>
                   </div>
@@ -214,16 +214,11 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <p className='text-white text-[24px] min-w-[180px]'>Жанри:</p>
 
                   <div className='flex gap-[8px] flex-wrap'>
-                    {title.genres?.length ? title.genres?.map((genre, i) => {
+                    {title.genres.length ? title.genres?.map((genre, i) => {
                       let immutableI = i;
 
-                      return <Tooltip content={genresDescription.find(el => el.genre === genre)?.description || 'Опис цього жанру ще не написаний.'} key={`genre-${i}`}>
-                        <Link href={'#'}>
-                          {/* LINK FOR GENRE */}
-                          <p className='text-white text-[24px] font-bold'>{animeGenres[genre]}{++immutableI < title.genres?.length! ? ',' : ''}</p>
-                        </Link>
-                      </Tooltip>
-                    }) : <p className='text-white text-[24px]'>Відсутні</p>}
+                      return <p className='text-white text-[24px]' key={`genre-${i}`}>{animeGenres[genre]}{++immutableI < title.genres?.length! ? ',' : ''}</p>
+                    }) : <p className='text-white text-[24px]'>—</p>}
                   </div>
                 </li>
 
@@ -262,7 +257,7 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
 
                       // TODO navigate to lib with that studio
                       return <p className='text-white text-[24px]' key={`stu-${i}`}>{studio}{++immutableI < title.studios.length ? ',' : ''}</p>
-                    }) : <p className='text-white text-[24px]'>Відсутні</p>}
+                    }) : <p className='text-white text-[24px]'>—</p>}
                   </div>
                 </li>
 
@@ -278,37 +273,27 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
                   <p className='text-white text-[24px] min-w-[180px]'>Озвучено:</p>
 
                   <div className='flex gap-[8px] flex-wrap'>
-                    {dubbers?.length ? dubbers.map((dub, i) => {
+                    {dubbers.length ? dubbers.map((dub, i) => {
                       let immutableI = i;
 
                       return <Link href={`${config.URL.baseURL}/dub/${dub.code}`} target='_blank' key={`dubber-${dub.code}`}>
                         <p className='text-white text-[24px] font-bold'>{dub.name}{++immutableI < dubbers.length ? ',' : ''}</p>
                       </Link>
-                    }) : <p className='text-white text-[24px]'>Відсутні</p>}
+                    }) : <p className='text-white text-[24px]'>—</p>}
                   </div>
                 </li>
               </ul>
             </div>
           </div>
 
-          {/* Player & ep meta */}
-          {title.episodes.length ? <div className='flex items-start max-[1020px]:flex-col gap-[40px] z-[4] mb-[80px]'>
-            <div className='flex flex-col gap-[24px] items-center w-full'>
-              <div className='h-[600px] w-full'>
-                <KekwPlayer title={title} dubbers={dubbers!} setOutDubber={setDubber} />
-              </div>
-
+          {/* Player*/}
+          {title.episodes.length ? <div className='flex items-start gap-[40px] z-[4] mb-[80px]'>
+            <div className='h-[600px] w-full'>
+              <KekwPlayer title={title} dubbers={dubbers!} setOutDubber={setDubber} />
             </div>
-
-            <DubberDetails dubber={dubber} />
           </div> : <div className='w-full h-[400px] bg-darkGrey flex justify-center items-center rounded-[4px]'>
             <h3 className='text-white text-[24px] font-bold'>Нажаль, для цього тайтлу озвучення не завантажені.</h3>
           </div>}
-
-          {/* Linked */}
-          <div>
-
-          </div>
         </div>
 
         <Footer />
@@ -334,94 +319,6 @@ const Watch: NextPage<IProps> = ({ title, dubbers, totalEps }) => {
       <p className='text-white whitespace-nowrap'>{state ? textOut : textIn}</p>
     </Menu.MenuItem>
   }
-}
-
-const DubberDetails: NextPage<{ dubber?: IDubber, className?: string }> = ({ dubber, className }) => {
-  return (
-    <div className={`bg-darkGrey px-[40px] py-[24px] flex flex-col gap-[24px] rounded-[4px] max-[600px]:w-full ${className ? className : ''}`}>
-      {dubber ? <>
-        <div className='flex items-center max-[600px]:flex-col gap-[40px]'>
-          <LoadingImage src={dubber.thumbURL} width='128px' height='128px' parentClassName='shrink-0 rounded-[128px] overflow-hidden' />
-
-          <div className='flex flex-col gap-[8px] items-center'>
-            <p className='text-white text-[24px]'>Озвучено</p>
-            <p className='text-white text-[24px] font-bold text-center whitespace-nowrap'>{dubber.name}</p>
-          </div>
-        </div>
-
-        {/* Rating */}
-        <div className='flex gap-[24px] justify-center'>
-          <Tooltip content={`Рейтинг ${dubber.name}`}>
-            <div className='flex items-center gap-[8px]'>
-              <IcoStarRating width={24} height={24} fill='#FF464E' />
-              <p className='gradient--primary-text text-[24px] font-bold'>{dubber.rating}</p>
-            </div>
-          </Tooltip>
-        </div>
-
-        {/* Support */}
-        {(dubber?.support.bymeacoffee || dubber?.support.diaka || dubber?.support.monobank || dubber?.support.patreon || dubber?.support.privatbank) && <div className='flex flex-col items-center gap-[24px]'>
-          <p className='text-white text-[24px] font-bold'>Дяка</p>
-          <ul className='flex items-center gap-[8px]'>
-            {dubber?.support.bymeacoffee && <>
-              <Link href={dubber.support!.bymeacoffee} target='_blank'>
-                <IcoSupportByMeACoffee height={40} width={40} />
-              </Link>
-            </>}
-            {dubber?.support.patreon && <>
-              <Link href={dubber.support!.patreon} target='_blank'>
-                <IcoSupportPatreon height={40} width={40} />
-              </Link>
-            </>}
-            {dubber?.support.privatbank && <>
-              <Link href={dubber.support!.privatbank} target='_blank'>
-                <IcoSupportPrivatbank height={40} width={40} />
-              </Link>
-            </>}
-            {dubber?.support.monobank && <>
-              <Link href={dubber.support!.monobank} target='_blank'>
-                <IcoSupportMonobank height={40} width={40} />
-              </Link>
-            </>}
-            {dubber?.support.diaka && <>
-              <Link href={dubber.support!.diaka} target='_blank'>
-                <IcoSupportDiaka height={40} width={40} />
-              </Link>
-            </>}
-          </ul>
-        </div>}
-
-        {/* Socials */}
-        {(dubber?.socials.instagram || dubber?.socials.telegram || dubber?.socials.tiktok || dubber?.socials.youtube) && <div className='flex flex-col items-center gap-[24px]'>
-          <p className='text-white text-[24px] font-bold'>Мережі</p>
-          <ul className='flex items-center gap-[8px]'>
-            {dubber?.socials.instagram && <>
-              <Link href={dubber.socials!.instagram} target='_blank'>
-                <IcoSocialInstagram height={40} width={40} />
-              </Link>
-            </>}
-            {dubber?.socials.telegram && <>
-              <Link href={dubber.socials!.telegram} target='_blank'>
-                <IcoSocialTelegram height={40} width={40} />
-              </Link>
-            </>}
-            {dubber?.socials.tiktok && <>
-              <Link href={dubber.socials!.tiktok} target='_blank'>
-                <IcoSocialTiktok height={40} width={40} />
-              </Link>
-            </>}
-            {dubber?.socials.youtube && <>
-              <Link href={dubber.socials!.youtube} target='_blank'>
-                <IcoSocialYoutube height={40} width={40} />
-              </Link>
-            </>}
-          </ul>
-        </div>}
-      </> : <div className='w-[300px] h-[200px] bg-darkGrey flex justify-center items-center'>
-        <RaceBy color='#fff' size={128} />
-      </div>}
-    </div>
-  )
 }
 
 export default Watch;

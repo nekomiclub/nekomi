@@ -95,7 +95,7 @@ const RSC: NextPage<IRSCProps<{ username: string }>> = async ({ params }) => {
       <div className='w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]'>
         <UserHeader user={user!} isOwner={isOwner} primaryPage />
 
-        <div className="wrapperNew gap-[40px]">
+        <div className="wrapper gap-[40px]">
           {/* Stats */}
           <div className='grid gap-[16px] grid-cols-4 max-[1554px]:grid-cols-3 max-[1210px]:grid-cols-2 max-[820px]:grid-cols-1'>
             <StatCard value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label='favs' />

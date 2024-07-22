@@ -8,17 +8,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        dark: 'var(--dark)',
-        darkGrey: 'var(--darkGrey)',
-        lightGrey: 'var(--lightGrey)',
-        grey: 'var(--grey)',
-        purple: 'var(--purple)',
-        white: 'var(--white)',
-        orange: 'var(--orange)',
-        green: 'var(--green)',
-        red: 'var(--red)',
-        gradientPrimaryFallback: 'var(--gradientPrimaryFallback)',
-        gradientSecondaryFallback: 'var(--gradientSecondaryFallback)',
+        dark: '#121212',
+        darkGrey: '#181818',
+        lightGrey: '#747474',
+        grey: '#222222',
+        purple: '#6C5CE7',
+        white: '#ffffff',
+        orange: '#F39C12',
+        green: '#2ecc71',
+        red: '#e74c3c',
+        gradientPrimaryFallback: '#FF464E',
+        gradientSecondaryFallback: '#FF9966',
       }
     },
   },

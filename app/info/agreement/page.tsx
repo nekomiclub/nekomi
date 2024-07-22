@@ -7,7 +7,7 @@ const Agreement: NextPage = (props) => {
     <div className='flex flex-col gap-[160px] items-center bg-dark'>
       <Header />
 
-      <div className="wrapper gap-[160px] items-center">
+      <div className="wrapper160px] items-center">
         <h2 className='text-[32px] text-white mt-[128px] text-center'>Угода користувача</h2>
 
         <div className='py-[24px] px-[40px] bg-darkGrey rounded-[2px] flex flex-col gap-[24px] max-w-[1170px]'>

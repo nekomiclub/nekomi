@@ -195,7 +195,7 @@ const Header: NextPage = () => {
       </Layer>
 
       <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200`}>
-        <div className="wrapperNew !flex-row items-center justify-between w-full">
+        <div className="wrapper !flex-row items-center justify-between w-full">
           <div className='flex items-center gap-[40px]'>
             <Link href={routes.home.path}>
               <IcoAnimeeLogo width={60} height={60} fill='#FF464E' />
