@@ -14,7 +14,7 @@ import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
 import { routes } from '../routes';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import userSlice, { IUserState, defaultUserState } from '../store/reducers/userSlice';
+import userSlice, { IUserState, userStateDefault } from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
 import { getUTC, parseTitleType, randomNumber } from './handlers';
 import { LoadingImage } from './Components';
@@ -145,7 +145,7 @@ const Header: NextPage = () => {
       }
     }
 
-    dispatch(userSlice.actions.reducer(defaultUserState))
+    dispatch(userSlice.actions.reducer(userStateDefault))
     setUserDetailsOpened(false)
     router.refresh();
   }
@@ -157,9 +157,9 @@ const Header: NextPage = () => {
 
   return (
     <>
-      <Layer className='bg-dark/[.1] backdrop-blur-[64px] z-[1000] fixed max-[700px]:items-start'>
+      <Layer className='bg-dark/[.1] backdrop-blur-[64px] z-[1000] !fixed max-[700px]:items-start'>
         <Popup id={searchPopupID} className='bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]'>
-          <input type="text" className='px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full' placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id='search-searchBar' />
+          <input type="text" autoComplete='off' className='px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full' placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id='search-searchBar' />
 
           <div className='px-[16px] py-[16px] w-full'>
             {/* Hint */}
@@ -223,7 +223,7 @@ const Header: NextPage = () => {
                 {/* <IcoBell width={40} height={40} /> */}
 
                 <div className='flex justify-center items-center gap-[8px]'>
-                  <LoadingImage src={user.avatarURL!} loading='eager' priority width='60px' height='60px' parentClassName='overflow-hidden rounded-[4px]' />
+                  <LoadingImage src={user.avatar} loading='eager' priority width='60px' height='60px' parentClassName='overflow-hidden rounded-[4px]' />
 
                   <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
                 </div>

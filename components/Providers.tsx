@@ -10,7 +10,7 @@ import { setupStore } from '../store/store'
 import { IRoute, TRouteStatus, routes } from '../routes';
 import { ITokenData, TUserRoles } from '../interfaces/ITokenData';
 import { useAppDispatch } from '../hooks/redux';
-import userSlice from '../store/reducers/userSlice';
+import userSlice, { userStateDefault } from '../store/reducers/userSlice';
 import { config } from '../config';
 import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 import { IUsapiUser, IUser } from '../interfaces/IUser';
@@ -71,20 +71,18 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
         await $api.get('/user/validate');
 
         const { data } = await $api.get<{ user: IUser }>(`/user/*`);
+        const { avatar, id, roles, username } = data.user
 
         dispatch(userSlice.actions.reducer({
-          id: data.user.id,
-          username: data.user.username,
-          avatarURL: data.user.avatar,
-          roles: data.user.roles
+          avatar,
+          id,
+          roles,
+          username,
         }))
       } catch (e) {
-        dispatch(userSlice.actions.reducer({
-          id: null,
-          username: null,
-          avatarURL: null,
-          roles: []
-        }))
+        console.warn('LOGGED OUT DUE TO VERIFICATION ERROR')
+        dispatch(userSlice.actions.reducer(userStateDefault))
+        router.refresh();
 
         if (e instanceof AxiosError) {
           // Session can be not provided, ignore it 

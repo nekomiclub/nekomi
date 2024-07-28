@@ -51,17 +51,15 @@ const RSC: NextPage<IRSCProps<{ username: string }>> = async ({ params }) => {
   const token = cookies().get(config.vars.animeeCookie)?.value;
 
   let userId = '';
+  let isOwner = false;
+  let user: IUser | null = null
 
+  // Get current user ID by token
   if (token) {
     try {
       userId = decodeToken<ISessionCookieData>(token).payload.userId;
-    } catch (e) {
-
-    }
+    } catch (e) { }
   }
-
-  let isOwner = false;
-  let user: IUser | null = null
 
   try {
     const { data } = await $api.get<{ user: IUser }>(`/user/${username}?detailed=true`);

@@ -4,23 +4,23 @@ import { ITokenData } from "../../interfaces/ITokenData";
 
 /** User local state */
 export interface IUserState {
-  id: string | null,
-  username: string | null,
+  id: string,
+  username: string,
   roles: string[],
-  avatarURL: string | null,
+  avatar: string,
 }
 
 /** Default user state */
-export const defaultUserState: IUserState = {
-  id: null,
-  username: null,
-  avatarURL: null,
+export const userStateDefault: IUserState = {
+  id: '',
+  username: '',
+  avatar: '',
   roles: []
 }
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: defaultUserState,
+  initialState: userStateDefault,
   reducers: {
     reducer(state, action: IReduxAction<IUserState>) {
       for (let key in action.payload) {

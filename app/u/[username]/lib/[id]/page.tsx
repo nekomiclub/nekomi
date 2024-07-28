@@ -30,27 +30,32 @@ export function generateMetadata(
 }
 
 const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ params }) => {
-  const { username } = params;
+  const { username, id } = params;
   const token = cookies().get(config.vars.animeeCookie)?.value;
 
   let userId = '';
+  let isOwner = false;
+  let user: IUser | null = null
+  let titles: ITitle[] = [];
 
+  // Get current user ID by token
   if (token) {
     try {
       userId = decodeToken<ISessionCookieData>(token).payload.userId;
-    } catch (e) {
-
-    }
+    } catch (e) { }
   }
 
-  let isOwner = false;
-  let user: IUser | null = null
-
   try {
-    const { data } = await $api.get<{ user: IUser }>(`/user/${username}?detailed=true`);
+    const { data } = await $api.get<{ user: IUser, parsedLib: ITitle[] }>(`/user/${username}`, {
+      params: {
+        detailed: true,
+        parseLib: id
+      }
+    });
 
     user = data.user;
     isOwner = user.id === userId;
+    titles = data.parsedLib;
   } catch (e) {
     if (e instanceof AxiosError) {
       const code = e.response?.data?.code || 500;
@@ -75,22 +80,6 @@ const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ para
 
   if (!lib) {
     return <NotFoundScreen />
-  }
-
-  const titles: ITitle[] = [];
-
-  for (const i in lib.titles) {
-    const id = lib.titles[i];
-
-    try {
-      titles.push((await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${id}`)).data.title)
-    } catch (e) {
-      if (e instanceof AxiosError) {
-        devMode ? console.error(e?.response?.data) : null
-      } else {
-        devMode ? console.error(e) : null
-      }
-    }
   }
 
   return (
