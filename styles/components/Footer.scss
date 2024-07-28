@@ -3,6 +3,8 @@
 
 .footer {
   &-socialItem {
+    outline: none;
+
     svg {
       path, rect {
         transition: .1s ease-in-out;

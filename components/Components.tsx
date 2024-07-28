@@ -24,11 +24,16 @@ import CatImg from '../assets/img/oopsIndevCat.png';
  */
 export const LoadingImage: NextPage<{ src: string, alt?: string, className?: string, parentClassName?: string, priority?: boolean, loading?: 'lazy' | 'eager', width: string, height: string }> = ({ src, alt, className, loading, priority, height, width, parentClassName }) => {
   const [loaded, setLoaded] = useState(false)
+  const [isErrored, setIsErrored] = useState(false)
 
   return (
-    <div className={`relative ${parentClassName ? parentClassName : ''}`} style={{ width, height }}>
-      <Image src={src || ''} alt={alt || '...'} fill priority={priority || false} loading={loading || 'lazy'} className={`duration-200 opacity-0 absolute top-0 left-0 z-[2] ${className ? className : ''}`} onLoad={e => { e.currentTarget.style.opacity = '1'; setLoaded(true) }} />
-      <Skeleton width={'100%'} height={'100%'} className={`absolute top-0 left-0 duration-200 ${loaded ? 'opacity-0' : ''}`} />
+    <div className={`relative ${isErrored ? 'bg-darkGrey' : ''} ${parentClassName ? parentClassName : ''}`} style={{ width, height }}>
+      <Image src={src || ''} alt={alt || '...'} fill priority={priority || false} loading={loading || 'lazy'} className={`duration-200 opacity-0 absolute top-0 left-0 z-[2] ${className ? className : ''}`} onLoad={e => { e.currentTarget.style.opacity = '1'; setLoaded(true) }} onError={() => setIsErrored(true)} />
+      <Skeleton width={'100%'} height={'100%'} className={`absolute top-0 left-0 duration-200 ${loaded || isErrored ? 'opacity-0' : ''}`} />
+
+      <div className={`absolute w-full h-full flex justify-center items-center opacity-0 duration-200 ${isErrored ? 'opacity-100' : ''}`}>
+        <IcoGhost width={40} height={40} />
+      </div>
     </div>
   )
 }
@@ -49,6 +54,7 @@ export const WatchButton: NextPage<{ href: string, className?: string, gradient:
 export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLParagraphElement>(null)
 
   const topOffset = 4;
   const bottomOffset = 8;
@@ -60,11 +66,9 @@ export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
     if (!card || !bottom) return;
 
     let inactiveHeight = (bottom.querySelector('.titleCardNew-heading') as HTMLParagraphElement).offsetHeight + topOffset + bottomOffset;
-    let activeHeight = bottom.scrollHeight + topOffset + bottomOffset;
 
     window.addEventListener('resize', () => {
       inactiveHeight = (bottom.querySelector('.titleCardNew-heading') as HTMLParagraphElement).offsetHeight + topOffset + bottomOffset;
-      activeHeight = bottom.scrollHeight + topOffset + bottomOffset;
 
       bottom.style.maxHeight = `${inactiveHeight}px`;
     })
@@ -73,36 +77,47 @@ export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
     bottom.style.paddingTop = `${topOffset}px`
     bottom.style.paddingBottom = `${bottomOffset}px`
 
-    card.addEventListener('mouseleave', () => {
+    // Hide
+    card.addEventListener('mouseleave', hide)
+    card.addEventListener('touchend', hide)
+    card.addEventListener('focusout', hide)
+
+    // Show
+    card.addEventListener('touchstart', show)
+    card.addEventListener('touchmove', show)
+    card.addEventListener('mouseenter', show)
+    card.addEventListener('focusin', show)
+
+
+
+    function hide() {
+      const bottom = bottomRef.current;
+      const title = titleRef.current;
+
+      if (!bottom || !title) return;
+
+      title.style.webkitLineClamp = '2'
       bottom.style.maxHeight = `${inactiveHeight}px`;
-    })
+    }
 
-    card.addEventListener('touchend', () => {
-      bottom.style.maxHeight = `${inactiveHeight}px`;
-    })
+    function show() {
+      const bottom = bottomRef.current;
+      const title = titleRef.current;
 
-    // Active
+      if (!bottom || !title) return;
 
-    card.addEventListener('touchstart', () => {
-      bottom.style.maxHeight = `${activeHeight}px`;
-    })
-
-    card.addEventListener('touchmove', () => {
-      bottom.style.maxHeight = `${activeHeight}px`;
-    })
-
-    card.addEventListener('mouseenter', () => {
-      bottom.style.maxHeight = `${activeHeight}px`;
-    })
+      title.style.webkitLineClamp = '6';
+      bottom.style.maxHeight = `${bottom.scrollHeight + topOffset + bottomOffset}px`;
+    }
   }, [])
 
   return (
-    <Link href={`${config.URL.baseURL}/w/${title.code}`} className='flex flex-col justify-end relative min-w-[200px] w-full h-[240px] rounded-[4px] overflow-hidden' ref={cardRef}>
+    <Link href={`${config.URL.baseURL}/w/${title.code}`} className='flex flex-col justify-end relative min-w-[200px] w-full h-[240px] rounded-[4px] overflow-hidden outline-none' ref={cardRef}>
       <LoadingImage src={title.poster} className='rounded-b-[4px]' parentClassName='!absolute top-0 left-0' width='100%' height='100%' />
 
       <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark/[.8]`} ref={bottomRef}>
         <div className='flex flex-col gap-[4px]'>
-          <p className='titleCardNew-heading text-white font-bold text-ellipsis line-clamp-[2]' title={title.names.ukr}>{title.names.ukr}</p>
+          <p className='titleCardNew-heading text-white font-bold text-ellipsis line-clamp-[2]' title={title.names.ukr} ref={titleRef}>{title.names.ukr}</p>
 
           <p className='text-lightGrey text-[12px] whitespace-break-spaces'>
             {title.genres.length ? title.genres.slice(0, 3).map((genre, i) => {

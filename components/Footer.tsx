@@ -110,8 +110,8 @@ const Footer: NextPage = (props) => {
 
   function FooterLink({ href, text, disabled }: { href: string, text: string, disabled?: boolean }) {
     return <li>
-      <Link href={href} aria-disabled={disabled} target='_blank'>
-        <p className={`${disabled ? 'text-lightGrey' : 'text-white duration-100 hover:text-gradientPrimaryFallback focus-visible:text-gradientPrimaryFallback'}`}>{text}</p>
+      <Link href={href} aria-disabled={disabled} target='_blank' className={`outline-none ${disabled ? 'text-lightGrey' : 'text-white duration-100 hover:text-gradientPrimaryFallback focus-visible:text-gradientPrimaryFallback'}`}>
+        {text}
       </Link>
     </li>
   }

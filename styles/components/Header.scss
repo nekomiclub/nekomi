@@ -2,14 +2,15 @@
 
 .header {
   &-ico {
-    svg {
-      &:hover,
-      &:focus-visible {
-        path {
-          fill: $gradientPrimaryFallback;
-        }
-      }
 
+    &:hover,
+    &:focus-visible {
+      svg path {
+        fill: $gradientPrimaryFallback;
+      }
+    }
+
+    svg {
       path {
         transition: .1s ease-in-out;
       }

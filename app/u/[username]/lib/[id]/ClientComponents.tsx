@@ -38,7 +38,7 @@ export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle
     <div className='flex flex-col gap-[24px]'>
       <div className='flex items-center w-full'>
         <div className='w-full flex-1'>
-          <UserDivider label={`${lib.settings.name} (${lib.titles.length})`} isOwner={isOwner} hidden={lib.settings.hidden} />
+          <UserDivider label={isOwner || !lib.settings.hidden ? `${lib.settings.name} (${lib.titles.length})` : '—'} isOwner={isOwner} hidden={lib.settings.hidden} />
         </div>
 
         <div className='flex gap-[8px]'>

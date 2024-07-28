@@ -197,7 +197,7 @@ const Header: NextPage = () => {
       <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200`}>
         <div className="wrapper !flex-row items-center justify-between w-full">
           <div className='flex items-center gap-[40px]'>
-            <Link href={routes.home.path}>
+            <Link href={routes.home.path} className='duration-200 hover:rotate-[5deg] focus-visible:rotate-[5deg] outline-none'>
               <IcoAnimeeLogo width={60} height={60} fill='#FF464E' />
             </Link>
 
@@ -218,10 +218,7 @@ const Header: NextPage = () => {
             {/* User authorized */}
 
             <Menu.Menu trigger={
-              <div className='flex items-center gap-[16px]'>
-                {/* // TODO */}
-                {/* <IcoBell width={40} height={40} /> */}
-
+              <div className='flex items-center gap-[16px] duration-200 hover:bg-grey rounded-[2px] overflow-hidden pr-[8px]'>
                 <div className='flex justify-center items-center gap-[8px]'>
                   <LoadingImage src={user.avatar} loading='eager' priority width='60px' height='60px' parentClassName='overflow-hidden rounded-[4px]' />
 
@@ -264,12 +261,14 @@ const Header: NextPage = () => {
             {/* User not authorized */}
 
             <Menu.Menu trigger={
-              <div className='flex justify-center items-center gap-[8px]'>
-                <IcoUser width={40} height={40} />
+              <div className='flex justify-center items-center gap-[8px] duration-200 hover:bg-grey rounded-[2px] overflow-hidden pr-[8px]'>
+                <div className='p-[10px]'>
+                  <IcoUser width={40} height={40} />
+                </div>
 
                 <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
               </div>
-            } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden' align='end' animation='slide'>
+            } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden' align='end' animation='slide' gap={18}>
               <Menu.MenuList>
                 <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={signIn}>
                   <IcoExit width={24} height={24} fill='#FF464E' />

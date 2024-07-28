@@ -101,7 +101,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 /** User section divider */
 export const UserDivider: NextPage<{ label: string, hidden: boolean, isOwner: boolean }> = ({ label, hidden, isOwner }) => {
   return (
-    <Tooltip content={`Цей розділ ${hidden ? 'прихований' : 'публічний'}`} className='flex items-center gap-[16px]'>
+    <Tooltip content={isOwner ? `Цей розділ ${hidden ? 'прихований' : 'публічний'}` : '—'} className='flex items-center gap-[16px]'>
       <p className='text-white text-[32px] font-bold flex-shrink-0 max-[600px]:text-[24px]'>{label}</p>
 
       {isOwner && <div className='flex-shrink-0'>
@@ -135,7 +135,7 @@ export const UserSectionLibs: NextPage<{ user: IUser, isOwner: boolean }> = ({ i
 export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: string }> = ({ lib, isOwner, username }) => {
   return (
     <>
-      {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${username}/lib/${lib.id}`} className='p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey'>
+      {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${username}/lib/${lib.id}`} className='p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none'>
         {lib.type === 'favorite' && <IcoHeartFilled width={128} height={128} fill='#FF464E' className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
         {lib.type === 'watching' && <IcoStack width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
         {lib.type === 'plans' && <IcoClockFilled width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
