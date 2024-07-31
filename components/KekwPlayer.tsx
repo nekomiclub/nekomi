@@ -82,7 +82,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const [isLastEpisode, setIsLastEpisode] = useState(false)
   const [isTimeToEndScreen, setIsTimeToEndScreen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const [isIdle, setIsIdle] = useState(true)
+  const [isIdle, setIsIdle] = useState(false)
   const [isContinueMenuOpen, setIsContinueMenuOpen] = useState(false)
 
   // Video states
@@ -940,6 +940,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   }
 
 
+
   return (
     <div className='w-full h-full relative overflow-hidden flex flex-col justify-between bg-black' id='player' ref={playerRef}>
       {/* Screen wrapper */}
@@ -985,7 +986,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
           <PiP isPiP={isPiP} videoRef={videoRef} />
 
           {/* Settings */}
-          <Settings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} />
+          <Settings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} isIdle={isIdle} />
 
           {/* Fullscreen */}
           <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
@@ -1027,13 +1028,13 @@ const ContinueProgressScreen: NextPage<{
         </div> : <p className='text-white text-[24px] text-center'>Команда невідома</p>}
       </div>
 
-      <div className='kekwplayer-screen-continue_action px-[24px] py-[16px] w-full bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple flex items-center justify-between gap-[24px] cursor-pointer' role='button' onClick={() => loadProgress()}>
-        <div className='flex items-center gap-[32px]'>
+      <div className='kekwplayer-screen-continue_action px-[24px] py-[16px] w-full bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple flex items-center justify-between gap-[24px] cursor-pointer max-[700px]:flex-col' role='button' onClick={() => loadProgress()}>
+        <div className='flex items-center gap-[32px] max-[700px]:flex-col'>
           <p className='text-white text-[32px] font-bold'>#{localData?.ep}</p>
 
-          <div className='flex flex-col gap-[4px]'>
-            <p className='text-white text-[24px] text-ellipsis line-clamp-[1]' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
-            <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1] duration-200' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}</p>
+          <div className='flex flex-col gap-[4px] max-[700px]:items-center'>
+            <p className='text-white text-[24px] text-ellipsis line-clamp-[1] text-center max-[700px]:line-clamp-3' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
+            <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1] duration-200 text-center max-[700px]:line-clamp-3' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}</p>
           </div>
         </div>
 
@@ -1129,8 +1130,8 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, episode, setEpiso
       <div className='flex items-center max-[680px]:flex-col gap-[32px] w-full'>
         <p className='text-white text-[32px] font-bold'>#{nextEp}</p>
         <div className='flex flex-col gap-[4px]'>
-          <p className='text-white text-[24px] text-ellipsis line-clamp-[1]' title={epMeta?.names.ukr || 'Наступний епізод'}>{epMeta?.names.ukr || 'Наступний епізод'}</p>
-          <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1]' title={epMeta?.names.eng || '—'}>{epMeta?.names.eng || '—'}</p>
+          <p className='text-white text-[24px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3' title={epMeta?.names.ukr || 'Наступний епізод'}>{epMeta?.names.ukr || 'Наступний епізод'}</p>
+          <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3' title={epMeta?.names.eng || '—'}>{epMeta?.names.eng || '—'}</p>
         </div>
       </div>
     </div>
@@ -1251,13 +1252,13 @@ const Menu = memo<IMenuProps>(function Menu({ order, dubbers, episode, isLastEpi
         <span className='w-[1px] h-auto bg-darkGrey block'></span>
 
         {/* Episodes */}
-        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
+        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px] w-fit'>
           {episodes.filter(el => el.dubberID === episode.dubberID).sort((a, b) => a.order - b.order).map(episode => {
             function setEpisode() {
               changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)!, 0)
             }
 
-            return <UMenu.MenuItem className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] w-full ${episode.order === order ? 'bg-purple' : ''} cursor-pointer`} onClick={setEpisode} key={`menu-eps_list--${episode.order}`}>
+            return <UMenu.MenuItem className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] ${episode.order === order ? 'bg-purple' : ''} cursor-pointer`} onClick={setEpisode} key={`menu-eps_list--${episode.order}`}>
               <p className='text-white'>{episode.order}</p>
             </UMenu.MenuItem>
           })}
@@ -1292,22 +1293,24 @@ interface ISettingsProps {
   videoRef: RefObject<HTMLVideoElement>
   stretch: boolean,
   setStretch: (state: boolean) => void,
+  isIdle: boolean
 }
 
-const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, speed, epData, isVideoProcessed, videoRef, stretch, setStretch }) {
+const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, speed, epData, isVideoProcessed, videoRef, stretch, setStretch, isIdle }) {
   const [page, setPage] = useState<TSettingPage>('list')
-  const listsRef = useRef<HTMLDivElement>(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const listsRef = useRef<HTMLDivElement>(null)
   const qualityRef = useRef<HTMLDivElement>(null)
   const speedRef = useRef<HTMLDivElement>(null)
 
-  const menuPx = 8; //! Edit only this var to change menu padding
-  const menuPy = 4; //! Edit only this var to change menu padding
-  const menuWidth = 260; //! Edit only this var to change menu width
+  const menuPx = 8; //! Edit this var to change menu padding
+  const menuPy = 4; //! Edit this var to change menu padding
+  const menuWidth = 260; //! Edit this var to change menu width
 
   // Set default placement
   useEffect(() => {
-    const menu = document.querySelector('#kp-settings_menu') as HTMLDivElement | undefined
+    const menu = document.querySelector('#kekwplayer-settings_menu') as HTMLDivElement | undefined
     const lists = listsRef.current;
     const quality = qualityRef.current;
     const speed = speedRef.current;
@@ -1317,24 +1320,21 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
     menu.style.width = `${menuWidth}px`
     menu.style.right = `-${menuWidth / 4}px`
 
-    reset()
+    setDefault(lists)
+    setDefault(quality)
+    setDefault(speed)
 
-    lists.style.bottom = `${menuPy}px`
-    lists.style.left = `${menuPx}px`
-    lists.style.width = `${menuWidth - (menuPx * 2)}px`
+    function setDefault(el: HTMLElement) {
+      el.style.bottom = `${menuPy}px`
+      el.style.left = `${menuPx}px`
+      el.style.width = `${menuWidth - (menuPx * 2)}px`
+    }
 
-    quality.style.bottom = `${menuPy}px`
-    quality.style.left = `${menuPx}px`
-    quality.style.width = `${menuWidth - (menuPx * 2)}px`
-
-    speed.style.bottom = `${menuPy}px`
-    speed.style.left = `${menuPx}px`
-    speed.style.width = `${menuWidth - (menuPx * 2)}px`
   }, [])
 
   // Change page
   useEffect(() => {
-    const menu = document.querySelector('#kp-settings_menu') as HTMLDivElement | undefined
+    const menu = document.querySelector('#kekwplayer-settings_menu') as HTMLDivElement | undefined
     const lists = listsRef.current;
     const quality = qualityRef.current;
     const speed = speedRef.current;
@@ -1345,51 +1345,59 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
     reset()
 
     if (page === 'list') {
-      lists.style.transform = 'translateX(0)';
-      lists.style.opacity = '1';
-      lists.style.visibility = 'visible';
-
-      menu.style.height = `${lists.offsetHeight + (menuPy * 2)}px`
+      setPage(lists)
     } else if (page === 'quality') {
-      quality.style.transform = 'translateX(0)';
-      quality.style.opacity = '1';
-      quality.style.visibility = 'visible';
-
-      menu.style.height = `${quality.offsetHeight + (menuPy * 2)}px`;
+      setPage(quality)
     } else if (page === 'speed') {
-      speed.style.transform = 'translateX(0)';
-      speed.style.opacity = '1';
-      speed.style.visibility = 'visible';
+      setPage(speed)
+    }
 
-      menu.style.height = `${speed.offsetHeight + (menuPy * 2)}px`;
+    function setPage(el: HTMLElement) {
+      const menu = document.querySelector('#kekwplayer-settings_menu') as HTMLDivElement | undefined
+
+      if (!menu) return;
+
+      el.style.transform = 'translateX(0)';
+      el.style.opacity = '1';
+      el.style.visibility = 'visible';
+
+      menu.style.height = `${el.offsetHeight + (menuPy * 2)}px`;
     }
   }, [page])
 
+
+
   /** Reset menus position */
   function reset() {
-    const menu = document.querySelector('#kp-settings_menu') as HTMLDivElement | undefined
+    const menu = document.querySelector('#kekwplayer-settings_menu') as HTMLDivElement | undefined
     const lists = listsRef.current;
     const quality = qualityRef.current;
     const speed = speedRef.current;
 
     if (!menu || !lists || !quality || !speed) return;
 
-    lists.style.transform = `translateX(-${menuWidth + 24}px)`;
-    lists.style.opacity = '0';
-    lists.style.visibility = 'hidden';
+    resetMenu(lists)
+    resetMenu(quality)
+    resetMenu(speed)
 
-    quality.style.transform = `translateX(${menuWidth + 24}px)`;
-    quality.style.opacity = '0';
-    quality.style.visibility = 'hidden';
+    function resetMenu(el: HTMLElement) {
+      const gap = 24;
 
-    speed.style.transform = `translateX(${menuWidth + 24}px)`;
-    speed.style.opacity = '0';
-    speed.style.visibility = 'hidden';
+      el.style.transform = `translateX(${menuWidth + gap}px)`;
+      el.style.opacity = '0';
+      el.style.visibility = 'hidden';
+    }
   }
 
+  useEffect(() => {
+    if (isIdle) {
+      setIsMenuOpen(false)
+    }
+  }, [isIdle])
+
   return (
-    <div className='relative max-[460px]:hidden'>
-      <UMenu.Menu trigger={<MenuButton />} direction='top' align='end' className={`px-[${menuPx}px] py-[${menuPy}px] bg-dark rounded-[2px] overflow-hidden`} id='kp-settings_menu'>
+    <div className='relative max-[460px]:opacity-0 max-[460px]:invisible max-[460px]:absolute'>
+      <UMenu.Menu trigger={<MenuButton />} direction='top' align='end' gap={16} className={`px-[${menuPx}px] py-[${menuPy}px] bg-dark rounded-[2px] overflow-hidden`} state={isMenuOpen} stateSetter={setIsMenuOpen} statePriority='outer' id='kekwplayer-settings_menu'>
         {/* List */}
         <div ref={listsRef} className={`absolute bottom-0 left-0 duration-200 max-h-[200px] overflow-y-scroll`}>
           <UMenu.MenuList className={`flex flex-col gap-[4px]`}>
@@ -1411,6 +1419,8 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
       </UMenu.Menu>
     </div>
   )
+
+
 
   function MenuButton() {
     return <div className={'relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'}>

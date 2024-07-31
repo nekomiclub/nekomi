@@ -124,14 +124,14 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
 
                 <div className='flex flex-col gap-[16px]'>
                   <div className='flex flex-col gap-[8px]'>
-                    <div className='watch-grid gap-[8px]'>
-                      <MetaCard label='епізоди' value={`${episodesDubbed || '—'} / ${title.episodesCount || '—'}`} />
-                      <MetaCard label='статус' value={parseTitleStatus(title.status)} />
-                      <MetaCard label='рейтниг' specialType='ageRate' value={'NULL'} />
-                      <MetaCard label='сезон' value={parseTitleSeason(title.season)} />
-                      <MetaCard label='тип' value={parseTitleType(title.type)} />
-                      <MetaCard label='країна' value={parseTitleCountry(title.country)} />
-                      <MetaCard label='студії' value={title.studios.join(', ')} />
+                    <div className='grid grid-cols-7 max-[1568px]:grid-cols-5 max-[1084px]:grid-cols-3 max-[890px]:grid-cols-5 max-[726px]:grid-cols-3 max-[530px]:grid-cols-2 max-[490px]:grid-cols-1 gap-[8px]'>
+                      <MetaCard label='епізоди' value={`${episodesDubbed || '—'} / ${title.episodesCount || '—'}`} className='' />
+                      <MetaCard label='статус' value={parseTitleStatus(title.status)} className='' />
+                      <MetaCard label='рейтниг' specialType='ageRate' value={'NULL'} className='' />
+                      <MetaCard label='сезон' value={parseTitleSeason(title.season)} className='' />
+                      <MetaCard label='тип' value={parseTitleType(title.type)} className='' />
+                      <MetaCard label='країна' value={parseTitleCountry(title.country)} className='max-[1568px]:col-span-2 max-[1084px]:col-span-1 max-[890px]:col-span-2 max-[726px]:col-span-1' />
+                      <MetaCard label='студії' value={title.studios.join(', ')} className='max-[1568px]:col-span-3 max-[1084px]:col-span-3 max-[890px]:col-span-3 max-[726px]:col-span-3 max-[530px]:col-span-2 max-[490px]:col-span-1' />
                     </div>
 
                     <div className='grid grid-cols-2 max-[1210px]:grid-cols-1 gap-[8px]'>
@@ -290,7 +290,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
       <div className={`watch-grid_item flex flex-col items-center justify-center gap-[8px] px-[16px] py-[8px] rounded-[4px] bg-darkGrey ${className ? className : ''}`}>
         {specialType ? <>
           {specialType === 'ageRate' && <Tooltip content={title.ageRate === 'G' ? 'Для всіх' : title.ageRate === 'PG' ? 'Для дітей' : title.ageRate === 'PG-13' ? 'Для дітей від 13 років' : title.ageRate === 'R+' ? '18+' : title.ageRate === 'R-17' ? 'Для підлітків від 17 років' : '—'}>
-            <p className={`uppercase text-center max-[470px]:text-[12px] ${title.ageRate === 'R-17' || title.ageRate === 'R+' || title.ageRate === 'Rx' ? 'font-bold text-gradientPrimaryFallback' : 'text-white'}`}>{title.ageRate}</p>
+            <p className={`uppercase text-center ${title.ageRate === 'R-17' || title.ageRate === 'R+' || title.ageRate === 'Rx' ? 'font-bold text-gradientPrimaryFallback' : 'text-white'}`}>{title.ageRate}</p>
           </Tooltip>}
 
           {specialType === 'genres' && <div className='flex gap-[8px] justify-center flex-wrap'>
@@ -305,7 +305,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                   </p>
                 </Tooltip>
               })}
-            </> : <p className='text-lightGrey text-center max-[470px]:text-[12px]'>—</p>}
+            </> : <p className='text-lightGrey text-center'>—</p>}
           </div>}
 
           {specialType === 'dubbers' && <div className='flex gap-[8px] justify-center flex-wrap'>
@@ -318,13 +318,13 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                   {++immutableI < dubbers.length ? ',' : ''}
                 </Link>
               })}
-            </> : <p className='text-lightGrey text-center max-[470px]:text-[12px]'>—</p>}
+            </> : <p className='text-lightGrey text-center'>—</p>}
           </div>}
         </> : <>
-          <p className='text-white uppercase text-center max-[470px]:text-[12px]'>{value}</p>
+          <p className='text-white uppercase text-center'>{value}</p>
         </>}
 
-        <p className='text-lightGrey text-[12px] uppercase max-[470px]:text-[8px]'>{label}</p>
+        <p className='text-lightGrey text-[12px] uppercase'>{label}</p>
       </div>
     )
   }
