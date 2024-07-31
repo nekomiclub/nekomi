@@ -43,40 +43,26 @@ export async function generateMetadata(
 // Fetch title
 export default async function RSC({ params }: IRSCProps<{ query: string }>) {
   let title: ITitle | null = null;
-  let totalEps = 0;
   let dubbers: IDubber[] = []
+  let episodesDubbed = 0;
 
   try {
-    const { data } = await $api.get<{ title: ITitle }>(`/title/${params.query}?detailed=true`)
+    const { data } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] | null }>(`/title/${params.query}`, {
+      params: {
+        detailed: true,
+        parseDubbers: true
+      }
+    });
 
     title = data.title;
-
-    title.episodes.forEach(ep => {
-      if (ep.order > totalEps) totalEps = ep.order;
-    })
+    dubbers = data.parsedDubbers || [];
 
     if (title.episodes.length) {
-      const uniqueDubbers: string[] = []
+      let tmp = 0;
 
-      title.episodes.forEach(ep => uniqueDubbers.includes(ep.dubberID) ? null : uniqueDubbers.push(ep.dubberID))
+      title.episodes.forEach(el => el.order > tmp ? tmp = el.order : null)
 
-      const { data } = await $api.post<{ results: IDubber[] }>(`/v1/dubber/parse`, {
-        queries: uniqueDubbers
-      })
-
-      dubbers = data.results
-    } else {
-      dubbers = []
-    }
-
-    if (title.episodesCount === null) {
-      let maxEp = 0;
-
-      title.episodes.forEach(ep => {
-        if (ep.order > maxEp) maxEp = ep.order;
-      })
-
-      title.episodesCount = maxEp;
+      episodesDubbed = tmp;
     }
   } catch (e) {
     if (e instanceof AxiosError) {
@@ -98,5 +84,5 @@ export default async function RSC({ params }: IRSCProps<{ query: string }>) {
     }
   }
 
-  return <Watch title={title!} dubbers={dubbers} totalEps={totalEps} />
+  return <Watch title={title} dubbers={dubbers} episodesDubbed={episodesDubbed} />
 }

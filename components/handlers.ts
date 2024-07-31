@@ -26,11 +26,11 @@ export function parseTitleCountry(country: string): string {
     }
 
     case 'Other': {
-      return 'Країна ще неоновлена / невідома'
+      return '—'
     }
   }
 
-  return `Країна ще не перекладена - ${country}`
+  return country
 }
 
 /** Parse type

@@ -31,8 +31,8 @@ export const LoadingImage: NextPage<{ src: string, alt?: string, className?: str
       <Image src={src || ''} alt={alt || '...'} fill priority={priority || false} loading={loading || 'lazy'} className={`duration-200 opacity-0 absolute top-0 left-0 z-[2] ${className ? className : ''}`} onLoad={e => { e.currentTarget.style.opacity = '1'; setLoaded(true) }} onError={() => setIsErrored(true)} />
       <Skeleton width={'100%'} height={'100%'} className={`absolute top-0 left-0 duration-200 ${loaded || isErrored ? 'opacity-0' : ''}`} />
 
-      <div className={`absolute w-full h-full flex justify-center items-center opacity-0 duration-200 ${isErrored ? 'opacity-100' : ''}`}>
-        <IcoGhost width={40} height={40} />
+      <div className={`absolute top-0 left-0 w-full h-full flex justify-center items-center opacity-0 duration-200 ${isErrored ? 'opacity-100' : ''}`}>
+        <IcoGhost width={16} height={16} className='w-[50%] h-[50%]' />
       </div>
     </div>
   )

@@ -218,7 +218,7 @@ const Header: NextPage = () => {
             {/* User authorized */}
 
             <Menu.Menu trigger={
-              <div className='flex items-center gap-[16px] duration-200 hover:bg-grey rounded-[2px] overflow-hidden pr-[8px]'>
+              <div className='flex items-center gap-[16px] duration-200 rounded-[2px] overflow-hidden pr-[8px]'>
                 <div className='flex justify-center items-center gap-[8px]'>
                   <LoadingImage src={user.avatar} loading='eager' priority width='60px' height='60px' parentClassName='overflow-hidden rounded-[4px]' />
 
@@ -261,7 +261,7 @@ const Header: NextPage = () => {
             {/* User not authorized */}
 
             <Menu.Menu trigger={
-              <div className='flex justify-center items-center gap-[8px] duration-200 hover:bg-grey rounded-[2px] overflow-hidden pr-[8px]'>
+              <div className='flex justify-center items-center gap-[8px] duration-200 rounded-[2px] overflow-hidden pr-[8px]'>
                 <div className='p-[10px]'>
                   <IcoUser width={40} height={40} />
                 </div>

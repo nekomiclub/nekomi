@@ -941,69 +941,65 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
 
   return (
-    // In view
-    <div className='w-full h-full relative overflow-hidden' id="player">
-      {/* Wrapper */}
-      <div className='w-full h-full flex flex-col justify-between bg-black relative z-[5]' ref={playerRef}>
-        {/* Screen wrapper */}
-        <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center z-[15] bg-dark/[.5] backdrop-blur-[32px] duration-200 px-[24px] ${isTimeToEndScreen || isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-          {/* Ep ended */}
-          <EpEndScreen endScreen={endScreen} episode={episode} setEpisode={setEpisode} title={title} isTime={isTimeToEndScreen} videoRef={videoRef} />
+    <div className='w-full h-full relative overflow-hidden flex flex-col justify-between bg-black' id='player' ref={playerRef}>
+      {/* Screen wrapper */}
+      <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center z-[15] bg-dark/[.5] backdrop-blur-[32px] duration-200 px-[24px] ${isTimeToEndScreen || isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+        {/* Ep ended */}
+        <EpEndScreen endScreen={endScreen} episode={episode} setEpisode={setEpisode} title={title} isTime={isTimeToEndScreen} videoRef={videoRef} />
 
-          {/* Last ep in dub */}
-          <LastEpScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
+        {/* Last ep in dub */}
+        <LastEpScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
 
-          {/* Title ended */}
-          <TitleEndScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
+        {/* Title ended */}
+        <TitleEndScreen endScreen={endScreen} isTime={isTimeToEndScreen} />
 
-          {/* Continue progress */}
-          {localData && <ContinueProgressScreen loadProgress={loadProgress} passProgress={passProgress} dubbers={dubbers} localData={localData} isTime={isContinueMenuOpen} title={title} />}
+        {/* Continue progress */}
+        {localData && <ContinueProgressScreen loadProgress={loadProgress} passProgress={passProgress} dubbers={dubbers} localData={localData} isTime={isContinueMenuOpen} title={title} />}
+      </div>
+
+      {/* Mobile skip wrapper */}
+      <div className={isMobile ? 'w-full h-full absolute top-0 left-0 z-[10] flex' : 'hidden'} ref={mobileSkipWrapper}>
+        <div className='w-full h-full' ref={mobilePrevSkipRef}></div>
+        <div className='w-full h-full' ref={mobileNextSkipRef}></div>
+      </div>
+
+      {/* Menu */}
+      <Menu order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
+
+      {/* Bottom */}
+      <div className={`flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px] duration-200 translate-y-0 ${isIdle ? 'translate-y-[100%]' : ''}`}>
+        <div className='flex items-center gap-[16px]'>
+          {/* Play/Pause */}
+          <Play isPlaying={isPlaying} videoRef={videoRef} />
+
+          {/* Volume */}
+          <Volume volume={volume} isMuted={isMuted} videoRef={videoRef} volumeRef={volumeRef} />
         </div>
 
-        {/* Mobile skip wrapper */}
-        <div className={isMobile ? 'w-full h-full absolute top-0 left-0 z-[10] flex' : 'hidden'} ref={mobileSkipWrapper}>
-          <div className='w-full h-full' ref={mobilePrevSkipRef}></div>
-          <div className='w-full h-full' ref={mobileNextSkipRef}></div>
-        </div>
+        {/* Range */}
+        <Timeline duration={duration} moment={moment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
 
-        {/* Menu */}
-        <Menu order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
-
-        {/* Bottom */}
-        <div className={`flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px] duration-200 translate-y-0 ${isIdle ? 'translate-y-[100%]' : ''}`}>
-          <div className='flex items-center gap-[16px]'>
-            {/* Play/Pause */}
-            <Play isPlaying={isPlaying} videoRef={videoRef} />
-
-            {/* Volume */}
-            <Volume volume={volume} isMuted={isMuted} videoRef={videoRef} volumeRef={volumeRef} />
-          </div>
-
-          {/* Range */}
-          <Timeline duration={duration} moment={moment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
+        {/* Settings */}
+        <div className='flex items-center gap-[16px]'>
+          {/* PiP */}
+          <PiP isPiP={isPiP} videoRef={videoRef} />
 
           {/* Settings */}
-          <div className='flex items-center gap-[16px]'>
-            {/* PiP */}
-            <PiP isPiP={isPiP} videoRef={videoRef} />
+          <Settings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} />
 
-            {/* Settings */}
-            <Settings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} />
+          {/* Fullscreen */}
+          <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
+        </div>
+      </div>
 
-            {/* Fullscreen */}
-            <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
-          </div>
+      {/* Video */}
+      <div className='w-full h-full absolute top-0 left-0'>
+        {/* Loader */}
+        <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 touch-none pointer-events-none ${isVideoLoading ? 'opacity-100' : 'opacity-0'}`}>
+          <loader.DotPulse color='#fff' size={80} />
         </div>
 
-        {/* Video */}
-        <div className='w-full h-full absolute top-0 left-0'>
-          {/* Loader */}
-          <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 touch-none pointer-events-none ${isVideoLoading ? 'opacity-100' : 'opacity-0'}`}>
-            <loader.DotPulse color='#fff' size={80} />
-          </div>
-
-          <video src={''} preload='auto' controlsList='nodownload' className={`w-full h-full ${stretch ? 'object-cover' : ''}`} controls={false} ref={videoRef}></video>
-        </div>
+        <video src={''} preload='auto' controlsList='nodownload' className={`w-full h-full ${stretch ? 'object-cover' : ''}`} controls={false} ref={videoRef}></video>
       </div>
     </div>
   );
@@ -1031,13 +1027,13 @@ const ContinueProgressScreen: NextPage<{
         </div> : <p className='text-white text-[24px] text-center'>Команда невідома</p>}
       </div>
 
-      <div className='px-[24px] py-[16px] w-full bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple flex items-center justify-between gap-[24px] cursor-pointer' role='button' onClick={() => loadProgress()}>
+      <div className='kekwplayer-screen-continue_action px-[24px] py-[16px] w-full bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple flex items-center justify-between gap-[24px] cursor-pointer' role='button' onClick={() => loadProgress()}>
         <div className='flex items-center gap-[32px]'>
           <p className='text-white text-[32px] font-bold'>#{localData?.ep}</p>
 
           <div className='flex flex-col gap-[4px]'>
             <p className='text-white text-[24px] text-ellipsis line-clamp-[1]' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
-            <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1]' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}</p>
+            <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1] duration-200' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}</p>
           </div>
         </div>
 
