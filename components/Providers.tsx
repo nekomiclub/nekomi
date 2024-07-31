@@ -96,62 +96,61 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
     })()
   }, [])
 
+  // Establish websocket connection
+  // useEffect(() => {
+  //   if (typeof window === undefined) return;
 
+  //   (async function () {
+  //     if (!ws) {
+  //       setWs(new WebSocket(config.URL.apiWS))
+  //     }
+  //   })()
+  // }, [])
 
-  useEffect(() => {
-    if (typeof window === undefined) return;
+  // useEffect(() => {
+  //   if (!ws || typeof window === undefined) return;
 
-    (async function () {
-      if (!ws) {
-        setWs(new WebSocket(config.services.apiWS))
-      }
-    })()
-  }, [])
+  //   ws.onerror = e => console.error(`WS error: ${e}`)
 
-  useEffect(() => {
-    if (!ws) return;
+  //   let sid = (Math.random() + 1).toString(36).substring(8);
+  //   let prevAudience = 0;
 
-    ws.onerror = e => console.error(`WS error: ${e}`)
+  //   ws.onopen = () => {
+  //     if (!localStorage.getItem('sid')) {
+  //       localStorage.setItem('sid', sid)
+  //     } else {
+  //       sid = localStorage.getItem('sid')!
+  //     }
 
-    let sid = (Math.random() + 1).toString(36).substring(8);
-    let prevAudience = 0;
+  //     const payload: IWS<IWSPresence> = {
+  //       type: 'presence',
+  //       payload: {
+  //         sid,
+  //         connectedAt: +new Date()
+  //       }
+  //     }
 
-    ws.onopen = () => {
-      if (!localStorage.getItem('sid')) {
-        localStorage.setItem('sid', sid)
-      } else {
-        sid = localStorage.getItem('sid')!
-      }
+  //     ws.send(JSON.stringify(payload))
+  //   }
 
-      const payload: IWS<IWSPresence> = {
-        type: 'presence',
-        payload: {
-          sid,
-          connectedAt: +new Date()
-        }
-      }
+  //   ws.onmessage = raw => {
+  //     const message = JSON.parse(raw.data) as { type: TWS, payload: any };
 
-      ws.send(JSON.stringify(payload))
-    }
+  //     //* Update presence 
+  //     if (prevAudience !== message.payload.audience) {
+  //       const payload: IWS<IWSPresence> = {
+  //         type: 'presence',
+  //         payload: {
+  //           sid,
+  //           connectedAt: +new Date()
+  //         }
+  //       }
 
-    ws.onmessage = raw => {
-      const message = JSON.parse(raw.data) as { type: TWS, payload: any };
-
-      //* Update presence 
-      if (prevAudience !== message.payload.audience) {
-        const payload: IWS<IWSPresence> = {
-          type: 'presence',
-          payload: {
-            sid,
-            connectedAt: +new Date()
-          }
-        }
-
-        prevAudience = message.payload.audience
-        ws.send(JSON.stringify(payload))
-      };
-    }
-  }, [ws])
+  //       prevAudience = message.payload.audience
+  //       ws.send(JSON.stringify(payload))
+  //     };
+  //   }
+  // }, [ws])
 
   return (
     <>

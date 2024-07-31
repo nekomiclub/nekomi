@@ -13,49 +13,49 @@ import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/
 
 let isFirstOpen = true;
 const Footer: NextPage = (props) => {
-  const [ws, setWs] = useState<WebSocket>()
+  // const [ws, setWs] = useState<WebSocket>()
   const [online, setOnline] = useState(1)
 
-  useEffect(() => {
-    if (typeof window !== undefined && !ws) {
-      setWs(new WebSocket(config.services.apiWS))
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (typeof window !== undefined && !ws) {
+  //     setWs(new WebSocket(config.services.apiWS))
+  //   }
+  // }, [])
 
-  useEffect(() => {
-    if (!ws) return;
-    let sid = (Math.random() + 1).toString(36).substring(8)
+  // useEffect(() => {
+  //   if (!ws) return;
+  //   let sid = (Math.random() + 1).toString(36).substring(8)
 
-    ws.onopen = () => {
-      const payload: IWS<IWSPresence> = {
-        type: 'presence/audience',
-        payload: {
-          sid,
-          connectedAt: +new Date()
-        }
-      }
+  //   ws.onopen = () => {
+  //     const payload: IWS<IWSPresence> = {
+  //       type: 'presence/audience',
+  //       payload: {
+  //         sid,
+  //         connectedAt: +new Date()
+  //       }
+  //     }
 
-      ws.send(JSON.stringify(payload))
-    }
+  //     ws.send(JSON.stringify(payload))
+  //   }
 
-    ws.onmessage = raw => {
-      const message = JSON.parse(raw.data) as { type: TWS, payload: any };
+  //   ws.onmessage = raw => {
+  //     const message = JSON.parse(raw.data) as { type: TWS, payload: any };
 
-      if (message.type === 'presence') {
-        setOnline((message as IWS<IWSPresence>).payload.audience!)
-      }
+  //     if (message.type === 'presence') {
+  //       setOnline((message as IWS<IWSPresence>).payload.audience!)
+  //     }
 
-      if (isFirstOpen) {
-        isFirstOpen = false;
-        ws.close();
-        setWs(new WebSocket(config.services.apiWS))
-      }
-    }
-  }, [ws])
+  //     if (isFirstOpen) {
+  //       isFirstOpen = false;
+  //       ws.close();
+  //       setWs(new WebSocket(config.services.apiWS))
+  //     }
+  //   }
+  // }, [ws])
 
   return (
     <footer className='relative w-full bg-dark'>
-      <div className="wrapper min-[1260px]:!flex-row justify-between items-start !px-[32px] !py-[40px] max-[1260px]:gap-[40px] max-[1260px]:items-center max-[760px]:items-start">
+      <div className="wrapper min-[1260px]:!flex-row justify-between items-start !px-[32px] !py-[40px] max-[1260px]:gap-[40px] max-[1260px]:items-center max-[760px]:items-start gap-[24px]">
         {/* Left */}
         <div className='flex gap-[16px] items-center max-[760px]:w-full max-[760px]:justify-center max-[560px]:flex-col'>
           <IcoAnimeeLogo width={128} height={128} fill='#FF464E' />
@@ -102,7 +102,8 @@ const Footer: NextPage = (props) => {
 
         {/* Right */}
         <div className='flex justify-center max-[760px]:w-full'>
-          <p className='text-white'>Онлайн: <b className='font-bold gradient--primary-text'>{online}</b></p>
+          {/* <p className='text-white'>Онлайн: <b className='font-bold gradient--primary-text'>{online}</b></p> */}
+          <p className='text-white'>Онлайн: <span className='text-lightGrey text-[12px]'>Коти перегризли провода, вже фіксим</span></p>
         </div>
       </div>
     </footer>
