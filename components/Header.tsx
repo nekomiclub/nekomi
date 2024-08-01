@@ -37,6 +37,10 @@ export interface ISearchExtended<T = any> {
   item: T
 }
 
+interface ITitleSearched extends ITitle {
+  episodesDubbed: number
+}
+
 const Header: NextPage = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -76,6 +80,7 @@ const Header: NextPage = () => {
     if (!placeholderSearchQuery) return;
     if (placeholderSearchQuery.length !== 0 && isHintShowed) setIsHintShowed(false);
 
+    setIsSearchErrored(false);
     setSearchResults([
       { item: undefined, type: 'title' },
       { item: undefined, type: 'title' },
@@ -123,6 +128,7 @@ const Header: NextPage = () => {
         if (isSearchErrored) setIsSearchErrored(false);
       } catch (e) {
         setIsSearchErrored(true);
+        setSearchResults([])
         console.error(`Search error - `, e)
       }
     })()
@@ -282,7 +288,7 @@ const Header: NextPage = () => {
     </>
   );
 
-  /** @param title If not provided will return placeholder variant */
+  /** @param result If not provided will return placeholder variant */
   function SearchResult({ result }: { result?: ISearchExtended }) {
     return (
       <>
@@ -310,9 +316,9 @@ const Header: NextPage = () => {
                 <span className='text-lightGrey text-[12px]'>•</span>
 
                 <p className='text-white max-[700px]:text-[12px]'>{
-                  Number((result.item as ITitle).episodesCount) > 0 ? (result.item as ITitle).episodesCount : '—'
+                  Number((result.item as ITitleSearched).episodesDubbed) > 0 ? (result.item as ITitleSearched).episodesDubbed : '—'
                 } / {
-                    (result.item as ITitle).episodes.length ? (result.item as ITitle).episodes.sort((a, b) => a.order - b.order)[0].order : '—'
+                    Number((result.item as ITitle).episodesCount) > 0 ? (result.item as ITitle).episodesCount : '—'
                   }</p>
               </div>
             </div>
