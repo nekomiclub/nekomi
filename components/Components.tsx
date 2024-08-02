@@ -25,10 +25,32 @@ import CatImg from '../assets/img/oopsIndevCat.png';
 export const LoadingImage: NextPage<{ src: string, alt?: string, className?: string, parentClassName?: string, priority?: boolean, loading?: 'lazy' | 'eager', width: string, height: string }> = ({ src, alt, className, loading, priority, height, width, parentClassName }) => {
   const [loaded, setLoaded] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
+  const ref = useRef<HTMLImageElement>(null)
+
+  src = src || '';
+  alt = alt || '...';
+  priority = priority || false;
+  loading = loading || 'lazy';
+
+  useEffect(() => {
+    const image = ref.current;
+
+    if (!image) return;
+
+    if (image.complete) setLoaded(true)
+
+    image.addEventListener('load', () => setLoaded(true))
+    image.addEventListener('error', () => setIsErrored(true))
+  }, [])
 
   return (
     <div className={`relative ${isErrored ? 'bg-darkGrey' : ''} ${parentClassName ? parentClassName : ''}`} style={{ width, height }}>
-      <Image src={src || ''} alt={alt || '...'} fill priority={priority || false} loading={loading || 'lazy'} className={`duration-200 opacity-0 absolute top-0 left-0 z-[2] ${className ? className : ''}`} onLoad={e => { e.currentTarget.style.opacity = '1'; setLoaded(true) }} />
+      {src.includes(config.domain) ? <>
+        <Image src={src} alt={alt} fill priority={priority} loading={loading} className={`duration-200 ${loaded ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />
+      </> : <>
+        <img src={src} alt={alt} loading={loading} className={`w-full h-full duration-200 ${loaded ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />
+      </>}
+
       <Skeleton width={'100%'} height={'100%'} className={`absolute top-0 left-0 duration-200 ${loaded || isErrored ? 'opacity-0' : ''}`} />
 
       <div className={`absolute top-0 left-0 w-full h-full flex justify-center items-center opacity-0 duration-200 ${isErrored ? 'opacity-100' : ''}`}>
