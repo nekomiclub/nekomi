@@ -16,7 +16,7 @@ import { parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType }
 
 import './styles.scss'
 import IndevCat from '../../../assets/img/oopsIndevCat.png';
-import { IcoCan, IcoInfo, IcoStack, IcoStarRating, IcoWatched } from '../../../assets/Icons';
+import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoWatched } from '../../../assets/Icons';
 import { useAppSelector } from '../../../hooks/redux';
 import { IcoFolderAdd } from '../../../assets/Folder';
 import { animeGenres, config, genresDescription } from '../../../config';
@@ -92,9 +92,15 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
           </div>
 
           <div className='relative z-[3] flex flex-row gap-[24px] max-[890px]:!flex-col max-[890px]:items-center pt-[132px] pb-[40px]'>
-            <div className='watch-poster flex flex-col gap-[8px] max-[472px]:w-full'>
-              <div className='w-[500px] h-[700px] shrink-0 max-[1200px]:w-[350px] max-[1200px]:h-[500px] max-[472px]:w-full'>
+            <div className='watch-poster_wrapper flex flex-col gap-[8px] max-[472px]:w-full'>
+              <div className='watch-poster relative w-[500px] h-[700px] shrink-0 max-[1200px]:w-[350px] max-[1200px]:h-[500px] max-[472px]:w-full'>
                 <LoadingImage src={title.poster} width='100%' height='100%' loading='eager' priority parentClassName='rounded-[4px] overflow-hidden' />
+
+                <Link href={title.poster} target='_blank' className='watch-poster_link opacity-0 invisible duration-200 w-full h-full bg-dark/[.4] absolute top-0 left-0 flex justify-center items-center z-[3]'>
+                  <Tooltip content='Відкрити повний постер'>
+                    <IcoExternalLink width={128} height={128} />
+                  </Tooltip>
+                </Link>
               </div>
 
               <Menu.Menu trigger={<ManageLibTrigger isAuth={isAuth} libs={userLibs} inLibs={inLibs} />} disabled={!isAuth} className='bg-darkGrey' triggerClassName='w-full' align='stretch'>
@@ -128,7 +134,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                       <MetaCard label='епізоди' value={`${episodesDubbed || '—'} / ${title.episodesCount || '—'}`} className='' />
                       <MetaCard label='статус' value={parseTitleStatus(title.status)} className='' />
                       <MetaCard label='рейтниг' specialType='ageRate' value={'NULL'} className='' />
-                      <MetaCard label='сезон' value={parseTitleSeason(title.season)} className='' />
+                      <MetaCard label='сезон' value={`${parseTitleSeason(title.season)} ${title.year}`} className='' />
                       <MetaCard label='тип' value={parseTitleType(title.type)} className='' />
                       <MetaCard label='країна' value={parseTitleCountry(title.country)} className='max-[1568px]:col-span-2 max-[1084px]:col-span-1 max-[890px]:col-span-2 max-[726px]:col-span-1' />
                       <MetaCard label='студії' value={title.studios.join(', ')} className='max-[1568px]:col-span-3 max-[1084px]:col-span-3 max-[890px]:col-span-3 max-[726px]:col-span-3 max-[530px]:col-span-2 max-[490px]:col-span-1' />
@@ -211,7 +217,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
           <p className='text-white font-bold uppercase'>в {label}</p>
         </> : <Link href={`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}${pathname}`} className='flex gap-[16px]'>
           <IcoFolderAdd width={24} height={24} fill='#747474' />
-          <p className='text-lightGrey font-bold uppercase'>увійдіть в аканут</p>
+          <p className='text-lightGrey font-bold uppercase'>увійдіть в акаунт</p>
         </Link>}
       </div>
     )

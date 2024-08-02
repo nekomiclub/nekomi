@@ -15,7 +15,16 @@
 }
 
 .watch-poster {
-  .uvc-menu {
-    width: 100%;
+  &:hover {
+    .watch-poster_link {
+      opacity: 1;
+      visibility: visible;
+    }
   }
-} 
+
+  &_wrapper {
+    .uvc-menu {
+      width: 100%;
+    }
+  } 
+}
