@@ -16,12 +16,6 @@ import { IcoGhost, IcoHome, IcoInternet, IcoOffline } from '../assets/Icons';
 import '../styles/components/GeneralComponents.scss'
 import CatImg from '../assets/img/oopsIndevCat.png';
 
-/** Must be wrapped in div with relative position and dimensions
- * @example
- * <div className="relative w-[32px] h-[32px]">
- *  <LoadingImage src='' /> 
- * </div>
- */
 export const LoadingImage: NextPage<{ src: string, alt?: string, className?: string, parentClassName?: string, priority?: boolean, loading?: 'lazy' | 'eager', width: string, height: string }> = ({ src, alt, className, loading, priority, height, width, parentClassName }) => {
   const [loaded, setLoaded] = useState(false)
   const [isErrored, setIsErrored] = useState(false)

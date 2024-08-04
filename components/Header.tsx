@@ -156,11 +156,6 @@ const Header: NextPage = () => {
     router.refresh();
   }
 
-  /** Sign in account */
-  function signIn() {
-    router.push(`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}${pathname}`)
-  }
-
   return (
     <>
       <Layer className='bg-dark/[.1] backdrop-blur-[64px] z-[1000] !fixed max-[700px]:items-start'>
@@ -276,9 +271,11 @@ const Header: NextPage = () => {
               </div>
             } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden' align='end' animation='slide' gap={18}>
               <Menu.MenuList>
-                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={signIn}>
-                  <IcoExit width={24} height={24} fill='#FF464E' />
-                  <p className='text-white text-center w-full'>Увійти</p>
+                <Menu.MenuItem>
+                  <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
+                    <IcoExit width={24} height={24} fill='#FF464E' />
+                    <p className='text-white text-center w-full'>Увійти</p>
+                  </Link>
                 </Menu.MenuItem>
               </Menu.MenuList>
             </Menu.Menu>
