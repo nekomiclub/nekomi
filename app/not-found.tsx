@@ -14,10 +14,6 @@ export default function Error({
   const pathname = headers().get('x-url')!.replace(config.URL.baseURL, '')
   const route = getRoute(pathname)
 
-  console.log('NOT FOUND')
-  console.log(headers().get('x-url'))
-  console.log(route)
-
   if (!route) {
     return <NotFoundScreen />
   }

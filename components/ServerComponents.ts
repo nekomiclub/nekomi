@@ -2,11 +2,13 @@ import { NextPage } from 'next';
 import { Tooltip as RT } from 'react-tooltip'
 import { IRoute, routes } from "../routes";
 import { createID } from './handlers';
+import { config } from '../config';
 
 
 /** Get route object by it's path */
 export function getRoute(path: string): IRoute | null {
-  let route: IRoute | null = null
+  let route: IRoute | null = null;
+  path = path.replace(config.URL.baseURL, '')
 
   for (const key in routes) {
     const routeRec = routes[key] as IRoute;

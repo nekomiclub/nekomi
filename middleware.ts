@@ -10,10 +10,6 @@ export async function middleware(req: NextRequest) {
   const headers = new Headers(req.headers);
   headers.set('x-url', req.url)
 
-  console.log(`MIDDLEWARE`)
-  console.log(req.url)
-  console.log(req.nextUrl)
-
   return res.next({
     headers
   });
