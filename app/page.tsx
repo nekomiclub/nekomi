@@ -23,14 +23,14 @@ export const metadata: Metadata = {
   }
 }
 
-const headlinerQuery = 'konosuba-god-s-blessing-on-this-wonderful-world-3';
+const headlinerQuery = '538a4a13-d473-4e7d-be6a-13b26f10c53e';
 const titlesWatchingQueries = [
-  '538a4a13-d473-4e7d-be6a-13b26f10c53e',
+  'c6b9b3e3-3c8d-4597-a464-c22bfeb654dd',
   '534d41c4-f5d0-45db-9914-b5d9e649f048',
   '627690b0-f0c1-490d-b50e-c5ace32cd563',
   '0785c640-99ce-4195-863b-01712d794b96',
   'd675e08c-034d-4b8b-b60f-c362c6ebec34',
-  'db284cc51-cf3b-4251-a96e-4ce945ac1595'
+  'b284cc51-cf3b-4251-a96e-4ce945ac1595'
 ]
 
 
