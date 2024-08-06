@@ -54,11 +54,9 @@ const RSC: NextPage = async (props) => {
     if (e instanceof AxiosError) {
       const code = e.response?.data?.code || 500;
 
-      devMode ? console.error(e.response?.data) : null;
+      console.error(e.response?.data)
 
-      if (code === 404) {
-        return <NotFoundScreen />
-      } else if (code === 400) {
+      if (code === 400) {
         return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
       } else {
         return <HappenedWrongScreen cause={e.message} />
