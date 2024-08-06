@@ -25,12 +25,12 @@ export const metadata: Metadata = {
 
 const headlinerQuery = 'konosuba-god-s-blessing-on-this-wonderful-world-3';
 const titlesWatchingQueries = [
-  'that-time-i-got-reincarnated-as-a-slime-season-3',
-  'wind-breaker',
-  'spice-and-wolf-merchant-meets-the-wise-wolf',
-  'mushoku-tensei-jobless-reincarnation-season-2-part-2',
-  'kaiju-no-8',
-  'delicious-in-dungeon'
+  '538a4a13-d473-4e7d-be6a-13b26f10c53e',
+  '534d41c4-f5d0-45db-9914-b5d9e649f048',
+  '627690b0-f0c1-490d-b50e-c5ace32cd563',
+  '0785c640-99ce-4195-863b-01712d794b96',
+  'd675e08c-034d-4b8b-b60f-c362c6ebec34',
+  'db284cc51-cf3b-4251-a96e-4ce945ac1595'
 ]
 
 
@@ -56,7 +56,9 @@ const RSC: NextPage = async (props) => {
 
       console.error(e.response?.data)
 
-      if (code === 400) {
+      if (code === 404) {
+        return <HappenedWrongScreen cause={`Помилка в отриманні тайтлів - Деякі тайтли не знайдені`} />
+      } else if (code === 400) {
         return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
       } else {
         return <HappenedWrongScreen cause={e.message} />
