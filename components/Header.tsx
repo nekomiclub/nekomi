@@ -241,11 +241,12 @@ const Header: NextPage = () => {
                   </Link>
                 </Menu.MenuItem>
 
-                {/* // TODO */}
-                {/* <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button'>
-                  <IcoSettings width={24} height={24} />
-                  <p className='text-lightGrey w-full'>Налаштування</p>
-                </Menu.MenuItem> */}
+                <Menu.MenuItem>
+                  <Link href={`${config.URL.fkAccount}/me`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' target='_blank'>
+                    <IcoSettings width={24} height={24} />
+                    <p className='text-white w-full'>Акаунт</p>
+                  </Link>
+                </Menu.MenuItem>
 
                 {/* Divider */}
                 <Menu.MenuItem className='w-full h-[1px]'>
