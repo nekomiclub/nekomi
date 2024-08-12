@@ -12,9 +12,10 @@ import { ITokenData, TUserRoles } from '../interfaces/ITokenData';
 import { useAppDispatch } from '../hooks/redux';
 import userSlice, { userStateDefault } from '../store/reducers/userSlice';
 import { config } from '../config';
-import { IWS, IWSPresence, TWS } from '../interfaces/IWS';
 import { IUsapiUser, IUser } from '../interfaces/IUser';
 import { $api } from './http';
+import { IWS, IWSPollPresence, IWSSendPresence } from '../interfaces/IWS';
+import storageSlice from '../store/reducers/storageSlice';
 
 const store = setupStore();
 
@@ -35,10 +36,10 @@ export const Storage: NextPage<{ children: any }> = ({ children }) => {
 export const State: NextPage<{ children: any }> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [ws, setWs] = useState<WebSocket>()
 
-  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
 
   // Fetch user
@@ -97,60 +98,77 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
   }, [])
 
   // Establish websocket connection
-  // useEffect(() => {
-  //   if (typeof window === undefined) return;
+  useEffect(() => {
+    if (typeof window === undefined) return;
 
-  //   (async function () {
-  //     if (!ws) {
-  //       setWs(new WebSocket(config.URL.apiWS))
-  //     }
-  //   })()
-  // }, [])
+    (async function () {
+      if (!ws) {
+        setWs(new WebSocket(config.URL.apiWS))
+      }
+    })()
+  }, [])
 
-  // useEffect(() => {
-  //   if (!ws || typeof window === undefined) return;
+  // Send presence websocket request
+  useEffect(() => {
+    if (!ws || typeof window === undefined) return;
 
-  //   ws.onerror = e => console.error(`WS error: ${e}`)
+    let SID = localStorage.getItem('SID')
 
-  //   let sid = (Math.random() + 1).toString(36).substring(8);
-  //   let prevAudience = 0;
+    if (!SID) {
+      SID = (Math.random() + 1).toString(36).substring(6);
+      localStorage.setItem('SID', SID);
+    }
 
-  //   ws.onopen = () => {
-  //     if (!localStorage.getItem('sid')) {
-  //       localStorage.setItem('sid', sid)
-  //     } else {
-  //       sid = localStorage.getItem('sid')!
-  //     }
+    // Send presence request
+    ws.onopen = () => {
+      try {
+        const payload: IWS<IWSSendPresence> = {
+          type: 'send_presence',
+          payload: {
+            SID
+          }
+        }
 
-  //     const payload: IWS<IWSPresence> = {
-  //       type: 'presence',
-  //       payload: {
-  //         sid,
-  //         connectedAt: +new Date()
-  //       }
-  //     }
+        ws.send(JSON.stringify(payload))
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
-  //     ws.send(JSON.stringify(payload))
-  //   }
+    // Handle broadcast
+    ws.onmessage = data => {
+      try {
+        const message = JSON.parse(data.data) as IWS;
 
-  //   ws.onmessage = raw => {
-  //     const message = JSON.parse(raw.data) as { type: TWS, payload: any };
+        if (message.type === 'error') {
+          console.error('AN WEBSOCKET ERROR OCCURED WHEN SENDING PRESENCE REQUEST');
+          console.error(message.payload);
 
-  //     //* Update presence 
-  //     if (prevAudience !== message.payload.audience) {
-  //       const payload: IWS<IWSPresence> = {
-  //         type: 'presence',
-  //         payload: {
-  //           sid,
-  //           connectedAt: +new Date()
-  //         }
-  //       }
+          return;
+        } else if (message.type === 'poll_presence') {
+          const { payload } = message as IWS<IWSPollPresence>;
 
-  //       prevAudience = message.payload.audience
-  //       ws.send(JSON.stringify(payload))
-  //     };
-  //   }
-  // }, [ws])
+          dispatch(storageSlice.actions.reducer({
+            online: payload.online
+          }))
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    // Send disconnect request
+    window.addEventListener('beforeunload', () => {
+      const payload: IWS<IWSSendPresence> = {
+        type: 'disconnect_presence',
+        payload: {
+          SID
+        }
+      }
+
+      ws.send(JSON.stringify(payload));
+    })
+  }, [ws])
 
   return (
     <>

@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import userSlice from './reducers/userSlice';
+import storageSlice from './reducers/storageSlice';
 
 export interface IReduxAction<T> {
   type: string,
@@ -8,7 +9,8 @@ export interface IReduxAction<T> {
 }
 
 const rootReducer = combineReducers({
-  user: userSlice.reducer
+  user: userSlice.reducer,
+  storage: storageSlice.reducer
 });
 
 export const setupStore = () => {
