@@ -27,7 +27,7 @@ export const config = {
     apiHTTP: prodMode ? `https://api.animee.club` : `http://${devIP}`,
 
     /** Animee-core websocket URL */
-    apiWS: prodMode ? `wss://api.animee.club` : `ws://${devIP}:8080`,
+    apiWS: prodMode ? `wss://api.animee.club/ws` : `ws://${devIP}:8080`,
 
     /** Fullkekw userapi URL */
     fkUsapi: prodMode ? `https://usapi.animee.club` : `http://${devIP}:45660`,
