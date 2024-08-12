@@ -11,7 +11,7 @@ import { IRoute, TRouteStatus, routes } from '../routes';
 import { ITokenData, TUserRoles } from '../interfaces/ITokenData';
 import { useAppDispatch } from '../hooks/redux';
 import userSlice, { userStateDefault } from '../store/reducers/userSlice';
-import { config } from '../config';
+import { config, prodMode } from '../config';
 import { IUsapiUser, IUser } from '../interfaces/IUser';
 import { $api } from './http';
 import { IWS, IWSPollPresence, IWSSendPresence } from '../interfaces/IWS';
@@ -101,6 +101,8 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
   useEffect(() => {
     if (typeof window === undefined) return;
 
+    if (prodMode) return;
+
     (async function () {
       if (!ws) {
         setWs(new WebSocket(config.URL.apiWS))
@@ -111,6 +113,8 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
   // Send presence websocket request
   useEffect(() => {
     if (!ws || typeof window === undefined) return;
+
+    if (prodMode) return;
 
     let SID = localStorage.getItem('SID')
 
