@@ -215,7 +215,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
         {isAuth ? <>
           <IcoFolderAdd width={24} height={24} />
           <p className='text-white font-bold uppercase'>в {label}</p>
-        </> : <Link href={`${config.URL.fkAccount}/continue?ref=${config.URL.baseURL}${pathname}`} className='flex gap-[16px]'>
+        </> : <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className='flex gap-[16px]'>
           <IcoFolderAdd width={24} height={24} fill='#747474' />
           <p className='text-lightGrey font-bold uppercase'>увійдіть в акаунт</p>
         </Link>}
