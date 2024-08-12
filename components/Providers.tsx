@@ -125,7 +125,7 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
         const payload: IWS<IWSSendPresence> = {
           type: 'send_presence',
           payload: {
-            SID
+            SID: SID || ''
           }
         }
 
@@ -162,7 +162,7 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
       const payload: IWS<IWSSendPresence> = {
         type: 'disconnect_presence',
         payload: {
-          SID
+          SID: SID || ''
         }
       }
 
