@@ -1033,8 +1033,8 @@ const ContinueProgressScreen: NextPage<{
           <p className='text-white text-[32px] font-bold'>#{localData?.ep}</p>
 
           <div className='flex flex-col gap-[4px] max-[700px]:items-center'>
-            <p className='text-white text-[24px] text-ellipsis line-clamp-[1] text-center max-[700px]:line-clamp-3' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
-            <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1] duration-200 text-center max-[700px]:line-clamp-3' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}</p>
+            <p className='text-white text-[24px] text-ellipsis line-clamp-[1] max-[700px]:text-center max-[700px]:line-clamp-3' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
+            <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1] duration-200 max-[700px]:text-center max-[700px]:line-clamp-3' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}</p>
           </div>
         </div>
 
@@ -1115,8 +1115,10 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, episode, setEpiso
 
     if (!video) return;
 
-    episode.order = nextEp;
-    setEpisode(episode)
+    const nextEpisode = JSON.parse(JSON.stringify(episode)) as ITitleEpisode;
+    nextEpisode.order = nextEp;
+
+    setEpisode(nextEpisode);
 
     setTimeout(() => {
       video.play().catch(e => null)

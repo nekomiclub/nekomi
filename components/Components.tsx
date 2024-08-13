@@ -40,9 +40,9 @@ export const LoadingImage: NextPage<{ src: string, alt?: string, className?: str
   return (
     <div className={`relative ${isErrored ? 'bg-darkGrey' : ''} ${parentClassName ? parentClassName : ''}`} style={{ width, height }}>
       {src.includes(config.domain) ? <>
-        <Image src={src} alt={alt} fill priority={priority} loading={loading} className={`duration-200 ${loaded ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />
+        <Image src={src} alt={alt} fill priority={priority} loading={loading} className={`duration-200 ${loaded && !isErrored ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />
       </> : <>
-        <img src={src} alt={alt} loading={loading} className={`w-full h-full duration-200 ${loaded ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />
+        <img src={src} alt={alt} loading={loading} className={`w-full h-full duration-200 ${loaded && !isErrored ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />
       </>}
 
       <Skeleton width={'100%'} height={'100%'} className={`absolute top-0 left-0 duration-200 ${loaded || isErrored ? 'opacity-0' : ''}`} />
