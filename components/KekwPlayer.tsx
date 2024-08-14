@@ -32,7 +32,7 @@ type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
 type TEndScreen = 'clear' | 'epEnded' | 'titleEnded' | 'lastEp';
 type TStage = 'setup' | 'operational'
 
-interface IKekwPlayerLocalDataItem {
+export interface IKekwPlayerLocalDataItem {
   id: string,
   dub: string,
   ep: number,
@@ -1905,7 +1905,7 @@ const Fullscreen: NextPage<IFullscreenProps> = ({ isFullscreen, playerRef }) => 
 
 
 
-function secondsToReadable(time: number): { hrs: number, mins: number, secs: number, pretty: string } {
+export function secondsToReadable(time: number): { hrs: number, mins: number, secs: number, pretty: string } {
   let mins = Math.floor(time / 60);
   const secs = Math.floor(time - mins * 60);
   let hrs = 0;

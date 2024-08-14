@@ -1,11 +1,12 @@
 import { Metadata, NextPage } from 'next';
-import Home from './Home';
+import Home, { IHomeCategories } from './Home';
 import { ITitle } from '../interfaces/ITitle';
 import { config, devMode, prodMode } from '../config';
 import axios, { AxiosError } from 'axios';
 import Link from 'next/link';
 import { HappenedWrongScreen, NotFoundScreen } from '../components/Components';
 import { getUTC } from '../components/handlers';
+import { $api } from '../components/http';
 
 export const metadata: Metadata = {
   title: 'Animee',
@@ -23,40 +24,26 @@ export const metadata: Metadata = {
   }
 }
 
-const headlinerQuery = prodMode ? '538a4a13-d473-4e7d-be6a-13b26f10c53e' : 'konosuba-god-s-blessing-on-this-wonderful-world-3';
-const titlesWatchingQueries = prodMode ? [
-  'c6b9b3e3-3c8d-4597-a464-c22bfeb654dd',
-  '534d41c4-f5d0-45db-9914-b5d9e649f048',
-  '627690b0-f0c1-490d-b50e-c5ace32cd563',
-  '0785c640-99ce-4195-863b-01712d794b96',
-  'd675e08c-034d-4b8b-b60f-c362c6ebec34',
-  'b284cc51-cf3b-4251-a96e-4ce945ac1595'
-] : [
-  'that-time-i-got-reincarnated-as-a-slime-season-3',
-  'wind-breaker',
-  'spice-and-wolf-merchant-meets-the-wise-wolf',
-  'mushoku-tensei-jobless-reincarnation-season-2-part-2',
-  'kaiju-no-8',
-  'delicious-in-dungeon'
-]
-
 
 
 const RSC: NextPage = async (props) => {
   let headliner: ITitle | null = null;
-  let watchingNow: ITitle[] = [];
+  let headlinerVideo = '';
+  let headlinerPoster = '';
+
+  let categories: IHomeCategories = {
+    hightRating: [],
+    popular: [],
+    updatedRecently: []
+  }
 
   try {
-    const { data } = await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${headlinerQuery}`);
+    const { data } = await $api.get<{ headliner: ITitle, headlinerVideo: string, headlinerPoster: string, categories: IHomeCategories }>(`/title/popular`);
 
-    headliner = data.title;
-
-    for (const i in titlesWatchingQueries) {
-      const code = titlesWatchingQueries[i];
-
-      const { data } = await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${code}`);
-      watchingNow.push(data.title)
-    }
+    headliner = data.headliner;
+    headlinerVideo = data.headlinerVideo;
+    categories = data.categories;
+    headlinerPoster = data.headlinerPoster;
   } catch (e) {
     if (e instanceof AxiosError) {
       const code = e.response?.data?.code || 500;
@@ -79,7 +66,7 @@ const RSC: NextPage = async (props) => {
     }
   }
 
-  return <Home headliner={headliner!} watchingNow={watchingNow} />
+  return <Home headliner={headliner!} categories={categories} headlinerVideo={headlinerVideo} headlinerPoster={headlinerPoster} />
 }
 
 export default RSC;
