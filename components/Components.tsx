@@ -67,7 +67,7 @@ export const WatchButton: NextPage<{ href: string, className?: string, gradient:
 }
 
 /** Title card */
-export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
+export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLParagraphElement>(null)
@@ -128,7 +128,7 @@ export const TitleCard: NextPage<{ title: ITitle }> = ({ title }) => {
   }, [])
 
   return (
-    <Link href={`${config.URL.baseURL}/w/${title.code}`} className='flex flex-col justify-end relative min-w-[200px] w-full h-[240px] rounded-[4px] overflow-hidden outline-none' ref={cardRef}>
+    <Link href={`${config.URL.baseURL}/w/${title.code}`} className={`flex flex-col justify-end relative min-w-[200px] w-full h-[240px] rounded-[4px] overflow-hidden outline-none ${className ? className : ''}`} ref={cardRef}>
       <LoadingImage src={title.poster} className='rounded-b-[4px]' parentClassName='!absolute top-0 left-0' width='100%' height='100%' />
 
       <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark/[.8]`} ref={bottomRef}>

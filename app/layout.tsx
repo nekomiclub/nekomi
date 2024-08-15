@@ -25,13 +25,13 @@ import { ServerUnavailable } from '../components/Components';
 import { signCSRF } from '../components/http';
 
 export const metadata: Metadata = {
-  title: 'Animee',
+  title: 'Animee Club',
   description: 'Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!',
   applicationName: 'Animee',
   metadataBase: new URL('https://animee.club'),
   keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'анімі', 'аніме', 'анімі клаб', 'animee', 'animee club'],
   openGraph: {
-    title: `Animee`,
+    title: `Animee Club`,
     description: `Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!`,
     url: 'https://animee.club',
     siteName: 'Animee',

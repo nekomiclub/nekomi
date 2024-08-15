@@ -9,7 +9,7 @@ import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import Skeleton from 'react-loading-skeleton';
-import { IcoPlay } from '../assets/Icons';
+import { IcoExternalLink, IcoGhost, IcoPlay, IcoStar, IcoStarRating } from '../assets/Icons';
 import Link from 'next/link';
 import { routes } from '../routes';
 import { IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
@@ -17,6 +17,8 @@ import * as loader from '@uiball/loaders';
 import { useIdleTimer } from 'react-idle-timer';
 import gsap from 'gsap';
 import { IKekwPlayerLocalDataItem, secondsToReadable } from '../components/KekwPlayer';
+import { createID } from '../components/handlers';
+import { IcoClockOutlined } from '../assets/Clock';
 
 interface IProps {
   headliner: ITitle
@@ -31,6 +33,8 @@ export interface IHomeCategories {
   updatedRecently: ITitle[]
   hightRating: ITitle[]
 }
+
+type TCategory = 'popular' | 'updatedRecently' | 'hightRate';
 
 const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlinerPoster }) => {
   const [isTrailerVisible, setIsTrailerVisible] = useState(false);
@@ -237,6 +241,70 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
     )
   })
 
+  const Label = memo(function Label({ icon, label }: { label: string, icon: React.ReactElement }) {
+    return (
+      <div className='flex items-center gap-[16px]'>
+        <div className='flex items-center gap-[16px] shrink-0'>
+          <div className='w-[32px] h-[32px] max-[880px]:w-[24px] max-[880px]:h-[24px]'>
+            {icon}
+          </div>
+          <h3 className='text-white text-[32px] font-bold max-[880px]:text-[24px]'>{label}</h3>
+        </div>
+
+        <span className='w-full h-[3px] gradient--primary'></span>
+      </div>
+    )
+  })
+
+  const Category = memo(function Category({ type }: { type: TCategory }) {
+    const id = createID();
+    let icon = <></>;
+    let label = '...';
+    let titles: ITitle[] = []
+
+    if (type === 'popular') {
+      label = 'Популярні'
+      icon = <IcoStar className='w-full h-full' />
+      titles = categories.popular
+    } else if (type === 'hightRate') {
+      label = 'З високою оцінкою'
+      icon = <IcoStarRating className='w-full h-full' />
+      titles = categories.hightRating
+    } else if (type === 'updatedRecently') {
+      label = 'Оновлено нещодавно'
+      icon = <IcoClockOutlined className='w-full h-full' />
+      titles = categories.updatedRecently
+    }
+
+    const TitlesRow = memo(function TitlesRow({ titles }: { titles: ITitle[] }) {
+      return <div className='min-w-0'>
+        <Swiper spaceBetween={16} slidesPerView={'auto'} className='ml-0'>
+          {titles.map(title => {
+            return <SwiperSlide className='!w-fit' key={`category-${id}--${title.id}`} >
+              <TitleCard title={title} className='w-[230px]' />
+            </SwiperSlide>
+          })}
+        </Swiper>
+      </div>
+    })
+
+    return (
+      <div className='flex flex-col gap-[16px]'>
+        <Label icon={icon} label={label} />
+
+        {titles.length ? <>
+          {titles.length > 10 ? <div className='flex flex-col gap-[8px]'>
+            <TitlesRow titles={titles.slice(0, 10)} />
+            <TitlesRow titles={titles.slice(10, 20)} />
+          </div> : <TitlesRow titles={titles} />}
+        </> : <div className='flex items-center justify-center gap-[24px]'>
+          <IcoGhost width={32} height={32} fill='#747474' />
+          <p className='text-lightGrey'>Тайтли відсутні</p>
+        </div>}
+      </div>
+    )
+  })
+
 
 
   return (
@@ -245,7 +313,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
 
       <main className='w-full h-full bg-dark min-h-screen'>
         {/* Headliner */}
-        <div className="wrapper w-full h-full min-h-screen">
+        <div className="wrapper w-full h-full min-h-screen !mb-[40px]">
           <div className={`w-full h-full min-h-screen flex items-center absolute top-0 right-0 px-[32px] max-[650px]:px-[16px] duration-300 opacity-100`} ref={posterScreenRef}>
             <PosterScreen />
           </div>
@@ -253,6 +321,35 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
           <div className={`w-full h-full min-h-screen flex items-center absolute top-0 right-0 px-[32px] max-[650px]:px-[16px] duration-300 opacity-0`} ref={trailerScreenRef}>
             <TrailerScreen />
           </div>
+        </div>
+
+        {/* Categories */}
+        <div className='wrapper gap-[32px]'>
+          <Category type='popular' />
+        </div>
+
+        <div className='wrapper bg-darkGrey !flex-row gap-[60px] py-[60px] items-center !my-[60px] max-[880px]:!flex-col'>
+          <IcoGhost width={128} height={128} className='shrink-0' />
+
+          <div className='flex flex-col gap-[24px]'>
+            <div className='flex flex-col gap-[8px]'>
+              <h2 className='text-white text-[40px] font-bold max-[650px]:text-[32px]'>А ти, підписаний на <span className='text-gradientPrimaryFallback text-[40px] max-[650px]:text-[32px]'>телеграм Animee?</span></h2>
+              <p className='text-white text-[24px] max-[650px]:text-[16px]'>Тут то ти і попався. Там публікується багато цікавого. Новини, оновлення там, та всяке інше з аніме тематики.</p>
+            </div>
+
+            <div className='flex flex-col gap-[8px] w-fit max-[650px]:w-full'>
+              <Link href={'#'} className='px-[16px] py-[16px] rounded-[2px] bg-grey flex items-center justify-center gap-[16px] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback'>
+                <IcoExternalLink width={32} height={32} />
+                <p className='text-white text-[24px] uppercase max-[650px]:text-[16px]'>підписатися</p>
+              </Link>
+              <p className='text-lightGrey max-[650px]:text-center'>Підпишись будь ласка, нам буде приємно 👉👈</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="wrapper gap-[32px]">
+          <Category type='updatedRecently' />
+          <Category type='hightRate' />
         </div>
       </main>
 

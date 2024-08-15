@@ -9,7 +9,7 @@ import { getUTC } from '../components/handlers';
 import { $api } from '../components/http';
 
 export const metadata: Metadata = {
-  title: 'Animee',
+  title: 'Головна - animee',
   description: 'Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!',
   applicationName: 'Animee',
   metadataBase: new URL('https://animee.club'),
