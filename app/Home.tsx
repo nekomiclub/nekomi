@@ -17,6 +17,7 @@ import gsap from 'gsap';
 import { IKekwPlayerLocalDataItem, secondsToReadable } from '../components/KekwPlayer';
 import { createID } from '../components/handlers';
 import { IcoClockOutlined } from '../assets/Clock';
+import Image from 'next/image';
 
 interface IProps {
   headliner: ITitle
@@ -129,7 +130,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
       <>
         {/* Background */}
         <div className='w-full h-full absolute top-0 left-0'>
-          <LoadingImage width='100%' height='100%' src={isMobile ? headliner.poster : headlinerPoster} loading='eager' priority />
+          <Image src={isMobile ? headliner.poster : headlinerPoster} fill alt='...' loading='eager' priority />
           <div className='absolute top-0 left-0 w-full h-full bg-dark/[.4] z-[2]'></div>
         </div>
 
@@ -159,12 +160,12 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
     const videoRef = useRef<HTMLVideoElement>(null)
 
     // Idle timer
-    // useIdleTimer({
-    //   timeout: 5000,
-    //   throttle: 500,
-    //   onIdle: () => setIsIdle(true),
-    //   onAction: () => setIsIdle(false)
-    // })
+    useIdleTimer({
+      timeout: 5000,
+      throttle: 500,
+      onIdle: () => setIsIdle(true),
+      onAction: () => setIsIdle(false)
+    })
 
     // Init
     useEffect(() => {
