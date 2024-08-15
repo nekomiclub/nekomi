@@ -5,8 +5,6 @@ import { LoadingImage } from '../../../components/Components';
 import UnniiiverseAvatar from '../../../assets/img/unniiiverseAvatar.png';
 import Link from 'next/link';
 import { IcoSocialGithub, IcoSocialTelegram } from '../../../assets/Social';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
 
 import './styles.scss';
 
@@ -21,12 +19,9 @@ export function generateMetadata(): Metadata {
 const RSC: NextPage<IRSCProps> = (props) => {
   return (
     <>
-      <Header />
-
       <div className="w-full h-full min-h-screen bg-dark">
         <div className="wrapper justify-center items-center w-full min-h-screen h-full px-[24px]">
           <div className='px-[24px] py-[24px] bg-darkGrey rounded-[4px] flex flex-col gap-[16px] w-full max-w-[600px]'>
-            {/* Header */}
             <div className='flex items-center gap-[16px] max-[460px]:flex-col'>
               <LoadingImage src={UnniiiverseAvatar.src} width='128px' height='128px' parentClassName='shrink-0' />
 
@@ -79,8 +74,6 @@ const RSC: NextPage<IRSCProps> = (props) => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </>
   );
 }

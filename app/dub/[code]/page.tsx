@@ -1,21 +1,23 @@
-import type { NextPage, Metadata, ResolvingMetadata } from 'next';
+import './styles.scss';
+
+import Link from 'next/link';
+
+import { NextPage, Metadata, ResolvingMetadata } from 'next';
+import axios, { AxiosError } from 'axios';
+
+import Tooltip from '../../../components/Tooltip';
 
 import { config, devMode } from '../../../config';
-import axios, { AxiosError } from 'axios';
 import { IDubber } from '../../../interfaces/IDubber';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
-import Link from 'next/link';
 import { routes } from '../../../routes';
-
-import './styles.scss';
-import Tooltip from '../../../components/Tooltip';
 import { DubStats, DubCrew } from './clientContent';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/Social';
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/Support';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { getUTC } from '../../../components/handlers';
+
+
 
 export async function generateMetadata(
   { params }: IRSCProps,
@@ -45,12 +47,14 @@ export async function generateMetadata(
   }
 }
 
+
+
 export default async function RSC({ params }: IRSCProps<{ code: string }>) {
   // @ts-ignore
   let dubberData: IDubber = {};
 
   try {
-    const res = await axios.get<IDubber>(`${config.services.apiURL}/v1/dubber/${params.code}`);
+    const res = await axios.get<IDubber>(`${config.URL.apiHTTP}/v1/dubber/${params.code}`);
     dubberData = res.data
   } catch (e) {
     if (e instanceof AxiosError) {
@@ -76,8 +80,6 @@ export default async function RSC({ params }: IRSCProps<{ code: string }>) {
 
   return (
     <div className="w-full min-h-screen h-full bg-dark">
-      <Header />
-
       <div className='py-[200px]'>
         <div className="wrapper h-full items-center justify-center">
           <div className='flex flex-col gap-[32px] relative items-center rounded-[4px] bg-darkGrey px-[32px] py-[24px] w-full'>
@@ -199,8 +201,6 @@ export default async function RSC({ params }: IRSCProps<{ code: string }>) {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   )
 }

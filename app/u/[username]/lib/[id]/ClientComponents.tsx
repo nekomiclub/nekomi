@@ -3,22 +3,18 @@
 import { NextPage } from 'next';
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
+
+import Tooltip from '../../../../../components/Tooltip';
+
 import { IUser, IUserLib } from '../../../../../interfaces/IUser';
 import { UserDivider, UserLibCard } from '../../ClientComponents';
 import { TitleCard, copyToClipboard } from '../../../../../components/Components';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { getUTC } from '../../../../../components/handlers';
-import Tooltip from '../../../../../components/Tooltip';
 import { IcoChain } from '../../../../../assets/Icons';
 import { config } from '../../../../../config';
 
-// export const ClientComponents: NextPage = (props) => {
-//   return (
-//     <div className="ClientComponents">
 
-//     </div>
-//   );
-// }
 
 /** User lib section */
 export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle[] }> = ({ isOwner, lib, titles }) => {
@@ -60,6 +56,8 @@ export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle
     </div>
   );
 }
+
+
 
 /** User other libs */
 export const UserLibOthers: NextPage<{ user: IUser, isOwner: boolean, currentLibID: string }> = ({ isOwner, user, currentLibID }) => {

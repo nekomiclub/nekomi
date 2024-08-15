@@ -1,18 +1,19 @@
 import { Metadata, NextPage, ResolvingMetadata } from 'next';
-import { IRSCProps } from '../../../../../interfaces/IRSC';
 import { cookies } from 'next/headers';
+import axios, { AxiosError } from 'axios';
+
+import { IRSCProps } from '../../../../../interfaces/IRSC';
 import { config, devMode } from '../../../../../config';
 import { decodeToken, getUTC } from '../../../../../components/handlers';
 import { ISessionCookieData } from '../../../../../interfaces/ITokenData';
 import { IUsapiUser, IUser } from '../../../../../interfaces/IUser';
-import axios, { AxiosError } from 'axios';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../../../components/Components';
-import Header from '../../../../../components/Header';
-import Footer from '../../../../../components/Footer';
 import { UserHeader } from '../../ClientComponents';
 import { UserLib, UserLibOthers } from './ClientComponents';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { $api } from '../../../../../components/http';
+
+
 
 export function generateMetadata(
   { params }: IRSCProps<{ username: string }>,
@@ -28,6 +29,8 @@ export function generateMetadata(
     robots: 'noindex,nofollow'
   }
 }
+
+
 
 const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ params }) => {
   const { username, id } = params;
@@ -84,8 +87,6 @@ const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ para
 
   return (
     <>
-      <Header />
-
       <div className='w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]'>
         <UserHeader user={user!} isOwner={isOwner} />
 
@@ -97,8 +98,6 @@ const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ para
           <UserLibOthers user={user!} isOwner={isOwner} currentLibID={params.id} />
         </div>
       </div>
-
-      <Footer />
     </>
   );
 }

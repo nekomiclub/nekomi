@@ -16,8 +16,12 @@ body {
   overflow-x: hidden !important;
 }
 
-body {
+html {
   scroll-behavior: smooth;
+}
+
+body {
+  overflow: hidden;
 }
 
 img {
@@ -47,11 +51,6 @@ img {
   }
 }
 
-#root {
-  min-height: 100vh;
-  height: 100%;
-}
-
 li {
   list-style-type: none !important;
 }
@@ -76,6 +75,13 @@ input::placeholder {
   font-size: $fontSize;
 }
 
+b, i, span, a {
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
 b {
   font-weight: 700;
 }
@@ -87,11 +93,6 @@ i {
 input,
 button {
   outline: none;
-}
-
-html,
-body {
-  scroll-behavior: smooth;
 }
 
 * {
@@ -108,7 +109,11 @@ body {
   }
 }
 
+
+
 //* ------------ NEW -------------------
+
+
 
 // SVG TO DATA IMAGE https://www.svgbackgrounds.com/tools/svg-to-css/
 .gradient {

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 
 
-const RSC: NextPage = async (props) => {
+export default async function RSC() {
   let headliner: ITitle | null = null;
   let headlinerVideo = '';
   let headlinerPoster = '';
@@ -68,5 +68,3 @@ const RSC: NextPage = async (props) => {
 
   return <Home headliner={headliner!} categories={categories} headlinerVideo={headlinerVideo} headlinerPoster={headlinerPoster} />
 }
-
-export default RSC;

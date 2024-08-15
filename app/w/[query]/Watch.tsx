@@ -1,21 +1,24 @@
 'use client'
 
-import { NextPage } from 'next';
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import './styles.scss'
 
 import * as Menu from 'uvc-menu';
+
+import Link from 'next/link';
+import Image from 'next/image';
+
+import { NextPage } from 'next';
+import { useRouter, usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+
+import IndevCat from '../../../assets/img/oopsIndevCat.png';
+import Tooltip from '../../../components/Tooltip';
+import KekwPlayer from '../../../components/KekwPlayer';
+
 import { ITitle } from '../../../interfaces/ITitle';
 import { IDubber } from '../../../interfaces/IDubber';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
 import { LoadingImage } from '../../../components/Components';
 import { parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
-
-import './styles.scss'
-import IndevCat from '../../../assets/img/oopsIndevCat.png';
 import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoWatched } from '../../../assets/Icons';
 import { useAppSelector } from '../../../hooks/redux';
 import { IcoFolderAdd } from '../../../assets/Folder';
@@ -24,8 +27,8 @@ import { IUser, IUserLib, TUserLibType } from '../../../interfaces/IUser';
 import { $api } from '../../../components/http';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoHeartFilled } from '../../../assets/Heart';
-import Tooltip from '../../../components/Tooltip';
-import KekwPlayer from '../../../components/KekwPlayer';
+
+
 
 interface IProps {
   title: ITitle
@@ -33,6 +36,8 @@ interface IProps {
 
   episodesDubbed: number
 }
+
+
 
 const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
   const state = useAppSelector(state => state.user);
@@ -80,8 +85,6 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
 
   return (
     <>
-      <Header />
-
       <main className='w-full h-full min-h-screen bg-dark'>
         {/* Top */}
         <div className="wrapper !mb-[60px]">
@@ -183,8 +186,6 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
           </div>
         </div>}
       </main>
-
-      <Footer />
     </>
   );
 

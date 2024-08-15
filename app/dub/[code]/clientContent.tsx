@@ -1,9 +1,10 @@
 'use client'
 
 import { NextPage } from 'next';
+import Link from 'next/link';
+
 import Tooltip from '../../../components/Tooltip';
 import { IDubber } from '../../../interfaces/IDubber';
-import Link from 'next/link';
 import { routes } from '../../../routes';
 import { IcoClockOutlined } from '../../../assets/Clock';
 import { IcoCalendar, IcoCrown, IcoPen, IcoPeople, IcoStarRating } from '../../../assets/Icons';

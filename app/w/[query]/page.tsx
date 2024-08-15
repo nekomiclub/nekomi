@@ -1,13 +1,17 @@
 import { NextPage, Metadata, ResolvingMetadata } from "next";
-import { ITitle } from "../../../interfaces/ITitle";
-import Watch from "./Watch";
-import { config, devMode } from "../../../config";
 import axios, { AxiosError } from "axios";
+
+import Watch from "./Watch";
+
+import { ITitle } from "../../../interfaces/ITitle";
+import { config, devMode } from "../../../config";
 import { IDubber } from "../../../interfaces/IDubber";
 import { getUTC } from "../../../components/handlers";
 import { IRSCProps } from "../../../interfaces/IRSC";
 import { $api } from "../../../components/http";
 import { HappenedWrongScreen, NotFoundScreen } from "../../../components/Components";
+
+
 
 export async function generateMetadata(
   { params }: IRSCProps,

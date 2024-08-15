@@ -2,8 +2,6 @@
 
 import { NextPage, Metadata } from 'next';
 import React, { useState, useEffect, useRef, memo } from 'react'
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { LoadingImage, TitleCard, WatchButton } from '../components/Components';
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
@@ -281,7 +279,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
         <Swiper spaceBetween={16} slidesPerView={'auto'} className='ml-0'>
           {titles.map(title => {
             return <SwiperSlide className='!w-fit' key={`category-${id}--${title.id}`} >
-              <TitleCard title={title} className='w-[230px]' />
+              <TitleCard title={title} className='!w-[230px]' />
             </SwiperSlide>
           })}
         </Swiper>
@@ -309,8 +307,6 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
 
   return (
     <>
-      <Header />
-
       <main className='w-full h-full bg-dark min-h-screen'>
         {/* Headliner */}
         <div className="wrapper w-full h-full min-h-screen !mb-[40px]">
@@ -333,7 +329,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
 
           <div className='flex flex-col gap-[24px]'>
             <div className='flex flex-col gap-[8px]'>
-              <h2 className='text-white text-[40px] font-bold max-[650px]:text-[32px]'>А ти, підписаний на <span className='text-gradientPrimaryFallback text-[40px] max-[650px]:text-[32px]'>телеграм Animee?</span></h2>
+              <h2 className='text-white text-[40px] font-bold max-[650px]:text-[32px]'>А ти, підписаний на <span className='text-gradientPrimaryFallback'>телеграм Animee?</span></h2>
               <p className='text-white text-[24px] max-[650px]:text-[16px]'>Тут то ти і попався. Там публікується багато цікавого. Новини, оновлення там, та всяке інше з аніме тематики.</p>
             </div>
 
@@ -352,8 +348,6 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
           <Category type='hightRate' />
         </div>
       </main>
-
-      <Footer />
     </>
   );
 }

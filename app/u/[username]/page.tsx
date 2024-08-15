@@ -2,6 +2,8 @@ import { Metadata, NextPage, ResolvingMetadata } from 'next';
 import axios, { AxiosError } from 'axios';
 import { cookies } from 'next/headers'
 
+import Tooltip from '../../../components/Tooltip';
+
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { config, devMode } from '../../../config';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
@@ -11,10 +13,7 @@ import { UserDivider, UserHeader, UserSectionLibs, UserSectionStats, UserSection
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoCan, IcoStack, IcoWatched } from '../../../assets/Icons';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
 import { ISessionCookieData } from '../../../interfaces/ITokenData';
-import Tooltip from '../../../components/Tooltip';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 
 import './styles.scss';
@@ -46,7 +45,7 @@ export async function generateMetadata(
 
 
 
-const RSC: NextPage<IRSCProps<{ username: string }>> = async ({ params }) => {
+export default async function RSC({ params }: IRSCProps<{ username: string }>) {
   const { username } = params;
   const token = cookies().get(config.vars.animeeCookie)?.value;
 
@@ -88,8 +87,6 @@ const RSC: NextPage<IRSCProps<{ username: string }>> = async ({ params }) => {
 
   return (
     <>
-      <Header />
-
       <div className='w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]'>
         <UserHeader user={user!} isOwner={isOwner} primaryPage />
 
@@ -112,8 +109,6 @@ const RSC: NextPage<IRSCProps<{ username: string }>> = async ({ params }) => {
           <UserSectionTakePart user={user!} isOwner={isOwner} />
         </div>
       </div>
-
-      <Footer />
     </>
   );
 
@@ -142,5 +137,3 @@ const RSC: NextPage<IRSCProps<{ username: string }>> = async ({ params }) => {
     )
   }
 }
-
-export default RSC;

@@ -1,26 +1,22 @@
 'use client'
 
+import Link from 'next/link';
+
 import { NextPage } from 'next';
 import { useState, useEffect } from 'react'
+
+import Tooltip from '../../../components/Tooltip';
 
 import { IUser, IUserLib } from '../../../interfaces/IUser';
 import { LoadingImage, copyToClipboard } from '../../../components/Components';
 import { IcoCalendar, IcoCan, IcoChain, IcoSettings, IcoStack, IcoUser, IcoWatched } from '../../../assets/Icons';
-import Tooltip from '../../../components/Tooltip';
 import { addZeroIfNumberSingle } from '../../../components/handlers';
-import Link from 'next/link';
 import { config } from '../../../config';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoClockFilled } from '../../../assets/Clock';
 
-// export const ClientComponents: NextPage = (props) => {
-//   return (
-//     <div className="ClientComponents">
 
-//     </div>
-//   );
-// }
 
 /** User header
  * @param primaryPage Defines if current page primary. If not, at the menu will appear button navigates to primary page
@@ -98,6 +94,8 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   );
 }
 
+
+
 /** User section divider */
 export const UserDivider: NextPage<{ label: string, hidden: boolean, isOwner: boolean }> = ({ label, hidden, isOwner }) => {
   return (
@@ -112,6 +110,8 @@ export const UserDivider: NextPage<{ label: string, hidden: boolean, isOwner: bo
     </Tooltip>
   );
 }
+
+
 
 export const UserSectionLibs: NextPage<{ user: IUser, isOwner: boolean }> = ({ isOwner, user }) => {
   return (
@@ -130,6 +130,8 @@ export const UserSectionLibs: NextPage<{ user: IUser, isOwner: boolean }> = ({ i
     </div>
   );
 }
+
+
 
 /** User lib card */
 export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: string }> = ({ lib, isOwner, username }) => {
@@ -164,6 +166,8 @@ export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: 
   )
 }
 
+
+
 export const UserSectionStats: NextPage<{ user: IUser, isOwner: boolean }> = ({ isOwner, user }) => {
   return (
     <div className="flex flex-col gap-[24px]">
@@ -172,6 +176,8 @@ export const UserSectionStats: NextPage<{ user: IUser, isOwner: boolean }> = ({ 
     </div>
   );
 }
+
+
 
 export const UserSectionTakePart: NextPage<{ user: IUser, isOwner: boolean }> = ({ isOwner, user }) => {
   return (

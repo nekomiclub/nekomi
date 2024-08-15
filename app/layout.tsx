@@ -23,6 +23,8 @@ import { IcoInternet, IcoOffline } from '../assets/Icons';
 import { ILayoutProps, IRSCProps } from '../interfaces/IRSC';
 import { ServerUnavailable } from '../components/Components';
 import { signCSRF } from '../components/http';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
   title: 'Animee Club',
@@ -68,7 +70,11 @@ export default async function Layout({ children, params }: ILayoutProps) {
           <Provider.Storage>
             <Provider.State>
               <SkeletonTheme baseColor='#181818' highlightColor='#222'>
+                <Header />
+
                 {children}
+
+                <Footer />
               </SkeletonTheme>
             </Provider.State>
           </Provider.Storage>

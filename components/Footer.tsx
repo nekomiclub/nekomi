@@ -1,20 +1,20 @@
 'use client'
 
+import '../styles/components/Footer.scss'
+
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react'
 import Link from 'next/link';
 
-import '../styles/components/Footer.scss'
 import { routes } from '../routes';
 import { config, devMode } from '../config';
 import { IcoAnimeeLogo } from '../assets/Icons';
 import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
 import { useAppSelector } from '../hooks/redux';
 
-let isFirstOpen = true;
+
 const Footer: NextPage = (props) => {
   const storageState = useAppSelector(state => state.storage)
-
 
   return (
     <footer className='relative w-full bg-dark'>

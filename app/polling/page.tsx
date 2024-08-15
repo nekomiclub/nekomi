@@ -1,7 +1,9 @@
+import Link from 'next/link';
+
 import axios, { AxiosError } from 'axios';
 import { NextPage } from 'next';
+
 import { config, devMode } from '../../config';
-import Link from 'next/link';
 import { HappenedWrongScreen, NotFoundScreen } from '../../components/Components';
 import { getUTC } from '../../components/handlers';
 

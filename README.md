@@ -5,11 +5,6 @@
 ## Notes
 Classes
 ```scss
-.gradient--primary // Primary background gradient
-  &-text // Primary gradient for text
-  &-border // DEPRECATED. Primary gradient for border 
-.gradient--secondary // Secondary background gradient
-
 .gradient--primary // New background gradient
   &-text // New text gradient
   &-border-* // New border gradient. *px - 2, 4
@@ -19,12 +14,13 @@ Classes
   &-hover // Fills background on hover and focus-visible
 ```
 
-Each request has x-url header, that contains current url.
+Each request has ```x-url``` header, that contains current url.
 Server unavailable screen logic placed in ```./layout.tsx```
 404 route fallback to define if route simple not added placed in ```./not-found.tsx```
 Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```
 
 *See ./components/handlers.ts*
+
 ## Dependencies
 - animee-core
 - animee-media

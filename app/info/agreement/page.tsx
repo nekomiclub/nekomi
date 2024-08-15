@@ -1,12 +1,8 @@
 import { NextPage } from 'next';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
 
 const Agreement: NextPage = (props) => {
   return (
     <div className='flex flex-col gap-[160px] items-center bg-dark'>
-      <Header />
-
       <div className="wrapper160px] items-center">
         <h2 className='text-[32px] text-white mt-[128px] text-center'>Угода користувача</h2>
 
@@ -184,8 +180,6 @@ const Agreement: NextPage = (props) => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

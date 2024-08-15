@@ -25,6 +25,6 @@ export function signCSRF(): string {
 
   return KJUR.jws.JWS.sign(alg, { alg }, {
     origin: config.domain,
-    expire: new Date().getTime() + config.CSRF_EXPIRE
-  }, config.CSRF)
+    expire: new Date().getTime() + config.vars.CSRF_EXPIRE
+  }, config.secrets.CSRF_TOKEN)
 }

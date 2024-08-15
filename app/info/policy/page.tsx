@@ -1,12 +1,8 @@
 import { NextPage } from 'next';
-import Footer from '../../../components/Footer';
-import Header from '../../../components/Header';
 
 const Policy: NextPage = (props) => {
   return (
     <div className='flex flex-col gap-[160px] items-center bg-dark'>
-      <Header />
-
       <div className="wrapper gap-[160px] items-center">
         <h2 className='text-[32px] text-white mt-[128px] text-center'>Політика конфіденційності</h2>
 
@@ -154,8 +150,6 @@ const Policy: NextPage = (props) => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

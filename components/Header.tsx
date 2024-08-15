@@ -3,12 +3,16 @@
 import '../styles/components/Header.scss';
 
 import { NextPage } from 'next';
-import { useRouter, usePathname } from 'next/navigation';
-import { useEffect, useMemo, useState, useRef } from 'react'
-import { useDebounce } from 'use-debounce';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+
 import * as Menu from 'uvc-menu';
 import * as uuid from 'uuid';
+
+import { useEffect, useMemo, useState, useRef } from 'react'
+import { useDebounce } from 'use-debounce';
+import { createUVCID, Layer, Popup, Trigger } from 'uvc-popup';
+import { AxiosError } from 'axios';
 
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
@@ -19,10 +23,8 @@ import { ITokenData } from '../interfaces/ITokenData';
 import { getUTC, parseTitleType, randomNumber } from './handlers';
 import { LoadingImage } from './Components';
 import { $api } from './http';
-import { AxiosError } from 'axios';
 import { IcoAnimeeLogo, IcoArrow, IcoBell, IcoExit, IcoGhost, IcoHome, IcoInfo, IcoLibrary, IcoMicrophone, IcoSearch, IcoSettings, IcoStarRating, IcoUser } from '../assets/Icons';
 import { IcoFolderPlain } from '../assets/Folder';
-import { createUVCID, Layer, Popup, Trigger } from 'uvc-popup';
 import { IUser } from '../interfaces/IUser';
 import { IDubber } from '../interfaces/IDubber';
 
@@ -63,6 +65,8 @@ const Header: NextPage = () => {
   // Init
   useEffect(() => {
     setSearchPopupID(createUVCID());
+
+    console.log('header render')
   }, [])
 
   useEffect(() => {
