@@ -65,8 +65,6 @@ const Header: NextPage = () => {
   // Init
   useEffect(() => {
     setSearchPopupID(createUVCID());
-
-    console.log('header render')
   }, [])
 
   useEffect(() => {

@@ -335,7 +335,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
             </div>
 
             <div className='flex flex-col gap-[8px] w-fit max-[650px]:w-full'>
-              <Link href={'#'} className='px-[16px] py-[16px] rounded-[2px] bg-grey flex items-center justify-center gap-[16px] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback'>
+              <Link href={'https://t.me/an1meeClub'} target='_blank' className='px-[16px] py-[16px] rounded-[2px] bg-grey flex items-center justify-center gap-[16px] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback'>
                 <IcoExternalLink width={32} height={32} />
                 <p className='text-white text-[24px] uppercase max-[650px]:text-[16px]'>підписатися</p>
               </Link>

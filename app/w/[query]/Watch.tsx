@@ -19,7 +19,7 @@ import { ITitle } from '../../../interfaces/ITitle';
 import { IDubber } from '../../../interfaces/IDubber';
 import { LoadingImage } from '../../../components/Components';
 import { parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
-import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoWatched } from '../../../assets/Icons';
+import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
 import { useAppSelector } from '../../../hooks/redux';
 import { IcoFolderAdd } from '../../../assets/Folder';
 import { animeGenres, config, genresDescription } from '../../../config';
@@ -27,6 +27,7 @@ import { IUser, IUserLib, TUserLibType } from '../../../interfaces/IUser';
 import { $api } from '../../../components/http';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoHeartFilled } from '../../../assets/Heart';
+import { routes } from '../../../routes';
 
 
 
@@ -42,8 +43,9 @@ interface IProps {
 const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
   const state = useAppSelector(state => state.user);
   const [userLibs, setUserLibs] = useState<IUserLib[]>([])
-  const [isAuth, setIsAuth] = useState(false);
   const [inLibs, setInLibs] = useState<TUserLibType[]>([])
+  const [isAuth, setIsAuth] = useState(false);
+  const [isEditor, setIsEditor] = useState(false);
 
   // Initial
   useEffect(() => {
@@ -70,7 +72,12 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
   // Define is user authorized
   useEffect(() => {
     setIsAuth(Boolean(state.id))
+
+    const { capabilities } = state;
+    if (capabilities.includes('editor') || capabilities.includes('dubber') || capabilities.includes('root')) setIsEditor(true);
   }, [state])
+
+  useEffect(() => console.log(isEditor), [isEditor])
 
   // Set in which libs title is
   useEffect(() => {
@@ -115,6 +122,11 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                   <ManageLib type='delayed' lib={userLibs.find(el => el.type === 'delayed')!} isInLib={inLibs.includes('delayed')} />
                 </Menu.MenuList>
               </Menu.Menu>
+
+              {isEditor && <Link href={`${config.URL.baseURL}/${routes.patcher.path}/${title.id}`} className={`px-[16px] py-[12px] flex gap-[16px] justify-center rounded-[2px] bg-darkGrey hover:bg-grey duration-200`}>
+                <IcoUpdate width={24} height={24} />
+                <p className='text-white font-bold uppercase'>оновити</p>
+              </Link>}
             </div>
 
             <div className='flex flex-col gap-[60px] w-full'>
@@ -167,11 +179,6 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
               </div> : <p className='text-lightGrey text-[16px]'>Опис відсутній</p>}
             </div>
           </div>
-
-          {/* <div className='absolute top-0 left-0 w-full h-full'>
-            <LoadingImage src={title.poster} width='100%' height='100%' loading='eager' />
-            <div className='absolute top-0 left-0 w-full h-full z-[2] bg-dark/[.8] backdrop-blur-[200px]'></div>
-          </div> */}
         </div>
 
         {/* Player */}

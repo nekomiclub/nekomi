@@ -1,28 +1,15 @@
-:root {
-  --dark: #121212;
-  --darkGrey: #181818;
-  --lightGrey: #747474;
-  --grey: #222222;
-  --purple: #6C5CE7;
-  --white: #FFFFFF;
-  --orange: #F39C12;
-  --green: #2ecc71;
-  --red: #e74c3c;
-  --gradientPrimaryFallback: #FF464E;
-  --gradientSecondaryFallback: #FF9966;
-}
-
-
-
-
-$dark: var(--dark);
-$grey: var(--grey);
-$purple: var(--purple);
-$white: var(--white);
-$lightGrey: var(--lightGrey);
+$dark: #121212;
+$darkGrey: #181818;
+$grey: #222222;
+$red: #e74c3c;
+$green: #2ecc71;
+$purple: #6C5CE7;
+$white: #FFFFFF;
+$lightGrey: #747474;
+$orange: #F39C12;
 
 $gradientPrimary: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%);
-$gradientPrimaryFallback: var(--gradientPrimaryFallback);
+$gradientPrimaryFallback: #FF464E;
 
 $gradientSecondary: linear-gradient(90deg, #FF9966, #FF7D81);
-$gradientSecondaryFallback: var(--gradientSecondaryFallback);
+$gradientSecondaryFallback: #FF9966;

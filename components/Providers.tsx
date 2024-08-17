@@ -16,6 +16,7 @@ import { IUsapiUser, IUser } from '../interfaces/IUser';
 import { $api } from './http';
 import { IWS, IWSPollPresence, IWSSendPresence } from '../interfaces/IWS';
 import storageSlice from '../store/reducers/storageSlice';
+import { TRoleCapability } from '../interfaces/IRoles';
 
 const store = setupStore();
 
@@ -71,14 +72,19 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
         // Verify
         await $api.get('/user/validate');
 
-        const { data } = await $api.get<{ user: IUser }>(`/user/*`);
-        const { avatar, id, roles, username } = data.user
+        const { data } = await $api.get<{ user: IUser, parsedCapabilities: TRoleCapability[] }>(`/user/*`, {
+          params: {
+            detailed: true
+          }
+        });
+        const { avatar, id, roles, username } = data.user;
 
         dispatch(userSlice.actions.reducer({
           avatar,
           id,
           roles,
           username,
+          capabilities: data.parsedCapabilities
         }))
       } catch (e) {
         console.warn('LOGGED OUT DUE TO VERIFICATION ERROR')

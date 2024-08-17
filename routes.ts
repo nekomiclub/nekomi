@@ -33,6 +33,8 @@ interface IRoutes {
   dubber: IRoute,
   polling: IRoute,
   rickroll: IRoute,
+  patcher: IRoute,
+  patchTitle: IRoute,
 }
 
 export const routes: IRoutes = {
@@ -73,4 +75,10 @@ export const routes: IRoutes = {
     path: '/rickroll',
     status: 'indev'
   },
+  patcher: {
+    path: '/patcher'
+  },
+  patchTitle: {
+    path: '/patcher/*'
+  }
 }

@@ -1,0 +1,94 @@
+@import '../../../styles/colors.scss';
+
+.patcher {
+  &-button {
+    &_action {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 24px;
+      background: $grey;
+      transition: .2s ease-in-out;
+      border-radius: 4px;
+
+      &:hover {
+        background: $purple;
+      }
+
+
+
+      &--save {
+        &:hover {
+          background: $green;
+        }
+      }
+
+      &--saved {
+        background: $green;
+
+        &:hover {
+          background: $green;
+        }
+      }
+
+      &--saveError {
+        background: $red;
+
+        &:hover {
+          background: $red;
+        }
+      }
+
+      &--delete {
+        &:hover {
+          background: $red;
+        }
+      }
+    }
+  }
+
+  &-poster {
+    position: relative;
+
+    &:hover {
+      .patcher-poster_hover {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  } 
+
+  &-field {
+    outline: none;
+    background: $grey;
+    color: $white;
+    padding: 8px 12px;
+    border-radius: 2px;
+    width: 100%;
+    max-width: 100%;
+    max-height: 300px;
+    border: 1px solid $grey;
+    transition: .2s ease-in-out border;
+
+    &::placeholder {
+      color: $lightGrey;
+    }
+
+    &--locked {
+      color: $lightGrey;
+    }
+
+    &--pending {
+      border-color: $gradientSecondaryFallback;
+    }
+
+    &--saved {
+      border-color: $green;
+    }
+
+    &--error {
+      border-color: $red !important;
+    }
+  }
+}
