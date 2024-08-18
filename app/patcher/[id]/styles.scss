@@ -45,6 +45,14 @@
           background: $red;
         }
       }
+
+      &--nothingChanged {
+        background: $orange;
+
+        &:hover {
+          background: $orange;
+        }
+      }
     }
   }
 
@@ -69,7 +77,7 @@
     max-width: 100%;
     max-height: 300px;
     border: 1px solid $grey;
-    transition: .2s ease-in-out border;
+    transition: .2s ease-in-out;
 
     &::placeholder {
       color: $lightGrey;

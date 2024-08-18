@@ -251,3 +251,12 @@ export function decodeToken<T = any>(token: string): ITokenPayload<T> {
     throw new Error(emsg);
   }
 }
+
+/** Get file extension from file name
+ * @example
+ * getFileExtension('file.txt') => txt
+ * getFileExtension('file.test.txt') => txt
+ */
+export function getFileExtension(filename: string): string {
+  return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || filename;
+}
