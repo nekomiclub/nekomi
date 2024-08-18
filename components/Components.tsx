@@ -16,6 +16,8 @@ import { IcoGhost, IcoHome, IcoInternet, IcoOffline } from '../assets/Icons';
 import '../styles/components/GeneralComponents.scss'
 import CatImg from '../assets/img/oopsIndevCat.png';
 
+
+
 export const LoadingImage: NextPage<{ src: string, alt?: string, className?: string, parentClassName?: string, priority?: boolean, loading?: 'lazy' | 'eager', width: string, height: string }> = ({ src, alt, className, loading, priority, height, width, parentClassName }) => {
   const [loaded, setLoaded] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
@@ -66,7 +68,6 @@ export const WatchButton: NextPage<{ href: string, className?: string, gradient:
   )
 }
 
-/** Title card */
 export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -160,6 +161,7 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
   );
 }
 
+
 /** Copy given text to cpilboard */
 export function copyToClipboard(textToCopy: string) {
   // Navigator clipboard api needs a secure context (https)
@@ -186,8 +188,6 @@ export function copyToClipboard(textToCopy: string) {
     }
   }
 }
-
-
 
 
 

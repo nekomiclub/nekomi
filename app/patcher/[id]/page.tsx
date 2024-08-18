@@ -17,6 +17,7 @@ import { IDubber } from '../../../interfaces/IDubber';
 export default async function RSC({ params }: IRSCProps<{ id: string }>) {
   let title: ITitle | null = null;
   let dubbers: IDubber[] = [];
+  let totalDubbers: IDubber[] = [];
   let isEditor = false;
   let totalTitles = 0;
   let totalUpdated = 0;
@@ -55,6 +56,12 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
         }
       })
 
+      const { data: totalDubbersData } = await $api.get<{ dubbers: IDubber[] }>(`/v1/dubber/all`)
+
+      totalDubbers = totalDubbersData.dubbers;
+
+
+
       title = titleData.title;
       dubbers = titleData.parsedDubbers;
 
@@ -83,5 +90,5 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
     }
   }
 
-  return pass ? <Patcher totalTitles={totalTitles} totalUpdated={totalUpdated} isEditor={isEditor} title={title!} dubbers={dubbers} user={user!} capabilities={capabilities} /> : <NotFoundScreen />
+  return pass ? <Patcher totalTitles={totalTitles} totalUpdated={totalUpdated} isEditor={isEditor} title={title!} dubbers={dubbers} user={user!} capabilities={capabilities} totalDubbers={totalDubbers} /> : <NotFoundScreen />
 }

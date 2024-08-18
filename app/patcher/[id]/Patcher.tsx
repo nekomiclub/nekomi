@@ -9,7 +9,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/navigation';
 
 import { useAppSelector } from '../../../hooks/redux';
-import { ITitle, ITitleEpisode, ITitleEpisodeMeta } from '../../../interfaces/ITitle';
+import { AnimeAgeRates, AnimeStatuses, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeSeason, TAnimeStatus, TTitleCountry } from '../../../interfaces/ITitle';
 import { IDubber } from '../../../interfaces/IDubber';
 import { IUser } from '../../../interfaces/IUser';
 import { LoadingImage } from '../../../components/Components';
@@ -22,6 +22,7 @@ import { DeepPartial } from '../../../interfaces/Interfaces';
 import { getFileExtension, getUTC } from '../../../components/handlers';
 import Tooltip from '../../../components/Tooltip';
 import { AxiosError } from 'axios';
+import { Menu, MenuItem, MenuList } from 'uvc-menu';
 
 
 
@@ -33,6 +34,7 @@ interface IProps {
   dubbers: IDubber[]
   user: IUser
   capabilities: TRoleCapability[]
+  totalDubbers: IDubber[]
 }
 
 interface IFieldProps {
@@ -62,9 +64,74 @@ interface IEpsiode extends ITitleEpisode {
   type: 'uploaded' | 'uploading' | 'pending'
 }
 
-type TSaveStatus = 'save' | 'saved' | 'saveError' | 'nothingChanged';
-type TFieldID = 'ukrName' | 'engName' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount' | 'metaImdbParse' | 'metaOrder' | 'metaEngName' | 'metaUkrName' | 'metaDateOut' | 'epOrder'
+interface ISelectOption<T = any> {
+  label: string
+  code: T
+}
 
+interface ISelectProps {
+  label: string
+  value: any
+  valueSetter: (value: any) => void
+  options: ISelectOption[]
+  disablePending?: boolean
+  isDubbers?: boolean
+  dubbers?: IDubber[]
+}
+
+type TSaveStatus = 'save' | 'saved' | 'saveError' | 'nothingChanged';
+type TFieldID = 'ukrName' | 'engName' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount' | 'metaImdbParse' | 'metaOrder' | 'metaEngName' | 'metaUkrName' | 'metaDateOut' | 'epOrder';
+
+
+
+const titleStatusOptions: ISelectOption<TAnimeStatus>[] = [{
+  code: 'announcement',
+  label: 'Анонс'
+}, {
+  code: 'delayed',
+  label: 'Відкладений'
+}, {
+  code: 'ongoing',
+  label: 'Онґоїнг'
+}, {
+  code: 'out',
+  label: 'Вийшов'
+}]
+
+const titleCountryOptions: ISelectOption<TTitleCountry>[] = [{
+  code: 'China',
+  label: 'Китай'
+}, {
+  code: 'Japan',
+  label: 'Японія'
+}, {
+  code: 'South Corea',
+  label: 'Південна Корея'
+}, {
+  code: 'Other',
+  label: 'Інша'
+}]
+
+const titleSeasonOptions: ISelectOption<TAnimeSeason>[] = [{
+  code: 'autumn',
+  label: 'Осінь'
+}, {
+  code: 'spring',
+  label: 'Весна'
+}, {
+  code: 'summer',
+  label: 'Літо'
+}, {
+  code: 'winter',
+  label: 'Зима'
+}]
+
+const titleAgeRateOptions: ISelectOption<TAnimeAgeRate>[] = AnimeAgeRates.map(rate => {
+  return {
+    code: rate,
+    label: rate
+  }
+})
 
 
 
@@ -161,9 +228,38 @@ const Label = memo(function Label({ label }: { label: string }) {
   </div>
 })
 
+const Select = memo(function Select({ options, value, valueSetter, label, disablePending, isDubbers, dubbers }: ISelectProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const initialValue = useRef(value);
+
+  return <div className='flex flex-col gap-[8px] w-full'>
+    <p className='text-white'>{label}</p>
+
+    <Menu trigger={<div className={`px-[16px] py-[8px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
+      {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
+
+      <p className='text-white'>{options.find(el => el.code === value)?.label}</p>
+
+      <IcoArrow className={`duration-200 ${isOpen ? 'rotate-[180deg]' : 'rotate-[0def]'}`} />
+    </div>} menuClassName='w-full' triggerClassName='w-full' align='stretch' className='w-full' animation='slide' closeAfter='any' state={isOpen} stateSetter={setIsOpen} statePriority='outer'>
+      <MenuList className='bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto'>
+        {options.map(option => {
+          return <MenuItem key={`select-option--${option.code}`} onClick={() => valueSetter(option.code)}>
+            <button className={`px-[8px] py-[6px] ${value === option.code ? 'bg-purple' : !disablePending && option.code === initialValue.current ? 'bg-gradientSecondaryFallback' : ''} duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center ${isDubbers ? 'justify-start' : 'justify-center'} gap-[16px]`}>
+              {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
+
+              <p className='text-white'>{option.label}</p>
+            </button>
+          </MenuItem>
+        })}
+      </MenuList>
+    </Menu>
+  </div>
+})
 
 
-const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubbers, title, user, capabilities }) => {
+
+const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubbers, title, user, capabilities, totalDubbers }) => {
   const router = useRouter();
 
   const isRoot = capabilities.includes('root');
@@ -176,16 +272,21 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
   const [poster, setPoster] = useState(title.poster);
   const [errors, setErrors] = useState<string[]>([])
   const [isPosterOnAnimee, setIsPosterOnAnimee] = useState(poster.includes('media.animee.club'))
+  const [titleStatus, setTitleStatus] = useState(title.status);
+  const [titleAgeRate, setTitleAgeRate] = useState(title.ageRate);
+  const [titleCountry, setTitleCountry] = useState(title.country);
+  const [titleSeason, setTitleSeason] = useState(title.season);
   const [selectedMeta, setSelectedMeta] = useState<ITitleEpisodeMeta | null>(null)
   const [episodesMeta, setEpisodesMeta] = useState(title.episodesMeta);
   const [file, setFile] = useState<File | null>(null)
   const [filename, setFilename] = useState<string | null>(null)
   const [episodesGroups, setEpisodesGroups] = useState<IEpisodesGroup[]>([]);
   const [episodeOrder, setEpisodeOrder] = useState('1')
-  const [dubbingSelected, setDubbingSelected] = useState<IDubber | null>(dubbers.length ? dubbers[0] : null)
+  const [dubbingSelected, setDubbingSelected] = useState(dubbers.length ? dubbers[0].code : '')
 
   const episodeInputRef = useRef<HTMLInputElement>(null)
   const errorWrapperRef = useRef<HTMLDivElement>(null)
+
 
 
 
@@ -609,86 +710,102 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
           </section>
 
           {/* Head */}
-          <section className='flex gap-[32px]'>
-            {/* Poster section */}
-            <div className='flex flex-col gap-[24px]'>
-              {/* Poster */}
-              <div className='flex flex-col gap-[8px]'>
-                <div className='patcher-poster cursor-pointer'>
-                  <LoadingImage src={poster} width='500px' height='700px' parentClassName='overflow-hidden rounded-[4px]' />
+          <section className='flex flex-col gap-[16px]'>
+            {/* Top */}
+            <div className='flex gap-[32px]'>
+              {/* Poster section */}
+              <div className='flex flex-col gap-[24px]'>
+                {/* Poster */}
+                <div className='flex flex-col gap-[8px]'>
+                  <div className='patcher-poster cursor-pointer'>
+                    <LoadingImage src={poster} width='500px' height='700px' parentClassName='overflow-hidden rounded-[4px]' />
 
-                  {canTitleEdit && <div className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
-                    <IcoUpdate width={256} height={256} />
+                    {canTitleEdit && <div className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
+                      <IcoUpdate width={256} height={256} />
 
-                    <p className='text-white text-[32px] uppercase font-bold text-center select-none'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
-                  </div>}
+                      <p className='text-white text-[32px] uppercase font-bold text-center select-none'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
+                    </div>}
+                  </div>
+
+                  {!isPosterOnAnimee && <p className='text-orange'>* Постер не на сервері animee.club</p>}
                 </div>
 
-                {!isPosterOnAnimee && <p className='text-orange'>* Постер не на сервері animee.club</p>}
-              </div>
+                {/* Meta section */}
+                <div className='flex flex-col gap-[24px]'>
+                  <div className='flex flex-col gap-[4px]'>
+                    {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${saveStatus}`} onClick={patchTitleMeta} disabled={!canTitleEdit}>
+                      {(saveStatus === 'save' || saveStatus === 'saved') && <IcoUpdate width={32} height={32} />}
+                      {saveStatus === 'saveError' && <IcoCross width={32} height={32} />}
+                      {saveStatus === 'nothingChanged' && <IcoGhost width={32} height={32} />}
 
-              {/* Meta section */}
-              <div className='flex flex-col gap-[24px]'>
-                <div className='flex flex-col gap-[4px]'>
-                  {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${saveStatus}`} onClick={patchTitleMeta} disabled={!canTitleEdit}>
-                    {(saveStatus === 'save' || saveStatus === 'saved') && <IcoUpdate width={32} height={32} />}
-                    {saveStatus === 'saveError' && <IcoCross width={32} height={32} />}
-                    {saveStatus === 'nothingChanged' && <IcoGhost width={32} height={32} />}
+                      <p className='text-white uppercase'>
+                        {saveStatus === 'save' && 'зберегти'}
+                        {saveStatus === 'saved' && 'збережено'}
+                        {saveStatus === 'saveError' && 'помилка'}
+                        {saveStatus === 'nothingChanged' && 'нічого не змінилось'}
+                      </p>
+                    </button>}
 
-                    <p className='text-white uppercase'>
-                      {saveStatus === 'save' && 'зберегти'}
-                      {saveStatus === 'saved' && 'збережено'}
-                      {saveStatus === 'saveError' && 'помилка'}
-                      {saveStatus === 'nothingChanged' && 'нічого не змінилось'}
-                    </p>
+                    <Link href={`${config.URL.baseURL}/${routes.watch.path}/${title.code}`} className='patcher-button_action'>
+                      <IcoAnimeeLogo width={32} height={32} />
+                      <p className='text-white uppercase'>тайтл на animee.club</p>
+                    </Link>
+                  </div>
+
+                  {/* Delete title */}
+                  {canTitleDelete && <button className='patcher-button_action patcher-button_action--delete' disabled={!canTitleDelete} onClick={deleteTitle}>
+                    <IcoCan width={32} height={32} />
+                    <p className='text-white uppercase'>видалити</p>
                   </button>}
 
-                  <Link href={`${config.URL.baseURL}/${routes.watch.path}/${title.code}`} className='patcher-button_action'>
-                    <IcoAnimeeLogo width={32} height={32} />
-                    <p className='text-white uppercase'>тайтл на animee.club</p>
-                  </Link>
+                  <div className='flex flex-col gap-[4px]'>
+                    <p className='text-lightGrey'>ID: {title.id}</p>
+                    <p className='text-lightGrey'>CODE: {title.code}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Fields */}
+              <div className='flex flex-col gap-[8px] w-full'>
+                {/* Ukr name */}
+                <Field label='Назва' id='ukrName' initialValue={title.names.ukr} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
+
+                {/* Alt names */}
+                <div className='pl-[16px]'>
+                  <Field label='Англійська' id='engName' initialValue={title.names.eng} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
+
+                  {canTitleEdit && <>{/* alt names */}</>}
                 </div>
 
-                {/* Delete title */}
-                {canTitleDelete && <button className='patcher-button_action patcher-button_action--delete' disabled={!canTitleDelete} onClick={deleteTitle}>
-                  <IcoCan width={32} height={32} />
-                  <p className='text-white uppercase'>видалити</p>
-                </button>}
+                {/* Status */}
+                <Select label='Статус' options={titleStatusOptions} value={titleStatus} valueSetter={setTitleStatus} />
 
-                <div className='flex flex-col gap-[4px]'>
-                  <p className='text-lightGrey'>ID: {title.id}</p>
-                  <p className='text-lightGrey'>CODE: {title.code}</p>
-                </div>
+                {/* IMDB rating */}
+                <Field label='Рейтинг IMDB' id='imdbRating' note='1 - 10, 0 - Відсутній' initialValue={`${title.rating.IMDB || '0'}`} isLocked={!canTitleEdit} symbolsLimited={3} type='title' />
+
+                {/* Age rate */}
+                <Select label='Віковий рейтинг' options={titleAgeRateOptions} value={titleAgeRate} valueSetter={setTitleAgeRate} />
+
+                {/* Episodes count */}
+                <Field label='Епізоди' id='episodesCount' note='1 - 9999, 0 - Відсутні' initialValue={`${title.episodesCount || '0'}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
+
+                {/* Country */}
+                <Select label='Країна' options={titleCountryOptions} value={titleCountry} valueSetter={setTitleCountry} />
+
+                {/* Season */}
+                <Select label='Сезон' options={titleSeasonOptions} value={titleSeason} valueSetter={setTitleSeason} />
+
+                {/* Year */}
+                <Field label='Рік' id='year' note='2007 - 2050' initialValue={`${title.year}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
               </div>
             </div>
 
-            {/* Fields */}
-            <div className='flex flex-col gap-[8px] w-full'>
-              {/* Ukr name */}
-              <Field label='Назва' id='ukrName' initialValue={title.names.ukr} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
+            {/* Textareas */}
+            {/* Description */}
+            <Field label='Опис' id='description' isLarge initialValue={title.description} isLocked={!canTitleEdit} symbolsLimited={2200} type='title' />
 
-              {/* Alt names */}
-              <div className='pl-[16px]'>
-                <Field label='Англійська' id='engName' initialValue={title.names.eng} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
-
-                {canTitleEdit && <>{/* alt names */}</>}
-              </div>
-
-              {/* IMDB rating */}
-              <Field label='Рейтинг IMDB' id='imdbRating' note='1 - 10, 0 - Відсутній' initialValue={`${title.rating.IMDB || '0'}`} isLocked={!canTitleEdit} symbolsLimited={3} type='title' />
-
-              {/* Description */}
-              <Field label='Опис' id='description' isLarge initialValue={title.description} isLocked={!canTitleEdit} symbolsLimited={2200} type='title' />
-
-              {/* Episodes count */}
-              <Field label='Епізоди' id='episodesCount' note='1 - 9999, 0 - Відсутні' initialValue={`${title.episodesCount || '0'}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
-
-              {/* Year */}
-              <Field label='Рік' id='year' note='2007 - 2050' initialValue={`${title.year}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
-
-              {/* Details */}
-              {canTitleEdit && <Field label='Деталі' id='details' note='Не обов`язково' isLarge initialValue={title.details || ''} isLocked={!canTitleEdit} symbolsLimited={500} type='title' />}
-            </div>
+            {/* Details */}
+            {canTitleEdit && <Field label='Деталі' id='details' note='Не обов`язково' isLarge initialValue={title.details || ''} isLocked={!canTitleEdit} symbolsLimited={500} type='title' />}
           </section>
 
           {/* Episodes metas */}
@@ -771,13 +888,23 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
                   <Field id='epOrder' label='Номер серії' type='episode' symbolsLimited={4} disablePending initialValue={'1'} outValueSetter={setEpisodeOrder} />
                 </div>
 
-                <div className='flex flex-col gap-[8px] w-full'>
-                  <input type="file" accept='.mp4,.webm,.mov,.mkv,.m4v' className='hidden' ref={episodeInputRef} onChange={selectFile} />
+                {/* Select dubber */}
+                <div className='w-[300px] shrink-0'>
+                  <Select label='Команда' options={totalDubbers.map(dub => { return { code: dub.code, label: dub.name } })} value={dubbingSelected} valueSetter={setDubbingSelected} disablePending isDubbers dubbers={totalDubbers} />
+                </div>
 
-                  <button className='patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={chooseFile}>
-                    <IcoUpdate width={32} height={32} />
-                    <p className={`text-white ${filename ? '' : 'uppercase'}`}>{filename || 'виберіть файл'}</p>
-                  </button>
+                {/* File select */}
+                <div className='w-full flex flex-col gap-[8px]'>
+                  <p className='text-white'>Файл</p>
+
+                  <div className='flex flex-col gap-[8px] w-full'>
+                    <input type="file" accept='.mp4,.webm,.mov,.mkv,.m4v' className='hidden' ref={episodeInputRef} onChange={selectFile} />
+
+                    <button className='patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={chooseFile}>
+                      <IcoUpdate width={32} height={32} />
+                      <p className={`text-white ${filename ? '' : 'uppercase'}`}>{filename || 'виберіть файл'}</p>
+                    </button>
+                  </div>
                 </div>
 
                 <Tooltip content='Додати серію'>
