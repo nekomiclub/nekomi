@@ -91,4 +91,29 @@
       border-color: $red !important;
     }
   }
+
+  &-episodeMeta {
+    &_select,
+    &_delete {
+      path {
+        transition: .2s ease-in-out;
+      }
+    }
+
+    &:hover {
+      .patcher-episodeMeta {
+        &_select {
+          path {
+            fill: $green;
+          }
+        }
+
+        &_delete {
+          path {
+            fill: $red;
+          }
+        }
+      }
+    }
+  }
 }

@@ -9,16 +9,18 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/navigation';
 
 import { useAppSelector } from '../../../hooks/redux';
-import { ITitle } from '../../../interfaces/ITitle';
+import { ITitle, ITitleEpisode, ITitleEpisodeMeta } from '../../../interfaces/ITitle';
 import { IDubber } from '../../../interfaces/IDubber';
 import { IUser } from '../../../interfaces/IUser';
 import { LoadingImage } from '../../../components/Components';
 import { memo, useEffect, useRef, useState } from 'react';
-import { IcoAnimeeLogo, IcoCan, IcoCross, IcoGhost, IcoLock, IcoUpdate } from '../../../assets/Icons';
+import { IcoAnimeeLogo, IcoCan, IcoCross, IcoGhost, IcoLock, IcoPlus, IcoUpdate } from '../../../assets/Icons';
 import { config } from '../../../config';
 import { routes } from '../../../routes';
 import { TRoleCapability } from '../../../interfaces/IRoles';
 import { DeepPartial } from '../../../interfaces/Interfaces';
+import { getUTC } from '../../../components/handlers';
+import Tooltip from '../../../components/Tooltip';
 
 
 
@@ -34,6 +36,7 @@ interface IProps {
 
 interface IFieldProps {
   label: string
+  type: 'title' | 'meta'
   /** Will add "patcher-" prefix */
   id: TFieldID
   initialValue?: string
@@ -42,15 +45,19 @@ interface IFieldProps {
   isLarge?: boolean
   symbolsLimited?: number
   isLocked?: boolean
+  placeholder?: string
+  disablePending?: boolean
+  /** Out useState value. Out value will sync inner & set it like initial value */
+  outValue?: string
 }
 
 type TSaveStatus = 'save' | 'saved' | 'saveError';
-type TFieldID = 'ukrName' | 'engName' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount'
+type TFieldID = 'ukrName' | 'engName' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount' | 'metaImdbParse' | 'metaOrder' | 'metaEngName' | 'metaUkrName' | 'metaDateOut'
 
 
 
 
-const Field = memo(function Field({ isLarge, label, note, symbolsLimited, initialValue, id, isLocked }: IFieldProps) {
+const Field = memo(function Field({ isLarge, label, note, symbolsLimited, initialValue, id, isLocked, type, placeholder, disablePending, outValue }: IFieldProps) {
   const [value, setValue] = useState(initialValue || '')
   const [currentValue, setCurrentValue] = useState(initialValue) // Like initial
   const [isPending, setIsPending] = useState(false)
@@ -80,7 +87,7 @@ const Field = memo(function Field({ isLarge, label, note, symbolsLimited, initia
       }
     }
 
-    if (value !== currentValue) {
+    if (value !== currentValue && !disablePending) {
       setIsPending(true)
     } else {
       setIsPending(false)
@@ -104,8 +111,16 @@ const Field = memo(function Field({ isLarge, label, note, symbolsLimited, initia
     prevValue.current = value;
   }, [value, currentValue])
 
+  // Sync out value with inner
+  useEffect(() => {
+    if (!outValue) return
+
+    setValue(outValue)
+    setCurrentValue(outValue)
+  }, [outValue])
+
   return (
-    <div className='flex flex-col gap-[8px]'>
+    <div className='flex flex-col gap-[8px] w-full'>
       <div className='flex items-end gap-[8px]'>
         <div className='flex items-center gap-[4px]'>
           {isLocked && <IcoLock fill='#747474' width={16} height={16} />}
@@ -117,14 +132,24 @@ const Field = memo(function Field({ isLarge, label, note, symbolsLimited, initia
       </div>
 
       {isLarge
-        ? <textarea value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''} min-h-[120px]`} id={`patcher-${id}`} disabled={isLocked} placeholder='...' autoComplete='off' ref={textareaRef} />
-        : <input type='text' value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''}`} id={`patcher-${id}`} disabled={isLocked} placeholder='...' autoComplete='off' ref={inputRef} />
+        ? <textarea value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''}  patcher-${type} min-h-[120px]`} id={`patcher-${id}`} disabled={isLocked} placeholder={placeholder || '...'} autoComplete='off' ref={textareaRef} />
+        : <input type='text' value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''} patcher-${type} `} id={`patcher-${id}`} disabled={isLocked} placeholder={placeholder || '...'} autoComplete='off' ref={inputRef} />
       }
 
       {symbolsLimited && <p className='text-lightGrey text-[12px] w-full text-end'>{value.length} / {symbolsLimited}</p>}
     </div>
   )
 })
+
+const Label = memo(function Label({ label }: { label: string }) {
+  return <div className='flex items-center gap-[16px]'>
+    <h3 className='text-white text-[32px] font-bold shrink-0'>{label}</h3>
+
+    <span className='w-full h-[3px] bg-grey'></span>
+  </div>
+})
+
+
 
 const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubbers, title, user, capabilities }) => {
   const router = useRouter();
@@ -158,7 +183,7 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
 
   async function patch() {
     // Reset
-    const inputs = document.querySelectorAll('.patcher-field') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>
+    const inputs = document.querySelectorAll('.patcher-field.patcher-title') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>
 
     inputs.forEach(el => {
       el.classList.remove('patcher-field--error')
@@ -172,8 +197,8 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
     try {
       let isParsingErrored = false;
 
-      const pending = document.querySelectorAll('.patcher-field--pending') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
-      const errored = document.querySelectorAll('.patcher-field--error');
+      const pending = document.querySelectorAll('.patcher-field--pending.patcher-title') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
+      const errored = document.querySelectorAll('.patcher-field--error.patcher-title');
       const patchBody: DeepPartial<ITitle> = {};
 
       if (errored.length) {
@@ -265,9 +290,201 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
 
 
 
+  const HeadSection = memo(function HeadSection() {
+    return <div className='flex gap-[32px]'>
+      {/* Poster section */}
+      <div className='flex flex-col gap-[24px]'>
+        {/* Poster */}
+        <div className='flex flex-col gap-[8px]'>
+          <div className='patcher-poster cursor-pointer'>
+            <LoadingImage src={poster} width='500px' height='700px' parentClassName='overflow-hidden rounded-[4px]' />
+
+            {canTitleEdit && <div className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
+              <IcoUpdate width={256} height={256} />
+
+              <p className='text-white text-[32px] uppercase font-bold text-center select-none'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
+            </div>}
+          </div>
+
+          {!isPosterOnAnimee && <p className='text-orange'>* Постер не на сервері animee.club</p>}
+        </div>
+
+        {/* Meta section */}
+        <div className='flex flex-col gap-[24px]'>
+          <div className='flex flex-col gap-[4px]'>
+            {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${saveStatus}`} onClick={patch} disabled={!canTitleEdit}>
+              {(saveStatus === 'save' || saveStatus === 'saved') && <IcoUpdate width={32} height={32} />}
+              {saveStatus === 'saveError' && <IcoCross width={32} height={32} />}
+
+              <p className='text-white uppercase'>
+                {saveStatus === 'save' && 'зберегти'}
+                {saveStatus === 'saved' && 'збережено'}
+                {saveStatus === 'saveError' && 'помилка'}
+              </p>
+            </button>}
+
+            <Link href={`${config.URL.baseURL}/${routes.watch.path}/${title.code}`} className='patcher-button_action'>
+              <IcoAnimeeLogo width={32} height={32} />
+              <p className='text-white uppercase'>тайтл на animee.club</p>
+            </Link>
+          </div>
+
+          {/* Delete title */}
+          {canTitleDelete && <button className='patcher-button_action patcher-button_action--delete' disabled={!canTitleDelete} onClick={deleteTitle}>
+            <IcoCan width={32} height={32} />
+            <p className='text-white uppercase'>видалити</p>
+          </button>}
+
+          <div className='flex flex-col gap-[4px]'>
+            <p className='text-lightGrey'>ID: {title.id}</p>
+            <p className='text-lightGrey'>CODE: {title.code}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Fields */}
+      <div className='flex flex-col gap-[8px] w-full'>
+        {/* Ukr name */}
+        <Field label='Назва' id='ukrName' initialValue={title.names.ukr} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
+
+        {/* Alt names */}
+        <div className='pl-[16px]'>
+          <Field label='Англійська' id='engName' initialValue={title.names.eng} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
+
+          {canTitleEdit && <>{/* alt names */}</>}
+        </div>
+
+        {/* IMDB rating */}
+        <Field label='Рейтинг IMDB' id='imdbRating' note='1 - 10, 0 - Відсутній' initialValue={`${title.rating.IMDB || '0'}`} isLocked={!canTitleEdit} symbolsLimited={3} type='title' />
+
+        {/* Description */}
+        <Field label='Опис' id='description' isLarge initialValue={title.description} isLocked={!canTitleEdit} symbolsLimited={2200} type='title' />
+
+        {/* Episodes count */}
+        <Field label='Епізоди' id='episodesCount' note='1 - 9999, 0 - Відсутні' initialValue={`${title.episodesCount || '0'}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
+
+        {/* Year */}
+        <Field label='Рік' id='year' note='2007 - 2050' initialValue={`${title.year}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
+
+        {/* Details */}
+        {canTitleEdit && <Field label='Деталі' id='details' note='Не обов`язково' isLarge initialValue={title.details || ''} isLocked={!canTitleEdit} symbolsLimited={500} type='title' />}
+      </div>
+    </div>
+  })
+
+  const EpisodesMetaSection = memo(function EpisodesMetaSection() {
+    const [selectedMeta, setSelectedMeta] = useState<ITitleEpisodeMeta | null>(null)
+
+    async function parseEpisodesMetas() {
+      const url = (document.querySelector(`#patcher-${'metaImdbParse' as TFieldID}`) as HTMLInputElement).value
+
+      console.log(`Parse ${url}`)
+    }
+
+
+
+    const EpisodeMeta = memo(function EpisodeMeta({ meta }: { meta: ITitleEpisodeMeta }) {
+      return <div className={`w-full px-[12px] py-[8px] rounded-[4px] flex items-center justify-between gap-[24px] duration-200 ${selectedMeta?.order === meta.order ? 'bg-green/[.2]' : 'bg-grey'}`}>
+        <div className='flex gap-[16px]'>
+          <div className='flex flex-col gap-[4px]'>
+            <p className='text-white text-[24px] font-bold'>#{meta.order}</p>
+            <p className='text-lightGrey'>{getUTC(meta.dateOut).dateReversed}</p>
+          </div>
+
+          <div className='flex flex-col gap-[4px]'>
+            <p className='text-white text-[24px]'>{meta.names.ukr}</p>
+            <p className='text-lightGrey'>{meta.names.eng}</p>
+          </div>
+        </div>
+
+        <div className='flex gap-[4px]'>
+          <Tooltip content='Вибрати'>
+            <button className='patcher-episodeMeta p-[8px]' onClick={() => setSelectedMeta(meta)}>
+              <IcoPlus width={32} height={32} className='patcher-episodeMeta_select' />
+            </button>
+          </Tooltip>
+
+          <Tooltip content='Видалити'>
+            <button className='patcher-episodeMeta p-[8px]'>
+              <IcoCan width={32} height={32} className='patcher-episodeMeta_delete' />
+            </button>
+          </Tooltip>
+        </div>
+      </div>
+    })
+
+
+
+    return <div className='flex flex-col gap-[16px]'>
+      <Label label='Інформація про серії' />
+
+      <div className='flex flex-col gap-[24px]'>
+        <div className='flex flex-col gap-[16px]'>
+          {/* Parse */}
+          {isRoot && <div className='flex items-center gap-[16px]'>
+            <Field label='Парс епізодів з IMDB' id='metaImdbParse' type='meta' placeholder='https://www.imdb.com/title/{ID}/episodes' disablePending />
+
+            <button className='p-[12px] bg-grey rounded-[4px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={parseEpisodesMetas}>
+              <IcoUpdate width={32} height={32} />
+            </button>
+          </div>}
+
+          {/* Panel */}
+          <div className='flex flex-col gap-[8px]'>
+            <div className='flex items-start gap-[16px] w-full'>
+              {/* Order */}
+              <div className='w-[100px] shrink-0'>
+                <Field label='Номер серії' id='metaOrder' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? `${selectedMeta.order}` : undefined} symbolsLimited={4} />
+              </div>
+
+              <Field label='Українська назва' id='metaUkrName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.ukr : undefined} symbolsLimited={256} />
+            </div>
+
+            <div className='flex items-center gap-[16px] w-full'>
+              <div className='flex items-start gap-[16px] w-full'>
+                <Field label='Англійска назва' id='metaEngName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.eng : undefined} symbolsLimited={256} />
+
+                {/* Out date */}
+                <div className='w-[320px] shrink-0'>
+                  <Field label='Дата виходу' note='ДД.ММ.РРРР' id='metaDateOut' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? getUTC(selectedMeta.dateOut).dateReversed : undefined} symbolsLimited={10} />
+                </div>
+              </div>
+
+              {/* Controls */}
+              <div className='flex gap-[4px]'>
+                <Tooltip content='Зберегти'>
+                  <button className='p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-green focus-visible:bg-green'>
+                    <IcoUpdate width={32} height={32} />
+                  </button>
+                </Tooltip>
+
+                <Tooltip content='Видалити'>
+                  <button className='p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-red focus-visible:bg-red'>
+                    <IcoCan width={32} height={32} />
+                  </button>
+                </Tooltip>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <span className='w-full h-[3px] bg-grey'></span>
+
+        <div className='flex flex-col gap-[4px] max-h-[600px] overflow-y-auto overflow-x-hidden'>
+          {(JSON.parse(JSON.stringify(title.episodesMeta)) as ITitleEpisodeMeta[]).reverse().map(meta => {
+            return <EpisodeMeta meta={meta} key={`episodeMeta--${meta.order}`} />
+          })}
+        </div>
+      </div>
+    </div>
+  })
+
+
+
   return (
     <div className='w-full h-full min-h-screen bg-dark'>
-      <div className="wrapper !pt-[132px] flex flex-col gap-[24px]">
+      <div className="wrapper !pt-[132px] !pb-[60px] flex flex-col gap-[24px]">
         {/* Header */}
         <div className='flex flex-col gap-[8px]'>
           <div className='flex items-center gap-[32px]'>
@@ -301,85 +518,12 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
           </div>
 
           {/* Head */}
-          <div className='flex gap-[32px]'>
-            {/* Poster section */}
-            <div className='flex flex-col gap-[24px]'>
-              {/* Poster */}
-              <div className='flex flex-col gap-[8px]'>
-                <div className='patcher-poster cursor-pointer'>
-                  <LoadingImage src={poster} width='500px' height='700px' parentClassName='overflow-hidden rounded-[4px]' />
+          {/* <HeadSection /> */}
 
-                  {canTitleEdit && <div className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
-                    <IcoUpdate width={256} height={256} />
+          {/* Episodes metas */}
+          <EpisodesMetaSection />
 
-                    <p className='text-white text-[32px] uppercase font-bold text-center select-none'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
-                  </div>}
-                </div>
-
-                {!isPosterOnAnimee && <p className='text-orange'>* Постер не на сервері animee.club</p>}
-              </div>
-
-              {/* Meta section */}
-              <div className='flex flex-col gap-[24px]'>
-                <div className='flex flex-col gap-[4px]'>
-                  {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${saveStatus}`} onClick={patch} disabled={!canTitleEdit}>
-                    {(saveStatus === 'save' || saveStatus === 'saved') && <IcoUpdate width={32} height={32} />}
-                    {saveStatus === 'saveError' && <IcoCross width={32} height={32} />}
-
-                    <p className='text-white uppercase'>
-                      {saveStatus === 'save' && 'зберегти'}
-                      {saveStatus === 'saved' && 'збережено'}
-                      {saveStatus === 'saveError' && 'помилка'}
-                    </p>
-                  </button>}
-
-                  <Link href={`${config.URL.baseURL}/${routes.watch.path}/${title.code}`} className='patcher-button_action'>
-                    <IcoAnimeeLogo width={32} height={32} />
-                    <p className='text-white uppercase'>тайтл на animee.club</p>
-                  </Link>
-                </div>
-
-                {/* Delete title */}
-                {canTitleDelete && <button className='patcher-button_action patcher-button_action--delete' disabled={!canTitleDelete} onClick={deleteTitle}>
-                  <IcoCan width={32} height={32} />
-                  <p className='text-white uppercase'>видалити</p>
-                </button>}
-
-                <div className='flex flex-col gap-[4px]'>
-                  <p className='text-lightGrey'>ID: {title.id}</p>
-                  <p className='text-lightGrey'>CODE: {title.code}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Fields */}
-            <div className='flex flex-col gap-[8px] w-full'>
-              {/* Ukr name */}
-              <Field label='Назва' id='ukrName' initialValue={title.names.ukr} isLocked={!canTitleEdit} symbolsLimited={256} />
-
-              {/* Alt names */}
-              <div className='pl-[16px]'>
-                <Field label='Англійська' id='engName' initialValue={title.names.eng} isLocked={!canTitleEdit} symbolsLimited={256} />
-
-                {canTitleEdit && <>{/* alt names */}</>}
-              </div>
-
-              {/* IMDB rating */}
-              <Field label='Рейтинг IMDB' id='imdbRating' note='1 - 10, 0 - Відсутній' initialValue={`${title.rating.IMDB || '0'}`} isLocked={!canTitleEdit} symbolsLimited={3} />
-
-              {/* Description */}
-              <Field label='Опис' id='description' isLarge initialValue={title.description} isLocked={!canTitleEdit} symbolsLimited={2200} />
-
-              {/* Episodes count */}
-              <Field label='Епізоди' id='episodesCount' note='1 - 9999, 0 - Відсутні' initialValue={`${title.episodesCount || '0'}`} isLocked={!canTitleEdit} symbolsLimited={4} />
-
-              {/* Year */}
-              <Field label='Рік' id='year' note='2007 - 2050' initialValue={`${title.year}`} isLocked={!canTitleEdit} symbolsLimited={4} />
-
-              {/* Details */}
-              {canTitleEdit && <Field label='Деталі' id='details' note='Не обов`язково' isLarge initialValue={title.details || ''} isLocked={!canTitleEdit} symbolsLimited={500} />}
-            </div>
-          </div>
+          {/* Dubbing */}
         </div>
       </div>
     </div>

@@ -316,3 +316,11 @@ export const IcoLock = ({ className, fill, height, width }: IAssetProps) => {
     </svg>
   );
 }
+
+export const IcoPlus = ({ className, fill, height, width }: IAssetProps) => {
+  return (
+    <svg width={width || 32} height={height || 32} className={className || ''} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M26.0875 14H18V5.9125C18 4.85625 17.1062 4 16 4C14.8938 4 14 4.85625 14 5.9125V14H5.9125C4.85625 14 4 14.8938 4 16C4 17.1062 4.85625 18 5.9125 18H14V26.0875C14 27.1437 14.8938 28 16 28C17.1062 28 18 27.1437 18 26.0875V18H26.0875C27.1437 18 28 17.1062 28 16C28 14.8938 27.1437 14 26.0875 14Z" fill={fill || '#fff'} />
+    </svg>
+  );
+}

@@ -228,7 +228,7 @@ const Header: NextPage = () => {
                   <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
                 </div>
               </div>
-            } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden !top-[70px]' align='end' animation='slide' statePriority='outer' state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
+            } className='bg-darkGrey rounded-[2px] !w-[180px] overflow-hidden !top-[70px]' align='end' animation='slide' statePriority='outer' state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
               <Menu.MenuList>
                 <Menu.MenuItem>
                   <Link href={`${config.URL.baseURL}/u/${user.username}`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
@@ -272,7 +272,7 @@ const Header: NextPage = () => {
 
                 <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
               </div>
-            } className='bg-darkGrey rounded-[2px] w-[180px] overflow-hidden' align='end' animation='slide' gap={18}>
+            } className='bg-darkGrey rounded-[2px] !w-[180px] overflow-hidden' align='end' animation='slide' gap={18}>
               <Menu.MenuList>
                 <Menu.MenuItem>
                   <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
