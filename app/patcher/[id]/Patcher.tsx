@@ -13,7 +13,7 @@ import { AnimeAgeRates, AnimeStatuses, ITitle, ITitleEpisode, ITitleEpisodeMeta,
 import { IDubber } from '../../../interfaces/IDubber';
 import { IUser } from '../../../interfaces/IUser';
 import { LoadingImage } from '../../../components/Components';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, RefObject, useEffect, useRef, useState } from 'react';
 import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCross, IcoGhost, IcoLock, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
 import { config, prodMode } from '../../../config';
 import { routes } from '../../../routes';
@@ -23,13 +23,13 @@ import { getFileExtension, getUTC } from '../../../components/handlers';
 import Tooltip from '../../../components/Tooltip';
 import { AxiosError } from 'axios';
 import { Menu, MenuItem, MenuList } from 'uvc-menu';
+import { IPatcherStackItem, PactherStack } from './PatcherStack';
 
 
 
 interface IProps {
   totalTitles: number
   totalUpdated: number
-  isEditor: boolean
   title: ITitle
   dubbers: IDubber[]
   user: IUser
@@ -39,7 +39,7 @@ interface IProps {
 
 interface IFieldProps {
   label: string
-  type: 'title' | 'meta' | 'episode'
+  type: 'title' | 'meta' | 'metaParse' | 'episode'
   /** Will add "patcher-" prefix */
   id: TFieldID
   initialValue?: string
@@ -61,7 +61,7 @@ interface IEpisodesGroup {
 }
 
 interface IEpsiode extends ITitleEpisode {
-  type: 'uploaded' | 'uploading' | 'pending'
+  type: TEpisodeType
 }
 
 interface ISelectOption<T = any> {
@@ -79,8 +79,26 @@ interface ISelectProps {
   dubbers?: IDubber[]
 }
 
+interface IHeaderSectionProps {
+  title: ITitle
+  canTitleEdit: boolean
+  canTitleDelete: boolean
+}
+
+interface IEpisodesMetaSection {
+  title: ITitle
+  isRoot: boolean
+}
+
+interface IEpisodesSection {
+  title: ITitle
+  dubbers: IDubber[]
+  totalDubbers: IDubber[]
+}
+
 type TSaveStatus = 'save' | 'saved' | 'saveError' | 'nothingChanged';
 type TFieldID = 'ukrName' | 'engName' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount' | 'metaImdbParse' | 'metaOrder' | 'metaEngName' | 'metaUkrName' | 'metaDateOut' | 'epOrder';
+export type TEpisodeType = 'uploaded' | 'uploading' | 'pending';
 
 
 
@@ -235,13 +253,13 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
   return <div className='flex flex-col gap-[8px] w-full'>
     <p className='text-white'>{label}</p>
 
-    <Menu trigger={<div className={`px-[16px] py-[8px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
+    <Menu trigger={<div className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
       {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
 
       <p className='text-white'>{options.find(el => el.code === value)?.label}</p>
 
       <IcoArrow className={`duration-200 ${isOpen ? 'rotate-[180deg]' : 'rotate-[0def]'}`} />
-    </div>} menuClassName='w-full' triggerClassName='w-full' align='stretch' className='w-full' animation='slide' closeAfter='any' state={isOpen} stateSetter={setIsOpen} statePriority='outer'>
+    </div>} menuClassName='!w-full' triggerClassName='w-full' align='stretch' className='w-full' animation='slide' closeAfter='any' state={isOpen} stateSetter={setIsOpen} statePriority='outer'>
       <MenuList className='bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto'>
         {options.map(option => {
           return <MenuItem key={`select-option--${option.code}`} onClick={() => valueSetter(option.code)}>
@@ -257,135 +275,133 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
   </div>
 })
 
+const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, title, uploadsStack }: { group: IEpisodesGroup, dubbingSelectedCode: string, title: ITitle, uploadsStack: IPatcherStackItem[] }) {
+  const isActive = group.dubber.code === dubbingSelectedCode;
+  const [isCollapsed, setIsCollapsed] = useState(!isActive)
+
+  const Episode = memo(function Episode({ episode }: { episode: IEpsiode }) {
+    const inStack = uploadsStack.find(el => el.dubberID === episode.dubberID && el.order === episode.order)
+    let order = 0;
+    let progress = 0;
+
+    if (inStack) {
+      order = uploadsStack.findIndex(el => el.dubberID === episode.dubberID && el.order === episode.order) + 1;
+      progress = inStack.progress || 0;
+      episode.type = inStack.type;
+    }
+
+    return <div className='px-[24px] py-[16px] flex items-center gap-[16px] rounded-[2px] bg-grey'>
+      {/* Order */}
+      <p className='text-white text-[24px] font-bold w-[100px] shrink-0'>#{episode.order}</p>
+
+      {/* Content */}
+      <div className='flex items-center gap-[16px] w-full'>
+        {episode.type === 'uploaded' && <Link href={`${episode.qualities.q1080}`} target='_blank' className='flex items-center gap-[16px]'>
+          <IcoPlay width={32} height={32} fill='#6C5CE7' />
+
+          <p className='text-purple'>Переглянути</p>
+        </Link>}
+
+        {episode.type === 'pending' && <>
+          <IcoUpdate width={32} height={32} fill='#F39C12' />
+          <p className='text-white'>В черзі на завантаження</p>
+          <p className='text-lightGrey'>{'>'}{order}</p>
+        </>}
+
+        {episode.type === 'uploading' && <>
+          <IcoUpdate width={32} height={32} fill='#2ECC71' />
+          <p className='text-white'>Завантажується...</p>
+          <p className='text-lightGrey'>{progress}%</p>
+        </>}
+      </div>
+
+      {/* Delete */}
+      <button className='shrink-0'>
+        <IcoCan width={32} height={32} />
+      </button>
+    </div>
+  })
+
+  return <div className='flex flex-col gap-[16px]'>
+    {/* Label */}
+    <div className='flex items-center gap-[16px]'>
+      <LoadingImage src={group.dubber.thumbURL} height='32px' width='32px' parentClassName='overflow-hidden rounded-[32px] shrink-0' />
+
+      <h3 className='text-white text-[24px] uppercase shrink-0 font-bold'>{group.dubber.name} ({group.episodes.length} / {title.episodesCount || 0})</h3>
+
+      <span className='w-full h-[3px] bg-grey'></span>
+
+      <Tooltip content={isCollapsed ? 'Розгорнути' : 'Згорунти'}>
+        <button className='p-[8px] rounded-[2px] bg-grey duration-200 hover:bg-purple focus-visible:bg-purple' onClick={() => setIsCollapsed(!isCollapsed)}>
+          <IcoArrow className={`duration-200 ${isCollapsed ? 'rotate-0' : 'rotate-[180deg]'}`} />
+        </button>
+      </Tooltip>
+    </div>
+
+    {/* Episodes */}
+    <div className={`flex flex-col gap-[4px] duration-300 ${isCollapsed ? 'max-h-0' : 'max-h-[600px]'} overflow-x-hidden overflow-y-auto`}>
+      {group.episodes.toReversed().map(episode => {
+        return <Episode episode={episode} key={`patcher-episodeGroup-${group.dubber.id}--${episode.order}`} />
+      })}
+    </div>
+  </div>
+})
+
+const ErrorsWrapper = memo(function ErrorsWrapper({ errors }: { errors: string[] }) {
+  return <section className={`px-[16px] py-[8px] rounded-[2px] border border-red bg-red/[.2] flex ${errors.length === 1 ? 'items-center' : ''} gap-[24px] ${!errors.length ? 'hidden' : ''}`}>
+    <IcoGhost width={32} height={32} />
+
+    <div className='flex flex-col gap-4px h-fit'>
+      {errors.map((el, i) => {
+        return <p className='text-white' key={`error--${i}`}>{el}</p>
+      })}
+    </div>
+  </section>
+})
 
 
-const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubbers, title, user, capabilities, totalDubbers }) => {
+
+const TitleMetaSection = memo(function TitleMetaSection({
+  title,
+  canTitleEdit,
+  canTitleDelete,
+}: IHeaderSectionProps) {
   const router = useRouter();
 
-  const isRoot = capabilities.includes('root');
-  const canTitleDelete = isRoot || capabilities.includes('titleDelete');
-  const canTitleEdit = isRoot || capabilities.includes('titleEdit');
-
-  // const canTitleEdit = false;
+  const [errors, setErrors] = useState<string[]>([])
 
   const [saveStatus, setSaveStatus] = useState<TSaveStatus>('save')
   const [poster, setPoster] = useState(title.poster);
-  const [errors, setErrors] = useState<string[]>([])
   const [isPosterOnAnimee, setIsPosterOnAnimee] = useState(poster.includes('media.animee.club'))
+
   const [titleStatus, setTitleStatus] = useState(title.status);
   const [titleAgeRate, setTitleAgeRate] = useState(title.ageRate);
   const [titleCountry, setTitleCountry] = useState(title.country);
   const [titleSeason, setTitleSeason] = useState(title.season);
-  const [selectedMeta, setSelectedMeta] = useState<ITitleEpisodeMeta | null>(null)
-  const [episodesMeta, setEpisodesMeta] = useState(title.episodesMeta);
-  const [file, setFile] = useState<File | null>(null)
-  const [filename, setFilename] = useState<string | null>(null)
-  const [episodesGroups, setEpisodesGroups] = useState<IEpisodesGroup[]>([]);
-  const [episodeOrder, setEpisodeOrder] = useState('1')
-  const [dubbingSelected, setDubbingSelected] = useState(dubbers.length ? dubbers[0].code : '')
-
-  const episodeInputRef = useRef<HTMLInputElement>(null)
-  const errorWrapperRef = useRef<HTMLDivElement>(null)
 
 
 
-
-  useEffect(() => {
-    if (!errors.length) return;
-
-    const errorWrapper = errorWrapperRef.current;
-
-    if (!errorWrapper) return;
-
-    document.documentElement.scrollTo({ top: errorWrapper.offsetTop - (document.querySelector('header')?.offsetHeight || 0) - 32, behavior: 'smooth' })
-  }, [errors])
-
-  // Handle episodes initial parsing
-  useEffect(() => {
-    const episodesGroups: IEpisodesGroup[] = []
-
-    title.episodes.forEach(episode => {
-      let group = episodesGroups.find(el => el.dubber.id === episode.dubberID);
-
-      if (group) {
-        group.episodes.push({ ...episode, type: 'uploaded' })
-      } else {
-        group = {
-          episodes: [{ ...episode, type: 'uploaded' }],
-          dubber: dubbers.find(el => el.id === episode.dubberID)!,
-        }
-
-        episodesGroups.push(group)
-      }
-    })
-
-    setEpisodesGroups(episodesGroups);
-
-    if (prodMode) {
-      window.addEventListener('beforeunload', e => {
-        if (document.querySelectorAll('.patcher-field--pending').length) e.preventDefault();
-      })
-    }
-  }, [])
-
-  // Handle file
-  useEffect(() => {
-    if (file) {
-      setFilename(file.name)
-    } else {
-      setFilename(null)
-    }
-  }, [file])
-
-
-
-  //* Handlers
-  function appendError(emsg: string) {
-    console.error(emsg)
-    setErrors(errors => [...errors.filter(el => el !== emsg), emsg])
-  }
-
-  /** Check if string is NaN
-   * @returns true if value is NaN
-   */
-  function validateNaN(value: string, emsg?: string, field?: HTMLElement): boolean {
-    let result = false;
-
-    if (isNaN(+value)) {
-      result = true;
-      if (emsg) appendError(emsg);
-      if (field) field.classList.add('patcher-field--error')
-    }
-
-    return result;
-  }
-
-
-
-  //* Events
   async function patchTitleMeta() {
     // Reset
     const inputs = document.querySelectorAll('.patcher-field.patcher-title') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>
-
-    inputs.forEach(el => {
-      el.classList.remove('patcher-field--error')
-    })
+    const errors: string[] = []
 
     setErrors([]);
+
+    inputs.forEach(el => {
+      el.classList.remove('patcher-field--saved')
+    })
 
 
 
     try {
-      let isParsingErrored = false;
-
       const pending = document.querySelectorAll('.patcher-field--pending.patcher-title') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
       const errored = document.querySelectorAll('.patcher-field--error.patcher-title');
       const patchBody: DeepPartial<ITitle> = {};
 
       if (errored.length) {
-        const emsg = 'Оновлення тайтлу - Деякі поля містять помилки.';
+        appendError('Оновлення тайтлу - Деякі поля містять помилки.')
 
-        appendError(emsg);
         setSaveStatus('saveError');
 
         return;
@@ -403,15 +419,15 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
           patchBody.names.eng = value;
         } else if (id === 'imdbRating') {
           patchBody.rating = patchBody.rating || {};
-          if (validateNaN(value, 'Оновлення тайтлу - Рейтинг IMDB може містити тільки цифри', el)) return isParsingErrored = true;
+          if (isNaN(+value)) return rejectField('Оновлення тайтлу - Рейтинг IMDB може містити тільки цифри', el, errors)
 
           patchBody.rating.IMDB = +value;
         } else if (id === 'episodesCount') {
-          if (validateNaN(value, 'Оновлення тайтлу - Епізоди можуть містити тільки цифри', el)) return isParsingErrored = true;
+          if (isNaN(+value)) return rejectField('Оновлення тайтлу - Епізоди можуть містити тільки цифри', el, errors);
 
           patchBody.episodesCount = +value;
         } else if (id === 'year') {
-          if (validateNaN(value, 'Оновлення тайтлу - Рік може містити тільки цифри', el)) return isParsingErrored = true;
+          if (isNaN(+value)) return rejectField('Оновлення тайтлу - Рік може містити тільки цифри', el, errors);
 
           patchBody.year = +value;
         } else if (id === 'description') {
@@ -423,9 +439,8 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
         el.classList.add('patcher-field--saved')
       })
 
-      if (isParsingErrored) {
-        setSaveStatus('saveError');
-        return;
+      if (errors.length) {
+        return setSaveStatus('saveError');
       }
 
       if (!Object.keys(patchBody).length) return setSaveStatus('nothingChanged');
@@ -436,10 +451,16 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
       setSaveStatus('saved')
       // router.refresh();
     } catch (e) {
-      console.error(e)
+      if (e instanceof AxiosError) {
+        errors.push(`Помилка при оновлені даних - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+      } else {
+        errors.push(`Помилка при оновленні даних - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+      }
 
       setSaveStatus('saveError')
     } finally {
+      errors.forEach(err => appendError(err))
+
       setTimeout(() => {
         setSaveStatus('save')
 
@@ -451,17 +472,140 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
   }
 
   async function deleteTitle() {
-    console.log('delete title')
+    console.log('[-]: Title deleted')
 
     router.refresh();
+
+    // TODO Delete title
   }
 
-  function addEpisodeMeta() {
+  function appendError(emsg: string) {
+    console.error(emsg)
+    setErrors(errors => [...errors.filter(el => el !== emsg), emsg])
+  }
+
+  function rejectField(emsg: string, el: HTMLElement, errors: string[]) {
+    el.classList.add('patcher-field--error')
+    errors.push(emsg)
+  }
+
+
+
+  return <section className='flex flex-col gap-[16px]'>
+    <ErrorsWrapper errors={errors} />
+
+    {/* Top */}
+    <div className='flex gap-[32px]'>
+      {/* Poster section */}
+      <div className='flex flex-col gap-[24px]'>
+        {/* Poster */}
+        <div className='flex flex-col gap-[8px]'>
+          <div className='patcher-poster cursor-pointer'>
+            <LoadingImage src={poster} width='500px' height='700px' parentClassName='overflow-hidden rounded-[4px]' />
+
+            {canTitleEdit && <div className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
+              <IcoUpdate width={256} height={256} />
+
+              <p className='text-white text-[32px] uppercase font-bold text-center select-none'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
+            </div>}
+          </div>
+
+          {!isPosterOnAnimee && <p className='text-orange'>* Постер не на сервері animee.club</p>}
+        </div>
+
+        {/* Meta section */}
+        <div className='flex flex-col gap-[24px]'>
+          <div className='flex flex-col gap-[4px]'>
+            {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${saveStatus}`} onClick={patchTitleMeta} disabled={!canTitleEdit}>
+              {(saveStatus === 'save' || saveStatus === 'saved') && <IcoUpdate width={32} height={32} />}
+              {saveStatus === 'saveError' && <IcoCross width={32} height={32} />}
+              {saveStatus === 'nothingChanged' && <IcoGhost width={32} height={32} />}
+
+              <p className='text-white uppercase'>
+                {saveStatus === 'save' && 'зберегти'}
+                {saveStatus === 'saved' && 'збережено'}
+                {saveStatus === 'saveError' && 'помилка'}
+                {saveStatus === 'nothingChanged' && 'нічого не змінилось'}
+              </p>
+            </button>}
+
+            <Link href={`${config.URL.baseURL}/${routes.watch.path}/${title.code}`} className='patcher-button_action'>
+              <IcoAnimeeLogo width={32} height={32} />
+              <p className='text-white uppercase'>тайтл на animee.club</p>
+            </Link>
+          </div>
+
+          {/* Delete title */}
+          {canTitleDelete && <button className='patcher-button_action patcher-button_action--delete' disabled={!canTitleDelete} onClick={deleteTitle}>
+            <IcoCan width={32} height={32} />
+            <p className='text-white uppercase'>видалити</p>
+          </button>}
+
+          <div className='flex flex-col gap-[4px]'>
+            <p className='text-lightGrey'>ID: {title.id}</p>
+            <p className='text-lightGrey'>CODE: {title.code}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Fields */}
+      <div className='flex flex-col gap-[8px] w-full'>
+        {/* Ukr name */}
+        <Field label='Назва' id='ukrName' initialValue={title.names.ukr} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
+
+        {/* Alt names */}
+        <div className='pl-[16px]'>
+          <Field label='Англійська' id='engName' initialValue={title.names.eng} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
+
+          {canTitleEdit && <>{/* alt names */}</>}
+        </div>
+
+        {/* Status */}
+        <Select label='Статус' options={titleStatusOptions} value={titleStatus} valueSetter={setTitleStatus} />
+
+        {/* IMDB rating */}
+        <Field label='Рейтинг IMDB' id='imdbRating' note='1 - 10, 0 - Відсутній' initialValue={`${title.rating.IMDB || '0'}`} isLocked={!canTitleEdit} symbolsLimited={3} type='title' />
+
+        {/* Age rate */}
+        <Select label='Віковий рейтинг' options={titleAgeRateOptions} value={titleAgeRate} valueSetter={setTitleAgeRate} />
+
+        {/* Episodes count */}
+        <Field label='Епізоди' id='episodesCount' note='1 - 9999, 0 - Відсутні' initialValue={`${title.episodesCount || '0'}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
+
+        {/* Country */}
+        <Select label='Країна' options={titleCountryOptions} value={titleCountry} valueSetter={setTitleCountry} />
+
+        {/* Season */}
+        <Select label='Сезон' options={titleSeasonOptions} value={titleSeason} valueSetter={setTitleSeason} />
+
+        {/* Year */}
+        <Field label='Рік' id='year' note='2007 - 2050' initialValue={`${title.year}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
+
+        {/* Details */}
+        {canTitleEdit && <Field label='Деталі' id='details' note='Не обов`язково' isLarge initialValue={title.details || ''} isLocked={!canTitleEdit} symbolsLimited={500} type='title' />}
+      </div>
+    </div>
+
+    {/* Textareas */}
+    {/* Description */}
+    <Field label='Опис' id='description' isLarge initialValue={title.description} isLocked={!canTitleEdit} symbolsLimited={2200} type='title' />
+  </section>
+})
+
+const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title }: IEpisodesMetaSection) {
+  const [errors, setErrors] = useState<string[]>([])
+
+  const [selectedMeta, setSelectedMeta] = useState<ITitleEpisodeMeta | null>(null)
+  const [episodesMeta, setEpisodesMeta] = useState(title.episodesMeta);
+
+
+
+  async function addEpisodeMeta() {
     // Reset
     const inputs = document.querySelectorAll('.patcher-field.patcher-meta');
+    const errors: string[] = []
 
     inputs.forEach(el => {
-      el.classList.remove('patcher-field--error')
       el.classList.remove('patcher-field--saved')
     })
 
@@ -472,21 +616,18 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
     const engName = (document.querySelector(`#patcher-${'metaEngName' as TFieldID}`) as HTMLInputElement);
     const dateOut = (document.querySelector(`#patcher-${'metaDateOut' as TFieldID}`) as HTMLInputElement);
 
-    let rejected = false;
-    let errors: string[] = []
-
-    if (!order.value || isNaN(+order.value)) reject('Інформація про епізод - Номер серії не може містити букви чи бути порожнім', order);
-    if (!dateOut.value || !dateOut.value.match(/^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(\d{4})$/gi)) reject('Інформація про епізод - Дата виходу не може бути порожнею або не відповідати - ДД.ММ.РРРР (09, 10)', dateOut);
-    if (!ukrName.value) reject('Інформація про епізод - Українська назва відсутня', ukrName);
-    if (!engName.value) reject('Інформація про епізод - Англійська назва відсутня', engName);
+    if (!order.value || isNaN(+order.value)) rejectField('Номер серії не може містити букви чи бути порожнім', order, errors); else order.classList.remove('patcher-field--error')
+    if (!dateOut.value || !dateOut.value.match(/^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(\d{4})$/gi)) rejectField('Дата виходу не може бути порожнею або не відповідати - ДД.ММ.РРРР (09, 10)', dateOut, errors); else dateOut.classList.remove('patcher-field--error')
+    if (!ukrName.value) rejectField('Українська назва відсутня', ukrName, errors); else ukrName.classList.remove('patcher-field--error')
+    if (!engName.value) rejectField('Англійська назва відсутня', engName, errors); else engName.classList.remove('patcher-field--error')
 
     const date = new Date()
 
     date.setFullYear(+dateOut.value.split('.')[2], +dateOut.value.split('.')[1] - 1, +dateOut.value.split('.')[0])
 
-    if (date.getUTCFullYear() > 2050 || date.getUTCFullYear() < 2007) reject('Інформація про епізод - Рік не може бути менше 2007 чи більше 2050', dateOut)
+    if (date.getUTCFullYear() > 2050 || date.getUTCFullYear() < 2007) rejectField('Рік не може бути менше 2007 чи більше 2050', dateOut, errors)
 
-    if (rejected) {
+    if (errors.length) {
       return errors.forEach(err => appendError(err));
     }
 
@@ -507,32 +648,27 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
       console.log(`[+]: Meta for episode ${+order.value} added.`)
     } catch (e) {
       if (e instanceof AxiosError) {
-        appendError(`Помилка при оновлені даних - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        errors.push(`Помилка при оновлені даних - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
-        appendError(`Помилка при оновленні даних - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        errors.push(`Помилка при оновленні даних - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }
     }
 
-    inputs.forEach(el => {
-      el.classList.add('patcher-field--saved')
-    })
-
-    setTimeout(() => {
+    if (!errors.length) {
       inputs.forEach(el => {
-        el.classList.remove('patcher-field--saved')
+        el.classList.remove('patcher-field--error')
+        el.classList.add('patcher-field--saved')
       })
-    }, 3000);
 
-
-
-    function reject(emsg: string, el: HTMLElement) {
-      errors.push(emsg);
-      el.classList.add('patcher-field--error')
-      rejected = true;
+      setTimeout(() => {
+        inputs.forEach(el => {
+          el.classList.remove('patcher-field--saved')
+        })
+      }, 3000);
     }
   }
 
-  function deleteEpisodeMeta(specified?: number) {
+  async function deleteEpisodeMeta(specified?: number) {
     const order = specified || (document.querySelector(`#patcher-${'metaOrder' as TFieldID}`) as HTMLInputElement).value;
 
     try {
@@ -551,41 +687,65 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
   }
 
   async function parseEpisodesMetas() {
-    const url = (document.querySelector(`#patcher-${'metaImdbParse' as TFieldID}`) as HTMLInputElement).value
+    // Reset
+    const inputs = document.querySelectorAll('.patcher-field.patcher-metaParse');
+    const field = document.querySelector(`#patcher-${'metaImdbParse' as TFieldID}`)! as HTMLInputElement;
+    const errors: string[] = []
 
-    console.log(`Parse ${url}`)
-    // TODO Fetch
-  }
+    inputs.forEach(el => {
+      el.classList.remove('patcher-field--saved')
+    })
 
-  function uploadEpisode() {
-    if (validateNaN(episodeOrder), 'Епізод озвучення не може містити букви') return;
-  }
+    setErrors([]);
 
-  function chooseFile() {
-    const input = episodeInputRef.current;
+    try {
+      let url: URL = new URL('https://example.com');
 
-    if (!input) return;
-
-    input.click();
-  }
-
-  function selectFile() {
-    const input = episodeInputRef.current;
-
-    if (!input) return;
-
-    if (!input.files) {
-      setFile(null)
-    } else {
-      const file = input.files[0];
-
-      if (file.size >= config.vars.PATCHER_FILE_MAX_SIZE) {
-        return appendError('Файл занадто великий (>5GB)');
+      try {
+        url = new URL((document.querySelector(`#patcher-${'metaImdbParse' as TFieldID}`) as HTMLInputElement).value)
+      } catch (e) {
+        rejectField(`Неправильний URL`, field, errors)
       }
 
-      setFile(file);
+      if (url.host === 'example.com') return;
+      if (url.host !== 'www.imdb.com' && url.host !== 'imdb.com') rejectField(`Домен не є IMDB`, field, errors)
+      if (errors.length) return;
+
+      const { href } = url;
+      console.log(`Parse ${href}`)
+      // TODO Fetch
+
+      inputs.forEach(el => {
+        el.classList.add('patcher-field--saved')
+        el.classList.remove('patcher-field--error')
+      })
+
+      setTimeout(() => {
+        inputs.forEach(el => {
+          el.classList.remove('patcher-field--saved')
+        })
+      }, 3000);
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        errors.push(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+      } else {
+        errors.push(`Помилка при парсингу інформації про епізоди - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+      }
+    } finally {
+      errors.forEach(err => appendError(err))
     }
   }
+
+  function appendError(emsg: string) {
+    console.error(emsg)
+    setErrors(errors => [...errors.filter(el => el !== emsg), emsg])
+  }
+
+  function rejectField(emsg: string, el: HTMLElement, errors: string[]) {
+    el.classList.add('patcher-field--error')
+    errors.push(emsg)
+  }
+
 
 
 
@@ -619,58 +779,320 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
     </div>
   })
 
-  const EpisodesGroup = memo(function EpisodesGroup({ group }: { group: IEpisodesGroup }) {
-    const Episode = memo(function Episode({ episode }: { episode: IEpsiode }) {
-      return <div className='px-[24px] py-[16px] flex items-center gap-[16px] rounded-[2px] bg-grey'>
-        {/* Order */}
-        <p className='text-white text-[24px] font-bold w-[100px] shrink-0'>#{episode.order}</p>
 
-        {/* Content */}
-        <div className='flex items-center gap-[16px] w-full'>
-          {episode.type === 'uploaded' && <Link href={`${episode.qualities.q1080}`} target='_blank' className='flex items-center gap-[16px]'>
-            <IcoPlay width={32} height={32} fill='#6C5CE7' />
 
-            <p className='text-purple'>Переглянути</p>
-          </Link>}
+  return <section className='flex flex-col gap-[16px]'>
+    <Label label='Інформація про серії' />
 
-          {episode.type === 'pending' && <>
-            <IcoUpdate width={32} height={32} fill='#F39C12' />
-            <p className='text-white'>В черзі на завантаження</p>
-            <p className='text-lightGrey'>{'>'}COUNT</p>
-          </>}
+    <ErrorsWrapper errors={errors} />
 
-          {episode.type === 'uploading' && <>
-            <IcoUpdate width={32} height={32} fill='#2ECC71' />
-            <p className='text-white'>Завантажується...</p>
-            <p className='text-lightGrey'>COUNT%</p>
-          </>}
+    <div className='flex flex-col gap-[24px]'>
+      <div className='flex flex-col gap-[16px]'>
+        {/* Parse */}
+        {isRoot && <div className='flex items-center gap-[16px]'>
+          <Field label='Парс епізодів з IMDB' id='metaImdbParse' type='metaParse' placeholder='https://www.imdb.com/title/{ID}/episodes' disablePending />
+
+          <button className='p-[12px] bg-grey rounded-[4px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={parseEpisodesMetas}>
+            <IcoUpdate width={32} height={32} />
+          </button>
+        </div>}
+
+        {/* Panel */}
+        <div className='flex flex-col gap-[8px]'>
+          <div className='flex items-start gap-[16px] w-full'>
+            {/* Order */}
+            <div className='w-[100px] shrink-0'>
+              <Field label='Номер серії' id='metaOrder' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? `${selectedMeta.order}` : undefined} symbolsLimited={4} />
+            </div>
+
+            <Field label='Українська назва' id='metaUkrName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.ukr : undefined} symbolsLimited={256} />
+          </div>
+
+          <div className='flex items-center gap-[16px] w-full'>
+            <div className='flex items-start gap-[16px] w-full'>
+              <Field label='Англійска назва' id='metaEngName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.eng : undefined} symbolsLimited={256} />
+
+              {/* Out date */}
+              <div className='w-[320px] shrink-0'>
+                <Field label='Дата виходу' note='ДД.ММ.РРРР' id='metaDateOut' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? getUTC(selectedMeta.dateOut).dateReversed : undefined} symbolsLimited={10} />
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className='flex gap-[4px]'>
+              <Tooltip content='Зберегти'>
+                <button className='p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-green focus-visible:bg-green' onClick={addEpisodeMeta}>
+                  <IcoUpdate width={32} height={32} />
+                </button>
+              </Tooltip>
+
+              <Tooltip content='Видалити'>
+                <button className='p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-red focus-visible:bg-red' onClick={() => deleteEpisodeMeta()}>
+                  <IcoCan width={32} height={32} />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
         </div>
-
-        {/* Delete */}
-        <button className='shrink-0'>
-          <IcoCan width={32} height={32} />
-        </button>
-      </div>
-    })
-
-    return <div className='flex flex-col gap-[16px]'>
-      {/* Label */}
-      <div className='flex items-center gap-[16px]'>
-        <LoadingImage src={group.dubber.thumbURL} height='32px' width='32px' parentClassName='overflow-hidden rounded-[32px] shrink-0' />
-
-        <h3 className='text-white text-[24px] uppercase shrink-0 font-bold'>{group.dubber.name} ({group.episodes.length} / {title.episodesCount || 0})</h3>
-
-        <span className='w-full h-[3px] bg-grey'></span>
       </div>
 
-      {/* Episodes */}
-      <div className='flex flex-col gap-[4px] max-h-[600px] overflow-x-hidden overflow-y-auto'>
-        {(JSON.parse(JSON.stringify(group.episodes)) as IEpsiode[]).reverse().map(episode => {
-          return <Episode episode={episode} key={`patcher-episodeGroup-${group.dubber.id}--${episode.order}`} />
-        })}
+      {/* Divider */}
+      <span className='w-full h-[3px] bg-grey'></span>
+
+      <div className='flex flex-col gap-[4px] max-h-[600px] overflow-y-auto overflow-x-hidden'>
+        {episodesMeta.length ? episodesMeta.sort((a, b) => b.order - a.order).map(meta => {
+          return <EpisodeMeta meta={meta} key={`episodeMeta--${meta.order}`} />
+        }) : <div className='w-full flex justify-center items-center gap-[16px]'>
+          <IcoGhost fill='#747474' />
+          <p className='text-lightGrey'>Здається, тут нічого нема...</p>
+        </div>}
       </div>
     </div>
-  })
+  </section>
+})
+
+const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, title }: IEpisodesSection) {
+  const [errors, setErrors] = useState<string[]>([])
+
+  const [episodesGroups, setEpisodesGroups] = useState<IEpisodesGroup[]>([]);
+  const [uploadsStack, setUploadsStack] = useState<IPatcherStackItem[]>([])
+
+  const [file, setFile] = useState<File | null>(null)
+  const [filename, setFilename] = useState<string | null>(null)
+  const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : '')
+  const [Stack] = useState(new PactherStack({
+    appendError,
+    setUploadsStack
+  }))
+
+  const fileRef = useRef<HTMLInputElement>(null)
+
+
+
+  useEffect(() => {
+    const episodesGroups: IEpisodesGroup[] = []
+
+    title.episodes.forEach(episode => {
+      let group = episodesGroups.find(el => el.dubber.id === episode.dubberID);
+
+      if (group) {
+        group.episodes.push({ ...episode, type: 'uploaded' })
+      } else {
+        group = {
+          episodes: [{ ...episode, type: 'uploaded' }],
+          dubber: dubbers.find(el => el.id === episode.dubberID)!,
+        }
+
+        episodesGroups.push(group)
+      }
+    })
+
+    setEpisodesGroups(episodesGroups);
+  }, [])
+
+  // Handle file
+  useEffect(() => {
+    if (file) {
+      setFilename(file.name)
+    } else {
+      setFilename(null)
+    }
+  }, [file])
+
+
+
+  function chooseFile() {
+    const input = fileRef.current;
+
+    if (!input) return;
+
+    input.click();
+  }
+
+  function selectFile() {
+    const input = fileRef.current;
+
+    if (!input) return;
+
+    if (!input.files) {
+      setFile(null)
+    } else {
+      const file = input.files[0];
+
+      if (file.size >= config.vars.PATCHER_FILE_MAX_SIZE) {
+        return appendError('Файл занадто великий (>5GB)');
+      }
+
+      setFile(file);
+    }
+  }
+
+  async function addEpisode() {
+    // Reset
+    const inputs = document.querySelectorAll('.patcher-field.patcher-episode');
+    const errors: string[] = []
+
+    inputs.forEach(el => {
+      el.classList.remove('patcher-field--saved')
+    })
+
+    setErrors([]);
+
+    try {
+      const order = document.querySelector(`#patcher-${'epOrder' as TFieldID}`) as HTMLInputElement
+      const dubber = totalDubbers.find(el => el.code === dubbingSelectedCode)!;
+      let group = episodesGroups.find(el => el.dubber.id === dubber.id);
+
+
+      if (!order.value || isNaN(+order.value)) rejectField('Номер не може містити букви або бути порожнім', order, errors); else order.classList.remove('patcher-field--error')
+
+      if (!group) {
+        group = {
+          dubber,
+          episodes: []
+        }
+      }
+
+      if (group.episodes.some(el => el.order === +order.value)) rejectField('Епізод вже існує', order, errors)
+      if (!file) rejectField('Файл не вибраний', fileRef.current!, errors)
+
+      if (errors.length) return;
+
+      const episode: IEpsiode = {
+        dubberID: dubber.id,
+        frames: [],
+        order: +order.value,
+        qualities: {
+          q1080: '',
+          q240: null,
+          q480: null,
+          q4k: null,
+          q720: null
+        },
+        type: 'pending'
+      }
+
+      group.episodes.push(episode)
+
+      Stack.append({
+        dubberID: dubber.id,
+        file: file!,
+        order: +order.value,
+        progress: null,
+        type: 'pending'
+      })
+
+      setEpisodesGroups(episodeGroups => {
+        return [...episodeGroups.filter(el => el.dubber.id !== dubber.id), group].sort((a, b) => a.dubber.name > b.dubber.name ? 1 : -1);
+      })
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        errors.push(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+      } else {
+        errors.push(`Помилка при парсингу інформації про епізоди - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+      }
+    } finally {
+      errors.forEach(err => appendError(err));
+    }
+  }
+
+  async function deleteEpisode(specified?: number, dubber?: string) {
+    const order = specified || 1;
+
+    console.log(`[-]: Episode ${order} in ${totalDubbers.find(el => el.code === dubber)?.name} deleted`)
+
+    try {
+
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        errors.push(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+      } else {
+        errors.push(`Помилка при парсингу інформації про епізоди - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+      }
+    } finally {
+      errors.forEach(err => appendError(err));
+    }
+  }
+
+  function appendError(emsg: string) {
+    console.error(emsg)
+    setErrors(errors => [...errors.filter(el => el !== emsg), emsg])
+  }
+
+  function rejectField(emsg: string, el: HTMLElement, errors: string[]) {
+    el.classList.add('patcher-field--error')
+    errors.push(emsg)
+  }
+
+
+
+  return <section className='flex flex-col gap-[32px]'>
+    {/* Controls */}
+    <div className='flex flex-col gap-[16px]'>
+      <Label label='Озвучення' />
+
+      <ErrorsWrapper errors={errors} />
+
+      <div className='flex items-center gap-[16px]'>
+        <div className='flex items-start gap-[16px] w-full'>
+          {/* Order */}
+          <div className='w-[100px] shrink-0'>
+            <Field id='epOrder' label='Номер серії' type='episode' symbolsLimited={4} disablePending initialValue={'1'} />
+          </div>
+
+          {/* Select dubber */}
+          <div className='w-[300px] shrink-0'>
+            <Select label='Команда' options={totalDubbers.sort((a, b) => a.name > b.name ? 1 : -1).map(dub => { return { code: dub.code, label: dub.name } })} value={dubbingSelectedCode} valueSetter={setDubbingSelectedCode} disablePending isDubbers dubbers={totalDubbers} />
+          </div>
+
+          {/* File select */}
+          <div className='w-full flex flex-col gap-[8px]'>
+            <p className='text-white'>Файл</p>
+
+            <div className='w-full'>
+              <input type="file" accept='.mp4,.webm,.mov,.mkv,.m4v' className='hidden' ref={fileRef} onChange={selectFile} />
+
+              <button className='patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]' onClick={chooseFile}>
+                <IcoUpdate width={32} height={32} />
+                <p className={`text-white ${filename ? '' : 'uppercase'}`}>{filename || 'виберіть файл'}</p>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <Tooltip content='Додати серію'>
+          <button className='p-[8px] bg-grey rounded-[4px] duration-200 hover:bg-green focus-visible:bg-green' onClick={addEpisode}>
+            <IcoArrow width={32} height={32} className='-rotate-[90deg]' />
+          </button>
+        </Tooltip>
+      </div>
+    </div>
+
+    {/* Groups */}
+    {episodesGroups.map(group => {
+      return <EpisodesGroup group={group} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} />
+    })}
+  </section>
+})
+
+
+const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, user, capabilities, totalDubbers }) => {
+  const router = useRouter();
+
+  const isRoot = capabilities.includes('root');
+  const canTitleDelete = isRoot || capabilities.includes('titleDelete');
+  const canTitleEdit = isRoot || capabilities.includes('titleEdit');
+
+
+
+  // Prevent unloading if some changes are pending 
+  useEffect(() => {
+    if (prodMode) {
+      window.addEventListener('beforeunload', e => {
+        if (document.querySelectorAll('.patcher-field--pending').length) e.preventDefault();
+      })
+    }
+  }, [])
 
 
 
@@ -692,234 +1114,20 @@ const Patcher: NextPage<IProps> = ({ isEditor, totalTitles, totalUpdated, dubber
             {/* Divider */}
             <span className='w-full h-[3px] bg-grey'></span>
 
-            <p className='text-lightGrey shrink-0'>Оновлено тайтлів: {totalUpdated} / {totalTitles} ({((totalUpdated / totalTitles) * 100).toFixed(2)})</p>
+            <p className='text-lightGrey shrink-0'>Оновлено тайтлів: {totalUpdated} / {totalTitles} ({((totalUpdated / totalTitles) * 100).toFixed(2)}%)</p>
           </div>
         </div>
 
         {/* Container */}
         <div className='bg-darkGrey rounded-[4px] px-[32px] py-[40px] flex flex-col gap-[60px]'>
-          {/* Error */}
-          <section className={`px-[16px] py-[8px] rounded-[2px] border border-red bg-red/[.2] flex ${errors.length === 1 ? 'items-center' : ''} gap-[24px] ${!errors.length ? 'hidden' : ''}`} ref={errorWrapperRef}>
-            <IcoGhost width={32} height={32} />
-
-            <div className='flex flex-col gap-4px h-fit'>
-              {errors.map((el, i) => {
-                return <p className='text-white' key={`error--${i}`}>{el}</p>
-              })}
-            </div>
-          </section>
-
-          {/* Head */}
-          <section className='flex flex-col gap-[16px]'>
-            {/* Top */}
-            <div className='flex gap-[32px]'>
-              {/* Poster section */}
-              <div className='flex flex-col gap-[24px]'>
-                {/* Poster */}
-                <div className='flex flex-col gap-[8px]'>
-                  <div className='patcher-poster cursor-pointer'>
-                    <LoadingImage src={poster} width='500px' height='700px' parentClassName='overflow-hidden rounded-[4px]' />
-
-                    {canTitleEdit && <div className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
-                      <IcoUpdate width={256} height={256} />
-
-                      <p className='text-white text-[32px] uppercase font-bold text-center select-none'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
-                    </div>}
-                  </div>
-
-                  {!isPosterOnAnimee && <p className='text-orange'>* Постер не на сервері animee.club</p>}
-                </div>
-
-                {/* Meta section */}
-                <div className='flex flex-col gap-[24px]'>
-                  <div className='flex flex-col gap-[4px]'>
-                    {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${saveStatus}`} onClick={patchTitleMeta} disabled={!canTitleEdit}>
-                      {(saveStatus === 'save' || saveStatus === 'saved') && <IcoUpdate width={32} height={32} />}
-                      {saveStatus === 'saveError' && <IcoCross width={32} height={32} />}
-                      {saveStatus === 'nothingChanged' && <IcoGhost width={32} height={32} />}
-
-                      <p className='text-white uppercase'>
-                        {saveStatus === 'save' && 'зберегти'}
-                        {saveStatus === 'saved' && 'збережено'}
-                        {saveStatus === 'saveError' && 'помилка'}
-                        {saveStatus === 'nothingChanged' && 'нічого не змінилось'}
-                      </p>
-                    </button>}
-
-                    <Link href={`${config.URL.baseURL}/${routes.watch.path}/${title.code}`} className='patcher-button_action'>
-                      <IcoAnimeeLogo width={32} height={32} />
-                      <p className='text-white uppercase'>тайтл на animee.club</p>
-                    </Link>
-                  </div>
-
-                  {/* Delete title */}
-                  {canTitleDelete && <button className='patcher-button_action patcher-button_action--delete' disabled={!canTitleDelete} onClick={deleteTitle}>
-                    <IcoCan width={32} height={32} />
-                    <p className='text-white uppercase'>видалити</p>
-                  </button>}
-
-                  <div className='flex flex-col gap-[4px]'>
-                    <p className='text-lightGrey'>ID: {title.id}</p>
-                    <p className='text-lightGrey'>CODE: {title.code}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Fields */}
-              <div className='flex flex-col gap-[8px] w-full'>
-                {/* Ukr name */}
-                <Field label='Назва' id='ukrName' initialValue={title.names.ukr} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
-
-                {/* Alt names */}
-                <div className='pl-[16px]'>
-                  <Field label='Англійська' id='engName' initialValue={title.names.eng} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
-
-                  {canTitleEdit && <>{/* alt names */}</>}
-                </div>
-
-                {/* Status */}
-                <Select label='Статус' options={titleStatusOptions} value={titleStatus} valueSetter={setTitleStatus} />
-
-                {/* IMDB rating */}
-                <Field label='Рейтинг IMDB' id='imdbRating' note='1 - 10, 0 - Відсутній' initialValue={`${title.rating.IMDB || '0'}`} isLocked={!canTitleEdit} symbolsLimited={3} type='title' />
-
-                {/* Age rate */}
-                <Select label='Віковий рейтинг' options={titleAgeRateOptions} value={titleAgeRate} valueSetter={setTitleAgeRate} />
-
-                {/* Episodes count */}
-                <Field label='Епізоди' id='episodesCount' note='1 - 9999, 0 - Відсутні' initialValue={`${title.episodesCount || '0'}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
-
-                {/* Country */}
-                <Select label='Країна' options={titleCountryOptions} value={titleCountry} valueSetter={setTitleCountry} />
-
-                {/* Season */}
-                <Select label='Сезон' options={titleSeasonOptions} value={titleSeason} valueSetter={setTitleSeason} />
-
-                {/* Year */}
-                <Field label='Рік' id='year' note='2007 - 2050' initialValue={`${title.year}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
-              </div>
-            </div>
-
-            {/* Textareas */}
-            {/* Description */}
-            <Field label='Опис' id='description' isLarge initialValue={title.description} isLocked={!canTitleEdit} symbolsLimited={2200} type='title' />
-
-            {/* Details */}
-            {canTitleEdit && <Field label='Деталі' id='details' note='Не обов`язково' isLarge initialValue={title.details || ''} isLocked={!canTitleEdit} symbolsLimited={500} type='title' />}
-          </section>
+          {/* Title meta */}
+          {/* <TitleMetaSection canTitleDelete={canTitleDelete} canTitleEdit={canTitleEdit} title={title} /> */}
 
           {/* Episodes metas */}
-          <section className='flex flex-col gap-[16px]'>
-            <Label label='Інформація про серії' />
-
-            <div className='flex flex-col gap-[24px]'>
-              <div className='flex flex-col gap-[16px]'>
-                {/* Parse */}
-                {isRoot && <div className='flex items-center gap-[16px]'>
-                  <Field label='Парс епізодів з IMDB' id='metaImdbParse' type='meta' placeholder='https://www.imdb.com/title/{ID}/episodes' disablePending />
-
-                  <button className='p-[12px] bg-grey rounded-[4px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={parseEpisodesMetas}>
-                    <IcoUpdate width={32} height={32} />
-                  </button>
-                </div>}
-
-                {/* Panel */}
-                <div className='flex flex-col gap-[8px]'>
-                  <div className='flex items-start gap-[16px] w-full'>
-                    {/* Order */}
-                    <div className='w-[100px] shrink-0'>
-                      <Field label='Номер серії' id='metaOrder' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? `${selectedMeta.order}` : undefined} symbolsLimited={4} />
-                    </div>
-
-                    <Field label='Українська назва' id='metaUkrName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.ukr : undefined} symbolsLimited={256} />
-                  </div>
-
-                  <div className='flex items-center gap-[16px] w-full'>
-                    <div className='flex items-start gap-[16px] w-full'>
-                      <Field label='Англійска назва' id='metaEngName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.eng : undefined} symbolsLimited={256} />
-
-                      {/* Out date */}
-                      <div className='w-[320px] shrink-0'>
-                        <Field label='Дата виходу' note='ДД.ММ.РРРР' id='metaDateOut' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? getUTC(selectedMeta.dateOut).dateReversed : undefined} symbolsLimited={10} />
-                      </div>
-                    </div>
-
-                    {/* Controls */}
-                    <div className='flex gap-[4px]'>
-                      <Tooltip content='Зберегти'>
-                        <button className='p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-green focus-visible:bg-green' onClick={addEpisodeMeta}>
-                          <IcoUpdate width={32} height={32} />
-                        </button>
-                      </Tooltip>
-
-                      <Tooltip content='Видалити'>
-                        <button className='p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-red focus-visible:bg-red' onClick={() => deleteEpisodeMeta()}>
-                          <IcoCan width={32} height={32} />
-                        </button>
-                      </Tooltip>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <span className='w-full h-[3px] bg-grey'></span>
-
-              <div className='flex flex-col gap-[4px] max-h-[600px] overflow-y-auto overflow-x-hidden'>
-                {episodesMeta.length ? episodesMeta.sort((a, b) => b.order - a.order).map(meta => {
-                  return <EpisodeMeta meta={meta} key={`episodeMeta--${meta.order}`} />
-                }) : <div className='w-full flex justify-center items-center gap-[16px]'>
-                  <IcoGhost fill='#747474' />
-                  <p className='text-lightGrey'>Здається, тут нічого нема...</p>
-                </div>}
-              </div>
-            </div>
-          </section>
+          {/* <EpisodeMetaSection isRoot={isRoot} title={title} /> */}
 
           {/* Dubbing */}
-          <section className='flex flex-col gap-[32px]'>
-            {/* Controls */}
-            <div className='flex flex-col gap-[16px]'>
-              <Label label='Озвучення' />
-
-              <div className='flex items-center gap-[16px]'>
-                {/* Order */}
-                <div className='w-[100px] shrink-0'>
-                  <Field id='epOrder' label='Номер серії' type='episode' symbolsLimited={4} disablePending initialValue={'1'} outValueSetter={setEpisodeOrder} />
-                </div>
-
-                {/* Select dubber */}
-                <div className='w-[300px] shrink-0'>
-                  <Select label='Команда' options={totalDubbers.map(dub => { return { code: dub.code, label: dub.name } })} value={dubbingSelected} valueSetter={setDubbingSelected} disablePending isDubbers dubbers={totalDubbers} />
-                </div>
-
-                {/* File select */}
-                <div className='w-full flex flex-col gap-[8px]'>
-                  <p className='text-white'>Файл</p>
-
-                  <div className='flex flex-col gap-[8px] w-full'>
-                    <input type="file" accept='.mp4,.webm,.mov,.mkv,.m4v' className='hidden' ref={episodeInputRef} onChange={selectFile} />
-
-                    <button className='patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={chooseFile}>
-                      <IcoUpdate width={32} height={32} />
-                      <p className={`text-white ${filename ? '' : 'uppercase'}`}>{filename || 'виберіть файл'}</p>
-                    </button>
-                  </div>
-                </div>
-
-                <Tooltip content='Додати серію'>
-                  <button className='p-[8px] bg-grey rounded-[4px] duration-200 hover:bg-green focus-visible:bg-green' onClick={uploadEpisode}>
-                    <IcoArrow width={32} height={32} className='-rotate-[90deg]' />
-                  </button>
-                </Tooltip>
-              </div>
-            </div>
-
-            {/* Groups */}
-            {episodesGroups.map(group => {
-              return <EpisodesGroup group={group} key={`patcher-episodeGroup--${group.dubber.id}`} />
-            })}
-          </section>
+          <EpisodesSection dubbers={dubbers} title={title} totalDubbers={totalDubbers} />
         </div>
       </div>
     </div>

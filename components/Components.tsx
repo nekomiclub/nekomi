@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import { ITitle } from '../interfaces/ITitle';
 import { IRoute, routes } from '../routes';
@@ -18,7 +18,7 @@ import CatImg from '../assets/img/oopsIndevCat.png';
 
 
 
-export const LoadingImage: NextPage<{ src: string, alt?: string, className?: string, parentClassName?: string, priority?: boolean, loading?: 'lazy' | 'eager', width: string, height: string }> = ({ src, alt, className, loading, priority, height, width, parentClassName }) => {
+export const LoadingImage = memo(function LoadingImage({ src, alt, className, loading, priority, height, width, parentClassName }: { src: string, alt?: string, className?: string, parentClassName?: string, priority?: boolean, loading?: 'lazy' | 'eager', width: string, height: string }) {
   const [loaded, setLoaded] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
   const ref = useRef<HTMLImageElement>(null)
@@ -54,7 +54,7 @@ export const LoadingImage: NextPage<{ src: string, alt?: string, className?: str
       </div>
     </div>
   )
-}
+})
 
 export const WatchButton: NextPage<{ href: string, className?: string, gradient: 'primary' | 'secondary' }> = ({ gradient, href, className }) => {
   return (

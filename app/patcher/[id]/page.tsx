@@ -18,7 +18,6 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
   let title: ITitle | null = null;
   let dubbers: IDubber[] = [];
   let totalDubbers: IDubber[] = [];
-  let isEditor = false;
   let totalTitles = 0;
   let totalUpdated = 0;
   let user: IUser | null = null
@@ -38,9 +37,7 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
 
     user = userData.user;
     capabilities = userData.parsedCapabilities;
-
-    isEditor = userData.parsedCapabilities.includes('root') || userData.parsedCapabilities.includes('editor');
-    pass = userData.parsedCapabilities.includes('dubber') || isEditor;
+    pass = userData.parsedCapabilities.includes('dubber') || userData.parsedCapabilities.includes('root') || userData.parsedCapabilities.includes('editor');
 
     if (pass) {
       const { data: titleData } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] }>(`/title/${params.id}`, {
@@ -90,5 +87,5 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
     }
   }
 
-  return pass ? <Patcher totalTitles={totalTitles} totalUpdated={totalUpdated} isEditor={isEditor} title={title!} dubbers={dubbers} user={user!} capabilities={capabilities} totalDubbers={totalDubbers} /> : <NotFoundScreen />
+  return pass ? <Patcher totalTitles={totalTitles} totalUpdated={totalUpdated} title={title!} dubbers={dubbers} user={user!} capabilities={capabilities} totalDubbers={totalDubbers} /> : <NotFoundScreen />
 }
