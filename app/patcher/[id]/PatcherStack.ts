@@ -38,14 +38,16 @@ export class PactherStack {
     console.log(`[PatcherStack]: Item ${order} in ${dubberID} appended`)
 
     this.stack.push({ dubberID, file, order, progress, type, id })
-    // this.patch({ id, type: 'pending' });
+    this.patch({ id, type: 'pending' })
 
     this.run();
   }
 
   remove(id: string) {
+    const item = this.stack.find(el => el.id === id)!;
     console.log(`[PatcherStack]: Item ${id} removed`)
-    this.stack = this.stack.filter(el => el.id !== id);
+
+    item.type = 'uploaded';
 
     this.run();
   }
@@ -56,15 +58,15 @@ export class PactherStack {
     if (progress) item.progress = progress;
     if (type) item.type = type;
 
-    this.setUploadsStack([...this.stack])
+    this.setUploadsStack(this.stack.map(el => { return { ...el, id: undefined } }))
   }
 
   async run() {
     if (this.isRunning) return console.log(`[PatcherStack]: Stack is already running`);
-    if (!this.stack.length) return console.log(`[PatcherStack]: Stack is empty`);
+    if (!this.stack.filter(el => el.type !== 'uploaded').length) return console.log(`[PatcherStack]: Stack is empty`);
 
     this.isRunning = true;
-    const item = this.stack[0];
+    const item = this.stack.filter(el => el.type !== 'uploaded')[0];
 
     try {
       this.patch({ id: item.id, type: 'uploading' })
@@ -73,8 +75,6 @@ export class PactherStack {
       // Upload
       await new Promise(res => {
         setTimeout(() => {
-          console.log('Uploaded')
-          console.log(item)
           this.patch({ id: item.id, type: 'uploaded' })
           res(1)
         }, 10000);
@@ -86,6 +86,6 @@ export class PactherStack {
     this.isRunning = false;
     this.remove(item.id)
 
-    if (this.stack.length) this.run();
+    if (this.stack.filter(el => el.type !== 'uploaded').length) this.run();
   }
 }

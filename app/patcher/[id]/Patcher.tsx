@@ -280,12 +280,12 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
   const [isCollapsed, setIsCollapsed] = useState(!isActive)
 
   const Episode = memo(function Episode({ episode }: { episode: IEpsiode }) {
-    const inStack = uploadsStack.find(el => el.dubberID === episode.dubberID && el.order === episode.order)
+    const inStack = uploadsStack.find(el => el.dubberID === episode.dubberID && el.order === episode.order);
     let order = 0;
     let progress = 0;
 
     if (inStack) {
-      order = uploadsStack.findIndex(el => el.dubberID === episode.dubberID && el.order === episode.order) + 1;
+      order = uploadsStack.filter(el => el.type !== 'uploaded').findIndex(el => el.dubberID === episode.dubberID && el.order === episode.order);
       progress = inStack.progress || 0;
       episode.type = inStack.type;
     }
@@ -859,7 +859,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
   const [file, setFile] = useState<File | null>(null)
   const [filename, setFilename] = useState<string | null>(null)
-  const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : '')
+  const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : totalDubbers[0].code)
   const [Stack] = useState(new PactherStack({
     appendError,
     setUploadsStack
@@ -941,8 +941,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     try {
       const order = document.querySelector(`#patcher-${'epOrder' as TFieldID}`) as HTMLInputElement
       const dubber = totalDubbers.find(el => el.code === dubbingSelectedCode)!;
-      let group = episodesGroups.find(el => el.dubber.id === dubber.id);
-
+      let group = { ...episodesGroups.find(el => el.dubber.id === dubber.id)! };
 
       if (!order.value || isNaN(+order.value)) rejectField('Номер не може містити букви або бути порожнім', order, errors); else order.classList.remove('patcher-field--error')
 
@@ -1023,6 +1022,8 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     el.classList.add('patcher-field--error')
     errors.push(emsg)
   }
+
+  useEffect(() => console.log(uploadsStack), [uploadsStack])
 
 
 
