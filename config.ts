@@ -43,7 +43,9 @@ export const config = {
     /** CSRF token expiration */
     CSRF_EXPIRE: 180000,
 
-    PATCHER_FILE_MAX_SIZE: 5368709120 // 5368709120 // 5gb
+    PATCHER_FILE_MAX_SIZE: 5368709120, // 5368709120 // 5gb
+
+    PATCHER_POSTER_MAX_SIZE: 2097152 // 2097152 // 2mb
   },
 
   /** Site secrets */

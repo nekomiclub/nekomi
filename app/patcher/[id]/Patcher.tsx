@@ -19,7 +19,7 @@ import { config, prodMode } from '../../../config';
 import { routes } from '../../../routes';
 import { TRoleCapability } from '../../../interfaces/IRoles';
 import { DeepPartial } from '../../../interfaces/Interfaces';
-import { getFileExtension, getUTC } from '../../../components/handlers';
+import { getFileExtension, getUTC, wordDeclination } from '../../../components/handlers';
 import Tooltip from '../../../components/Tooltip';
 import { AxiosError } from 'axios';
 import { Menu, MenuItem, MenuList } from 'uvc-menu';
@@ -254,7 +254,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
     <p className='text-white'>{label}</p>
 
     <Menu trigger={<div className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
-      {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
+      {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='24px' height='24px' parentClassName='overflow-hidden rounded-[32px]' />}
 
       <p className='text-white'>{options.find(el => el.code === value)?.label}</p>
 
@@ -264,7 +264,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
         {options.map(option => {
           return <MenuItem key={`select-option--${option.code}`} onClick={() => valueSetter(option.code)}>
             <button className={`px-[8px] py-[6px] ${value === option.code ? 'bg-purple' : !disablePending && option.code === initialValue.current ? 'bg-gradientSecondaryFallback' : ''} duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center ${isDubbers ? 'justify-start' : 'justify-center'} gap-[16px]`}>
-              {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
+              {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === option.code)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
 
               <p className='text-white'>{option.label}</p>
             </button>
@@ -275,7 +275,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
   </div>
 })
 
-const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, title, uploadsStack }: { group: IEpisodesGroup, dubbingSelectedCode: string, title: ITitle, uploadsStack: IPatcherStackItem[] }) {
+const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, title, uploadsStack, deleteEpisode }: { group: IEpisodesGroup, dubbingSelectedCode: string, title: ITitle, uploadsStack: IPatcherStackItem[], deleteEpisode: (specified: number, dubber: string) => void }) {
   const isActive = group.dubber.code === dubbingSelectedCode;
   const [isCollapsed, setIsCollapsed] = useState(!isActive)
 
@@ -316,9 +316,11 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
       </div>
 
       {/* Delete */}
-      <button className='shrink-0'>
-        <IcoCan width={32} height={32} />
-      </button>
+      <Tooltip content='Видалити'>
+        <button className='shrink-0 patcher-episodeMeta' onClick={() => deleteEpisode(episode.order, episode.dubberID)}>
+          <IcoCan width={32} height={32} className='patcher-episodeMeta_delete' />
+        </button>
+      </Tooltip>
     </div>
   })
 
@@ -378,6 +380,32 @@ const TitleMetaSection = memo(function TitleMetaSection({
   const [titleAgeRate, setTitleAgeRate] = useState(title.ageRate);
   const [titleCountry, setTitleCountry] = useState(title.country);
   const [titleSeason, setTitleSeason] = useState(title.season);
+
+  const fileRef = useRef<HTMLInputElement>(null)
+
+
+
+  function chooseFile() {
+    const input = fileRef.current;
+
+    if (!input) return;
+
+    input.click();
+  }
+
+  function uploadFile() {
+    const input = fileRef.current;
+
+    if (!input || !input.files) return;
+
+    const file = input.files[0];
+
+    if (file.size >= config.vars.PATCHER_POSTER_MAX_SIZE) {
+      return appendError('Файл занадто великий (>2MB)');
+    };
+
+    console.log(file)
+  }
 
 
 
@@ -443,6 +471,11 @@ const TitleMetaSection = memo(function TitleMetaSection({
         return setSaveStatus('saveError');
       }
 
+      if (titleStatus !== title.status) patchBody.status = titleStatus;
+      if (titleAgeRate !== title.ageRate) patchBody.ageRate = titleAgeRate;
+      if (titleCountry !== title.country) patchBody.country = titleCountry;
+      if (titleSeason !== title.season) patchBody.season = titleSeason;
+
       if (!Object.keys(patchBody).length) return setSaveStatus('nothingChanged');
 
       console.log(`[+]: Title meta patched`)
@@ -472,11 +505,14 @@ const TitleMetaSection = memo(function TitleMetaSection({
   }
 
   async function deleteTitle() {
-    console.log('[-]: Title deleted')
+    if (confirm('Видалити тайтл?')) {
+      console.log('[-]: Title deleted')
 
-    router.refresh();
-
-    // TODO Delete title
+      // TODO Delete title
+      // router.refresh();
+    } else {
+      console.log('[+]: Title not deleted')
+    }
   }
 
   function appendError(emsg: string) {
@@ -500,14 +536,17 @@ const TitleMetaSection = memo(function TitleMetaSection({
       <div className='flex flex-col gap-[24px]'>
         {/* Poster */}
         <div className='flex flex-col gap-[8px]'>
-          <div className='patcher-poster cursor-pointer'>
+          <div className='patcher-poster cursor-pointer' onClick={canTitleEdit ? chooseFile : undefined}>
+            {/* Input */}
+            <input type="file" accept='.png,.jpg,.webp' ref={fileRef} className='hidden' onChange={uploadFile} />
+
             <LoadingImage src={poster} width='500px' height='700px' parentClassName='overflow-hidden rounded-[4px]' />
 
-            {canTitleEdit && <div className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
+            {canTitleEdit && <button className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
               <IcoUpdate width={256} height={256} />
 
               <p className='text-white text-[32px] uppercase font-bold text-center select-none'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
-            </div>}
+            </button>}
           </div>
 
           {!isPosterOnAnimee && <p className='text-orange'>* Постер не на сервері animee.club</p>}
@@ -941,7 +980,11 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     try {
       const order = document.querySelector(`#patcher-${'epOrder' as TFieldID}`) as HTMLInputElement
       const dubber = totalDubbers.find(el => el.code === dubbingSelectedCode)!;
-      let group = { ...episodesGroups.find(el => el.dubber.id === dubber.id)! };
+      const defaultGroup: IEpisodesGroup = {
+        dubber: dubber,
+        episodes: []
+      }
+      let group = { ...episodesGroups.find(el => el.dubber.id === dubber.id) || defaultGroup };
 
       if (!order.value || isNaN(+order.value)) rejectField('Номер не може містити букви або бути порожнім', order, errors); else order.classList.remove('patcher-field--error')
 
@@ -995,13 +1038,19 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     }
   }
 
-  async function deleteEpisode(specified?: number, dubber?: string) {
+  async function deleteEpisode(specified?: number, specifiedDubberID?: string) {
     const order = specified || 1;
+    const dubberID = specifiedDubberID || totalDubbers.find(el => el.code === dubbingSelectedCode)!.id;
 
-    console.log(`[-]: Episode ${order} in ${totalDubbers.find(el => el.code === dubber)?.name} deleted`)
+    console.log(`[-]: Episode ${order} in ${totalDubbers.find(el => el.id === dubberID)?.name} deleted`)
 
     try {
+      const group = { ...episodesGroups.find(el => el.dubber.id === dubberID) } as IEpisodesGroup;
+      group.episodes = group.episodes.filter(el => !(el.dubberID == dubberID && el.order === order));
 
+      // TODO Fetch
+
+      setEpisodesGroups(prev => [...prev.filter(el => el.dubber.id !== group.dubber.id), group]);
     } catch (e) {
       if (e instanceof AxiosError) {
         errors.push(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
@@ -1022,8 +1071,6 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     el.classList.add('patcher-field--error')
     errors.push(emsg)
   }
-
-  useEffect(() => console.log(uploadsStack), [uploadsStack])
 
 
 
@@ -1067,12 +1114,21 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
           </button>
         </Tooltip>
       </div>
+
+      <p className={`text-lightGrey ${uploadsStack.filter(el => el.type !== 'uploaded').length ? 'block' : 'hidden'}`}>Очікується завантаження: {uploadsStack.filter(el => el.type !== 'uploaded').length} {wordDeclination(uploadsStack.filter(el => el.type !== 'uploaded').length, ['серії', 'серій', 'серій'])}</p>
+      <p className={`text-green ${uploadsStack.filter(el => el.type !== 'uploaded').length === 0 && uploadsStack.length ? 'block' : 'hidden'}`}>Завантажено: {uploadsStack.length} {wordDeclination(uploadsStack.length, ['серію', 'серії', 'серій'])}!</p>
     </div>
 
     {/* Groups */}
-    {episodesGroups.map(group => {
-      return <EpisodesGroup group={group} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} />
-    })}
+    {episodesGroups.some(el => el.dubber.code === dubbingSelectedCode) ? <>
+      <EpisodesGroup group={{ ...episodesGroups.find(el => el.dubber.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} />
+
+      {episodesGroups.filter(el => el.dubber.code !== dubbingSelectedCode).map(group => {
+        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} />
+      })}</> : <>
+      {episodesGroups.map(group => {
+        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} />
+      })}</>}
   </section>
 })
 
@@ -1122,10 +1178,10 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
         {/* Container */}
         <div className='bg-darkGrey rounded-[4px] px-[32px] py-[40px] flex flex-col gap-[60px]'>
           {/* Title meta */}
-          {/* <TitleMetaSection canTitleDelete={canTitleDelete} canTitleEdit={canTitleEdit} title={title} /> */}
+          <TitleMetaSection canTitleDelete={canTitleDelete} canTitleEdit={canTitleEdit} title={title} />
 
           {/* Episodes metas */}
-          {/* <EpisodeMetaSection isRoot={isRoot} title={title} /> */}
+          <EpisodeMetaSection isRoot={isRoot} title={title} />
 
           {/* Dubbing */}
           <EpisodesSection dubbers={dubbers} title={title} totalDubbers={totalDubbers} />
