@@ -14,7 +14,7 @@ import { IDubber } from '../../../interfaces/IDubber';
 import { IUser } from '../../../interfaces/IUser';
 import { LoadingImage } from '../../../components/Components';
 import { memo, RefObject, useEffect, useRef, useState } from 'react';
-import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCross, IcoGhost, IcoLock, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
+import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
 import { config, prodMode } from '../../../config';
 import { routes } from '../../../routes';
 import { TRoleCapability } from '../../../interfaces/IRoles';
@@ -77,6 +77,7 @@ interface ISelectProps {
   disablePending?: boolean
   isDubbers?: boolean
   dubbers?: IDubber[]
+  isLocked?: boolean
 }
 
 interface IHeaderSectionProps {
@@ -88,16 +89,19 @@ interface IHeaderSectionProps {
 interface IEpisodesMetaSection {
   title: ITitle
   isRoot: boolean
+  canEditEpsMeta: boolean
 }
 
 interface IEpisodesSection {
   title: ITitle
   dubbers: IDubber[]
   totalDubbers: IDubber[]
+  canSeriesAdd: boolean
+  canSeriesDelete: boolean
 }
 
 type TSaveStatus = 'save' | 'saved' | 'saveError' | 'nothingChanged';
-type TFieldID = 'ukrName' | 'engName' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount' | 'metaImdbParse' | 'metaOrder' | 'metaEngName' | 'metaUkrName' | 'metaDateOut' | 'epOrder';
+type TFieldID = 'ukrName' | 'engName' | 'altNames' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount' | 'studios' | 'metaImdbParse' | 'metaOrder' | 'metaEngName' | 'metaUkrName' | 'metaDateOut' | 'epOrder';
 export type TEpisodeType = 'uploaded' | 'uploading' | 'pending';
 
 
@@ -240,26 +244,29 @@ const Field = memo(function Field({ isLarge, label, note, symbolsLimited, initia
 
 const Label = memo(function Label({ label }: { label: string }) {
   return <div className='flex items-center gap-[16px]'>
-    <h3 className='text-white text-[32px] font-bold shrink-0'>{label}</h3>
+    <h3 className='text-white text-[32px] font-bold shrink-0 max-[820px]:text-[24px]'>{label}</h3>
 
     <span className='w-full h-[3px] bg-grey'></span>
   </div>
 })
 
-const Select = memo(function Select({ options, value, valueSetter, label, disablePending, isDubbers, dubbers }: ISelectProps) {
+const Select = memo(function Select({ options, value, valueSetter, label, disablePending, isDubbers, dubbers, isLocked }: ISelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const initialValue = useRef(value);
 
   return <div className='flex flex-col gap-[8px] w-full'>
-    <p className='text-white'>{label}</p>
+    <div className='flex items-center gap-[8px]'>
+      {isLocked && <IcoLock width={16} height={16} fill='#747474' className={isLocked ? 'block' : 'hidden'} />}
+      <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{label}</p>
+    </div>
 
     <Menu trigger={<div className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
       {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='24px' height='24px' parentClassName='overflow-hidden rounded-[32px]' />}
 
-      <p className='text-white'>{options.find(el => el.code === value)?.label}</p>
+      <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{options.find(el => el.code === value)?.label}</p>
 
-      <IcoArrow className={`duration-200 ${isOpen ? 'rotate-[180deg]' : 'rotate-[0def]'}`} />
-    </div>} menuClassName='!w-full' triggerClassName='w-full' align='stretch' className='w-full' animation='slide' closeAfter='any' state={isOpen} stateSetter={setIsOpen} statePriority='outer'>
+      <IcoArrow className={`duration-200 ${isOpen ? 'rotate-[180deg]' : 'rotate-[0def]'}`} fill={`${isLocked ? '#747474' : '#fff'}`} />
+    </div>} menuClassName='!w-full' triggerClassName='w-full' align='stretch' className='w-full' animation='slide' closeAfter='any' state={isOpen} stateSetter={setIsOpen} statePriority='outer' disabled={isLocked}>
       <MenuList className='bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto'>
         {options.map(option => {
           return <MenuItem key={`select-option--${option.code}`} onClick={() => valueSetter(option.code)}>
@@ -275,7 +282,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
   </div>
 })
 
-const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, title, uploadsStack, deleteEpisode }: { group: IEpisodesGroup, dubbingSelectedCode: string, title: ITitle, uploadsStack: IPatcherStackItem[], deleteEpisode: (specified: number, dubber: string) => void }) {
+const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, title, uploadsStack, deleteEpisode, canSeriesDelete }: { group: IEpisodesGroup, dubbingSelectedCode: string, title: ITitle, uploadsStack: IPatcherStackItem[], deleteEpisode: (specified: number, dubber: string) => void, canSeriesDelete: boolean }) {
   const isActive = group.dubber.code === dubbingSelectedCode;
   const [isCollapsed, setIsCollapsed] = useState(!isActive)
 
@@ -316,11 +323,11 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
       </div>
 
       {/* Delete */}
-      <Tooltip content='Видалити'>
+      {canSeriesDelete && <Tooltip content='Видалити'>
         <button className='shrink-0 patcher-episodeMeta' onClick={() => deleteEpisode(episode.order, episode.dubberID)}>
           <IcoCan width={32} height={32} className='patcher-episodeMeta_delete' />
         </button>
-      </Tooltip>
+      </Tooltip>}
     </div>
   })
 
@@ -368,8 +375,6 @@ const TitleMetaSection = memo(function TitleMetaSection({
   canTitleEdit,
   canTitleDelete,
 }: IHeaderSectionProps) {
-  const router = useRouter();
-
   const [errors, setErrors] = useState<string[]>([])
 
   const [saveStatus, setSaveStatus] = useState<TSaveStatus>('save')
@@ -428,7 +433,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
       const patchBody: DeepPartial<ITitle> = {};
 
       if (errored.length) {
-        appendError('Оновлення тайтлу - Деякі поля містять помилки.')
+        appendError('Деякі поля містять помилки.')
 
         setSaveStatus('saveError');
 
@@ -445,17 +450,22 @@ const TitleMetaSection = memo(function TitleMetaSection({
         } else if (id === 'engName') {
           patchBody.names = patchBody.names || {};
           patchBody.names.eng = value;
+        } else if (id === 'altNames') {
+          patchBody.names = patchBody.names || {};
+          patchBody.names.alt = value.split(',');
+        } else if (id === 'studios') {
+          patchBody.studios = value.split(',');
         } else if (id === 'imdbRating') {
           patchBody.rating = patchBody.rating || {};
-          if (isNaN(+value)) return rejectField('Оновлення тайтлу - Рейтинг IMDB може містити тільки цифри', el, errors)
+          if (isNaN(+value)) return rejectField('Рейтинг IMDB може містити тільки цифри', el, errors)
 
           patchBody.rating.IMDB = +value;
         } else if (id === 'episodesCount') {
-          if (isNaN(+value)) return rejectField('Оновлення тайтлу - Епізоди можуть містити тільки цифри', el, errors);
+          if (isNaN(+value)) return rejectField('Епізоди можуть містити тільки цифри', el, errors);
 
           patchBody.episodesCount = +value;
         } else if (id === 'year') {
-          if (isNaN(+value)) return rejectField('Оновлення тайтлу - Рік може містити тільки цифри', el, errors);
+          if (isNaN(+value)) return rejectField('Рік може містити тільки цифри', el, errors);
 
           patchBody.year = +value;
         } else if (id === 'description') {
@@ -531,21 +541,21 @@ const TitleMetaSection = memo(function TitleMetaSection({
     <ErrorsWrapper errors={errors} />
 
     {/* Top */}
-    <div className='flex gap-[32px]'>
+    <div className='flex gap-[32px] max-[1200px]:flex-col'>
       {/* Poster section */}
       <div className='flex flex-col gap-[24px]'>
         {/* Poster */}
-        <div className='flex flex-col gap-[8px]'>
-          <div className='patcher-poster cursor-pointer' onClick={canTitleEdit ? chooseFile : undefined}>
+        <div className='flex flex-col gap-[8px] items-center'>
+          <div className={`patcher-poster ${canTitleEdit ? 'cursor-pointer' : ''} w-[500px] h-[700px] max-[670px]:w-full max-[670px]:h-[500px]`} onClick={canTitleEdit ? chooseFile : undefined}>
             {/* Input */}
             <input type="file" accept='.png,.jpg,.webp' ref={fileRef} className='hidden' onChange={uploadFile} />
 
-            <LoadingImage src={poster} width='500px' height='700px' parentClassName='overflow-hidden rounded-[4px]' />
+            <LoadingImage src={poster} width='100%' height='100%' parentClassName='overflow-hidden rounded-[4px]' />
 
             {canTitleEdit && <button className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
-              <IcoUpdate width={256} height={256} />
+              <IcoUpdate width={256} height={256} className='max-[670px]:w-[128px] max-[670px]:h-[128px]' />
 
-              <p className='text-white text-[32px] uppercase font-bold text-center select-none'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
+              <p className='text-white text-[32px] uppercase font-bold text-center select-none max-[670px]:text-[24px]'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
             </button>}
           </div>
 
@@ -570,7 +580,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
 
             <Link href={`${config.URL.baseURL}/${routes.watch.path}/${title.code}`} className='patcher-button_action'>
               <IcoAnimeeLogo width={32} height={32} />
-              <p className='text-white uppercase'>тайтл на animee.club</p>
+              <p className='text-white uppercase text-center'>тайтл на animee.club</p>
             </Link>
           </div>
 
@@ -596,26 +606,29 @@ const TitleMetaSection = memo(function TitleMetaSection({
         <div className='pl-[16px]'>
           <Field label='Англійська' id='engName' initialValue={title.names.eng} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
 
-          {canTitleEdit && <>{/* alt names */}</>}
+          {canTitleEdit && <Field label='Альтернативні' id='altNames' note='Через кому' initialValue={Array.isArray(title.names.alt) ? title.names.alt.join(', ') : title.names.alt} isLocked={!canTitleEdit} symbolsLimited={256} type='title' isLarge />}
         </div>
 
         {/* Status */}
-        <Select label='Статус' options={titleStatusOptions} value={titleStatus} valueSetter={setTitleStatus} />
+        <Select label='Статус' options={titleStatusOptions} value={titleStatus} valueSetter={setTitleStatus} isLocked={!canTitleEdit} />
 
         {/* IMDB rating */}
         <Field label='Рейтинг IMDB' id='imdbRating' note='1 - 10, 0 - Відсутній' initialValue={`${title.rating.IMDB || '0'}`} isLocked={!canTitleEdit} symbolsLimited={3} type='title' />
 
         {/* Age rate */}
-        <Select label='Віковий рейтинг' options={titleAgeRateOptions} value={titleAgeRate} valueSetter={setTitleAgeRate} />
+        <Select label='Віковий рейтинг' options={titleAgeRateOptions} value={titleAgeRate} valueSetter={setTitleAgeRate} isLocked={!canTitleEdit} />
 
         {/* Episodes count */}
         <Field label='Епізоди' id='episodesCount' note='1 - 9999, 0 - Відсутні' initialValue={`${title.episodesCount || '0'}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
 
+        {/* Studios */}
+        <Field label='Студії' id='studios' note='Через кому' initialValue={Array.isArray(title.studios) ? title.studios.join(', ') : title.studios} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
+
         {/* Country */}
-        <Select label='Країна' options={titleCountryOptions} value={titleCountry} valueSetter={setTitleCountry} />
+        <Select label='Країна' options={titleCountryOptions} value={titleCountry} valueSetter={setTitleCountry} isLocked={!canTitleEdit} />
 
         {/* Season */}
-        <Select label='Сезон' options={titleSeasonOptions} value={titleSeason} valueSetter={setTitleSeason} />
+        <Select label='Сезон' options={titleSeasonOptions} value={titleSeason} valueSetter={setTitleSeason} isLocked={!canTitleEdit} />
 
         {/* Year */}
         <Field label='Рік' id='year' note='2007 - 2050' initialValue={`${title.year}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
@@ -631,7 +644,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
   </section>
 })
 
-const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title }: IEpisodesMetaSection) {
+const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, canEditEpsMeta }: IEpisodesMetaSection) {
   const [errors, setErrors] = useState<string[]>([])
 
   const [selectedMeta, setSelectedMeta] = useState<ITitleEpisodeMeta | null>(null)
@@ -789,15 +802,15 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title }: I
 
 
   const EpisodeMeta = memo(function EpisodeMeta({ meta }: { meta: ITitleEpisodeMeta }) {
-    return <div className={`w-full px-[12px] py-[8px] rounded-[4px] flex items-center justify-between gap-[24px] duration-200 ${selectedMeta?.order === meta.order ? 'bg-green/[.2]' : 'bg-grey'}`}>
+    return <div className={`w-full px-[12px] py-[8px] rounded-[4px] flex items-center justify-between gap-[24px] duration-200 ${selectedMeta?.order === meta.order ? 'bg-green/[.2]' : 'bg-grey'} max-[600px]:flex-col`}>
       <div className='flex gap-[16px]'>
         <div className='flex flex-col gap-[4px]'>
-          <p className='text-white text-[24px] font-bold'>#{meta.order}</p>
+          <p className='text-white text-[24px] font-bold max-[880px]:text-[16px]'>#{meta.order}</p>
           <p className='text-lightGrey'>{getUTC(meta.dateOut).dateReversed}</p>
         </div>
 
         <div className='flex flex-col gap-[4px]'>
-          <p className='text-white text-[24px]'>{meta.names.ukr}</p>
+          <p className='text-white text-[24px] max-[880px]:text-[16px]'>{meta.names.ukr}</p>
           <p className='text-lightGrey'>{meta.names.eng}</p>
         </div>
       </div>
@@ -820,7 +833,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title }: I
 
 
 
-  return <section className='flex flex-col gap-[16px]'>
+  return canEditEpsMeta && <section className='flex flex-col gap-[16px]'>
     <Label label='Інформація про серії' />
 
     <ErrorsWrapper errors={errors} />
@@ -847,26 +860,26 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title }: I
             <Field label='Українська назва' id='metaUkrName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.ukr : undefined} symbolsLimited={256} />
           </div>
 
-          <div className='flex items-center gap-[16px] w-full'>
-            <div className='flex items-start gap-[16px] w-full'>
+          <div className='flex items-center gap-[16px] w-full max-[900px]:flex-col'>
+            <div className='flex items-start gap-[16px] w-full max-[600px]:flex-col'>
               <Field label='Англійска назва' id='metaEngName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.eng : undefined} symbolsLimited={256} />
 
               {/* Out date */}
-              <div className='w-[320px] shrink-0'>
+              <div className='w-[200px] shrink-0 max-[600px]:w-full'>
                 <Field label='Дата виходу' note='ДД.ММ.РРРР' id='metaDateOut' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? getUTC(selectedMeta.dateOut).dateReversed : undefined} symbolsLimited={10} />
               </div>
             </div>
 
             {/* Controls */}
-            <div className='flex gap-[4px]'>
-              <Tooltip content='Зберегти'>
-                <button className='p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-green focus-visible:bg-green' onClick={addEpisodeMeta}>
+            <div className='flex gap-[4px] max-[900px]:w-full'>
+              <Tooltip content='Зберегти' className='max-[900px]:w-full'>
+                <button className='flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-green focus-visible:bg-green w-full' onClick={addEpisodeMeta}>
                   <IcoUpdate width={32} height={32} />
                 </button>
               </Tooltip>
 
-              <Tooltip content='Видалити'>
-                <button className='p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-red focus-visible:bg-red' onClick={() => deleteEpisodeMeta()}>
+              <Tooltip content='Видалити' className='max-[900px]:w-full'>
+                <button className='flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-red focus-visible:bg-red w-full' onClick={() => deleteEpisodeMeta()}>
                   <IcoCan width={32} height={32} />
                 </button>
               </Tooltip>
@@ -890,12 +903,13 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title }: I
   </section>
 })
 
-const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, title }: IEpisodesSection) {
+const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, title, canSeriesAdd, canSeriesDelete }: IEpisodesSection) {
   const [errors, setErrors] = useState<string[]>([])
 
   const [episodesGroups, setEpisodesGroups] = useState<IEpisodesGroup[]>([]);
   const [uploadsStack, setUploadsStack] = useState<IPatcherStackItem[]>([])
 
+  const [isMobile, setIsMobile] = useState(false);
   const [file, setFile] = useState<File | null>(null)
   const [filename, setFilename] = useState<string | null>(null)
   const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : totalDubbers[0].code)
@@ -927,6 +941,21 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     })
 
     setEpisodesGroups(episodesGroups);
+
+    // Define is mobile
+    handleResize()
+
+    window.addEventListener('resize', () => {
+      handleResize()
+    })
+
+    function handleResize() {
+      if (window.innerWidth < 940) {
+        setIsMobile(true)
+      } else {
+        setIsMobile(false)
+      }
+    }
   }, [])
 
   // Handle file
@@ -976,6 +1005,8 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     })
 
     setErrors([]);
+
+    if (!canSeriesAdd) return appendError('Ви не можете додавати епізоди')
 
     try {
       const order = document.querySelector(`#patcher-${'epOrder' as TFieldID}`) as HTMLInputElement
@@ -1039,8 +1070,14 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   }
 
   async function deleteEpisode(specified?: number, specifiedDubberID?: string) {
+    // Reset
+    setErrors([]);
+
+    if (!canSeriesDelete) return appendError('Ви не можете видаляти епізоди')
+
     const order = specified || 1;
     const dubberID = specifiedDubberID || totalDubbers.find(el => el.code === dubbingSelectedCode)!.id;
+    const id = `${order}/${dubberID}`;
 
     console.log(`[-]: Episode ${order} in ${totalDubbers.find(el => el.id === dubberID)?.name} deleted`)
 
@@ -1050,6 +1087,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
       // TODO Fetch
 
+      Stack.remove(id);
       setEpisodesGroups(prev => [...prev.filter(el => el.dubber.id !== group.dubber.id), group]);
     } catch (e) {
       if (e instanceof AxiosError) {
@@ -1081,39 +1119,44 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
       <ErrorsWrapper errors={errors} />
 
-      <div className='flex items-center gap-[16px]'>
-        <div className='flex items-start gap-[16px] w-full'>
-          {/* Order */}
-          <div className='w-[100px] shrink-0'>
-            <Field id='epOrder' label='Номер серії' type='episode' symbolsLimited={4} disablePending initialValue={'1'} />
-          </div>
+      {canSeriesAdd && <div className='flex items-center gap-[16px] max-[940px]:flex-col'>
+        {isMobile ? <>
+          <IcoGhost width={32} height={32} fill='#747474' />
+          <p className='text-lightGrey'>Ви не можете додавати епізоди на телефоні</p>
+        </> : <>
+          <div className='flex items-start gap-[16px] w-full'>
+            {/* Order */}
+            <div className='w-[100px] shrink-0'>
+              <Field id='epOrder' label='Номер серії' type='episode' symbolsLimited={4} disablePending initialValue={'1'} />
+            </div>
 
-          {/* Select dubber */}
-          <div className='w-[300px] shrink-0'>
-            <Select label='Команда' options={totalDubbers.sort((a, b) => a.name > b.name ? 1 : -1).map(dub => { return { code: dub.code, label: dub.name } })} value={dubbingSelectedCode} valueSetter={setDubbingSelectedCode} disablePending isDubbers dubbers={totalDubbers} />
-          </div>
+            {/* Select dubber */}
+            <div className='w-[300px] shrink-0'>
+              <Select label='Команда' options={totalDubbers.sort((a, b) => a.name > b.name ? 1 : -1).map(dub => { return { code: dub.code, label: dub.name } })} value={dubbingSelectedCode} valueSetter={setDubbingSelectedCode} disablePending isDubbers dubbers={totalDubbers} />
+            </div>
 
-          {/* File select */}
-          <div className='w-full flex flex-col gap-[8px]'>
-            <p className='text-white'>Файл</p>
+            {/* File select */}
+            <div className='w-full flex flex-col gap-[8px]'>
+              <p className='text-white'>Файл</p>
 
-            <div className='w-full'>
-              <input type="file" accept='.mp4,.webm,.mov,.mkv,.m4v' className='hidden' ref={fileRef} onChange={selectFile} />
+              <div className='w-full'>
+                <input type="file" accept='.mp4,.webm,.mov,.mkv,.m4v' className='hidden' ref={fileRef} onChange={selectFile} />
 
-              <button className='patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]' onClick={chooseFile}>
-                <IcoUpdate width={32} height={32} />
-                <p className={`text-white ${filename ? '' : 'uppercase'}`}>{filename || 'виберіть файл'}</p>
-              </button>
+                <button className='patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]' onClick={chooseFile}>
+                  <IcoUpdate width={32} height={32} />
+                  <p className={`text-white ${filename ? '' : 'uppercase'}`}>{filename || 'виберіть файл'}</p>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <Tooltip content='Додати серію'>
-          <button className='p-[8px] bg-grey rounded-[4px] duration-200 hover:bg-green focus-visible:bg-green' onClick={addEpisode}>
-            <IcoArrow width={32} height={32} className='-rotate-[90deg]' />
-          </button>
-        </Tooltip>
-      </div>
+          <Tooltip content='Додати серію' className='max-[940px]:w-full'>
+            <button className='p-[8px] bg-grey rounded-[4px] duration-200 hover:bg-green focus-visible:bg-green w-full' onClick={addEpisode}>
+              <IcoArrow width={32} height={32} className='-rotate-[90deg]' />
+            </button>
+          </Tooltip>
+        </>}
+      </div>}
 
       <p className={`text-lightGrey ${uploadsStack.filter(el => el.type !== 'uploaded').length ? 'block' : 'hidden'}`}>Очікується завантаження: {uploadsStack.filter(el => el.type !== 'uploaded').length} {wordDeclination(uploadsStack.filter(el => el.type !== 'uploaded').length, ['серії', 'серій', 'серій'])}</p>
       <p className={`text-green ${uploadsStack.filter(el => el.type !== 'uploaded').length === 0 && uploadsStack.length ? 'block' : 'hidden'}`}>Завантажено: {uploadsStack.length} {wordDeclination(uploadsStack.length, ['серію', 'серії', 'серій'])}!</p>
@@ -1121,13 +1164,13 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
     {/* Groups */}
     {episodesGroups.some(el => el.dubber.code === dubbingSelectedCode) ? <>
-      <EpisodesGroup group={{ ...episodesGroups.find(el => el.dubber.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} />
+      <EpisodesGroup group={{ ...episodesGroups.find(el => el.dubber.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} canSeriesDelete={canSeriesDelete} />
 
       {episodesGroups.filter(el => el.dubber.code !== dubbingSelectedCode).map(group => {
-        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} />
+        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} canSeriesDelete={canSeriesDelete} />
       })}</> : <>
       {episodesGroups.map(group => {
-        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} />
+        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} canSeriesDelete={canSeriesDelete} />
       })}</>}
   </section>
 })
@@ -1138,6 +1181,10 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
 
   const isRoot = capabilities.includes('root');
   const canTitleDelete = isRoot || capabilities.includes('titleDelete');
+  const canTitleAdd = isRoot || capabilities.includes('titleAdd');
+  const canEditEpsMeta = isRoot || capabilities.includes('titleEditEpsMeta');
+  const canSeriesAdd = isRoot || capabilities.includes('seriesAdd');
+  const canSeriesDelete = isRoot || capabilities.includes('seriesDelete');
   const canTitleEdit = isRoot || capabilities.includes('titleEdit');
 
 
@@ -1153,26 +1200,57 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
 
 
 
+  async function createNewTitle() {
+    console.log('[+]: Створено новий тайтл')
+  }
+
+
+
   return (
     <div className='w-full h-full min-h-screen bg-dark'>
       <div className="wrapper !pt-[132px] !pb-[60px] flex flex-col gap-[24px]">
         {/* Header */}
-        <div className='flex flex-col gap-[8px]'>
-          <div className='flex items-center gap-[32px]'>
-            <h2 className='text-white text-[32px] uppercase font-bold'>патчер тайтлів</h2>
+        <div className='flex flex-col gap-[8px] max-[784px]:gap-[24px]'>
+          <div className='flex items-center gap-[32px] max-[784px]:flex-col max-[784px]:gap-[8px]'>
+            <h2 className='text-white text-[32px] uppercase font-bold max-[1072px]:text-[24px]'>патчер тайтлів</h2>
 
             {/* Divider */}
-            <span className='w-[200px] h-[3px] bg-grey'></span>
+            <span className='w-[200px] h-[3px] bg-grey max-[1072px]:w-[80px] max-[784px]:hidden'></span>
 
             <p className='text-white text-[24px]'>Вітаю, <b>{user.username}</b></p>
           </div>
 
-          <div className='flex items-center gap-[16px]'>
+          <div className='flex items-center gap-[16px] max-[784px]:flex-col-reverse'>
+            {canTitleAdd && <button className='flex items-center px-[16px] py-[8px] rounded-[2px] bg-grey duration-200 hover:bg-purple focus-visible:bg-purple gap-[16px] shrink-0' onClick={createNewTitle}>
+              <IcoPlus width={24} height={24} />
+              <p className='text-white uppercase'>створити новий</p>
+            </button>}
+
             {/* Divider */}
             <span className='w-full h-[3px] bg-grey'></span>
 
             <p className='text-lightGrey shrink-0'>Оновлено тайтлів: {totalUpdated} / {totalTitles} ({((totalUpdated / totalTitles) * 100).toFixed(2)}%)</p>
           </div>
+
+          {canTitleEdit && <div className='w-full flex justify-center items-center gap-[16px] flex-wrap'>
+            <IcoExternalLink width={32} height={32} fill='#FF464E' />
+
+            <Link href={`https://www.imdb.com/find/?s=tt&q=${title.names.eng}`} target='_blank'>
+              <p className='text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple'>IMDB</p>
+            </Link>
+
+            <Link href={`https://animego.org/search/all?q=${title.names.eng}`} target='_blank'>
+              <p className='text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple'>AnimeGO</p>
+            </Link>
+
+            <Link href={`https://anitube.in.ua/anime`} target='_blank'>
+              <p className='text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple'>Anitube</p>
+            </Link>
+
+            <Link href={`https://myanimelist.net/search/all?q=${title.names.eng}`} target='_blank'>
+              <p className='text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple'>MAL</p>
+            </Link>
+          </div>}
         </div>
 
         {/* Container */}
@@ -1181,10 +1259,10 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
           <TitleMetaSection canTitleDelete={canTitleDelete} canTitleEdit={canTitleEdit} title={title} />
 
           {/* Episodes metas */}
-          <EpisodeMetaSection isRoot={isRoot} title={title} />
+          <EpisodeMetaSection canEditEpsMeta={canEditEpsMeta} isRoot={isRoot} title={title} />
 
           {/* Dubbing */}
-          <EpisodesSection dubbers={dubbers} title={title} totalDubbers={totalDubbers} />
+          <EpisodesSection dubbers={dubbers} title={title} totalDubbers={totalDubbers} canSeriesAdd={canSeriesAdd} canSeriesDelete={canSeriesDelete} />
         </div>
       </div>
     </div>

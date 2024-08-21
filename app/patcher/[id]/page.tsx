@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { NextPage } from 'next';
+import { Metadata, NextPage, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers'
 
 import { IRSCProps } from '../../../interfaces/IRSC';
@@ -12,6 +12,29 @@ import { IUser } from '../../../interfaces/IUser';
 import { TRoleCapability } from '../../../interfaces/IRoles';
 import Patcher from './Patcher';
 import { IDubber } from '../../../interfaces/IDubber';
+import { config } from 'process';
+
+
+
+export async function generateMetadata(
+  { params }: IRSCProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    const res = await $api.get<{ title: ITitle }>(`/title/${params.id}`)
+    const data = res.data.title
+
+    return {
+      title: `${data.names.ukr} - Патчер`,
+    }
+  } catch (e) {
+    return {
+      title: 'Аніме не знайдено'
+    }
+  }
+}
+
+
 
 // Fetch title
 export default async function RSC({ params }: IRSCProps<{ id: string }>) {
