@@ -19,6 +19,12 @@ export const config = {
     /** Animee-core URL */
     apiHTTP: prodMode ? `https://api.animee.club` : `http://${devIP}`,
 
+    /** Animee-core proxy URL */
+    apiProxy: prodMode ? 'https://fkgway.cx.ua' : `http://${devIP}`,
+
+    /** Animee media URL */
+    media: prodMode ? `https://media.animee.club` : `http://${devIP}:43120`,
+
     /** Animee-core websocket URL */
     apiWS: prodMode ? `wss://api.animee.club/ws` : `ws://${devIP}:8080`,
 

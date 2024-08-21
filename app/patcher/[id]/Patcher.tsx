@@ -9,7 +9,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/navigation';
 
 import { useAppSelector } from '../../../hooks/redux';
-import { AnimeAgeRates, AnimeStatuses, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeSeason, TAnimeStatus, TTitleCountry } from '../../../interfaces/ITitle';
+import { AnimeAgeRates, AnimeStatuses, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
 import { IDubber } from '../../../interfaces/IDubber';
 import { IUser } from '../../../interfaces/IUser';
 import { LoadingImage } from '../../../components/Components';
@@ -24,6 +24,7 @@ import Tooltip from '../../../components/Tooltip';
 import { AxiosError } from 'axios';
 import { Menu, MenuItem, MenuList } from 'uvc-menu';
 import { IPatcherStackItem, PactherStack } from './PatcherStack';
+import { $api } from '../../../components/http';
 
 
 
@@ -290,11 +291,14 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
     const inStack = uploadsStack.find(el => el.dubberID === episode.dubberID && el.order === episode.order);
     let order = 0;
     let progress = 0;
+    let source = episode.qualities.q1080;
+    let type = episode.type;
 
     if (inStack) {
       order = uploadsStack.filter(el => el.type !== 'uploaded').findIndex(el => el.dubberID === episode.dubberID && el.order === episode.order);
       progress = inStack.progress || 0;
       episode.type = inStack.type;
+      source = inStack.sourceURL || episode.qualities.q1080;
     }
 
     return <div className='px-[24px] py-[16px] flex items-center gap-[16px] rounded-[2px] bg-grey'>
@@ -303,19 +307,19 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
 
       {/* Content */}
       <div className='flex items-center gap-[16px] w-full'>
-        {episode.type === 'uploaded' && <Link href={`${episode.qualities.q1080}`} target='_blank' className='flex items-center gap-[16px]'>
+        {type === 'uploaded' && <Link href={`${source}`} target='_blank' className='flex items-center gap-[16px]'>
           <IcoPlay width={32} height={32} fill='#6C5CE7' />
 
           <p className='text-purple'>Переглянути</p>
         </Link>}
 
-        {episode.type === 'pending' && <>
+        {type === 'pending' && <>
           <IcoUpdate width={32} height={32} fill='#F39C12' />
           <p className='text-white'>В черзі на завантаження</p>
           <p className='text-lightGrey'>{'>'}{order}</p>
         </>}
 
-        {episode.type === 'uploading' && <>
+        {type === 'uploading' && <>
           <IcoUpdate width={32} height={32} fill='#2ECC71' />
           <p className='text-white'>Завантажується...</p>
           <p className='text-lightGrey'>{progress}%</p>
@@ -323,7 +327,7 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
       </div>
 
       {/* Delete */}
-      {canSeriesDelete && <Tooltip content='Видалити'>
+      {canSeriesDelete && type !== 'uploading' && <Tooltip content='Видалити'>
         <button className='shrink-0 patcher-episodeMeta' onClick={() => deleteEpisode(episode.order, episode.dubberID)}>
           <IcoCan width={32} height={32} className='patcher-episodeMeta_delete' />
         </button>
@@ -375,6 +379,8 @@ const TitleMetaSection = memo(function TitleMetaSection({
   canTitleEdit,
   canTitleDelete,
 }: IHeaderSectionProps) {
+  const router = useRouter();
+
   const [errors, setErrors] = useState<string[]>([])
 
   const [saveStatus, setSaveStatus] = useState<TSaveStatus>('save')
@@ -398,7 +404,9 @@ const TitleMetaSection = memo(function TitleMetaSection({
     input.click();
   }
 
-  function uploadFile() {
+  async function uploadPoster() {
+    setErrors([])
+
     const input = fileRef.current;
 
     if (!input || !input.files) return;
@@ -409,7 +417,26 @@ const TitleMetaSection = memo(function TitleMetaSection({
       return appendError('Файл занадто великий (>2MB)');
     };
 
-    console.log(file)
+    try {
+      const formData = new FormData();
+
+      formData.append('file', file);
+      formData.append('type', 'change_poster');
+
+      const { data } = await $api.patch<{ id: string }>(`${config.URL.apiProxy}/title/${title.id}`, formData)
+      const poster = `${config.URL.media}/${data.id}`;
+
+      setPoster(poster);
+      setIsPosterOnAnimee(true);
+
+      console.log(`[+]: Poster uploaded`)
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        appendError(`Помилка при оновленні постера - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+      } else {
+        appendError(`Помилка при оновленні постера - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+      }
+    }
   }
 
 
@@ -430,7 +457,25 @@ const TitleMetaSection = memo(function TitleMetaSection({
     try {
       const pending = document.querySelectorAll('.patcher-field--pending.patcher-title') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
       const errored = document.querySelectorAll('.patcher-field--error.patcher-title');
-      const patchBody: DeepPartial<ITitle> = {};
+      const patchBody: {
+        changeNames?: {
+          alt?: string[],
+          ukr?: string,
+          eng?: string
+        },
+        setRating?: number
+        setDescription?: string
+        setAgeRate?: TAnimeAgeRate
+        setSeason?: TAnimeSeason
+        setStatus?: TAnimeStatus
+        setType?: TTitleType
+        setCountry?: TTitleCountry
+        setEps?: number
+        setGenres?: TAnimeGenre[]
+        setStudios?: string[]
+        setYear?: number
+        setDetails?: string
+      } = {};
 
       if (errored.length) {
         appendError('Деякі поля містять помилки.')
@@ -445,33 +490,32 @@ const TitleMetaSection = memo(function TitleMetaSection({
         const value = el.value;
 
         if (id === 'ukrName') {
-          patchBody.names = patchBody.names || {};
-          patchBody.names.ukr = value;
+          patchBody.changeNames = patchBody.changeNames || {};
+          patchBody.changeNames.ukr = value;
         } else if (id === 'engName') {
-          patchBody.names = patchBody.names || {};
-          patchBody.names.eng = value;
+          patchBody.changeNames = patchBody.changeNames || {};
+          patchBody.changeNames.eng = value;
         } else if (id === 'altNames') {
-          patchBody.names = patchBody.names || {};
-          patchBody.names.alt = value.split(',');
+          patchBody.changeNames = patchBody.changeNames || {};
+          patchBody.changeNames.alt = value.split(',');
         } else if (id === 'studios') {
-          patchBody.studios = value.split(',');
+          patchBody.setStudios = value.split(',');
         } else if (id === 'imdbRating') {
-          patchBody.rating = patchBody.rating || {};
           if (isNaN(+value)) return rejectField('Рейтинг IMDB може містити тільки цифри', el, errors)
 
-          patchBody.rating.IMDB = +value;
+          patchBody.setRating = +value;
         } else if (id === 'episodesCount') {
           if (isNaN(+value)) return rejectField('Епізоди можуть містити тільки цифри', el, errors);
 
-          patchBody.episodesCount = +value;
+          patchBody.setEps = +value;
         } else if (id === 'year') {
           if (isNaN(+value)) return rejectField('Рік може містити тільки цифри', el, errors);
 
-          patchBody.year = +value;
+          patchBody.setYear = +value;
         } else if (id === 'description') {
-          patchBody.description = value
+          patchBody.setDescription = value
         } else if (id === 'details') {
-          patchBody.details = value
+          patchBody.setDetails = value
         }
 
         el.classList.add('patcher-field--saved')
@@ -481,15 +525,16 @@ const TitleMetaSection = memo(function TitleMetaSection({
         return setSaveStatus('saveError');
       }
 
-      if (titleStatus !== title.status) patchBody.status = titleStatus;
-      if (titleAgeRate !== title.ageRate) patchBody.ageRate = titleAgeRate;
-      if (titleCountry !== title.country) patchBody.country = titleCountry;
-      if (titleSeason !== title.season) patchBody.season = titleSeason;
+      if (titleStatus !== title.status) patchBody.setStatus = titleStatus;
+      if (titleAgeRate !== title.ageRate) patchBody.setAgeRate = titleAgeRate;
+      if (titleCountry !== title.country) patchBody.setCountry = titleCountry;
+      if (titleSeason !== title.season) patchBody.setSeason = titleSeason;
 
       if (!Object.keys(patchBody).length) return setSaveStatus('nothingChanged');
 
       console.log(`[+]: Title meta patched`)
-      console.log(patchBody)
+
+      await $api.patch(`/title/${title!.id}`, patchBody)
 
       setSaveStatus('saved')
       // router.refresh();
@@ -515,11 +560,26 @@ const TitleMetaSection = memo(function TitleMetaSection({
   }
 
   async function deleteTitle() {
-    if (confirm('Видалити тайтл?')) {
-      console.log('[-]: Title deleted')
+    setErrors([])
 
-      // TODO Delete title
-      // router.refresh();
+    if (confirm('Видалити тайтл?')) {
+      const key = prompt('ENTER ISSUED KEY')
+
+      try {
+        await $api.delete(`/title/${title.id}`, {
+          params: {
+            key
+          }
+        })
+
+        router.refresh();
+      } catch (e) {
+        if (e instanceof AxiosError) {
+          appendError(`Помилка видалення тайтлу - ${e.response?.data?.msg}`)
+        } else {
+          appendError(`Помилка видалення тайтлу - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        }
+      }
     } else {
       console.log('[+]: Title not deleted')
     }
@@ -548,7 +608,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
         <div className='flex flex-col gap-[8px] items-center'>
           <div className={`patcher-poster ${canTitleEdit ? 'cursor-pointer' : ''} w-[500px] h-[700px] max-[670px]:w-full max-[670px]:h-[500px]`} onClick={canTitleEdit ? chooseFile : undefined}>
             {/* Input */}
-            <input type="file" accept='.png,.jpg,.webp' ref={fileRef} className='hidden' onChange={uploadFile} />
+            <input type="file" accept='.png,.jpg,.webp' ref={fileRef} className='hidden' onChange={uploadPoster} />
 
             <LoadingImage src={poster} width='100%' height='100%' parentClassName='overflow-hidden rounded-[4px]' />
 
@@ -693,16 +753,21 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
     }
 
     try {
-      // TODO Fetch
+      await $api.patch(`/title/${title!.id}`, {
+        editEpMeta: {
+          ...patchBody,
+          action: 'edit'
+        }
+      })
 
       setEpisodesMeta(episodesMeta => [...episodesMeta.filter(el => el.order !== +order.value), patchBody])
 
       console.log(`[+]: Meta for episode ${+order.value} added.`)
     } catch (e) {
       if (e instanceof AxiosError) {
-        errors.push(`Помилка при оновлені даних - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        errors.push(`Помилка при додаванні епізода - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
-        errors.push(`Помилка при оновленні даних - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        errors.push(`Помилка при додаванні епізода - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }
     }
 
@@ -724,16 +789,26 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
     const order = specified || (document.querySelector(`#patcher-${'metaOrder' as TFieldID}`) as HTMLInputElement).value;
 
     try {
-      // TODO Fetch
+      await $api.patch(`/title/${title!.id}`, {
+        editEpMeta: {
+          order,
+          names: {
+            eng: 'dummy',
+            ukr: 'dummy'
+          },
+          dateOut: 1,
+          action: 'delete'
+        }
+      })
 
       setEpisodesMeta(episodesMeta => episodesMeta.filter(el => el.order !== order))
 
       console.log(`[-]: Meta for ${order} episode deleted.`)
     } catch (e) {
       if (e instanceof AxiosError) {
-        appendError(`Помилка при оновлені даних - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        appendError(`Помилка при видаленні епізоду - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
-        appendError(`Помилка при оновленні даних - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        appendError(`Помилка при видаленні епізоду - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }
     }
   }
@@ -915,7 +990,8 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : totalDubbers[0].code)
   const [Stack] = useState(new PactherStack({
     appendError,
-    setUploadsStack
+    setUploadsStack,
+    title
   }))
 
   const fileRef = useRef<HTMLInputElement>(null)
@@ -1052,7 +1128,8 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
         file: file!,
         order: +order.value,
         progress: null,
-        type: 'pending'
+        type: 'pending',
+        sourceURL: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
       })
 
       setEpisodesGroups(episodeGroups => {
@@ -1085,12 +1162,19 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
       const group = { ...episodesGroups.find(el => el.dubber.id === dubberID) } as IEpisodesGroup;
       group.episodes = group.episodes.filter(el => !(el.dubberID == dubberID && el.order === order));
 
-      // TODO Fetch
+      await $api.patch(`/title/${title!.id}`, {
+        deleteEpisode: {
+          episodeOrder: order,
+          dubID: dubberID
+        }
+      })
 
       Stack.remove(id);
       setEpisodesGroups(prev => [...prev.filter(el => el.dubber.id !== group.dubber.id), group]);
     } catch (e) {
       if (e instanceof AxiosError) {
+        if (e.response?.data?.code === 404) return;
+
         errors.push(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
         errors.push(`Помилка при парсингу інформації про епізоди - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
@@ -1201,7 +1285,18 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
 
 
   async function createNewTitle() {
-    console.log('[+]: Створено новий тайтл')
+    if (!canTitleAdd) return console.error(`You can not add title`);
+
+    try {
+      console.log('[+]: New title created')
+
+      const { data } = await $api.post<{ id: string }>('/title');
+
+      router.push(`${config.URL.baseURL}/${routes.patcher.path}/${data.id}`)
+    } catch (e) {
+      console.error(e)
+    }
+
   }
 
 
