@@ -537,10 +537,9 @@ const TitleMetaSection = memo(function TitleMetaSection({
       await $api.patch(`/title/${title!.id}`, patchBody)
 
       setSaveStatus('saved')
-      // router.refresh();
     } catch (e) {
       if (e instanceof AxiosError) {
-        errors.push(`Помилка при оновлені даних - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        errors.push(`Помилка при оновлені даних - ${e.code}; ${JSON.stringify(e.response?.data?.msg)}`)
       } else {
         errors.push(`Помилка при оновленні даних - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }

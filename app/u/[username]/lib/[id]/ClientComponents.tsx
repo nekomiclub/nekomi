@@ -49,7 +49,7 @@ export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle
       </div>
 
       {isOwner || !lib.settings.hidden ? <div className='grid gap-[16px]' style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-        {titles.map(title => {
+        {titles.toReversed().map(title => {
           return <TitleCard title={title} key={`${title.id}-${Math.random().toFixed(3).split('.')[1]}`} />
         })}
       </div> : <p className='text-lightGrey text-center'>Ця тека приватна</p>}
