@@ -86,6 +86,7 @@ interface IHeaderSectionProps {
   title: ITitle
   canTitleEdit: boolean
   canTitleDelete: boolean
+  session: string
 }
 
 interface IEpisodesMetaSection {
@@ -380,6 +381,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
   title,
   canTitleEdit,
   canTitleDelete,
+  session
 }: IHeaderSectionProps) {
   const router = useRouter();
 
@@ -425,7 +427,11 @@ const TitleMetaSection = memo(function TitleMetaSection({
       formData.append('file', file);
       formData.append('type', 'change_poster');
 
-      const { data } = await $api.patch<{ id: string }>(`${config.URL.apiProxy}/title/${title.id}`, formData)
+      const { data } = await $api.patch<{ id: string }>(`${config.URL.apiProxy}/title/${title.id}`, formData, {
+        headers: {
+          Authorization: session
+        }
+      })
       const poster = `${config.URL.media}/${data.id}`;
 
       setPoster(poster);
@@ -1353,7 +1359,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
         {/* Container */}
         <div className='bg-darkGrey rounded-[4px] px-[32px] py-[40px] flex flex-col gap-[60px]'>
           {/* Title meta */}
-          <TitleMetaSection canTitleDelete={canTitleDelete} canTitleEdit={canTitleEdit} title={title} />
+          <TitleMetaSection canTitleDelete={canTitleDelete} canTitleEdit={canTitleEdit} title={title} session={session} />
 
           {/* Episodes metas */}
           <EpisodeMetaSection canEditEpsMeta={canEditEpsMeta} isRoot={isRoot} title={title} />

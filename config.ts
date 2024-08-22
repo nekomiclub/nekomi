@@ -19,7 +19,7 @@ export const config = {
     /** Animee-core URL */
     apiHTTP: prodMode ? `https://api.animee.club` : `http://${devIP}`,
 
-    /** Animee-core proxy URL */
+    /** Animee-core proxy URL. You should provide header Authorization to pass session */
     apiProxy: prodMode ? 'https://fkgway.cx.ua' : `http://${devIP}`,
 
     /** Animee media URL */
