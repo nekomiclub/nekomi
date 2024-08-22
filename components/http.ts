@@ -1,5 +1,8 @@
 import axios from 'axios';
 import { KJUR } from 'jsrsasign'
+import http from 'http';
+import https from 'https';
+
 
 import { config, prodMode } from '../config';
 
@@ -7,7 +10,9 @@ import { config, prodMode } from '../config';
 export const $api = axios.create({
   withCredentials: true,
   baseURL: config.URL.apiHTTP,
-  timeout: 10000,
+  timeout: 600000,
+  httpAgent: new http.Agent({ keepAlive: true }),
+  httpsAgent: new https.Agent({ keepAlive: true }),
 })
 
 $api.interceptors.request.use(async cfg => {

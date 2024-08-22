@@ -261,7 +261,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
       <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{label}</p>
     </div>
 
-    <Menu trigger={<div className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
+    <Menu trigger={<div className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between !w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
       {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='24px' height='24px' parentClassName='overflow-hidden rounded-[32px]' />}
 
       <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{options.find(el => el.code === value)?.label}</p>

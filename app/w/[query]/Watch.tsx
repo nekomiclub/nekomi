@@ -77,8 +77,6 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
     if (capabilities.includes('editor') || capabilities.includes('dubber') || capabilities.includes('root')) setIsEditor(true);
   }, [state])
 
-  useEffect(() => console.log(isEditor), [isEditor])
-
   // Set in which libs title is
   useEffect(() => {
     const tmpInLibs: TUserLibType[] = []
@@ -113,7 +111,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                 </Link>
               </div>
 
-              <Menu.Menu trigger={<ManageLibTrigger isAuth={isAuth} libs={userLibs} inLibs={inLibs} />} disabled={!isAuth} className='bg-darkGrey' triggerClassName='w-full' align='stretch'>
+              <Menu.Menu trigger={<ManageLibTrigger isAuth={isAuth} libs={userLibs} inLibs={inLibs} />} menuClassName='!w-full' disabled={!isAuth} className='!w-full bg-darkGrey' triggerClassName='!w-full' align='stretch'>
                 <Menu.MenuList className='flex flex-col'>
                   <ManageLib type='favorite' lib={userLibs.find(el => el.type === 'favorite')!} isInLib={inLibs.includes('favorite')} />
                   <ManageLib type='watched' lib={userLibs.find(el => el.type === 'watched')!} isInLib={inLibs.includes('watched')} />
@@ -219,7 +217,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
     }, [inLibs])
 
     return (
-      <div className={`px-[16px] py-[12px] flex gap-[16px] justify-center rounded-[2px] ${inLibs.length ? 'bg-green' : 'bg-darkGrey'} hover:bg-grey duration-200`}>
+      <div className={`px-[16px] py-[12px] flex gap-[16px] justify-center rounded-[2px] w-full ${inLibs.length ? 'bg-green' : 'bg-darkGrey'} hover:bg-grey duration-200`}>
         {isAuth ? <>
           <IcoFolderAdd width={24} height={24} />
           <p className='text-white font-bold uppercase'>в {label}</p>
