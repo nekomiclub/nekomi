@@ -113,7 +113,7 @@ export class PactherStack {
           }
         },
         headers: {
-          Cookie: `${config.vars.animeeCookie}=${this.session}`
+          Authorization: `${config.vars.animeeCookie}=${this.session}`
         }
       })
 
