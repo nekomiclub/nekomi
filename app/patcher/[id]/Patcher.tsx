@@ -7,13 +7,15 @@ import gsap from 'gsap';
 
 import { NextPage } from 'next';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+import { Menu, MenuItem, MenuList } from 'uvc-menu';
+import { memo, RefObject, useEffect, useRef, useState } from 'react';
 
 import { useAppSelector } from '../../../hooks/redux';
 import { AnimeAgeRates, AnimeStatuses, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
 import { IDubber } from '../../../interfaces/IDubber';
 import { IUser } from '../../../interfaces/IUser';
 import { LoadingImage } from '../../../components/Components';
-import { memo, RefObject, useEffect, useRef, useState } from 'react';
 import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
 import { config, prodMode } from '../../../config';
 import { routes } from '../../../routes';
@@ -21,8 +23,6 @@ import { TRoleCapability } from '../../../interfaces/IRoles';
 import { DeepPartial } from '../../../interfaces/Interfaces';
 import { getFileExtension, getUTC, wordDeclination } from '../../../components/handlers';
 import Tooltip from '../../../components/Tooltip';
-import { AxiosError } from 'axios';
-import { Menu, MenuItem, MenuList } from 'uvc-menu';
 import { IPatcherStackItem, PactherStack } from './PatcherStack';
 import { $api } from '../../../components/http';
 
@@ -36,6 +36,7 @@ interface IProps {
   user: IUser
   capabilities: TRoleCapability[]
   totalDubbers: IDubber[]
+  session: string
 }
 
 interface IFieldProps {
@@ -99,6 +100,7 @@ interface IEpisodesSection {
   totalDubbers: IDubber[]
   canSeriesAdd: boolean
   canSeriesDelete: boolean
+  session: string
 }
 
 type TSaveStatus = 'save' | 'saved' | 'saveError' | 'nothingChanged';
@@ -977,7 +979,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
   </section>
 })
 
-const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, title, canSeriesAdd, canSeriesDelete }: IEpisodesSection) {
+const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, title, canSeriesAdd, canSeriesDelete, session }: IEpisodesSection) {
   const [errors, setErrors] = useState<string[]>([])
 
   const [episodesGroups, setEpisodesGroups] = useState<IEpisodesGroup[]>([]);
@@ -990,7 +992,8 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   const [Stack] = useState(new PactherStack({
     appendError,
     setUploadsStack,
-    title
+    title,
+    session
   }))
 
   const fileRef = useRef<HTMLInputElement>(null)
@@ -1259,7 +1262,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 })
 
 
-const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, user, capabilities, totalDubbers }) => {
+const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, user, capabilities, totalDubbers, session }) => {
   const router = useRouter();
 
   const isRoot = capabilities.includes('root');
@@ -1356,7 +1359,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
           <EpisodeMetaSection canEditEpsMeta={canEditEpsMeta} isRoot={isRoot} title={title} />
 
           {/* Dubbing */}
-          <EpisodesSection dubbers={dubbers} title={title} totalDubbers={totalDubbers} canSeriesAdd={canSeriesAdd} canSeriesDelete={canSeriesDelete} />
+          <EpisodesSection dubbers={dubbers} title={title} totalDubbers={totalDubbers} canSeriesAdd={canSeriesAdd} canSeriesDelete={canSeriesDelete} session={session} />
         </div>
       </div>
     </div>

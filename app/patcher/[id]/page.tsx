@@ -5,14 +5,13 @@ import { cookies } from 'next/headers'
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { getUTC } from '../../../components/handlers';
-import { devMode } from '../../../config';
+import { config, devMode } from '../../../config';
 import { ITitle } from '../../../interfaces/ITitle';
 import { $api } from '../../../components/http';
 import { IUser } from '../../../interfaces/IUser';
 import { TRoleCapability } from '../../../interfaces/IRoles';
 import Patcher from './Patcher';
 import { IDubber } from '../../../interfaces/IDubber';
-import { config } from 'process';
 
 
 
@@ -45,10 +44,13 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
   let totalUpdated = 0;
   let user: IUser | null = null
   let capabilities: TRoleCapability[] = [];
+  let session = '';
 
   let pass = false;
 
   try {
+    session = cookies().get(config.vars.animeeCookie)?.value || '';
+
     const { data: userData } = await $api.get<{ user: IUser, parsedCapabilities: TRoleCapability[] }>(`/user/*`, {
       params: {
         detailed: true
@@ -110,5 +112,5 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
     }
   }
 
-  return pass ? <Patcher totalTitles={totalTitles} totalUpdated={totalUpdated} title={title!} dubbers={dubbers} user={user!} capabilities={capabilities} totalDubbers={totalDubbers} /> : <NotFoundScreen />
+  return pass ? <Patcher totalTitles={totalTitles} totalUpdated={totalUpdated} title={title!} dubbers={dubbers} user={user!} capabilities={capabilities} totalDubbers={totalDubbers} session={session} /> : <NotFoundScreen />
 }

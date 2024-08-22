@@ -21,22 +21,25 @@ interface IPatcherProps {
   appendError: (emsg: string) => void
   setUploadsStack: (item: IPatcherStackItem[]) => void
   title: ITitle
+  session: string
 }
 
 export class PactherStack {
   private isRunning = false;
   private stack: IPatcherStackItemExtended[] = []
   private title: ITitle
+  private session = ''
 
   private appendError: (emsg: string) => void;
   private setUploadsStack: (item: IPatcherStackItem[]) => void;
 
 
 
-  constructor({ appendError, setUploadsStack, title }: IPatcherProps) {
+  constructor({ appendError, setUploadsStack, title, session }: IPatcherProps) {
     this.appendError = appendError;
     this.setUploadsStack = setUploadsStack;
     this.title = title;
+    this.session = session;
   }
 
 
@@ -108,6 +111,9 @@ export class PactherStack {
           if (progress === 1) {
             clearInterval(interval)
           }
+        },
+        headers: {
+          Cookie: `${config.vars.animeeCookie}=${this.session}`
         }
       })
 
