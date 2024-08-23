@@ -1001,7 +1001,6 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
   const [isMobile, setIsMobile] = useState(false);
   const [file, setFile] = useState<File | null>(null)
-  const [filename, setFilename] = useState<string | null>(null)
   const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : totalDubbers[0].code)
   const [Stack] = useState(new PactherStack({
     appendError,
@@ -1060,17 +1059,6 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     }
   }, [])
 
-  // Handle file
-  useEffect(() => {
-    if (file) {
-      setFilename(file.name)
-    } else {
-      setFilename(null)
-    }
-  }, [file])
-
-  useEffect(() => console.log(episodesGroups), [episodesGroups])
-
 
 
   function chooseFile() {
@@ -1086,7 +1074,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
     if (!input) return;
 
-    if (!input.files) {
+    if (!input.files?.length) {
       setFile(null)
     } else {
       const file = input.files[0];
@@ -1260,7 +1248,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
                 <button className='patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]' onClick={chooseFile}>
                   <IcoUpdate width={32} height={32} />
-                  <p className={`text-white ${filename ? '' : 'uppercase'}`}>{filename || 'виберіть файл'}</p>
+                  <p className={`text-white ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'виберіть файл'}</p>
                 </button>
               </div>
             </div>
@@ -1273,9 +1261,6 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
           </Tooltip>
         </>}
       </div>}
-
-      {/* <p className={`text-lightGrey ${uploadsStack.filter(el => el.type !== 'uploaded').length ? 'block' : 'hidden'}`}>Очікується завантаження: {uploadsStack.filter(el => el.type !== 'uploaded').length} {wordDeclination(uploadsStack.filter(el => el.type !== 'uploaded').length, ['серії', 'серій', 'серій'])}</p> */}
-      {/* <p className={`text-green ${uploadsStack.filter(el => el.type !== 'uploaded').length === 0 && uploadsStack.length ? 'block' : 'hidden'}`}>Завантажено: {uploadsStack.length} {wordDeclination(uploadsStack.length, ['серію', 'серії', 'серій'])}!</p> */}
     </div>
 
     {/* Groups */}
