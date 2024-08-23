@@ -2,65 +2,48 @@ import { AxiosError } from "axios";
 import { $api } from "../../../components/http";
 import { config } from "../../../config";
 import { ITitle, ITitleEpisode } from "../../../interfaces/ITitle";
-import { TEpisodeType } from "./Patcher";
-
-export interface IPatcherStackItem {
-  type: TEpisodeType
-  order: number
-  dubberID: string
-  progress: number | null
-  file: File
-  sourceURL: string
-}
-
-interface IPatcherStackItemExtended extends IPatcherStackItem {
-  id: string
-}
+import { IPatcherEpisode, IPatcherEpisodesGroup, TEpisodeType } from "./Patcher";
 
 interface IPatcherProps {
   appendError: (emsg: string) => void
-  setUploadsStack: (item: IPatcherStackItem[]) => void
+  patchEpisode: (episode: IPatcherEpisode) => void
   title: ITitle
   session: string
 }
 
 export class PactherStack {
   private isRunning = false;
-  private stack: IPatcherStackItemExtended[] = []
+  private stack: IPatcherEpisode[] = []
   private title: ITitle
   private session = ''
 
   private appendError: (emsg: string) => void;
-  private setUploadsStack: (item: IPatcherStackItem[]) => void;
+  private patchEpisode: (episode: IPatcherEpisode) => void;
 
 
 
-  constructor({ appendError, setUploadsStack, title, session }: IPatcherProps) {
+  constructor({ appendError, title, session, patchEpisode }: IPatcherProps) {
     this.appendError = appendError;
-    this.setUploadsStack = setUploadsStack;
+    this.patchEpisode = patchEpisode;
     this.title = title;
     this.session = session;
   }
 
 
 
-  append({ dubberID, file, order, progress, type, sourceURL }: IPatcherStackItem) {
-    const id = `${order}/${dubberID}`;
-    console.log(`[PatcherStack]: Item ${order} in ${dubberID} appended`)
+  append({ file, progress, type, episode, id }: IPatcherEpisode) {
+    console.log(`[PatcherStack]: Item ${episode.order} in ${episode.dubberID} appended`)
+    const uploadOrder = this.stack.filter(el => el.type !== 'uploaded').length += 1;
 
-    this.stack.push({ dubberID, file, order, progress, type, id, sourceURL })
+    this.stack.push({ file, progress, type, episode, id, uploadOrder })
     this.patch({ id, type: 'pending' })
 
     this.run();
   }
 
   remove(id: string) {
-    const item = this.stack.find(el => el.id === id);
+    this.stack = this.stack.filter(el => el.id !== id);
     console.log(`[PatcherStack]: Item ${id} removed`)
-
-    if (item) {
-      item.type = 'uploaded';
-    }
 
     this.run();
   }
@@ -70,12 +53,15 @@ export class PactherStack {
 
     if (progress) item.progress = progress;
     if (type) item.type = type;
-    if (sourceURL) item.sourceURL = sourceURL;
+    if (sourceURL) item.episode.qualities.q1080 = sourceURL;
 
-    this.setUploadsStack(this.stack.map(el => { return { ...el, id: undefined } }))
+    this.patchEpisode(item);
   }
 
   async run() {
+    console.log('STACK')
+    console.log(this.stack)
+
     if (this.isRunning) return console.log(`[PatcherStack]: Stack is already running`);
     if (!this.stack.filter(el => el.type !== 'uploaded').length) return console.log(`[PatcherStack]: Stack is empty`);
 
@@ -92,10 +78,10 @@ export class PactherStack {
       // Upload
       const formData = new FormData()
 
-      formData.append('file', item.file);
+      formData.append('file', item.file!);
       formData.append('type', 'upload_episode');
-      formData.append('dubID', item.dubberID);
-      formData.append('episodeOrder', `${item.order}`);
+      formData.append('dubID', item.episode.dubberID);
+      formData.append('episodeOrder', `${item.episode.order}`);
       formData.append('qualities', JSON.stringify([480]));
 
       interval = setInterval(() => {

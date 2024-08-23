@@ -23,8 +23,8 @@ import { TRoleCapability } from '../../../interfaces/IRoles';
 import { DeepPartial } from '../../../interfaces/Interfaces';
 import { getFileExtension, getUTC, wordDeclination } from '../../../components/handlers';
 import Tooltip from '../../../components/Tooltip';
-import { IPatcherStackItem, PactherStack } from './PatcherStack';
 import { $api } from '../../../components/http';
+import { PactherStack } from './PatcherStack';
 
 
 
@@ -57,13 +57,20 @@ interface IFieldProps {
   outValueSetter?: (value: string) => void
 }
 
-interface IEpisodesGroup {
+/** Patcher episodes group */
+export interface IPatcherEpisodesGroup {
   dubber: IDubber,
-  episodes: IEpsiode[],
+  episodes: IPatcherEpisode[]
 }
 
-interface IEpsiode extends ITitleEpisode {
+/** Patcher episode */
+export interface IPatcherEpisode {
+  id: string
+  episode: ITitleEpisode
   type: TEpisodeType
+  progress: number | null
+  file: File | null
+  uploadOrder: number | null
 }
 
 interface ISelectOption<T = any> {
@@ -286,27 +293,26 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
   </div>
 })
 
-const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, title, uploadsStack, deleteEpisode, canSeriesDelete }: { group: IEpisodesGroup, dubbingSelectedCode: string, title: ITitle, uploadsStack: IPatcherStackItem[], deleteEpisode: (specified: number, dubber: string) => void, canSeriesDelete: boolean }) {
+const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, title, deleteEpisode, canSeriesDelete }: { group: IPatcherEpisodesGroup, dubbingSelectedCode: string, title: ITitle, deleteEpisode: (specified: number, dubber: string) => void, canSeriesDelete: boolean }) {
   const isActive = group.dubber.code === dubbingSelectedCode;
   const [isCollapsed, setIsCollapsed] = useState(!isActive)
 
-  const Episode = memo(function Episode({ episode }: { episode: IEpsiode }) {
-    const inStack = uploadsStack.find(el => el.dubberID === episode.dubberID && el.order === episode.order);
-    let order = 0;
+  const Episode = memo(function Episode({ episode }: { episode: IPatcherEpisode }) {
+    let order = 1;
     let progress = 0;
-    let source = episode.qualities.q1080;
+    let source = episode.episode.qualities.q1080;
     let type = episode.type;
 
-    if (inStack) {
-      order = uploadsStack.filter(el => el.type !== 'uploaded').findIndex(el => el.dubberID === episode.dubberID && el.order === episode.order);
-      progress = inStack.progress || 0;
-      episode.type = inStack.type;
-      source = inStack.sourceURL || episode.qualities.q1080;
+    if (episode.type !== 'uploaded') {
+      order = episode.uploadOrder || 1
+      progress = episode.progress || 0;
+      episode.type = episode.type;
+      source = episode.episode.qualities.q1080;
     }
 
     return <div className='px-[24px] py-[16px] flex items-center gap-[16px] rounded-[2px] bg-grey'>
       {/* Order */}
-      <p className='text-white text-[24px] font-bold w-[100px] shrink-0'>#{episode.order}</p>
+      <p className='text-white text-[24px] font-bold w-[100px] shrink-0'>#{episode.episode.order}</p>
 
       {/* Content */}
       <div className='flex items-center gap-[16px] w-full'>
@@ -331,7 +337,7 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
 
       {/* Delete */}
       {canSeriesDelete && type !== 'uploading' && <Tooltip content='Видалити'>
-        <button className='shrink-0 patcher-episodeMeta' onClick={() => deleteEpisode(episode.order, episode.dubberID)}>
+        <button className='shrink-0 patcher-episodeMeta' onClick={() => deleteEpisode(episode.episode.order, episode.episode.dubberID)}>
           <IcoCan width={32} height={32} className='patcher-episodeMeta_delete' />
         </button>
       </Tooltip>}
@@ -357,7 +363,7 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
     {/* Episodes */}
     <div className={`flex flex-col gap-[4px] duration-300 ${isCollapsed ? 'max-h-0' : 'max-h-[600px]'} overflow-x-hidden overflow-y-auto`}>
       {group.episodes.toReversed().map(episode => {
-        return <Episode episode={episode} key={`patcher-episodeGroup-${group.dubber.id}--${episode.order}`} />
+        return <Episode episode={episode} key={`patcher-episodeGroup-${group.dubber.id}--${episode.episode.order}`} />
       })}
     </div>
   </div>
@@ -466,10 +472,10 @@ const TitleMetaSection = memo(function TitleMetaSection({
       const pending = document.querySelectorAll('.patcher-field--pending.patcher-title') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
       const errored = document.querySelectorAll('.patcher-field--error.patcher-title');
       const patchBody: {
-        changeNames?: {
-          alt?: string[],
-          ukr?: string,
-          eng?: string
+        changeNames: {
+          alt: string[],
+          ukr: string,
+          eng: string
         },
         setRating?: number
         setDescription?: string
@@ -483,7 +489,13 @@ const TitleMetaSection = memo(function TitleMetaSection({
         setStudios?: string[]
         setYear?: number
         setDetails?: string
-      } = {};
+      } = {
+        changeNames: {
+          alt: title.names.alt,
+          eng: title.names.eng,
+          ukr: title.names.ukr
+        }
+      };
 
       if (errored.length) {
         appendError('Деякі поля містять помилки.')
@@ -498,13 +510,10 @@ const TitleMetaSection = memo(function TitleMetaSection({
         const value = el.value;
 
         if (id === 'ukrName') {
-          patchBody.changeNames = patchBody.changeNames || {};
           patchBody.changeNames.ukr = value;
         } else if (id === 'engName') {
-          patchBody.changeNames = patchBody.changeNames || {};
           patchBody.changeNames.eng = value;
         } else if (id === 'altNames') {
-          patchBody.changeNames = patchBody.changeNames || {};
           patchBody.changeNames.alt = value.split(',');
         } else if (id === 'studios') {
           patchBody.setStudios = value.split(',');
@@ -988,8 +997,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
 const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, title, canSeriesAdd, canSeriesDelete, session }: IEpisodesSection) {
   const [errors, setErrors] = useState<string[]>([])
 
-  const [episodesGroups, setEpisodesGroups] = useState<IEpisodesGroup[]>([]);
-  const [uploadsStack, setUploadsStack] = useState<IPatcherStackItem[]>([])
+  const [episodesGroups, setEpisodesGroups] = useState<IPatcherEpisodesGroup[]>([])
 
   const [isMobile, setIsMobile] = useState(false);
   const [file, setFile] = useState<File | null>(null)
@@ -997,7 +1005,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : totalDubbers[0].code)
   const [Stack] = useState(new PactherStack({
     appendError,
-    setUploadsStack,
+    patchEpisode,
     title,
     session
   }))
@@ -1007,17 +1015,27 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
 
   useEffect(() => {
-    const episodesGroups: IEpisodesGroup[] = []
+    const episodesGroups: IPatcherEpisodesGroup[] = []
 
     title.episodes.forEach(episode => {
       let group = episodesGroups.find(el => el.dubber.id === episode.dubberID);
+      const newEpisode: IPatcherEpisode = {
+        id: `${episode.order}/${episode.dubberID}`,
+        episode,
+        type: 'uploaded',
+        file: null,
+        progress: null,
+        uploadOrder: null
+      }
 
       if (group) {
-        group.episodes.push({ ...episode, type: 'uploaded' })
+        // Push
+        group.episodes.push(newEpisode)
       } else {
+        // Create new
         group = {
-          episodes: [{ ...episode, type: 'uploaded' }],
-          dubber: dubbers.find(el => el.id === episode.dubberID)!,
+          dubber: totalDubbers.find(el => el.id === episode.dubberID)!,
+          episodes: [newEpisode]
         }
 
         episodesGroups.push(group)
@@ -1050,6 +1068,8 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
       setFilename(null)
     }
   }, [file])
+
+  useEffect(() => console.log(episodesGroups), [episodesGroups])
 
 
 
@@ -1095,59 +1115,44 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     try {
       const order = document.querySelector(`#patcher-${'epOrder' as TFieldID}`) as HTMLInputElement
       const dubber = totalDubbers.find(el => el.code === dubbingSelectedCode)!;
-      const defaultGroup: IEpisodesGroup = {
-        dubber: dubber,
+      const defaultGroup: IPatcherEpisodesGroup = {
+        dubber,
         episodes: []
       }
       let group = { ...episodesGroups.find(el => el.dubber.id === dubber.id) || defaultGroup };
 
       if (!order.value || isNaN(+order.value)) rejectField('Номер не може містити букви або бути порожнім', order, errors); else order.classList.remove('patcher-field--error')
-
-      if (!group) {
-        group = {
-          dubber,
-          episodes: []
-        }
-      }
-
-      if (group.episodes.some(el => el.order === +order.value)) rejectField('Епізод вже існує', order, errors)
+      if (group.episodes.some(el => el.episode.order === +order.value)) rejectField('Епізод вже існує', order, errors)
       if (!file) rejectField('Файл не вибраний', fileRef.current!, errors)
 
       if (errors.length) return;
 
-      const episode: IEpsiode = {
-        dubberID: dubber.id,
-        frames: [],
-        order: +order.value,
-        qualities: {
-          q1080: '',
-          q240: null,
-          q480: null,
-          q4k: null,
-          q720: null
+      const episode: IPatcherEpisode = {
+        episode: {
+          dubberID: dubber.id,
+          frames: [],
+          order: +order.value,
+          qualities: {
+            q1080: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            q240: null,
+            q480: null,
+            q4k: null,
+            q720: null
+          }
         },
+        file,
+        id: `${+order.value}/${dubber.id}`,
+        progress: null,
+        uploadOrder: null,
         type: 'pending'
       }
 
-      group.episodes.push(episode)
-
-      Stack.append({
-        dubberID: dubber.id,
-        file: file!,
-        order: +order.value,
-        progress: null,
-        type: 'pending',
-        sourceURL: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      })
-
-      setEpisodesGroups(episodeGroups => {
-        return [...episodeGroups.filter(el => el.dubber.id !== dubber.id), group].sort((a, b) => a.dubber.name > b.dubber.name ? 1 : -1);
-      })
+      Stack.append(episode)
     } catch (e) {
       if (e instanceof AxiosError) {
-        errors.push(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        errors.push(`Помилка при додаванні епізоду - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
-        errors.push(`Помилка при парсингу інформації про епізоди - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        errors.push(`Помилка при додаванні епізоду - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }
     } finally {
       errors.forEach(err => appendError(err));
@@ -1167,8 +1172,8 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     console.log(`[-]: Episode ${order} in ${totalDubbers.find(el => el.id === dubberID)?.name} deleted`)
 
     try {
-      const group = { ...episodesGroups.find(el => el.dubber.id === dubberID) } as IEpisodesGroup;
-      group.episodes = group.episodes.filter(el => !(el.dubberID == dubberID && el.order === order));
+      const group = { ...episodesGroups.find(el => el.dubber.id === dubberID) } as IPatcherEpisodesGroup;
+      group.episodes = group.episodes.filter(el => el.id !== id);
 
       await $api.patch(`/title/${title!.id}`, {
         deleteEpisode: {
@@ -1178,18 +1183,36 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
       })
 
       Stack.remove(id);
-      setEpisodesGroups(prev => [...prev.filter(el => el.dubber.id !== group.dubber.id), group]);
+      setEpisodesGroups(prev => {
+        return [...prev.filter(el => el.dubber.id !== group.dubber.id), group];
+      })
     } catch (e) {
       if (e instanceof AxiosError) {
         if (e.response?.data?.code === 404) return;
+        if (e.response?.data?.code === 503) return;
 
-        errors.push(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        errors.push(`Помилка при видаленні серії - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
-        errors.push(`Помилка при парсингу інформації про епізоди - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        errors.push(`Помилка при видаленні серії - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }
     } finally {
       errors.forEach(err => appendError(err));
     }
+  }
+
+  function patchEpisode(episode: IPatcherEpisode) {
+    setEpisodesGroups(prev => {
+      const defaultGroup: IPatcherEpisodesGroup = {
+        dubber: totalDubbers.find(el => el.id === episode.episode.dubberID)!,
+        episodes: []
+      }
+
+      const group = { ...prev.find(el => el.dubber.id === episode.episode.dubberID) || defaultGroup } as IPatcherEpisodesGroup;
+      group.episodes = [...group.episodes!.filter(el => el.id !== episode.id), episode]
+
+
+      return [...prev.filter(el => el.dubber.id !== episode.episode.dubberID), group].sort((a, b) => a.dubber.name > b.dubber.name ? 1 : -1);
+    })
   }
 
   function appendError(emsg: string) {
@@ -1201,6 +1224,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     el.classList.add('patcher-field--error')
     errors.push(emsg)
   }
+
 
 
 
@@ -1250,19 +1274,19 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
         </>}
       </div>}
 
-      <p className={`text-lightGrey ${uploadsStack.filter(el => el.type !== 'uploaded').length ? 'block' : 'hidden'}`}>Очікується завантаження: {uploadsStack.filter(el => el.type !== 'uploaded').length} {wordDeclination(uploadsStack.filter(el => el.type !== 'uploaded').length, ['серії', 'серій', 'серій'])}</p>
-      <p className={`text-green ${uploadsStack.filter(el => el.type !== 'uploaded').length === 0 && uploadsStack.length ? 'block' : 'hidden'}`}>Завантажено: {uploadsStack.length} {wordDeclination(uploadsStack.length, ['серію', 'серії', 'серій'])}!</p>
+      {/* <p className={`text-lightGrey ${uploadsStack.filter(el => el.type !== 'uploaded').length ? 'block' : 'hidden'}`}>Очікується завантаження: {uploadsStack.filter(el => el.type !== 'uploaded').length} {wordDeclination(uploadsStack.filter(el => el.type !== 'uploaded').length, ['серії', 'серій', 'серій'])}</p> */}
+      {/* <p className={`text-green ${uploadsStack.filter(el => el.type !== 'uploaded').length === 0 && uploadsStack.length ? 'block' : 'hidden'}`}>Завантажено: {uploadsStack.length} {wordDeclination(uploadsStack.length, ['серію', 'серії', 'серій'])}!</p> */}
     </div>
 
     {/* Groups */}
     {episodesGroups.some(el => el.dubber.code === dubbingSelectedCode) ? <>
-      <EpisodesGroup group={{ ...episodesGroups.find(el => el.dubber.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} canSeriesDelete={canSeriesDelete} />
+      <EpisodesGroup group={{ ...episodesGroups.find(el => el.dubber.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
 
       {episodesGroups.filter(el => el.dubber.code !== dubbingSelectedCode).map(group => {
-        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} canSeriesDelete={canSeriesDelete} />
+        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
       })}</> : <>
       {episodesGroups.map(group => {
-        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} uploadsStack={uploadsStack} canSeriesDelete={canSeriesDelete} />
+        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
       })}</>}
   </section>
 })
