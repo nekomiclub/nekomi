@@ -333,10 +333,11 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
 
       {/* Content */}
       <div className='flex items-center gap-[16px] w-full'>
-        {type === 'uploaded' && <Link href={`${source}`} target='_blank' className='flex items-center gap-[16px]'>
+        {type === 'uploaded' && <Link href={source} target='_blank' className='flex items-center gap-[16px]'>
           <IcoPlay width={32} height={32} fill='#6C5CE7' />
 
           <p className='text-purple'>Переглянути</p>
+          {episode.file && <p className='text-lightGrey'>Завантажено!</p>}
         </Link>}
 
         {type === 'pending' && <>
@@ -1025,6 +1026,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   const [isMobile, setIsMobile] = useState(false);
   const [file, setFile] = useState<File | null>(null)
   const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : totalDubbers[0].code)
+  const [uploadsRemain, setUploadsRemain] = useState<null | number>(null) // If null - no uploads have been uploaded
   const [Stack] = useState(new PactherStack({
     appendError,
     patchEpisode,
@@ -1212,6 +1214,16 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   }
 
   function patchEpisode(episode: IPatcherEpisode) {
+    if (episode.type === 'pending') {
+      setUploadsRemain(prev => {
+        return prev === null ? 1 : prev + 1;
+      })
+    } else if (episode.type === 'uploaded') {
+      setUploadsRemain(prev => {
+        return prev === null ? 1 : prev - 1;
+      })
+    }
+
     setEpisodesGroups(prev => {
       const defaultGroup: IPatcherEpisodesGroup = {
         dubber: totalDubbers.find(el => el.id === episode.episode.dubberID)!,
@@ -1219,7 +1231,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
       }
 
       const group = { ...prev.find(el => el.dubber.id === episode.episode.dubberID) || defaultGroup } as IPatcherEpisodesGroup;
-      group.episodes = [...group.episodes!.filter(el => el.id !== episode.id), episode]
+      group.episodes = [...group.episodes!.filter(el => el.id !== episode.id), episode].sort((a, b) => a.episode.order - b.episode.order)
 
 
       return [...prev.filter(el => el.dubber.id !== episode.episode.dubberID), group].sort((a, b) => a.dubber.name > b.dubber.name ? 1 : -1);
@@ -1284,6 +1296,9 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
           </Tooltip>
         </>}
       </div>}
+
+      {uploadsRemain !== null && uploadsRemain === 0 && <p className='text-green'>Всі епізоди завантажені!</p>}
+      {uploadsRemain !== null && uploadsRemain !== 0 && <p className='text-lightGrey'>Очікується завантаження: {uploadsRemain} {wordDeclination(uploadsRemain, ['епізоду', 'епізодів', 'епізодів'])}</p>}
     </div>
 
     {/* Groups */}
