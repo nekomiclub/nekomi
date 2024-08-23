@@ -131,6 +131,23 @@ const titleStatusOptions: ISelectOption<TAnimeStatus>[] = [{
   label: 'Вийшов'
 }]
 
+const titleTypeOptions: ISelectOption<TTitleType>[] = [{
+  code: 'ONA',
+  label: 'ОНА'
+}, {
+  code: 'OVA',
+  label: 'ОВА'
+}, {
+  code: 'film',
+  label: 'Фільм'
+}, {
+  code: 'serial',
+  label: 'Серіал'
+}, {
+  code: 'special',
+  label: 'Спешл'
+}]
+
 const titleCountryOptions: ISelectOption<TTitleCountry>[] = [{
   code: 'China',
   label: 'Китай'
@@ -401,6 +418,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
   const [titleAgeRate, setTitleAgeRate] = useState(title.ageRate);
   const [titleCountry, setTitleCountry] = useState(title.country);
   const [titleSeason, setTitleSeason] = useState(title.season);
+  const [titleType, setTitleType] = useState(title.type);
 
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -472,10 +490,10 @@ const TitleMetaSection = memo(function TitleMetaSection({
       const pending = document.querySelectorAll('.patcher-field--pending.patcher-title') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
       const errored = document.querySelectorAll('.patcher-field--error.patcher-title');
       const patchBody: {
-        changeNames: {
-          alt: string[],
-          ukr: string,
-          eng: string
+        changeNames?: {
+          alt?: string[],
+          ukr?: string,
+          eng?: string
         },
         setRating?: number
         setDescription?: string
@@ -491,9 +509,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
         setDetails?: string
       } = {
         changeNames: {
-          alt: title.names.alt,
-          eng: title.names.eng,
-          ukr: title.names.ukr
+          alt: title.names.alt
         }
       };
 
@@ -510,10 +526,13 @@ const TitleMetaSection = memo(function TitleMetaSection({
         const value = el.value;
 
         if (id === 'ukrName') {
+          patchBody.changeNames = patchBody.changeNames || {};
           patchBody.changeNames.ukr = value;
         } else if (id === 'engName') {
+          patchBody.changeNames = patchBody.changeNames || {};
           patchBody.changeNames.eng = value;
         } else if (id === 'altNames') {
+          patchBody.changeNames = patchBody.changeNames || {};
           patchBody.changeNames.alt = value.split(',');
         } else if (id === 'studios') {
           patchBody.setStudios = value.split(',');
@@ -546,6 +565,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
       if (titleAgeRate !== title.ageRate) patchBody.setAgeRate = titleAgeRate;
       if (titleCountry !== title.country) patchBody.setCountry = titleCountry;
       if (titleSeason !== title.season) patchBody.setSeason = titleSeason;
+      if (titleType !== title.type) patchBody.setType = titleType;
 
       if (!Object.keys(patchBody).length) return setSaveStatus('nothingChanged');
 
@@ -654,7 +674,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
               </p>
             </button>}
 
-            <Link href={`${config.URL.baseURL}/${routes.watch.path}/${title.code}`} className='patcher-button_action'>
+            <Link href={`${config.URL.baseURL}${routes.watch.path}/${title.code}`} className='patcher-button_action'>
               <IcoAnimeeLogo width={32} height={32} />
               <p className='text-white uppercase text-center'>тайтл на animee.club</p>
             </Link>
@@ -682,11 +702,14 @@ const TitleMetaSection = memo(function TitleMetaSection({
         <div className='pl-[16px]'>
           <Field label='Англійська' id='engName' initialValue={title.names.eng} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
 
-          {canTitleEdit && <Field label='Альтернативні' id='altNames' note='Через кому' initialValue={Array.isArray(title.names.alt) ? title.names.alt.join(', ') : title.names.alt} isLocked={!canTitleEdit} symbolsLimited={256} type='title' isLarge />}
+          {canTitleEdit && <Field label='Альтернативні' id='altNames' note='Через кому' initialValue={Array.isArray(title.names.alt) ? title.names.alt.join(', ') : title.names.alt} isLocked={!canTitleEdit} symbolsLimited={512} type='title' isLarge />}
         </div>
 
         {/* Status */}
         <Select label='Статус' options={titleStatusOptions} value={titleStatus} valueSetter={setTitleStatus} isLocked={!canTitleEdit} />
+
+        {/* Type */}
+        <Select label='Тип' options={titleTypeOptions} value={titleType} valueSetter={setTitleType} isLocked={!canTitleEdit} />
 
         {/* IMDB rating */}
         <Field label='Рейтинг IMDB' id='imdbRating' note='1 - 10, 0 - Відсутній' initialValue={`${title.rating.IMDB || '0'}`} isLocked={!canTitleEdit} symbolsLimited={3} type='title' />
@@ -1309,7 +1332,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
 
       const { data } = await $api.post<{ id: string }>('/title');
 
-      router.push(`${config.URL.baseURL}/${routes.patcher.path}/${data.id}`)
+      router.push(`${config.URL.baseURL}${routes.patcher.path}/${data.id}`)
     } catch (e) {
       console.error(e)
     }

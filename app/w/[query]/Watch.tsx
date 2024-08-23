@@ -121,7 +121,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                 </Menu.MenuList>
               </Menu.Menu>
 
-              {isEditor && <Link href={`${config.URL.baseURL}/${routes.patcher.path}/${title.id}`} className={`px-[16px] py-[12px] flex gap-[16px] justify-center rounded-[2px] bg-darkGrey hover:bg-grey duration-200`}>
+              {isEditor && <Link href={`${config.URL.baseURL}${routes.patcher.path}/${title.id}`} className={`px-[16px] py-[12px] flex gap-[16px] justify-center rounded-[2px] bg-darkGrey hover:bg-grey duration-200`}>
                 <IcoUpdate width={24} height={24} />
                 <p className='text-white font-bold uppercase'>оновити</p>
               </Link>}

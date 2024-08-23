@@ -118,7 +118,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
     }, [])
 
     return (
-      <Link href={`${config.URL.baseURL}/${routes.watch.path}/${headliner.code}`} className={`flex items-center justify-center gap-[16px] bg-grey px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback ${className ? className : ''} max-[784px]:px-[16px] max-[784px]:py-[12px]`} tabIndex={0}>
+      <Link href={`${config.URL.baseURL}${routes.watch.path}/${headliner.code}`} className={`flex items-center justify-center gap-[16px] bg-grey px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback ${className ? className : ''} max-[784px]:px-[16px] max-[784px]:py-[12px]`} tabIndex={0}>
         <IcoPlay width={40} height={40} />
         <p className='text-white text-[24px] uppercase max-[784px]:text-[16px]'>{label}</p>
       </Link>
