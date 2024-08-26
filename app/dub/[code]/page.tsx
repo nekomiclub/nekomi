@@ -16,6 +16,7 @@ import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutub
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/Support';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { getUTC } from '../../../components/handlers';
+import { $api } from '../../../components/http';
 
 
 
@@ -24,7 +25,7 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const { data } = await axios.get<IDubber>(`/dubber/${params.code}`);
+    const { data } = await $api.get<IDubber>(`/dubber/${params.code}`);
 
     return {
       title: `${data.name} на animee`,
@@ -54,7 +55,7 @@ export default async function RSC({ params }: IRSCProps<{ code: string }>) {
   let dubberData: IDubber = {};
 
   try {
-    const res = await axios.get<IDubber>(`/dubber/${params.code}`);
+    const res = await $api.get<IDubber>(`/dubber/${params.code}`);
     dubberData = res.data
   } catch (e) {
     if (e instanceof AxiosError) {
