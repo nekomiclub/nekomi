@@ -78,7 +78,7 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
         }
       })
 
-      const { data: totalDubbersData } = await $api.get<{ dubbers: IDubber[] }>(`/v1/dubber/all`)
+      const { data: totalDubbersData } = await $api.get<{ dubbers: IDubber[] }>(`/dubber/all`)
 
       totalDubbers = totalDubbersData.dubbers;
 

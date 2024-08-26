@@ -24,7 +24,7 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const { data } = await axios.get<IDubber>(`${config.URL.apiHTTP}/v1/dubber/${params.code}`);
+    const { data } = await axios.get<IDubber>(`/dubber/${params.code}`);
 
     return {
       title: `${data.name} на animee`,
@@ -54,7 +54,7 @@ export default async function RSC({ params }: IRSCProps<{ code: string }>) {
   let dubberData: IDubber = {};
 
   try {
-    const res = await axios.get<IDubber>(`${config.URL.apiHTTP}/v1/dubber/${params.code}`);
+    const res = await axios.get<IDubber>(`/dubber/${params.code}`);
     dubberData = res.data
   } catch (e) {
     if (e instanceof AxiosError) {
