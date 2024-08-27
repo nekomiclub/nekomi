@@ -9,7 +9,7 @@ import { config, devMode } from '../../../config';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { decodeToken, getUTC, wordDeclination } from '../../../components/handlers';
 import { IUsapiUser, IUser, IUserLib } from '../../../interfaces/IUser';
-import { UserDivider, UserHeader, UserSectionLibs, UserSectionStats, UserSectionTakePart } from './ClientComponents';
+import { UserDivider, UserHeader, UserSectionLibs } from './ClientComponents';
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoCan, IcoStack, IcoWatched } from '../../../assets/Icons';
@@ -101,12 +101,6 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
 
           {/* Libs */}
           <UserSectionLibs user={user!} isOwner={isOwner} />
-
-          {/* Stats */}
-          <UserSectionStats user={user!} isOwner={isOwner} />
-
-          {/* Dubs take part */}
-          <UserSectionTakePart user={user!} isOwner={isOwner} />
         </div>
       </div>
     </>

@@ -165,25 +165,3 @@ export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: 
     </>
   )
 }
-
-
-
-export const UserSectionStats: NextPage<{ user: IUser, isOwner: boolean }> = ({ isOwner, user }) => {
-  return (
-    <div className="flex flex-col gap-[24px]">
-      <UserDivider label='Статистика' hidden={false} isOwner={isOwner} />
-      <p className='text-lightGrey text-[16px] text-center'>Статистика буде згодом</p>
-    </div>
-  );
-}
-
-
-
-export const UserSectionTakePart: NextPage<{ user: IUser, isOwner: boolean }> = ({ isOwner, user }) => {
-  return (
-    <div className="flex flex-col gap-[24px]">
-      <UserDivider label='Команди озвучення' hidden={false} isOwner={isOwner} />
-      <p className='text-lightGrey text-[16px] text-center'>Участь у командах озвучення буде згодом</p>
-    </div>
-  );
-}

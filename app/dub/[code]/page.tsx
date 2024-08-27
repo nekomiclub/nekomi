@@ -10,13 +10,13 @@ import Tooltip from '../../../components/Tooltip';
 import { config, devMode } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 import { routes } from '../../../routes';
-import { DubStats, DubCrew } from './clientContent';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/Social';
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/Support';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { getUTC } from '../../../components/handlers';
 import { $api } from '../../../components/http';
+import { DubberHeader } from './ClientComponents';
 
 
 
@@ -52,11 +52,11 @@ export async function generateMetadata(
 
 export default async function RSC({ params }: IRSCProps<{ code: string }>) {
   // @ts-ignore
-  let dubberData: IDubber = {};
+  let dubber: IDubber = {};
 
   try {
-    const res = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
-    dubberData = res.data.dubber
+    const { data } = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
+    dubber = data.dubber
   } catch (e) {
     if (e instanceof AxiosError) {
       const code = e.response?.data?.code || 500;
@@ -79,93 +79,35 @@ export default async function RSC({ params }: IRSCProps<{ code: string }>) {
     }
   }
 
-  console.log(dubberData)
-
   return (
-    <div className="w-full min-h-screen h-full bg-dark">
-      <div className='py-[200px]'>
-        <div className="wrapper h-full items-center justify-center">
-          <div className='flex flex-col gap-[32px] relative items-center rounded-[4px] bg-darkGrey px-[32px] py-[24px] w-full'>
-            <div className='relative h-[64px] w-[128px]'>
-              <img src={dubberData.thumbURL} alt={`${dubberData.name} image`} loading='lazy' className='absolute left-0 -top-[80px] w-[128px] h-[128px] rounded-[4px]' />
-            </div>
+    <div className='w-full h-full min-h-screen bg-dark'>
+      <DubberHeader dubber={dubber} />
 
-            {/* Name */}
-            <div className='flex flex-col gap-[8px]'>
-              <h1 className='text-[24px] text-white font-bold text-center'>{dubberData.name}</h1>
-              <h3 className='text-[16px] text-white font-extralight text-center'>@{dubberData.code}</h3>
-            </div>
+      <div className="wrapper gap-[40px] !pt-[48px]">
+        {/* Stats */}
 
-            {/* Stat */}
-            <div className='flex gap-[32px] items-center'>
-              <DubStats dubberData={dubberData} />
-            </div>
+        {/* About */}
+        <div className='flex flex-col gap-[24px]'>
+          <div className='flex items-stretch gap-[24px] justify-center max-[560px]:flex-col'>
+            {dubber.socials && <div className='w-full flex items-center gap-[24px] justify-end max-[560px]:justify-center'>
+              {dubber.socials.instagram && <Link href={dubber.socials.instagram} target='_blank'><IcoSocialInstagram width={40} height={40} /></Link>}
+              {dubber.socials.telegram && <Link href={dubber.socials.telegram} target='_blank'><IcoSocialTelegram width={40} height={40} /></Link>}
+              {dubber.socials.tiktok && <Link href={dubber.socials.tiktok} target='_blank'><IcoSocialTiktok width={40} height={40} /></Link>}
+              {dubber.socials.youtube && <Link href={dubber.socials.youtube} target='_blank'><IcoSocialYoutube width={40} height={40} /></Link>}
+            </div>}
 
-            {/* Description * crew */}
-            <div className='flex gap-[16px] items-stretch w-full max-[770px]:flex-col-reverse'>
-              <div className='w-full'>
-                <p className='text-[16px] text-white font-extralight text-justify'>{dubberData.description}</p>
-              </div>
+            {dubber.socials && dubber.support && <span className='w-[2px] bg-grey shrink-0 block h-auto max-[560px]:w-full max-[560px]:h-[3px]'></span>}
 
-              <span className='block w-[1px] rounded-[2px] bg-white/[.2] flex-shrink-0 max-[770px]:w-full max-[770px]:h-[1px]'></span>
-
-              <div className='w-full flex flex-col gap-[8px]'>
-                <DubCrew dubberData={dubberData} />
-              </div>
-            </div>
-
-            {/* Socials & support */}
-            <div className='flex gap-[16px] items-stretch w-full'>
-              <div className='flex items-center justify-end gap-[16px] w-full'>
-                {dubberData.socials?.instagram && <Link href={dubberData.socials.instagram} target='_blank'>
-                  <IcoSocialInstagram width={32} height={32} />
-                </Link>}
-                {dubberData.socials?.youtube && <Link href={dubberData.socials.youtube} target='_blank'>
-                  <IcoSocialYoutube width={32} height={32} />
-                </Link>}
-                {dubberData.socials?.telegram && <Link href={dubberData.socials.telegram} target='_blank'>
-                  <IcoSocialTelegram width={32} height={32} />
-                </Link>}
-                {dubberData.socials?.tiktok && <Link href={dubberData.socials.tiktok} target='_blank'>
-                  <IcoSocialTiktok width={32} height={32} />
-                </Link>}
-              </div>
-
-              <span className='block w-[1px] rounded-[2px] bg-white/[.2] flex-shrink-0'></span>
-
-              <div className='flex items-center gap-[16px] w-full'>
-                {dubberData.support?.bymeacoffee && <>
-                  <Link href={dubberData.support!.bymeacoffee} target='_blank'>
-                    <IcoSupportByMeACoffee height={32} width={32} />
-                  </Link>
-                </>}
-
-                {dubberData.support?.patreon && <>
-                  <Link href={dubberData.support!.patreon} target='_blank'>
-                    <IcoSupportPatreon height={32} width={32} />
-                  </Link>
-                </>}
-
-                {dubberData.support?.privatbank && <>
-                  <Link href={dubberData.support!.privatbank} target='_blank'>
-                    <IcoSupportPrivatbank height={32} width={32} />
-                  </Link>
-                </>}
-
-                {dubberData.support?.monobank && <>
-                  <Link href={dubberData.support!.monobank} target='_blank'>
-                    <IcoSupportMonobank height={32} width={32} />
-                  </Link>
-                </>}
-
-                {dubberData.support?.diaka && <>
-                  <Link href={dubberData.support!.diaka} target='_blank'>
-                    <IcoSupportDiaka height={32} width={32} />
-                  </Link>
-                </>}
-              </div>
-            </div>
+            {dubber.support && <div className='w-full flex items-center gap-[24px] max-[560px]:justify-center'>
+              {dubber.support.bymeacoffee && <Link href={dubber.support.bymeacoffee} target='_blank'><IcoSupportByMeACoffee width={40} height={40} /></Link>}
+              {dubber.support.diaka && <Link href={dubber.support.diaka} target='_blank'><IcoSupportDiaka width={40} height={40} /></Link>}
+              {dubber.support.monobank && <Link href={dubber.support.monobank} target='_blank'><IcoSupportMonobank width={40} height={40} /></Link>}
+              {dubber.support.patreon && <Link href={dubber.support.patreon} target='_blank'><IcoSupportPatreon width={40} height={40} /></Link>}
+              {dubber.support.privatbank && <Link href={dubber.support.privatbank} target='_blank'><IcoSupportPrivatbank width={40} height={40} /></Link>}
+            </div>}
           </div>
+
+          <p className={`${dubber.description ? 'text-white text-[24px]' : 'text-lightGrey'}`}>{dubber.description || 'Опис відсутній'}</p>
         </div>
       </div>
     </div>
