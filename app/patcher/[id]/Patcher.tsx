@@ -675,7 +675,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
               </p>
             </button>}
 
-            <Link href={`${config.URL.baseURL}${routes.watch.path}/${title.code}`} className='patcher-button_action'>
+            <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${title.code}`} className='patcher-button_action'>
               <IcoAnimeeLogo width={32} height={32} />
               <p className='text-white uppercase text-center'>тайтл на animee.club</p>
             </Link>
@@ -1347,7 +1347,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
 
       const { data } = await $api.post<{ id: string }>('/title');
 
-      router.push(`${config.URL.baseURL}${routes.patcher.path}/${data.id}`)
+      router.push(`${config.URL.baseURL}${routes.title_patcher.path}/${data.id}`)
     } catch (e) {
       console.error(e)
     }

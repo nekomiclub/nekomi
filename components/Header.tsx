@@ -58,7 +58,7 @@ const Header: NextPage = () => {
   const [searchPopupID, setSearchPopupID] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<ISearchExtended[]>([])
-  const [resultBaseURL, setResultBaseURL] = useState(`${config.URL.baseURL}${routes.watch.path}`)
+  const [resultBaseURL, setResultBaseURL] = useState(`${config.URL.baseURL}${routes.watch_title.path}`)
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 500)
   const [placeholderSearchQuery] = useDebounce(searchQuery, 50)
@@ -142,10 +142,10 @@ const Header: NextPage = () => {
   useEffect(() => {
     const route = getRoute(pathname)?.path.replace('/*', '');
 
-    if (route === routes.patcher.path) {
-      setResultBaseURL(`${config.URL.baseURL}${routes.patcher.path}`)
+    if (route === routes.title_patcher.path) {
+      setResultBaseURL(`${config.URL.baseURL}${routes.title_patcher.path}`)
     } else {
-      setResultBaseURL(`${config.URL.baseURL}${routes.watch.path}`)
+      setResultBaseURL(`${config.URL.baseURL}${routes.watch_title.path}`)
     }
   }, [pathname])
 
@@ -337,7 +337,7 @@ const Header: NextPage = () => {
             </div>
           </Link>}
 
-          {(result.type === 'dubber' || result.type === 'user') && <Link href={result.type === 'user' ? `${config.URL.baseURL}${routes.user.path.replace('/*', '')}/${(result.item as IUser).username}` : `${config.URL.baseURL}${routes.dubber.path.replace('/*', '')}/${(result.item as IDubber).code}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
+          {(result.type === 'dubber' || result.type === 'user') && <Link href={result.type === 'user' ? `${config.URL.baseURL}${routes.user_profile.path}/${(result.item as IUser).username}` : `${config.URL.baseURL}${routes.dubber_profile.path}/${(result.item as IDubber).code}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
             <LoadingImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).thumbURL} width='128px' height='128px' parentClassName='rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]' />
 
             <div className='flex flex-col gap-[8px]'>

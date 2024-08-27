@@ -48,14 +48,14 @@ const Footer: NextPage = (props) => {
         {/* Center */}
         <div className='flex gap-[24px] max-[760px]:flex-col'>
           <ul className='flex flex-col gap-[4px]'>
-            <FooterLink href={routes.contacts.path} text='Контакти' />
+            <FooterLink href={routes.info_contacts.path} text='Контакти' />
             <FooterLink href={routes.polling.path} text='Сервіси' />
           </ul>
 
           <ul className='flex flex-col gap-[4px]'>
-            <FooterLink href={routes.agreement.path} text='Угода користувача / Agreement' />
-            <FooterLink href={routes.privatePolicy.path} text='Політика конфіденційності / Privacy policy' />
-            <FooterLink href={routes.copyright.path} text='Правовласникам / Copyright' />
+            <FooterLink href={routes.info_agreement.path} text='Угода користувача / Agreement' />
+            <FooterLink href={routes.info_policy.path} text='Політика конфіденційності / Privacy policy' />
+            <FooterLink href={routes.info_copyright.path} text='Правовласникам / Copyright' />
           </ul>
 
           <ul className='flex flex-col gap-[4px]'>

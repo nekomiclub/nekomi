@@ -19,7 +19,7 @@ export function getRoute(path: string): IRoute | null {
     }
 
     //* Check dynamic routes
-    if (routeRec.path.includes('/*')) {
+    if (routeRec.path.includes('/*') || routeRec.dynamic) {
       const matcher = new RegExp(routeRec.path.replaceAll('/*', '\/(?:(?!\/).)*'));
       if (path.match(matcher)) return routeRec
     }

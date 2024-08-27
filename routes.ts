@@ -9,10 +9,8 @@ export interface IRoute {
   /** Route path */
   path: string
 
-  /** Route required roles. If undefined route will be public
-   * @default undefined
-   */
-  roles?: string[]
+  /** Define if route static (/hello) or dynamic (/hello/[name]) */
+  dynamic?: boolean
 
   /** Page status 
    * @default clear
@@ -20,65 +18,49 @@ export interface IRoute {
   status?: TRouteStatus
 }
 
-interface IRoutes {
-  home: IRoute,
-  watch: IRoute,
-  watchTitle: IRoute,
-  contacts: IRoute,
-  agreement: IRoute,
-  privatePolicy: IRoute,
-  copyright: IRoute,
-  user: IRoute,
-  userList: IRoute,
-  dubber: IRoute,
-  polling: IRoute,
-  rickroll: IRoute,
-  patcher: IRoute,
-  patchTitle: IRoute,
-}
+type TRoute = 'home' | 'watch_title' | 'info_agreement' | 'info_contacts' | 'info_copyright' | 'info_policy' | 'user_profile' | 'user_list' | 'dubber_profile' | 'polling' | 'rickroll' | 'title_patcher'
 
-export const routes: IRoutes = {
+export const routes: { [key in TRoute]: IRoute } = {
   home: {
     path: '/'
   },
-  watch: {
-    path: '/w',
+  info_agreement: {
+    path: '/info/agreement'
   },
-  watchTitle: {
-    path: '/w/*',
+  info_contacts: {
+    path: '/info/contacts'
   },
-  agreement: {
-    path: '/info/agreement',
+  info_copyright: {
+    path: '/info/copyright'
   },
-  contacts: {
-    path: '/info/contacts',
+  info_policy: {
+    path: '/info/policy'
   },
-  copyright: {
-    path: '/info/copyright',
-  },
-  privatePolicy: {
-    path: '/info/policy',
-  },
-  user: {
-    path: '/u/*',
-  },
-  userList: {
-    path: '/u/*/list/*',
-  },
-  dubber: {
-    path: '/dub/*',
+  dubber_profile: {
+    path: '/dub',
+    dynamic: true
   },
   polling: {
-    path: '/polling',
+    path: '/polling'
   },
   rickroll: {
     path: '/rickroll',
     status: 'indev'
   },
-  patcher: {
-    path: '/patcher'
+  title_patcher: {
+    path: '/patcher',
+    dynamic: true
   },
-  patchTitle: {
-    path: '/patcher/*'
+  user_list: {
+    path: '/u/*/list/*',
+    dynamic: true
+  },
+  user_profile: {
+    path: '/u',
+    dynamic: true
+  },
+  watch_title: {
+    path: '/w',
+    dynamic: true
   }
 }
