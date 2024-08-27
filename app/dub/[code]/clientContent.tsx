@@ -21,7 +21,7 @@ export const DubStats: NextPage<{ dubberData: IDubber }> = ({ dubberData }) => {
 
       <Tooltip content='Команда зареєстрована на сайті'>
         <div className='flex gap-[8px] items-center'>
-          <IcoCalendar width={24} height={24} />
+          <IcoCalendar width={24} height={24} fill='#FF464E' />
           <p className='font-bold text-[16px] gradient--primary-text'>{new Date(dubberData.createdAt).toLocaleString('uk').split(',')[0]}</p>
         </div>
       </Tooltip>

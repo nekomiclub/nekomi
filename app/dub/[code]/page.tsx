@@ -25,20 +25,20 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const { data } = await $api.get<IDubber>(`/dubber/${params.code}`);
+    const { data } = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
 
     return {
-      title: `${data.name} на animee`,
-      description: `Сторінка команди озвучення - ${data.name}`,
+      title: `${data.dubber.name} на animee`,
+      description: `Сторінка команди озвучення - ${data.dubber.name}`,
       metadataBase: new URL(`https://api.animee.club`),
-      keywords: ['anime', 'аніме на українській мові', data.name],
+      keywords: ['anime', 'аніме на українській мові', data.dubber.name],
       openGraph: {
-        title: `${data.name} на animee`,
-        description: `Сторінка команди озвучення - ${data.name}`,
-        url: `https://animee.club/dub/${data.code}`,
+        title: `${data.dubber.name} на animee`,
+        description: `Сторінка команди озвучення - ${data.dubber.name}`,
+        url: `https://animee.club/dub/${data.dubber.code}`,
         siteName: 'Animee',
         type: 'article',
-        images: data.thumbURL
+        images: data.dubber.thumbURL
       }
     }
   } catch (e) {
@@ -55,8 +55,8 @@ export default async function RSC({ params }: IRSCProps<{ code: string }>) {
   let dubberData: IDubber = {};
 
   try {
-    const res = await $api.get<IDubber>(`/dubber/${params.code}`);
-    dubberData = res.data
+    const res = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
+    dubberData = res.data.dubber
   } catch (e) {
     if (e instanceof AxiosError) {
       const code = e.response?.data?.code || 500;
@@ -78,6 +78,8 @@ export default async function RSC({ params }: IRSCProps<{ code: string }>) {
       return <HappenedWrongScreen cause={`Server error occured at ${at}. See logs at ${date}`} />;
     }
   }
+
+  console.log(dubberData)
 
   return (
     <div className="w-full min-h-screen h-full bg-dark">
@@ -113,90 +115,54 @@ export default async function RSC({ params }: IRSCProps<{ code: string }>) {
             </div>
 
             {/* Socials & support */}
-            <div className='flex gap-[16px] items-stretch'>
-              <div className='flex items-center gap-[16px]'>
-                {dubberData.socials.instagram && <Link href={dubberData.socials.instagram} target='_blank'>
+            <div className='flex gap-[16px] items-stretch w-full'>
+              <div className='flex items-center justify-end gap-[16px] w-full'>
+                {dubberData.socials?.instagram && <Link href={dubberData.socials.instagram} target='_blank'>
                   <IcoSocialInstagram width={32} height={32} />
                 </Link>}
-                {dubberData.socials.youtube && <Link href={dubberData.socials.youtube} target='_blank'>
+                {dubberData.socials?.youtube && <Link href={dubberData.socials.youtube} target='_blank'>
                   <IcoSocialYoutube width={32} height={32} />
                 </Link>}
-                {dubberData.socials.telegram && <Link href={dubberData.socials.telegram} target='_blank'>
+                {dubberData.socials?.telegram && <Link href={dubberData.socials.telegram} target='_blank'>
                   <IcoSocialTelegram width={32} height={32} />
                 </Link>}
-                {dubberData.socials.tiktok && <Link href={dubberData.socials.tiktok} target='_blank'>
+                {dubberData.socials?.tiktok && <Link href={dubberData.socials.tiktok} target='_blank'>
                   <IcoSocialTiktok width={32} height={32} />
                 </Link>}
               </div>
 
               <span className='block w-[1px] rounded-[2px] bg-white/[.2] flex-shrink-0'></span>
 
-              <div className='flex items-center gap-[16px]'>
-                {dubberData?.support.bymeacoffee && <>
+              <div className='flex items-center gap-[16px] w-full'>
+                {dubberData.support?.bymeacoffee && <>
                   <Link href={dubberData.support!.bymeacoffee} target='_blank'>
                     <IcoSupportByMeACoffee height={32} width={32} />
                   </Link>
                 </>}
 
-                {dubberData?.support.patreon && <>
+                {dubberData.support?.patreon && <>
                   <Link href={dubberData.support!.patreon} target='_blank'>
                     <IcoSupportPatreon height={32} width={32} />
                   </Link>
                 </>}
 
-                {dubberData?.support.privatbank && <>
+                {dubberData.support?.privatbank && <>
                   <Link href={dubberData.support!.privatbank} target='_blank'>
                     <IcoSupportPrivatbank height={32} width={32} />
                   </Link>
                 </>}
 
-                {dubberData?.support.monobank && <>
+                {dubberData.support?.monobank && <>
                   <Link href={dubberData.support!.monobank} target='_blank'>
                     <IcoSupportMonobank height={32} width={32} />
                   </Link>
                 </>}
 
-                {dubberData?.support.diaka && <>
+                {dubberData.support?.diaka && <>
                   <Link href={dubberData.support!.diaka} target='_blank'>
                     <IcoSupportDiaka height={32} width={32} />
                   </Link>
                 </>}
-              </div>
-            </div>
-
-            {/* Their titles in library */}
-            {/* <BorderGradient className='dub-allDubbedTitlesBtn w-full px-[24px] py-[8px]'>
-      <Link className='w-full flex items-center justify-center gap-[24px]' href={`#`}>
-        <div className='relative w-[32px] h-[32px]'>
-          <IcoLibrary width={32} height={32} className='dub-btn--gradient' />
-          <IcoLibrary width={32} height={32} className='dub-btn--white' />
-        </div>
-        <p className='text-[16px] text-white font-bold'>Всі озвучені тайтли</p>
-      </Link>
-    </BorderGradient> */}
-
-            {/* Stats */}
-            <div className='flex gap-[16px] items-start w-full'>
-              <div className='flex flex-col gap-[8px] w-full'>
-                <div className='flex items-center justify-between w-full max-[770px]:flex-col'>
-                  <p className='text-[16px] text-white font-extralight'>Всього тайтлів на сайті:</p>
-                  <p className='text-[16px] text-white font-bold'>Збираємо статистику...</p>
-                </div>
-
-                <div className='flex items-center justify-between w-full max-[770px]:flex-col'>
-                  <p className='text-[16px] text-white font-extralight'>Працюють з:</p>
-                  <p className='text-[16px] text-white font-bold'>Збираємо статистику...</p>
-                </div>
-
-                <div className='flex items-center justify-between w-full max-[770px]:flex-col'>
-                  <p className='text-[16px] text-white font-extralight'>Найкращий по переглядам тайтл:</p>
-                  <p className='text-[16px] text-white font-bold'>Збираємо статистику...</p>
-                </div>
-
-                <div className='flex items-center justify-between w-full max-[770px]:flex-col'>
-                  <p className='text-[16px] text-white font-extralight'>Кількість людей:</p>
-                  <p className='text-[16px] text-white font-bold'>Збираємо статистику...</p>
-                </div>
               </div>
             </div>
           </div>
