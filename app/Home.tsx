@@ -18,6 +18,7 @@ import { IKekwPlayerLocalDataItem, secondsToReadable } from '../components/KekwP
 import { createID } from '../components/handlers';
 import { IcoClockOutlined } from '../assets/Clock';
 import Image from 'next/image';
+import { useAppSelector } from '../hooks/redux';
 
 interface IProps {
   headliner: ITitle
@@ -36,6 +37,7 @@ export interface IHomeCategories {
 type TCategory = 'popular' | 'updatedRecently' | 'hightRate';
 
 const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlinerPoster }) => {
+  const user = useAppSelector(state => state.user);
   const [isTrailerVisible, setIsTrailerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false)
 
@@ -104,18 +106,21 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
     const [label, setLabel] = useState('розпочати перегляд')
 
     useEffect(() => {
-      if (window === undefined) return;
+      if (!user.loaded) return;
 
-      const progressData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+      const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+      const watchProgress = user.watchProgress;
 
-      if (progressData) {
-        const current = progressData.find(el => el.id === headliner.id);
+      if (user.id) {
+        const current = watchProgress.find(el => el.titleID === headliner.id);
 
-        if (current) {
-          setLabel(`продовжити (${current.ep} серія, ${secondsToReadable(current.moment).pretty})`);
-        }
+        if (current) setLabel(`продовжити (${current.episodeOrder} серія, ${secondsToReadable(current.progress).pretty})`);
+      } else {
+        const current = localData.find(el => el.id === headliner.id);
+
+        if (current) setLabel(`продовжити (${current.ep} серія, ${secondsToReadable(current.moment).pretty})`);
       }
-    }, [])
+    }, [user])
 
     return (
       <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${headliner.code}`} className={`flex items-center justify-center gap-[16px] bg-grey px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback ${className ? className : ''} max-[784px]:px-[16px] max-[784px]:py-[12px]`} tabIndex={0}>
@@ -213,6 +218,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
         {/* Trailer */}
         <div className='w-full h-full absolute top-0 left-0 flex justify-center items-center'>
           <video src={headlinerVideo} controls={false} ref={videoRef} className='absolute top-0 left-0 w-full h-full object-cover' />
+          <div className='absolute top-0 left-0 w-full h-full block z-[2]' style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .5))' }}></div>
 
           {/* Loading */}
           <div className={`duration-200 ${isLoading ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
@@ -221,7 +227,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
         </div>
 
         {/* Main */}
-        <div className={`absolute bottom-[60px] flex flex-col gap-[16px] max-w-[1170px] duration-200 ${isIdle ? 'translate-y-[40px] opacity-0 invisible' : 'translate-y-0 opacity-100 visible'} pr-[32px] max-[650px]:pr-[16px]`}>
+        <div className={`absolute bottom-[60px] flex flex-col gap-[16px] max-w-[1170px] duration-200 z-[3] ${isIdle ? 'translate-y-[40px] opacity-0 invisible' : 'translate-y-0 opacity-100 visible'} pr-[32px] max-[650px]:pr-[16px]`}>
           <h3 className='text-white uppercase text-[32px] font-black text-ellipsis line-clamp-[1] max-[784px]:text-[24px] max-[650px]:line-clamp-3'>{headliner.names.ukr}</h3>
 
           <div className='flex gap-[8px] w-full max-[450px]:flex-col'>
