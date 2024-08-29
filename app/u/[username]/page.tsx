@@ -130,14 +130,3 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
     )
   }
 }
-
-/** Sign CSRF token */
-export function issueTelegramLinkToken(userID: string): string {
-  const alg = 'RS256'
-
-  return KJUR.jws.JWS.sign(alg, { alg }, {
-    origin: config.domain,
-    expire: new Date().getTime() + config.vars.CSRF_EXPIRE,
-    userID
-  }, config.secrets.CSRF_TOKEN)
-}

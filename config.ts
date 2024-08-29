@@ -22,6 +22,9 @@ export const config = {
     /** Animee-core proxy URL. You should provide header Authorization to pass session */
     apiProxy: prodMode ? 'https://fkgway.cx.ua' : `http://${devIP}`,
 
+    /** Animee bot */
+    bot: prodMode ? `https://t.me/an1meeclub_bot` : `https://t.me/eblano3d_testbot`,
+
     /** Animee media URL */
     media: prodMode ? `https://media.animee.club` : `http://${devIP}:43120`,
 
