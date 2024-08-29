@@ -1,6 +1,7 @@
 import { Metadata, NextPage, ResolvingMetadata } from 'next';
 import axios, { AxiosError } from 'axios';
 import { cookies } from 'next/headers'
+import { KJUR } from 'jsrsasign'
 
 import Tooltip from '../../../components/Tooltip';
 
@@ -96,7 +97,7 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
             <StatCard value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label='favs' />
             <StatCard value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label='watched' />
             <StatCard value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label='watching' />
-            <StatCard value={user?.statistics.timeSpent!} label='timeSpent' className='max-[1554px]:col-span-3 max-[1210px]:col-auto' />
+            <StatCard value={Math.floor(user?.statistics.viewtime / 60 / 60)} label='timeSpent' className='max-[1554px]:col-span-3 max-[1210px]:col-auto' />
           </div>
 
           {/* Libs */}
@@ -107,8 +108,6 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
   );
 
   function StatCard({ label, value, className }: { label: 'favs' | 'watched' | 'watching' | 'timeSpent', value: number, className?: string }) {
-    if (label === 'timeSpent') value = Math.ceil(value / 60);
-
     return (
       <div className={`card-grid ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] min-w-[360px] max-[600px]:min-w-[260px] flex items-center max-[600px]:flex-col ${className ? className : ''}`}>
         <div className='flex-shrink-0'>
@@ -130,4 +129,15 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
       </div>
     )
   }
+}
+
+/** Sign CSRF token */
+export function issueTelegramLinkToken(userID: string): string {
+  const alg = 'RS256'
+
+  return KJUR.jws.JWS.sign(alg, { alg }, {
+    origin: config.domain,
+    expire: new Date().getTime() + config.vars.CSRF_EXPIRE,
+    userID
+  }, config.secrets.CSRF_TOKEN)
 }

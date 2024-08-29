@@ -11,8 +11,6 @@ export async function middleware(req: NextRequest) {
   const headers = new Headers(req.headers);
   headers.set('x-url', req.url)
 
-  console.log(getRoute(req.url))
-
   return res.next({
     headers
   });

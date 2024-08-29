@@ -20,17 +20,37 @@ export interface IUser {
 
   /** Avatar URL */
   avatar: string
+
+  watchProgress: IUserWatchProgress[]
 }
 
-/** User animee statistics
- * Inherit IUserStats
- */
+/** User animee statistics */
 export interface IUserStatistics {
-  /** UTC0 account creation (on animee) timestamp */
+  /** UTC0 account creation timestamp */
   accountCreated: number
 
-  /** Watch time in minutes */
+  /** Watch time in minutes
+   * @deprecated refactored into viewtime.
+   */
   timeSpent: number
+
+  /** Viewtime in seconds */
+  viewtime: number
+
+  isTelegramLinked: boolean
+}
+
+/** User watch progress item */
+export interface IUserWatchProgress {
+  titleID: string
+  dubberID: string
+  episodeOrder: number
+
+  /** Watch progress in seconds */
+  progress: number
+
+  /** Last update UTC-0 timestamp */
+  updatedAt: number
 }
 
 /** User lib type */

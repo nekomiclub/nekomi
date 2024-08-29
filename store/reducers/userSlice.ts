@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { IReduxAction } from '../store'
 import { ITokenData } from "../../interfaces/ITokenData";
 import { TRoleCapability } from "../../interfaces/IRoles";
+import { IUserWatchProgress } from "../../interfaces/IUser";
 
 /** User local state */
 export interface IUserState {
@@ -10,6 +11,8 @@ export interface IUserState {
   roles: string[]
   avatar: string
   capabilities: TRoleCapability[]
+  watchProgress: IUserWatchProgress[]
+  loaded: boolean
 }
 
 /** Default user state */
@@ -18,7 +21,9 @@ export const userStateDefault: IUserState = {
   username: '',
   avatar: '',
   roles: [],
-  capabilities: []
+  capabilities: [],
+  watchProgress: [],
+  loaded: false
 }
 
 const userSlice = createSlice({

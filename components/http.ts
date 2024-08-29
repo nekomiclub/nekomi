@@ -22,9 +22,7 @@ $api.interceptors.request.use(async cfg => {
 })
 
 
-/** Sign JWT token
- * CSRF method - will sign CSRF token, with age of 5s (in dev mode 5m). Payload will be ignored
- */
+/** Sign CSRF token */
 export function signCSRF(): string {
   const alg = 'RS256'
 

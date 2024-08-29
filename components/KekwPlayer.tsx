@@ -2,7 +2,7 @@
 
 import next, { NextPage } from 'next';
 import { useState, useEffect, useRef, RefObject, memo } from 'react';
-import axios from 'axios';
+import axios, { Axios, AxiosError } from 'axios';
 import * as loader from '@uiball/loaders';
 import { Range } from 'react-range';
 import { getImageSize } from 'react-image-size'
@@ -25,6 +25,7 @@ import '../styles/components/KekwPlayer.scss';
 import { useAppSelector } from '../hooks/redux';
 import { $api } from './http';
 import { LoadingImage } from './Components';
+import { IUserWatchProgress } from '../interfaces/IUser';
 
 
 
@@ -141,19 +142,36 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     };
   }, [])
 
-  //* Save user stats
+  //* Patch user watch progress
   useEffect(() => {
-    if (!user.id) return
+    if (!user.id) return;
 
-    // Increase viewtime
-    window.addEventListener('beforeunload', () => {
+    // Patch watch progress
+    window.addEventListener('beforeunload', e => {
+      const playerData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+      const currentTitle = playerData.find(el => el.id === title.id)!;
+      const viewtime = viewtimeRef.current;
+
       // Ignore patching less than 5 seconds of viewtime
-      if (viewtimeRef.current < 5) return;
+      if (viewtime < 5) return;
 
       $api.patch('/user', {
-        method: 'increaseViewtime',
-        viewtime: viewtimeRef.current
-      }).catch(e => console.error(e))
+        method: 'patchWatchProgress',
+        titleId: title.id,
+        dubberID: currentTitle.dub,
+        episodeOrder: currentTitle.ep,
+        progress: currentTitle.moment,
+        viewtime,
+      }).catch(err => {
+        e.preventDefault();
+
+        if (err instanceof AxiosError) {
+          console.log(`HTTP error occured while saving user progress - ${err.response?.data?.msg}`)
+        } else {
+          console.log(`An error occured while saving user progress - `)
+          console.error(err)
+        }
+      })
     })
   }, [user])
 
@@ -162,7 +180,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   //! -------------- SETUP STAGE --------------
   // Setup with user progress or default
   useEffect(() => {
-    if (stage !== 'setup') return;
+    if (stage !== 'setup' || !user.loaded) return;
 
     const video = videoRef.current;
 
@@ -183,7 +201,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
       loadDefault();
     }
-  }, [stage])
+  }, [stage, user])
 
 
 
@@ -733,12 +751,26 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   //* -------------- HANDLERS --------------
   /** Get user progress */
   function getPlayerProgress(): IKekwPlayerLocalDataItem | null {
-    const data = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+    // Get progress from user watch progress
+    if (user.id) {
+      const currentTitle = user.watchProgress.find(el => el.titleID === title.id);
 
-    if (!data) return null;
+      // Procced if title saved, otherwise procced by default
+      if (currentTitle) {
+        return {
+          dub: currentTitle.dubberID,
+          ep: currentTitle.episodeOrder,
+          id: currentTitle.titleID,
+          moment: currentTitle.progress
+        }
+      }
+    }
 
-    const currentTitle = data.find(el => el.id === title.id)
+    // Get progress from local storage (by default)
+    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+    if (!localData) return null;
 
+    const currentTitle = localData.find(el => el.id === title.id)
     if (!currentTitle) return null;
 
     return currentTitle

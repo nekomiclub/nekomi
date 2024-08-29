@@ -77,18 +77,24 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
             detailed: true
           }
         });
-        const { avatar, id, roles, username } = data.user;
+        const { avatar, id, roles, username, watchProgress } = data.user;
 
         dispatch(userSlice.actions.reducer({
           avatar,
           id,
           roles,
           username,
-          capabilities: data.parsedCapabilities
+          watchProgress,
+          capabilities: data.parsedCapabilities,
+          loaded: true
         }))
       } catch (e) {
+        const state = { ...userStateDefault };
         console.warn('LOGGED OUT DUE TO VERIFICATION ERROR')
-        dispatch(userSlice.actions.reducer(userStateDefault))
+
+        state.loaded = true;
+        dispatch(userSlice.actions.reducer(state))
+
         router.refresh();
 
         if (e instanceof AxiosError) {
