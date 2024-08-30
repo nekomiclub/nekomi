@@ -879,13 +879,25 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
       if (errors.length) return;
 
       const { href } = url;
-      console.log(`Parse ${href}`)
-      // TODO Fetch
 
       inputs.forEach(el => {
         el.classList.add('patcher-field--saved')
         el.classList.remove('patcher-field--error')
       })
+
+      console.log('[+]: Episodes metas parsing request sended')
+
+      await $api.patch(`/title/${title.id}`, {
+        parseIMDBEpisodesMetas: href
+      })
+
+      const { data } = await $api.get<{ title: ITitle }>(`/title/${title.id}`, {
+        params: {
+          detailed: true
+        }
+      })
+
+      setEpisodesMeta(data.title.episodesMeta)
 
       setTimeout(() => {
         inputs.forEach(el => {

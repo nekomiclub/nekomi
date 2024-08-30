@@ -58,7 +58,7 @@ const Header: NextPage = () => {
   const [searchPopupID, setSearchPopupID] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<ISearchExtended[]>([])
-  const [resultBaseURL, setResultBaseURL] = useState(`${config.URL.baseURL}${routes.watch_title.path}`)
+  const [usePatcherRouting, setUsePatcherRouting] = useState(false)
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 500)
   const [placeholderSearchQuery] = useDebounce(searchQuery, 50)
@@ -143,9 +143,9 @@ const Header: NextPage = () => {
     const route = getRoute(pathname)?.path.replace('/*', '');
 
     if (route === routes.title_patcher.path) {
-      setResultBaseURL(`${config.URL.baseURL}${routes.title_patcher.path}`)
+      setUsePatcherRouting(true)
     } else {
-      setResultBaseURL(`${config.URL.baseURL}${routes.watch_title.path}`)
+      setUsePatcherRouting(false)
     }
   }, [pathname])
 
@@ -306,7 +306,7 @@ const Header: NextPage = () => {
     return (
       <>
         {result?.item ? <>
-          {result.type === 'title' && <Link href={`${resultBaseURL}/${(result.item as ITitle).code}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
+          {result.type === 'title' && <Link href={`${config.URL.baseURL}${usePatcherRouting ? `${routes.title_patcher.path}/${(result.item as ITitle).id}` : `${routes.watch_title.path}/${(result.item as ITitle).code}`}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
             <LoadingImage src={(result.item as ITitle).poster} loading='lazy' width='128px' height='160px' parentClassName='rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]' />
 
             <div className='flex flex-col gap-[8px]'>
