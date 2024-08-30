@@ -12,7 +12,11 @@ import './styles.scss';
 
 export function generateMetadata(): Metadata {
   return {
-    title: 'Контакти розробників'
+    title: 'Контакти розробників',
+    robots: 'none',
+    openGraph: {
+      title: 'Контакти розробників'
+    }
   }
 }
 

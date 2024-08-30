@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import axios, { AxiosError } from 'axios';
-import { NextPage } from 'next';
+import { Metadata, NextPage } from 'next';
 
 import { config, devMode } from '../../config';
 import { HappenedWrongScreen, NotFoundScreen } from '../../components/Components';
@@ -68,6 +68,16 @@ const Card: NextPage<{
 }
 
 
+
+export const metadata: Metadata = {
+  title: 'Статус сервісів — animee',
+  description: 'Статус сервісів Fullkekw',
+  openGraph: {
+    title: 'Статус сервісів — animee',
+    description: 'Статус сервісів Fullkekw'
+  },
+  robots: 'none'
+}
 
 const RSC: NextPage = async (props) => {
   let isUptimeUnavailable = false;

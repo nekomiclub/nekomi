@@ -26,24 +26,24 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   try {
     const { data } = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
+    const { dubber } = data;
 
     return {
-      title: `${data.dubber.name} на animee`,
-      description: `Сторінка команди озвучення - ${data.dubber.name}`,
-      metadataBase: new URL(`https://api.animee.club`),
-      keywords: ['anime', 'аніме на українській мові', data.dubber.name],
+      title: `${dubber.name} — animee`,
+      description: `Сторінка команди озвучення ${dubber.name} на animee`,
+      keywords: ['anime', 'аніме на українській мові', dubber.name],
       openGraph: {
-        title: `${data.dubber.name} на animee`,
-        description: `Сторінка команди озвучення - ${data.dubber.name}`,
-        url: `https://animee.club/dub/${data.dubber.code}`,
-        siteName: 'Animee',
+        title: `${dubber.name} — animee`,
+        description: `Сторінка команди озвучення ${dubber.name} на animee`,
+        url: `https://animee.club/dub/${dubber.code}`,
         type: 'article',
-        images: data.dubber.thumbURL
+        images: dubber.thumbURL
       }
     }
   } catch (e) {
     return {
-      title: `Команда озвучення не знайдена`
+      title: `Команда озвучення не знайдена`,
+      description: ''
     }
   }
 }

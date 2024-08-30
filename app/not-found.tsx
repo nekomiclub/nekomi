@@ -3,6 +3,17 @@ import { headers } from 'next/headers'
 import { config } from '../config';
 import { getRoute } from '../components/ServerComponents';
 import { IndevScreen, NotFoundScreen } from '../components/Components';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Йой, сталась якась помилка',
+  description: '',
+  robots: 'none',
+  openGraph: {
+    title: `Йой, сталась якась помилка`,
+    description: '',
+  }
+}
 
 export default function NotFound() {
   const pathname = headers().get('x-url')!.replace(config.URL.baseURL, '')

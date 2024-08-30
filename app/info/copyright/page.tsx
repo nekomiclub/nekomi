@@ -1,5 +1,7 @@
 import { NextPage } from 'next';
 
+
+
 const Copyright: NextPage = (props) => {
   return (
     <div className='flex flex-col gap-[160px] items-center bg-dark'>

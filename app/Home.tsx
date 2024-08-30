@@ -221,7 +221,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
           <div className='absolute top-0 left-0 w-full h-full block z-[2]' style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .5))' }}></div>
 
           {/* Loading */}
-          <div className={`duration-200 ${isLoading ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+          <div className={`duration-200 z-[3] ${isLoading ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
             <loader.DotPulse color='#fff' size={80} />
           </div>
         </div>

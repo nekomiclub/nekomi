@@ -15,18 +15,13 @@ import { $api } from '../../../../../components/http';
 
 
 
-export function generateMetadata(
-  { params }: IRSCProps<{ username: string }>,
-  parent: ResolvingMetadata
-): Metadata {
-  return {
-    title: `Тека @${params.username}`,
-    description: ``,
-    openGraph: {
-      title: `Тека @${params.username}`,
-      description: ``
-    },
-    robots: 'noindex,nofollow'
+export const metadata: Metadata = {
+  title: 'Тека — animee',
+  description: 'Чиясь тека з тайтлами',
+  robots: 'none',
+  openGraph: {
+    title: `Тека — animee`,
+    description: `Чиясь тека з тайтлами`,
   }
 }
 

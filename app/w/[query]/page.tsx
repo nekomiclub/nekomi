@@ -18,26 +18,26 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   try {
-    const res = await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${params.query}`)
-    const data = res.data.title
+    const { data } = await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${params.query}`)
+    const { title } = data
 
     return {
-      title: data.names.ukr || data.names.eng,
-      description: data.description,
-      metadataBase: new URL(`https://api.animee.club`),
-      keywords: [data.names.ukr, data.names.eng, ...data.names.alt || []],
+      title: `${title.names.ukr} — animee`,
+      description: title.description,
+      keywords: [title.names.ukr, title.names.eng, ...title.names.alt || [], 'дивитись аніме українською'],
       openGraph: {
-        title: `${data.names.ukr || data.names.eng} на animee`,
-        description: data.description,
-        url: `https://animee.club/w/${data.code}`,
-        siteName: 'Animee',
+        title: `${title.names.ukr} — animee`,
+        description: title.description,
+        url: `https://animee.club/w/${title.code}`,
+        siteName: 'animee.club',
         type: 'video.tv_show',
-        images: data.poster
+        images: title.poster
       }
     }
   } catch (e) {
     return {
-      title: 'Аніме не знайдено'
+      title: 'Аніме не знайдено',
+      description: ''
     }
   }
 }

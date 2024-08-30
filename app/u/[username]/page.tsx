@@ -28,18 +28,19 @@ export async function generateMetadata(
     const { data } = await axios.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${params.username}`);
 
     return {
-      title: `@${params.username}`,
-      description: `Профіль ${params.username}`,
+      title: `@${params.username} — animee`,
+      description: `Буквально його профіль (:`,
       openGraph: {
         type: 'profile',
-        title: `@${params.username}`,
+        title: `@${params.username} — animee`,
         images: data.user.avatar,
-        description: `Профіль ${params.username}`
+        description: `Буквально його профіль (:`
       }
     }
   } catch (e) {
     return {
-      title: 'Юзер не знайдений'
+      title: 'Юзер не знайдений',
+      description: ''
     }
   }
 }

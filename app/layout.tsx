@@ -27,16 +27,15 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Animee Club',
+  title: 'Animee',
   description: 'Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!',
   applicationName: 'Animee',
-  metadataBase: new URL('https://animee.club'),
   keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'анімі', 'аніме', 'анімі клаб', 'animee', 'animee club'],
   openGraph: {
     title: `Animee Club`,
     description: `Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!`,
     url: 'https://animee.club',
-    siteName: 'Animee',
+    siteName: 'animee.club',
     type: 'website',
     images: './icon.png'
   }
@@ -64,7 +63,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
   }
 
   return (
-    <html lang="ua">
+    <html lang="uk">
       <body id='root'>
         {isServerOnline ? <>
           <Provider.Storage>

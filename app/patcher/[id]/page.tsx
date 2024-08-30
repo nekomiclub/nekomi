@@ -25,10 +25,12 @@ export async function generateMetadata(
 
     return {
       title: `${data.names.ukr} - Патчер`,
+      robots: 'none'
     }
   } catch (e) {
     return {
-      title: 'Аніме не знайдено'
+      title: 'Аніме не знайдено',
+      robots: 'none'
     }
   }
 }
