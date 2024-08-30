@@ -282,7 +282,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
   const [isOpen, setIsOpen] = useState(false)
   const initialValue = useRef(value);
 
-  return <div className='flex flex-col gap-[8px] w-full'>
+  return <div className='flex flex-col gap-[8px] !w-full'>
     <div className='flex items-center gap-[8px]'>
       {isLocked && <IcoLock width={16} height={16} fill='#747474' className={isLocked ? 'block' : 'hidden'} />}
       <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{label}</p>
@@ -749,6 +749,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
 
   const [selectedMeta, setSelectedMeta] = useState<ITitleEpisodeMeta | null>(null)
   const [episodesMeta, setEpisodesMeta] = useState(title.episodesMeta);
+  const [isFolded, setIsFolded] = useState(true)
 
 
 
@@ -1010,6 +1011,12 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
                   <IcoCan width={32} height={32} />
                 </button>
               </Tooltip>
+
+              <Tooltip content={isFolded ? 'Розгорнути' : 'Згорнути'} className='max-[900px]:w-full'>
+                <button className='flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-purple focus-visible:bg-purple w-full' onClick={() => setIsFolded(!isFolded)}>
+                  <IcoArrow width={32} height={32} className={`duration-200 ${isFolded ? 'rotate-0' : 'rotate-[180deg]'}`} />
+                </button>
+              </Tooltip>
             </div>
           </div>
         </div>
@@ -1018,7 +1025,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
       {/* Divider */}
       <span className='w-full h-[3px] bg-grey'></span>
 
-      <div className='flex flex-col gap-[4px] max-h-[600px] overflow-y-auto overflow-x-hidden'>
+      <div className={`flex flex-col gap-[4px] overflow-y-auto overflow-x-hidden duration-200 ${isFolded ? 'max-h-0' : 'max-h-[600px]'}`}>
         {episodesMeta.length ? episodesMeta.sort((a, b) => b.order - a.order).map(meta => {
           return <EpisodeMeta meta={meta} key={`episodeMeta--${meta.order}`} />
         }) : <div className='w-full flex justify-center items-center gap-[16px]'>

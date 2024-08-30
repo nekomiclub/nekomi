@@ -1256,7 +1256,7 @@ const Menu = memo<IMenuProps>(function Menu({ order, dubbers, episode, isLastEpi
     <div className={`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200 ${isIdle ? '-translate-y-[100%]' : 'translate-y-0'}`}>
       <UMenu.Menu trigger={<IcoPlayerList width={40} height={40} />} triggerClassName='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' className='px-[16px] py-[8px] bg-dark rounded-[2px] flex gap-[8px]' direction='bottom' align='start' statePriority='outer' stateSetter={setIsMenuOpen} state={isMenuOpen}>
         {/* Dubbers */}
-        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px]'>
+        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll overflow-x-hidden flex flex-col gap-[4px]'>
           {dubbers.map(dubber => {
             const dubberEpisodes = episodes.filter(el => el.dubberID === dubber.id).sort((a, b) => a.order - b.order)
             let lastEpisode = 0;
@@ -1286,7 +1286,7 @@ const Menu = memo<IMenuProps>(function Menu({ order, dubbers, episode, isLastEpi
         <span className='w-[1px] h-auto bg-darkGrey block'></span>
 
         {/* Episodes */}
-        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll flex flex-col gap-[4px] w-fit'>
+        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll overflow-x-hidden flex flex-col gap-[4px] w-fit'>
           {episodes.filter(el => el.dubberID === episode.dubberID).sort((a, b) => a.order - b.order).map(episode => {
             function setEpisode() {
               changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)!, 0)
