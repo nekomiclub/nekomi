@@ -299,3 +299,38 @@ export const ServerUnavailable: NextPage = (props) => {
     </div>
   );
 }
+
+// export async function RSCCatchError(cb: () => Promise<any> | any) {
+//   try {
+//     await cb();
+//   } catch (e) {
+//     const id = createID()
+
+//     if (e instanceof AxiosError) {
+//       const resCode = e.response?.data.code;
+
+//       if (resCode === 404) {
+//         <NotFoundScreen />
+//       } else if (resCode === 400) {
+//         <HappenedWrongScreen cause={`[400]: Помилка надісланої інформації`} />
+//       } else if (resCode === 401) {
+//         <HappenedWrongScreen cause={`[401]: Помилка авторизації`} />
+//       } else if (resCode === 403) {
+//         <HappenedWrongScreen cause={`[403]: Доступ заборонено`} />
+//       } else if (resCode === 500) {
+//         <HappenedWrongScreen cause={`[500]: Внутрішня помилка серверу`} />
+//       } else if (resCode === 501) {
+//         <HappenedWrongScreen cause={`[501]: Метод не імплементовано`} />
+//       } else if (resCode === 502) {
+//         <HappenedWrongScreen cause={`[502]: Сервіс тимчасово недоступний`} />
+//       } else if (resCode) {
+//         <HappenedWrongScreen cause={`[${resCode}]: Необроблена помилка API`} />
+//       } else {
+//         <HappenedWrongScreen cause={`[${e.code}]: Необроблена помилка запиту`} />
+//       }
+//     } else {
+//       console.error(`[${id}]: Unknown server error occured - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
+//       return <HappenedWrongScreen cause={`Unknown server error occured - ${id}`} />
+//     }
+//   }
+// }
