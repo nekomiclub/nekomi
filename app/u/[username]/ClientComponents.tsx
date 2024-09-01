@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { NextPage } from 'next';
 import { useState, useEffect } from 'react'
-import { createUVCID, Layer, Popup, Trigger } from 'uvc-popup'
+import { Layer, Dialog, Trigger } from '@fullkekw/fkw-popup';
 import { useRouter } from 'next/navigation';
 
 import Tooltip from '../../../components/Tooltip';
@@ -12,7 +12,7 @@ import Tooltip from '../../../components/Tooltip';
 import { IUser, IUserLib } from '../../../interfaces/IUser';
 import { LoadingImage, copyToClipboard } from '../../../components/Components';
 import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoSettings, IcoStack, IcoStar, IcoUser, IcoWatched } from '../../../assets/Icons';
-import { addZeroIfNumberSingle } from '../../../components/handlers';
+import { addZeroIfNumberSingle, makeStringID } from '../../../components/handlers';
 import { config } from '../../../config';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 import { IcoHeartFilled } from '../../../assets/Heart';
@@ -37,7 +37,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   // Set popups ids
   useEffect(() => {
-    setSettingsPopupID(createUVCID())
+    setSettingsPopupID(makeStringID(16, true))
   }, [])
 
 
@@ -74,8 +74,8 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   return (
     <>
-      <Layer className='bg-dark/[.1] backdrop-blur-[64px] z-[1000] !fixed'>
-        <Popup id={settingsPopupID} className='px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] w-[1170px] max-w-[1170px] mx-[32px] my-[24px]'>
+      <Layer className='bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center'>
+        <Dialog id={settingsPopupID} className='px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] w-[1170px] max-w-[1170px] mx-[32px] my-[24px]'>
           <Label label='Налаштування акаунту' />
           <Link href={`${config.URL.fkAccount}/me`} className='flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple'>
             <IcoExternalLink width={24} height={24} />
@@ -94,7 +94,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
               {settingsLinkTelegramStatus === 'pending' && 'Чекаєм...'}
             </p>
           </button>}
-        </Popup>
+        </Dialog>
       </Layer>
 
       <div className='bg-dark'>
@@ -182,7 +182,7 @@ export const UserSectionLibs: NextPage<{ user: IUser, isOwner: boolean }> = ({ i
     <div className='flex flex-col gap-[24px]' id='user-libs'>
       <UserDivider label='Теки' hidden={false} isOwner={isOwner} />
 
-      <div className='grid gap-[16px]' style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))' }}>
+      <div className='flex flex-wrap gap-[16px]'>
         {user.libs.some(el => !el.settings.hidden) ? <>
           <UserLibCard lib={user.libs.find(el => el.type === 'favorite')!} isOwner={isOwner} username={user.username} />
           <UserLibCard lib={user.libs.find(el => el.type === 'watching')!} isOwner={isOwner} username={user.username} />
@@ -201,7 +201,7 @@ export const UserSectionLibs: NextPage<{ user: IUser, isOwner: boolean }> = ({ i
 export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: string }> = ({ lib, isOwner, username }) => {
   return (
     <>
-      {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${username}/lib/${lib.id}`} className='p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none'>
+      {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${username}/lib/${lib.id}`} className='grow basis-[290px] p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none'>
         {lib.type === 'favorite' && <IcoHeartFilled width={128} height={128} fill='#FF464E' className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
         {lib.type === 'watching' && <IcoStack width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
         {lib.type === 'plans' && <IcoClockFilled width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}

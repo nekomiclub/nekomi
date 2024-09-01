@@ -1,7 +1,7 @@
 // Packages styles
 import 'react-loading-skeleton/dist/skeleton.css'
 import 'uvc-menu/css';
-import 'uvc-popup/css'
+import '@fullkekw/fkw-popup/css'
 import 'swiper/css';
 
 import '../styles/globals.css';
@@ -31,6 +31,7 @@ export const metadata: Metadata = {
   description: 'Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!',
   applicationName: 'Animee',
   keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'анімі', 'аніме', 'анімі клаб', 'animee', 'animee club'],
+  metadataBase: new URL(config.URL.baseURL),
   openGraph: {
     title: `Animee Club`,
     description: `Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!`,
@@ -64,7 +65,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
   return (
     <html lang="uk">
-      <body id='root'>
+      <body id='root' className='bg-dark'>
         {isServerOnline ? <>
           <Provider.Storage>
             <Provider.State>

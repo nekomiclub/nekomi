@@ -11,8 +11,8 @@ import * as uuid from 'uuid';
 
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { useDebounce } from 'use-debounce';
-import { createUVCID, Layer, Popup, Trigger } from 'uvc-popup';
 import { AxiosError } from 'axios';
+import { Layer, Dialog, Trigger, forceFocus } from '@fullkekw/fkw-popup';
 
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
@@ -20,7 +20,7 @@ import { routes } from '../routes';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import userSlice, { IUserState, userStateDefault } from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
-import { getUTC, parseTitleType, randomNumber } from './handlers';
+import { getUTC, makeStringID, parseTitleType, randomNumber } from './handlers';
 import { LoadingImage } from './Components';
 import { $api } from './http';
 import { IcoAnimeeLogo, IcoArrow, IcoBell, IcoExit, IcoGhost, IcoHome, IcoInfo, IcoLibrary, IcoMicrophone, IcoSearch, IcoSettings, IcoStarRating, IcoUser } from '../assets/Icons';
@@ -67,18 +67,8 @@ const Header: NextPage = () => {
 
   // Init
   useEffect(() => {
-    setSearchPopupID(createUVCID());
+    setSearchPopupID(makeStringID(16, true));
   }, [])
-
-  useEffect(() => {
-    if (!searchPopupID) return;
-
-    (document.querySelector(`[data-uvc-popup-target="${searchPopupID}"]`) as HTMLButtonElement).addEventListener('click', () => {
-      setTimeout(() => {
-        (document.querySelector('#search-searchBar') as HTMLInputElement).focus();
-      }, 200);
-    })
-  }, [searchPopupID])
 
   // Set / update placeholders
   useEffect(() => {
@@ -171,10 +161,17 @@ const Header: NextPage = () => {
     router.refresh();
   }
 
+  function focusSearch() {
+    const search = document.querySelector('#search-searchBar') as HTMLInputElement;
+
+    if (!search) return console.error(`Search #search-searchBar is not found`);
+    forceFocus(search);
+  }
+
   return (
     <>
-      <Layer className='bg-dark/[.1] backdrop-blur-[64px] z-[1000] !fixed max-[700px]:items-start'>
-        <Popup id={searchPopupID} className='bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]'>
+      <Layer className='bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center max-[700px]:items-start'>
+        <Dialog id={searchPopupID} className='bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]'>
           <input type="text" autoComplete='off' className='px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full' placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id='search-searchBar' />
 
           <div className='px-[16px] py-[16px] w-full'>
@@ -207,7 +204,7 @@ const Header: NextPage = () => {
               })}
             </ul>
           </div>
-        </Popup>
+        </Dialog>
       </Layer>
 
       <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200`}>
@@ -223,7 +220,7 @@ const Header: NextPage = () => {
               </Link>
 
               <div className='flex items-center gap-[16px]'>
-                <Trigger className='uvc-popup-trigger header-ico duration-200' id={searchPopupID}>
+                <Trigger className='header-ico duration-200' id={searchPopupID} onClick={focusSearch}>
                   <IcoSearch width={32} height={32} />
                 </Trigger>
               </div>

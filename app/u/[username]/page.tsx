@@ -17,7 +17,6 @@ import { IcoCan, IcoStack, IcoWatched } from '../../../assets/Icons';
 import { ISessionCookieData } from '../../../interfaces/ITokenData';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 
-import './styles.scss';
 import { $api } from '../../../components/http';
 
 export async function generateMetadata(
@@ -94,11 +93,11 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
 
         <div className="wrapper gap-[40px]">
           {/* Stats */}
-          <div className='grid gap-[16px] grid-cols-4 max-[1554px]:grid-cols-3 max-[1210px]:grid-cols-2 max-[820px]:grid-cols-1'>
+          <div className='flex gap-[16px] flex-wrap'>
             <StatCard value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label='favs' />
             <StatCard value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label='watched' />
             <StatCard value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label='watching' />
-            <StatCard value={Math.floor(user?.statistics.viewtime / 60 / 60)} label='timeSpent' className='max-[1554px]:col-span-3 max-[1210px]:col-auto' />
+            <StatCard value={Math.floor(user?.statistics.viewtime / 60 / 60)} label='timeSpent' />
           </div>
 
           {/* Libs */}
@@ -110,7 +109,7 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
 
   function StatCard({ label, value, className }: { label: 'favs' | 'watched' | 'watching' | 'timeSpent', value: number, className?: string }) {
     return (
-      <div className={`card-grid ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] min-w-[360px] max-[600px]:min-w-[260px] flex items-center max-[600px]:flex-col ${className ? className : ''}`}>
+      <div className={`grow basis-[360px] ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] min-w-[360px] max-[600px]:min-w-[260px] flex items-center max-[600px]:flex-col ${className ? className : ''}`}>
         <div className='flex-shrink-0'>
           {label === 'favs' && <IcoHeartFilled width={80} height={80} />}
           {label === 'watched' && <IcoWatched width={80} height={80} />}

@@ -260,3 +260,15 @@ export function decodeToken<T = any>(token: string): ITokenPayload<T> {
 export function getFileExtension(filename: string): string {
   return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || filename;
 }
+
+export function makeStringID(length: number, excludeNumbers?: boolean) {
+  let result = '';
+  const characters = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz${excludeNumbers ? '' : '0123456789'}`;
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}

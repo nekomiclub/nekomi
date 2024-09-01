@@ -143,7 +143,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
 
                 <div className='flex flex-col gap-[16px]'>
                   <div className='flex flex-col gap-[8px]'>
-                    <div className='grid grid-cols-7 max-[1568px]:grid-cols-5 max-[1084px]:grid-cols-3 max-[890px]:grid-cols-5 max-[726px]:grid-cols-3 max-[530px]:grid-cols-2 max-[490px]:grid-cols-1 gap-[8px]'>
+                    <div className='flex flex-wrap gap-[8px]'>
                       <MetaCard label='епізоди' value={`${episodesDubbed || '—'} / ${title.episodesCount || '—'}`} className='' />
                       <MetaCard label='статус' value={parseTitleStatus(title.status)} className='' />
                       <MetaCard label='рейтниг' specialType='ageRate' value={'NULL'} className='' />
@@ -299,7 +299,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
 
   function MetaCard({ label, value, className, specialType }: { label: string, value: string, className?: string, specialType?: 'genres' | 'dubbers' | 'ageRate' }) {
     return (
-      <div className={`watch-grid_item flex flex-col items-center justify-center gap-[8px] px-[16px] py-[8px] rounded-[4px] bg-darkGrey ${className ? className : ''}`}>
+      <div className={`grow basis-[140px] flex flex-col items-center justify-center gap-[8px] px-[16px] py-[8px] rounded-[4px] bg-darkGrey ${className ? className : ''}`}>
         {specialType ? <>
           {specialType === 'ageRate' && <Tooltip content={title.ageRate === 'G' ? 'Для всіх' : title.ageRate === 'PG' ? 'Для дітей' : title.ageRate === 'PG-13' ? 'Для дітей від 13 років' : title.ageRate === 'R+' ? '18+' : title.ageRate === 'R-17' ? 'Для підлітків від 17 років' : '—'}>
             <p className={`uppercase text-center ${title.ageRate === 'R-17' || title.ageRate === 'R+' || title.ageRate === 'Rx' ? 'font-bold text-gradientPrimaryFallback' : 'text-white'}`}>{title.ageRate}</p>
