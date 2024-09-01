@@ -294,7 +294,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
       <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{options.find(el => el.code === value)?.label}</p>
 
       <IcoArrow className={`duration-200 ${isOpen ? 'rotate-[180deg]' : 'rotate-[0def]'}`} fill={`${isLocked ? '#747474' : '#fff'}`} />
-    </div>} menuClassName='!w-full' triggerClassName='w-full' align='stretch' className='w-full' animation='slide' closeAfter='any' state={isOpen} stateSetter={setIsOpen} statePriority='outer' disabled={isLocked}>
+    </div>} menuClassName='!w-full' triggerClassName='!w-full' align='stretch' className='!w-full' animation='slide' closeAfter='any' state={isOpen} stateSetter={setIsOpen} statePriority='outer' disabled={isLocked}>
       <MenuList className='bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto'>
         {options.map(option => {
           return <MenuItem key={`select-option--${option.code}`} onClick={() => valueSetter(option.code)}>

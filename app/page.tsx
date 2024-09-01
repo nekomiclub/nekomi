@@ -9,15 +9,16 @@ import { getUTC } from '../components/handlers';
 import { $api } from '../components/http';
 
 export const metadata: Metadata = {
-  title: 'Animee.club',
+  title: 'Animee - Онлайн кінотеатр аніме українською',
   description: 'Поринь у світ україномовного аніме разом з animee!',
   applicationName: 'Animee',
   keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'анімі', 'аніме', 'анімі клаб', 'animee', 'animee club'],
   metadataBase: new URL(config.URL.media),
   openGraph: {
-    title: `Animee`,
+    title: `Animee - Онлайн кінотеатр аніме українською`,
     description: `Поринь у світ україномовного аніме разом з animee!`,
     url: 'https://animee.club',
+    siteName: 'Animee',
     type: 'website',
     images: './icon.png'
   }

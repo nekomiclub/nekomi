@@ -14,7 +14,6 @@ import { ITitle, ITitleEpisode, ITitleEpisodeMeta } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
 import { timestampToDate, wordDeclination } from './handlers';
 import { devMode } from '../config';
-import { clearTimeout } from 'timers';
 import { IcoPlayerCenter, IcoPlayerList, IcoPlayerNext, IcoPlayerPause, IcoPlayerQuality, IcoPlayerStretch } from '../assets/Player';
 import { IcoArrow, IcoPlay, IcoServerUnavailable, IcoSettings, IcoSpeed } from '../assets/Icons';
 import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
@@ -59,7 +58,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
 
   // Player data
-  const [volume, setVolume] = useState(50)
+  const [volume, setVolume] = useState(100)
   const [episode, setEpisode] = useState<ITitleEpisode>(title.episodes[0])
   const [duration, setDuration] = useState(1)
   const [moment, setMoment] = useState(0);
@@ -104,16 +103,17 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
   const isMultiskipRef = useRef(false)
   const skipTimeoutRef = useRef<NodeJS.Timeout>()
+  const onPausePatchTimeoutRef = useRef<NodeJS.Timeout>()
 
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  useIdleTimer({
-    timeout: 3000,
-    throttle: 500,
-    onIdle: () => setIsIdle(true),
-    onAction: () => setIsIdle(false)
-  })
+  // useIdleTimer({
+  //   timeout: 3000,
+  //   throttle: 500,
+  //   onIdle: () => setIsIdle(true),
+  //   onAction: () => setIsIdle(false)
+  // })
 
   //! -------------- DEFAULT EFFECTS --------------
   //* Player vitals, video loading handling
@@ -148,30 +148,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
     // Patch watch progress
     window.addEventListener('beforeunload', e => {
-      const playerData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
-      const currentTitle = playerData.find(el => el.id === title.id)!;
-      const viewtime = viewtimeRef.current;
-
-      // Ignore patching less than 5 seconds of viewtime
-      if (viewtime < 5) return;
-
-      $api.patch('/user', {
-        method: 'patchWatchProgress',
-        titleId: title.id,
-        dubberID: currentTitle.dub,
-        episodeOrder: currentTitle.ep,
-        progress: currentTitle.moment,
-        viewtime,
-      }).catch(err => {
-        e.preventDefault();
-
-        if (err instanceof AxiosError) {
-          console.log(`HTTP error occured while saving user progress - ${err.response?.data?.msg}`)
-        } else {
-          console.log(`An error occured while saving user progress - `)
-          console.error(err)
-        }
-      })
+      patchWatchProgress();
     })
   }, [user])
 
@@ -248,6 +225,35 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
       i++;
     }, 50)
+  }
+
+  async function patchWatchProgress() {
+    if (!user.id) return;
+
+    const playerData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+    const currentTitle = playerData.find(el => el.id === title.id)!;
+    const viewtime = viewtimeRef.current;
+
+    // Ignore patching less than 5 seconds of viewtime
+    if (viewtime < 5) return;
+
+    try {
+      await $api.patch('/user', {
+        method: 'patchWatchProgress',
+        titleId: title.id,
+        dubberID: currentTitle.dub,
+        episodeOrder: currentTitle.ep,
+        progress: currentTitle.moment,
+        viewtime,
+      })
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        console.log(`HTTP error occured while saving user progress - ${err.response?.data?.msg}`)
+      } else {
+        console.log(`An error occured while saving user progress - `)
+        console.error(err)
+      }
+    }
   }
 
 
@@ -347,12 +353,20 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       }, 1000)
 
       setIsPlaying(true)
+
+      window.clearTimeout(onPausePatchTimeoutRef.current);
     })
 
     video.addEventListener('pause', () => {
       clearInterval(viewtimeInterval);
 
       setIsPlaying(false)
+
+      window.clearTimeout(onPausePatchTimeoutRef.current);
+      onPausePatchTimeoutRef.current = setTimeout(() => {
+        // Patch progress if user not active at least two minutes
+        patchWatchProgress()
+      }, 120000);
     })
 
     // Handle volume. Mute if volume equal 0, unmute either
@@ -1000,27 +1014,20 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       <Menu order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
 
       {/* Bottom */}
-      <div className={`flex justify-between gap-[24px] relative z-[10] bg-dark/[.1] backdrop-blur-[32px] px-[24px] py-[16px] duration-200 translate-y-0 ${isIdle ? 'translate-y-[100%]' : ''}`}>
+      <div className={`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px] backdrop-blur-[8px] bg-red ${isIdle ? 'translate-y-[100%]' : ''}`} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }}>
         <div className='flex items-center gap-[16px]'>
-          {/* Play/Pause */}
           <Play isPlaying={isPlaying} videoRef={videoRef} />
 
-          {/* Volume */}
           <Volume volume={volume} isMuted={isMuted} videoRef={videoRef} volumeRef={volumeRef} />
         </div>
 
-        {/* Range */}
         <Timeline duration={duration} moment={moment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
 
-        {/* Settings */}
-        <div className='flex items-center gap-[16px]'>
-          {/* PiP */}
+        <div className='flex items-center gap-[12px]'>
           <PiP isPiP={isPiP} videoRef={videoRef} />
 
-          {/* Settings */}
           <Settings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} isIdle={isIdle} />
 
-          {/* Fullscreen */}
           <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
         </div>
       </div>
@@ -1254,7 +1261,7 @@ const Menu = memo<IMenuProps>(function Menu({ order, dubbers, episode, isLastEpi
 
   return (
     <div className={`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200 ${isIdle ? '-translate-y-[100%]' : 'translate-y-0'}`}>
-      <UMenu.Menu trigger={<IcoPlayerList width={40} height={40} />} triggerClassName='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' className='px-[16px] py-[8px] bg-dark rounded-[2px] flex gap-[8px]' direction='bottom' align='start' statePriority='outer' stateSetter={setIsMenuOpen} state={isMenuOpen}>
+      <UMenu.Menu trigger={<IcoPlayerList width={40} height={40} />} triggerClassName='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' className='px-[16px] py-[8px] bg-dark rounded-[2px] !flex gap-[8px]' direction='bottom' align='start' statePriority='outer' stateSetter={setIsMenuOpen} state={isMenuOpen}>
         {/* Dubbers */}
         <UMenu.MenuList className='max-h-[200px] overflow-y-scroll overflow-x-hidden flex flex-col gap-[4px]'>
           {dubbers.map(dubber => {
@@ -1434,7 +1441,7 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
       <UMenu.Menu trigger={<MenuButton />} direction='top' align='end' gap={16} className={`px-[${menuPx}px] py-[${menuPy}px] bg-dark rounded-[2px] overflow-hidden`} state={isMenuOpen} stateSetter={setIsMenuOpen} statePriority='outer' id='kekwplayer-settings_menu'>
         {/* List */}
         <div ref={listsRef} className={`absolute bottom-0 left-0 duration-200 max-h-[200px] overflow-y-scroll`}>
-          <UMenu.MenuList className={`flex flex-col gap-[4px]`}>
+          <UMenu.MenuList className={`flex flex-col`}>
             <QualityButton />
             <SpeedButton />
             <StretchButton />
@@ -1455,19 +1462,6 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
   )
 
 
-
-  function MenuButton() {
-    return <div className={'relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'}>
-      <IcoSettings width={40} height={40} className={`absolute left-[4px] top-[4px] duration-200`} />
-    </div>
-  }
-
-  function ReturnButton({ label }: { label: string }) {
-    return <button className={`flex items-center gap-[16px] w-full duration-200 hover:bg-darkGrey focus-visible:bg-darkGrey`} onClick={() => setPage('list')}>
-      <IcoArrow width={24} height={24} className='rotate-[90deg]' />
-      <p className='text-white w-full'>{label}</p>
-    </button>
-  }
 
   function setSpeed(to: number) {
     const video = videoRef.current;
@@ -1505,9 +1499,27 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
     }
   }
 
+  function MenuButton() {
+    return <div className={'kekwplayer-settings_button relative w-[32px] h-[32px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'}>
+      <IcoSettings width={40} height={40} className={`kekwplayer-settings`} />
+    </div>
+  }
+
+  function ReturnButton({ label, menu }: { label: string, menu: TSettingPage }) {
+    return <button className={`flex items-center gap-[8px]`} onClick={() => setPage('list')}>
+      <IcoArrow width={24} height={24} className='rotate-[90deg] shrink-0' />
+
+      <div className='w-full flex items-center justify-center gap-[8px]'>
+        {menu === 'quality' && <IcoPlayerQuality width={16} height={16} className='shrink-0' />}
+        {menu === 'speed' && <IcoSpeed width={16} height={16} className='shrink-0' />}
+        <p className='text-white'>{label}</p>
+      </div>
+    </button>
+  }
+
   function QualityButton() {
     return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
-      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('quality')}>
+      <button className={`flex items-center justify-between kekwplayer-menu_item`} onClick={() => setPage('quality')}>
         <div className='flex items-center gap-[16px]'>
           <IcoPlayerQuality width={24} height={24} />
           <p className='text-white'>Якість</p>
@@ -1520,38 +1532,22 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
     </UMenu.MenuItem>
   }
 
-  function QualityMenu() {
-    return <UMenu.MenuItem onClick={(e) => e.stopPropagation()}>
-      <div className={`flex flex-col gap-[16px]`}>
-        <ReturnButton label='Якість' />
-        <div className='flex flex-col gap-[4px]'>
-          {epData?.qualities.q4k && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q4k' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q1080')} disabled={!isVideoProcessed}>
-            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>4K</p>
-          </button>}
-
-          {epData?.qualities.q1080 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q1080' ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setQuality('q1080')}>
-            <p className='text-white'>1080</p>
-          </button>}
-
-          {epData?.qualities.q720 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q720' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q720')} disabled={!isVideoProcessed}>
-            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>720</p>
-          </button>}
-
-          {epData?.qualities.q480 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q480' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q480')} disabled={!isVideoProcessed}>
-            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>480</p>
-          </button>}
-
-          {epData?.qualities.q240 && <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${quality === 'q240' ? 'bg-purple' : ''} ${isVideoProcessed ? 'hover:bg-purple focus-visible:bg-purple' : ''}`} onClick={() => setQuality('q240')} disabled={!isVideoProcessed}>
-            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>240</p>
-          </button>}
+  function StretchButton() {
+    return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
+      <button className={`flex items-center gap-[16px] w-full bg-darkGrey kekwplayer-menu_item px-[8px] py-[4px] rounded-[2px]`} onClick={() => setStretch(!stretch)}>
+        <div className='relative w-[24px] h-[24px]'>
+          <IcoPlayerStretch width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-0 invisible' : 'opacity-100 visible'}`} />
+          <IcoPlayerCenter width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
         </div>
-      </div>
+
+        <p className='text-white'>{stretch ? 'Центрувати' : 'Розтягнути'} відео</p>
+      </button>
     </UMenu.MenuItem>
   }
 
   function SpeedButton() {
     return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
-      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('speed')}>
+      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 kekwplayer-menu_item px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('speed')}>
         <div className='flex items-center gap-[16px]'>
           <IcoSpeed width={24} height={24} />
           <p className='text-white'>Швидкість</p>
@@ -1564,57 +1560,73 @@ const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, s
     </UMenu.MenuItem>
   }
 
-  function SpeedMenu() {
+  function QualityMenu() {
     return <UMenu.MenuItem onClick={(e) => e.stopPropagation()}>
       <div className={`flex flex-col gap-[16px]`}>
-        <ReturnButton label='Швидкість' />
-        <div className='flex flex-col gap-[4px]'>
-          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.25 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.25)}>
-            <p className={`text-white`}>0.25x</p>
-          </button>
+        <ReturnButton label='Якість' menu='quality' />
+        <div className='flex flex-col'>
+          {epData?.qualities.q4k && <button className={`${quality === 'q4k' ? 'kekwplayer-menu_item--active' : ''} ${isVideoProcessed ? 'kekwplayer-menu_item' : ''}`} onClick={() => setQuality('q1080')} disabled={!isVideoProcessed}>
+            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>4K</p>
+          </button>}
 
-          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.5 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.5)}>
-            <p className={`text-white`}>0.5x</p>
-          </button>
+          {epData?.qualities.q1080 && <button className={`${quality === 'q1080' ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setQuality('q1080')}>
+            <p className='text-white'>1080</p>
+          </button>}
 
-          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 0.75 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(0.75)}>
-            <p className={`text-white`}>0.75x</p>
-          </button>
+          {epData?.qualities.q720 && <button className={`${quality === 'q720' ? 'kekwplayer-menu_item--active' : ''} ${isVideoProcessed ? 'kekwplayer-menu_item' : ''}`} onClick={() => setQuality('q720')} disabled={!isVideoProcessed}>
+            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>720</p>
+          </button>}
 
-          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1)}>
-            <p className={`text-white`}>Нормальна</p>
-          </button>
+          {epData?.qualities.q480 && <button className={`${quality === 'q480' ? 'kekwplayer-menu_item--active' : ''} ${isVideoProcessed ? 'kekwplayer-menu_item' : ''}`} onClick={() => setQuality('q480')} disabled={!isVideoProcessed}>
+            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>480</p>
+          </button>}
 
-          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.25 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.25)}>
-            <p className={`text-white`}>1.25x</p>
-          </button>
-
-          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.5 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.5)}>
-            <p className={`text-white`}>1.5x</p>
-          </button>
-
-          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 1.75 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(1.75)}>
-            <p className={`text-white`}>1.75x</p>
-          </button>
-
-          <button className={`w-full bg-darkGrey px-[16px] py-[4px] rounded-[2px] duration-200 ${speed === 2 ? 'bg-purple' : ''} hover:bg-purple focus-visible:bg-purple`} onClick={() => setSpeed(2)}>
-            <p className={`text-white`}>2x</p>
-          </button>
+          {epData?.qualities.q240 && <button className={`${quality === 'q240' ? 'kekwplayer-menu_item--active' : ''} ${isVideoProcessed ? 'kekwplayer-menu_item' : ''}`} onClick={() => setQuality('q240')} disabled={!isVideoProcessed}>
+            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>240</p>
+          </button>}
         </div>
       </div>
     </UMenu.MenuItem>
   }
 
-  function StretchButton() {
-    return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
-      <button className={`flex items-center gap-[16px] w-full bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple px-[8px] py-[4px] rounded-[2px]`} onClick={() => setStretch(!stretch)}>
-        <div className='relative w-[24px] h-[24px]'>
-          <IcoPlayerStretch width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-0 invisible' : 'opacity-100 visible'}`} />
-          <IcoPlayerCenter width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
-        </div>
+  function SpeedMenu() {
+    return <UMenu.MenuItem onClick={(e) => e.stopPropagation()}>
+      <div className={`flex flex-col gap-[16px]`}>
+        <ReturnButton label='Швидкість' menu='speed' />
+        <div className='flex flex-col'>
+          <button className={`${speed === 0.25 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(0.25)}>
+            <p className={`text-white`}>0.25x</p>
+          </button>
 
-        <p className='text-white'>{stretch ? 'Центрувати' : 'Розтягнути'} відео</p>
-      </button>
+          <button className={`${speed === 0.5 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(0.5)}>
+            <p className={`text-white`}>0.5x</p>
+          </button>
+
+          <button className={`${speed === 0.75 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(0.75)}>
+            <p className={`text-white`}>0.75x</p>
+          </button>
+
+          <button className={`${speed === 1 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(1)}>
+            <p className={`text-white`}>Нормальна (1x)</p>
+          </button>
+
+          <button className={`${speed === 1.25 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(1.25)}>
+            <p className={`text-white`}>1.25x</p>
+          </button>
+
+          <button className={`${speed === 1.5 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(1.5)}>
+            <p className={`text-white`}>1.5x</p>
+          </button>
+
+          <button className={`${speed === 1.75 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(1.75)}>
+            <p className={`text-white`}>1.75x</p>
+          </button>
+
+          <button className={`${speed === 2 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(2)}>
+            <p className={`text-white`}>2x</p>
+          </button>
+        </div>
+      </div>
     </UMenu.MenuItem>
   }
 })
@@ -1641,14 +1653,14 @@ const Play: NextPage<IPlayProps> = ({ isPlaying, videoRef }) => {
     }
   }
 
-  function getTitle() {
+  function getLabel() {
     return isPlaying ? 'Зупинити відео (k)' : 'Продовжити відео (k)'
   }
 
   return (
-    <button className='relative w-[68px] h-[68px] max-[460px]:w-[40px] max-[460px]:h-[40px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoPlay width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:w-[40px] max-[460px]:h-[40px] ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
-      <IcoPlayerPause width={60} height={60} className={`duration-200 absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:w-[40px] max-[460px]:h-[40px] ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
+    <button className='kekwplayer-play_button relative w-[40px] h-[40px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
+      <IcoPlay className={`kekwplayer-play ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
+      <IcoPlayerPause className={`kekwplayer-play ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
     </button>
   );
 }
@@ -1666,21 +1678,23 @@ interface IVolumeProps {
 
 const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }) => {
   const video = videoRef.current;
+  const volumeWrapperRef = useRef<HTMLDivElement>(null)
+  const volumeRangeRef = useRef<HTMLDivElement>(null)
 
   //* Handle volume hover
   useEffect(() => {
-    const volumeWrapper = document.querySelector('#kekwplayer-volume') as HTMLDivElement;
-    const volumeRange = document.querySelector('#kekwplayer-volume_range') as HTMLDivElement;
-
+    const volumeWrapper = volumeWrapperRef.current;
+    const volumeRange = volumeRangeRef.current;
     if (!volumeRange || !volumeWrapper) return;
-    const width = volumeRange.offsetWidth;
+
+    const volumeWidth = volumeRange.scrollWidth;
 
     volumeRange.style.maxWidth = '0';
     volumeRange.style.opacity = '0';
 
     volumeWrapper.addEventListener('pointerenter', () => {
       volumeRange.style.opacity = '1';
-      volumeRange.style.maxWidth = `${width}px`;
+      volumeRange.style.maxWidth = `${volumeWidth}px`;
     })
 
     volumeWrapper.addEventListener('pointerleave', () => {
@@ -1692,9 +1706,9 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
   //* Handle volume progress
   useEffect(() => {
     const ref = volumeRef.current;
-    if (!volume) return;
+    if (!ref) return;
 
-    ref!.style.width = `${volume}px`
+    ref.style.width = `${volume}px`
   }, [volume])
 
 
@@ -1717,9 +1731,29 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
     video.volume = to / 100;
   }
 
-  function getTitle() {
+  function getLabel() {
     return isMuted ? 'Увімкнути звук (m)' : 'Вимкнути звук (m)'
   }
+
+  return (
+    <div className='relative flex items-center gap-[8px] max-[600px]:hidden' ref={volumeWrapperRef}>
+      <button className='kekwplayer-volume_button relative w-[32px] h-[32px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
+        <IcoPlayerVolumeMin className={`kekwplayer-volume ${volume < 30 && !isMuted ? 'opacity-100' : 'opacity-0'}`} />
+        <IcoPlayerVolumeNormal className={`kekwplayer-volume ${volume >= 30 && !isMuted ? 'opacity-100' : 'opacity-0'}`} />
+        <IcoPlayerVolumeMuted className={`kekwplayer-volume ${isMuted ? 'opacity-100' : 'opacity-0'}`} />
+      </button>
+
+      <div className='flex items-center gap-[16px] w-fit overflow-hidden opacity-0 duration-500 max-0' ref={volumeRangeRef}>
+        <div className='w-[100px] relative'>
+          <Range min={0} max={100} onChange={val => setVolume(val[0])} values={[volume]} renderThumb={renderThumb} renderTrack={renderTrack} />
+        </div>
+
+        <p className='text-white'>{volume}%</p>
+      </div>
+    </div>
+  );
+
+
 
   function renderThumb({ props }: IRenderThumbParams) {
     return <div
@@ -1730,11 +1764,11 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
         touchAction: 'none',
         pointerEvents: 'none',
         position: 'relative',
-        zIndex: 13,
+        zIndex: 3,
         outline: 'none'
       }}
       id='kekwplayer-volume_thumb'
-      className={`w-[16px] h-[16px] gradient--primary rounded-[32px]`}
+      className={`w-[12px] h-[12px] bg-gradientPrimaryFallback rounded-[32px]`}
     />
   }
 
@@ -1745,34 +1779,16 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
       style={{
         ...props.style,
         position: 'relative',
-        zIndex: 13
+        zIndex: 1
       }}
-      className={`w-full h-[8px] rounded-[6px] z-[10] bg-dark/[.1]`}
+      className={`w-full h-[4px] rounded-[6px] bg-[#666]`}
     >
       {children}
+
+      {/* Volume progress */}
+      <div className='w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] gradient--secondary rounded-[6px]' ref={volumeRef}></div>
     </div>
   }
-
-  return (
-    <div className='relative flex items-center gap-[8px] max-[600px]:hidden' id='kekwplayer-volume'>
-      <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-        <IcoPlayerVolumeMin width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume < 30 && !isMuted ? 'opacity-100' : ''}`} />
-        <IcoPlayerVolumeNormal width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${volume >= 30 && !isMuted ? 'opacity-100' : ''}`} />
-        <IcoPlayerVolumeMuted width={40} height={40} className={`duration-200 opacity-0 absolute top-[4px] left-[4px] ${isMuted ? 'opacity-100' : ''}`} />
-      </button>
-
-      <div className='flex items-center gap-[16px] w-fit overflow-hidden opacity-0 duration-500' id='kekwplayer-volume_range'>
-        <div className='w-[100px] max-w-[100px] relative'>
-          <Range min={0} max={100} onChange={val => setVolume(val[0])} values={[volume]} renderThumb={renderThumb} renderTrack={renderTrack} />
-
-          {/* Volume progress */}
-          <div className='w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[11] gradient--secondary rounded-[6px]' ref={volumeRef}></div>
-        </div>
-
-        <p className='text-white'>{volume}</p>
-      </div>
-    </div>
-  );
 }
 
 
@@ -1793,37 +1809,6 @@ interface ITimelineProps {
 }
 
 const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, isPreviewsOld, isVideoProcessed, changeMoment, videoRef }) => {
-  function renderThumb({ props }: IRenderThumbParams) {
-    return <div
-      {...props}
-      key={'kekwplayer-timeline_thumb'}
-      style={{
-        ...props.style,
-        touchAction: 'none',
-        pointerEvents: 'none',
-        position: 'relative',
-        zIndex: 13
-      }}
-      id='kekwplayer-timeline_thumb'
-      className={`w-[16px] h-[16px] gradient--primary rounded-[32px]`}
-    />
-  }
-
-  function renderTrack({ props, children }: IRenderTrackParams) {
-    return <div
-      {...props}
-      key={'kekwplayer-timeline_track'}
-      style={{
-        ...props.style,
-        position: 'relative',
-        zIndex: 13
-      }}
-      className={`w-full h-[8px] rounded-[6px] z-[10] bg-dark/[.1]`}
-    >
-      {children}
-    </div>
-  }
-
   return (
     <div className='w-full h-full relative'>
       {/* Range */}
@@ -1831,16 +1816,10 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
         {/* Track */}
         <div className='w-full relative' id='kekwplayer-timeline'>
           <Range min={0} max={duration} step={1} onChange={val => changeMoment(val[0])} values={[moment]} renderTrack={renderTrack} renderThumb={renderThumb} />
-
-          {/* From start progress */}
-          <div className='h-full absolute top-0 left-0 touch-none pointer-events-none z-[11] gradient--secondary rounded-[6px]' ref={progressRef}></div>
-
-          {/* Downloading progress */}
-          <div className='h-full absolute top-0 touch-none pointer-events-none left-0 z-[10] bg-white/[.3] rounded-[6px]' ref={loadedRef}></div>
         </div>
 
         {/* Time */}
-        <div className='w-full flex justify-between absolute bottom-[4px] max-[460px]:-bottom-[8px] left-0'>
+        <div className='w-full flex justify-between absolute left-0 -bottom-[8px]'>
           <p className='text-white'>{secondsToReadable(videoRef.current?.currentTime || 0).pretty}</p>
           <p className='text-white'>{secondsToReadable(duration).pretty}</p>
         </div>
@@ -1859,6 +1838,45 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
       </div>
     </div>
   );
+
+
+
+  function renderThumb({ props }: IRenderThumbParams) {
+    return <div
+      {...props}
+      key={'kekwplayer-timeline_thumb'}
+      style={{
+        ...props.style,
+        touchAction: 'none',
+        pointerEvents: 'none',
+        position: 'relative',
+        zIndex: 3
+      }}
+      id='kekwplayer-timeline_thumb'
+      className={`w-[12px] h-[12px] bg-gradientPrimaryFallback rounded-[32px]`}
+    />
+  }
+
+  function renderTrack({ props, children }: IRenderTrackParams) {
+    return <div
+      {...props}
+      key={'kekwplayer-timeline_track'}
+      style={{
+        ...props.style,
+        position: 'relative',
+        zIndex: 1
+      }}
+      className={`w-full h-[4px] rounded-[6px] z-[10] bg-[#666]`}
+    >
+      {children}
+
+      {/* From start progress */}
+      <div className='h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] gradient--secondary rounded-[6px]' ref={progressRef}></div>
+
+      {/* Downloading progress */}
+      <div className='h-full absolute top-0 touch-none pointer-events-none left-0 z-[1] bg-[#888] rounded-[6px]' ref={loadedRef}></div>
+    </div>
+  }
 }
 
 
@@ -1891,9 +1909,9 @@ const PiP: NextPage<IPiPProps> = ({ isPiP, videoRef }) => {
   }
 
   return (
-    <button className='relative w-[48px] h-[48px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px] max-[600px]:hidden' onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoPlayerPiPEnter className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
-      <IcoPlayerPiPExit className={`absolute top-[4px] left-[4px] duration-200 opacity-0 ${isPiP ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
+    <button className='kekwplayer-pip_button relative w-[32px] h-[32px] max-[600px]:hidden' onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+      <IcoPlayerPiPEnter className={`kekwplayer-pip ${isPiP ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
+      <IcoPlayerPiPExit className={`kekwplayer-pip ${isPiP ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
     </button>
   );
 }
@@ -1928,9 +1946,9 @@ const Fullscreen: NextPage<IFullscreenProps> = ({ isFullscreen, playerRef }) => 
   }
 
   return (
-    <button className='relative w-[48px] h-[48px] max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 hover:bg-purple focus-visible:bg-purple rounded-[4px]' onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoPlayerFullscreenExit className={`absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 opacity-0 ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
-      <IcoPlayerFullscreenEnter className={`absolute top-[4px] left-[4px] max-[460px]:top-0 max-[460px]:left-0 max-[460px]:h-[32px] max-[460px]:w-[32px] duration-200 opacity-0 ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
+    <button className='kekwplayer-fullscreen_button relative w-[32px] h-[32px]' onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+      <IcoPlayerFullscreenExit className={`kekwplayer-fullscreen ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
+      <IcoPlayerFullscreenEnter className={`kekwplayer-fullscreen ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
     </button>
   );
 }

@@ -37,6 +37,83 @@
         }
       }
     }
+
+    &_item {
+      transition: .2s ease-in-out;
+      padding: 4px 8px;
+      border-radius: 2px;
+      width: 100%;
+      background: $darkGrey;
+
+      &:hover,
+      &:focus-visible {
+        &:not(.kekwplayer-menu_item--active) {
+          background: $grey;
+        }
+      }
+
+      &--active {
+        background: $purple;
+      }
+    }
+  }
+
+  &-play {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: .2s ease-in-out;
+
+    path {
+      transition: .2s ease-in-out;
+    }
+
+    &_button {
+      &:hover,
+      &:focus-visible {
+        svg path {
+          fill: $purple;
+        }
+      }
+    }
+  }
+
+  &-volume {
+    // :)
+    @extend .kekwplayer-play;
+
+    &_button {
+      @extend .kekwplayer-play_button;
+    }
+  }
+
+  &-pip {
+    // :)
+    @extend .kekwplayer-play;
+
+    &_button {
+      @extend .kekwplayer-play_button;
+    }
+  }
+
+  &-fullscreen {
+    // :)
+    @extend .kekwplayer-play;
+
+    &_button {
+      @extend .kekwplayer-play_button;
+    }
+  }
+
+  &-settings {
+    // :)
+    @extend .kekwplayer-play;
+
+    &_button {
+      @extend .kekwplayer-play_button;
+    }
   }
 
   &-screen {
