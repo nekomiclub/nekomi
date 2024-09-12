@@ -331,6 +331,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
           <Category type='popular' />
         </div>
 
+
         <div className='wrapper bg-darkGrey !flex-row gap-[60px] py-[60px] items-center !my-[60px] max-[880px]:!flex-col'>
           <IcoGhost width={128} height={128} className='shrink-0' />
 
