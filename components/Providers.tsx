@@ -113,8 +113,6 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
   useEffect(() => {
     if (typeof window === undefined) return;
 
-    if (prodMode) return;
-
     (async function () {
       if (!ws) {
         setWs(new WebSocket(config.URL.apiWS))
@@ -125,8 +123,6 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
   // Send presence websocket request
   useEffect(() => {
     if (!ws || typeof window === undefined) return;
-
-    if (prodMode) return;
 
     let SID = localStorage.getItem('SID')
 
