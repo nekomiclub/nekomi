@@ -9,6 +9,9 @@ import '../styles/index.scss'
 
 
 
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
 import { Metadata, NextPage } from 'next'
 import axios from 'axios';
 import Link from 'next/link';
@@ -66,6 +69,9 @@ export default async function Layout({ children, params }: ILayoutProps) {
   return (
     <html lang="uk">
       <body id='root' className='bg-dark'>
+        <Analytics />
+        <SpeedInsights />
+
         {isServerOnline ? <>
           <Provider.Storage>
             <Provider.State>
