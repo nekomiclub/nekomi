@@ -65,8 +65,8 @@ const Footer: NextPage = (props) => {
 
         {/* Right */}
         <div className='flex justify-center max-[760px]:w-full'>
-          {/* <p className='text-white'>Онлайн: <b className='font-bold gradient--primary-text'>{storageState.online || -1}</b></p> */}
-          <p className='text-white'>Онлайн: <span className='text-lightGrey text-[12px]'>Коти перегризли провода, вже фіксим</span></p>
+          <p className='text-white'>Онлайн: <b className='font-bold gradient--primary-text'>{storageState.online || -1}</b></p>
+          {/* <p className='text-white'>Онлайн: <span className='text-lightGrey text-[12px]'>Коти перегризли провода, вже фіксим</span></p> */}
         </div>
       </div>
     </footer>

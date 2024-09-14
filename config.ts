@@ -29,7 +29,7 @@ export const config = {
     media: prodMode ? `https://media.animee.club` : `http://${devIP}:43120`,
 
     /** Animee-core websocket URL */
-    apiWS: prodMode ? `wss://api.animee.club/ws` : `ws://${devIP}:8080`,
+    apiWS: prodMode ? `wss://websocket.animee.club` : `ws://${devIP}:8080`,
 
     /** Fullkekw userapi URL */
     fkUsapi: prodMode ? `https://usapi.animee.club` : `http://${devIP}:45660`,
