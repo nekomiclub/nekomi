@@ -14,9 +14,10 @@ import userSlice, { userStateDefault } from '../store/reducers/userSlice';
 import { config, prodMode } from '../config';
 import { IUsapiUser, IUser } from '../interfaces/IUser';
 import { $api } from './http';
-import { IWS, IWSPollPresence, IWSSendPresence } from '../interfaces/IWS';
 import storageSlice from '../store/reducers/storageSlice';
 import { TRoleCapability } from '../interfaces/IRoles';
+import { createID } from './handlers';
+import { IWS_OnlineChanged, IWS_SiteConnection, Message, Request, Response } from '../interfaces/IWS';
 
 const store = setupStore();
 
@@ -124,24 +125,17 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
   useEffect(() => {
     if (!ws || typeof window === undefined) return;
 
-    let SID = localStorage.getItem('SID')
+    let SID = sessionStorage.getItem('SID')
 
     if (!SID) {
-      SID = (Math.random() + 1).toString(36).substring(6);
-      localStorage.setItem('SID', SID);
+      SID = createID();
+      sessionStorage.setItem('SID', SID);
     }
 
     // Send presence request
     ws.onopen = () => {
       try {
-        const payload: IWS<IWSSendPresence> = {
-          type: 'send_presence',
-          payload: {
-            SID: SID || ''
-          }
-        }
-
-        ws.send(JSON.stringify(payload))
+        sendPresenceRequest(ws, SID || 'SID_INVALID')
       } catch (e) {
         console.error(e)
       }
@@ -150,19 +144,30 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
     // Handle broadcast
     ws.onmessage = data => {
       try {
-        const message = JSON.parse(data.data) as IWS;
+        const message = JSON.parse(data.data) as Message;
 
-        if (message.type === 'error') {
-          console.error('AN WEBSOCKET ERROR OCCURED WHEN SENDING PRESENCE REQUEST');
-          console.error(message.payload);
+        switch (message.type) {
+          case 'error': {
+            console.error('Websocket error occured');
+            console.error(message.payload);
 
-          return;
-        } else if (message.type === 'poll_presence') {
-          const { payload } = message as IWS<IWSPollPresence>;
+            break;
+          }
 
-          dispatch(storageSlice.actions.reducer({
-            online: payload.online
-          }))
+          case 'online_changed': {
+            const { payload } = message as Response<IWS_OnlineChanged>;
+
+            dispatch(storageSlice.actions.reducer({
+              online: payload.online
+            }))
+
+            break;
+          }
+
+          case 'online_poll': {
+            sendPresenceRequest(ws, SID || 'SID_INVALID');
+            break;
+          }
         }
       } catch (e) {
         console.error(e)
@@ -171,15 +176,26 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
 
     // Send disconnect request
     window.addEventListener('beforeunload', () => {
-      const payload: IWS<IWSSendPresence> = {
-        type: 'disconnect_presence',
+      const payload: Request<IWS_SiteConnection> = {
+        type: 'site_disconnected',
         payload: {
-          SID: SID || ''
+          SID: SID || 'SID_INVALID'
         }
       }
 
       ws.send(JSON.stringify(payload));
     })
+
+    function sendPresenceRequest(ws: WebSocket, SID: string) {
+      const payload: Request<IWS_SiteConnection> = {
+        type: 'site_connected',
+        payload: {
+          SID
+        }
+      }
+
+      ws.send(JSON.stringify(payload))
+    }
   }, [ws])
 
   return (
