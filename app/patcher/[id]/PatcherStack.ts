@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { $api } from "../../../components/http";
+import { $api, $upload } from "../../../components/http";
 import { config } from "../../../config";
 import { ITitle, ITitleEpisode } from "../../../interfaces/ITitle";
 import { IPatcherEpisode, IPatcherEpisodesGroup, TEpisodeType } from "./Patcher";
@@ -96,7 +96,7 @@ export class PactherStack {
         this.patch({ id: item.id, progress: percentage })
       }, 3000); // 3000
 
-      const { data } = await $api.patch<{ episode: ITitleEpisode }>(`${config.URL.apiProxy}/title/${this.title.id}`, formData, {
+      const { data } = await $upload.patch<{ episode: ITitleEpisode }>(`${config.URL.apiProxy}/title/${this.title.id}`, formData, {
         onUploadProgress: (e) => {
           const { progress } = e;
 
@@ -114,7 +114,7 @@ export class PactherStack {
       this.patch({ id: item.id, type: 'uploaded', sourceURL: data.episode.qualities.q1080 })
     } catch (e) {
       if (e instanceof AxiosError) {
-        this.appendError(`[PatcherStack]: Stack stopped due to error - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
+        this.appendError(`[PatcherStack]: Сталась помилка завантаження - ${e.code}. Будь ласка, не змінюйте файли які додані в чергу`);
       } else {
         this.appendError(`[PatcherStack]: Stack stopped due to error - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
       }

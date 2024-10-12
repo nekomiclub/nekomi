@@ -73,9 +73,10 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
         // Verify
         await $api.get('/user/validate');
 
-        const { data } = await $api.get<{ user: IUser, parsedCapabilities: TRoleCapability[] }>(`/user/*`, {
+        const { data } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/*`, {
           params: {
-            detailed: true
+            detailed: true,
+            parseRoles: true
           }
         });
         const { avatar, id, roles, username, watchProgress } = data.user;
@@ -86,7 +87,7 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
           roles,
           username,
           watchProgress,
-          capabilities: data.parsedCapabilities,
+          capabilities: data.parsedRoles,
           loaded: true
         }))
       } catch (e) {

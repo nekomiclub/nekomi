@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { NextPage } from 'next';
 import { useState, useEffect } from 'react'
 import { Layer, Dialog, Trigger } from '@fullkekw/fkw-popup';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import Tooltip from '../../../components/Tooltip';
 
 import { IUser, IUserLib } from '../../../interfaces/IUser';
 import { LoadingImage, copyToClipboard } from '../../../components/Components';
-import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoSettings, IcoStack, IcoStar, IcoUser, IcoWatched } from '../../../assets/Icons';
+import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoSettings, IcoStack, IcoStar, IcoUser, IcoWatched } from '../../../assets/Icons';
 import { addZeroIfNumberSingle, makeStringID } from '../../../components/handlers';
 import { config } from '../../../config';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
@@ -19,9 +19,12 @@ import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { useAppSelector } from '../../../hooks/redux';
 import { IcoSocialTelegram } from '../../../assets/Social';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { $api } from '../../../components/http';
 
+
+
+type TTelegramLinkStatus = 'connected' | 'notConnected' | 'pending' | 'error';
 
 
 /** User header
@@ -29,9 +32,14 @@ import { $api } from '../../../components/http';
  */
 export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?: boolean }> = ({ user, primaryPage, isOwner }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  const [telegramLinkError, setTelegramLinkError] = useState('');
   const [urlCopied, setUrlCopied] = useState(false)
   const [settingsPopupID, setSettingsPopupID] = useState('')
-  const [settingsLinkTelegramStatus, setSettingsLinkTelegramStatus] = useState<'connected' | 'notConnected' | 'pending' | 'error'>(user.statistics.isTelegramLinked ? 'connected' : 'notConnected')
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [settingsLinkTelegramStatus, setSettingsLinkTelegramStatus] = useState<TTelegramLinkStatus>(user.statistics.isTelegramLinked ? 'connected' : 'notConnected')
 
 
 
@@ -39,6 +47,19 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   useEffect(() => {
     setSettingsPopupID(makeStringID(16, true))
   }, [])
+
+  // Open settings popup
+  useEffect(() => {
+    if (searchParams.get('openSettings') === null) return;
+
+    setIsSettingsOpen(true)
+  }, [searchParams])
+
+  // Remove open settings param
+  useEffect(() => {
+    if (!isSettingsOpen && searchParams.has('openSettings')) router.replace(pathname)
+  }, [isSettingsOpen])
+
 
 
   function copyProfileURL() {
@@ -59,12 +80,19 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   async function linkTelegram() {
     try {
+      setTelegramLinkError('');
       setSettingsLinkTelegramStatus('pending')
       const { data } = await $api.get<{ token: string }>(`/user/linkTelegram/token`);
       router.push(`${config.URL.bot}?start=linkAccount=${data.token}`)
     } catch (e) {
       setSettingsLinkTelegramStatus('error')
       console.error(e)
+
+      if (e instanceof AxiosError) {
+        setTelegramLinkError(e.response?.data.message || e.response?.data.msg)
+      } else {
+        setTelegramLinkError(`Дивна помилка, відправ лог консолі браузера в тікет на сервері діскорд будь ласка`)
+      }
     } finally {
       setTimeout(() => {
         setSettingsLinkTelegramStatus('notConnected')
@@ -72,28 +100,45 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
     }
   }
 
+
+
   return (
     <>
       <Layer className='bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center'>
-        <Dialog id={settingsPopupID} className='px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] w-[1170px] max-w-[1170px] mx-[32px] my-[24px]'>
+        <Dialog id={settingsPopupID} className='px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] w-[1170px] max-w-[1170px] mx-[32px] my-[24px]' state={isSettingsOpen} stateSetter={setIsSettingsOpen}>
           <Label label='Налаштування акаунту' />
           <Link href={`${config.URL.fkAccount}/me`} className='flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple'>
             <IcoExternalLink width={24} height={24} />
-            <p className='text-white'>Редагувати акаунт</p>
+            <p className='text-white'>Редагувати акаунт Fullkekw</p>
           </Link>
 
           <Label label={`Під'єднання`} />
-          {settingsLinkTelegramStatus === 'connected' ? <div className='flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey'>
-            <IcoStar width={24} height={24} fill='#FF464E' />
-            <p className='text-white'>Акаунт Telegram прив’язано! </p>
-          </div> : <button className={`flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] duration-200 ${settingsLinkTelegramStatus === 'pending' ? 'bg-orange' : settingsLinkTelegramStatus === 'error' ? 'bg-red' : 'bg-darkGrey hover:bg-purple focus-visible:bg-purple'}`} onClick={linkTelegram}>
-            <IcoSocialTelegram width={24} height={24} />
-            <p className='text-white'>
-              {settingsLinkTelegramStatus === 'notConnected' && 'Прив’язати акаунт Telegram'}
-              {settingsLinkTelegramStatus === 'error' && 'Помилка!'}
-              {settingsLinkTelegramStatus === 'pending' && 'Чекаєм...'}
-            </p>
-          </button>}
+          {settingsLinkTelegramStatus === 'connected' ?
+            <div className='flex flex-col gap-[8px]'>
+              <div className='flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey'>
+                <IcoStar width={24} height={24} fill='#FF464E' />
+                <p className='text-white'>Акаунт Telegram прив’язано! </p>
+              </div>
+
+              <div className={`flex gap-[8px] items-center`}>
+                <IcoInfo width={16} height={16} fill='#747474' />
+                <p className='text-[12px] text-lightGrey'>Ти будеш отримувати сповіщення в телеграм</p>
+              </div>
+            </div> :
+
+            <div className='flex flex-col gap-[8px]'>
+              <button className={`flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] duration-200 ${settingsLinkTelegramStatus === 'pending' ? 'bg-orange' : settingsLinkTelegramStatus === 'error' ? 'bg-red' : 'bg-darkGrey hover:bg-purple focus-visible:bg-purple'}`} onClick={linkTelegram}>
+                <IcoSocialTelegram width={24} height={24} />
+                <p className='text-white'>
+                  {settingsLinkTelegramStatus === 'notConnected' && 'Прив’язати акаунт Telegram'}
+                  {settingsLinkTelegramStatus === 'error' && 'Помилка!'}
+                  {settingsLinkTelegramStatus === 'pending' && 'Генеруємо токен...'}
+                </p>
+              </button>
+
+              {telegramLinkError && <p className='text-red'>{telegramLinkError}</p>}
+            </div>
+          }
         </Dialog>
       </Layer>
 

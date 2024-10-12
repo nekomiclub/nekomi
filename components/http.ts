@@ -6,13 +6,11 @@ import https from 'https';
 
 import { config, prodMode } from '../config';
 
-/** Axios HTTP instance with creds for animee-api only */
+/** Axios HTTP instance with csrf token specified & creds */
 export const $api = axios.create({
   withCredentials: true,
   baseURL: config.URL.apiHTTP,
-  timeout: 600000,
-  httpAgent: new http.Agent({ keepAlive: true }),
-  httpsAgent: new https.Agent({ keepAlive: true }),
+  timeout: 10000,
 })
 
 $api.interceptors.request.use(async cfg => {
@@ -21,6 +19,20 @@ $api.interceptors.request.use(async cfg => {
   return cfg;
 })
 
+/** Same as $api, but with longer timeout */
+export const $upload = axios.create({
+  withCredentials: true,
+  baseURL: config.URL.apiHTTP,
+  timeout: 180000,
+  httpAgent: new http.Agent({ keepAlive: true }),
+  httpsAgent: new https.Agent({ keepAlive: true }),
+})
+
+$upload.interceptors.request.use(async cfg => {
+  cfg.headers['X-CSRF-Token'] = signCSRF();
+
+  return cfg;
+})
 
 /** Sign CSRF token */
 export function signCSRF(): string {

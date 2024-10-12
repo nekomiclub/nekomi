@@ -1272,15 +1272,15 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
   return <section className='flex flex-col gap-[32px]'>
     {/* Controls */}
-    <div className='flex flex-col gap-[16px]'>
+    <div className='flex flex-col gap-[16px] w-full'>
       <Label label='Озвучення' />
 
       <ErrorsWrapper errors={errors} />
 
-      {canSeriesAdd && <div className='flex items-center gap-[16px] max-[940px]:flex-col'>
+      {canSeriesAdd && <div className='flex items-center gap-[16px] max-[940px]:flex-col w-full'>
         {isMobile ? <>
           <IcoGhost width={32} height={32} fill='#747474' />
-          <p className='text-lightGrey'>Ви не можете додавати епізоди на телефоні</p>
+          <p className='text-lightGrey'>Нажаль, ви не можете додавати епізоди на телефоні</p>
         </> : <>
           <div className='flex items-start gap-[16px] w-full'>
             {/* Order */}
@@ -1294,7 +1294,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
             </div>
 
             {/* File select */}
-            <div className='w-full flex flex-col gap-[8px]'>
+            <div className='w-full flex flex-col gap-[8px] overflow-hidden'>
               <p className='text-white'>Файл</p>
 
               <div className='w-full'>
@@ -1308,7 +1308,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
             </div>
           </div>
 
-          <Tooltip content='Додати серію' className='max-[940px]:w-full'>
+          <Tooltip content='Додати серію' className='max-[940px]:w-full shrink-0'>
             <button className='p-[8px] bg-grey rounded-[4px] duration-200 hover:bg-green focus-visible:bg-green w-full' onClick={addEpisode}>
               <IcoArrow width={32} height={32} className='-rotate-[90deg]' />
             </button>

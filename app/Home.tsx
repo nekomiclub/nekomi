@@ -1,7 +1,7 @@
 'use client'
 
 import { NextPage, Metadata } from 'next';
-import React, { useState, useEffect, useRef, memo } from 'react'
+import React, { useState, useEffect, useRef, memo, useMemo } from 'react'
 import { LoadingImage, TitleCard, WatchButton } from '../components/Components';
 import { ITitle } from '../interfaces/ITitle';
 import { config } from '../config';
@@ -19,6 +19,9 @@ import { createID } from '../components/handlers';
 import { IcoClockOutlined } from '../assets/Clock';
 import Image from 'next/image';
 import { useAppSelector } from '../hooks/redux';
+import { IUserState } from '../store/reducers/userSlice';
+
+
 
 interface IProps {
   headliner: ITitle
@@ -36,6 +39,38 @@ export interface IHomeCategories {
 
 type TCategory = 'popular' | 'updatedRecently' | 'hightRate';
 
+
+
+const WatchHeadliner: NextPage<{ className?: string, user: IUserState, headliner: ITitle }> = ({ headliner, user, className }) => {
+  const [label, setLabel] = useState('розпочати перегляд')
+
+  useMemo(() => {
+    if (typeof window === "undefined") return;
+
+    const localData = JSON.parse(window.localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+    const watchProgress = user.watchProgress;
+
+    if (user.id) {
+      const current = watchProgress.find(el => el.titleID === headliner.id);
+
+      if (current) setLabel(`продовжити (${current.episodeOrder} серія, ${secondsToReadable(current.progress).pretty})`);
+    } else {
+      const current = localData.find(el => el.id === headliner.id);
+
+      if (current) setLabel(`продовжити (${current.ep} серія, ${secondsToReadable(current.moment).pretty})`);
+    }
+  }, [user])
+
+  return (
+    <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${headliner.code}`} className={`flex items-center justify-center gap-[16px] bg-grey px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback ${className ? className : ''} max-[784px]:px-[16px] max-[784px]:py-[12px]`} tabIndex={0}>
+      <IcoPlay width={40} height={40} />
+      <p className='text-white text-[24px] uppercase max-[784px]:text-[16px]' suppressHydrationWarning>{label}</p>
+    </Link>
+  )
+}
+
+
+
 const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlinerPoster }) => {
   const user = useAppSelector(state => state.user);
   const [isTrailerVisible, setIsTrailerVisible] = useState(false);
@@ -43,6 +78,8 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
 
   const posterScreenRef = useRef<HTMLDivElement>(null)
   const trailerScreenRef = useRef<HTMLDivElement>(null)
+
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -102,34 +139,6 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
 
 
 
-  const WatchHeadliner = memo(function WatchHeadliner({ className }: { className?: string }) {
-    const [label, setLabel] = useState('розпочати перегляд')
-
-    useEffect(() => {
-      if (!user.loaded) return;
-
-      const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
-      const watchProgress = user.watchProgress;
-
-      if (user.id) {
-        const current = watchProgress.find(el => el.titleID === headliner.id);
-
-        if (current) setLabel(`продовжити (${current.episodeOrder} серія, ${secondsToReadable(current.progress).pretty})`);
-      } else {
-        const current = localData.find(el => el.id === headliner.id);
-
-        if (current) setLabel(`продовжити (${current.ep} серія, ${secondsToReadable(current.moment).pretty})`);
-      }
-    }, [user])
-
-    return (
-      <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${headliner.code}`} className={`flex items-center justify-center gap-[16px] bg-grey px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback ${className ? className : ''} max-[784px]:px-[16px] max-[784px]:py-[12px]`} tabIndex={0}>
-        <IcoPlay width={40} height={40} />
-        <p className='text-white text-[24px] uppercase max-[784px]:text-[16px]'>{label}</p>
-      </Link>
-    )
-  })
-
   const PosterScreen = memo(function PosterScreen() {
     return (
       <>
@@ -151,7 +160,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
 
         {/* Watch */}
         <div className='absolute bottom-[60px] z-[3] pr-[32px] max-[560px]:w-full'>
-          <WatchHeadliner />
+          <WatchHeadliner headliner={headliner} user={user} />
         </div>
       </>
     )
@@ -231,7 +240,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
           <h3 className='text-white uppercase text-[32px] font-black text-ellipsis line-clamp-[1] max-[784px]:text-[24px] max-[650px]:line-clamp-3'>{headliner.names.ukr}</h3>
 
           <div className='flex gap-[8px] w-full max-[450px]:flex-col'>
-            <WatchHeadliner className='w-full' />
+            <WatchHeadliner className='w-full' headliner={headliner} user={user} />
 
             <button className='relative bg-grey p-[16px] duration-200 rounded-[4px] flex justify-center hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback' tabIndex={0} onClick={() => setIsMuted(!isMuted)}>
               {/* Placeholder */}

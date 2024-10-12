@@ -4,7 +4,7 @@ import '../styles/components/Header.scss';
 
 import { NextPage } from 'next';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import * as Menu from 'uvc-menu';
 import * as uuid from 'uuid';
@@ -47,6 +47,7 @@ interface ITitleSearched extends ITitle {
 const Header: NextPage = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
 
   const user = useAppSelector(state => state.user)
@@ -54,6 +55,7 @@ const Header: NextPage = () => {
   const [userDetailsOpened, setUserDetailsOpened] = useState(false)
   const [isSearchErrored, setIsSearchErrored] = useState(false);
   const [isHintShowed, setIsHintShowed] = useState(true)
+  const [isPatcherHintShowed, setIsPatcherHintShowed] = useState(false)
 
   const [searchPopupID, setSearchPopupID] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
@@ -62,6 +64,8 @@ const Header: NextPage = () => {
 
   const [debouncedSearchQuery] = useDebounce(searchQuery, 500)
   const [placeholderSearchQuery] = useDebounce(searchQuery, 50)
+
+  const resultsRef = useRef<HTMLUListElement>(null)
 
 
 
@@ -129,12 +133,19 @@ const Header: NextPage = () => {
     })()
   }, [debouncedSearchQuery])
 
+  // Scroll to top of search results
+  useEffect(() => {
+    resultsRef.current?.scrollTo({ top: 0, behavior: 'instant' })
+  }, [searchResults])
+
   useEffect(() => {
     const route = getRoute(pathname)?.path.replace('/*', '');
 
     if (route === routes.title_patcher.path) {
+      setIsPatcherHintShowed(true)
       setUsePatcherRouting(true)
     } else {
+      setIsPatcherHintShowed(false)
       setUsePatcherRouting(false)
     }
   }, [pathname])
@@ -168,17 +179,25 @@ const Header: NextPage = () => {
     forceFocus(search);
   }
 
+
+
   return (
     <>
       <Layer className='bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center max-[700px]:items-start'>
         <Dialog id={searchPopupID} className='bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]'>
           <input type="text" autoComplete='off' className='px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full' placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id='search-searchBar' />
 
-          <div className='px-[16px] py-[16px] w-full'>
+          <div className='px-[16px] py-[16px] w-full flex flex-col gap-[16px]'>
             {/* Hint */}
             <div className={`flex gap-[8px] items-center ${isHintShowed && !isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
               <IcoInfo width={16} height={16} fill='#747474' />
               <p className='text-[12px] text-lightGrey'>Ти можеш знайти юзера чи даббера через <b className='text-lightGrey font-bold'>@</b></p>
+            </div>
+
+            {/* Patcher hint */}
+            <div className={`flex gap-[8px] items-center ${isPatcherHintShowed && !isSearchErrored && searchResults.length ? '' : 'opacity-0 invisible absolute'}`}>
+              <IcoInfo width={16} height={16} fill='#747474' />
+              <p className='text-[12px] text-lightGrey'>Новий тайтл буде відкрито в патчері</p>
             </div>
 
             {/* Nothing found */}
@@ -198,7 +217,7 @@ const Header: NextPage = () => {
             </div>
 
             {/* Results */}
-            <ul className='flex flex-col gap-[8px] max-h-[500px] overflow-y-scroll w-full'>
+            <ul className={`flex-col gap-[8px] max-h-[500px] overflow-y-scroll w-full ${searchResults.length ? 'flex' : 'hidden'}`} ref={resultsRef}>
               {searchResults.map(result => {
                 return <SearchResult result={result} key={`search-placeholder--${result.item?.id || uuid.v4()}`} />
               })}
@@ -241,20 +260,20 @@ const Header: NextPage = () => {
             } className='bg-darkGrey rounded-[2px] !w-[180px] overflow-hidden !top-[70px]' align='end' animation='slide' statePriority='outer' state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
               <Menu.MenuList>
                 <Menu.MenuItem>
-                  <Link href={`${config.URL.baseURL}/u/${user.username}`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
+                  <Link href={`/u/${user.username}`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
                     <IcoUser width={24} height={24} />
                     <p className='text-white w-full'>Профіль</p>
                   </Link>
                 </Menu.MenuItem>
                 <Menu.MenuItem>
-                  <Link href={`${config.URL.baseURL}/u/${user.username}#user-libs`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
+                  <Link href={`/u/${user.username}#user-libs`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
                     <IcoFolderPlain width={24} height={24} />
                     <p className='text-white w-full'>Теки</p>
                   </Link>
                 </Menu.MenuItem>
 
                 <Menu.MenuItem>
-                  <Link href={`${config.URL.fkAccount}/me`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' target='_blank'>
+                  <Link href={`/u/${user.username}?openSettings`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
                     <IcoSettings width={24} height={24} />
                     <p className='text-white w-full'>Акаунт</p>
                   </Link>

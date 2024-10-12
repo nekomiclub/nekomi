@@ -92,6 +92,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const playerRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
+  const bottomRef = useRef<HTMLDivElement>(null)
   const loadedRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
   const volumeRef = useRef<HTMLDivElement>(null)
@@ -108,12 +109,12 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  useIdleTimer({
-    timeout: 3000,
-    throttle: 500,
-    onIdle: () => setIsIdle(true),
-    onAction: () => setIsIdle(false)
-  })
+  // useIdleTimer({
+  //   timeout: 3000,
+  //   throttle: 500,
+  //   onIdle: () => setIsIdle(true),
+  //   onAction: () => setIsIdle(false)
+  // })
 
   //! -------------- DEFAULT EFFECTS --------------
   //* Player vitals, video loading handling
@@ -441,11 +442,15 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     function timelineTouchStartHandler() {
       preview.style.opacity = '1';
       preview.style.visibility = 'visible';
+      preview.style.touchAction = 'all';
+      preview.style.pointerEvents = 'all';
     }
 
     function timelineTouchEndHandler() {
       preview.style.opacity = '0';
       preview.style.visibility = 'invisible';
+      preview.style.touchAction = 'none';
+      preview.style.pointerEvents = 'none';
     }
   }, [stage])
 
@@ -760,6 +765,20 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     }
   }, [duration, moment])
 
+  useEffect(() => {
+    const bottom = bottomRef.current;
+    const track = document.querySelector('#kekwplayer-timeline_track') as HTMLDivElement | undefined
+    if (stage !== 'operational' || !bottom || !track) return;
+
+    bottom.addEventListener('mouseenter', () => {
+      track.style.padding = '3px 0';
+    })
+
+    bottom.addEventListener('mouseleave', () => {
+      track.style.padding = '0';
+    })
+  }, [stage])
+
 
 
   //* -------------- HANDLERS --------------
@@ -1014,7 +1033,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       <Menu order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
 
       {/* Bottom */}
-      <div className={`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px] backdrop-blur-[8px] bg-red ${isIdle ? 'translate-y-[100%]' : ''}`} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }}>
+      <div className={`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px] backdrop-blur-[8px] bg-red ${isIdle ? 'translate-y-[100%]' : ''}`} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }} ref={bottomRef}>
         <div className='flex items-center gap-[16px]'>
           <Play isPlaying={isPlaying} videoRef={videoRef} />
 
@@ -1263,7 +1282,7 @@ const Menu = memo<IMenuProps>(function Menu({ order, dubbers, episode, isLastEpi
     <div className={`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200 ${isIdle ? '-translate-y-[100%]' : 'translate-y-0'}`}>
       <UMenu.Menu trigger={<IcoPlayerList width={40} height={40} />} triggerClassName='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' className='px-[16px] py-[8px] bg-dark rounded-[2px] !flex gap-[8px]' direction='bottom' align='start' statePriority='outer' stateSetter={setIsMenuOpen} state={isMenuOpen}>
         {/* Dubbers */}
-        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll overflow-x-hidden flex flex-col gap-[4px]'>
+        <UMenu.MenuList className='max-h-[200px] overflow-y-auto overflow-x-hidden flex flex-col gap-[4px]'>
           {dubbers.map(dubber => {
             const dubberEpisodes = episodes.filter(el => el.dubberID === dubber.id).sort((a, b) => a.order - b.order)
             let lastEpisode = 0;
@@ -1278,7 +1297,11 @@ const Menu = memo<IMenuProps>(function Menu({ order, dubbers, episode, isLastEpi
             }
 
             return <UMenu.MenuItem className={`px-[8px] py-[4px] duration-200 flex justify-between gap-[8px] hover:bg-purple focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${episode.dubberID === dubber.id ? 'bg-purple' : ''}`} onClick={selectDubber} key={`menu-dubs_list--${dubber.id}`}>
-              <p className='text-white whitespace-nowrap'>{dubber.name}</p>
+              <div className='shrink-0'>
+                <LoadingImage src={dubber.thumbURL} width='24px' height='24px' className='rounded-[32px] overflow-hidden' />
+              </div>
+
+              <p className='text-white whitespace-nowrap w-full text-start'>{dubber.name}</p>
 
               <div className='flex gap-[4px]'>
                 <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
@@ -1293,7 +1316,7 @@ const Menu = memo<IMenuProps>(function Menu({ order, dubbers, episode, isLastEpi
         <span className='w-[1px] h-auto bg-darkGrey block'></span>
 
         {/* Episodes */}
-        <UMenu.MenuList className='max-h-[200px] overflow-y-scroll overflow-x-hidden flex flex-col gap-[4px] w-fit'>
+        <UMenu.MenuList className='max-h-[200px] overflow-y-auto overflow-x-hidden flex flex-col gap-[4px] w-fit'>
           {episodes.filter(el => el.dubberID === episode.dubberID).sort((a, b) => a.order - b.order).map(episode => {
             function setEpisode() {
               changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)!, 0)
@@ -1819,7 +1842,7 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
         </div>
 
         {/* Time */}
-        <div className='w-full flex justify-between absolute left-0 -bottom-[8px]'>
+        <div className='w-full flex justify-between absolute left-0 -bottom-[8px] max-[720px]:-bottom-[12px]'>
           <p className='text-white'>{secondsToReadable(videoRef.current?.currentTime || 0).pretty}</p>
           <p className='text-white'>{secondsToReadable(duration).pretty}</p>
         </div>
@@ -1866,7 +1889,8 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
         position: 'relative',
         zIndex: 1
       }}
-      className={`w-full h-[4px] rounded-[6px] z-[10] bg-[#666]`}
+      id='kekwplayer-timeline_track'
+      className={`w-full h-[4px] max-[720px]:!py-[3px] rounded-[6px] z-[10] bg-[#666] duration-200`}
     >
       {children}
 

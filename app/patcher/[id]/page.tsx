@@ -53,9 +53,10 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
   try {
     session = cookies().get(config.vars.animeeCookie)?.value || '';
 
-    const { data: userData } = await $api.get<{ user: IUser, parsedCapabilities: TRoleCapability[] }>(`/user/*`, {
+    const { data: userData } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/*`, {
       params: {
-        detailed: true
+        detailed: true,
+        parseRoles: true
       },
       headers: {
         Cookie: cookies().toString()
@@ -63,8 +64,8 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
     });
 
     user = userData.user;
-    capabilities = userData.parsedCapabilities;
-    pass = userData.parsedCapabilities.includes('dubber') || userData.parsedCapabilities.includes('root') || userData.parsedCapabilities.includes('editor');
+    capabilities = userData.parsedRoles;
+    pass = userData.parsedRoles.includes('dubber') || userData.parsedRoles.includes('root') || userData.parsedRoles.includes('editor');
 
     if (pass) {
       const { data: titleData } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] }>(`/title/${params.id}`, {
