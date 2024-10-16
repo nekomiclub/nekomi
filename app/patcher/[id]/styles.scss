@@ -100,6 +100,23 @@
     }
   }
 
+  &-select {
+    border: 1px solid $grey;
+    transition: .2s ease-in-out;
+
+    &--pending {
+      border-color: $gradientSecondaryFallback;
+    }
+
+    &--saved {
+      border-color: $green;
+    }
+
+    &--error {
+      border-color: $red !important;
+    }
+  }
+
   &-episodeMeta {
     &_select,
     &_delete {

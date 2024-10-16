@@ -324,3 +324,12 @@ export const IcoPlus = ({ className, fill, height, width }: IAssetProps) => {
     </svg>
   );
 }
+
+export const IcoCheckmark = ({ className, fill, height, width }: IAssetProps) => {
+  return (
+    <svg width={width || 32} height={height || 32} className={className || ''} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fillRule="evenodd" clipRule="evenodd" d="M2.29289 15.2929C2.68342 14.9024 3.31658 14.9024 3.70711 15.2929L12.7071 24.2929C13.0976 24.6834 13.0976 25.3166 12.7071 25.7071C12.3166 26.0976 11.6834 26.0976 11.2929 25.7071L2.29289 16.7071C1.90237 16.3166 1.90237 15.6834 2.29289 15.2929Z" fill={fill || '#fff'} />
+      <path fillRule="evenodd" clipRule="evenodd" d="M29.6866 6.27299C30.0881 6.6522 30.1062 7.2851 29.727 7.68662L12.727 25.6866C12.3478 26.0881 11.7149 26.1062 11.3134 25.727C10.9119 25.3478 10.8938 24.7149 11.273 24.3134L28.273 6.31338C28.6522 5.91186 29.2851 5.89377 29.6866 6.27299Z" fill={fill || '#fff'} />
+    </svg>
+  );
+}

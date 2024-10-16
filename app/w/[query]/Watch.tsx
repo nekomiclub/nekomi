@@ -18,7 +18,7 @@ import KekwPlayer from '../../../components/KekwPlayer';
 import { ITitle } from '../../../interfaces/ITitle';
 import { IDubber } from '../../../interfaces/IDubber';
 import { LoadingImage } from '../../../components/Components';
-import { parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
+import { getUTC, parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
 import { useAppSelector } from '../../../hooks/redux';
 import { IcoFolderAdd } from '../../../assets/Folder';
@@ -115,8 +115,10 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                 <Menu.MenuList className='flex flex-col'>
                   <ManageLib type='favorite' lib={userLibs.find(el => el.type === 'favorite')!} isInLib={inLibs.includes('favorite')} />
                   <ManageLib type='watched' lib={userLibs.find(el => el.type === 'watched')!} isInLib={inLibs.includes('watched')} />
-                  <ManageLib type='watching' lib={userLibs.find(el => el.type === 'watching')!} isInLib={inLibs.includes('watching')} />
-                  <ManageLib type='plans' lib={userLibs.find(el => el.type === 'plans')!} isInLib={inLibs.includes('plans')} />
+                  <ManageLib type='watching' lib={userLibs.find(el => el.type === 'watching')!} isInLib={inLibs.includes('watching')}
+                    hint={state.isTelegramLinked ? 'Ти отримаєш сповіщення про нові серії в телеграм' : 'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про нові серії'} />
+                  <ManageLib type='plans' lib={userLibs.find(el => el.type === 'plans')!} isInLib={inLibs.includes('plans')}
+                    hint={state.isTelegramLinked ? title.status === 'announcement' && title.year === getUTC().y ? 'Ти отримаєш сповіщення про початок трансляції в телеграм' : undefined : 'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про початок трансляції'} />
                   <ManageLib type='delayed' lib={userLibs.find(el => el.type === 'delayed')!} isInLib={inLibs.includes('delayed')} />
                 </Menu.MenuList>
               </Menu.Menu>
@@ -229,38 +231,38 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
     )
   }
 
-  function ManageLib({ type, isInLib, lib }: { type: TUserLibType, isInLib: boolean, lib: IUserLib }) {
+  function ManageLib({ type, isInLib, lib, hint }: { type: TUserLibType, isInLib: boolean, lib: IUserLib, hint?: string }) {
     const [label, setLabel] = useState('—')
 
     useEffect(() => {
       switch (type) {
         case 'custom': {
-          setLabel(isInLib ? 'З Своїх' : 'В Свої')
+          setLabel(isInLib ? 'Видалити з Своїх тек' : 'Додати в Свої теки')
           break;
         }
 
         case 'delayed': {
-          setLabel(isInLib ? 'З Відкладених' : 'В Відкладені')
+          setLabel(isInLib ? 'Видалити з Відкладених' : 'Додати в Відкладені')
           break;
         }
 
         case 'favorite': {
-          setLabel(isInLib ? 'З Улюблених' : 'В Улюблені')
+          setLabel(isInLib ? 'Видалити з Улюблених' : 'Додати в Улюблені')
           break;
         }
 
         case 'plans': {
-          setLabel(isInLib ? 'З Планів' : 'В Плани')
+          setLabel(isInLib ? 'Видалити з Планів' : 'Додати в Плани')
           break;
         }
 
         case 'watched': {
-          setLabel(isInLib ? 'З Переглянутих' : 'В Переглянуті')
+          setLabel(isInLib ? 'Видалити з Переглянутих' : 'Додати в Переглянуті')
           break;
         }
 
         case 'watching': {
-          setLabel(isInLib ? 'З Переглядаємих' : 'В Переглядаємі')
+          setLabel(isInLib ? 'Видалити з Переглядаємих' : 'Додати в Переглядаємі')
           break;
         }
       }
@@ -285,14 +287,21 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
     }
 
     return (
-      <Menu.MenuItem className={`flex gap-[8px] px-[16px] py-[8px] hover:bg-grey focus-visible:bg-grey duration-200 cursor-pointer outline-none ${isInLib ? 'bg-grey' : ''}`} onClick={changeLib}>
-        {type === 'favorite' && <IcoHeartFilled width={24} height={24} />}
-        {type === 'watched' && <IcoWatched width={24} height={24} />}
-        {type === 'watching' && <IcoClockFilled width={24} height={24} />}
-        {type === 'plans' && <IcoStack width={24} height={24} />}
-        {type === 'delayed' && <IcoCan width={24} height={24} />}
+      <Menu.MenuItem className={`flex flex-col gap-[8px] px-[16px] py-[8px] hover:bg-grey focus-visible:bg-grey duration-200 cursor-pointer outline-none ${isInLib ? 'bg-grey' : ''}`} onClick={changeLib}>
+        <div className='flex gap-[8px]'>
+          {type === 'favorite' && <IcoHeartFilled width={24} height={24} />}
+          {type === 'watched' && <IcoWatched width={24} height={24} />}
+          {type === 'watching' && <IcoClockFilled width={24} height={24} />}
+          {type === 'plans' && <IcoStack width={24} height={24} />}
+          {type === 'delayed' && <IcoCan width={24} height={24} />}
 
-        <p className='text-white'>{label}</p>
+          <p className='text-white'>{label}</p>
+        </div>
+
+        {hint && <div className='flex gap-[8px] items-center'>
+          <IcoInfo width={16} height={16} fill='#747474' className='shrink-0' />
+          <p className='text-[12px] text-lightGrey'>{hint}</p>
+        </div>}
       </Menu.MenuItem>
     )
   }

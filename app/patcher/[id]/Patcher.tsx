@@ -9,14 +9,14 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { Menu, MenuItem, MenuList } from 'uvc-menu';
-import { memo, RefObject, useEffect, useRef, useState } from 'react';
+import { createContext, memo, RefObject, useContext, useEffect, useRef, useState } from 'react';
 
 import { useAppSelector } from '../../../hooks/redux';
 import { AnimeAgeRates, AnimeStatuses, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
 import { IDubber } from '../../../interfaces/IDubber';
 import { IUser } from '../../../interfaces/IUser';
-import { LoadingImage } from '../../../components/Components';
-import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
+import { cn, LoadingImage } from '../../../components/Components';
+import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
 import { config, prodMode } from '../../../config';
 import { routes } from '../../../routes';
 import { TRoleCapability } from '../../../interfaces/IRoles';
@@ -25,6 +25,7 @@ import { getFileExtension, getUTC, wordDeclination } from '../../../components/h
 import Tooltip from '../../../components/Tooltip';
 import { $api } from '../../../components/http';
 import { PactherStack } from './PatcherStack';
+import { IPatcherSelectOption, PatcherErrorWrapper, PatcherField, PatcherSelect } from './Components';
 
 
 
@@ -111,13 +112,45 @@ interface IEpisodesSection {
   session: string
 }
 
+interface IPatcherMetaContext {
+  meta: {
+    /** @readonly */
+    id: string
+    /** @readonly */
+    code: string
+
+    nameUkr: string
+    nameEng: string
+    nameAlt: string
+    posterURL: string
+    IMDBRating: number
+    description: string
+    status: TAnimeStatus
+    episodesCount: number
+    genres: string
+    ageRate: TAnimeAgeRate
+    season: TAnimeSeason
+    type: TTitleType
+    year: number
+    studios: string
+    country: TTitleCountry
+    details: string
+  }
+}
+
+export type TPatcherMetaKey = keyof IPatcherMetaContext['meta']
+
 type TSaveStatus = 'save' | 'saved' | 'saveError' | 'nothingChanged';
-type TFieldID = 'ukrName' | 'engName' | 'altNames' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount' | 'studios' | 'metaImdbParse' | 'metaOrder' | 'metaEngName' | 'metaUkrName' | 'metaDateOut' | 'epOrder';
+type TFieldID = 'ukrName' | 'engName' | 'altNames' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount' | 'studios' | 'metaImdbParse' | 'metaOrder' | 'metaEngName' | 'metaUkrName' | 'metaDateOut' | 'epOrder' | 'genres';
 export type TEpisodeType = 'uploaded' | 'uploading' | 'pending';
 
 
+// @ts-expect-error Need an empty object
+export const PatcherMetaContext = createContext<IPatcherMetaContext>({})
 
-const titleStatusOptions: ISelectOption<TAnimeStatus>[] = [{
+
+
+const titleStatusOptions: IPatcherSelectOption<TAnimeStatus>[] = [{
   code: 'announcement',
   label: 'Анонс'
 }, {
@@ -131,7 +164,7 @@ const titleStatusOptions: ISelectOption<TAnimeStatus>[] = [{
   label: 'Вийшов'
 }]
 
-const titleTypeOptions: ISelectOption<TTitleType>[] = [{
+const titleTypeOptions: IPatcherSelectOption<TTitleType>[] = [{
   code: 'ONA',
   label: 'ОНА'
 }, {
@@ -148,7 +181,7 @@ const titleTypeOptions: ISelectOption<TTitleType>[] = [{
   label: 'Спешл'
 }]
 
-const titleCountryOptions: ISelectOption<TTitleCountry>[] = [{
+const titleCountryOptions: IPatcherSelectOption<TTitleCountry>[] = [{
   code: 'China',
   label: 'Китай'
 }, {
@@ -162,7 +195,7 @@ const titleCountryOptions: ISelectOption<TTitleCountry>[] = [{
   label: 'Інша'
 }]
 
-const titleSeasonOptions: ISelectOption<TAnimeSeason>[] = [{
+const titleSeasonOptions: IPatcherSelectOption<TAnimeSeason>[] = [{
   code: 'autumn',
   label: 'Осінь'
 }, {
@@ -176,7 +209,7 @@ const titleSeasonOptions: ISelectOption<TAnimeSeason>[] = [{
   label: 'Зима'
 }]
 
-const titleAgeRateOptions: ISelectOption<TAnimeAgeRate>[] = AnimeAgeRates.map(rate => {
+const titleAgeRateOptions: IPatcherSelectOption<TAnimeAgeRate>[] = AnimeAgeRates.map(rate => {
   return {
     code: rate,
     label: rate
@@ -387,41 +420,25 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
   </div>
 })
 
-const ErrorsWrapper = memo(function ErrorsWrapper({ errors }: { errors: string[] }) {
-  return <section className={`px-[16px] py-[8px] rounded-[2px] border border-red bg-red/[.2] flex ${errors.length === 1 ? 'items-center' : ''} gap-[24px] ${!errors.length ? 'hidden' : ''}`}>
-    <IcoGhost width={32} height={32} />
-
-    <div className='flex flex-col gap-4px h-fit'>
-      {errors.map((el, i) => {
-        return <p className='text-white' key={`error--${i}`}>{el}</p>
-      })}
-    </div>
-  </section>
-})
 
 
-
-const TitleMetaSection = memo(function TitleMetaSection({
-  title,
-  canTitleEdit,
-  canTitleDelete,
-  session
-}: IHeaderSectionProps) {
+const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, canTitleDelete, session }: IHeaderSectionProps) {
   const router = useRouter();
+  const MetaCtx = useContext(PatcherMetaContext);
 
   const [errors, setErrors] = useState<string[]>([])
-
   const [saveStatus, setSaveStatus] = useState<TSaveStatus>('save')
   const [poster, setPoster] = useState(title.poster);
   const [isPosterOnAnimee, setIsPosterOnAnimee] = useState(poster.includes('media.animee.club'))
 
-  const [titleStatus, setTitleStatus] = useState(title.status);
-  const [titleAgeRate, setTitleAgeRate] = useState(title.ageRate);
-  const [titleCountry, setTitleCountry] = useState(title.country);
-  const [titleSeason, setTitleSeason] = useState(title.season);
-  const [titleType, setTitleType] = useState(title.type);
-
   const fileRef = useRef<HTMLInputElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+
+
+
+  useEffect(() => {
+    console.log(MetaCtx.meta)
+  }, [MetaCtx])
 
 
 
@@ -437,11 +454,9 @@ const TitleMetaSection = memo(function TitleMetaSection({
     setErrors([])
 
     const input = fileRef.current;
-
     if (!input || !input.files) return;
 
     const file = input.files[0];
-
     if (file.size >= config.vars.PATCHER_POSTER_MAX_SIZE) {
       return appendError('Файл занадто великий (>2MB)');
     };
@@ -457,142 +472,17 @@ const TitleMetaSection = memo(function TitleMetaSection({
           Authorization: session
         }
       })
-      const poster = `${config.URL.media}/${data.id}`;
 
-      setPoster(poster);
+      setPoster(`${config.URL.media}/${data.id}`);
       setIsPosterOnAnimee(true);
 
       console.log(`[+]: Poster uploaded`)
     } catch (e) {
       if (e instanceof AxiosError) {
-        appendError(`Помилка при оновленні постера - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        appendError(`Помилка при оновленні постера - ${e.code}; ${JSON.stringify(e.response?.data.message || e.response?.data.msg)}`)
       } else {
-        appendError(`Помилка при оновленні постера - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        appendError(`Помилка при оновленні постера. Будь ласка, відправте лог консолі браузера в тікет на діскорд сервері`)
       }
-    }
-  }
-
-
-
-  async function patchTitleMeta() {
-    // Reset
-    const inputs = document.querySelectorAll('.patcher-field.patcher-title') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>
-    const errors: string[] = []
-
-    setErrors([]);
-
-    inputs.forEach(el => {
-      el.classList.remove('patcher-field--saved')
-    })
-
-
-
-    try {
-      const pending = document.querySelectorAll('.patcher-field--pending.patcher-title') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>;
-      const errored = document.querySelectorAll('.patcher-field--error.patcher-title');
-      const patchBody: {
-        changeNames?: {
-          alt?: string[],
-          ukr?: string,
-          eng?: string
-        },
-        setRating?: number
-        setDescription?: string
-        setAgeRate?: TAnimeAgeRate
-        setSeason?: TAnimeSeason
-        setStatus?: TAnimeStatus
-        setType?: TTitleType
-        setCountry?: TTitleCountry
-        setEps?: number
-        setGenres?: TAnimeGenre[]
-        setStudios?: string[]
-        setYear?: number
-        setDetails?: string
-      } = {
-        changeNames: {
-          alt: title.names.alt
-        }
-      };
-
-      if (errored.length) {
-        appendError('Деякі поля містять помилки.')
-
-        setSaveStatus('saveError');
-
-        return;
-      }
-
-      pending.forEach(el => {
-        const id = el.id.replace('patcher-', '') as TFieldID;
-        const value = el.value;
-
-        if (id === 'ukrName') {
-          patchBody.changeNames = patchBody.changeNames || {};
-          patchBody.changeNames.ukr = value;
-        } else if (id === 'engName') {
-          patchBody.changeNames = patchBody.changeNames || {};
-          patchBody.changeNames.eng = value;
-        } else if (id === 'altNames') {
-          patchBody.changeNames = patchBody.changeNames || {};
-          patchBody.changeNames.alt = value.split(',');
-        } else if (id === 'studios') {
-          patchBody.setStudios = value.split(',');
-        } else if (id === 'imdbRating') {
-          if (isNaN(+value)) return rejectField('Рейтинг IMDB може містити тільки цифри', el, errors)
-
-          patchBody.setRating = +value;
-        } else if (id === 'episodesCount') {
-          if (isNaN(+value)) return rejectField('Епізоди можуть містити тільки цифри', el, errors);
-
-          patchBody.setEps = +value;
-        } else if (id === 'year') {
-          if (isNaN(+value)) return rejectField('Рік може містити тільки цифри', el, errors);
-
-          patchBody.setYear = +value;
-        } else if (id === 'description') {
-          patchBody.setDescription = value
-        } else if (id === 'details') {
-          patchBody.setDetails = value
-        }
-
-        el.classList.add('patcher-field--saved')
-      })
-
-      if (errors.length) {
-        return setSaveStatus('saveError');
-      }
-
-      if (titleStatus !== title.status) patchBody.setStatus = titleStatus;
-      if (titleAgeRate !== title.ageRate) patchBody.setAgeRate = titleAgeRate;
-      if (titleCountry !== title.country) patchBody.setCountry = titleCountry;
-      if (titleSeason !== title.season) patchBody.setSeason = titleSeason;
-      if (titleType !== title.type) patchBody.setType = titleType;
-
-      if (!Object.keys(patchBody).length) return setSaveStatus('nothingChanged');
-
-      console.log(`[+]: Title meta patched`)
-
-      await $api.patch(`/title/${title!.id}`, patchBody)
-
-      setSaveStatus('saved')
-    } catch (e) {
-      if (e instanceof AxiosError) {
-        errors.push(`Помилка при оновлені даних - ${e.code}; ${JSON.stringify(e.response?.data?.msg)}`)
-      } else {
-        errors.push(`Помилка при оновленні даних - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
-      }
-
-      setSaveStatus('saveError')
-    } finally {
-      errors.forEach(err => appendError(err))
-
-      setTimeout(() => {
-        setSaveStatus('save')
-
-        inputs.forEach(el => {
-          el.classList.remove('patcher-field--saved')
-        })
-      }, 3000);
     }
   }
 
@@ -612,13 +502,75 @@ const TitleMetaSection = memo(function TitleMetaSection({
         router.refresh();
       } catch (e) {
         if (e instanceof AxiosError) {
-          appendError(`Помилка видалення тайтлу - ${e.response?.data?.msg}`)
+          appendError(`Помилка видалення тайтлу - ${e.response?.data?.message || e.response?.data?.msg}`)
         } else {
-          appendError(`Помилка видалення тайтлу - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+          appendError(`Помилка видалення тайтлу. Будь ласка, відправте лог консолі браузера в тікет на діскорд сервері`)
         }
       }
     } else {
-      console.log('[+]: Title not deleted')
+      console.log('[+]: Title delete aborted')
+    }
+  }
+
+  async function patchTitleMeta() {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    setErrors([]);
+    if (wrapper.querySelector('.patcher-field--error')) return appendError('Деякі поля містять помилки');
+
+    // const patchBody: {
+    //   changeNames?: {
+    //     alt?: string[],
+    //     ukr?: string,
+    //     eng?: string
+    //   },
+    //   setRating?: number
+    //   setDescription?: string
+    //   setAgeRate?: TAnimeAgeRate
+    //   setSeason?: TAnimeSeason
+    //   setStatus?: TAnimeStatus
+    //   setType?: TTitleType
+    //   setCountry?: TTitleCountry
+    //   setEps?: number
+    //   setGenres?: TAnimeGenre[]
+    //   setStudios?: string[]
+    //   setYear?: number
+    //   setDetails?: string
+    // } = {
+    //   changeNames: {
+    //     alt: MetaCtx.meta.nameAlt.split(',')
+    //   }
+    // };
+
+    const pending: TPatcherMetaKey[] = [];
+
+    (wrapper.querySelectorAll('.patcher-field--pending') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>).forEach(el => {
+      const wrapper = el.closest('.patcher-field_wrapper')!;
+      const key = wrapper.id.replace('patcher-field--', '') as TPatcherMetaKey;
+    });
+
+    (wrapper.querySelectorAll('.patcher-select--pending') as NodeListOf<HTMLButtonElement>).forEach(el => {
+      const wrapper = el.closest('.patcher-select_wrapper')!;
+      const key = wrapper.id.replace('patcher-select--', '') as TPatcherMetaKey;
+    });
+
+    try {
+      if (!pending.length) return setSaveStatus('nothingChanged');
+
+      setSaveStatus('saved')
+    } catch (e) {
+      setSaveStatus('saveError')
+
+      if (e instanceof AxiosError) {
+        appendError(e.response?.data.message || e.response?.data.msg || e.code)
+      } else {
+        appendError(`Сталась помилка при оновлені інформації про тайтл. Будь ласка, відправ лог консолі браузера в тікет на діскорд сервері`)
+      }
+    } finally {
+      setTimeout(() => {
+        setSaveStatus('save')
+      }, 3000);
     }
   }
 
@@ -627,23 +579,17 @@ const TitleMetaSection = memo(function TitleMetaSection({
     setErrors(errors => [...errors.filter(el => el !== emsg), emsg])
   }
 
-  function rejectField(emsg: string, el: HTMLElement, errors: string[]) {
-    el.classList.add('patcher-field--error')
-    errors.push(emsg)
-  }
-
 
 
   return <section className='flex flex-col gap-[16px]'>
-    <ErrorsWrapper errors={errors} />
+    <PatcherErrorWrapper errors={errors} section='meta' />
 
-    {/* Top */}
-    <div className='flex gap-[32px] max-[1200px]:flex-col'>
-      {/* Poster section */}
+    {/* Meta section */}
+    <div className='flex gap-[32px] max-[1280px]:flex-col'>
+      {/* Poster */}
       <div className='flex flex-col gap-[24px]'>
-        {/* Poster */}
         <div className='flex flex-col gap-[8px] items-center'>
-          <div className={`patcher-poster ${canTitleEdit ? 'cursor-pointer' : ''} w-[500px] h-[700px] max-[670px]:w-full max-[670px]:h-[500px]`} onClick={canTitleEdit ? chooseFile : undefined}>
+          <div className={cn(`patcher-poster w-[600px] h-[800px] max-[670px]:w-full max-[670px]:h-[500px]`, canTitleEdit && 'cursor-pointer')} onClick={canTitleEdit ? chooseFile : undefined}>
             {/* Input */}
             <input type="file" accept='.png,.jpg,.webp' ref={fileRef} className='hidden' onChange={uploadPoster} />
 
@@ -659,11 +605,10 @@ const TitleMetaSection = memo(function TitleMetaSection({
           {!isPosterOnAnimee && <p className='text-orange'>* Постер не на сервері animee.club</p>}
         </div>
 
-        {/* Meta section */}
         <div className='flex flex-col gap-[24px]'>
           <div className='flex flex-col gap-[4px]'>
             {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${saveStatus}`} onClick={patchTitleMeta} disabled={!canTitleEdit}>
-              {(saveStatus === 'save' || saveStatus === 'saved') && <IcoUpdate width={32} height={32} />}
+              {(saveStatus === 'save' || saveStatus === 'saved') && <IcoCheckmark width={32} height={32} />}
               {saveStatus === 'saveError' && <IcoCross width={32} height={32} />}
               {saveStatus === 'nothingChanged' && <IcoGhost width={32} height={32} />}
 
@@ -677,7 +622,7 @@ const TitleMetaSection = memo(function TitleMetaSection({
 
             <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${title.code}`} className='patcher-button_action'>
               <IcoAnimeeLogo width={32} height={32} />
-              <p className='text-white uppercase text-center'>тайтл на animee.club</p>
+              <p className='text-white uppercase text-center'>тайтл на сайті</p>
             </Link>
           </div>
 
@@ -694,53 +639,37 @@ const TitleMetaSection = memo(function TitleMetaSection({
         </div>
       </div>
 
-      {/* Fields */}
-      <div className='flex flex-col gap-[8px] w-full'>
-        {/* Ukr name */}
-        <Field label='Назва' id='ukrName' initialValue={title.names.ukr} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
+      {/* Meta fields */}
+      <div className='flex flex-col gap-[8px] w-full' ref={wrapperRef}>
+        <PatcherField label='Українська назва' id='nameUkr' symbolsLimited={256} />
 
-        {/* Alt names */}
         <div className='pl-[16px]'>
-          <Field label='Англійська' id='engName' initialValue={title.names.eng} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
-
-          {canTitleEdit && <Field label='Альтернативні' id='altNames' note='Через кому' initialValue={Array.isArray(title.names.alt) ? title.names.alt.join(', ') : title.names.alt} isLocked={!canTitleEdit} symbolsLimited={512} type='title' isLarge />}
+          <PatcherField label='Англійська' id='nameEng' symbolsLimited={256} />
+          <PatcherField label='Альтернативні' id='nameAlt' note='Через кому' type='textarea' value={Array.isArray(MetaCtx.meta.nameAlt) ? MetaCtx.meta.nameAlt.join(', ') : MetaCtx.meta.nameAlt} symbolsLimited={256} />
         </div>
 
-        {/* Status */}
-        <Select label='Статус' options={titleStatusOptions} value={titleStatus} valueSetter={setTitleStatus} isLocked={!canTitleEdit} />
+        <PatcherSelect label='Статус' id='status' options={titleStatusOptions} />
+        <PatcherSelect label='Тип' id='type' options={titleTypeOptions} />
 
-        {/* Type */}
-        <Select label='Тип' options={titleTypeOptions} value={titleType} valueSetter={setTitleType} isLocked={!canTitleEdit} />
+        <PatcherField label='Рейтинг IMDb' id='IMDBRating' note='1 - 10, 0 - відсутній' type='number' symbolsLimited={3} />
 
-        {/* IMDB rating */}
-        <Field label='Рейтинг IMDB' id='imdbRating' note='1 - 10, 0 - Відсутній' initialValue={`${title.rating.IMDB || '0'}`} isLocked={!canTitleEdit} symbolsLimited={3} type='title' />
+        <PatcherSelect label='Віковий рейтинг' id='ageRate' options={titleAgeRateOptions} />
 
-        {/* Age rate */}
-        <Select label='Віковий рейтинг' options={titleAgeRateOptions} value={titleAgeRate} valueSetter={setTitleAgeRate} isLocked={!canTitleEdit} />
+        <PatcherField label='Епізоди' id='episodesCount' note='1 - 9999, 0 - відсутні' type='number' symbolsLimited={4} />
+        <PatcherField label='Студії' id='studios' note='Через кому' symbolsLimited={256} />
 
-        {/* Episodes count */}
-        <Field label='Епізоди' id='episodesCount' note='1 - 9999, 0 - Відсутні' initialValue={`${title.episodesCount || '0'}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
+        <PatcherSelect label='Країна' id='country' options={titleCountryOptions} />
+        <PatcherSelect label='Сезон' id='season' options={titleSeasonOptions} />
 
-        {/* Studios */}
-        <Field label='Студії' id='studios' note='Через кому' initialValue={Array.isArray(title.studios) ? title.studios.join(', ') : title.studios} isLocked={!canTitleEdit} symbolsLimited={256} type='title' />
-
-        {/* Country */}
-        <Select label='Країна' options={titleCountryOptions} value={titleCountry} valueSetter={setTitleCountry} isLocked={!canTitleEdit} />
-
-        {/* Season */}
-        <Select label='Сезон' options={titleSeasonOptions} value={titleSeason} valueSetter={setTitleSeason} isLocked={!canTitleEdit} />
-
-        {/* Year */}
-        <Field label='Рік' id='year' note='2007 - 2050' initialValue={`${title.year}`} isLocked={!canTitleEdit} symbolsLimited={4} type='title' />
-
-        {/* Details */}
-        {canTitleEdit && <Field label='Деталі' id='details' note='Не обов`язково' isLarge initialValue={title.details || ''} isLocked={!canTitleEdit} symbolsLimited={500} type='title' />}
+        <PatcherField label='Рік' id='year' note='2007 - 2050' type='number' symbolsLimited={4} />
       </div>
     </div>
 
     {/* Textareas */}
-    {/* Description */}
-    <Field label='Опис' id='description' isLarge initialValue={title.description} isLocked={!canTitleEdit} symbolsLimited={2200} type='title' />
+    <div className='flex gap-[8px] max-[970px]:flex-col'>
+      <PatcherField id='description' label='Опис' locked={!canTitleEdit} symbolsLimited={2200} type='textarea' />
+      {canTitleEdit && <PatcherField id='details' label='Деталі' note='Не обов`язково' symbolsLimited={500} type='textarea' />}
+    </div>
   </section>
 })
 
@@ -964,7 +893,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
   return canEditEpsMeta && <section className='flex flex-col gap-[16px]'>
     <Label label='Інформація про серії' />
 
-    <ErrorsWrapper errors={errors} />
+    <PatcherErrorWrapper errors={errors} section='ep_meta' />
 
     <div className='flex flex-col gap-[24px]'>
       <div className='flex flex-col gap-[16px]'>
@@ -1275,7 +1204,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     <div className='flex flex-col gap-[16px] w-full'>
       <Label label='Озвучення' />
 
-      <ErrorsWrapper errors={errors} />
+      <PatcherErrorWrapper errors={errors} section='ep_dubbing' />
 
       {canSeriesAdd && <div className='flex items-center gap-[16px] max-[940px]:flex-col w-full'>
         {isMobile ? <>
@@ -1375,7 +1304,28 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
 
 
 
-  return (
+  return <PatcherMetaContext.Provider value={{
+    meta: {
+      id: title.id,
+      code: title.code,
+      nameUkr: title.names.ukr,
+      nameEng: title.names.eng,
+      nameAlt: title.names.alt.join(', '),
+      posterURL: title.poster,
+      IMDBRating: Number(title.rating.IMDB),
+      description: title.description,
+      status: title.status,
+      episodesCount: Number(title.episodesCount),
+      genres: title.genres.join(', '),
+      ageRate: title.ageRate,
+      season: title.season,
+      type: title.type,
+      year: title.year,
+      studios: title.studios.join(', '),
+      country: title.country,
+      details: String(title.details),
+    }
+  }}>
     <div className='w-full h-full min-h-screen bg-dark'>
       <div className="wrapper !pt-[132px] !pb-[60px] flex flex-col gap-[24px]">
         {/* Header */}
@@ -1435,7 +1385,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
         </div>
       </div>
     </div>
-  );
+  </PatcherMetaContext.Provider>
 }
 
 export default Patcher;

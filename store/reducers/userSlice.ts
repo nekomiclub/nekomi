@@ -13,6 +13,7 @@ export interface IUserState {
   capabilities: TRoleCapability[]
   watchProgress: IUserWatchProgress[]
   loaded: boolean
+  isTelegramLinked: boolean
 }
 
 /** Default user state */
@@ -23,7 +24,8 @@ export const userStateDefault: IUserState = {
   roles: [],
   capabilities: [],
   watchProgress: [],
-  loaded: false
+  loaded: false,
+  isTelegramLinked: false
 }
 
 const userSlice = createSlice({

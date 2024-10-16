@@ -79,7 +79,7 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
             parseRoles: true
           }
         });
-        const { avatar, id, roles, username, watchProgress } = data.user;
+        const { avatar, id, roles, username, watchProgress, statistics } = data.user;
 
         dispatch(userSlice.actions.reducer({
           avatar,
@@ -88,7 +88,8 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
           username,
           watchProgress,
           capabilities: data.parsedRoles,
-          loaded: true
+          loaded: true,
+          isTelegramLinked: statistics.isTelegramLinked
         }))
       } catch (e) {
         const state = { ...userStateDefault };

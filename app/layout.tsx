@@ -2,6 +2,7 @@
 import 'react-loading-skeleton/dist/skeleton.css'
 import 'uvc-menu/css';
 import '@fullkekw/fkw-popup/css'
+import '@fullkekw/fkw-menu/css'
 import 'swiper/css';
 
 import '../styles/globals.css';
@@ -54,15 +55,17 @@ export default async function Layout({ children, params }: ILayoutProps) {
   // Check is server online
   let isServerOnline = false;
 
-  try {
-    await axios.options(config.URL.apiHTTP)
-    isServerOnline = true;
-  } catch (e) {
-    isServerOnline = false
-  }
+
 
   // Pass polling page anyway
-  if (route?.path === '/polling') {
+  if (route?.path !== '/polling') {
+    try {
+      await axios.options(config.URL.apiHTTP)
+      isServerOnline = true;
+    } catch (e) {
+      isServerOnline = false;
+    }
+  } else {
     isServerOnline = true;
   }
 
