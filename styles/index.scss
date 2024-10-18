@@ -32,6 +32,19 @@ img {
   object-position: center;
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
 .wrapper {
   min-width: calc($wrapperMinWidth + calc($wrapperSidePadding * 2));
   width: 100%;

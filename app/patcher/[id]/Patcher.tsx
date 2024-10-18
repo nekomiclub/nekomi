@@ -20,7 +20,7 @@ import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLin
 import { config, prodMode } from '../../../config';
 import { routes } from '../../../routes';
 import { TRoleCapability } from '../../../interfaces/IRoles';
-import { DeepPartial } from '../../../interfaces/Interfaces';
+import { DeepPartial, TEpisodeQuality } from '../../../interfaces/Interfaces';
 import { getFileExtension, getUTC, wordDeclination } from '../../../components/handlers';
 import Tooltip from '../../../components/Tooltip';
 import { $api } from '../../../components/http';
@@ -138,6 +138,66 @@ interface IPatcherMetaContext {
   }
 }
 
+interface IPatchTitleBody {
+  names?: {
+    eng?: string
+    ukr?: string
+    alt?: string[]
+  }
+  ageRate?: TAnimeAgeRate
+  country?: TTitleCountry
+  description?: string
+  details?: string
+  genres?: TAnimeGenre[]
+  season?: TAnimeSeason
+  status?: TAnimeStatus
+  studios?: string[]
+  type?: TTitleType
+  year?: number
+  episodesCount?: number
+  IMDBRating?: number
+  AnimeeRating?: number
+
+  editEpMeta?: IChangeEpMeta
+  parseIMDBEpisodesMeta?: string
+
+  deleteEpisode?: IDeleteEpisode
+
+  // Form Data
+  uploadEpisode?: IUploadEpisode
+
+  uploadPoster?: IUploadPoster
+}
+
+interface IDeleteEpisode {
+  order: number
+  dubberID: string
+}
+
+interface IUploadEpisode {
+  file?: any
+  type: TPatchTitleFormDataType
+  order: number,
+  dubberID: string
+  qualities: TEpisodeQuality[]
+}
+
+interface IUploadPoster {
+  /** req.file */
+  file?: any
+  type: TPatchTitleFormDataType
+}
+
+export interface IChangeEpMeta extends ITitleEpisodeMeta {
+  action: 'edit' | 'delete'
+}
+
+export interface IFieldStatus {
+  id: TPatcherMetaKey
+  status: 'errror' | 'pending' | 'saved';
+}
+
+type TPatchTitleFormDataType = 'change_poster' | 'upload_episode';
 export type TPatcherMetaKey = keyof IPatcherMetaContext['meta']
 
 type TSaveStatus = 'save' | 'saved' | 'saveError' | 'nothingChanged';
@@ -430,15 +490,10 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, c
   const [saveStatus, setSaveStatus] = useState<TSaveStatus>('save')
   const [poster, setPoster] = useState(title.poster);
   const [isPosterOnAnimee, setIsPosterOnAnimee] = useState(poster.includes('media.animee.club'))
+  const [fieldsStatus, setFieldsStatus] = useState<IFieldStatus[]>([])
 
   const fileRef = useRef<HTMLInputElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
-
-
-
-  useEffect(() => {
-    console.log(MetaCtx.meta)
-  }, [MetaCtx])
 
 
 
@@ -467,13 +522,13 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, c
       formData.append('file', file);
       formData.append('type', 'change_poster');
 
-      const { data } = await $api.patch<{ id: string }>(`${config.URL.apiProxy}/title/${title.id}`, formData, {
+      const { data } = await $api.patch<{ posterURL: string }>(`${config.URL.apiProxy}/title/${title.id}`, formData, {
         headers: {
           Authorization: session
         }
       })
 
-      setPoster(`${config.URL.media}/${data.id}`);
+      setPoster(data.posterURL);
       setIsPosterOnAnimee(true);
 
       console.log(`[+]: Poster uploaded`)
@@ -519,45 +574,73 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, c
     setErrors([]);
     if (wrapper.querySelector('.patcher-field--error')) return appendError('Деякі поля містять помилки');
 
-    // const patchBody: {
-    //   changeNames?: {
-    //     alt?: string[],
-    //     ukr?: string,
-    //     eng?: string
-    //   },
-    //   setRating?: number
-    //   setDescription?: string
-    //   setAgeRate?: TAnimeAgeRate
-    //   setSeason?: TAnimeSeason
-    //   setStatus?: TAnimeStatus
-    //   setType?: TTitleType
-    //   setCountry?: TTitleCountry
-    //   setEps?: number
-    //   setGenres?: TAnimeGenre[]
-    //   setStudios?: string[]
-    //   setYear?: number
-    //   setDetails?: string
-    // } = {
-    //   changeNames: {
-    //     alt: MetaCtx.meta.nameAlt.split(',')
-    //   }
-    // };
+    const pendingInputs = (wrapper.querySelectorAll('.patcher-field--pending') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>);
+    const pendingSelects = (wrapper.querySelectorAll('.patcher-select--pending') as NodeListOf<HTMLButtonElement>);
 
-    const pending: TPatcherMetaKey[] = [];
+    const fieldsStatus: IFieldStatus[] = []
+    const patchBody: IPatchTitleBody = {};
 
-    (wrapper.querySelectorAll('.patcher-field--pending') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>).forEach(el => {
+    // Parse inputs
+    pendingInputs.forEach(el => {
       const wrapper = el.closest('.patcher-field_wrapper')!;
       const key = wrapper.id.replace('patcher-field--', '') as TPatcherMetaKey;
+
+      const simpleTypes: TPatcherMetaKey[] = ['description', 'details', 'IMDBRating', 'episodesCount', 'year'];
+      if (simpleTypes.includes(key)) {
+        fieldsStatus.push({ id: key, status: 'saved' })
+        patchBody[key] = MetaCtx.meta[key]
+      };
+
+      switch (key) {
+        case 'nameEng': {
+          patchBody.names = patchBody.names || {};
+          patchBody.names.eng = MetaCtx.meta.nameEng
+          fieldsStatus.push({ id: key, status: 'saved' })
+          break
+        }
+
+        case 'nameUkr': {
+          patchBody.names = patchBody.names || {};
+          patchBody.names.ukr = MetaCtx.meta.nameUkr
+          fieldsStatus.push({ id: key, status: 'saved' })
+          break
+        }
+
+        case 'nameAlt': {
+          patchBody.names = patchBody.names || {};
+          patchBody.names!.alt = MetaCtx.meta.nameAlt.split(',');
+          fieldsStatus.push({ id: key, status: 'saved' })
+          break
+        }
+
+        case 'studios': {
+          patchBody.studios = MetaCtx.meta.studios.split(',');
+          fieldsStatus.push({ id: key, status: 'saved' })
+          break
+        }
+      }
     });
 
-    (wrapper.querySelectorAll('.patcher-select--pending') as NodeListOf<HTMLButtonElement>).forEach(el => {
+    // Parse selects
+    pendingSelects.forEach(el => {
       const wrapper = el.closest('.patcher-select_wrapper')!;
       const key = wrapper.id.replace('patcher-select--', '') as TPatcherMetaKey;
+
+      const simpleTypes: TPatcherMetaKey[] = ['ageRate', 'country', 'season', 'status', 'type'];
+      if (simpleTypes.includes(key)) {
+        fieldsStatus.push({ id: key, status: 'saved' })
+        patchBody[key] = MetaCtx.meta[key];
+      }
     });
 
-    try {
-      if (!pending.length) return setSaveStatus('nothingChanged');
 
+
+    try {
+      if (!Object.keys(patchBody).length) return setSaveStatus('nothingChanged');
+
+      await $api.patch(`/title/${title.id}`, patchBody);
+
+      setFieldsStatus(fieldsStatus)
       setSaveStatus('saved')
     } catch (e) {
       setSaveStatus('saveError')
@@ -581,7 +664,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, c
 
 
 
-  return <section className='flex flex-col gap-[16px]'>
+  return <section className='flex flex-col gap-[16px]' ref={wrapperRef}>
     <PatcherErrorWrapper errors={errors} section='meta' />
 
     {/* Meta section */}
@@ -591,7 +674,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, c
         <div className='flex flex-col gap-[8px] items-center'>
           <div className={cn(`patcher-poster w-[600px] h-[800px] max-[670px]:w-full max-[670px]:h-[500px]`, canTitleEdit && 'cursor-pointer')} onClick={canTitleEdit ? chooseFile : undefined}>
             {/* Input */}
-            <input type="file" accept='.png,.jpg,.webp' ref={fileRef} className='hidden' onChange={uploadPoster} />
+            <input type="file" accept='.png,.jpg,.webp' ref={fileRef} className='hidden' onClick={e => (e.target as HTMLInputElement).value = ''} onChange={uploadPoster} />
 
             <LoadingImage src={poster} width='100%' height='100%' parentClassName='overflow-hidden rounded-[4px]' />
 
@@ -640,35 +723,35 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, c
       </div>
 
       {/* Meta fields */}
-      <div className='flex flex-col gap-[8px] w-full' ref={wrapperRef}>
-        <PatcherField label='Українська назва' id='nameUkr' symbolsLimited={256} />
+      <div className='flex flex-col gap-[8px] w-full'>
+        <PatcherField label='Українська назва' id='nameUkr' symbolsLimited={256} fieldsStatus={fieldsStatus} />
 
         <div className='pl-[16px]'>
-          <PatcherField label='Англійська' id='nameEng' symbolsLimited={256} />
-          <PatcherField label='Альтернативні' id='nameAlt' note='Через кому' type='textarea' value={Array.isArray(MetaCtx.meta.nameAlt) ? MetaCtx.meta.nameAlt.join(', ') : MetaCtx.meta.nameAlt} symbolsLimited={256} />
+          <PatcherField label='Англійська' id='nameEng' symbolsLimited={256} fieldsStatus={fieldsStatus} />
+          <PatcherField label='Альтернативні' id='nameAlt' note='Через кому' type='textarea' value={Array.isArray(MetaCtx.meta.nameAlt) ? MetaCtx.meta.nameAlt.join(', ') : MetaCtx.meta.nameAlt} symbolsLimited={256} fieldsStatus={fieldsStatus} />
         </div>
 
-        <PatcherSelect label='Статус' id='status' options={titleStatusOptions} />
-        <PatcherSelect label='Тип' id='type' options={titleTypeOptions} />
+        <PatcherSelect label='Статус' id='status' options={titleStatusOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label='Тип' id='type' options={titleTypeOptions} fieldsStatus={fieldsStatus} />
 
-        <PatcherField label='Рейтинг IMDb' id='IMDBRating' note='1 - 10, 0 - відсутній' type='number' symbolsLimited={3} />
+        <PatcherField label='Рейтинг IMDb' id='IMDBRating' note='1 - 10, 0 - відсутній' type='number' symbolsLimited={3} fieldsStatus={fieldsStatus} />
 
-        <PatcherSelect label='Віковий рейтинг' id='ageRate' options={titleAgeRateOptions} />
+        <PatcherSelect label='Віковий рейтинг' id='ageRate' options={titleAgeRateOptions} fieldsStatus={fieldsStatus} />
 
-        <PatcherField label='Епізоди' id='episodesCount' note='1 - 9999, 0 - відсутні' type='number' symbolsLimited={4} />
-        <PatcherField label='Студії' id='studios' note='Через кому' symbolsLimited={256} />
+        <PatcherField label='Епізоди' id='episodesCount' note='1 - 9999, 0 - відсутні' type='number' symbolsLimited={4} fieldsStatus={fieldsStatus} />
+        <PatcherField label='Студії' id='studios' note='Через кому' symbolsLimited={256} fieldsStatus={fieldsStatus} />
 
-        <PatcherSelect label='Країна' id='country' options={titleCountryOptions} />
-        <PatcherSelect label='Сезон' id='season' options={titleSeasonOptions} />
+        <PatcherSelect label='Країна' id='country' options={titleCountryOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label='Сезон' id='season' options={titleSeasonOptions} fieldsStatus={fieldsStatus} />
 
-        <PatcherField label='Рік' id='year' note='2007 - 2050' type='number' symbolsLimited={4} />
+        <PatcherField label='Рік' id='year' note='2007 - 2050' type='number' symbolsLimited={4} fieldsStatus={fieldsStatus} />
       </div>
     </div>
 
     {/* Textareas */}
     <div className='flex gap-[8px] max-[970px]:flex-col'>
-      <PatcherField id='description' label='Опис' locked={!canTitleEdit} symbolsLimited={2200} type='textarea' />
-      {canTitleEdit && <PatcherField id='details' label='Деталі' note='Не обов`язково' symbolsLimited={500} type='textarea' />}
+      <PatcherField id='description' label='Опис' locked={!canTitleEdit} symbolsLimited={2200} type='textarea' fieldsStatus={fieldsStatus} />
+      {canTitleEdit && <PatcherField id='details' label='Деталі' note='Не обов`язково' symbolsLimited={500} type='textarea' fieldsStatus={fieldsStatus} />}
     </div>
   </section>
 })

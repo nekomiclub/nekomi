@@ -20,46 +20,50 @@ import { IcoClockOutlined } from '../assets/Clock';
 import Image from 'next/image';
 import { useAppSelector } from '../hooks/redux';
 import { IUserState } from '../store/reducers/userSlice';
+import { IUserWatchProgress } from '../interfaces/IUser';
 
 
 
-interface IProps {
-  headliner: ITitle
-  headlinerPoster: string
-  headlinerVideo: string
-
-  categories: IHomeCategories
+interface ITitleWithMediaMeta extends ITitle {
+  videoURL: string
+  backgroundURL: string
 }
 
-export interface IHomeCategories {
+export interface IHomeWrapped {
+  /** Home featured titles */
+  featured: ITitleWithMediaMeta[]
+
   popular: ITitle[]
   updatedRecently: ITitle[]
-  hightRating: ITitle[]
+  hightRated: ITitle[]
 }
 
-type TCategory = 'popular' | 'updatedRecently' | 'hightRate';
+interface IProps {
+  data: IHomeWrapped
+  watchProgress: IUserWatchProgress[]
+}
+
+type TCategory = keyof IHomeWrapped;
 
 
 
-const WatchHeadliner: NextPage<{ className?: string, user: IUserState, headliner: ITitle }> = ({ headliner, user, className }) => {
+const WatchHeadliner: NextPage<{ className?: string, watchProgress?: IUserWatchProgress, headliner: ITitle }> = ({ headliner, watchProgress, className }) => {
   const [label, setLabel] = useState('розпочати перегляд')
 
-  useMemo(() => {
+  useEffect(() => {
     if (typeof window === "undefined") return;
 
     const localData = JSON.parse(window.localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
-    const watchProgress = user.watchProgress;
+    const localCurrent = localData.find(el => el.id === headliner.id);
 
-    if (user.id) {
-      const current = watchProgress.find(el => el.titleID === headliner.id);
-
-      if (current) setLabel(`продовжити (${current.episodeOrder} серія, ${secondsToReadable(current.progress).pretty})`);
+    if (watchProgress) {
+      setLabel(`продовжити (${watchProgress.episodeOrder} серія, ${secondsToReadable(watchProgress.progress).pretty})`);
+    } else if (localCurrent) {
+      setLabel(`продовжити (${localCurrent.ep} серія, ${secondsToReadable(localCurrent.moment).pretty})`);
     } else {
-      const current = localData.find(el => el.id === headliner.id);
-
-      if (current) setLabel(`продовжити (${current.ep} серія, ${secondsToReadable(current.moment).pretty})`);
+      setLabel('розпочати перегляд')
     }
-  }, [user])
+  }, [])
 
   return (
     <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${headliner.code}`} className={`flex items-center justify-center gap-[16px] bg-grey px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback ${className ? className : ''} max-[784px]:px-[16px] max-[784px]:py-[12px]`} tabIndex={0}>
@@ -71,8 +75,9 @@ const WatchHeadliner: NextPage<{ className?: string, user: IUserState, headliner
 
 
 
-const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlinerPoster }) => {
-  const user = useAppSelector(state => state.user);
+const Home: NextPage<IProps> = ({ data, watchProgress }) => {
+  const { featured, hightRated, popular, updatedRecently } = data;
+
   const [isTrailerVisible, setIsTrailerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false)
 
@@ -144,7 +149,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
       <>
         {/* Background */}
         <div className='w-full h-full absolute top-0 left-0'>
-          <Image src={isMobile ? headliner.poster : headlinerPoster} fill alt='...' loading='eager' priority />
+          <Image src={isMobile ? featured[0].poster : featured[0].backgroundURL} fill alt='...' loading='eager' priority />
           <div className='absolute top-0 left-0 w-full h-full bg-dark/[.4] z-[2]'></div>
         </div>
 
@@ -152,15 +157,15 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
         <div className='relative z-[3] max-w-[1170px] flex flex-col gap-[24px] max-[1170px]:max-w-none'>
           <div className='flex flex-col gap-[8px]'>
             <p className='text-white text-[24px] uppercase max-[784px]:text-[16px]'>набирає популярність</p>
-            <h1 className='text-white text-[60px] font-black text-ellipsis line-clamp-[2] uppercase max-[1170px]:text-[40px] max-[560px]:text-[32px] max-[560px]:line-clamp-4'>{headliner.names.ukr}</h1>
+            <h1 className='text-white text-[60px] font-black text-ellipsis line-clamp-[2] uppercase max-[1170px]:text-[40px] max-[560px]:text-[32px] max-[560px]:line-clamp-4'>{featured[0].names.ukr}</h1>
           </div>
 
-          <h3 className={`text-[24px] text-ellipsis line-clamp-[2] max-[784px]:text-[16px] ${headliner.description ? 'text-white' : 'text-lightGrey'}`}>{headliner.description || 'Опис відсутній'}</h3>
+          <h3 className={`text-[24px] text-ellipsis line-clamp-[2] max-[784px]:text-[16px] ${featured[0].description ? 'text-white' : 'text-lightGrey'}`}>{featured[0].description || 'Опис відсутній'}</h3>
         </div>
 
         {/* Watch */}
         <div className='absolute bottom-[60px] z-[3] pr-[32px] max-[560px]:w-full'>
-          <WatchHeadliner headliner={headliner} user={user} />
+          <WatchHeadliner headliner={featured[0]} watchProgress={watchProgress.find(el => el.titleID === featured[0].id)} />
         </div>
       </>
     )
@@ -226,7 +231,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
       <>
         {/* Trailer */}
         <div className='w-full h-full absolute top-0 left-0 flex justify-center items-center'>
-          <video src={headlinerVideo} controls={false} ref={videoRef} className='absolute top-0 left-0 w-full h-full object-cover' />
+          <video src={featured[0].videoURL} controls={false} ref={videoRef} className='absolute top-0 left-0 w-full h-full object-cover' />
           <div className='absolute top-0 left-0 w-full h-full block z-[2]' style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .5))' }}></div>
 
           {/* Loading */}
@@ -237,10 +242,10 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
 
         {/* Main */}
         <div className={`absolute bottom-[60px] flex flex-col gap-[16px] max-w-[1170px] duration-200 z-[3] ${isIdle ? 'translate-y-[40px] opacity-0 invisible' : 'translate-y-0 opacity-100 visible'} pr-[32px] max-[650px]:pr-[16px]`}>
-          <h3 className='text-white uppercase text-[32px] font-black text-ellipsis line-clamp-[1] max-[784px]:text-[24px] max-[650px]:line-clamp-3'>{headliner.names.ukr}</h3>
+          <h3 className='text-white uppercase text-[32px] font-black text-ellipsis line-clamp-[1] max-[784px]:text-[24px] max-[650px]:line-clamp-3'>{featured[0].names.ukr}</h3>
 
           <div className='flex gap-[8px] w-full max-[450px]:flex-col'>
-            <WatchHeadliner className='w-full' headliner={headliner} user={user} />
+            <WatchHeadliner className='w-full' headliner={featured[0]} watchProgress={watchProgress.find(el => el.titleID === featured[0].id)} />
 
             <button className='relative bg-grey p-[16px] duration-200 rounded-[4px] flex justify-center hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback' tabIndex={0} onClick={() => setIsMuted(!isMuted)}>
               {/* Placeholder */}
@@ -279,15 +284,15 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
     if (type === 'popular') {
       label = 'Популярні'
       icon = <IcoStar className='w-full h-full' />
-      titles = categories.popular
-    } else if (type === 'hightRate') {
+      titles = popular
+    } else if (type === 'hightRated') {
       label = 'З високою оцінкою'
       icon = <IcoStarRating className='w-full h-full' />
-      titles = categories.hightRating
+      titles = hightRated
     } else if (type === 'updatedRecently') {
       label = 'Оновлено нещодавно'
       icon = <IcoClockOutlined className='w-full h-full' />
-      titles = categories.updatedRecently
+      titles = updatedRecently
     }
 
     const TitlesRow = memo(function TitlesRow({ titles }: { titles: ITitle[] }) {
@@ -362,7 +367,7 @@ const Home: NextPage<IProps> = ({ categories, headliner, headlinerVideo, headlin
 
         <div className="wrapper gap-[32px]">
           <Category type='updatedRecently' />
-          <Category type='hightRate' />
+          <Category type='hightRated' />
         </div>
       </main>
     </>

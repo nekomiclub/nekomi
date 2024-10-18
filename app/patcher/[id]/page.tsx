@@ -65,7 +65,7 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
 
     user = userData.user;
     capabilities = userData.parsedRoles;
-    pass = userData.parsedRoles.includes('dubber') || userData.parsedRoles.includes('root') || userData.parsedRoles.includes('editor');
+    pass = userData.parsedRoles.includes('root') || userData.parsedRoles.includes('dubber') || userData.parsedRoles.includes('editor');
 
     if (pass) {
       const { data: titleData } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] }>(`/title/${params.id}`, {

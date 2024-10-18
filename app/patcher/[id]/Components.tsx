@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { memo, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { IcoArrow, IcoGhost, IcoLock } from "../../../assets/Icons"
 import { cn, LoadingImage } from "../../../components/Components"
-import { PatcherMetaContext, TPatcherMetaKey } from "./Patcher"
+import { IFieldStatus, PatcherMetaContext, TPatcherMetaKey } from "./Patcher"
 import gsap from "gsap"
 import { IDubber } from "../../../interfaces/IDubber"
 import { createID } from '../../../components/handlers'
@@ -16,6 +16,7 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu'
 interface IPatcherFieldProps {
   label: string
   id: TPatcherMetaKey
+  fieldsStatus: IFieldStatus[]
 
   symbolsLimited?: number
   locked?: boolean
@@ -43,6 +44,7 @@ interface ISelectProps {
   label: string
   id: TPatcherMetaKey
   options: IPatcherSelectOption[]
+  fieldsStatus: IFieldStatus[]
 
   value?: any
   disablePending?: boolean
@@ -66,7 +68,7 @@ export const PatcherErrorWrapper = memo(function PatcherErrorWrapper({ errors, s
 })
 
 /** Patcher inner component */
-export const PatcherField = memo(function PatcherField({ label, type, disablePending, locked, note, placeholder, symbolsLimited, value, id }: IPatcherFieldProps) {
+export const PatcherField = memo(function PatcherField({ label, type, disablePending, locked, note, placeholder, symbolsLimited, value, id, fieldsStatus }: IPatcherFieldProps) {
   const ctx = useContext(PatcherMetaContext);
 
   type = type !== undefined ? type : 'text';
@@ -77,37 +79,35 @@ export const PatcherField = memo(function PatcherField({ label, type, disablePen
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const [val, setVal] = useState(value)
-  const [isError, setIsError] = useState(false); // readonly
-  const [isPending, setIsPending] = useState(false); // readonly
+  const [isError, setIsError] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
 
 
   useEffect(() => {
-    const input = inputRef.current;
-    const textarea = textareaRef.current;
+    const status = fieldsStatus.find(el => el.id === id);
+    if (!status) {
+      setIsSaved(false);
+      setIsError(false);
 
-    const observer = new MutationObserver(() => {
-      if (input) checkClasses(input);
-      if (textarea) checkClasses(textarea);
+      return;
+    };
 
-      function checkClasses(el: HTMLInputElement | HTMLTextAreaElement) {
-        if (el.classList.contains('patcher-field--saved')) {
-          setIsPending(false);
-          initialValue.current = el.value;
+    if (status.status === 'saved') setIsSaved(true);
+    if (status.status === 'errror') setIsError(true);
+  }, [fieldsStatus])
 
-          setTimeout(() => {
-            el.classList.remove('patcher-field--saved')
-          }, 3000);
-        }
+  useEffect(() => {
+    if (!isSaved) return;
 
-        setIsError(el.classList.contains('patcher-field--error'))
-        setIsPending(el.classList.contains('patcher-field--pending'))
-      }
-    })
+    initialValue.current = val;
+    setIsPending(false)
 
-    if (input) observer.observe(input, { attributes: true });
-    if (textarea) observer.observe(textarea, { attributes: true });
-  }, [])
+    setTimeout(() => {
+      setIsSaved(false)
+    }, 3000);
+  }, [isSaved, val])
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -116,10 +116,10 @@ export const PatcherField = memo(function PatcherField({ label, type, disablePen
     (ctx.meta[id] as any) = val;
 
     // Set isPending
-    toggleClass(val !== initialValue.current, 'pending')
+    setIsPending(val !== initialValue.current)
 
     // Check symbols length
-    toggleClass(Boolean(symbolsLimited && val.length > symbolsLimited), 'error')
+    setIsError(Boolean(symbolsLimited && val.length > symbolsLimited))
 
     if (textarea) {
       gsap.to(textarea, {
@@ -128,23 +128,6 @@ export const PatcherField = memo(function PatcherField({ label, type, disablePen
       })
     }
   }, [val])
-
-
-
-  function toggleClass(value: boolean, classType: 'error' | 'pending' | 'success') {
-    const input = inputRef.current;
-    const textarea = textareaRef.current;
-
-    if (input) {
-      if (value) input.classList.add(`patcher-field--${classType}`)
-      if (!value) input.classList.remove(`patcher-field--${classType}`)
-    }
-
-    if (textarea) {
-      if (value) textarea.classList.add(`patcher-field--${classType}`)
-      if (!value) textarea.classList.remove(`patcher-field--${classType}`)
-    }
-  }
 
 
 
@@ -168,7 +151,7 @@ export const PatcherField = memo(function PatcherField({ label, type, disablePen
         ref={inputRef}
         value={val}
         onChange={e => setVal(e.target.value)}
-        className={cn(`patcher-field `, locked && 'patcher-field--locked')}
+        className={cn(`patcher-field `, locked && 'patcher-field--locked', isPending && 'patcher-field--pending', isError && 'patcher-field--error', isSaved && 'patcher-field--saved')}
       />
     </>}
 
@@ -180,15 +163,15 @@ export const PatcherField = memo(function PatcherField({ label, type, disablePen
         ref={textareaRef}
         value={val}
         onChange={e => setVal(e.target.value)}
-        className={cn(`patcher-field min-h-[120px]`, locked && 'patcher-field--locked')}
+        className={cn(`patcher-field min-h-[120px]`, locked && 'patcher-field--locked', isPending && 'patcher-field--pending', isError && 'patcher-field--error', isSaved && 'patcher-field--saved')}
       ></textarea>
     </>}
 
-    {symbolsLimited && <p className={cn(`text-[12px] w-full text-end`, val.length > symbolsLimited ? 'text-red' : 'text-lightGrey')}>{val.length} / {symbolsLimited}</p>}
+    {symbolsLimited && <p className={cn(`text-[12px] w-full text-end`, String(val).length > symbolsLimited ? 'text-red' : 'text-lightGrey')}>{String(val).length} / {symbolsLimited}</p>}
   </div>
 })
 
-export const PatcherSelect = memo(function PatcherSelect({ options, label, disablePending, dubbers, locked, id, value }: ISelectProps) {
+export const PatcherSelect = memo(function PatcherSelect({ options, label, disablePending, dubbers, locked, id, value, fieldsStatus }: ISelectProps) {
   const ctx = useContext(PatcherMetaContext);
 
   value = value !== undefined ? value : ctx.meta[id];
@@ -196,34 +179,38 @@ export const PatcherSelect = memo(function PatcherSelect({ options, label, disab
   const initialValue = useRef(value);
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  const [val, setVal] = useState(value);
+  const [option, setOption] = useState(value);
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
 
 
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
+    const status = fieldsStatus.find(el => el.id === id);
+    if (!status) {
+      setIsSaved(false);
 
-    const observer = new MutationObserver(() => {
-      const el = wrapper.querySelector('.patcher-select') as HTMLElement
+      return;
+    };
 
-      if (el.classList.contains('patcher-field--saved')) {
-        setIsPending(false);
+    if (status.status === 'saved') setIsSaved(true);
+  }, [fieldsStatus])
 
-        setTimeout(() => {
-          el.classList.remove('patcher-field--saved')
-        }, 3000);
-      }
+  useEffect(() => {
+    if (!isSaved) return;
 
-      setIsError(el.classList.contains('patcher-field--error'))
-      setIsPending(el.classList.contains('patcher-field--pending'))
-    })
+    initialValue.current = option;
+    setIsPending(false)
 
-    observer.observe(wrapper.querySelector('.patcher-select')!, { attributes: true });
-  }, [])
+    setTimeout(() => {
+      setIsSaved(false)
+    }, 3000);
+  }, [isSaved, option])
+
+  useEffect(() => {
+    setIsPending(option !== initialValue.current);
+  }, [option])
 
 
 
@@ -238,7 +225,7 @@ export const PatcherSelect = memo(function PatcherSelect({ options, label, disab
   }
 
   function select(option: IPatcherSelectOption) {
-    setVal(option.code);
+    setOption(option.code);
 
     // Set pending
     toggleClass(option.code !== initialValue.current, 'pending')
@@ -252,21 +239,21 @@ export const PatcherSelect = memo(function PatcherSelect({ options, label, disab
       <p className={cn(locked ? 'text-lightGrey' : 'text-white')}>{label}</p>
     </div>
 
-    <Menu className="w-full" gap={16} settings={{ align: 'stretch', direction: 'bottom', animation: 'slide' }} state={isOpen} stateSetter={setIsOpen}>
-      <MenuTrigger className={cn(`patcher-select px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`)} primary>
+    <Menu className="w-full" gap={16} settings={{ align: 'stretch', direction: 'bottom', animation: 'slide', closeOn: 'both' }} state={isOpen} stateSetter={setIsOpen}>
+      <MenuTrigger className={cn(`patcher-select px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`, isPending && 'patcher-select--pending', isSaved && 'patcher-select--saved')} primary>
         {dubbers?.length && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='24px' height='24px' parentClassName='overflow-hidden rounded-[32px]' />}
 
-        <p className={cn(`select-none`, locked ? 'text-lightGrey' : 'text-white')}>{options.find(el => el.code === val)?.label}</p>
+        <p className={cn(`select-none`, locked ? 'text-lightGrey' : 'text-white')}>{options.find(el => el.code === option)?.label}</p>
 
         <IcoArrow className={cn(`duration-200`, isOpen && 'rotate-[180deg]')} fill={`${locked ? '#747474' : '#fff'}`} />
       </MenuTrigger>
 
       <MenuWrapper className='flex flex-col bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto'>
-        {options.map(option => {
-          return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, val === option.code && 'bg-purple', option.code === initialValue.current && val !== option.code && 'bg-gradientSecondaryFallback')} key={`select-option--${option.code}`} onClick={() => select(option)}>
-            {dubbers?.length && <LoadingImage src={dubbers.find(el => el.code === option.code)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
+        {options.map(el => {
+          return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, option === el.code && 'bg-purple', el.code === initialValue.current && option !== el.code && 'bg-gradientSecondaryFallback')} key={`select-option--${el.code}`} onClick={() => select(el)}>
+            {dubbers?.length && <LoadingImage src={dubbers.find(el => el.code === el.code)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
 
-            <p className='text-white'>{option.label}</p>
+            <p className='text-white'>{el.label}</p>
           </button>
         })}
       </MenuWrapper>

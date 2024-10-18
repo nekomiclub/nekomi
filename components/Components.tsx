@@ -31,7 +31,6 @@ export const LoadingImage = memo(function LoadingImage({ src, alt, className, lo
 
   useEffect(() => {
     const image = ref.current;
-
     if (!image) return;
 
     if (image.complete) setLoaded(true)
@@ -282,11 +281,10 @@ export const ServerUnavailable: NextPage = (props) => {
           <div className='flex flex-col justify-center items-center'>
             <IcoOffline width={256} height={256} className='max-[700px]:w-[128px] max-[700px]:h-[128px]' />
             <div className='flex flex-col gap-[16px]'>
-              <h1 className='text-center text-white text-[40px] max-[700px]:text-[24px]'>Здається, з сервером щось не те...</h1>
-              {/* <h1 className='text-center text-white text-[40px] max-[700px]:text-[24px]'>Сервер тимчасово недоступний</h1> */}
+              <h1 className='text-center text-white text-[40px] max-[700px]:text-[24px]'>Сервер тимчасово недоступний</h1>
               <p className='text-center text-white'>
-                {/* Якщо в телеграмі <a href="https://t.me/an1meeClub" className='text-purple'>animee</a> нема сповіщення про роботи, створіть будь ласка тікет в <a href="https://discord.gg/UmDfKTpsh5" className='text-purple'>діскорді</a> */}
-                Можливо, сервер вимкнений через стабілізаційні відключення. Це не повинно тривати довго.
+                Якщо в телеграмі <a href="https://t.me/an1meeClub" className='text-purple'>animee</a> нема сповіщення про роботи, створіть будь ласка тікет в <a href="https://discord.gg/UmDfKTpsh5" className='text-purple'>діскорді</a>
+                {/* Можливо, сервер вимкнений через стабілізаційні відключення. Це не повинно тривати довго. */}
               </p>
             </div>
           </div>

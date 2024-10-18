@@ -1,5 +1,5 @@
 import { Metadata, NextPage } from 'next';
-import Home, { IHomeCategories } from './Home';
+import Home, { IHomeWrapped } from './Home';
 import { ITitle } from '../interfaces/ITitle';
 import { config, devMode, prodMode } from '../config';
 import axios, { AxiosError } from 'axios';
@@ -7,6 +7,16 @@ import Link from 'next/link';
 import { HappenedWrongScreen, NotFoundScreen } from '../components/Components';
 import { getUTC } from '../components/handlers';
 import { $api } from '../components/http';
+import { IUserWatchProgress } from '../interfaces/IUser';
+import { cookies } from 'next/headers';
+
+
+
+interface IHomeWrappedResponse extends IHomeWrapped {
+  watchProgress?: IUserWatchProgress[]
+}
+
+
 
 export const metadata: Metadata = {
   title: 'Animee - Онлайн кінотеатр аніме українською',
@@ -27,28 +37,32 @@ export const metadata: Metadata = {
 
 
 export default async function RSC() {
-  let headliner: ITitle | null = null;
-  let headlinerVideo = '';
-  let headlinerPoster = '';
+  let watchProgress: IUserWatchProgress[] = []
 
-  let categories: IHomeCategories = {
-    hightRating: [],
+  let DATA: IHomeWrapped = {
+    featured: [],
+    hightRated: [],
     popular: [],
     updatedRecently: []
   }
 
   try {
-    const { data } = await $api.get<{ headliner: ITitle, headlinerVideo: string, headlinerPoster: string, categories: IHomeCategories }>(`/title/popular`);
+    const { data } = await $api.get<IHomeWrappedResponse>(`/title/home_wrapped`, {
+      headers: {
+        Cookie: cookies().toString()
+      }
+    });
 
-    headliner = data.headliner;
-    headlinerVideo = data.headlinerVideo;
-    categories = data.categories;
-    headlinerPoster = data.headlinerPoster;
+    DATA.featured = data.featured;
+    DATA.hightRated = data.hightRated;
+    DATA.popular = data.popular;
+    DATA.updatedRecently = data.updatedRecently;
+    watchProgress = data.watchProgress || [];
   } catch (e) {
     if (e instanceof AxiosError) {
       const code = e.response?.data?.code || 500;
 
-      console.error(e.response?.data)
+      console.error(e)
 
       if (code === 404) {
         return <HappenedWrongScreen cause={`Помилка в отриманні тайтлів - Деякі тайтли не знайдені`} />
@@ -66,5 +80,5 @@ export default async function RSC() {
     }
   }
 
-  return <Home headliner={headliner!} categories={categories} headlinerVideo={headlinerVideo} headlinerPoster={headlinerPoster} />
+  return <Home data={DATA} watchProgress={watchProgress} />
 }

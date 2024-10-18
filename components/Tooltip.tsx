@@ -9,7 +9,7 @@ const Tooltip: NextPage<{ children: any, content: string, fitWrapper?: boolean, 
   const tooltipId = `ttid-${createID()}`
 
   return (
-    <div data-tooltip-id={tooltipId} data-tooltip-content={content} className={`relative z-[5] ${className ? className : ''}`}>
+    <div data-tooltip-id={tooltipId} suppressHydrationWarning data-tooltip-content={content} className={`relative z-[5] ${className ? className : ''}`}>
       {children}
       <RT id={tooltipId} className={`${fitWrapper ? '!w-fit text-center' : ''}`} />
     </div>
