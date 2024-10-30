@@ -73,6 +73,7 @@ export const PatcherField = memo(function PatcherField({ label, type, disablePen
 
   type = type !== undefined ? type : 'text';
   value = value !== undefined ? value : ctx.meta[id];
+  value = value === 'null' ? '' : value;
 
   const initialValue = useRef(value);
   const inputRef = useRef<HTMLInputElement>(null)

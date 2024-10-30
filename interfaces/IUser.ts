@@ -3,16 +3,18 @@ export interface IUser {
   id: string
 
   /** Statistics
-   * Inherit stats
+   * @access CSRF required
    */
   statistics: IUserStatistics
 
   /** Titles libs
-   * Inherit lists
+   * @access CSRF required
    */
   libs: IUserLib[]
 
-  /** Roles */
+  /** Roles
+   * @access CSRF required
+   */
   roles: string[]
 
   /** Username */
@@ -21,18 +23,35 @@ export interface IUser {
   /** Avatar URL */
   avatar: string
 
+  /** User banner URL */
+  banner: string
+
+  /** Events subscribes
+   * @see docs/features.md#user-subscribes
+   * @access only API
+   */
+  subscribes: string[]
+
+  /** Synced watch progress
+   * @access CSRF required
+   */
   watchProgress: IUserWatchProgress[]
+
+  /** Telegram linked account data.
+   * @access only API
+   */
+  telegramData: null | IUserTelegramData
+
+  /** Token for linking telegram to animee account
+   * @access CSRF required
+   */
+  telegramLinkToken: string | null
 }
 
 /** User animee statistics */
 export interface IUserStatistics {
   /** UTC0 account creation timestamp */
   accountCreated: number
-
-  /** Watch time in minutes
-   * @deprecated refactored into viewtime.
-   */
-  timeSpent: number
 
   /** Viewtime in seconds */
   viewtime: number
@@ -53,8 +72,12 @@ export interface IUserWatchProgress {
   updatedAt: number
 }
 
+export interface IUserTelegramData {
+  id: number
+}
+
 /** User lib type */
-export type TUserLibType = 'favorite' | 'watching' | 'watched' | 'delayed' | 'plans' | 'custom'
+type TUserLibType = 'favorite' | 'watching' | 'watched' | 'delayed' | 'plans' | 'custom'
 
 /** User titles lib */
 export interface IUserLib {
@@ -82,7 +105,6 @@ export interface IUserLib {
     immortal: boolean
   }
 }
-
 
 
 /** Fullkekw usapi user */

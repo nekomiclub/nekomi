@@ -3,15 +3,15 @@
 import Link from 'next/link';
 
 import { NextPage } from 'next';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Layer, Dialog, Trigger } from '@fullkekw/fkw-popup';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import Tooltip from '../../../components/Tooltip';
 
 import { IUser, IUserLib } from '../../../interfaces/IUser';
-import { LoadingImage, copyToClipboard } from '../../../components/Components';
-import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoSettings, IcoStack, IcoStar, IcoUser, IcoWatched } from '../../../assets/Icons';
+import { LoadingImage, cn, copyToClipboard } from '../../../components/Components';
+import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoSettings, IcoStack, IcoStar, IcoUpdate, IcoUser, IcoWatched } from '../../../assets/Icons';
 import { addZeroIfNumberSingle, makeStringID } from '../../../components/handlers';
 import { config } from '../../../config';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
@@ -21,6 +21,7 @@ import { useAppSelector } from '../../../hooks/redux';
 import { IcoSocialTelegram } from '../../../assets/Social';
 import axios, { AxiosError } from 'axios';
 import { $api } from '../../../components/http';
+import { PatcherErrorWrapper } from '../../patcher/[id]/Components';
 
 
 
@@ -40,12 +41,57 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   const [settingsPopupID, setSettingsPopupID] = useState('')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [settingsLinkTelegramStatus, setSettingsLinkTelegramStatus] = useState<TTelegramLinkStatus>(user.statistics.isTelegramLinked ? 'connected' : 'notConnected')
+  const [bannerURL, setBannerURL] = useState(user.banner);
+  const [bannerUploadError, setBannerUploadError] = useState('');
 
 
+  const bannerSelectRef = useRef<HTMLInputElement>(null)
+  const bannerWrapperRef = useRef<HTMLDivElement>(null)
+  const bannerButtonRef = useRef<HTMLButtonElement>(null)
 
-  // Set popups ids
+  // Set popups ids & handle banner hover + dragNdrop
   useEffect(() => {
     setSettingsPopupID(makeStringID(16, true))
+
+    if (user.id) {
+      const input = bannerSelectRef.current;
+      const bannerWrapper = bannerWrapperRef.current;
+      const bannerButton = bannerButtonRef.current;
+      if (!input || !bannerWrapper || !bannerButton) return;
+
+      bannerWrapper.addEventListener('mouseenter', bannerShow)
+      // bannerWrapper.addEventListener('dragenter', bannerShow)
+
+      bannerWrapper.addEventListener('mouseleave', bannerHide)
+      // bannerWrapper.addEventListener('dragleave', bannerHide)
+
+      // bannerButton.addEventListener('drop', e => {
+      //   console.log('drop')
+
+      //   e.preventDefault();
+      //   input.files = e.dataTransfer?.files!;
+      // })
+    }
+
+    function bannerShow(e: MouseEvent) {
+      e.preventDefault();
+
+      const bannerButton = bannerButtonRef.current;
+      if (!bannerButton) return;
+
+      bannerButton.style.opacity = '1';
+      bannerButton.style.visibility = 'visible';
+    }
+
+    function bannerHide(e: MouseEvent) {
+      e.preventDefault();
+
+      const bannerButton = bannerButtonRef.current;
+      if (!bannerButton) return;
+
+      bannerButton.style.opacity = '0';
+      bannerButton.style.visibility = 'invisible';
+    }
   }, [])
 
   // Open settings popup
@@ -100,17 +146,66 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
     }
   }
 
+  function selectBannerFile() {
+    const input = bannerSelectRef.current;
+    if (!input) return;
+
+    input.value = '';
+    input.click();
+  }
+
+  async function uploadBanner() {
+    const input = bannerSelectRef.current;
+    if (!input || !input.files?.length) return;
+
+    const file = input.files[0];
+    if (!file) return;
+
+    setBannerUploadError('');
+
+    try {
+      const formData = new FormData();
+
+      formData.append('file', file);
+      formData.append('method', 'upload_banner');
+
+      await $api.patch(`${config.URL.apiHTTP}/user`, formData);
+
+      const { data } = await $api.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${user.id}`);
+      setBannerURL(data.user.banner)
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        setBannerUploadError(`Помилка при оновленні банера - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+      } else {
+        setBannerUploadError(`Помилка при оновленні банера - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+      }
+    }
+  }
+
 
 
   return (
     <>
-      <Layer className='bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center'>
-        <Dialog id={settingsPopupID} className='px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] w-[1170px] max-w-[1170px] mx-[32px] my-[24px]' state={isSettingsOpen} stateSetter={setIsSettingsOpen}>
+      {user.id && <Layer className='bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[32px] py-[40px]'>
+        <Dialog id={settingsPopupID} className='px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] w-[1170px] max-w-[1170px] overflow-y-auto' state={isSettingsOpen} stateSetter={setIsSettingsOpen}>
           <Label label='Налаштування акаунту' />
           <Link href={`${config.URL.fkAccount}/me`} className='flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple'>
             <IcoExternalLink width={24} height={24} />
             <p className='text-white'>Редагувати акаунт Fullkekw</p>
           </Link>
+
+          <Label label='Банер профілю' />
+          {bannerUploadError && <PatcherErrorWrapper errors={[bannerUploadError]} section='upload_banner' />}
+
+          <div className='w-full h-[400px] relative' ref={bannerWrapperRef}>
+            <button className='w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible' onClick={selectBannerFile} ref={bannerButtonRef}>
+              <IcoUpdate width={80} height={80} />
+              <p className='uppercase text-[40px] font-bold text-white'>завантажити</p>
+            </button>
+
+            <input type="file" accept='.png,.jpg,.webp' ref={bannerSelectRef} className='hidden absolute -z-[1]' onChange={uploadBanner} />
+            <LoadingImage src={bannerURL} width='100%' height='100%' priority />
+          </div>
 
           <Label label={`Під'єднання`} />
           {settingsLinkTelegramStatus === 'connected' ?
@@ -140,12 +235,12 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
             </div>
           }
         </Dialog>
-      </Layer>
+      </Layer>}
 
       <div className='bg-dark'>
         {/* Image */}
-        <div className='w-full h-[400px] flex justify-center items-center bg-darkGrey'>
-          <p className='text-[60px] gradient--primary-text font-bold uppercase max-[600px]:text-[40px] select-none'>animee.club</p>
+        <div className='w-full h-[500px]'>
+          <img src={bannerURL} alt="banner" className='w-full h-full object-cover' />
         </div>
 
         <div className={`wrapper h-[128px] max-[820px]:h-[270px]`}>

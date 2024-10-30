@@ -92,23 +92,17 @@ interface ISelectProps {
 
 interface IHeaderSectionProps {
   title: ITitle
-  canTitleEdit: boolean
-  canTitleDelete: boolean
   session: string
 }
 
 interface IEpisodesMetaSection {
   title: ITitle
-  isRoot: boolean
-  canEditEpsMeta: boolean
 }
 
 interface IEpisodesSection {
   title: ITitle
   dubbers: IDubber[]
   totalDubbers: IDubber[]
-  canSeriesAdd: boolean
-  canSeriesDelete: boolean
   session: string
 }
 
@@ -136,6 +130,15 @@ interface IPatcherMetaContext {
     country: TTitleCountry
     details: string
   }
+  capability: {
+    isRoot: boolean
+    canTitleDelete: boolean
+    canTitleAdd: boolean
+    canEditEpsMeta: boolean
+    canSeriesAdd: boolean
+    canSeriesDelete: boolean
+    canTitleEdit: boolean
+  }
 }
 
 interface IPatchTitleBody {
@@ -160,32 +163,6 @@ interface IPatchTitleBody {
 
   editEpMeta?: IChangeEpMeta
   parseIMDBEpisodesMeta?: string
-
-  deleteEpisode?: IDeleteEpisode
-
-  // Form Data
-  uploadEpisode?: IUploadEpisode
-
-  uploadPoster?: IUploadPoster
-}
-
-interface IDeleteEpisode {
-  order: number
-  dubberID: string
-}
-
-interface IUploadEpisode {
-  file?: any
-  type: TPatchTitleFormDataType
-  order: number,
-  dubberID: string
-  qualities: TEpisodeQuality[]
-}
-
-interface IUploadPoster {
-  /** req.file */
-  file?: any
-  type: TPatchTitleFormDataType
 }
 
 export interface IChangeEpMeta extends ITitleEpisodeMeta {
@@ -197,7 +174,6 @@ export interface IFieldStatus {
   status: 'errror' | 'pending' | 'saved';
 }
 
-type TPatchTitleFormDataType = 'change_poster' | 'upload_episode';
 export type TPatcherMetaKey = keyof IPatcherMetaContext['meta']
 
 type TSaveStatus = 'save' | 'saved' | 'saveError' | 'nothingChanged';
@@ -482,7 +458,7 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
 
 
 
-const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, canTitleDelete, session }: IHeaderSectionProps) {
+const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHeaderSectionProps) {
   const router = useRouter();
   const MetaCtx = useContext(PatcherMetaContext);
 
@@ -494,6 +470,8 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, c
 
   const fileRef = useRef<HTMLInputElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
+
+  const { canTitleEdit, canTitleDelete } = MetaCtx.capability
 
 
 
@@ -756,12 +734,16 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, canTitleEdit, c
   </section>
 })
 
-const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, canEditEpsMeta }: IEpisodesMetaSection) {
+const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodesMetaSection) {
+  const MetaCtx = useContext(PatcherMetaContext)
+
   const [errors, setErrors] = useState<string[]>([])
 
   const [selectedMeta, setSelectedMeta] = useState<ITitleEpisodeMeta | null>(null)
   const [episodesMeta, setEpisodesMeta] = useState(title.episodesMeta);
   const [isFolded, setIsFolded] = useState(true)
+
+  const { isRoot, canEditEpsMeta } = MetaCtx.capability
 
 
 
@@ -1049,7 +1031,8 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ isRoot, title, can
   </section>
 })
 
-const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, title, canSeriesAdd, canSeriesDelete, session }: IEpisodesSection) {
+const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, title, session }: IEpisodesSection) {
+  const MetaCtx = useContext(PatcherMetaContext);
   const [errors, setErrors] = useState<string[]>([])
 
   const [episodesGroups, setEpisodesGroups] = useState<IPatcherEpisodesGroup[]>([])
@@ -1066,6 +1049,8 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   }))
 
   const fileRef = useRef<HTMLInputElement>(null)
+
+  const { canSeriesAdd, canSeriesDelete } = MetaCtx.capability;
 
 
 
@@ -1407,6 +1392,15 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
       studios: title.studios.join(', '),
       country: title.country,
       details: String(title.details),
+    },
+    capability: {
+      isRoot,
+      canTitleDelete,
+      canTitleAdd,
+      canEditEpsMeta,
+      canSeriesAdd,
+      canSeriesDelete,
+      canTitleEdit,
     }
   }}>
     <div className='w-full h-full min-h-screen bg-dark'>
@@ -1458,13 +1452,13 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
         {/* Container */}
         <div className='bg-darkGrey rounded-[4px] px-[32px] py-[40px] flex flex-col gap-[60px]'>
           {/* Title meta */}
-          <TitleMetaSection canTitleDelete={canTitleDelete} canTitleEdit={canTitleEdit} title={title} session={session} />
+          <TitleMetaSection title={title} session={session} />
 
           {/* Episodes metas */}
-          <EpisodeMetaSection canEditEpsMeta={canEditEpsMeta} isRoot={isRoot} title={title} />
+          <EpisodeMetaSection title={title} />
 
           {/* Dubbing */}
-          <EpisodesSection dubbers={dubbers} title={title} totalDubbers={totalDubbers} canSeriesAdd={canSeriesAdd} canSeriesDelete={canSeriesDelete} session={session} />
+          <EpisodesSection dubbers={dubbers} title={title} totalDubbers={totalDubbers} session={session} />
         </div>
       </div>
     </div>

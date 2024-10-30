@@ -10,7 +10,7 @@ const devIP = '192.168.0.106'
 
 /** Site config */
 export const config = {
-  devIP: '192.168.0.106',
+  devIP,
 
   /** Site domain */
   domain: 'animee.club',

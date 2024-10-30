@@ -97,7 +97,7 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
             <StatCard value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label='favs' />
             <StatCard value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label='watched' />
             <StatCard value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label='watching' />
-            <StatCard value={Math.floor(user?.statistics.viewtime / 60 / 60)} label='timeSpent' />
+            <StatCard value={Math.floor(user?.statistics.viewtime / 60 / 60)} label='viewtime' />
           </div>
 
           {/* Libs */}
@@ -107,14 +107,14 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
     </>
   );
 
-  function StatCard({ label, value, className }: { label: 'favs' | 'watched' | 'watching' | 'timeSpent', value: number, className?: string }) {
+  function StatCard({ label, value, className }: { label: 'favs' | 'watched' | 'watching' | 'viewtime', value: number, className?: string }) {
     return (
       <div className={`grow basis-[360px] ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] min-w-[360px] max-[600px]:min-w-[260px] flex items-center max-[600px]:flex-col ${className ? className : ''}`}>
         <div className='flex-shrink-0'>
           {label === 'favs' && <IcoHeartFilled width={80} height={80} />}
           {label === 'watched' && <IcoWatched width={80} height={80} />}
           {label === 'watching' && <IcoStack width={80} height={80} />}
-          {label === 'timeSpent' && <IcoClockFilled width={80} height={80} />}
+          {label === 'viewtime' && <IcoClockFilled width={80} height={80} />}
         </div>
 
         <div className='w-full flex flex-col gap-[8px]'>
@@ -123,7 +123,7 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
             {label === 'favs' && `${wordDeclination(value, ['Улюблений тайтл', 'Улюблених тайтли', 'Улюблених тайтлів'])}`}
             {label === 'watched' && `${wordDeclination(value, ['Переглянутий тайтл', 'Переглянутих тайтли', 'Переглянутих тайтлів'])}`}
             {label === 'watching' && `${wordDeclination(value, ['Переглядаємий тайтл', 'Переглядаємих тайтли', 'Переглядаємих тайтлів'])}`}
-            {label === 'timeSpent' && `${wordDeclination(value, ['Година перегляду', 'Години перегляду', 'Годин перегляду'])}`}
+            {label === 'viewtime' && `${wordDeclination(value, ['Година перегляду', 'Години перегляду', 'Годин перегляду'])}`}
           </p>
         </div>
       </div>
