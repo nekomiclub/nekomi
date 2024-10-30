@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import { NextPage } from 'next';
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Layer, Dialog, Trigger } from '@fullkekw/fkw-popup';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
@@ -22,6 +22,7 @@ import { IcoSocialTelegram } from '../../../assets/Social';
 import axios, { AxiosError } from 'axios';
 import { $api } from '../../../components/http';
 import { PatcherErrorWrapper } from '../../patcher/[id]/Components';
+import Image from 'next/image';
 
 
 
@@ -43,16 +44,23 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   const [settingsLinkTelegramStatus, setSettingsLinkTelegramStatus] = useState<TTelegramLinkStatus>(user.statistics.isTelegramLinked ? 'connected' : 'notConnected')
   const [bannerURL, setBannerURL] = useState(user.banner);
   const [bannerUploadError, setBannerUploadError] = useState('');
+  const [headerHeight, setHeaderHeight] = useState(92);
 
 
   const bannerSelectRef = useRef<HTMLInputElement>(null)
   const bannerWrapperRef = useRef<HTMLDivElement>(null)
   const bannerButtonRef = useRef<HTMLButtonElement>(null)
 
+  // Calc header height
+  useMemo(() => {
+    setHeaderHeight(document.querySelector('header')?.offsetHeight || 92)
+  }, [])
+
   // Set popups ids & handle banner hover + dragNdrop
   useEffect(() => {
     setSettingsPopupID(makeStringID(16, true))
 
+    // Handle banner hover
     if (user.id) {
       const input = bannerSelectRef.current;
       const bannerWrapper = bannerWrapperRef.current;
@@ -161,6 +169,8 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
     const file = input.files[0];
     if (!file) return;
 
+    if (!confirm(`Завантажуючи банер профілю ти погоджуєшся з Угодою Користувача (Agreement) та Політикою Конфіденційності (Privacy policy) сайту animee.club. Ознайомитись з ними можна внизу сайту`)) return;
+
     setBannerUploadError('');
 
     try {
@@ -186,21 +196,21 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   return (
     <>
-      {user.id && <Layer className='bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[32px] py-[40px]'>
-        <Dialog id={settingsPopupID} className='px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] w-[1170px] max-w-[1170px] overflow-y-auto' state={isSettingsOpen} stateSetter={setIsSettingsOpen}>
+      {user.id && <Layer className='bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[8px] py-[40px]'>
+        <Dialog id={settingsPopupID} className='px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] flex-1 max-h-full max-w-[1170px] overflow-y-auto overflow-x-hidden' state={isSettingsOpen} stateSetter={setIsSettingsOpen}>
           <Label label='Налаштування акаунту' />
           <Link href={`${config.URL.fkAccount}/me`} className='flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple'>
             <IcoExternalLink width={24} height={24} />
-            <p className='text-white'>Редагувати акаунт Fullkekw</p>
+            <p className='text-white text-center'>Редагувати акаунт Fullkekw</p>
           </Link>
 
           <Label label='Банер профілю' />
           {bannerUploadError && <PatcherErrorWrapper errors={[bannerUploadError]} section='upload_banner' />}
 
-          <div className='w-full h-[400px] relative' ref={bannerWrapperRef}>
+          <div className='w-full max-h-[400px] aspect-[16/7] relative shrink-0' ref={bannerWrapperRef}>
             <button className='w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible' onClick={selectBannerFile} ref={bannerButtonRef}>
-              <IcoUpdate width={80} height={80} />
-              <p className='uppercase text-[40px] font-bold text-white'>завантажити</p>
+              <IcoUpdate width={80} height={80} className='max-[640px]:w-[64px] max-[640px]:h-[64px]' />
+              <p className='uppercase text-[40px] font-bold text-white max-[640px]:text-[24px]'>завантажити</p>
             </button>
 
             <input type="file" accept='.png,.jpg,.webp' ref={bannerSelectRef} className='hidden absolute -z-[1]' onChange={uploadBanner} />
@@ -212,7 +222,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
             <div className='flex flex-col gap-[8px]'>
               <div className='flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey'>
                 <IcoStar width={24} height={24} fill='#FF464E' />
-                <p className='text-white'>Акаунт Telegram прив’язано! </p>
+                <p className='text-white text-center'>Акаунт Telegram прив’язано! </p>
               </div>
 
               <div className={`flex gap-[8px] items-center`}>
@@ -237,67 +247,84 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
         </Dialog>
       </Layer>}
 
-      <div className='bg-dark'>
+      <div className={`bg-dark relative mt-[${headerHeight}px]`}>
         {/* Image */}
-        <div className='w-full h-[500px]'>
-          <img src={bannerURL} alt="banner" className='w-full h-full object-cover' />
+        <div className='w-full h-fit max-h-[500px] aspect-[16/9] relative max-[1140px]:aspect-[16/7]'>
+          <Image src={bannerURL} fill priority alt="banner" className='w-full h-full object-cover' />
         </div>
 
-        <div className={`wrapper h-[128px] max-[820px]:h-[270px]`}>
-          {/* Profile */}
-          <div className={`flex gap-[32px] w-full relative -top-[128px] max-[820px]:flex-col max-[820px]:items-center`}>
-            {/* Avatar */}
-            <LoadingImage src={user.avatar} width='256px' height='256px' parentClassName='shrink-0' />
+        {/* Layouts */}
+        <>
+          {/* PC */}
+          <div className={`min-[670px]:flex hidden wrapper flex-row justify-between absolute bottom-0 left-0 w-full bg-dark/[.3] backdrop-blur-[32px] px-[32px] py-[16px]`}>
+            <div className='flex gap-[32px] min-[670px]'>
+              <AvatarComponent />
 
-            {/* Container */}
-            <div className={`flex justify-between items-center w-full relative top-[64px] max-[820px]:top-0`}>
-              {/* User */}
-              <div className='flex flex-col gap-[8px]'>
-                <div className='flex items-center gap-[16px]'>
-                  <p className='text-white text-[32px] font-bold max-[1140px]:text-[24px] break-all' title={user.username}>@{user.username}</p>
+              <UserComponent />
+            </div>
 
-                  {/* Badges */}
-                  <div></div>
-                </div>
+            <SettingsComponent />
+          </div>
 
-                <Tooltip content='Дата реєстрації акаунту'>
-                  <div className='flex items-center gap-[16px]'>
-                    <IcoCalendar width={32} height={32} />
-                    <p className='text-white'>{addZeroIfNumberSingle(new Date(user.statistics.accountCreated).getUTCDate())}.{addZeroIfNumberSingle(new Date(user.statistics.accountCreated).getUTCMonth() + 1)}.{new Date(user.statistics.accountCreated).getUTCFullYear()}</p>
-                  </div>
-                </Tooltip>
-              </div>
+          {/* Mobile */}
+          <div className='max-[670px]:flex hidden wrapper gap-[16px] items-center pt-[40px]'>
+            <AvatarComponent />
 
-              {/* Settings */}
-              <div className='flex gap-[8px]'>
-                <Tooltip content={urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на профіль'}>
-                  <button className={`p-[16px] duration-200 ${urlCopied ? 'bg-green' : 'hover:bg-purple focus-visible:bg-purple'} rounded-[4px] max-[600px]:p-[12px]`} onClick={() => copyProfileURL()}>
-                    <IcoChain width={32} height={32} className='max-[600px]:w-[24px] max-[600px]:h-[24px]' />
-                  </button>
-                </Tooltip>
-
-                {isOwner && <Tooltip content='Налаштування'>
-                  <Trigger id={settingsPopupID} className='p-[16px] duration-200 bg-darkGrey hover:bg-grey focus-visible:bg-grey rounded-[4px] max-[600px]:p-[12px]'>
-                    <IcoSettings width={32} height={32} className='max-[600px]:w-[24px] max-[600px]:h-[24px]' />
-                  </Trigger>
-                </Tooltip>}
-
-                {!primaryPage && <Link href={`${config.URL.baseURL}/u/${user.username}`}>
-                  <Tooltip content='На головну профілю'>
-                    <button className={`p-[16px] duration-200 bg-darkGrey hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback rounded-[4px] max-[600px]:p-[12px]`}>
-                      <IcoUser width={32} height={32} className='max-[600px]:w-[24px] max-[600px]:h-[24px]' />
-                    </button>
-                  </Tooltip>
-                </Link>}
-              </div>
+            <div className='flex justify-between items-center gap-[16px] w-full'>
+              <UserComponent />
+              <SettingsComponent />
             </div>
           </div>
-        </div>
+        </>
       </div>
     </>
   );
-}
 
+  function AvatarComponent() {
+    return <div className='w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px]'>
+      <Image src={user.avatar} width={256} height={256} className='absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square' priority alt='avatar' />
+    </div>
+  }
+
+  function UserComponent() {
+    return <div className='flex flex-col gap-[8px]'>
+      <div className='flex items-center gap-[16px]'>
+        <p className='text-white text-[32px] font-bold max-[1140px]:text-[24px] break-all' title={user.username}>@{user.username}</p>
+      </div>
+
+      <Tooltip content='Дата реєстрації акаунту'>
+        <div className='flex items-center gap-[16px]'>
+          <IcoCalendar width={32} height={32} />
+          <p className='text-white'>{addZeroIfNumberSingle(new Date(user.statistics.accountCreated).getUTCDate())}.{addZeroIfNumberSingle(new Date(user.statistics.accountCreated).getUTCMonth() + 1)}.{new Date(user.statistics.accountCreated).getUTCFullYear()}</p>
+        </div>
+      </Tooltip>
+    </div>
+  }
+
+  function SettingsComponent() {
+    return <div className='flex items-center gap-[8px]'>
+      <Tooltip content={urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на профіль'}>
+        <button className={`p-[16px] duration-200 ${urlCopied ? 'bg-green' : 'hover:bg-purple focus-visible:bg-purple'} rounded-[4px] max-[600px]:p-[12px]`} onClick={() => copyProfileURL()}>
+          <IcoChain width={32} height={32} className='max-[600px]:w-[24px] max-[600px]:h-[24px]' />
+        </button>
+      </Tooltip>
+
+      {isOwner && <Tooltip content='Налаштування'>
+        <Trigger id={settingsPopupID} className='p-[16px] duration-200 bg-darkGrey hover:bg-grey focus-visible:bg-grey rounded-[4px] max-[600px]:p-[12px]'>
+          <IcoSettings width={32} height={32} className='max-[600px]:w-[24px] max-[600px]:h-[24px]' />
+        </Trigger>
+      </Tooltip>}
+
+      {!primaryPage && <Link href={`${config.URL.baseURL}/u/${user.username}`}>
+        <Tooltip content='На головну профілю'>
+          <button className={`p-[16px] duration-200 bg-darkGrey hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback rounded-[4px] max-[600px]:p-[12px]`}>
+            <IcoUser width={32} height={32} className='max-[600px]:w-[24px] max-[600px]:h-[24px]' />
+          </button>
+        </Tooltip>
+      </Link>}
+    </div>
+  }
+}
 
 
 /** User section divider */
@@ -341,15 +368,15 @@ export const UserSectionLibs: NextPage<{ user: IUser, isOwner: boolean }> = ({ i
 export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: string }> = ({ lib, isOwner, username }) => {
   return (
     <>
-      {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${username}/lib/${lib.id}`} className='grow basis-[290px] p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none'>
+      {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${username}/lib/${lib.id}`} className='grow basis-[290px] p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none max-[1140px]:basis-[250px] max-[880px]:basis-[220px] max-[620px]:basis-[160px]'>
         {lib.type === 'favorite' && <IcoHeartFilled width={128} height={128} fill='#FF464E' className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
         {lib.type === 'watching' && <IcoStack width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
         {lib.type === 'plans' && <IcoClockFilled width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
         {lib.type === 'watched' && <IcoWatched width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
         {lib.type === 'delayed' && <IcoCan width={128} height={128} className='max-[480px]:w-[80px] max-[480px]:h-[80px]' />}
 
-        <div className='flex items-center gap-[8px]'>
-          <p className='text-white text-center text-[24px]'>
+        <div className='flex items-center gap-[8px] max-[480px]:flex-col-reverse'>
+          <p className='text-white text-center text-[24px] max-[620px]:text-[16px]'>
             {lib.type === 'favorite' && `Улюблені (${lib.titles.length})`}
             {lib.type === 'watching' && `Переглядаю (${lib.titles.length})`}
             {lib.type === 'plans' && `Плани (${lib.titles.length})`}

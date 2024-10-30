@@ -109,16 +109,16 @@ export default async function RSC({ params }: IRSCProps<{ username: string }>) {
 
   function StatCard({ label, value, className }: { label: 'favs' | 'watched' | 'watching' | 'viewtime', value: number, className?: string }) {
     return (
-      <div className={`grow basis-[360px] ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] min-w-[360px] max-[600px]:min-w-[260px] flex items-center max-[600px]:flex-col ${className ? className : ''}`}>
+      <div className={`grow basis-[280px] ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] flex items-center gap-[8px] max-[620px]:flex-col max-[620px]:basis-[170px] ${className ? className : ''}`}>
         <div className='flex-shrink-0'>
-          {label === 'favs' && <IcoHeartFilled width={80} height={80} />}
-          {label === 'watched' && <IcoWatched width={80} height={80} />}
-          {label === 'watching' && <IcoStack width={80} height={80} />}
-          {label === 'viewtime' && <IcoClockFilled width={80} height={80} />}
+          {label === 'favs' && <IcoHeartFilled width={80} height={80} className='max-[620px]:h-[64px] max-[620px]:w-[64px]' />}
+          {label === 'watched' && <IcoWatched width={80} height={80} className='max-[620px]:h-[64px] max-[620px]:w-[64px]' />}
+          {label === 'watching' && <IcoStack width={80} height={80} className='max-[620px]:h-[64px] max-[620px]:w-[64px]' />}
+          {label === 'viewtime' && <IcoClockFilled width={80} height={80} className='max-[620px]:h-[64px] max-[620px]:w-[64px]' />}
         </div>
 
         <div className='w-full flex flex-col gap-[8px]'>
-          <p className='text-white text-[32px] font-bold text-center w-full'>{value}</p>
+          <p className='text-white text-[32px] font-bold text-center w-full max-[620px]:text-[24px]'>{value}</p>
           <p className='text-white w-full text-center'>
             {label === 'favs' && `${wordDeclination(value, ['Улюблений тайтл', 'Улюблених тайтли', 'Улюблених тайтлів'])}`}
             {label === 'watched' && `${wordDeclination(value, ['Переглянутий тайтл', 'Переглянутих тайтли', 'Переглянутих тайтлів'])}`}

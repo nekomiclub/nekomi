@@ -65,7 +65,7 @@ export const UserLibOthers: NextPage<{ user: IUser, isOwner: boolean, currentLib
     <div className='flex flex-col gap-[24px]'>
       <UserDivider label={'Інші теки'} isOwner={isOwner} hidden={false} />
 
-      <div className='grid gap-[16px]' style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))' }}>
+      <div className='flex flex-wrap gap-[16px]'>
         {user.libs.some(el => !el.settings.hidden) ? <>
           {user.libs.filter(el => el.id !== currentLibID).map(lib => {
             return <UserLibCard lib={lib} isOwner={isOwner} username={user.username} key={`otherLib-${lib.id}`} />

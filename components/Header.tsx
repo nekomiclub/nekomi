@@ -28,6 +28,7 @@ import { IcoFolderPlain } from '../assets/Folder';
 import { IUser } from '../interfaces/IUser';
 import { IDubber } from '../interfaces/IDubber';
 import { getRoute } from './ServerComponents';
+import Image from 'next/image';
 
 
 
@@ -252,7 +253,7 @@ const Header: NextPage = () => {
             <Menu.Menu trigger={
               <div className='flex items-center gap-[16px] duration-200 rounded-[2px] overflow-hidden pr-[8px]'>
                 <div className='flex justify-center items-center gap-[8px]'>
-                  <LoadingImage src={user.avatar} loading='eager' priority width='60px' height='60px' parentClassName='overflow-hidden rounded-[4px]' />
+                  <Image src={user.avatar} priority width={60} height={60} className='rounded-[4px]' alt='avatar' />
 
                   <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
                 </div>
