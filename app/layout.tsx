@@ -25,7 +25,7 @@ import { routes } from '../routes';
 import { getRoute } from '../components/ServerComponents';
 import { IcoInternet, IcoOffline } from '../assets/Icons';
 import { ILayoutProps, IRSCProps } from '../interfaces/IRSC';
-import { ServerUnavailable } from '../components/Components';
+import { RenamePopup, ServerUnavailable } from '../components/Components';
 import { signCSRF } from '../components/http';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -80,6 +80,8 @@ export default async function Layout({ children, params }: ILayoutProps) {
             <Provider.State>
               <SkeletonTheme baseColor='#181818' highlightColor='#222'>
                 <Header />
+
+                <RenamePopup />
 
                 {children}
 
