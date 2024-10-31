@@ -254,9 +254,9 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
         </div>
 
         {/* Layouts */}
-        <>
+        <div className='wrapper'>
           {/* PC */}
-          <div className={`min-[670px]:flex hidden wrapper flex-row justify-between absolute bottom-0 left-0 w-full bg-dark/[.3] backdrop-blur-[32px] px-[32px] py-[16px]`}>
+          <div className={`min-[670px]:flex hidden flex-row justify-between absolute bottom-0 left-0 w-full bg-dark/[.3] backdrop-blur-[32px] px-[32px] py-[16px]`}>
             <div className='flex gap-[32px] min-[670px]'>
               <AvatarComponent />
 
@@ -267,7 +267,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
           </div>
 
           {/* Mobile */}
-          <div className='max-[670px]:flex hidden wrapper gap-[16px] items-center pt-[40px]'>
+          <div className='max-[670px]:flex hidden gap-[16px] items-center pt-[40px]'>
             <AvatarComponent />
 
             <div className='flex justify-between items-center gap-[16px] w-full'>
@@ -275,7 +275,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
               <SettingsComponent />
             </div>
           </div>
-        </>
+        </div>
       </div>
     </>
   );
