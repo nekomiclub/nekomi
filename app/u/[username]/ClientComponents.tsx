@@ -247,7 +247,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
         </Dialog>
       </Layer>}
 
-      <div className={`bg-dark relative mt-[${headerHeight}px]`}>
+      <div className={`bg-dark relative`} style={{ paddingTop: `${headerHeight}px` }}>
         {/* Image */}
         <div className='w-full h-fit max-h-[500px] aspect-[16/9] relative max-[1140px]:aspect-[16/7]'>
           <Image src={bannerURL} fill priority alt="banner" className='w-full h-full object-cover' />
