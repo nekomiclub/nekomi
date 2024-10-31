@@ -48,7 +48,7 @@ export const config = {
     apiProxy: prodMode ? `https://${CONSTS.Domains.proxy}` : `http://${devIP}`,
 
     /** Nekomi bot */
-    bot: prodMode ? `https://t.me/nekomibott` : `https://t.me/eblano3d_testbot`,
+    bot: prodMode ? `https://t.me/nekoomibot` : `https://t.me/eblano3d_testbot`,
 
     /** Nekomi media URL */
     media: prodMode ? `https://${CONSTS.Domains.nekomi_media}` : `http://${devIP}:43120`,
