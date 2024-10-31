@@ -77,7 +77,7 @@ export interface IUserTelegramData {
 }
 
 /** User lib type */
-type TUserLibType = 'favorite' | 'watching' | 'watched' | 'delayed' | 'plans' | 'custom'
+export type TUserLibType = 'favorite' | 'watching' | 'watched' | 'delayed' | 'plans' | 'custom'
 
 /** User titles lib */
 export interface IUserLib {
