@@ -16,8 +16,8 @@ import { AnimeAgeRates, AnimeStatuses, ITitle, ITitleEpisode, ITitleEpisodeMeta,
 import { IDubber } from '../../../interfaces/IDubber';
 import { IUser } from '../../../interfaces/IUser';
 import { cn, LoadingImage } from '../../../components/Components';
-import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
-import { config, prodMode } from '../../../config';
+import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoNekomiLogo, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
+import { config, CONSTS, prodMode } from '../../../config';
 import { routes } from '../../../routes';
 import { TRoleCapability } from '../../../interfaces/IRoles';
 import { DeepPartial, TEpisodeQuality } from '../../../interfaces/Interfaces';
@@ -465,7 +465,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
   const [errors, setErrors] = useState<string[]>([])
   const [saveStatus, setSaveStatus] = useState<TSaveStatus>('save')
   const [poster, setPoster] = useState(title.poster);
-  const [isPosterOnAnimee, setIsPosterOnAnimee] = useState(poster.includes('media.animee.club'))
+  const [isPosterStored, setIsPosterStored] = useState(poster.includes(CONSTS.Domains.nekomi_media))
   const [fieldsStatus, setFieldsStatus] = useState<IFieldStatus[]>([])
 
   const fileRef = useRef<HTMLInputElement>(null)
@@ -507,7 +507,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
       })
 
       setPoster(data.posterURL);
-      setIsPosterOnAnimee(true);
+      setIsPosterStored(true);
 
       console.log(`[+]: Poster uploaded`)
     } catch (e) {
@@ -663,7 +663,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
             </button>}
           </div>
 
-          {!isPosterOnAnimee && <p className='text-orange'>* Постер не на сервері animee.club</p>}
+          {!isPosterStored && <p className='text-orange'>* Постер не на сервері nekomi.club</p>}
         </div>
 
         <div className='flex flex-col gap-[24px]'>
@@ -682,7 +682,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
             </button>}
 
             <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${title.code}`} className='patcher-button_action'>
-              <IcoAnimeeLogo width={32} height={32} />
+              <IcoNekomiLogo width={32} height={32} fill='#fff' />
               <p className='text-white uppercase text-center'>тайтл на сайті</p>
             </Link>
           </div>

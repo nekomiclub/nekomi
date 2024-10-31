@@ -36,7 +36,7 @@ export const DubberHeader: NextPage<IProps> = ({ dubber }) => {
     <div className='bg-dark'>
       {/* Image */}
       <div className='w-full h-[400px] flex justify-center items-center bg-darkGrey'>
-        <p className='text-[60px] gradient--primary-text font-bold uppercase max-[600px]:text-[40px] select-none'>animee.club</p>
+        <p className='text-[60px] gradient--primary-text font-bold uppercase max-[600px]:text-[40px] select-none'>nekomi.club</p>
       </div>
 
       <div className={`wrapper h-[128px] max-[820px]:h-[270px]`}>

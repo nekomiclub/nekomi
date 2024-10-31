@@ -1219,7 +1219,7 @@ const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] gap-[24px] z-[7] ${isTime && endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
     <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Тайтл завершено!</p>
 
-    <p className='text-white text-[16px] font-extralight'>Дякуємо, що обрали animee!</p>
+    <p className='text-white text-[16px] font-extralight'>Дякуємо, що обрали nekomi!</p>
   </div>
 }
 

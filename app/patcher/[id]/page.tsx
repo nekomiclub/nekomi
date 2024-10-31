@@ -51,7 +51,7 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
   let pass = false;
 
   try {
-    session = cookies().get(config.vars.animeeCookie)?.value || '';
+    session = cookies().get(config.vars.SessionCookie)?.value || '';
 
     const { data: userData } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/*`, {
       params: {

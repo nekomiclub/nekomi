@@ -7,7 +7,7 @@ import axios, { AxiosError } from 'axios';
 
 import Tooltip from '../../../components/Tooltip';
 
-import { config, devMode } from '../../../config';
+import { config, CONSTS, devMode } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 import { routes } from '../../../routes';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
@@ -29,13 +29,13 @@ export async function generateMetadata(
     const { dubber } = data;
 
     return {
-      title: `${dubber.name} — animee`,
-      description: `Сторінка команди озвучення ${dubber.name} на animee`,
+      title: `${dubber.name} — nekomi`,
+      description: `Сторінка команди озвучення ${dubber.name} на nekomi`,
       keywords: ['anime', 'аніме на українській мові', dubber.name],
       openGraph: {
-        title: `${dubber.name} — animee`,
-        description: `Сторінка команди озвучення ${dubber.name} на animee`,
-        url: `https://animee.club/dub/${dubber.code}`,
+        title: `${dubber.name} — nekomi`,
+        description: `Сторінка команди озвучення ${dubber.name} на nekomi`,
+        url: `https://${CONSTS.Domains.nekomi}/dub/${dubber.code}`,
         type: 'article',
         images: dubber.thumbURL
       }

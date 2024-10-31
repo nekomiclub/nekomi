@@ -169,7 +169,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
     const file = input.files[0];
     if (!file) return;
 
-    if (!confirm(`Завантажуючи банер профілю ти погоджуєшся з Угодою Користувача (Agreement) та Політикою Конфіденційності (Privacy policy) сайту animee.club. Ознайомитись з ними можна внизу сайту`)) return;
+    if (!confirm(`Завантажуючи банер профілю ти погоджуєшся з Угодою Користувача (Agreement) та Політикою Конфіденційності (Privacy policy) сайту nekomi.club. Ознайомитись з ними можна внизу сайту`)) return;
 
     setBannerUploadError('');
 

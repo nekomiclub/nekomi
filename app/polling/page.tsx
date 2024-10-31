@@ -3,7 +3,7 @@ import Link from 'next/link';
 import axios, { AxiosError } from 'axios';
 import { Metadata, NextPage } from 'next';
 
-import { config, devMode } from '../../config';
+import { config, CONSTS, devMode } from '../../config';
 import { HappenedWrongScreen, NotFoundScreen } from '../../components/Components';
 import { getUTC } from '../../components/handlers';
 
@@ -113,6 +113,8 @@ const RSC: NextPage = async (props) => {
     <main className='h-full min-h-screen bg-dark w-full flex justify-center items-center'>
       <div className="wrapper justify-center items-center">
         <div className='bg-darkGrey px-[24px] py-[16px] my-[40px] flex flex-col gap-[40px] w-full max-w-[1200px]'>
+          <h1 className='text-red text-[24px] font-bold'>Опитування статусу сервісів вимкнено</h1>
+
           {/* Fullkekw services */}
           <div className='flex flex-col gap-[24px]'>
             <div className='flex items-center gap-[16px]'>
@@ -137,7 +139,7 @@ const RSC: NextPage = async (props) => {
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M16.0001 14.6667C14.5267 14.6667 13.3334 15.86 13.3334 17.3333C13.3334 18.8067 14.5267 20 16.0001 20C17.4734 20 18.6667 18.8067 18.6667 17.3333C18.6667 15.86 17.4734 14.6667 16.0001 14.6667ZM24.0001 17.3333C24.0001 12.9133 20.4201 9.33333 16.0001 9.33333C11.5801 9.33333 8.00008 12.9133 8.00008 17.3333C8.00008 20.2933 9.60675 22.8667 11.9934 24.2533L13.3401 21.9333C11.7467 21.0067 10.6667 19.3067 10.6667 17.3333C10.6667 14.3867 13.0534 12 16.0001 12C18.9467 12 21.3334 14.3867 21.3334 17.3333C21.3334 19.3067 20.2534 21.0067 18.6601 21.9267L20.0067 24.2467C22.3934 22.8667 24.0001 20.2933 24.0001 17.3333ZM16.0001 4C8.63341 4 2.66675 9.96667 2.66675 17.3333C2.66675 22.26 5.34675 26.5533 9.32675 28.86L10.6601 26.5533C7.48008 24.7133 5.33341 21.2733 5.33341 17.3333C5.33341 11.44 10.1067 6.66667 16.0001 6.66667C21.8934 6.66667 26.6667 11.44 26.6667 17.3333C26.6667 21.2733 24.5201 24.7133 21.3401 26.56L22.6734 28.8667C26.6534 26.5533 29.3334 22.26 29.3334 17.3333C29.3334 9.96667 23.3601 4 16.0001 4Z" fill="white" />
               </svg>
-              <h3 className='text-[24px] text-white'>Статус сервісів Animee</h3>
+              <h3 className='text-[24px] text-white'>Статус сервісів Nekomi</h3>
             </div>
 
             <div className='flex gap-[8px] flex-wrap justify-center'>
@@ -150,7 +152,7 @@ const RSC: NextPage = async (props) => {
           </div>
 
           <div className='w-full flex flex-col gap-[8px]'>
-            <p className='text-white text-center'>Якщо якийсь сервіс недоступний (не вимкнений) та в телеграмах <a href="https://t.me/an1meeClub" target='_blank' className='text-purple'>animee</a> чи <a href="https://t.me/fullkekw" target='_blank' className='text-purple'>fullkekw</a> нема сповіщення про роботи, будь ласка створіть тікет на <a href="https://discord.gg/UmDfKTpsh5" target='_blank' className='text-purple'>діскорд сервері</a></p>
+            {/* <p className='text-white text-center'>Якщо якийсь сервіс недоступний (не вимкнений) та в телеграмах <a href={CONSTS.social.telegram} target='_blank' className='text-purple'>nekomi</a> чи <a href="https://t.me/fullkekw" target='_blank' className='text-purple'>fullkekw</a> нема сповіщення про роботи, будь ласка створіть тікет на <a href={CONSTS.social.discord} target='_blank' className='text-purple'>діскорд сервері</a></p> */}
             <p className='text-lightGrey text-center'>Оновлено в: {updated}</p>
             <Link href={'/'} className='text-purple'>На головну</Link>
           </div>

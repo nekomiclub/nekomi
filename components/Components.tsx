@@ -9,7 +9,7 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { ITitle } from '../interfaces/ITitle';
 import { IRoute, routes } from '../routes';
 import { IcoAnimeeLogo, IcoArrow, IcoCheckmark, IcoNekomiLogo, IcoPlay, IcoStarRating } from '../assets/Icons';
-import { animeGenres, config } from '../config';
+import { animeGenres, config, CONSTS } from '../config';
 import { IcoClockOutlined } from '../assets/Clock';
 import { IcoGhost, IcoHome, IcoInternet, IcoOffline } from '../assets/Icons';
 
@@ -321,7 +321,7 @@ export const ServerUnavailable: NextPage = (props) => {
             <div className='flex flex-col gap-[16px]'>
               <h1 className='text-center text-white text-[40px] max-[700px]:text-[24px]'>Сервер тимчасово недоступний</h1>
               <p className='text-center text-white'>
-                Якщо в телеграмі <a href="https://t.me/an1meeClub" className='text-purple'>animee</a> нема сповіщення про роботи, створіть будь ласка тікет в <a href="https://discord.gg/UmDfKTpsh5" className='text-purple'>діскорді</a>
+                Якщо в телеграмі <a href={CONSTS.social.telegram} className='text-purple'>nekomi</a> нема сповіщення про роботи, створіть будь ласка тікет в <a href={CONSTS.social.discord} className='text-purple'>діскорді</a>
                 {/* Можливо, сервер вимкнений через стабілізаційні відключення. Це не повинно тривати довго. */}
               </p>
             </div>

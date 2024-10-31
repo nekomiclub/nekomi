@@ -18,7 +18,7 @@ interface IProps {
   user: IUser
 }
 
-type TUploadType = 'photo/user/avatar' | 'photo/user/banner' | 'video/title/episode' | 'photo/title/poster';
+type TUploadType = 'photo/user/avatar' | 'photo/user/banner' | 'video/title/episode' | 'photo/title/poster' | 'photo/raw';
 const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
   code: 'photo/title/poster',
   label: 'Постер тайтлу'
@@ -31,6 +31,9 @@ const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
 }, {
   code: 'video/title/episode',
   label: 'Епізод аніме'
+}, {
+  code: 'photo/raw',
+  label: 'Фото без обрізання'
 }]
 
 export const MediaClient: NextPage<IProps> = ({ user }) => {
@@ -80,6 +83,7 @@ export const MediaClient: NextPage<IProps> = ({ user }) => {
       if (!file) return;
 
       setError('');
+      setUploadLink('')
 
       const formData = new FormData();
 
@@ -101,7 +105,7 @@ export const MediaClient: NextPage<IProps> = ({ user }) => {
 
 
   return (
-    <div className={`wrapper min-h-screen mt-[${headerHeight}px] gap-[40px]`}>
+    <div className={`wrapper min-h-screen gap-[40px]`} style={{ paddingTop: `${headerHeight}px` }}>
       <div className='flex items-center gap-[32px] max-[784px]:flex-col max-[784px]:gap-[8px] mt-[40px]'>
         <h2 className='text-white text-[32px] uppercase font-bold max-[1072px]:text-[24px]'>МЕДІА КОНТЕНТ</h2>
 

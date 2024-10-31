@@ -1,4 +1,4 @@
-# Animee.club tree
+# Nekomi.club tree
 
 [Back](../README.md)
 
@@ -63,7 +63,7 @@ Dev endpoints. In prod mode layout will throw 404 screen
 ------------------------------------------
 
 ## /dev/icons
-List of all animee icons
+List of all nekomi icons
 
 ------------------------------------------
 

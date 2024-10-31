@@ -16,11 +16,11 @@ import { $api } from '../../../../../components/http';
 
 
 export const metadata: Metadata = {
-  title: 'Тека — animee',
+  title: 'Тека — nekomi',
   description: 'Чиясь тека з тайтлами',
   robots: 'none',
   openGraph: {
-    title: `Тека — animee`,
+    title: `Тека — nekomi`,
     description: `Чиясь тека з тайтлами`,
   }
 }
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 
 const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ params }) => {
   const { username, id } = params;
-  const token = cookies().get(config.vars.animeeCookie)?.value;
+  const token = cookies().get(config.vars.SessionCookie)?.value;
 
   let userId = '';
   let isOwner = false;

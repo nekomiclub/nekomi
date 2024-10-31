@@ -1,4 +1,4 @@
-# ANIMEE.CLUB
+# NEKOMI.CLUB
 
 ## [Tree](./docs/tree.md)
 
@@ -22,8 +22,8 @@ Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```
 *See ./components/handlers.ts*
 
 ## Dependencies
-- animee-core
-- animee-media
+- nekomi-core
+- nekomi-media
 - fk-usapi
 - fk-authority
 - fk-uptime (/polling)

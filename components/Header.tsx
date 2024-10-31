@@ -23,7 +23,7 @@ import { ITokenData } from '../interfaces/ITokenData';
 import { getUTC, makeStringID, parseTitleType, randomNumber } from './handlers';
 import { LoadingImage } from './Components';
 import { $api } from './http';
-import { IcoAnimeeLogo, IcoArrow, IcoBell, IcoExit, IcoGhost, IcoHome, IcoInfo, IcoLibrary, IcoMicrophone, IcoSearch, IcoSettings, IcoStarRating, IcoUser } from '../assets/Icons';
+import { IcoArrow, IcoBell, IcoExit, IcoGhost, IcoHome, IcoInfo, IcoLibrary, IcoMicrophone, IcoNekomiLogo, IcoSearch, IcoSettings, IcoStarRating, IcoUser } from '../assets/Icons';
 import { IcoFolderPlain } from '../assets/Folder';
 import { IUser } from '../interfaces/IUser';
 import { IDubber } from '../interfaces/IDubber';
@@ -231,7 +231,7 @@ const Header: NextPage = () => {
         <div className="wrapper !flex-row items-center justify-between w-full">
           <div className='flex items-center gap-[40px]'>
             <Link href={routes.home.path} className='duration-200 hover:rotate-[5deg] focus-visible:rotate-[5deg] outline-none'>
-              <IcoAnimeeLogo width={60} height={60} fill='#FF464E' />
+              <IcoNekomiLogo width={60} height={60} fill='#fff' />
             </Link>
 
             <div className='flex items-center gap-[16px]'>

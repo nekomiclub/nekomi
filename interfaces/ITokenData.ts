@@ -1,4 +1,4 @@
-export type TAuthProviders = 'google' | 'telegram' | 'animee' | 'fullkekw'
+export type TAuthProviders = 'google' | 'telegram' | 'fullkekw'
 export type TUserRoles = 'root' | 'admin' | 'moderator' | 'dubber' | 'subber' | 'subscriber' | 'editor' | 'user'
 
 export interface ITokenData {

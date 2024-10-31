@@ -4,7 +4,7 @@ import axios, { AxiosError } from "axios";
 import Watch from "./Watch";
 
 import { ITitle } from "../../../interfaces/ITitle";
-import { config, devMode } from "../../../config";
+import { config, CONSTS, devMode } from "../../../config";
 import { IDubber } from "../../../interfaces/IDubber";
 import { getUTC } from "../../../components/handlers";
 import { IRSCProps } from "../../../interfaces/IRSC";
@@ -22,14 +22,14 @@ export async function generateMetadata(
     const { title } = data
 
     return {
-      title: `${title.names.ukr} — animee`,
+      title: `${title.names.ukr} — nekomi`,
       description: title.description,
       keywords: [title.names.ukr, title.names.eng, ...title.names.alt || [], 'дивитись аніме українською'],
       openGraph: {
-        title: `${title.names.ukr} — animee`,
+        title: `${title.names.ukr} — nekomi`,
         description: title.description,
-        url: `https://animee.club/w/${title.code}`,
-        siteName: 'animee.club',
+        url: `https://${CONSTS.Domains.nekomi}/w/${title.code}`,
+        siteName: CONSTS.Domains.nekomi,
         type: 'video.tv_show',
         images: title.poster
       }

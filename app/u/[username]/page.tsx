@@ -27,11 +27,11 @@ export async function generateMetadata(
     const { data } = await axios.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${params.username}`);
 
     return {
-      title: `@${params.username} — animee`,
+      title: `@${params.username} — nekomi`,
       description: `Буквально його профіль (:`,
       openGraph: {
         type: 'profile',
-        title: `@${params.username} — animee`,
+        title: `@${params.username} — nekomi`,
         images: data.user.avatar,
         description: `Буквально його профіль (:`
       }
@@ -48,7 +48,7 @@ export async function generateMetadata(
 
 export default async function RSC({ params }: IRSCProps<{ username: string }>) {
   const { username } = params;
-  const token = cookies().get(config.vars.animeeCookie)?.value;
+  const token = cookies().get(config.vars.SessionCookie)?.value;
 
   let userId = '';
   let isOwner = false;

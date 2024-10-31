@@ -36,7 +36,7 @@ const RSC: NextPage<IRSCProps> = (props) => {
             </div>
 
             {/* Description */}
-            <p className='text-white'>Засновник та головний розробник Fullkekw & Animee.club</p>
+            <p className='text-white'>Fullkekw Founder</p>
 
             {/* Stack */}
             <div className='flex gap-[16px] items-center'>
@@ -48,10 +48,6 @@ const RSC: NextPage<IRSCProps> = (props) => {
             <ul className='flex flex-col gap-[8px]'>
               <li>
                 <p className='text-white'>Software Engineer</p>
-              </li>
-
-              <li>
-                <p className='text-white'>SMM</p>
               </li>
             </ul>
 

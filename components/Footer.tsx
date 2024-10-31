@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link';
 
 import { routes } from '../routes';
-import { config, devMode } from '../config';
-import { IcoAnimeeLogo } from '../assets/Icons';
+import { config, CONSTS, devMode } from '../config';
+import { IcoNekomiLogo } from '../assets/Icons';
 import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
 import { useAppSelector } from '../hooks/redux';
 
@@ -21,24 +21,24 @@ const Footer: NextPage = (props) => {
       <div className="wrapper min-[1260px]:!flex-row justify-between items-start !px-[32px] !py-[40px] max-[1260px]:gap-[40px] max-[1260px]:items-center max-[760px]:items-start gap-[24px]">
         {/* Left */}
         <div className='flex gap-[16px] items-center max-[760px]:w-full max-[760px]:justify-center max-[560px]:flex-col'>
-          <IcoAnimeeLogo width={128} height={128} fill='#FF464E' />
+          <IcoNekomiLogo width={128} height={128} fill='#fff' />
 
           <div className='flex flex-col gap-[16px]'>
             <div className='flex flex-col gap-[4px]'>
-              <p className='text-[32px] font-bold gradient--primary-text max-[560px]:text-center'>ANIMEE.CLUB</p>
-              <p className='text-white max-[560px]:text-center'>Поринь у світ україномовного аніме!</p>
+              <p className='text-[32px] text-white font-bold max-[560px]:text-center'>NEKOMI</p>
+              <p className='text-lightGrey max-[560px]:text-center'>Поринь у світ україномовного аніме!</p>
             </div>
 
             <div className='flex items-center gap-[16px] max-[560px]:justify-between'>
-              <Link href={`https://t.me/an1meeClub`} target='_blank' className='footer-socialItem'>
+              <Link href={CONSTS.social.telegram} target='_blank' className='footer-socialItem'>
                 <IcoSocialTelegram width={32} height={32} />
               </Link>
 
-              <Link href={`https://www.tiktok.com/@an1mee.club`} target='_blank' className='footer-socialItem'>
+              <Link href={CONSTS.social.tiktok} target='_blank' className='footer-socialItem'>
                 <IcoSocialTiktok width={32} height={32} />
               </Link>
 
-              <Link href={`https://discord.gg/UmDfKTpsh5`} target='_blank' className='footer-socialItem'>
+              <Link href={CONSTS.social.discord} target='_blank' className='footer-socialItem'>
                 <IcoSocialDiscord width={32} height={32} />
               </Link>
             </div>
@@ -49,17 +49,13 @@ const Footer: NextPage = (props) => {
         <div className='flex gap-[24px] max-[760px]:flex-col'>
           <ul className='flex flex-col gap-[4px]'>
             <FooterLink href={routes.info_contacts.path} text='Контакти' />
-            <FooterLink href={routes.polling.path} text='Сервіси' />
+            <FooterLink href={'#'} disabled text='FAQ' />
           </ul>
 
           <ul className='flex flex-col gap-[4px]'>
             <FooterLink href={routes.info_agreement.path} text='Угода користувача / Agreement' />
             <FooterLink href={routes.info_policy.path} text='Політика конфіденційності / Privacy policy' />
             <FooterLink href={routes.info_copyright.path} text='Правовласникам / Copyright' />
-          </ul>
-
-          <ul className='flex flex-col gap-[4px]'>
-            <FooterLink href={routes.rickroll.path} text='Rickroll' disabled />
           </ul>
         </div>
 

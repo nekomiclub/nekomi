@@ -4,7 +4,7 @@ import { NextPage, Metadata } from 'next';
 import React, { useState, useEffect, useRef, memo, useMemo } from 'react'
 import { LoadingImage, TitleCard, WatchButton } from '../components/Components';
 import { ITitle } from '../interfaces/ITitle';
-import { config } from '../config';
+import { config, CONSTS } from '../config';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import Skeleton from 'react-loading-skeleton';
 import { IcoExternalLink, IcoGhost, IcoPlay, IcoStar, IcoStarRating } from '../assets/Icons';
@@ -351,12 +351,12 @@ const Home: NextPage<IProps> = ({ data, watchProgress }) => {
 
           <div className='flex flex-col gap-[24px]'>
             <div className='flex flex-col gap-[8px]'>
-              <h2 className='text-white text-[40px] font-bold max-[650px]:text-[32px]'>А ти, підписаний на <span className='text-gradientPrimaryFallback'>телеграм Animee?</span></h2>
+              <h2 className='text-white text-[40px] font-bold max-[650px]:text-[32px]'>А ти, підписаний на <span className='text-gradientPrimaryFallback'>телеграм nekomi?</span></h2>
               <p className='text-white text-[24px] max-[650px]:text-[16px]'>Тут то ти і попався. Там публікується багато цікавого. Новини, оновлення там, та всяке інше з аніме тематики.</p>
             </div>
 
             <div className='flex flex-col gap-[8px] w-fit max-[650px]:w-full'>
-              <Link href={'https://t.me/an1meeClub'} target='_blank' className='px-[16px] py-[16px] rounded-[2px] bg-grey flex items-center justify-center gap-[16px] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback'>
+              <Link href={CONSTS.social.telegram} target='_blank' className='px-[16px] py-[16px] rounded-[2px] bg-grey flex items-center justify-center gap-[16px] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback'>
                 <IcoExternalLink width={32} height={32} />
                 <p className='text-white text-[24px] uppercase max-[650px]:text-[16px]'>підписатися</p>
               </Link>

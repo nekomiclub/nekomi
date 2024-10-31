@@ -19,7 +19,7 @@ import Link from 'next/link';
 import { headers } from 'next/headers';
 
 import * as Provider from '../components/Providers'
-import { config } from '../config';
+import { config, CONSTS } from '../config';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { routes } from '../routes';
 import { getRoute } from '../components/ServerComponents';
@@ -31,16 +31,16 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Animee',
-  description: 'Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!',
-  applicationName: 'Animee',
-  keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'анімі', 'аніме', 'анімі клаб', 'animee', 'animee club'],
+  title: 'Nekomi',
+  description: 'Nekomi - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!',
+  applicationName: 'Nekomi',
+  keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'некомі', 'аніме', 'некомі клаб', 'nekomi', 'nekomi club'],
   metadataBase: new URL(config.URL.baseURL),
   openGraph: {
-    title: `Animee Club`,
-    description: `Animee - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!`,
-    url: 'https://animee.club',
-    siteName: 'animee.club',
+    title: `Nekomi Club`,
+    description: `Nekomi - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!`,
+    url: `https://${CONSTS.Domains.nekomi}`,
+    siteName: CONSTS.Domains.nekomi,
     type: 'website',
     images: './icon.png'
   }
