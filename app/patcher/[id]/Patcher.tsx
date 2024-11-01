@@ -596,6 +596,12 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
           fieldsStatus.push({ id: key, status: 'saved' })
           break
         }
+
+        case 'genres': {
+          patchBody.genres = MetaCtx.meta.genres.split(',').map(el => el.trim().replaceAll(/\s+/gi, ' ')) as TAnimeGenre[];
+          fieldsStatus.push({ id: key, status: 'saved' })
+          break
+        }
       }
     });
 
@@ -718,6 +724,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
 
         <PatcherField label='Епізоди' id='episodesCount' note='1 - 9999, 0 - відсутні' type='number' symbolsLimited={4} fieldsStatus={fieldsStatus} />
         <PatcherField label='Студії' id='studios' note='Через кому' symbolsLimited={256} fieldsStatus={fieldsStatus} />
+        <PatcherField label='Жанри' id='genres' note='Через кому' value={MetaCtx.meta.genres} symbolsLimited={256} fieldsStatus={fieldsStatus} />
 
         <PatcherSelect label='Країна' id='country' options={titleCountryOptions} fieldsStatus={fieldsStatus} />
         <PatcherSelect label='Сезон' id='season' options={titleSeasonOptions} fieldsStatus={fieldsStatus} />
