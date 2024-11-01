@@ -88,7 +88,7 @@ export class PactherStack {
 
       formData.append('file', item.file!);
       formData.append('type', 'upload_episode');
-      formData.append('dubID', item.episode.dubberID);
+      formData.append('dubberID', item.episode.dubberID);
       formData.append('episodeOrder', `${item.episode.order}`);
       formData.append('qualities', JSON.stringify([480]));
 
