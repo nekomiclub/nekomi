@@ -267,7 +267,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
           </div>
 
           {/* Mobile */}
-          <div className='max-[670px]:flex hidden gap-[16px] items-center pt-[40px]'>
+          <div className='max-[670px]:flex flex-col hidden gap-[16px] items-center pt-[40px]'>
             <AvatarComponent />
 
             <div className='flex justify-between items-center gap-[16px] w-full'>

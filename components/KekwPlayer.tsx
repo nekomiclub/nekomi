@@ -109,12 +109,12 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  // useIdleTimer({
-  //   timeout: 3000,
-  //   throttle: 500,
-  //   onIdle: () => setIsIdle(true),
-  //   onAction: () => setIsIdle(false)
-  // })
+  useIdleTimer({
+    timeout: 3000,
+    throttle: 500,
+    onIdle: () => setIsIdle(true),
+    onAction: () => setIsIdle(false)
+  })
 
   //! -------------- DEFAULT EFFECTS --------------
   //* Player vitals, video loading handling

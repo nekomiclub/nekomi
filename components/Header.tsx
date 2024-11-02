@@ -154,7 +154,7 @@ const Header: NextPage = () => {
 
 
   /** Exit from account */
-  async function signOut() {
+  async function logout() {
     try {
       await $api.get('/user/logout')
     } catch (e) {
@@ -285,7 +285,7 @@ const Header: NextPage = () => {
                   <span className='w-full h-full block bg-grey'></span>
                 </Menu.MenuItem>
 
-                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={signOut}>
+                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={logout}>
                   <IcoExit width={24} height={24} fill='#FF464E' />
                   <p className='text-white text-center w-full font-bold'>Вийти</p>
                 </Menu.MenuItem>
