@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { ILayoutProps, IRSCProps } from '../../../interfaces/IRSC';
+import { IRSCProps } from '../../../interfaces/IRSC';
 import { cookies } from 'next/headers';
 import { config, devMode } from '../../../config';
 import { IUser } from '../../../interfaces/IUser';
@@ -11,6 +11,8 @@ import { getUTC } from '../../../components/handlers';
 import { MediaClient } from './Client';
 
 const RSC: NextPage<IRSCProps> = async () => {
+  const cookieData = await cookies();
+
   let user: IUser | undefined = undefined
   let capabilities: TRoleCapability[] = []
   let pass = false
@@ -22,7 +24,7 @@ const RSC: NextPage<IRSCProps> = async () => {
         parseRoles: true
       },
       headers: {
-        Cookie: cookies().toString()
+        Cookie: cookieData.toString()
       }
     });
 

@@ -194,9 +194,9 @@ export const RenamePopup: NextPage = (props) => {
   const [show, setShow] = useState(false);
 
   useMemo(() => {
-    if (typeof window === undefined) return;
-
-    setShow(!Boolean(window.localStorage.getItem('renameDialogShowed')))
+    if (window !== undefined) {
+      setShow(!Boolean(localStorage.getItem('renameDialogShowed')))
+    }
   }, [])
 
   function hide() {

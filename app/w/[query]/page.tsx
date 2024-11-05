@@ -1,4 +1,4 @@
-import { NextPage, Metadata, ResolvingMetadata } from "next";
+import { Metadata, ResolvingMetadata } from "next";
 import axios, { AxiosError } from "axios";
 
 import Watch from "./Watch";
@@ -14,9 +14,11 @@ import { HappenedWrongScreen, NotFoundScreen } from "../../../components/Compone
 
 
 export async function generateMetadata(
-  { params }: IRSCProps,
+  props: IRSCProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const params = await props.params;
+
   try {
     const { data } = await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${params.query}`)
     const { title } = data
@@ -45,7 +47,9 @@ export async function generateMetadata(
 
 
 // Fetch title
-export default async function RSC({ params }: IRSCProps<{ query: string }>) {
+export default async function RSC(props: IRSCProps<{ query: string }>) {
+  const params = await props.params;
+
   let title: ITitle | null = null;
   let dubbers: IDubber[] = []
   let episodesDubbed = 0;

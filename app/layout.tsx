@@ -24,7 +24,7 @@ import { SkeletonTheme } from 'react-loading-skeleton';
 import { routes } from '../routes';
 import { getRoute } from '../components/ServerComponents';
 import { IcoInternet, IcoOffline } from '../assets/Icons';
-import { ILayoutProps, IRSCProps } from '../interfaces/IRSC';
+import { ILayoutProps } from '../interfaces/IRSC';
 import { RenamePopup, ServerUnavailable } from '../components/Components';
 import { signCSRF } from '../components/http';
 import Header from '../components/Header';
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
 
 
 export default async function Layout({ children, params }: ILayoutProps) {
-  const pathname = headers().get('x-url')!.replace(config.URL.baseURL, '')
+  const pathname = (await headers()).get('x-url')!.replace(config.URL.baseURL, '')
   const route = getRoute(pathname)
 
   // Check is server online

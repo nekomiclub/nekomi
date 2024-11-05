@@ -23,13 +23,15 @@ export const metadata: Metadata = {
     title: `Тека — nekomi`,
     description: `Чиясь тека з тайтлами`,
   }
-}
+};
 
 
 
-const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ params }) => {
+export default async function RSC(props: IRSCProps) {
+  const params = await props.params;
+
   const { username, id } = params;
-  const token = cookies().get(config.vars.SessionCookie)?.value;
+  const token = (await cookies()).get(config.vars.SessionCookie)?.value;
 
   let userId = '';
   let isOwner = false;
@@ -96,5 +98,3 @@ const RSC: NextPage<IRSCProps<{ id: string, username: string }>> = async ({ para
     </>
   );
 }
-
-export default RSC;

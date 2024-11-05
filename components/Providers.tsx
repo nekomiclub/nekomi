@@ -13,7 +13,7 @@ import { useAppDispatch } from '../hooks/redux';
 import userSlice, { userStateDefault } from '../store/reducers/userSlice';
 import { config, prodMode } from '../config';
 import { IUsapiUser, IUser } from '../interfaces/IUser';
-import { $api } from './http';
+import { $api, signCSRF } from './http';
 import storageSlice from '../store/reducers/storageSlice';
 import { TRoleCapability } from '../interfaces/IRoles';
 import { createID } from './handlers';

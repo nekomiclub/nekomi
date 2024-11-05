@@ -16,9 +16,11 @@ import { IDubber } from '../../../interfaces/IDubber';
 
 
 export async function generateMetadata(
-  { params }: IRSCProps,
+  props: IRSCProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const params = await props.params;
+
   try {
     const res = await $api.get<{ title: ITitle }>(`/title/${params.id}`)
     const data = res.data.title
@@ -38,7 +40,9 @@ export async function generateMetadata(
 
 
 // Fetch title
-export default async function RSC({ params }: IRSCProps<{ id: string }>) {
+export default async function RSC(props: IRSCProps<{ id: string }>) {
+  const params = await props.params;
+
   let title: ITitle | null = null;
   let dubbers: IDubber[] = [];
   let totalDubbers: IDubber[] = [];
@@ -51,7 +55,7 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
   let pass = false;
 
   try {
-    session = cookies().get(config.vars.SessionCookie)?.value || '';
+    session = (await cookies()).get(config.vars.SessionCookie)?.value || '';
 
     const { data: userData } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/*`, {
       params: {
@@ -59,7 +63,7 @@ export default async function RSC({ params }: IRSCProps<{ id: string }>) {
         parseRoles: true
       },
       headers: {
-        Cookie: cookies().toString()
+        Cookie: (await cookies()).toString()
       }
     });
 

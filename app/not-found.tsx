@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   }
 }
 
-export default function NotFound() {
-  const pathname = headers().get('x-url')!.replace(config.URL.baseURL, '')
+export default async function NotFound() {
+  const pathname = (await headers()).get('x-url')!.replace(config.URL.baseURL, '')
   const route = getRoute(pathname)
 
   if (!route) {

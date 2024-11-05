@@ -20,7 +20,7 @@ export function generateMetadata(): Metadata {
   }
 }
 
-const RSC: NextPage<IRSCProps> = (props) => {
+const RSC: NextPage<IRSCProps> = () => {
   return (
     <>
       <div className="w-full h-full min-h-screen bg-dark">

@@ -37,6 +37,8 @@ export const metadata: Metadata = {
 
 
 export default async function RSC() {
+  const cookieData = await cookies();
+
   let watchProgress: IUserWatchProgress[] = []
 
   let DATA: IHomeWrapped = {
@@ -49,7 +51,7 @@ export default async function RSC() {
   try {
     const { data } = await $api.get<IHomeWrappedResponse>(`/title/home_wrapped`, {
       headers: {
-        Cookie: cookies().toString()
+        Cookie: cookieData.toString()
       }
     });
 

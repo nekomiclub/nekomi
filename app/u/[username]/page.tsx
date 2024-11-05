@@ -20,9 +20,11 @@ import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 import { $api } from '../../../components/http';
 
 export async function generateMetadata(
-  { params }: IRSCProps<{ username: string }>,
+  props: IRSCProps<{ username: string }>,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const params = await props.params;
+
   try {
     const { data } = await axios.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${params.username}`);
 
@@ -46,9 +48,11 @@ export async function generateMetadata(
 
 
 
-export default async function RSC({ params }: IRSCProps<{ username: string }>) {
+export default async function RSC(props: IRSCProps<{ username: string }>) {
+  const params = await props.params;
+
   const { username } = params;
-  const token = cookies().get(config.vars.SessionCookie)?.value;
+  const token = (await cookies()).get(config.vars.SessionCookie)?.value;
 
   let userId = '';
   let isOwner = false;

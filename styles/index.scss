@@ -59,8 +59,8 @@ input[type=number] {
 
 @media only screen and (max-width: 650px) {
   .wrapper {
-    padding-right: $wrapperSidePadding / 2;
-    padding-left: $wrapperSidePadding / 2;
+    padding-right: calc($wrapperSidePadding / 2);
+    padding-left: calc($wrapperSidePadding / 2);
   }
 }
 

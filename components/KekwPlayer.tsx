@@ -198,16 +198,16 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       return loadDefault();
     }
 
-    await changeEpisode(episode, progress.moment);
     setIsContinueMenuOpen(false);
+    await changeEpisode(episode, progress.moment);
     setStage('operational')
   }
 
   /** Delete title from user progress & proceed */
   async function passProgress() {
+    setIsContinueMenuOpen(false);
     await loadDefault();
     deletePlayerProgress();
-    setIsContinueMenuOpen(false);
   }
 
   /** Setup with default player states */
@@ -247,6 +247,8 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
         progress: currentTitle.moment,
         viewtime,
       })
+
+      viewtimeRef.current = 0;
     } catch (err) {
       if (err instanceof AxiosError) {
         console.log(`HTTP error occured while saving user progress - ${err.response?.data?.msg}`)

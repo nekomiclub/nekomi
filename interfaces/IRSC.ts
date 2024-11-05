@@ -6,8 +6,8 @@ export interface IRSCProps<QUERY = {
 }, SEARCH = {
   [searchParam: string]: string
 }> {
-  params: QUERY | never,
-  searchParams: SEARCH | never,
+  params: Promise<QUERY>
+  searchParams: Promise<SEARCH>
 }
 
 /**
@@ -16,6 +16,6 @@ export interface IRSCProps<QUERY = {
 export interface ILayoutProps<QUERY = {
   [param: string]: string
 }> {
-  params: QUERY,
+  params: Promise<QUERY>,
   children: React.ReactElement
 }

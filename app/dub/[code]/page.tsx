@@ -21,9 +21,10 @@ import { DubberHeader } from './ClientComponents';
 
 
 export async function generateMetadata(
-  { params }: IRSCProps,
-  parent: ResolvingMetadata
+  props: IRSCProps,
 ): Promise<Metadata> {
+  const params = await props.params;
+
   try {
     const { data } = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
     const { dubber } = data;
@@ -50,7 +51,9 @@ export async function generateMetadata(
 
 
 
-export default async function RSC({ params }: IRSCProps<{ code: string }>) {
+export default async function RSC(props: IRSCProps) {
+  const params = await props.params;
+
   // @ts-ignore
   let dubber: IDubber = {};
 

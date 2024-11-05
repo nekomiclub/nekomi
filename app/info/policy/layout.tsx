@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { ILayoutProps, IRSCProps } from '../../../interfaces/IRSC'
+import { ILayoutProps } from '../../../interfaces/IRSC'
 
 export const metadata: Metadata = {
   title: 'Політика конфіденційності / Privacy policy',

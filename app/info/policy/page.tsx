@@ -4,36 +4,16 @@ import { NextPage } from 'next';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { IcoTranslations } from '../../../assets/Icons';
 import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 
-{/* <ul className='flex flex-col gap-[4px] text-white'>
-  <li className='!list-disc relative left-[16px]'>
-    <p className='text-white text-[16px]'></p>
-  </li>
 
-  <li className='!list-disc relative left-[16px]'>
-    <p className='text-white text-[16px]'></p>
-  </li>
-
-  <li className='!list-disc relative left-[16px]'>
-    <p className='text-white text-[16px]'></p>
-  </li>
-
-  <li className='!list-disc relative left-[16px]'>
-    <p className='text-white text-[16px]'></p>
-  </li>
-
-  <li className='!list-disc relative left-[16px]'>
-    <p className='text-white text-[16px]'></p>
-  </li>
-</ul> */}
-
-const Policy: NextPage<IRSCProps> = ({ searchParams }) => {
+const Policy: NextPage = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [lang, setLang] = useState<'eng' | 'ukr'>(searchParams.lang === 'ukr' ? 'ukr' : 'eng')
+  const [lang, setLang] = useState<'eng' | 'ukr'>(searchParams.get('lang') === 'ukr' ? 'ukr' : 'eng')
 
   useEffect(() => {
     router.replace(`${pathname}?lang=${lang}`)
