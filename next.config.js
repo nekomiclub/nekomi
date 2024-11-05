@@ -9,7 +9,10 @@ const nextConfig = {
       hostname: '192.168.0.106'
     }]
   },
-  reactStrictMode: false
+  reactStrictMode: false,
+  sassOptions: {
+    silenceDeprecations: ['legacy-js-api'],
+  }
 }
 
 module.exports = nextConfig

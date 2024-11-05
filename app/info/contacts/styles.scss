@@ -1,4 +1,4 @@
-@import '../../../styles/colors.scss';
+@use '../../../styles/colors.scss';
 
 .contacts {
   &-contact {
@@ -8,7 +8,7 @@
 
     &:hover {
       path, rect {
-        fill: $gradientPrimaryFallback;
+        fill: colors.$gradientPrimaryFallback;
       }
     }
   }

@@ -1,5 +1,5 @@
-@import '../colors.scss';
-@import '../index.scss';
+@use '../colors.scss';
+@use '../index.scss';
 
 .footer {
   &-socialItem {
@@ -15,7 +15,7 @@
     &:focus-visible {
       svg {
         path, rect {
-          fill: $gradientPrimaryFallback;
+          fill: colors.$gradientPrimaryFallback;
         }
       }
     }

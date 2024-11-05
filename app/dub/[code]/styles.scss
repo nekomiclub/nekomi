@@ -1,5 +1,5 @@
-@import '../../../styles/index.scss';
-@import '../../../styles/colors.scss';
+@use '../../../styles/index.scss';
+@use '../../../styles/colors.scss';
 
 .dub {
   &-allDubbedTitlesBtn {
@@ -44,7 +44,7 @@
       left: 0;
 
       path, rect {
-        fill: $white;
+        fill: colors.$white;
       }
     }
 

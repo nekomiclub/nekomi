@@ -1,4 +1,4 @@
-@import '../colors.scss';
+@use '../colors.scss';
 
 .header {
   &-ico {
@@ -6,7 +6,7 @@
     &:hover,
     &:focus-visible {
       svg path {
-        fill: $gradientPrimaryFallback;
+        fill: colors.$gradientPrimaryFallback;
       }
     }
 
@@ -18,7 +18,7 @@
 
     &--active {
       svg path {
-        fill: $gradientPrimaryFallback;
+        fill: colors.$gradientPrimaryFallback;
       }
     }
   }

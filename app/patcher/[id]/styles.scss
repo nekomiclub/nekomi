@@ -1,4 +1,4 @@
-@import '../../../styles/colors.scss';
+@use '../../../styles/colors.scss';
 
 .patcher {
   &-button {
@@ -8,49 +8,49 @@
       align-items: center;
       gap: 16px;
       padding: 8px 24px;
-      background: $grey;
+      background: colors.$grey;
       transition: .2s ease-in-out;
       border-radius: 4px;
 
       &:hover {
-        background: $purple;
+        background: colors.$purple
       }
 
 
 
       &--save {
         &:hover {
-          background: $green;
+          background: colors.$green;
         }
       }
 
       &--saved {
-        background: $green;
+        background: colors.$green;
 
         &:hover {
-          background: $green;
+          background: colors.$green;
         }
       }
 
       &--saveError {
-        background: $red;
+        background: colors.$red;
 
         &:hover {
-          background: $red;
+          background: colors.$red;
         }
       }
 
       &--delete {
         &:hover {
-          background: $red;
+          background: colors.$red;
         }
       }
 
       &--nothingChanged {
-        background: $orange;
+        background: colors.$orange;
 
         &:hover {
-          background: $orange;
+          background: colors.$orange;
         }
       }
     }
@@ -69,51 +69,51 @@
 
   &-field {
     outline: none;
-    background: $grey;
-    color: $white;
+    background: colors.$grey;
+    color: colors.$white;
     padding: 8px 12px;
     border-radius: 2px;
     width: 100%;
     max-width: 100%;
     max-height: 300px;
-    border: 1px solid $grey;
+    border: 1px solid colors.$grey;
     transition: .2s ease-in-out;
 
     &::placeholder {
-      color: $lightGrey;
+      color: colors.$lightGrey;
     }
 
     &--locked {
-      color: $lightGrey;
+      color: colors.$lightGrey;
     }
 
     &--pending {
-      border-color: $gradientSecondaryFallback;
+      border-color: colors.$gradientSecondaryFallback;
     }
 
     &--saved {
-      border-color: $green;
+      border-color: colors.$green;
     }
 
     &--error {
-      border-color: $red !important;
+      border-color: colors.$red !important;
     }
   }
 
   &-select {
-    border: 1px solid $grey;
+    border: 1px solid colors.$grey;
     transition: .2s ease-in-out;
 
     &--pending {
-      border-color: $gradientSecondaryFallback;
+      border-color: colors.$gradientSecondaryFallback;
     }
 
     &--saved {
-      border-color: $green;
+      border-color: colors.$green;
     }
 
     &--error {
-      border-color: $red !important;
+      border-color: colors.$red !important;
     }
   }
 
@@ -129,13 +129,13 @@
       .patcher-episodeMeta {
         &_select {
           path {
-            fill: $green;
+            fill: colors.$green;
           }
         }
 
         &_delete {
           path {
-            fill: $red;
+            fill: colors.$red;
           }
         }
       }
