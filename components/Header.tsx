@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import * as Menu from 'uvc-menu';
-import * as uuid from 'uuid';
 
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { useDebounce } from 'use-debounce';
@@ -20,7 +19,7 @@ import { routes } from '../routes';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import userSlice, { IUserState, userStateDefault } from '../store/reducers/userSlice';
 import { ITokenData } from '../interfaces/ITokenData';
-import { getUTC, makeStringID, parseTitleType, randomNumber } from './handlers';
+import { createID, getUTC, makeStringID, parseTitleType, randomNumber } from './handlers';
 import { LoadingImage } from './Components';
 import { $api } from './http';
 import { IcoArrow, IcoBell, IcoExit, IcoGhost, IcoHome, IcoInfo, IcoLibrary, IcoMicrophone, IcoNekomiLogo, IcoSearch, IcoSettings, IcoStarRating, IcoUser } from '../assets/Icons';
@@ -220,7 +219,7 @@ const Header: NextPage = () => {
             {/* Results */}
             <ul className={`flex-col gap-[8px] max-h-[500px] overflow-y-scroll w-full ${searchResults.length ? 'flex' : 'hidden'}`} ref={resultsRef}>
               {searchResults.map(result => {
-                return <SearchResult result={result} key={`search-placeholder--${result.item?.id || uuid.v4()}`} />
+                return <SearchResult result={result} key={`search-placeholder--${result.item?.id || createID()}`} />
               })}
             </ul>
           </div>

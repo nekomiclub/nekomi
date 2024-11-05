@@ -1,7 +1,6 @@
-import { Metadata, NextPage } from 'next';
 import Home, { IHomeWrapped } from './Home';
 import { ITitle } from '../interfaces/ITitle';
-import { config, CONSTS, devMode, prodMode } from '../config';
+import { config, CONSTS, devMode, metaObject, prodMode } from '../config';
 import axios, { AxiosError } from 'axios';
 import Link from 'next/link';
 import { HappenedWrongScreen, NotFoundScreen } from '../components/Components';
@@ -18,21 +17,10 @@ interface IHomeWrappedResponse extends IHomeWrapped {
 
 
 
-export const metadata: Metadata = {
-  title: 'Головна — nekomi',
-  description: 'Поринь у світ україномовного аніме разом з nekomi!',
-  applicationName: 'Nekomi',
-  keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'некомі', 'аніме', 'некомі клаб', 'nekomi', 'nekomi club'],
-  metadataBase: new URL(config.URL.media),
-  openGraph: {
-    title: `Головна — nekomi`,
-    description: `Поринь у світ україномовного аніме разом з nekomi!`,
-    url: `https://${CONSTS.Domains.nekomi}`,
-    siteName: CONSTS.Domains.nekomi,
-    type: 'website',
-    images: './icon.png'
-  }
-}
+export const metadata = metaObject({
+  title: 'Головна',
+  description: 'Nekomi - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!'
+})
 
 
 

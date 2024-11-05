@@ -13,13 +13,12 @@ import '../styles/index.scss'
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
-import { Metadata, NextPage } from 'next'
 import axios from 'axios';
 import Link from 'next/link';
 import { headers } from 'next/headers';
 
 import * as Provider from '../components/Providers'
-import { config, CONSTS } from '../config';
+import { config, CONSTS, metaObject } from '../config';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { routes } from '../routes';
 import { getRoute } from '../components/ServerComponents';
@@ -30,22 +29,7 @@ import { signCSRF } from '../components/http';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-export const metadata: Metadata = {
-  title: 'Nekomi',
-  description: 'Nekomi - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!',
-  applicationName: 'Nekomi',
-  keywords: ['anime', 'аніме на українській мові', 'дивитись аніме онлайн', 'некомі', 'аніме', 'некомі клаб', 'nekomi', 'nekomi club'],
-  metadataBase: new URL(config.URL.baseURL),
-  openGraph: {
-    title: `Nekomi Club`,
-    description: `Nekomi - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!`,
-    url: `https://${CONSTS.Domains.nekomi}`,
-    siteName: CONSTS.Domains.nekomi,
-    type: 'website',
-    images: './icon.png'
-  }
-}
-
+export const metadata = metaObject({})
 
 
 export default async function Layout({ children, params }: ILayoutProps) {
@@ -70,7 +54,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
   }
 
   return (
-    <html lang="uk">
+    <html lang="uk_UA">
       <body id='root' className='bg-dark'>
         <Analytics />
         <SpeedInsights />

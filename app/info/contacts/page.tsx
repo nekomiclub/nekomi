@@ -1,4 +1,4 @@
-import { Metadata, NextPage, ResolvingMetadata } from 'next';
+import { NextPage } from 'next';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { LoadingImage } from '../../../components/Components';
 
@@ -7,18 +7,13 @@ import Link from 'next/link';
 import { IcoSocialGithub, IcoSocialTelegram } from '../../../assets/Social';
 
 import './styles.scss';
+import { CONSTS, metaObject } from '../../../config';
 
 
 
-export function generateMetadata(): Metadata {
-  return {
-    title: 'Контакти розробників',
-    robots: 'none',
-    openGraph: {
-      title: 'Контакти розробників'
-    }
-  }
-}
+export const metadata = metaObject({
+  title: `Розробники`
+})
 
 const RSC: NextPage<IRSCProps> = () => {
   return (

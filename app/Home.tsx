@@ -1,6 +1,6 @@
 'use client'
 
-import { NextPage, Metadata } from 'next';
+import { NextPage } from 'next';
 import React, { useState, useEffect, useRef, memo, useMemo } from 'react'
 import { LoadingImage, TitleCard, WatchButton } from '../components/Components';
 import { ITitle } from '../interfaces/ITitle';

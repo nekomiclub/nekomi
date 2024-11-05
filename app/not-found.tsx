@@ -1,19 +1,16 @@
 import { headers } from 'next/headers'
 
-import { config } from '../config';
+import { config, metaObject } from '../config';
 import { getRoute } from '../components/ServerComponents';
 import { IndevScreen, NotFoundScreen } from '../components/Components';
-import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Йой, сталась якась помилка',
-  description: '',
-  robots: 'none',
-  openGraph: {
-    title: `Йой, сталась якась помилка`,
-    description: '',
-  }
-}
+export const metadata = metaObject({
+  title: '404',
+  description: 'Те, що ви шукали, не існує. Ось так',
+  robots: ['nofollow', 'noindex']
+})
+
+
 
 export default async function NotFound() {
   const pathname = (await headers()).get('x-url')!.replace(config.URL.baseURL, '')

@@ -2,12 +2,12 @@ import './styles.scss';
 
 import Link from 'next/link';
 
-import { NextPage, Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import axios, { AxiosError } from 'axios';
 
 import Tooltip from '../../../components/Tooltip';
 
-import { config, CONSTS, devMode } from '../../../config';
+import { config, CONSTS, devMode, metaObject } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 import { routes } from '../../../routes';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
@@ -29,23 +29,27 @@ export async function generateMetadata(
     const { data } = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
     const { dubber } = data;
 
-    return {
-      title: `${dubber.name} — nekomi`,
-      description: `Сторінка команди озвучення ${dubber.name} на nekomi`,
-      keywords: ['anime', 'аніме на українській мові', dubber.name],
+    const description = dubber.description ?? `Сторінка команди озвучення ${dubber.name}`
+
+    return metaObject({
+      title: dubber.name,
+      keywords: [dubber.name],
+      description,
       openGraph: {
-        title: `${dubber.name} — nekomi`,
-        description: `Сторінка команди озвучення ${dubber.name} на nekomi`,
-        url: `https://${CONSTS.Domains.nekomi}/dub/${dubber.code}`,
-        type: 'article',
-        images: dubber.thumbURL
+        title: `${dubber.name} ― nekomi`,
+        type: 'profile',
+        url: `${config.URL.baseURL}${routes.dubber_profile.path}/${dubber.name}`,
+        images: dubber.thumbURL,
+        locale: 'uk_UA',
+        siteName: CONSTS.Domains.nekomi.split('.')[0],
+        description,
+        username: dubber.code,
       }
-    }
+    })
   } catch (e) {
-    return {
-      title: `Команда озвучення не знайдена`,
-      description: ''
-    }
+    return metaObject({
+      title: 'Команда озвучення не знайдена'
+    })
   }
 }
 

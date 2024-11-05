@@ -1,4 +1,4 @@
-import { Metadata, NextPage, ResolvingMetadata } from 'next';
+import { Metadata, ResolvingMetadata } from 'next';
 import axios, { AxiosError } from 'axios';
 import { cookies } from 'next/headers'
 import { KJUR } from 'jsrsasign'
@@ -6,7 +6,7 @@ import { KJUR } from 'jsrsasign'
 import Tooltip from '../../../components/Tooltip';
 
 import { IRSCProps } from '../../../interfaces/IRSC';
-import { config, devMode } from '../../../config';
+import { config, CONSTS, devMode, metaObject } from '../../../config';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { decodeToken, getUTC, wordDeclination } from '../../../components/handlers';
 import { IUsapiUser, IUser, IUserLib } from '../../../interfaces/IUser';
@@ -21,28 +21,30 @@ import { $api } from '../../../components/http';
 
 export async function generateMetadata(
   props: IRSCProps<{ username: string }>,
-  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const params = await props.params;
 
   try {
     const { data } = await axios.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${params.username}`);
+    const { user } = data;
 
-    return {
-      title: `@${params.username} — nekomi`,
-      description: `Буквально його профіль (:`,
+    const description = `Профіль юзера на ${CONSTS.Domains.nekomi}`;
+
+    return metaObject({
+      title: `@${user.username}`,
+      description,
       openGraph: {
+        title: `@${user.username} ― nekomi`,
+        description,
         type: 'profile',
-        title: `@${params.username} — nekomi`,
-        images: data.user.avatar,
-        description: `Буквально його профіль (:`
+        images: user.avatar,
+        username: user.username,
+        locale: 'uk_UA',
+        siteName: CONSTS.Domains.nekomi.split('.')[0],
       }
-    }
+    })
   } catch (e) {
-    return {
-      title: 'Юзер не знайдений',
-      description: ''
-    }
+    return metaObject({ title: 'Юзер не знайдений' })
   }
 }
 

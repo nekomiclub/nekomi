@@ -5,7 +5,7 @@ import { cookies } from 'next/headers'
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { getUTC } from '../../../components/handlers';
-import { config, devMode } from '../../../config';
+import { config, devMode, metaObject } from '../../../config';
 import { ITitle } from '../../../interfaces/ITitle';
 import { $api } from '../../../components/http';
 import { IUser } from '../../../interfaces/IUser';
@@ -22,18 +22,15 @@ export async function generateMetadata(
   const params = await props.params;
 
   try {
-    const res = await $api.get<{ title: ITitle }>(`/title/${params.id}`)
-    const data = res.data.title
+    const { data } = await $api.get<{ title: ITitle }>(`/title/${params.id}`)
+    const { title } = data;
 
-    return {
-      title: `${data.names.ukr} - Патчер`,
-      robots: 'none'
-    }
+    return metaObject({
+      title: `${title.names.ukr} - патчер`,
+      robots: ['nofollow', 'noindex']
+    })
   } catch (e) {
-    return {
-      title: 'Аніме не знайдено',
-      robots: 'none'
-    }
+    return metaObject({ title: '404' })
   }
 }
 

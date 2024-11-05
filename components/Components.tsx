@@ -9,7 +9,7 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { ITitle } from '../interfaces/ITitle';
 import { IRoute, routes } from '../routes';
 import { IcoAnimeeLogo, IcoArrow, IcoCheckmark, IcoNekomiLogo, IcoPlay, IcoStarRating } from '../assets/Icons';
-import { animeGenres, config, CONSTS } from '../config';
+import { animeGenres, config, CONSTS, prodMode } from '../config';
 import { IcoClockOutlined } from '../assets/Clock';
 import { IcoGhost, IcoHome, IcoInternet, IcoOffline } from '../assets/Icons';
 
@@ -41,7 +41,7 @@ export const LoadingImage = memo(function LoadingImage({ src, alt, className, lo
 
   return (
     <div className={`relative ${isErrored ? 'bg-darkGrey' : ''} ${parentClassName ? parentClassName : ''}`} style={{ width, height }}>
-      {src.includes(config.domain) ? <>
+      {src.includes(config.domain) && prodMode ? <>
         <Image src={src} alt={alt} fill priority={priority} loading={loading} className={`duration-200 ${loaded && !isErrored ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />
       </> : <>
         <img src={src} alt={alt} loading={loading} className={`w-full h-full duration-200 ${loaded && !isErrored ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />

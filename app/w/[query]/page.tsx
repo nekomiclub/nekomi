@@ -15,7 +15,6 @@ import { HappenedWrongScreen, NotFoundScreen } from "../../../components/Compone
 
 export async function generateMetadata(
   props: IRSCProps,
-  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const params = await props.params;
 

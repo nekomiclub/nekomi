@@ -1,13 +1,9 @@
-import { Metadata } from 'next'
 import { ILayoutProps } from '../../../interfaces/IRSC'
+import { metaObject } from '../../../config'
 
-export const metadata: Metadata = {
-  title: 'Угода користувача / Agreement',
-  robots: 'none',
-  openGraph: {
-    title: 'Угода користувача / Agreement',
-  }
-}
+export const metadata = metaObject({
+  title: 'Угода користувача / Agreement'
+})
 
 export default function RootLayout({ children }: ILayoutProps) {
   return children

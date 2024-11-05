@@ -9,7 +9,9 @@ export interface IRoute {
   /** Route path */
   path: string
 
-  /** Define if route static (/hello) or dynamic (/hello/[name]) */
+  /** Define if route static (/hello) or dynamic (/hello/[name])
+   * @default false
+   */
   dynamic?: boolean
 
   /** Page status 

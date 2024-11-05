@@ -1,12 +1,9 @@
 import React from "react"
 import { NotFoundScreen } from "../../components/Components"
-import { devMode } from "../../config"
+import { devMode, metaObject } from "../../config"
 import { ILayoutProps } from "../../interfaces/IRSC"
-import { Metadata } from "next"
 
-export const metadata: Metadata = {
-  robots: 'none'
-}
+export const metadata = metaObject({ robots: ['nofollow', 'noindex'] })
 
 // Layout
 export default async function Layout({ children }: ILayoutProps) {
