@@ -27,11 +27,12 @@ export async function generateMetadata(
       return animeGenres[genre]
     })
 
-    const description = `${genres.join(', ')} • ${title.year} • ${parseTitleStatus(title.status)}. ${title.description}`
+    const description = `${genres.length ? genres.join(', ') : `Жанри відсутні`} • ${title.year} • ${parseTitleType(title.type)}. ${title.description}`
 
     return metaObject({
       title: title.names.ukr,
       description,
+      keywords: [title.names.eng, ...title.names.alt],
       openGraph: {
         title: `${title.names.ukr} — nekomi`,
         description,
