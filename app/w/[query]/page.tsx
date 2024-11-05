@@ -3,13 +3,14 @@ import axios, { AxiosError } from "axios";
 
 import Watch from "./Watch";
 
-import { ITitle } from "../../../interfaces/ITitle";
-import { config, CONSTS, devMode } from "../../../config";
+import { ITitle, TAnimeGenre } from "../../../interfaces/ITitle";
+import { animeGenres, config, CONSTS, devMode, metaObject } from "../../../config";
 import { IDubber } from "../../../interfaces/IDubber";
-import { getUTC } from "../../../components/handlers";
+import { getUTC, parseTitleStatus, parseTitleType } from "../../../components/handlers";
 import { IRSCProps } from "../../../interfaces/IRSC";
 import { $api } from "../../../components/http";
 import { HappenedWrongScreen, NotFoundScreen } from "../../../components/Components";
+import { routes } from "../../../routes";
 
 
 
@@ -22,24 +23,27 @@ export async function generateMetadata(
     const { data } = await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${params.query}`)
     const { title } = data
 
-    return {
-      title: `${title.names.ukr} — nekomi`,
-      description: title.description,
-      keywords: [title.names.ukr, title.names.eng, ...title.names.alt || [], 'дивитись аніме українською'],
+    const genres: TAnimeGenre[] = title.genres.map(genre => {
+      return animeGenres[genre]
+    })
+
+    const description = `${genres.join(', ')} • ${title.year} • ${parseTitleStatus(title.status)}. ${title.description}`
+
+    return metaObject({
+      title: title.names.ukr,
+      description,
       openGraph: {
         title: `${title.names.ukr} — nekomi`,
-        description: title.description,
-        url: `https://${CONSTS.Domains.nekomi}/w/${title.code}`,
-        siteName: CONSTS.Domains.nekomi,
+        description,
         type: 'video.tv_show',
-        images: title.poster
+        images: title.poster,
+        url: `${config.URL.baseURL}${routes.watch_title.path}/${title.code}`,
+        locale: 'uk_UA',
+        siteName: CONSTS.Domains.nekomi.split('.')[0],
       }
-    }
+    })
   } catch (e) {
-    return {
-      title: 'Аніме не знайдено',
-      description: ''
-    }
+    return metaObject({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] })
   }
 }
 

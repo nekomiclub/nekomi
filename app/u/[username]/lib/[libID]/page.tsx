@@ -12,6 +12,7 @@ import { UserHeader } from '../../ClientComponents';
 import { UserLib, UserLibOthers } from './ClientComponents';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { $api } from '../../../../../components/http';
+import { routes } from '../../../../../routes';
 
 
 
@@ -52,13 +53,14 @@ export async function generateMetadata(
         description,
         type: 'article',
         locale: 'uk_UA',
+        url: `${config.URL.baseURL}${routes.user_list.path}/${lib.id}`,
         siteName: CONSTS.Domains.nekomi.split('.')[0],
       }
     })
   } catch (e) {
     console.error(e)
 
-    return metaObject({ title: `Тека не знайдена`, description: `Ця тека не знайдена у @${params.username}` })
+    return metaObject({ title: `Тека не знайдена`, description: `Ця тека не знайдена у @${params.username}`, robots: ['nofollow', 'noindex'] })
   }
 }
 

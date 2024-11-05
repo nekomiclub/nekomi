@@ -18,6 +18,7 @@ import { ISessionCookieData } from '../../../interfaces/ITokenData';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 
 import { $api } from '../../../components/http';
+import { routes } from '../../../routes';
 
 export async function generateMetadata(
   props: IRSCProps<{ username: string }>,
@@ -39,12 +40,13 @@ export async function generateMetadata(
         type: 'profile',
         images: user.avatar,
         username: user.username,
+        url: `${config.URL.baseURL}${routes.user_profile.path}/${user.username}`,
         locale: 'uk_UA',
         siteName: CONSTS.Domains.nekomi.split('.')[0],
       }
     })
   } catch (e) {
-    return metaObject({ title: 'Юзер не знайдений' })
+    return metaObject({ title: 'Юзер не знайдений', robots: ['nofollow', 'noindex'] })
   }
 }
 

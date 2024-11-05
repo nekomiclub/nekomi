@@ -48,7 +48,8 @@ export async function generateMetadata(
     })
   } catch (e) {
     return metaObject({
-      title: 'Команда озвучення не знайдена'
+      title: 'Команда озвучення не знайдена',
+      robots: ['nofollow', 'noindex']
     })
   }
 }
