@@ -12,6 +12,7 @@ import '../styles/index.scss'
 
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Montserrat } from 'next/font/google'
 
 import axios from 'axios';
 import Link from 'next/link';
@@ -30,6 +31,11 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 export const metadata = metaObject({})
+const montserrat = Montserrat({
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  fallback: ['system-ui'],
+  subsets: ['cyrillic', 'cyrillic-ext', 'latin'],
+})
 
 
 export default async function Layout({ children, params }: ILayoutProps) {
@@ -55,7 +61,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
   return (
     <html lang="uk_UA">
-      <body id='root' className='bg-dark'>
+      <body id='root' className={`bg-dark ${montserrat.className}`}>
         <Analytics />
         <SpeedInsights />
 
