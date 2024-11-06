@@ -23,7 +23,7 @@ $api.interceptors.request.use(async cfg => {
 export const $upload = axios.create({
   withCredentials: true,
   baseURL: config.URL.apiHTTP,
-  timeout: 180000,
+  timeout: 420000,
   httpAgent: new http.Agent({ keepAlive: true }),
   httpsAgent: new https.Agent({ keepAlive: true }),
 })
