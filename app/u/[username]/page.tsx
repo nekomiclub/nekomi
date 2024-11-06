@@ -35,7 +35,7 @@ export async function generateMetadata(
       title: `@${user.username}`,
       description,
       openGraph: {
-        title: `@${user.username} ― nekomi`,
+        title: `Профіль @${user.username} ― nekomi`,
         description,
         type: 'profile',
         images: user.avatar,

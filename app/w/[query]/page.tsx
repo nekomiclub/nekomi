@@ -34,7 +34,7 @@ export async function generateMetadata(
       description,
       keywords: [title.names.eng, ...title.names.alt],
       openGraph: {
-        title: `${title.names.ukr} — nekomi`,
+        title: `Аніме ${title.names.ukr} (${title.year}) — nekomi`,
         description,
         type: 'video.tv_show',
         images: title.poster,
