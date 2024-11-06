@@ -29,7 +29,7 @@ export const LoadingImage = memo(function LoadingImage({ src, alt, className, lo
   priority = priority ?? false;
   loading = loading ?? 'lazy';
 
-  useMemo(() => {
+  useEffect(() => {
     const image = ref.current;
     if (!image) return;
 
@@ -47,7 +47,7 @@ export const LoadingImage = memo(function LoadingImage({ src, alt, className, lo
         <img src={src} alt={alt} loading={loading} className={cn(`w-full h-full duration-200 absolute top-0 left-0 z-[2]`, loaded && !isErrored ? 'opacity-100' : 'opacity-0', className)} ref={ref} />
       </>}
 
-      <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, (loaded || isErrored) && 'opacity-0')} />
+      <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, (loaded || isErrored) ?? 'opacity-0')} />
 
       <div className={cn(`absolute top-0 left-0 w-full h-full flex justify-center items-center opacity-0 duration-200`, isErrored && 'opacity-100')}>
         <IcoGhost width={16} height={16} className='w-[50%] h-[50%]' />
