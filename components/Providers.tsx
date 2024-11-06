@@ -114,7 +114,7 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
 
   // Establish websocket connection
   useEffect(() => {
-    if (typeof window === undefined) return;
+    if (typeof window === 'undefined') return;
 
     (async function () {
       if (!ws) {
@@ -125,7 +125,7 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
 
   // Send presence websocket request
   useEffect(() => {
-    if (!ws || typeof window === undefined) return;
+    if (!ws || typeof window === 'undefined') return;
 
     let SID = sessionStorage.getItem('SID')
 

@@ -190,13 +190,13 @@ export function copyToClipboard(textToCopy: string) {
 }
 
 /** Rename popup */
-export const RenamePopup: NextPage = (props) => {
+export const RenamePopup: NextPage = () => {
   const [show, setShow] = useState(false);
 
   useMemo(() => {
-    if (window !== undefined) {
-      setShow(!Boolean(localStorage.getItem('renameDialogShowed')))
-    }
+    if (typeof window === 'undefined') return;
+
+    setShow(!Boolean(localStorage.getItem('renameDialogShowed')))
   }, [])
 
   function hide() {

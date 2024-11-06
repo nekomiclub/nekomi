@@ -53,7 +53,7 @@ const WatchHeadliner: NextPage<{ className?: string, watchProgress?: IUserWatchP
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const localData = JSON.parse(window.localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
     const localCurrent = localData.find(el => el.id === headliner.id);
 
     if (watchProgress) {
