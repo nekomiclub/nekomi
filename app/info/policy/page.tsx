@@ -21,7 +21,7 @@ const Policy: NextPage = () => {
 
   return (
     <div className='w-full min-h-screen items-center' style={{ paddingTop: `132px` }}>
-      <div className="wrapper gap-[80px]">
+      <div className="wrapper gap-[80px] max-w-[1170px] w-full">
         {lang === 'ukr' && <>
           <div className='flex items-center gap-[32px] justify-center w-full max-[880px]:flex-col'>
             <h1 className='text-white text-[40px] text-center font-bold max-[1170px]:text-[24px]'>Політика конфіденційності Fullkekw</h1>

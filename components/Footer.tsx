@@ -55,7 +55,7 @@ const Footer: NextPage = (props) => {
           <ul className='flex flex-col gap-[4px]'>
             <FooterLink href={routes.info_agreement.path} text='Угода користувача / Agreement' />
             <FooterLink href={routes.info_policy.path} text='Політика конфіденційності / Privacy policy' />
-            <FooterLink href={routes.info_copyright.path} text='Правовласникам / Copyright' />
+            <FooterLink href={routes.info_dmca.path} text='DMCA' />
           </ul>
         </div>
 

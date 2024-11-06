@@ -20,7 +20,16 @@ export interface IRoute {
   status?: TRouteStatus
 }
 
-type TRoute = 'home' | 'watch_title' | 'info_agreement' | 'info_contacts' | 'info_copyright' | 'info_policy' | 'user_profile' | 'user_list' | 'dubber_profile' | 'polling' | 'rickroll' | 'title_patcher'
+type TRoute = 'home'
+  | 'watch_title'
+  | 'info_agreement'
+  | 'info_contacts'
+  | 'info_dmca'
+  | 'info_policy'
+  | 'user_profile'
+  | 'user_list'
+  | 'dubber_profile'
+  | 'title_patcher'
 
 export const routes: { [key in TRoute]: IRoute } = {
   home: {
@@ -32,8 +41,8 @@ export const routes: { [key in TRoute]: IRoute } = {
   info_contacts: {
     path: '/info/contacts'
   },
-  info_copyright: {
-    path: '/info/copyright'
+  info_dmca: {
+    path: '/info/dmca'
   },
   info_policy: {
     path: '/info/policy'
@@ -41,13 +50,6 @@ export const routes: { [key in TRoute]: IRoute } = {
   dubber_profile: {
     path: '/dub',
     dynamic: true
-  },
-  polling: {
-    path: '/polling'
-  },
-  rickroll: {
-    path: '/rickroll',
-    status: 'indev'
   },
   title_patcher: {
     path: '/patcher',

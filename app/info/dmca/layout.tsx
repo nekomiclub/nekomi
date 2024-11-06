@@ -2,7 +2,7 @@ import { ILayoutProps } from '../../../interfaces/IRSC'
 import { metaObject } from '../../../config'
 
 export const metadata = metaObject({
-  title: 'Правовласникам / Copyright'
+  title: 'DMCA'
 })
 
 export default function RootLayout({ children }: ILayoutProps) {

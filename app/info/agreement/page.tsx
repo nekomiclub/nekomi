@@ -5,6 +5,7 @@ import { IRSCProps } from '../../../interfaces/IRSC';
 import { IcoTranslations } from '../../../assets/Icons';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { CONSTS } from '../../../config';
 
 
 
@@ -21,7 +22,7 @@ const Agreement: NextPage = () => {
 
   return (
     <div className='w-full min-h-screen items-center' style={{ paddingTop: `132px` }}>
-      <div className="wrapper gap-[80px]">
+      <div className="wrapper gap-[80px] max-w-[1170px] w-full">
         {lang === 'ukr' && <>
           <div className='flex items-center gap-[32px] justify-center w-full max-[880px]:flex-col'>
             <h1 className='text-white text-[40px] text-center font-bold max-[1170px]:text-[24px]'>Угода користувача</h1>
@@ -143,7 +144,7 @@ const Agreement: NextPage = () => {
               </li>
 
               <li className='!list-disc relative left-[16px]'>
-                <p className='text-white text-[16px]'>Не використовувати матеріали створені Сайтом та/або іншими проектами екслюзивно для Користувачів Сайту (2K якість, субтитри, ексклюзивне озвучення) в своїх цілях без дозволу адміністрації сайту.</p>
+                <p className='text-white text-[16px]'>Не використовувати матеріали створені Сайтом та/або іншими проектами екслюзивно для Користувачів Сайту (покращена якість, субтитри, ексклюзивне озвучення) в своїх цілях без дозволу адміністрації сайту.</p>
               </li>
             </ul>
 
@@ -194,7 +195,7 @@ const Agreement: NextPage = () => {
               Ця Угода набирає чинності при реєстрації на Сайті та припиняє свою дію при появі нової версії угоди. Адміністрація залишає за собою право односторонньо змінювати цю Угоду за власним бажанням. У разі змін умов Угоди, в окремих випадках Адміністрація може повідомляти користувачів зручним для себе способом.
             </p>
 
-            <p className='text-white text-center font-extralight'>Політика конфіденційності оновлена: 31.10.2024</p>
+            <p className='text-white text-center font-extralight'>Угода оновлена: 06.11.2024</p>
           </div>
         </>}
 
@@ -206,6 +207,175 @@ const Agreement: NextPage = () => {
               <IcoTranslations />
               <p className='text-white font-extralight text-[24px]'>Українською</p>
             </button>
+          </div>
+
+          <div className='px-[24px] py-[40px] rounded-[2px] bg-darkGrey flex flex-col gap-[16px]'>
+            <h2 className='text-white text-[24px] font-bold text-center'>General statements</h2>
+
+            <p className='text-white text-[16px]'>
+              The following User Agreement (hereinafter - the Agreement) regulates the relationship between the administration of the site https://nekomi.club (hereinafter - the Site) and the user of the site (hereinafter - the User). By using the Site, you agree to the terms of this Agreement.
+            </p>
+
+            <b className='text-white text-[16px]'>If you do not agree to the terms of this Agreement, please refrain from using the Site.</b>
+
+            <h2 className='text-white text-[24px] font-bold text-center'>Предмет угоди</h2>
+            <p className='text-white text-[16px]'>The Administration grants the User the right to post the following information on the Site:</p>
+            <ul className='flex flex-col gap-[4px] text-white'>
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Text information</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Video materials</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Photo materials</p>
+              </li>
+            </ul>
+
+            <h2 className='text-white text-[24px] font-bold text-center'>Rights and duties</h2>
+            <p className='text-white text-[16px]'>The user has the right to:</p>
+            <ul className='flex flex-col gap-[4px] text-white'>
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Search for information on the Site</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Receive information from the Site</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Create information for the Site</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Distribute information on the Site</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Comment on the content posted on the Site</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Copy information to other sites without indicating the source</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Demand from the Administration to hide any information transferred by the User to the Site</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Use information from the Site for personal non-commercial purposes</p>
+              </li>
+            </ul>
+
+            <p className='text-white text-[16px]'>The administration has the right to:</p>
+            <ul className='flex flex-col gap-[4px] text-white'>
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Change and cancel the rules without informing the User</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Implement decisions without informing and/or justifying them</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Restrict access to any information on the Site</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Create, change, delete information</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Delete accounts</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Refuse registration without explaining the reasons</p>
+              </li>
+            </ul>
+
+            <h2 className='text-white text-[24px] font-bold text-center'>The user undertakes</h2>
+            <ul className='flex flex-col gap-[4px] text-white'>
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Not to distribute information aimed at propaganda of war, incitement of national, racial or religious hatred and enmity, as well as other information for the dissemination of which criminal or administrative liability is provided (Exception: Russia`s war against Ukraine began in 2014.)</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Do not disrupt the functionality of the Site</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Do not take actions aimed at misleading other Users</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Do not share your account and/or account login and password with third parties</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Do not register an account on behalf of or on behalf of another person, except as required by law</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Do not display explicit materials in the User`s profile photo and/or in its background.</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Not to use materials created by the Fullkekw project ({CONSTS.Domains.nekomi}) and/or other projects exclusively for the site (enchanced quality, subtitles, exclusive voiceover) for your own purposesundefined without the permission of the site administration. undefined</p>
+              </li>
+            </ul>
+
+            <h2 className='text-white text-[24px] font-bold text-center'>The administration undertakes</h2>
+            <ul className='flex flex-col gap-[4px] text-white'>
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Maintain the functionality of the Site, except for cases when this is impossible for reasons beyond the control of the Administration</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Provide comprehensive protection of the User`s account</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Protect information, the distribution of which is restricted or prohibited by law, by issuing a warning or deleting the account of the User who violated the rules</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>Provide all available information about the User to authorized state authorities in cases provided for by law</p>
+              </li>
+            </ul>
+
+            <h2 className='text-white text-[24px] font-bold text-center'>Responsibilities of the parties</h2>
+            <ul className='flex flex-col gap-[4px] text-white'>
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>The user personally bears full responsibility for the information distributed by him</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>The administration is not responsible for the reliability of information copied from other sources</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>The Administration is not responsible for the discrepancy between the User`s expectations and actually received services</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>The administration is not responsible for the materials posted on the site, such as: User comments, the content of their account, the content of the video from the voiceover teams</p>
+              </li>
+
+              <li className='!list-disc relative left-[16px]'>
+                <p className='text-white text-[16px]'>In the event of a force majeure situation (military action, emergency situation, natural disaster, etc.), the Administration does not guarantee the preservation of the information posted by the User, as well as the uninterrupted operation of the information resource</p>
+              </li>
+            </ul>
+
+            <h2 className='text-white text-[24px] font-bold text-center'>Terms of action</h2>
+            <p className='text-white text-[16px]'>
+              This Agreement enters into force upon registration on the site and ceases to be effective upon the appearance of a new version of the Agreement. The Administration reserves the right to unilaterally change this Agreement at its own discretion. In case of changes to the terms of the Agreement, in some cases, the Administration may notify users in a convenient way.
+            </p>
+
+            <p className='text-white text-center font-extralight'>Agreement updated at: 06.11.2024</p>
           </div>
         </>}
       </div>

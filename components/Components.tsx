@@ -326,11 +326,6 @@ export const ServerUnavailable: NextPage = (props) => {
               </p>
             </div>
           </div>
-
-          <Link href={routes.polling.path} className='p-[8px] rounded-[2px] bg- bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple flex gap-[16px] items-center'>
-            <IcoInternet />
-            <p className='text-white uppercase'>статус сервісів</p>
-          </Link>
         </div>
       </div>
     </div>
