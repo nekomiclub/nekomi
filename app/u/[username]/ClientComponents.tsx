@@ -53,6 +53,8 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   // Calc header height
   useMemo(() => {
+    if (typeof window === 'undefined') return;
+
     setHeaderHeight(document.querySelector('header')?.offsetHeight || 92)
   }, [])
 

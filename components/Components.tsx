@@ -24,12 +24,12 @@ export const LoadingImage = memo(function LoadingImage({ src, alt, className, lo
   const [isErrored, setIsErrored] = useState(false)
   const ref = useRef<HTMLImageElement>(null)
 
-  src = src || '';
-  alt = alt || '...';
-  priority = priority || false;
-  loading = loading || 'lazy';
+  src = src ?? 'https://media.nekomi.club/0849e678-43ee-4f72-ae5a-bb9ff9d86c89';
+  alt = alt ?? '...';
+  priority = priority ?? false;
+  loading = loading ?? 'lazy';
 
-  useEffect(() => {
+  useMemo(() => {
     const image = ref.current;
     if (!image) return;
 
@@ -42,14 +42,14 @@ export const LoadingImage = memo(function LoadingImage({ src, alt, className, lo
   return (
     <div className={`relative ${isErrored ? 'bg-darkGrey' : ''} ${parentClassName ? parentClassName : ''}`} style={{ width, height }}>
       {src.includes(config.domain) && prodMode ? <>
-        <Image src={src} alt={alt} fill priority={priority} loading={loading} className={`duration-200 ${loaded && !isErrored ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />
+        <Image src={src} alt={alt} fill priority={priority} loading={loading} className={cn(`w-full h-full duration-200 absolute top-0 left-0 z-[2]`, loaded && !isErrored ? 'opacity-100' : 'opacity-0', className)} ref={ref} />
       </> : <>
-        <img src={src} alt={alt} loading={loading} className={`w-full h-full duration-200 ${loaded && !isErrored ? 'opacity-100' : 'opacity-0'} absolute top-0 left-0 z-[2] ${className ? className : ''}`} ref={ref} />
+        <img src={src} alt={alt} loading={loading} className={cn(`w-full h-full duration-200 absolute top-0 left-0 z-[2]`, loaded && !isErrored ? 'opacity-100' : 'opacity-0', className)} ref={ref} />
       </>}
 
-      <Skeleton width={'100%'} height={'100%'} className={`absolute top-0 left-0 duration-200 ${loaded || isErrored ? 'opacity-0' : ''}`} />
+      <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, (loaded || isErrored) && 'opacity-0')} />
 
-      <div className={`absolute top-0 left-0 w-full h-full flex justify-center items-center opacity-0 duration-200 ${isErrored ? 'opacity-100' : ''}`}>
+      <div className={cn(`absolute top-0 left-0 w-full h-full flex justify-center items-center opacity-0 duration-200`, isErrored && 'opacity-100')}>
         <IcoGhost width={16} height={16} className='w-[50%] h-[50%]' />
       </div>
     </div>

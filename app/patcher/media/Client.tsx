@@ -51,6 +51,8 @@ export const MediaClient: NextPage<IProps> = ({ user }) => {
 
   // Calc header height
   useMemo(() => {
+    if (typeof window === 'undefined') return
+
     setHeaderHeight(document.querySelector('header')?.offsetHeight || 92)
   }, [])
 
