@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 import { IReduxAction } from '../store'
-import { ITokenData } from "../../interfaces/ITokenData";
 
 /** User local state */
 export interface IStorageSlice {

@@ -1,11 +1,11 @@
 'use client'
 
 import { NextPage } from 'next';
-import { IRSCProps } from '../../../interfaces/IRSC';
-import { IcoTranslations } from '../../../assets/Icons';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+
 import { CONSTS } from '../../../config';
+import { IcoTranslations } from '../../../assets/Icons';
 
 
 

@@ -1,21 +1,22 @@
 'use client'
 
-import { NextPage } from 'next';
-import Link from 'next/link';
-import Image from 'next/image';
-import Skeleton from 'react-loading-skeleton';
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import clsx from 'clsx';
+import { NextPage } from 'next';
+
+import { CONSTS, animeGenres, config, prodMode } from '../config';
 import { ITitle } from '../interfaces/ITitle';
-import { IRoute, routes } from '../routes';
-import { IcoAnimeeLogo, IcoArrow, IcoCheckmark, IcoNekomiLogo, IcoPlay, IcoStarRating } from '../assets/Icons';
-import { animeGenres, config, CONSTS, prodMode } from '../config';
+import { IcoAnimeeLogo, IcoArrow, IcoCheckmark, IcoGhost, IcoHome, IcoNekomiLogo, IcoOffline, IcoPlay, IcoStarRating } from '../assets/Icons';
 import { IcoClockOutlined } from '../assets/Clock';
-import { IcoGhost, IcoHome, IcoInternet, IcoOffline } from '../assets/Icons';
+import { routes } from '../routes';
+
+import CatImg from '../assets/img/oopsIndevCat.png';
 
 import '../styles/components/GeneralComponents.scss'
-import CatImg from '../assets/img/oopsIndevCat.png';
-import clsx from 'clsx';
 
 
 
@@ -225,11 +226,6 @@ export const RenamePopup: NextPage = () => {
     </div>
   </div>
 }
-
-
-
-
-
 
 const ReturnHome = () => {
   return (

@@ -1,8 +1,6 @@
-import { cookies } from 'next/headers';
 import { NextResponse as res } from 'next/server'
-import type { NextRequest, NextResponse } from 'next/server'
-import { config as cfg } from './config'
-import { getRoute } from './components/ServerComponents';
+import type { NextRequest } from 'next/server'
+
 
 
 

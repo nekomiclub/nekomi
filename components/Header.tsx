@@ -1,33 +1,32 @@
 'use client'
 
-import '../styles/components/Header.scss';
-
-import { NextPage } from 'next';
-import Link from 'next/link';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import * as Menu from 'uvc-menu';
-
-import { useEffect, useMemo, useState, useRef } from 'react'
-import { useDebounce } from 'use-debounce';
+import Image from 'next/image';
+import Link from 'next/link';
 import { AxiosError } from 'axios';
-import { Layer, Dialog, Trigger, forceFocus } from '@fullkekw/fkw-popup';
+import { Dialog, Layer,Trigger,forceFocus } from '@fullkekw/fkw-popup';
+import { NextPage } from 'next';
+import { useDebounce } from 'use-debounce';
+import { useEffect, useRef, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import userSlice, { userStateDefault } from '../store/reducers/userSlice';
+import { IDubber } from '../interfaces/IDubber';
 import { ITitle } from '../interfaces/ITitle';
+import { IUser } from '../interfaces/IUser';
+import { IcoArrow, IcoExit, IcoGhost, IcoHome, IcoInfo, IcoMicrophone, IcoNekomiLogo, IcoSearch, IcoSettings, IcoStarRating, IcoUser } from '../assets/Icons';
+import { IcoFolderPlain } from '../assets/Folder';
 import { config } from '../config';
 import { routes } from '../routes';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
-import userSlice, { IUserState, userStateDefault } from '../store/reducers/userSlice';
-import { ITokenData } from '../interfaces/ITokenData';
-import { createID, getUTC, makeStringID, parseTitleType, randomNumber } from './handlers';
-import { LoadingImage } from './Components';
+
 import { $api } from './http';
-import { IcoArrow, IcoBell, IcoExit, IcoGhost, IcoHome, IcoInfo, IcoLibrary, IcoMicrophone, IcoNekomiLogo, IcoSearch, IcoSettings, IcoStarRating, IcoUser } from '../assets/Icons';
-import { IcoFolderPlain } from '../assets/Folder';
-import { IUser } from '../interfaces/IUser';
-import { IDubber } from '../interfaces/IDubber';
+import { LoadingImage } from './Components';
+import { createID, makeStringID, parseTitleType, randomNumber } from './handlers';
 import { getRoute } from './ServerComponents';
-import Image from 'next/image';
+
+import '../styles/components/Header.scss';
 
 
 

@@ -1,33 +1,31 @@
 'use client'
 
-import './styles.scss'
 
 import * as Menu from 'uvc-menu';
-
 import Link from 'next/link';
-import Image from 'next/image';
-
 import { NextPage } from 'next';
-import { useRouter, usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+
+import KekwPlayer from '../../../components/KekwPlayer';
+import Tooltip from '../../../components/Tooltip';
+import { $api } from '../../../components/http';
+import { IDubber } from '../../../interfaces/IDubber';
+import { ITitle } from '../../../interfaces/ITitle';
+import { IUser, IUserLib, TUserLibType } from '../../../interfaces/IUser';
+import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
+import { IcoClockFilled } from '../../../assets/Clock';
+import { IcoFolderAdd } from '../../../assets/Folder';
+import { IcoHeartFilled } from '../../../assets/Heart';
+import { LoadingImage } from '../../../components/Components';
+import { animeGenres, config, genresDescription } from '../../../config';
+import { getUTC, parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
+import { routes } from '../../../routes';
+import { useAppSelector } from '../../../hooks/redux';
 
 import IndevCat from '../../../assets/img/oopsIndevCat.png';
-import Tooltip from '../../../components/Tooltip';
-import KekwPlayer from '../../../components/KekwPlayer';
 
-import { ITitle } from '../../../interfaces/ITitle';
-import { IDubber } from '../../../interfaces/IDubber';
-import { LoadingImage } from '../../../components/Components';
-import { getUTC, parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
-import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
-import { useAppSelector } from '../../../hooks/redux';
-import { IcoFolderAdd } from '../../../assets/Folder';
-import { animeGenres, config, genresDescription } from '../../../config';
-import { IUser, IUserLib, TUserLibType } from '../../../interfaces/IUser';
-import { $api } from '../../../components/http';
-import { IcoClockFilled } from '../../../assets/Clock';
-import { IcoHeartFilled } from '../../../assets/Heart';
-import { routes } from '../../../routes';
+import './styles.scss'
 
 
 

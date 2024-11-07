@@ -41,11 +41,6 @@ export const TitleCountries = ['Japan', 'South Corea', 'China', 'Other'] as cons
 /** Type that implements TitleCountries */
 export type TTitleCountry = typeof TitleCountries[number]
 
-
-
-
-
-
 /** Title object */
 export interface ITitle {
   /** ID */

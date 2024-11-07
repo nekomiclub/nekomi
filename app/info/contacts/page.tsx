@@ -1,13 +1,16 @@
+
+
+import Link from 'next/link';
 import { NextPage } from 'next';
+
 import { IRSCProps } from '../../../interfaces/IRSC';
+import { IcoSocialGithub, IcoSocialTelegram } from '../../../assets/Social';
 import { LoadingImage } from '../../../components/Components';
+import { metaObject } from '../../../config';
 
 import UnniiiverseAvatar from '../../../assets/img/unniiiverseAvatar.png';
-import Link from 'next/link';
-import { IcoSocialGithub, IcoSocialTelegram } from '../../../assets/Social';
 
 import './styles.scss';
-import { CONSTS, metaObject } from '../../../config';
 
 
 

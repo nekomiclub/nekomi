@@ -1,17 +1,15 @@
 'use client'
 
+
+
 import { NextPage } from 'next';
-import Link from 'next/link';
+import { useState } from 'react';
 
 import Tooltip from '../../../components/Tooltip';
 import { IDubber } from '../../../interfaces/IDubber';
-import { routes } from '../../../routes';
-import { IcoClockOutlined } from '../../../assets/Clock';
-import { IcoCalendar, IcoChain, IcoCrown, IcoMicrophone, IcoPen, IcoPeople, IcoStarRating } from '../../../assets/Icons';
-import { useState } from 'react';
-import { copyToClipboard, LoadingImage } from '../../../components/Components';
+import { IcoChain } from '../../../assets/Icons';
+import { LoadingImage,copyToClipboard } from '../../../components/Components';
 import { config } from '../../../config';
-import { addZeroIfNumberSingle, getUTC } from '../../../components/handlers';
 
 
 

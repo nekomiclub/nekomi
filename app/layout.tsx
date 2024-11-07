@@ -1,34 +1,28 @@
-// Packages styles
-import 'react-loading-skeleton/dist/skeleton.css'
-import 'uvc-menu/css';
-import '@fullkekw/fkw-popup/css'
+// Packages styles
 import '@fullkekw/fkw-menu/css'
+import '@fullkekw/fkw-popup/css'
 import 'swiper/css';
-
-import '../styles/globals.css';
-import '../styles/index.scss'
-
-
-
-import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/next"
-import { Montserrat } from 'next/font/google'
+import 'uvc-menu/css';
 
 import axios from 'axios';
-import Link from 'next/link';
+import { Analytics } from "@vercel/analytics/react"
+import { Montserrat } from 'next/font/google'
+import { SkeletonTheme } from 'react-loading-skeleton';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { headers } from 'next/headers';
 
 import * as Provider from '../components/Providers'
-import { config, CONSTS, metaObject } from '../config';
-import { SkeletonTheme } from 'react-loading-skeleton';
-import { routes } from '../routes';
-import { getRoute } from '../components/ServerComponents';
-import { IcoInternet, IcoOffline } from '../assets/Icons';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
 import { ILayoutProps } from '../interfaces/IRSC';
 import { RenamePopup, ServerUnavailable } from '../components/Components';
-import { signCSRF } from '../components/http';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import { config, metaObject } from '../config';
+import { getRoute } from '../components/ServerComponents';
+
+import '../styles/globals.css';
+import '../styles/index.scss'
+import 'react-loading-skeleton/dist/skeleton.css'
+
 
 export const metadata = metaObject({})
 const montserrat = Montserrat({
@@ -36,6 +30,7 @@ const montserrat = Montserrat({
   fallback: ['system-ui'],
   subsets: ['cyrillic', 'cyrillic-ext', 'latin'],
 })
+
 
 
 export default async function Layout({ children, params }: ILayoutProps) {
@@ -47,16 +42,11 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
 
 
-  // Pass polling page anyway
-  if (route?.path !== '/polling') {
-    try {
-      await axios.options(config.URL.apiHTTP)
-      isServerOnline = true;
-    } catch (e) {
-      isServerOnline = false;
-    }
-  } else {
+  try {
+    await axios.options(config.URL.apiHTTP)
     isServerOnline = true;
+  } catch (e) {
+    isServerOnline = false;
   }
 
   return (

@@ -1,5 +1,6 @@
 import { NextPage } from 'next';
 import { Tooltip as RT } from 'react-tooltip'
+
 import { createID } from './handlers';
 
 /** Tooltip component

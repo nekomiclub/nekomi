@@ -1,7 +1,4 @@
-import { NextPage } from "next"
-import React from "react"
-import { TUserRoles } from './interfaces/ITokenData'
-import { config, devMode } from "./config"
+
 
 export type TRouteStatus = 'clear' | 'indev'
 

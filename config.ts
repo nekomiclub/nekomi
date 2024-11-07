@@ -1,8 +1,10 @@
-import CSRF_TOKEN from './secrets/CSRF'
-
-import { TAnimeGenre } from './interfaces/ITitle';
 import { Metadata } from 'next';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
+
+import CSRF_TOKEN from './secrets/CSRF'
+import { TAnimeGenre } from './interfaces/ITitle';
+
+
 
 export const devMode = process.env.NODE_ENV === 'development'
 export const prodMode = process.env.NODE_ENV === 'production';

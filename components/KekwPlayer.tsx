@@ -1,30 +1,30 @@
 'use client'
 
-import next, { NextPage } from 'next';
-import { useState, useEffect, useRef, RefObject, memo } from 'react';
-import axios, { Axios, AxiosError } from 'axios';
-import * as loader from '@uiball/loaders';
-import { Range } from 'react-range';
-import { getImageSize } from 'react-image-size'
+
 import * as UMenu from 'uvc-menu';
+import * as loader from '@uiball/loaders';
+import { AxiosError } from 'axios';
 import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
+import { NextPage } from 'next';
+import { Range } from 'react-range';
+import { RefObject, memo, useEffect, useRef, useState } from 'react';
+import { getImageSize } from 'react-image-size'
 import { useIdleTimer } from 'react-idle-timer';
 
-import { ITitle, ITitleEpisode, ITitleEpisodeMeta } from '../interfaces/ITitle';
 import { IDubber } from '../interfaces/IDubber';
-import { timestampToDate, wordDeclination } from './handlers';
-import { devMode } from '../config';
-import { IcoPlayerCenter, IcoPlayerList, IcoPlayerNext, IcoPlayerPause, IcoPlayerQuality, IcoPlayerStretch } from '../assets/Player';
+import { ITitle, ITitleEpisode, ITitleEpisodeMeta } from '../interfaces/ITitle';
 import { IcoArrow, IcoPlay, IcoServerUnavailable, IcoSettings, IcoSpeed } from '../assets/Icons';
-import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
-import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '../assets/PlayerPiP';
+import { IcoPlayerCenter, IcoPlayerList, IcoPlayerNext, IcoPlayerPause, IcoPlayerQuality, IcoPlayerStretch } from '../assets/Player';
 import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '../assets/PlayerFullscreen';
-
-import '../styles/components/KekwPlayer.scss';
+import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '../assets/PlayerPiP';
+import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
 import { useAppSelector } from '../hooks/redux';
+
 import { $api } from './http';
 import { LoadingImage } from './Components';
-import { IUserWatchProgress } from '../interfaces/IUser';
+import { timestampToDate, wordDeclination } from './handlers';
+
+import '../styles/components/KekwPlayer.scss';
 
 
 
@@ -1107,12 +1107,7 @@ const ContinueProgressScreen: NextPage<{
       </button>
     </div>
   )
-}
-
-
-
-
-//* -------------- EP ENDED END SCREEN COMPONENT --------------
+} //* -------------- EP ENDED END SCREEN COMPONENT --------------
 
 interface IEndScreenProps {
   endScreen: TEndScreen,

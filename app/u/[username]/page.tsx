@@ -1,24 +1,20 @@
-import { Metadata, ResolvingMetadata } from 'next';
 import axios, { AxiosError } from 'axios';
+import { Metadata } from 'next';
 import { cookies } from 'next/headers'
-import { KJUR } from 'jsrsasign'
-
-import Tooltip from '../../../components/Tooltip';
-
-import { IRSCProps } from '../../../interfaces/IRSC';
-import { config, CONSTS, devMode, metaObject } from '../../../config';
-import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
-import { decodeToken, getUTC, wordDeclination } from '../../../components/handlers';
-import { IUsapiUser, IUser, IUserLib } from '../../../interfaces/IUser';
-import { UserDivider, UserHeader, UserSectionLibs } from './ClientComponents';
-import { IcoHeartFilled } from '../../../assets/Heart';
-import { IcoClockFilled } from '../../../assets/Clock';
-import { IcoCan, IcoStack, IcoWatched } from '../../../assets/Icons';
-import { ISessionCookieData } from '../../../interfaces/ITokenData';
-import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 
 import { $api } from '../../../components/http';
+import { CONSTS, config, devMode, metaObject } from '../../../config';
+import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
+import { IRSCProps } from '../../../interfaces/IRSC';
+import { ISessionCookieData } from '../../../interfaces/ITokenData';
+import { IUser } from '../../../interfaces/IUser';
+import { IcoClockFilled } from '../../../assets/Clock';
+import { IcoHeartFilled } from '../../../assets/Heart';
+import { IcoStack, IcoWatched } from '../../../assets/Icons';
+import { decodeToken, getUTC, wordDeclination } from '../../../components/handlers';
 import { routes } from '../../../routes';
+
+import { UserHeader, UserSectionLibs } from './ClientComponents';
 
 export async function generateMetadata(
   props: IRSCProps<{ username: string }>,

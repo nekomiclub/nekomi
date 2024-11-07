@@ -1,8 +1,8 @@
 import { headers } from 'next/headers'
 
+import { IndevScreen, NotFoundScreen } from '../components/Components';
 import { config, metaObject } from '../config';
 import { getRoute } from '../components/ServerComponents';
-import { IndevScreen, NotFoundScreen } from '../components/Components';
 
 export const metadata = metaObject({
   title: '404',

@@ -1,31 +1,30 @@
 'use client'
 
-import './styles.scss'
 
 import Link from 'next/link';
 import gsap from 'gsap';
-
-import { NextPage } from 'next';
-import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { Menu, MenuItem, MenuList } from 'uvc-menu';
-import { createContext, memo, RefObject, useContext, useEffect, useRef, useState } from 'react';
+import { NextPage } from 'next';
+import { createContext, memo, useContext, useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { useAppSelector } from '../../../hooks/redux';
-import { AnimeAgeRates, AnimeStatuses, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
-import { IDubber } from '../../../interfaces/IDubber';
-import { IUser } from '../../../interfaces/IUser';
-import { cn, LoadingImage } from '../../../components/Components';
-import { IcoAnimeeLogo, IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoNekomiLogo, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
-import { config, CONSTS, prodMode } from '../../../config';
-import { routes } from '../../../routes';
-import { TRoleCapability } from '../../../interfaces/IRoles';
-import { DeepPartial, TEpisodeQuality } from '../../../interfaces/Interfaces';
-import { getFileExtension, getUTC, wordDeclination } from '../../../components/handlers';
 import Tooltip from '../../../components/Tooltip';
 import { $api } from '../../../components/http';
-import { PactherStack } from './PatcherStack';
+import { AnimeAgeRates, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
+import { CONSTS, config, prodMode } from '../../../config';
+import { IDubber } from '../../../interfaces/IDubber';
+import { IUser } from '../../../interfaces/IUser';
+import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoNekomiLogo, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
+import { LoadingImage, cn } from '../../../components/Components';
+import { TRoleCapability } from '../../../interfaces/IRoles';
+import { getUTC, wordDeclination } from '../../../components/handlers';
+import { routes } from '../../../routes';
+
 import { IPatcherSelectOption, PatcherErrorWrapper, PatcherField, PatcherSelect } from './Components';
+import { PactherStack } from './PatcherStack';
+
+import './styles.scss'
 
 
 
@@ -925,12 +924,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
   function rejectField(emsg: string, el: HTMLElement, errors: string[]) {
     el.classList.add('patcher-field--error')
     errors.push(emsg)
-  }
-
-
-
-
-  const EpisodeMeta = memo(function EpisodeMeta({ meta }: { meta: ITitleEpisodeMeta }) {
+  } const EpisodeMeta = memo(function EpisodeMeta({ meta }: { meta: ITitleEpisodeMeta }) {
     return <div className={`w-full px-[12px] py-[8px] rounded-[4px] flex items-center justify-between gap-[24px] duration-200 ${selectedMeta?.order === meta.order ? 'bg-green/[.2]' : 'bg-grey'} max-[600px]:flex-col`}>
       <div className='flex gap-[16px]'>
         <div className='flex flex-col gap-[4px]'>
@@ -1269,12 +1263,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   function rejectField(emsg: string, el: HTMLElement, errors: string[]) {
     el.classList.add('patcher-field--error')
     errors.push(emsg)
-  }
-
-
-
-
-  return <section className='flex flex-col gap-[32px]'>
+  } return <section className='flex flex-col gap-[32px]'>
     {/* Controls */}
     <div className='flex flex-col gap-[16px] w-full'>
       <Label label='Озвучення' />

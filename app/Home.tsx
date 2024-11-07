@@ -1,26 +1,23 @@
 'use client'
 
-import { NextPage } from 'next';
-import React, { useState, useEffect, useRef, memo, useMemo } from 'react'
-import { LoadingImage, TitleCard, WatchButton } from '../components/Components';
-import { ITitle } from '../interfaces/ITitle';
-import { config, CONSTS } from '../config';
-import { SwiperSlide, Swiper } from 'swiper/react';
-import Skeleton from 'react-loading-skeleton';
-import { IcoExternalLink, IcoGhost, IcoPlay, IcoStar, IcoStarRating } from '../assets/Icons';
-import Link from 'next/link';
-import { routes } from '../routes';
-import { IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
 import * as loader from '@uiball/loaders';
-import { useIdleTimer } from 'react-idle-timer';
-import gsap from 'gsap';
-import { IKekwPlayerLocalDataItem, secondsToReadable } from '../components/KekwPlayer';
-import { createID } from '../components/handlers';
-import { IcoClockOutlined } from '../assets/Clock';
 import Image from 'next/image';
-import { useAppSelector } from '../hooks/redux';
-import { IUserState } from '../store/reducers/userSlice';
+import Link from 'next/link';
+import React, { memo, useEffect, useRef, useState } from 'react'
+import { NextPage } from 'next';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { useIdleTimer } from 'react-idle-timer';
+
+import { CONSTS, config } from '../config';
+import { IKekwPlayerLocalDataItem, secondsToReadable } from '../components/KekwPlayer';
+import { ITitle } from '../interfaces/ITitle';
 import { IUserWatchProgress } from '../interfaces/IUser';
+import { IcoClockOutlined } from '../assets/Clock';
+import { IcoExternalLink, IcoGhost, IcoPlay, IcoStar, IcoStarRating } from '../assets/Icons';
+import { IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
+import { TitleCard } from '../components/Components';
+import { createID } from '../components/handlers';
+import { routes } from '../routes';
 
 
 

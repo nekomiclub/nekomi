@@ -1,18 +1,19 @@
 'use client'
 
+
+import Link from 'next/link';
+import { AxiosError } from 'axios';
+import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
 import { useMemo, useRef, useState } from 'react';
-import { useAppSelector } from '../../../hooks/redux';
-import { IUser } from '../../../interfaces/IUser';
-import { IPatcherSelectOption, PatcherErrorWrapper } from '../[id]/Components';
-import { cn } from '../../../components/Components';
-import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
-import { IcoArrow, IcoExternalLink, IcoUpdate } from '../../../assets/Icons';
+
 import Tooltip from '../../../components/Tooltip';
-import { AxiosError } from 'axios';
-import { $api, $upload } from '../../../components/http';
+import { $upload } from '../../../components/http';
+import { IPatcherSelectOption, PatcherErrorWrapper } from '../[id]/Components';
+import { IUser } from '../../../interfaces/IUser';
+import { IcoArrow, IcoExternalLink, IcoUpdate } from '../../../assets/Icons';
+import { cn } from '../../../components/Components';
 import { config } from '../../../config';
-import Link from 'next/link';
 
 interface IProps {
   user: IUser

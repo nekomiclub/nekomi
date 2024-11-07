@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
-import userSlice from './reducers/userSlice';
+
 import storageSlice from './reducers/storageSlice';
+import userSlice from './reducers/userSlice';
 
 export interface IReduxAction<T> {
   type: string,

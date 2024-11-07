@@ -1,13 +1,13 @@
-import Home, { IHomeWrapped } from './Home';
-import { ITitle } from '../interfaces/ITitle';
-import { config, CONSTS, devMode, metaObject, prodMode } from '../config';
-import axios, { AxiosError } from 'axios';
-import Link from 'next/link';
-import { HappenedWrongScreen, NotFoundScreen } from '../components/Components';
-import { getUTC } from '../components/handlers';
-import { $api } from '../components/http';
-import { IUserWatchProgress } from '../interfaces/IUser';
+import { AxiosError } from 'axios';
 import { cookies } from 'next/headers';
+
+import { $api } from '../components/http';
+import { HappenedWrongScreen } from '../components/Components';
+import { IUserWatchProgress } from '../interfaces/IUser';
+import { getUTC } from '../components/handlers';
+import { metaObject } from '../config';
+
+import Home, { IHomeWrapped } from './Home';
 
 
 

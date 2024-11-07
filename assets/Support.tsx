@@ -1,8 +1,9 @@
 import { LoadingImage } from "../components/Components";
+
 import { IAssetProps } from "./Icons";
 
-import SupportMonobank from './img/monobank.png'
 import SupportDiaka from './img/diaka.png'
+import SupportMonobank from './img/monobank.png'
 
 //! width={width || 32} height={height || 32} className={className || ''}
 // export const IcoSupport = ({ className, fill, height, width }: IAssetProps) => {

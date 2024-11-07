@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { KJUR } from 'jsrsasign'
 import http from 'http';
 import https from 'https';
+import { KJUR } from 'jsrsasign'
 
-
-import { config, prodMode } from '../config';
+import { config } from '../config';
 
 /** Axios HTTP instance with csrf token specified & creds */
 export const $api = axios.create({

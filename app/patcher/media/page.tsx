@@ -1,13 +1,15 @@
+import { AxiosError } from 'axios';
 import { NextPage } from 'next';
-import { IRSCProps } from '../../../interfaces/IRSC';
 import { cookies } from 'next/headers';
-import { config, devMode } from '../../../config';
-import { IUser } from '../../../interfaces/IUser';
-import { TRoleCapability } from '../../../interfaces/IRoles';
+
 import { $api } from '../../../components/http';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
-import { AxiosError } from 'axios';
+import { IRSCProps } from '../../../interfaces/IRSC';
+import { IUser } from '../../../interfaces/IUser';
+import { TRoleCapability } from '../../../interfaces/IRoles';
+import { devMode } from '../../../config';
 import { getUTC } from '../../../components/handlers';
+
 import { MediaClient } from './Client';
 
 const RSC: NextPage<IRSCProps> = async () => {

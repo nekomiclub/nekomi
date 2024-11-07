@@ -1,15 +1,14 @@
 'use client'
 
-import dynamic from 'next/dynamic'
-
-import { memo, useContext, useEffect, useMemo, useRef, useState } from "react"
-import { IcoArrow, IcoGhost, IcoLock } from "../../../assets/Icons"
-import { cn, LoadingImage } from "../../../components/Components"
-import { IFieldStatus, PatcherMetaContext, TPatcherMetaKey } from "./Patcher"
 import gsap from "gsap"
-import { IDubber } from "../../../interfaces/IDubber"
-import { createID } from '../../../components/handlers'
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu'
+import { memo, useContext, useEffect, useRef, useState } from "react"
+
+import { IDubber } from "../../../interfaces/IDubber"
+import { IcoArrow, IcoGhost, IcoLock } from "../../../assets/Icons"
+import { LoadingImage,cn } from "../../../components/Components"
+
+import { IFieldStatus, PatcherMetaContext, TPatcherMetaKey } from "./Patcher"
 
 
 
