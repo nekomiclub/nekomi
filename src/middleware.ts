@@ -3,7 +3,6 @@ import type { NextRequest } from 'next/server'
 
 
 
-
 export async function middleware(req: NextRequest) {
   // Set current URL header
   const headers = new Headers(req.headers);
