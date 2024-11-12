@@ -88,30 +88,30 @@ export default async function RSC(props: IRSCProps) {
   }
 
   return (
-    <div className='w-full h-full min-h-screen bg-dark'>
+    <div className="w-full h-full min-h-screen bg-dark">
       <DubberHeader dubber={dubber} />
 
       <div className="wrapper gap-[40px] !pt-[48px]">
         {/* Stats */}
 
         {/* About */}
-        <div className='flex flex-col gap-[24px]'>
-          <div className='flex items-stretch gap-[24px] justify-center max-[560px]:flex-col'>
-            {dubber.socials && <div className='w-full flex items-center gap-[24px] justify-end max-[560px]:justify-center'>
-              {dubber.socials.instagram && <Link href={dubber.socials.instagram} target='_blank'><IcoSocialInstagram width={40} height={40} /></Link>}
-              {dubber.socials.telegram && <Link href={dubber.socials.telegram} target='_blank'><IcoSocialTelegram width={40} height={40} /></Link>}
-              {dubber.socials.tiktok && <Link href={dubber.socials.tiktok} target='_blank'><IcoSocialTiktok width={40} height={40} /></Link>}
-              {dubber.socials.youtube && <Link href={dubber.socials.youtube} target='_blank'><IcoSocialYoutube width={40} height={40} /></Link>}
+        <div className="flex flex-col gap-[24px]">
+          <div className="flex items-stretch gap-[24px] justify-center max-[560px]:flex-col">
+            {dubber.socials && <div className="w-full flex items-center gap-[24px] justify-end max-[560px]:justify-center">
+              {dubber.socials.instagram && <Link href={dubber.socials.instagram} target="_blank"><IcoSocialInstagram width={40} height={40} /></Link>}
+              {dubber.socials.telegram && <Link href={dubber.socials.telegram} target="_blank"><IcoSocialTelegram width={40} height={40} /></Link>}
+              {dubber.socials.tiktok && <Link href={dubber.socials.tiktok} target="_blank"><IcoSocialTiktok width={40} height={40} /></Link>}
+              {dubber.socials.youtube && <Link href={dubber.socials.youtube} target="_blank"><IcoSocialYoutube width={40} height={40} /></Link>}
             </div>}
 
-            {dubber.socials && dubber.support && <span className='w-[2px] bg-grey shrink-0 block h-auto max-[560px]:w-full max-[560px]:h-[3px]'></span>}
+            {dubber.socials && dubber.support && <span className="w-[2px] bg-grey shrink-0 block h-auto max-[560px]:w-full max-[560px]:h-[3px]"></span>}
 
-            {dubber.support && <div className='w-full flex items-center gap-[24px] max-[560px]:justify-center'>
-              {dubber.support.bymeacoffee && <Link href={dubber.support.bymeacoffee} target='_blank'><IcoSupportByMeACoffee width={40} height={40} /></Link>}
-              {dubber.support.diaka && <Link href={dubber.support.diaka} target='_blank'><IcoSupportDiaka width={40} height={40} /></Link>}
-              {dubber.support.monobank && <Link href={dubber.support.monobank} target='_blank'><IcoSupportMonobank width={40} height={40} /></Link>}
-              {dubber.support.patreon && <Link href={dubber.support.patreon} target='_blank'><IcoSupportPatreon width={40} height={40} /></Link>}
-              {dubber.support.privatbank && <Link href={dubber.support.privatbank} target='_blank'><IcoSupportPrivatbank width={40} height={40} /></Link>}
+            {dubber.support && <div className="w-full flex items-center gap-[24px] max-[560px]:justify-center">
+              {dubber.support.bymeacoffee && <Link href={dubber.support.bymeacoffee} target="_blank"><IcoSupportByMeACoffee width={40} height={40} /></Link>}
+              {dubber.support.diaka && <Link href={dubber.support.diaka} target="_blank"><IcoSupportDiaka width={40} height={40} /></Link>}
+              {dubber.support.monobank && <Link href={dubber.support.monobank} target="_blank"><IcoSupportMonobank width={40} height={40} /></Link>}
+              {dubber.support.patreon && <Link href={dubber.support.patreon} target="_blank"><IcoSupportPatreon width={40} height={40} /></Link>}
+              {dubber.support.privatbank && <Link href={dubber.support.privatbank} target="_blank"><IcoSupportPrivatbank width={40} height={40} /></Link>}
             </div>}
           </div>
 

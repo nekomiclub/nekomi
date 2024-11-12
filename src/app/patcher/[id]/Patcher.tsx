@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import gsap from 'gsap';
 import { AxiosError } from 'axios';
-import { Menu, MenuItem, MenuList } from 'uvc-menu';
+import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
 import { createContext, memo, useContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -317,32 +317,32 @@ const Field = memo(function Field({ isLarge, label, note, symbolsLimited, initia
   }, [outValue])
 
   return (
-    <div className='flex flex-col gap-[8px] w-full'>
-      <div className='flex items-end gap-[8px]'>
-        <div className='flex items-center gap-[4px]'>
-          {isLocked && <IcoLock fill='#747474' width={16} height={16} />}
+    <div className="flex flex-col gap-[8px] w-full">
+      <div className="flex items-end gap-[8px]">
+        <div className="flex items-center gap-[4px]">
+          {isLocked && <IcoLock fill="#747474" width={16} height={16} />}
 
           <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{label}</p>
         </div>
 
-        {note && <p className='text-lightGrey text-[12px]'>({note})</p>}
+        {note && <p className="text-lightGrey text-[12px]">({note})</p>}
       </div>
 
       {isLarge
-        ? <textarea value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''}  patcher-${type} min-h-[120px]`} id={`patcher-${id}`} disabled={isLocked} placeholder={placeholder || '...'} autoComplete='off' ref={textareaRef} />
-        : <input type='text' value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''} patcher-${type} `} id={`patcher-${id}`} disabled={isLocked} placeholder={placeholder || '...'} autoComplete='off' ref={inputRef} />
+        ? <textarea value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''}  patcher-${type} min-h-[120px]`} id={`patcher-${id}`} disabled={isLocked} placeholder={placeholder || '...'} autoComplete="off" ref={textareaRef} />
+        : <input type="text" value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''} patcher-${type} `} id={`patcher-${id}`} disabled={isLocked} placeholder={placeholder || '...'} autoComplete="off" ref={inputRef} />
       }
 
-      {symbolsLimited && <p className='text-lightGrey text-[12px] w-full text-end'>{value.length} / {symbolsLimited}</p>}
+      {symbolsLimited && <p className="text-lightGrey text-[12px] w-full text-end">{value.length} / {symbolsLimited}</p>}
     </div>
   )
 })
 
 const Label = memo(function Label({ label }: { label: string }) {
-  return <div className='flex items-center gap-[16px]'>
-    <h3 className='text-white text-[32px] font-bold shrink-0 max-[820px]:text-[24px]'>{label}</h3>
+  return <div className="flex items-center gap-[16px]">
+    <h3 className="text-white text-[32px] font-bold shrink-0 max-[820px]:text-[24px]">{label}</h3>
 
-    <span className='w-full h-[3px] bg-grey'></span>
+    <span className="w-full h-[3px] bg-grey"></span>
   </div>
 })
 
@@ -350,30 +350,32 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
   const [isOpen, setIsOpen] = useState(false)
   const initialValue = useRef(value);
 
-  return <div className='flex flex-col gap-[8px] !w-full'>
-    <div className='flex items-center gap-[8px]'>
-      {isLocked && <IcoLock width={16} height={16} fill='#747474' className={isLocked ? 'block' : 'hidden'} />}
+  return <div className="flex flex-col gap-[8px] !w-full">
+    <div className="flex items-center gap-[8px]">
+      {isLocked && <IcoLock width={16} height={16} fill="#747474" className={isLocked ? 'block' : 'hidden'} />}
       <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{label}</p>
     </div>
 
-    <Menu trigger={<div className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between !w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
-      {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='24px' height='24px' parentClassName='overflow-hidden rounded-[32px]' />}
+    <Menu state={isOpen} stateSetter={setIsOpen} disabled={isLocked}>
+      <MenuTrigger primary className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between !w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
+        {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width="24px" height="24px" parentClassName="overflow-hidden rounded-[32px]" />}
 
-      <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{options.find(el => el.code === value)?.label}</p>
+        <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{options.find(el => el.code === value)?.label}</p>
 
-      <IcoArrow className={`duration-200 ${isOpen ? 'rotate-[180deg]' : 'rotate-[0def]'}`} fill={`${isLocked ? '#747474' : '#fff'}`} />
-    </div>} menuClassName='!w-full' triggerClassName='!w-full' align='stretch' className='!w-full' animation='slide' closeAfter='any' state={isOpen} stateSetter={setIsOpen} statePriority='outer' disabled={isLocked}>
-      <MenuList className='bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto'>
+        <IcoArrow className={`duration-200 ${isOpen ? 'rotate-[180deg]' : 'rotate-[0def]'}`} fill={`${isLocked ? '#747474' : '#fff'}`} />
+      </MenuTrigger>
+
+      <MenuWrapper className="bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto flex flex-col">
         {options.map(option => {
-          return <MenuItem key={`select-option--${option.code}`} onClick={() => valueSetter(option.code)}>
+          return <div key={`select-option--${option.code}`} onClick={() => valueSetter(option.code)}>
             <button className={`px-[8px] py-[6px] ${value === option.code ? 'bg-purple' : !disablePending && option.code === initialValue.current ? 'bg-gradientSecondaryFallback' : ''} duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center ${isDubbers ? 'justify-start' : 'justify-center'} gap-[16px]`}>
-              {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === option.code)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
+              {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === option.code)!.thumbURL!} width="32px" height="32px" parentClassName="overflow-hidden rounded-[32px]" />}
 
-              <p className='text-white'>{option.label}</p>
+              <p className="text-white">{option.label}</p>
             </button>
-          </MenuItem>
+          </div>
         })}
-      </MenuList>
+      </MenuWrapper>
     </Menu>
   </div>
 })
@@ -395,52 +397,52 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
       source = episode.episode.qualities.q1080;
     }
 
-    return <div className='px-[24px] py-[16px] flex items-center gap-[16px] rounded-[2px] bg-grey'>
+    return <div className="px-[24px] py-[16px] flex items-center gap-[16px] rounded-[2px] bg-grey">
       {/* Order */}
-      <p className='text-white text-[24px] font-bold w-[100px] shrink-0'>#{episode.episode.order}</p>
+      <p className="text-white text-[24px] font-bold w-[100px] shrink-0">#{episode.episode.order}</p>
 
       {/* Content */}
-      <div className='flex items-center gap-[16px] w-full'>
-        {type === 'uploaded' && <Link href={source} target='_blank' className='flex items-center gap-[16px]'>
-          <IcoPlay width={32} height={32} fill='#6C5CE7' />
+      <div className="flex items-center gap-[16px] w-full">
+        {type === 'uploaded' && <Link href={source} target="_blank" className="flex items-center gap-[16px]">
+          <IcoPlay width={32} height={32} fill="#6C5CE7" />
 
-          <p className='text-purple'>Переглянути</p>
-          {episode.file && <p className='text-lightGrey'>Завантажено!</p>}
+          <p className="text-purple">Переглянути</p>
+          {episode.file && <p className="text-lightGrey">Завантажено!</p>}
         </Link>}
 
         {type === 'pending' && <>
-          <IcoUpdate width={32} height={32} fill='#F39C12' />
-          <p className='text-white'>В черзі на завантаження</p>
-          <p className='text-lightGrey'>{'>'}{order}</p>
+          <IcoUpdate width={32} height={32} fill="#F39C12" />
+          <p className="text-white">В черзі на завантаження</p>
+          <p className="text-lightGrey">{'>'}{order}</p>
         </>}
 
         {type === 'uploading' && <>
-          <IcoUpdate width={32} height={32} fill='#2ECC71' />
-          <p className='text-white'>Завантажується...</p>
-          <p className='text-lightGrey'>{progress}%</p>
+          <IcoUpdate width={32} height={32} fill="#2ECC71" />
+          <p className="text-white">Завантажується...</p>
+          <p className="text-lightGrey">{progress}%</p>
         </>}
       </div>
 
       {/* Delete */}
-      {canSeriesDelete && type !== 'uploading' && <Tooltip content='Видалити'>
-        <button className='shrink-0 patcher-episodeMeta' onClick={() => deleteEpisode(episode.episode.order, episode.episode.dubberID)}>
-          <IcoCan width={32} height={32} className='patcher-episodeMeta_delete' />
+      {canSeriesDelete && type !== 'uploading' && <Tooltip content="Видалити">
+        <button className="shrink-0 patcher-episodeMeta" onClick={() => deleteEpisode(episode.episode.order, episode.episode.dubberID)}>
+          <IcoCan width={32} height={32} className="patcher-episodeMeta_delete" />
         </button>
       </Tooltip>}
     </div>
   })
 
-  return <div className='flex flex-col gap-[16px]'>
+  return <div className="flex flex-col gap-[16px]">
     {/* Label */}
-    <div className='flex items-center gap-[16px]'>
-      <LoadingImage src={group.dubber.thumbURL} height='32px' width='32px' parentClassName='overflow-hidden rounded-[32px] shrink-0' />
+    <div className="flex items-center gap-[16px]">
+      <LoadingImage src={group.dubber.thumbURL} height="32px" width="32px" parentClassName="overflow-hidden rounded-[32px] shrink-0" />
 
-      <h3 className='text-white text-[24px] uppercase shrink-0 font-bold'>{group.dubber.name} ({group.episodes.length} / {title.episodesCount || 0})</h3>
+      <h3 className="text-white text-[24px] uppercase shrink-0 font-bold">{group.dubber.name} ({group.episodes.length} / {title.episodesCount || 0})</h3>
 
-      <span className='w-full h-[3px] bg-grey'></span>
+      <span className="w-full h-[3px] bg-grey"></span>
 
       <Tooltip content={isCollapsed ? 'Розгорнути' : 'Згорунти'}>
-        <button className='p-[8px] rounded-[2px] bg-grey duration-200 hover:bg-purple focus-visible:bg-purple' onClick={() => setIsCollapsed(!isCollapsed)}>
+        <button className="p-[8px] rounded-[2px] bg-grey duration-200 hover:bg-purple focus-visible:bg-purple" onClick={() => setIsCollapsed(!isCollapsed)}>
           <IcoArrow className={`duration-200 ${isCollapsed ? 'rotate-0' : 'rotate-[180deg]'}`} />
         </button>
       </Tooltip>
@@ -647,38 +649,38 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
 
 
 
-  return <section className='flex flex-col gap-[16px]' ref={wrapperRef}>
-    <PatcherErrorWrapper errors={errors} section='meta' />
+  return <section className="flex flex-col gap-[16px]" ref={wrapperRef}>
+    <PatcherErrorWrapper errors={errors} section="meta" />
 
     {/* Meta section */}
-    <div className='flex gap-[32px] max-[1280px]:flex-col'>
+    <div className="flex gap-[32px] max-[1280px]:flex-col">
       {/* Poster */}
-      <div className='flex flex-col gap-[24px]'>
-        <div className='flex flex-col gap-[8px] items-center'>
+      <div className="flex flex-col gap-[24px]">
+        <div className="flex flex-col gap-[8px] items-center">
           <div className={cn(`patcher-poster w-[600px] h-[800px] max-[670px]:w-full max-[670px]:h-[500px]`, canTitleEdit && 'cursor-pointer')} onClick={canTitleEdit ? chooseFile : undefined}>
             {/* Input */}
-            <input type="file" accept='.png,.jpg,.webp' ref={fileRef} className='hidden' onClick={e => (e.target as HTMLInputElement).value = ''} onChange={uploadPoster} />
+            <input type="file" accept=".png,.jpg,.webp" ref={fileRef} className="hidden" onClick={e => (e.target as HTMLInputElement).value = ''} onChange={uploadPoster} />
 
-            <LoadingImage src={poster} width='100%' height='100%' parentClassName='overflow-hidden rounded-[4px]' />
+            <LoadingImage src={poster} width="100%" height="100%" parentClassName="overflow-hidden rounded-[4px]" />
 
-            {canTitleEdit && <button className='patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none'>
-              <IcoUpdate width={256} height={256} className='max-[670px]:w-[128px] max-[670px]:h-[128px]' />
+            {canTitleEdit && <button className="patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none">
+              <IcoUpdate width={256} height={256} className="max-[670px]:w-[128px] max-[670px]:h-[128px]" />
 
-              <p className='text-white text-[32px] uppercase font-bold text-center select-none max-[670px]:text-[24px]'>ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
+              <p className="text-white text-[32px] uppercase font-bold text-center select-none max-[670px]:text-[24px]">ЗАВАНТАЖИТИ <br /> НОВИЙ</p>
             </button>}
           </div>
 
-          {!isPosterStored && <p className='text-orange'>* Постер не на сервері nekomi.club</p>}
+          {!isPosterStored && <p className="text-orange">* Постер не на сервері nekomi.club</p>}
         </div>
 
-        <div className='flex flex-col gap-[24px]'>
-          <div className='flex flex-col gap-[4px]'>
+        <div className="flex flex-col gap-[24px]">
+          <div className="flex flex-col gap-[4px]">
             {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${saveStatus}`} onClick={patchTitleMeta} disabled={!canTitleEdit}>
               {(saveStatus === 'save' || saveStatus === 'saved') && <IcoCheckmark width={32} height={32} />}
               {saveStatus === 'saveError' && <IcoCross width={32} height={32} />}
               {saveStatus === 'nothingChanged' && <IcoGhost width={32} height={32} />}
 
-              <p className='text-white uppercase'>
+              <p className="text-white uppercase">
                 {saveStatus === 'save' && 'зберегти'}
                 {saveStatus === 'saved' && 'збережено'}
                 {saveStatus === 'saveError' && 'помилка'}
@@ -686,56 +688,56 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
               </p>
             </button>}
 
-            <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${title.code}`} className='patcher-button_action'>
-              <IcoNekomiLogo width={32} height={32} fill='#fff' />
-              <p className='text-white uppercase text-center'>тайтл на сайті</p>
+            <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${title.code}`} className="patcher-button_action">
+              <IcoNekomiLogo width={32} height={32} fill="#fff" />
+              <p className="text-white uppercase text-center">тайтл на сайті</p>
             </Link>
           </div>
 
           {/* Delete title */}
-          {canTitleDelete && <button className='patcher-button_action patcher-button_action--delete' disabled={!canTitleDelete} onClick={deleteTitle}>
+          {canTitleDelete && <button className="patcher-button_action patcher-button_action--delete" disabled={!canTitleDelete} onClick={deleteTitle}>
             <IcoCan width={32} height={32} />
-            <p className='text-white uppercase'>видалити</p>
+            <p className="text-white uppercase">видалити</p>
           </button>}
 
-          <div className='flex flex-col gap-[4px]'>
-            <p className='text-lightGrey'>ID: {title.id}</p>
-            <p className='text-lightGrey'>CODE: {title.code}</p>
+          <div className="flex flex-col gap-[4px]">
+            <p className="text-lightGrey">ID: {title.id}</p>
+            <p className="text-lightGrey">CODE: {title.code}</p>
           </div>
         </div>
       </div>
 
       {/* Meta fields */}
-      <div className='flex flex-col gap-[8px] w-full'>
-        <PatcherField label='Українська назва' id='nameUkr' symbolsLimited={256} fieldsStatus={fieldsStatus} />
+      <div className="flex flex-col gap-[8px] w-full">
+        <PatcherField label="Українська назва" id="nameUkr" symbolsLimited={256} fieldsStatus={fieldsStatus} />
 
-        <div className='pl-[16px]'>
-          <PatcherField label='Англійська' id='nameEng' symbolsLimited={256} fieldsStatus={fieldsStatus} />
-          <PatcherField label='Альтернативні' id='nameAlt' note='Через кому' type='textarea' value={Array.isArray(MetaCtx.meta.nameAlt) ? MetaCtx.meta.nameAlt.join(', ') : MetaCtx.meta.nameAlt} symbolsLimited={256} fieldsStatus={fieldsStatus} />
+        <div className="pl-[16px]">
+          <PatcherField label="Англійська" id="nameEng" symbolsLimited={256} fieldsStatus={fieldsStatus} />
+          <PatcherField label="Альтернативні" id="nameAlt" note="Через кому" type="textarea" value={Array.isArray(MetaCtx.meta.nameAlt) ? MetaCtx.meta.nameAlt.join(', ') : MetaCtx.meta.nameAlt} symbolsLimited={256} fieldsStatus={fieldsStatus} />
         </div>
 
-        <PatcherSelect label='Статус' id='status' options={titleStatusOptions} fieldsStatus={fieldsStatus} />
-        <PatcherSelect label='Тип' id='type' options={titleTypeOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label="Статус" id="status" options={titleStatusOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label="Тип" id="type" options={titleTypeOptions} fieldsStatus={fieldsStatus} />
 
-        <PatcherField label='Рейтинг IMDb' id='IMDBRating' note='1 - 10, 0 - відсутній' type='number' symbolsLimited={3} fieldsStatus={fieldsStatus} />
+        <PatcherField label="Рейтинг IMDb" id="IMDBRating" note="1 - 10, 0 - відсутній" type="number" symbolsLimited={3} fieldsStatus={fieldsStatus} />
 
-        <PatcherSelect label='Віковий рейтинг' id='ageRate' options={titleAgeRateOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label="Віковий рейтинг" id="ageRate" options={titleAgeRateOptions} fieldsStatus={fieldsStatus} />
 
-        <PatcherField label='Епізоди' id='episodesCount' note='1 - 9999, 0 - відсутні' type='number' symbolsLimited={4} fieldsStatus={fieldsStatus} />
-        <PatcherField label='Студії' id='studios' note='Через кому' symbolsLimited={256} fieldsStatus={fieldsStatus} />
-        <PatcherField label='Жанри' id='genres' note='Через кому' value={MetaCtx.meta.genres} symbolsLimited={256} fieldsStatus={fieldsStatus} />
+        <PatcherField label="Епізоди" id="episodesCount" note="1 - 9999, 0 - відсутні" type="number" symbolsLimited={4} fieldsStatus={fieldsStatus} />
+        <PatcherField label="Студії" id="studios" note="Через кому" symbolsLimited={256} fieldsStatus={fieldsStatus} />
+        <PatcherField label="Жанри" id="genres" note="Через кому" value={MetaCtx.meta.genres} symbolsLimited={256} fieldsStatus={fieldsStatus} />
 
-        <PatcherSelect label='Країна' id='country' options={titleCountryOptions} fieldsStatus={fieldsStatus} />
-        <PatcherSelect label='Сезон' id='season' options={titleSeasonOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label="Країна" id="country" options={titleCountryOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label="Сезон" id="season" options={titleSeasonOptions} fieldsStatus={fieldsStatus} />
 
-        <PatcherField label='Рік' id='year' note='2007 - 2050' type='number' symbolsLimited={4} fieldsStatus={fieldsStatus} />
+        <PatcherField label="Рік" id="year" note="2007 - 2050" type="number" symbolsLimited={4} fieldsStatus={fieldsStatus} />
       </div>
     </div>
 
     {/* Textareas */}
-    <div className='flex gap-[8px] max-[970px]:flex-col'>
-      <PatcherField id='description' label='Опис' locked={!canTitleEdit} symbolsLimited={2200} type='textarea' fieldsStatus={fieldsStatus} />
-      {canTitleEdit && <PatcherField id='details' label='Деталі' note='Не обов`язково' symbolsLimited={500} type='textarea' fieldsStatus={fieldsStatus} />}
+    <div className="flex gap-[8px] max-[970px]:flex-col">
+      <PatcherField id="description" label="Опис" locked={!canTitleEdit} symbolsLimited={2200} type="textarea" fieldsStatus={fieldsStatus} />
+      {canTitleEdit && <PatcherField id="details" label="Деталі" note="Не обов`язково" symbolsLimited={500} type="textarea" fieldsStatus={fieldsStatus} />}
     </div>
   </section>
 })
@@ -926,28 +928,28 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
     errors.push(emsg)
   } const EpisodeMeta = memo(function EpisodeMeta({ meta }: { meta: ITitleEpisodeMeta }) {
     return <div className={`w-full px-[12px] py-[8px] rounded-[4px] flex items-center justify-between gap-[24px] duration-200 ${selectedMeta?.order === meta.order ? 'bg-green/[.2]' : 'bg-grey'} max-[600px]:flex-col`}>
-      <div className='flex gap-[16px]'>
-        <div className='flex flex-col gap-[4px]'>
-          <p className='text-white text-[24px] font-bold max-[880px]:text-[16px]'>#{meta.order}</p>
-          <p className='text-lightGrey'>{getUTC(meta.dateOut).dateReversed}</p>
+      <div className="flex gap-[16px]">
+        <div className="flex flex-col gap-[4px]">
+          <p className="text-white text-[24px] font-bold max-[880px]:text-[16px]">#{meta.order}</p>
+          <p className="text-lightGrey">{getUTC(meta.dateOut).dateReversed}</p>
         </div>
 
-        <div className='flex flex-col gap-[4px]'>
-          <p className='text-white text-[24px] max-[880px]:text-[16px]'>{meta.names.ukr}</p>
-          <p className='text-lightGrey'>{meta.names.eng}</p>
+        <div className="flex flex-col gap-[4px]">
+          <p className="text-white text-[24px] max-[880px]:text-[16px]">{meta.names.ukr}</p>
+          <p className="text-lightGrey">{meta.names.eng}</p>
         </div>
       </div>
 
-      <div className='flex gap-[4px]'>
-        <Tooltip content='Вибрати'>
-          <button className='patcher-episodeMeta p-[8px]' onClick={() => setSelectedMeta(meta)}>
-            <IcoPlus width={32} height={32} className='patcher-episodeMeta_select' />
+      <div className="flex gap-[4px]">
+        <Tooltip content="Вибрати">
+          <button className="patcher-episodeMeta p-[8px]" onClick={() => setSelectedMeta(meta)}>
+            <IcoPlus width={32} height={32} className="patcher-episodeMeta_select" />
           </button>
         </Tooltip>
 
-        <Tooltip content='Видалити'>
-          <button className='patcher-episodeMeta p-[8px]' onClick={() => deleteEpisodeMeta(meta.order)}>
-            <IcoCan width={32} height={32} className='patcher-episodeMeta_delete' />
+        <Tooltip content="Видалити">
+          <button className="patcher-episodeMeta p-[8px]" onClick={() => deleteEpisodeMeta(meta.order)}>
+            <IcoCan width={32} height={32} className="patcher-episodeMeta_delete" />
           </button>
         </Tooltip>
       </div>
@@ -956,59 +958,59 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
 
 
 
-  return canEditEpsMeta && <section className='flex flex-col gap-[16px]'>
-    <Label label='Інформація про серії' />
+  return canEditEpsMeta && <section className="flex flex-col gap-[16px]">
+    <Label label="Інформація про серії" />
 
-    <PatcherErrorWrapper errors={errors} section='ep_meta' />
+    <PatcherErrorWrapper errors={errors} section="ep_meta" />
 
-    <div className='flex flex-col gap-[24px]'>
-      <div className='flex flex-col gap-[16px]'>
+    <div className="flex flex-col gap-[24px]">
+      <div className="flex flex-col gap-[16px]">
         {/* Parse */}
-        {isRoot && <div className='flex items-center gap-[16px]'>
-          <Field label='Парс епізодів з IMDB' id='metaImdbParse' type='metaParse' placeholder='https://www.imdb.com/title/{ID}/episodes' disablePending />
+        {isRoot && <div className="flex items-center gap-[16px]">
+          <Field label="Парс епізодів з IMDB" id="metaImdbParse" type="metaParse" placeholder="https://www.imdb.com/title/{ID}/episodes" disablePending />
 
-          <button className='p-[12px] bg-grey rounded-[4px] duration-200 hover:bg-purple focus-visible:bg-purple' onClick={parseEpisodesMetas}>
+          <button className="p-[12px] bg-grey rounded-[4px] duration-200 hover:bg-purple focus-visible:bg-purple" onClick={parseEpisodesMetas}>
             <IcoUpdate width={32} height={32} />
           </button>
         </div>}
 
         {/* Panel */}
-        <div className='flex flex-col gap-[8px]'>
-          <div className='flex items-start gap-[16px] w-full'>
+        <div className="flex flex-col gap-[8px]">
+          <div className="flex items-start gap-[16px] w-full">
             {/* Order */}
-            <div className='w-[100px] shrink-0'>
-              <Field label='Номер серії' id='metaOrder' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? `${selectedMeta.order}` : undefined} symbolsLimited={4} />
+            <div className="w-[100px] shrink-0">
+              <Field label="Номер серії" id="metaOrder" type="meta" disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? `${selectedMeta.order}` : undefined} symbolsLimited={4} />
             </div>
 
-            <Field label='Українська назва' id='metaUkrName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.ukr : undefined} symbolsLimited={256} />
+            <Field label="Українська назва" id="metaUkrName" type="meta" disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.ukr : undefined} symbolsLimited={256} />
           </div>
 
-          <div className='flex items-center gap-[16px] w-full max-[900px]:flex-col'>
-            <div className='flex items-start gap-[16px] w-full max-[600px]:flex-col'>
-              <Field label='Англійска назва' id='metaEngName' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.eng : undefined} symbolsLimited={256} />
+          <div className="flex items-center gap-[16px] w-full max-[900px]:flex-col">
+            <div className="flex items-start gap-[16px] w-full max-[600px]:flex-col">
+              <Field label="Англійска назва" id="metaEngName" type="meta" disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.eng : undefined} symbolsLimited={256} />
 
               {/* Out date */}
-              <div className='w-[200px] shrink-0 max-[600px]:w-full'>
-                <Field label='Дата виходу' note='ДД.ММ.РРРР' id='metaDateOut' type='meta' disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? getUTC(selectedMeta.dateOut).dateReversed : undefined} symbolsLimited={10} />
+              <div className="w-[200px] shrink-0 max-[600px]:w-full">
+                <Field label="Дата виходу" note="ДД.ММ.РРРР" id="metaDateOut" type="meta" disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? getUTC(selectedMeta.dateOut).dateReversed : undefined} symbolsLimited={10} />
               </div>
             </div>
 
             {/* Controls */}
-            <div className='flex gap-[4px] max-[900px]:w-full'>
-              <Tooltip content='Зберегти' className='max-[900px]:w-full'>
-                <button className='flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-green focus-visible:bg-green w-full' onClick={addEpisodeMeta}>
+            <div className="flex gap-[4px] max-[900px]:w-full">
+              <Tooltip content="Зберегти" className="max-[900px]:w-full">
+                <button className="flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-green focus-visible:bg-green w-full" onClick={addEpisodeMeta}>
                   <IcoUpdate width={32} height={32} />
                 </button>
               </Tooltip>
 
-              <Tooltip content='Видалити' className='max-[900px]:w-full'>
-                <button className='flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-red focus-visible:bg-red w-full' onClick={() => deleteEpisodeMeta()}>
+              <Tooltip content="Видалити" className="max-[900px]:w-full">
+                <button className="flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-red focus-visible:bg-red w-full" onClick={() => deleteEpisodeMeta()}>
                   <IcoCan width={32} height={32} />
                 </button>
               </Tooltip>
 
-              <Tooltip content={isFolded ? 'Розгорнути' : 'Згорнути'} className='max-[900px]:w-full'>
-                <button className='flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-purple focus-visible:bg-purple w-full' onClick={() => setIsFolded(!isFolded)}>
+              <Tooltip content={isFolded ? 'Розгорнути' : 'Згорнути'} className="max-[900px]:w-full">
+                <button className="flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-purple focus-visible:bg-purple w-full" onClick={() => setIsFolded(!isFolded)}>
                   <IcoArrow width={32} height={32} className={`duration-200 ${isFolded ? 'rotate-0' : 'rotate-[180deg]'}`} />
                 </button>
               </Tooltip>
@@ -1018,14 +1020,14 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
       </div>
 
       {/* Divider */}
-      <span className='w-full h-[3px] bg-grey'></span>
+      <span className="w-full h-[3px] bg-grey"></span>
 
       <div className={`flex flex-col gap-[4px] overflow-y-auto overflow-x-hidden duration-200 ${isFolded ? 'max-h-0' : 'max-h-[600px]'}`}>
         {episodesMeta.length ? episodesMeta.sort((a, b) => b.order - a.order).map(meta => {
           return <EpisodeMeta meta={meta} key={`episodeMeta--${meta.order}`} />
-        }) : <div className='w-full flex justify-center items-center gap-[16px]'>
-          <IcoGhost fill='#747474' />
-          <p className='text-lightGrey'>Здається, тут нічого нема...</p>
+        }) : <div className="w-full flex justify-center items-center gap-[16px]">
+          <IcoGhost fill="#747474" />
+          <p className="text-lightGrey">Здається, тут нічого нема...</p>
         </div>}
       </div>
     </div>
@@ -1263,37 +1265,37 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   function rejectField(emsg: string, el: HTMLElement, errors: string[]) {
     el.classList.add('patcher-field--error')
     errors.push(emsg)
-  } return <section className='flex flex-col gap-[32px]'>
+  } return <section className="flex flex-col gap-[32px]">
     {/* Controls */}
-    <div className='flex flex-col gap-[16px] w-full'>
-      <Label label='Озвучення' />
+    <div className="flex flex-col gap-[16px] w-full">
+      <Label label="Озвучення" />
 
-      <PatcherErrorWrapper errors={errors} section='ep_dubbing' />
+      <PatcherErrorWrapper errors={errors} section="ep_dubbing" />
 
-      {canSeriesAdd && <div className='flex items-center gap-[16px] max-[940px]:flex-col w-full'>
+      {canSeriesAdd && <div className="flex items-center gap-[16px] max-[940px]:flex-col w-full">
         {isMobile ? <>
-          <IcoGhost width={32} height={32} fill='#747474' />
-          <p className='text-lightGrey'>Нажаль, ви не можете додавати епізоди на телефоні</p>
+          <IcoGhost width={32} height={32} fill="#747474" />
+          <p className="text-lightGrey">Нажаль, ви не можете додавати епізоди на телефоні</p>
         </> : <>
-          <div className='flex items-start gap-[16px] w-full'>
+          <div className="flex items-start gap-[16px] w-full">
             {/* Order */}
-            <div className='w-[100px] shrink-0'>
-              <Field id='epOrder' label='Номер серії' type='episode' symbolsLimited={4} disablePending initialValue={'1'} />
+            <div className="w-[100px] shrink-0">
+              <Field id="epOrder" label="Номер серії" type="episode" symbolsLimited={4} disablePending initialValue={'1'} />
             </div>
 
             {/* Select dubber */}
-            <div className='w-[300px] shrink-0'>
-              <Select label='Команда' options={totalDubbers.sort((a, b) => a.name > b.name ? 1 : -1).map(dub => { return { code: dub.code, label: dub.name } })} value={dubbingSelectedCode} valueSetter={setDubbingSelectedCode} disablePending isDubbers dubbers={totalDubbers} />
+            <div className="w-[300px] shrink-0">
+              <Select label="Команда" options={totalDubbers.sort((a, b) => a.name > b.name ? 1 : -1).map(dub => { return { code: dub.code, label: dub.name } })} value={dubbingSelectedCode} valueSetter={setDubbingSelectedCode} disablePending isDubbers dubbers={totalDubbers} />
             </div>
 
             {/* File select */}
-            <div className='w-full flex flex-col gap-[8px] overflow-hidden'>
-              <p className='text-white'>Файл</p>
+            <div className="w-full flex flex-col gap-[8px] overflow-hidden">
+              <p className="text-white">Файл</p>
 
-              <div className='w-full'>
-                <input type="file" accept='.mp4,.webm,.mov,.mkv,.m4v' className='hidden' ref={fileRef} onChange={selectFile} />
+              <div className="w-full">
+                <input type="file" accept=".mp4,.webm,.mov,.mkv,.m4v" className="hidden" ref={fileRef} onChange={selectFile} />
 
-                <button className='patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]' onClick={chooseFile}>
+                <button className="patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]" onClick={chooseFile}>
                   <IcoUpdate width={32} height={32} />
                   <p className={`text-white ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'виберіть файл'}</p>
                 </button>
@@ -1301,16 +1303,16 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
             </div>
           </div>
 
-          <Tooltip content='Додати серію' className='max-[940px]:w-full shrink-0'>
-            <button className='p-[8px] bg-grey rounded-[4px] duration-200 hover:bg-green focus-visible:bg-green w-full' onClick={addEpisode}>
-              <IcoArrow width={32} height={32} className='-rotate-[90deg]' />
+          <Tooltip content="Додати серію" className="max-[940px]:w-full shrink-0">
+            <button className="p-[8px] bg-grey rounded-[4px] duration-200 hover:bg-green focus-visible:bg-green w-full" onClick={addEpisode}>
+              <IcoArrow width={32} height={32} className="-rotate-[90deg]" />
             </button>
           </Tooltip>
         </>}
       </div>}
 
-      {uploadsRemain !== null && uploadsRemain === 0 && <p className='text-green'>Всі епізоди завантажені!</p>}
-      {uploadsRemain !== null && uploadsRemain !== 0 && <p className='text-lightGrey'>Очікується завантаження: {uploadsRemain} {wordDeclination(uploadsRemain, ['епізоду', 'епізодів', 'епізодів'])}</p>}
+      {uploadsRemain !== null && uploadsRemain === 0 && <p className="text-green">Всі епізоди завантажені!</p>}
+      {uploadsRemain !== null && uploadsRemain !== 0 && <p className="text-lightGrey">Очікується завантаження: {uploadsRemain} {wordDeclination(uploadsRemain, ['епізоду', 'епізодів', 'епізодів'])}</p>}
     </div>
 
     {/* Groups */}
@@ -1399,54 +1401,54 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
       canTitleEdit,
     }
   }}>
-    <div className='w-full h-full min-h-screen bg-dark'>
+    <div className="w-full h-full min-h-screen bg-dark">
       <div className="wrapper !pt-[132px] !pb-[60px] flex flex-col gap-[24px]">
         {/* Header */}
-        <div className='flex flex-col gap-[8px] max-[784px]:gap-[24px]'>
-          <div className='flex items-center gap-[32px] max-[784px]:flex-col max-[784px]:gap-[8px]'>
-            <h2 className='text-white text-[32px] uppercase font-bold max-[1072px]:text-[24px]'>патчер тайтлів</h2>
+        <div className="flex flex-col gap-[8px] max-[784px]:gap-[24px]">
+          <div className="flex items-center gap-[32px] max-[784px]:flex-col max-[784px]:gap-[8px]">
+            <h2 className="text-white text-[32px] uppercase font-bold max-[1072px]:text-[24px]">патчер тайтлів</h2>
 
             {/* Divider */}
-            <span className='w-[200px] h-[3px] bg-grey max-[1072px]:w-[80px] max-[784px]:hidden'></span>
+            <span className="w-[200px] h-[3px] bg-grey max-[1072px]:w-[80px] max-[784px]:hidden"></span>
 
-            <p className='text-white text-[24px]'>Вітаю, <b>{user.username}</b></p>
+            <p className="text-white text-[24px]">Вітаю, <b>{user.username}</b></p>
           </div>
 
-          <div className='flex items-center gap-[16px] max-[784px]:flex-col-reverse'>
-            {canTitleAdd && <button className='flex items-center px-[16px] py-[8px] rounded-[2px] bg-grey duration-200 hover:bg-purple focus-visible:bg-purple gap-[16px] shrink-0' onClick={createNewTitle}>
+          <div className="flex items-center gap-[16px] max-[784px]:flex-col-reverse">
+            {canTitleAdd && <button className="flex items-center px-[16px] py-[8px] rounded-[2px] bg-grey duration-200 hover:bg-purple focus-visible:bg-purple gap-[16px] shrink-0" onClick={createNewTitle}>
               <IcoPlus width={24} height={24} />
-              <p className='text-white uppercase'>створити новий</p>
+              <p className="text-white uppercase">створити новий</p>
             </button>}
 
             {/* Divider */}
-            <span className='w-full h-[3px] bg-grey'></span>
+            <span className="w-full h-[3px] bg-grey"></span>
 
-            <p className='text-lightGrey shrink-0'>Оновлено тайтлів: {totalUpdated} / {totalTitles} ({((totalUpdated / totalTitles) * 100).toFixed(2)}%)</p>
+            <p className="text-lightGrey shrink-0">Оновлено тайтлів: {totalUpdated} / {totalTitles} ({((totalUpdated / totalTitles) * 100).toFixed(2)}%)</p>
           </div>
 
-          {canTitleEdit && <div className='w-full flex justify-center items-center gap-[16px] flex-wrap'>
-            <IcoExternalLink width={32} height={32} fill='#FF464E' />
+          {canTitleEdit && <div className="w-full flex justify-center items-center gap-[16px] flex-wrap">
+            <IcoExternalLink width={32} height={32} fill="#FF464E" />
 
-            <Link href={`https://www.imdb.com/find/?s=tt&q=${title.names.eng}`} target='_blank'>
-              <p className='text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple'>IMDB</p>
+            <Link href={`https://www.imdb.com/find/?s=tt&q=${title.names.eng}`} target="_blank">
+              <p className="text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple">IMDB</p>
             </Link>
 
-            <Link href={`https://animego.org/search/all?q=${title.names.eng}`} target='_blank'>
-              <p className='text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple'>AnimeGO</p>
+            <Link href={`https://animego.org/search/all?q=${title.names.eng}`} target="_blank">
+              <p className="text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple">AnimeGO</p>
             </Link>
 
-            <Link href={`https://anitube.in.ua/anime`} target='_blank'>
-              <p className='text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple'>Anitube</p>
+            <Link href={`https://anitube.in.ua/anime`} target="_blank">
+              <p className="text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple">Anitube</p>
             </Link>
 
-            <Link href={`https://myanimelist.net/search/all?q=${title.names.eng}`} target='_blank'>
-              <p className='text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple'>MAL</p>
+            <Link href={`https://myanimelist.net/search/all?q=${title.names.eng}`} target="_blank">
+              <p className="text-white text-[24px] font-bold duration-200 hover:text-purple focus-visible:text-purple">MAL</p>
             </Link>
           </div>}
         </div>
 
         {/* Container */}
-        <div className='bg-darkGrey rounded-[4px] px-[32px] py-[40px] flex flex-col gap-[60px]'>
+        <div className="bg-darkGrey rounded-[4px] px-[32px] py-[40px] flex flex-col gap-[60px]">
           {/* Title meta */}
           <TitleMetaSection title={title} session={session} />
 

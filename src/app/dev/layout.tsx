@@ -1,8 +1,8 @@
-import React from "react"
+import React from 'react'
 
-import { ILayoutProps } from "../../interfaces/IRSC"
-import { NotFoundScreen } from "../../components/Components"
-import { devMode, metaObject } from "../../config"
+import { ILayoutProps } from '../../interfaces/IRSC'
+import { NotFoundScreen } from '../../components/Components'
+import { devMode, metaObject } from '../../config'
 
 export const metadata = metaObject({ robots: ['nofollow', 'noindex'] })
 

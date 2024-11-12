@@ -1,4 +1,4 @@
-import { IAssetProps } from "./Icons";
+import { IAssetProps } from './Icons';
 
 //! width={width || 32} height={height || 32} className={className || ''}
 // export const IcoPlayerVolume = ({ className, fill, height, width }: IAssetProps) => {

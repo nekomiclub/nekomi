@@ -1,4 +1,4 @@
-@use '../colors.scss';
+@use '../../styles/colors.scss';
 
 #kekwplayer {
   &-timeline {
@@ -113,6 +113,19 @@
 
     &_button {
       @extend .kekwplayer-play_button;
+    }
+
+    &-page {
+      width: 100%;
+      position: absolute;
+      max-height: 220px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      transition: .2s ease-in-out;
+      padding: 4px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
   }
 

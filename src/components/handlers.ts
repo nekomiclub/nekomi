@@ -3,7 +3,8 @@
 
 import jwt from 'jsonwebtoken';
 
-import { TAnimeSeason } from "../interfaces/ITitle";
+import { TAnimeSeason } from '../interfaces/ITitle';
+import { TVideoQuality } from '@/interfaces/Interfaces';
 
 /** Parse country.
  * @example
@@ -131,18 +132,18 @@ export function createID(): string {
 export function timestampToDate(timestamp: number): { day: number, month: number, year: number, localizedMonth: string } {
   const month = new Date(timestamp).getMonth();
   const months: string[] = [
-    "Січень",
-    "Лютий",
-    "Березень",
-    "Квітень",
-    "Травень",
-    "Червень",
-    "Липень",
-    "Серпень",
-    "Вересень",
-    "Жовтень",
-    "Листопад",
-    "Грудень"
+    'Січень',
+    'Лютий',
+    'Березень',
+    'Квітень',
+    'Травень',
+    'Червень',
+    'Липень',
+    'Серпень',
+    'Вересень',
+    'Жовтень',
+    'Листопад',
+    'Грудень'
   ];
   const localizedMonth = months[month]
 
@@ -271,4 +272,14 @@ export function makeStringID(length: number, excludeNumbers?: boolean) {
     counter += 1;
   }
   return result;
+}
+
+export function parseVideoQuality(quality: TVideoQuality) {
+  switch (quality) {
+    case 'q4k': return '4K';
+    case 'q1080': return '1080p';
+    case 'q720': return '720p';
+    case 'q480': return '480p';
+    case 'q240': return '240p';
+  }
 }

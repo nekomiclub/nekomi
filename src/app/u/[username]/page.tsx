@@ -92,16 +92,16 @@ export default async function RSC(props: IRSCProps<{ username: string }>) {
 
   return (
     <>
-      <div className='w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]'>
+      <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
         <UserHeader user={user!} isOwner={isOwner} primaryPage />
 
         <div className="wrapper gap-[40px]">
           {/* Stats */}
-          <div className='flex gap-[16px] flex-wrap'>
-            <StatCard value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label='favs' />
-            <StatCard value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label='watched' />
-            <StatCard value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label='watching' />
-            <StatCard value={Math.floor(user?.statistics.viewtime / 60 / 60)} label='viewtime' />
+          <div className="flex gap-[16px] flex-wrap">
+            <StatCard value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label="favs" />
+            <StatCard value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label="watched" />
+            <StatCard value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label="watching" />
+            <StatCard value={Math.floor(user?.statistics.viewtime / 60 / 60)} label="viewtime" />
           </div>
 
           {/* Libs */}
@@ -114,16 +114,16 @@ export default async function RSC(props: IRSCProps<{ username: string }>) {
   function StatCard({ label, value, className }: { label: 'favs' | 'watched' | 'watching' | 'viewtime', value: number, className?: string }) {
     return (
       <div className={`grow basis-[280px] ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] flex items-center gap-[8px] max-[620px]:flex-col max-[620px]:basis-[170px] ${className ? className : ''}`}>
-        <div className='flex-shrink-0'>
-          {label === 'favs' && <IcoHeartFilled width={80} height={80} className='max-[620px]:h-[64px] max-[620px]:w-[64px]' />}
-          {label === 'watched' && <IcoWatched width={80} height={80} className='max-[620px]:h-[64px] max-[620px]:w-[64px]' />}
-          {label === 'watching' && <IcoStack width={80} height={80} className='max-[620px]:h-[64px] max-[620px]:w-[64px]' />}
-          {label === 'viewtime' && <IcoClockFilled width={80} height={80} className='max-[620px]:h-[64px] max-[620px]:w-[64px]' />}
+        <div className="flex-shrink-0">
+          {label === 'favs' && <IcoHeartFilled width={80} height={80} className="max-[620px]:h-[64px] max-[620px]:w-[64px]" />}
+          {label === 'watched' && <IcoWatched width={80} height={80} className="max-[620px]:h-[64px] max-[620px]:w-[64px]" />}
+          {label === 'watching' && <IcoStack width={80} height={80} className="max-[620px]:h-[64px] max-[620px]:w-[64px]" />}
+          {label === 'viewtime' && <IcoClockFilled width={80} height={80} className="max-[620px]:h-[64px] max-[620px]:w-[64px]" />}
         </div>
 
-        <div className='w-full flex flex-col gap-[8px]'>
-          <p className='text-white text-[32px] font-bold text-center w-full max-[620px]:text-[24px]'>{value}</p>
-          <p className='text-white w-full text-center'>
+        <div className="w-full flex flex-col gap-[8px]">
+          <p className="text-white text-[32px] font-bold text-center w-full max-[620px]:text-[24px]">{value}</p>
+          <p className="text-white w-full text-center">
             {label === 'favs' && `${wordDeclination(value, ['Улюблений тайтл', 'Улюблених тайтли', 'Улюблених тайтлів'])}`}
             {label === 'watched' && `${wordDeclination(value, ['Переглянутий тайтл', 'Переглянутих тайтли', 'Переглянутих тайтлів'])}`}
             {label === 'watching' && `${wordDeclination(value, ['Переглядаємий тайтл', 'Переглядаємих тайтли', 'Переглядаємих тайтлів'])}`}

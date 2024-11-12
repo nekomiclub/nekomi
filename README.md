@@ -1,5 +1,7 @@
 # NEKOMI.CLUB
 
+Migrating to nextjs 15 is not possible due to errors in @fullkekw modules till they will be fixed
+
 ## [Tree](./docs/tree.md)
 
 ## Notes

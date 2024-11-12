@@ -1,11 +1,11 @@
 'use client'
 
 
-import * as Menu from 'uvc-menu';
+import * as DropMenu from '@fullkekw/fkw-menu';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AxiosError } from 'axios';
-import { Dialog, Layer,Trigger,forceFocus } from '@fullkekw/fkw-popup';
+import { Dialog, Layer, Trigger, forceFocus } from '@fullkekw/fkw-popup';
 import { NextPage } from 'next';
 import { useDebounce } from 'use-debounce';
 import { useEffect, useRef, useState } from 'react'
@@ -182,36 +182,36 @@ const Header: NextPage = () => {
 
   return (
     <>
-      <Layer className='bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center max-[700px]:items-start'>
-        <Dialog id={searchPopupID} className='bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]'>
-          <input type="text" autoComplete='off' className='px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full' placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id='search-searchBar' />
+      <Layer className="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center max-[700px]:items-start">
+        <Dialog id={searchPopupID} className="bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]">
+          <input type="text" autoComplete="off" className="px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full" placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id="search-searchBar" />
 
-          <div className='px-[16px] py-[16px] w-full flex flex-col gap-[16px]'>
+          <div className="px-[16px] py-[16px] w-full flex flex-col gap-[16px]">
             {/* Hint */}
             <div className={`flex gap-[8px] items-center ${isHintShowed && !isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
-              <IcoInfo width={16} height={16} fill='#747474' />
-              <p className='text-[12px] text-lightGrey'>Ти можеш знайти юзера чи даббера через <b className='text-lightGrey font-bold'>@</b></p>
+              <IcoInfo width={16} height={16} fill="#747474" />
+              <p className="text-[12px] text-lightGrey">Ти можеш знайти юзера чи даббера через <b className="text-lightGrey font-bold">@</b></p>
             </div>
 
             {/* Patcher hint */}
             <div className={`flex gap-[8px] items-center ${isPatcherHintShowed && !isSearchErrored && searchResults.length ? '' : 'opacity-0 invisible absolute'}`}>
-              <IcoInfo width={16} height={16} fill='#747474' />
-              <p className='text-[12px] text-lightGrey'>Новий тайтл буде відкрито в патчері</p>
+              <IcoInfo width={16} height={16} fill="#747474" />
+              <p className="text-[12px] text-lightGrey">Новий тайтл буде відкрито в патчері</p>
             </div>
 
             {/* Nothing found */}
             <div className={`flex gap-[16px] items-center justify-center ${searchResults.length === 0 && !isHintShowed && !isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
               <IcoGhost width={32} height={32} />
-              <p className='text-white'>Здається, в нас такого нема...</p>
+              <p className="text-white">Здається, в нас такого нема...</p>
             </div>
 
             {/* Search error */}
             <div className={`flex gap-[16px] items-center justify-center ${isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
               <IcoGhost width={32} height={32} />
 
-              <div className='flex flex-col gap-[4px]'>
-                <p className='text-white'>Йой, пошук тимчасово не працює</p>
-                <p className='text-lightGrey text-[12px] text-center'>Спробуй трохи пізніше</p>
+              <div className="flex flex-col gap-[4px]">
+                <p className="text-white">Йой, пошук тимчасово не працює</p>
+                <p className="text-lightGrey text-[12px] text-center">Спробуй трохи пізніше</p>
               </div>
             </div>
 
@@ -227,18 +227,18 @@ const Header: NextPage = () => {
 
       <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200`}>
         <div className="wrapper !flex-row items-center justify-between w-full">
-          <div className='flex items-center gap-[40px]'>
-            <Link href={routes.home.path} className='duration-200 hover:rotate-[5deg] focus-visible:rotate-[5deg] outline-none'>
-              <IcoNekomiLogo width={60} height={60} fill='#fff' />
+          <div className="flex items-center gap-[40px]">
+            <Link href={routes.home.path} className="duration-200 hover:rotate-[5deg] focus-visible:rotate-[5deg] outline-none">
+              <IcoNekomiLogo width={60} height={60} fill="#fff" />
             </Link>
 
-            <div className='flex items-center gap-[16px]'>
-              <Link href={routes.home.path} className={`header-ico focus-visible:outline-none ${pathname === routes.home.path ? 'header-ico--active' : ''}`} title='На головну'>
+            <div className="flex items-center gap-[16px]">
+              <Link href={routes.home.path} className={`header-ico focus-visible:outline-none ${pathname === routes.home.path ? 'header-ico--active' : ''}`} title="На головну">
                 <IcoHome width={32} height={32} />
               </Link>
 
-              <div className='flex items-center gap-[16px]'>
-                <Trigger className='header-ico duration-200' id={searchPopupID} onClick={focusSearch}>
+              <div className="flex items-center gap-[16px]">
+                <Trigger className="header-ico duration-200" id={searchPopupID} onClick={focusSearch}>
                   <IcoSearch width={32} height={32} />
                 </Trigger>
               </div>
@@ -248,68 +248,59 @@ const Header: NextPage = () => {
           {user.id ? <>
             {/* User authorized */}
 
-            <Menu.Menu trigger={
-              <div className='flex items-center gap-[16px] duration-200 rounded-[2px] overflow-hidden pr-[8px]'>
-                <div className='flex justify-center items-center gap-[8px]'>
-                  <Image src={user.avatar} priority width={60} height={60} className='rounded-[4px]' alt='avatar' />
+            <DropMenu.Menu gap={16} settings={{ align: 'right', animation: 'slide' }} state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
+              <DropMenu.MenuTrigger className="flex items-center gap-[16px] duration-200 rounded-[2px] overflow-hidden pr-[8px]" primary>
+                <div className="flex justify-center items-center gap-[8px]">
+                  <Image src={user.avatar} priority width={60} height={60} className="rounded-[4px]" alt="avatar" />
 
                   <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
                 </div>
-              </div>
-            } className='bg-darkGrey rounded-[2px] !w-[180px] overflow-hidden !top-[70px]' align='end' animation='slide' statePriority='outer' state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
-              <Menu.MenuList>
-                <Menu.MenuItem>
-                  <Link href={`/u/${user.username}`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
-                    <IcoUser width={24} height={24} />
-                    <p className='text-white w-full'>Профіль</p>
-                  </Link>
-                </Menu.MenuItem>
-                <Menu.MenuItem>
-                  <Link href={`/u/${user.username}#user-libs`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
-                    <IcoFolderPlain width={24} height={24} />
-                    <p className='text-white w-full'>Теки</p>
-                  </Link>
-                </Menu.MenuItem>
+              </DropMenu.MenuTrigger>
 
-                <Menu.MenuItem>
-                  <Link href={`/u/${user.username}?openSettings`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
-                    <IcoSettings width={24} height={24} />
-                    <p className='text-white w-full'>Акаунт</p>
-                  </Link>
-                </Menu.MenuItem>
+              <DropMenu.MenuWrapper className="bg-darkGrey rounded-[2px] !w-[180px] overflow-hidden !top-[70px] flex flex-col">
+                <Link href={`/u/${user.username}`} className="flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey">
+                  <IcoUser width={24} height={24} />
+                  <p className="text-white w-full">Профіль</p>
+                </Link>
+
+                <Link href={`/u/${user.username}#user-libs`} className="flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey">
+                  <IcoFolderPlain width={24} height={24} />
+                  <p className="text-white w-full">Теки</p>
+                </Link>
+
+                <Link href={`/u/${user.username}?openSettings`} className="flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey">
+                  <IcoSettings width={24} height={24} />
+                  <p className="text-white w-full">Акаунт</p>
+                </Link>
 
                 {/* Divider */}
-                <Menu.MenuItem className='w-full h-[1px]'>
-                  <span className='w-full h-full block bg-grey'></span>
-                </Menu.MenuItem>
+                <span className="w-full h-[1px] block bg-grey"></span>
 
-                <Menu.MenuItem className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey' role='button' onClick={logout}>
-                  <IcoExit width={24} height={24} fill='#FF464E' />
-                  <p className='text-white text-center w-full font-bold'>Вийти</p>
-                </Menu.MenuItem>
-              </Menu.MenuList>
-            </Menu.Menu>
+                <div className="flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey" role="button" onClick={logout}>
+                  <IcoExit width={24} height={24} fill="#FF464E" />
+                  <p className="text-white text-center w-full font-bold">Вийти</p>
+                </div>
+              </DropMenu.MenuWrapper>
+            </DropMenu.Menu>
           </> : <>
             {/* User not authorized */}
 
-            <Menu.Menu trigger={
-              <div className='flex justify-center items-center gap-[8px] duration-200 rounded-[2px] overflow-hidden pr-[8px]'>
-                <div className='p-[10px]'>
+            <DropMenu.Menu gap={16} settings={{ align: 'right', animation: 'slide' }}>
+              <DropMenu.MenuTrigger className="flex justify-center items-center gap-[8px] duration-200 rounded-[2px] overflow-hidden pr-[8px]" primary>
+                <div className="p-[10px]">
                   <IcoUser width={40} height={40} />
                 </div>
 
                 <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
-              </div>
-            } className='bg-darkGrey rounded-[2px] !w-[180px] overflow-hidden' align='end' animation='slide' gap={18}>
-              <Menu.MenuList>
-                <Menu.MenuItem>
-                  <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className='flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey'>
-                    <IcoExit width={24} height={24} fill='#FF464E' />
-                    <p className='text-white text-center w-full'>Увійти</p>
-                  </Link>
-                </Menu.MenuItem>
-              </Menu.MenuList>
-            </Menu.Menu>
+              </DropMenu.MenuTrigger>
+
+              <DropMenu.MenuWrapper className="bg-darkGrey rounded-[2px] !w-[180px] overflow-hidden flex flex-col">
+                <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className="flex items-center gap-[8px] p-[8px] cursor-pointer duration-200 hover:bg-grey focus-visible:bg-grey">
+                  <IcoExit width={24} height={24} fill="#FF464E" />
+                  <p className="text-white text-center w-full">Увійти</p>
+                </Link>
+              </DropMenu.MenuWrapper>
+            </DropMenu.Menu>
           </>}
         </div >
       </header>
@@ -321,29 +312,29 @@ const Header: NextPage = () => {
     return (
       <>
         {result?.item ? <>
-          {result.type === 'title' && <Link href={`${config.URL.baseURL}${usePatcherRouting ? `${routes.title_patcher.path}/${(result.item as ITitle).id}` : `${routes.watch_title.path}/${(result.item as ITitle).code}`}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
-            <LoadingImage src={(result.item as ITitle).poster} loading='lazy' width='128px' height='160px' parentClassName='rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]' />
+          {result.type === 'title' && <Link href={`${config.URL.baseURL}${usePatcherRouting ? `${routes.title_patcher.path}/${(result.item as ITitle).id}` : `${routes.watch_title.path}/${(result.item as ITitle).code}`}`} className="flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]">
+            <LoadingImage src={(result.item as ITitle).poster} loading="lazy" width="128px" height="160px" parentClassName="rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]" />
 
-            <div className='flex flex-col gap-[8px]'>
-              <p className='text-white text-[20px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]' title={(result.item as ITitle).names.ukr}>{(result.item as ITitle).names.ukr}</p>
-              <p className='text-lightGrey text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[12px]' title={(result.item as ITitle).names.eng}>{(result.item as ITitle).names.eng}</p>
+            <div className="flex flex-col gap-[8px]">
+              <p className="text-white text-[20px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]" title={(result.item as ITitle).names.ukr}>{(result.item as ITitle).names.ukr}</p>
+              <p className="text-lightGrey text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[12px]" title={(result.item as ITitle).names.eng}>{(result.item as ITitle).names.eng}</p>
 
               {/* Details */}
-              <div className='flex items-center gap-[8px]'>
-                <div className='flex items-center gap-[8px]'>
-                  <IcoStarRating width={16} height={16} fill='#FF464E' />
-                  <p className='gradient--primary-text font-bold max-[700px]:text-[12px]'>{
+              <div className="flex items-center gap-[8px]">
+                <div className="flex items-center gap-[8px]">
+                  <IcoStarRating width={16} height={16} fill="#FF464E" />
+                  <p className="gradient--primary-text font-bold max-[700px]:text-[12px]">{
                     Number((result.item as ITitle).rating.IMDB) > 0 ? (result.item as ITitle).rating.IMDB?.toFixed(1) : '—'
                   }</p>
                 </div>
 
-                <span className='text-lightGrey text-[12px]'>•</span>
+                <span className="text-lightGrey text-[12px]">•</span>
 
-                <p className='text-white max-[700px]:text-[12px]'>{parseTitleType((result.item as ITitle).type)}</p>
+                <p className="text-white max-[700px]:text-[12px]">{parseTitleType((result.item as ITitle).type)}</p>
 
-                <span className='text-lightGrey text-[12px]'>•</span>
+                <span className="text-lightGrey text-[12px]">•</span>
 
-                <p className='text-white max-[700px]:text-[12px]'>{
+                <p className="text-white max-[700px]:text-[12px]">{
                   Number((result.item as ITitleSearched).episodesDubbed) > 0 ? (result.item as ITitleSearched).episodesDubbed : '—'
                 } / {
                     Number((result.item as ITitle).episodesCount) > 0 ? (result.item as ITitle).episodesCount : '—'
@@ -352,22 +343,22 @@ const Header: NextPage = () => {
             </div>
           </Link>}
 
-          {(result.type === 'dubber' || result.type === 'user') && <Link href={result.type === 'user' ? `${config.URL.baseURL}${routes.user_profile.path}/${(result.item as IUser).username}` : `${config.URL.baseURL}${routes.dubber_profile.path}/${(result.item as IDubber).code}`} className='flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]'>
-            <LoadingImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).thumbURL} width='128px' height='128px' parentClassName='rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]' />
+          {(result.type === 'dubber' || result.type === 'user') && <Link href={result.type === 'user' ? `${config.URL.baseURL}${routes.user_profile.path}/${(result.item as IUser).username}` : `${config.URL.baseURL}${routes.dubber_profile.path}/${(result.item as IDubber).code}`} className="flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]">
+            <LoadingImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).thumbURL} width="128px" height="128px" parentClassName="rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]" />
 
-            <div className='flex flex-col gap-[8px]'>
-              <p className='text-white text-[24px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]'>{result.type === 'user' ? `@${(result.item as IUser).username}` : (result.item as IDubber).name}</p>
+            <div className="flex flex-col gap-[8px]">
+              <p className="text-white text-[24px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]">{result.type === 'user' ? `@${(result.item as IUser).username}` : (result.item as IDubber).name}</p>
 
-              <div className='flex items-center gap-[8px]'>
-                {result.type === 'user' ? <IcoUser width={16} height={16} fill='#747474' /> : <IcoMicrophone width={16} height={16} fill='#747474' />}
-                <p className='text-lightGrey max-[700px]:text-[12px]'>{result.type === 'user' ? 'Юзер' : 'Команда озвучення'}</p>
+              <div className="flex items-center gap-[8px]">
+                {result.type === 'user' ? <IcoUser width={16} height={16} fill="#747474" /> : <IcoMicrophone width={16} height={16} fill="#747474" />}
+                <p className="text-lightGrey max-[700px]:text-[12px]">{result.type === 'user' ? 'Юзер' : 'Команда озвучення'}</p>
               </div>
             </div>
           </Link>}
-        </> : <div className='flex gap-[16px]'>
-          <div className='relative w-[128px] h-[160px] bg-darkGrey rounded-[2px] max-[700px]:w-[80px] max-[700px]:h-[120px] shrink-0'></div>
+        </> : <div className="flex gap-[16px]">
+          <div className="relative w-[128px] h-[160px] bg-darkGrey rounded-[2px] max-[700px]:w-[80px] max-[700px]:h-[120px] shrink-0"></div>
 
-          <div className='flex flex-col gap-[8px] w-full'>
+          <div className="flex flex-col gap-[8px] w-full">
             <div className={`h-[32px] bg-darkGrey rounded-[2px] max-[700px]:h-[24px]`} style={{ width: `${randomNumber(20, 70)}%` }}></div>
             <div className={`h-[24px] bg-darkGrey rounded-[2px] max-[700px]:h-[16px]`} style={{ width: `${randomNumber(10, 50)}%` }}></div>
           </div>

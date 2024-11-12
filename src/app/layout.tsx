@@ -4,13 +4,12 @@ import '@fullkekw/fkw-menu/css'
 import '@fullkekw/fkw-popup/css'
 
 import 'swiper/css';
-import 'uvc-menu/css';
 
 import axios from 'axios';
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from '@vercel/analytics/react'
 import { Montserrat } from 'next/font/google'
 import { SkeletonTheme } from 'react-loading-skeleton';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { headers } from 'next/headers';
 
 import * as Provider from '../components/Providers'
@@ -55,7 +54,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
   return (
     <html lang="uk_UA">
-      <body id='root' className={`bg-dark ${montserrat.className}`}>
+      <body id="root" className={`bg-dark ${montserrat.className}`}>
         <Analytics />
         <SpeedInsights />
 
@@ -65,7 +64,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
         {/* Return layout if server respond */}
         {isServerOnline && <Provider.Storage>
           <Provider.State>
-            <SkeletonTheme baseColor='#181818' highlightColor='#222'>
+            <SkeletonTheme baseColor="#181818" highlightColor="#222">
               <Header />
 
               <RenamePopup />

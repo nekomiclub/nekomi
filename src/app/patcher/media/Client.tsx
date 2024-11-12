@@ -109,20 +109,20 @@ export const MediaClient: NextPage<IProps> = ({ user }) => {
 
   return (
     <div className={`wrapper min-h-screen gap-[40px]`} style={{ paddingTop: `${headerHeight}px` }}>
-      <div className='flex items-center gap-[32px] max-[784px]:flex-col max-[784px]:gap-[8px] mt-[40px]'>
-        <h2 className='text-white text-[32px] uppercase font-bold max-[1072px]:text-[24px]'>МЕДІА КОНТЕНТ</h2>
+      <div className="flex items-center gap-[32px] max-[784px]:flex-col max-[784px]:gap-[8px] mt-[40px]">
+        <h2 className="text-white text-[32px] uppercase font-bold max-[1072px]:text-[24px]">МЕДІА КОНТЕНТ</h2>
 
         {/* Divider */}
-        <span className='w-[200px] h-[3px] bg-grey max-[1072px]:w-[80px] max-[784px]:hidden'></span>
+        <span className="w-[200px] h-[3px] bg-grey max-[1072px]:w-[80px] max-[784px]:hidden"></span>
 
-        <p className='text-white text-[24px]'>Вітаю, <b>{user.username}</b></p>
+        <p className="text-white text-[24px]">Вітаю, <b>{user.username}</b></p>
       </div>
 
-      {error && <PatcherErrorWrapper errors={[error]} section='media_content' />}
+      {error && <PatcherErrorWrapper errors={[error]} section="media_content" />}
 
-      <div className='flex items-end gap-[16px]'>
-        <div className='flex flex-col gap-[8px] shrink-0 w-full max-w-[250px]'>
-          <div className='flex items-center gap-[4px]'>
+      <div className="flex items-end gap-[16px]">
+        <div className="flex flex-col gap-[8px] shrink-0 w-full max-w-[250px]">
+          <div className="flex items-center gap-[4px]">
             <p className={cn('text-white')}>Тип завантаження</p>
           </div>
 
@@ -133,10 +133,10 @@ export const MediaClient: NextPage<IProps> = ({ user }) => {
               <IcoArrow className={cn(`duration-200`, isTypeSelectOpen && 'rotate-[180deg]')} fill={'#fff'} />
             </MenuTrigger>
 
-            <MenuWrapper className='flex flex-col bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto'>
+            <MenuWrapper className="flex flex-col bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto">
               {uploadTypesOptions.map(el => {
                 return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, uploadType === el.code && 'bg-purple')} key={`select-option--${el.code}`} onClick={() => setUploadType(el.code)}>
-                  <p className='text-white'>{el.label}</p>
+                  <p className="text-white">{el.label}</p>
                 </button>
               })}
             </MenuWrapper>
@@ -144,30 +144,30 @@ export const MediaClient: NextPage<IProps> = ({ user }) => {
         </div>
 
         {/* File select */}
-        <div className='w-full flex flex-col gap-[8px] overflow-hidden'>
-          <p className='text-white'>Файл</p>
+        <div className="w-full flex flex-col gap-[8px] overflow-hidden">
+          <p className="text-white">Файл</p>
 
-          <div className='w-full'>
-            <input type="file" accept='.png,.jpg,.webp,.mp4,.webm,.mov,.mkv,.m4v' className='hidden' ref={fileRef} onChange={selectFile} />
+          <div className="w-full">
+            <input type="file" accept=".png,.jpg,.webp,.mp4,.webm,.mov,.mkv,.m4v" className="hidden" ref={fileRef} onChange={selectFile} />
 
-            <button className='patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]' onClick={chooseFile}>
+            <button className="patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]" onClick={chooseFile}>
               <IcoUpdate width={32} height={32} />
               <p className={`text-white ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'виберіть файл'}</p>
             </button>
           </div>
         </div>
 
-        <Tooltip content='Додати серію' className='max-[940px]:w-full shrink-0'>
-          <button className='p-[8px] bg-grey rounded-[4px] flex items-center gap-[8px] duration-200 hover:bg-green focus-visible:bg-green w-full' onClick={uploadFile}>
-            <p className='text-white uppercase font-bold'>завантажити</p>
-            <IcoArrow width={32} height={32} className='-rotate-[90deg]' />
+        <Tooltip content="Додати серію" className="max-[940px]:w-full shrink-0">
+          <button className="p-[8px] bg-grey rounded-[4px] flex items-center gap-[8px] duration-200 hover:bg-green focus-visible:bg-green w-full" onClick={uploadFile}>
+            <p className="text-white uppercase font-bold">завантажити</p>
+            <IcoArrow width={32} height={32} className="-rotate-[90deg]" />
           </button>
         </Tooltip>
       </div>
 
-      {uploadLink && <Link href={uploadLink} target='_blank' className='flex items-center gap-[8px]'>
-        <IcoExternalLink width={24} height={24} fill='#6C5CE7' />
-        <p className='text-purple'>Переглянути завантажений файл</p>
+      {uploadLink && <Link href={uploadLink} target="_blank" className="flex items-center gap-[8px]">
+        <IcoExternalLink width={24} height={24} fill="#6C5CE7" />
+        <p className="text-purple">Переглянути завантажений файл</p>
       </Link>}
     </div>
   );

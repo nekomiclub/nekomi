@@ -124,7 +124,7 @@ export default async function RSC(props: IRSCProps<{ username: string, libID: st
 
   return (
     <>
-      <div className='w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]'>
+      <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
         <UserHeader user={user!} isOwner={isOwner} />
 
         <div className="wrapper gap-[40px]">

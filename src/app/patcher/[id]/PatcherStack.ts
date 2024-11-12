@@ -1,10 +1,10 @@
-import { AxiosError } from "axios";
+import { AxiosError } from 'axios';
 
-import { $upload } from "../../../components/http";
-import { ITitle, ITitleEpisode } from "../../../interfaces/ITitle";
-import { config } from "../../../config";
+import { $upload } from '../../../components/http';
+import { ITitle, ITitleEpisode } from '../../../interfaces/ITitle';
+import { config } from '../../../config';
 
-import { IPatcherEpisode, TEpisodeType } from "./Patcher";
+import { IPatcherEpisode, TEpisodeType } from './Patcher';
 
 interface IPatcherProps {
   appendError: (emsg: string) => void

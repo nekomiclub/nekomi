@@ -1,16 +1,16 @@
-import axios, { AxiosError } from "axios";
-import { Metadata } from "next";
+import axios, { AxiosError } from 'axios';
+import { Metadata } from 'next';
 
-import { $api } from "../../../components/http";
-import { CONSTS, animeGenres, config, devMode, metaObject } from "../../../config";
-import { HappenedWrongScreen, NotFoundScreen } from "../../../components/Components";
-import { IDubber } from "../../../interfaces/IDubber";
-import { IRSCProps } from "../../../interfaces/IRSC";
-import { ITitle, TAnimeGenre } from "../../../interfaces/ITitle";
-import { getUTC, parseTitleType } from "../../../components/handlers";
-import { routes } from "../../../routes";
+import { $api } from '../../../components/http';
+import { CONSTS, animeGenres, config, devMode, metaObject } from '../../../config';
+import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
+import { IDubber } from '../../../interfaces/IDubber';
+import { IRSCProps } from '../../../interfaces/IRSC';
+import { ITitle, TAnimeGenre } from '../../../interfaces/ITitle';
+import { getUTC, parseTitleType } from '../../../components/handlers';
+import { routes } from '../../../routes';
 
-import Watch from "./Watch";
+import Watch from './Watch';
 
 
 

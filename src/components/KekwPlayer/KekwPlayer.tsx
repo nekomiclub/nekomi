@@ -1,30 +1,30 @@
 'use client'
 
 
-import * as UMenu from 'uvc-menu';
 import * as loader from '@uiball/loaders';
 import { AxiosError } from 'axios';
 import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 import { NextPage } from 'next';
 import { Range } from 'react-range';
-import { RefObject, memo, useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { getImageSize } from 'react-image-size'
-import { useIdleTimer } from 'react-idle-timer';
 
-import { IDubber } from '../interfaces/IDubber';
-import { ITitle, ITitleEpisode, ITitleEpisodeMeta } from '../interfaces/ITitle';
-import { IcoArrow, IcoPlay, IcoServerUnavailable, IcoSettings, IcoSpeed } from '../assets/Icons';
-import { IcoPlayerCenter, IcoPlayerList, IcoPlayerNext, IcoPlayerPause, IcoPlayerQuality, IcoPlayerStretch } from '../assets/Player';
-import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '../assets/PlayerFullscreen';
-import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '../assets/PlayerPiP';
-import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
-import { useAppSelector } from '../hooks/redux';
+import { $api } from '../http';
+import { IDubber } from '../../interfaces/IDubber';
+import { ITitle, ITitleEpisode, ITitleEpisodeMeta } from '../../interfaces/ITitle';
+import { IcoPlay, IcoServerUnavailable } from '../../assets/Icons';
+import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '../../assets/PlayerFullscreen';
+import { IcoPlayerPause } from '../../assets/Player';
+import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '../../assets/PlayerPiP';
+import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../../assets/PlayerVolume';
+import { KekwPlayerMenu } from './KekwPlayerMenu';
+import { LoadingImage } from '../Components';
+import { timestampToDate, wordDeclination } from '../handlers';
+import { useAppSelector } from '../../hooks/redux';
 
-import { $api } from './http';
-import { LoadingImage } from './Components';
-import { timestampToDate, wordDeclination } from './handlers';
+import { KekwPlayerSettings } from './KekwPlayerSettings';
 
-import '../styles/components/KekwPlayer.scss';
+import './KekwPlayer.scss';
 
 
 
@@ -109,12 +109,12 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  useIdleTimer({
-    timeout: 3000,
-    throttle: 500,
-    onIdle: () => setIsIdle(true),
-    onAction: () => setIsIdle(false)
-  })
+  // useIdleTimer({
+  //   timeout: 3000,
+  //   throttle: 500,
+  //   onIdle: () => setIsIdle(true),
+  //   onAction: () => setIsIdle(false)
+  // })
 
   //! -------------- DEFAULT EFFECTS --------------
   //* Player vitals, video loading handling
@@ -1009,7 +1009,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
 
   return (
-    <div className='w-full h-full relative overflow-hidden flex flex-col justify-between bg-black' id='player' ref={playerRef}>
+    <div className="w-full h-full relative overflow-hidden flex flex-col justify-between bg-black" id="player" ref={playerRef}>
       {/* Screen wrapper */}
       <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center z-[15] bg-dark/[.5] backdrop-blur-[32px] duration-200 px-[24px] ${isTimeToEndScreen || isContinueMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
         {/* Ep ended */}
@@ -1027,16 +1027,16 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
       {/* Mobile skip wrapper */}
       <div className={isMobile ? 'w-full h-full absolute top-0 left-0 z-[10] flex' : 'hidden'} ref={mobileSkipWrapper}>
-        <div className='w-full h-full' ref={mobilePrevSkipRef}></div>
-        <div className='w-full h-full' ref={mobileNextSkipRef}></div>
+        <div className="w-full h-full" ref={mobilePrevSkipRef}></div>
+        <div className="w-full h-full" ref={mobileNextSkipRef}></div>
       </div>
 
       {/* Menu */}
-      <Menu order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
+      <KekwPlayerMenu order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
 
       {/* Bottom */}
       <div className={`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px] backdrop-blur-[8px] bg-red ${isIdle ? 'translate-y-[100%]' : ''}`} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }} ref={bottomRef}>
-        <div className='flex items-center gap-[16px]'>
+        <div className="flex items-center gap-[16px]">
           <Play isPlaying={isPlaying} videoRef={videoRef} />
 
           <Volume volume={volume} isMuted={isMuted} videoRef={videoRef} volumeRef={volumeRef} />
@@ -1044,23 +1044,23 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
         <Timeline duration={duration} moment={moment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
 
-        <div className='flex items-center gap-[12px]'>
+        <div className="flex items-center gap-[12px]">
           <PiP isPiP={isPiP} videoRef={videoRef} />
 
-          <Settings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} isIdle={isIdle} />
+          <KekwPlayerSettings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} isIdle={isIdle} />
 
           <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
         </div>
       </div>
 
       {/* Video */}
-      <div className='w-full h-full absolute top-0 left-0'>
+      <div className="w-full h-full absolute top-0 left-0">
         {/* Loader */}
         <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 touch-none pointer-events-none ${isVideoLoading ? 'opacity-100' : 'opacity-0'}`}>
-          <loader.DotPulse color='#fff' size={80} />
+          <loader.DotPulse color="#fff" size={80} />
         </div>
 
-        <video src={''} preload='auto' controlsList='nodownload' className={`w-full h-full ${stretch ? 'object-cover' : ''}`} controls={false} ref={videoRef}></video>
+        <video src={''} preload="auto" controlsList="nodownload" className={`w-full h-full ${stretch ? 'object-cover' : ''}`} controls={false} ref={videoRef}></video>
       </div>
     </div>
   );
@@ -1080,30 +1080,30 @@ const ContinueProgressScreen: NextPage<{
 }> = ({ isTime, localData, dubbers, loadProgress, passProgress, title }) => {
   return (
     <div className={`max-w-[800px] w-full bg-dark px-[24px] py-[40px] rounded-[4px] flex flex-col gap-[24px] items-center ${isTime ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute'}`}>
-      <div className='flex flex-col gap-[8px]'>
-        <p className='text-white text-[24px] font-bold text-center'>Продовжити перегляд</p>
-        {dubbers.find(el => el.id === localData?.dub) ? <div className='flex items-center justify-center gap-[16px]'>
-          <LoadingImage parentClassName='rounded-[32px] overflow-hidden' width='32px' height='32px' src={dubbers.find(el => el.id === localData?.dub)!.thumbURL} />
-          <p className='text-white text-[24px] text-center'>{dubbers.find(el => el.id === localData?.dub)!.name}</p>
-        </div> : <p className='text-white text-[24px] text-center'>Команда невідома</p>}
+      <div className="flex flex-col gap-[8px]">
+        <p className="text-white text-[24px] font-bold text-center">Продовжити перегляд</p>
+        {dubbers.find(el => el.id === localData?.dub) ? <div className="flex items-center justify-center gap-[16px]">
+          <LoadingImage parentClassName="rounded-[32px] overflow-hidden" width="32px" height="32px" src={dubbers.find(el => el.id === localData?.dub)!.thumbURL} />
+          <p className="text-white text-[24px] text-center">{dubbers.find(el => el.id === localData?.dub)!.name}</p>
+        </div> : <p className="text-white text-[24px] text-center">Команда невідома</p>}
       </div>
 
-      <div className='kekwplayer-screen-continue_action px-[24px] py-[16px] w-full bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple flex items-center justify-between gap-[24px] cursor-pointer max-[700px]:flex-col' role='button' onClick={() => loadProgress()}>
-        <div className='flex items-center gap-[32px] max-[700px]:flex-col'>
-          <p className='text-white text-[32px] font-bold'>#{localData?.ep}</p>
+      <div className="kekwplayer-screen-continue_action px-[24px] py-[16px] w-full bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple flex items-center justify-between gap-[24px] cursor-pointer max-[700px]:flex-col" role="button" onClick={() => loadProgress()}>
+        <div className="flex items-center gap-[32px] max-[700px]:flex-col">
+          <p className="text-white text-[32px] font-bold">#{localData?.ep}</p>
 
-          <div className='flex flex-col gap-[4px] max-[700px]:items-center'>
-            <p className='text-white text-[24px] text-ellipsis line-clamp-[1] max-[700px]:text-center max-[700px]:line-clamp-3' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
-            <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1] duration-200 max-[700px]:text-center max-[700px]:line-clamp-3' title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}</p>
+          <div className="flex flex-col gap-[4px] max-[700px]:items-center">
+            <p className="text-white text-[24px] text-ellipsis line-clamp-[1] max-[700px]:text-center max-[700px]:line-clamp-3" title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.ukr || `${localData?.ep} епізод`}</p>
+            <p className="text-lightGrey text-[16px] text-ellipsis line-clamp-[1] duration-200 max-[700px]:text-center max-[700px]:line-clamp-3" title={title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}>{title.episodesMeta.find(el => el.order === localData?.ep)?.names.eng || `${localData?.ep} episode`}</p>
           </div>
         </div>
 
-        <p className='text-white text-[24px] flex-shrink-0'>{secondsToReadable(localData?.moment || 0).pretty}</p>
+        <p className="text-white text-[24px] flex-shrink-0">{secondsToReadable(localData?.moment || 0).pretty}</p>
 
       </div>
 
       <button onClick={() => passProgress()}>
-        <p className='text-white font-extralight'>Почати з початку?</p>
+        <p className="text-white font-extralight">Почати з початку?</p>
       </button>
     </div>
   )
@@ -1181,19 +1181,19 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, episode, setEpiso
   }
 
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] z-[20] gap-[24px] ${isTime && endScreen === 'epEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
-    <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Епізод завершено</p>
+    <p className="text-white text-[32px] font-bold max-[680px]:text-[24px]">Епізод завершено</p>
 
-    <div className='bg-darkGrey px-[24px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 hover:bg-purple focus-visible:bg-purple w-full rounded-[2px]' role='button' onClick={() => skipEp()}>
-      <div className='flex items-center max-[680px]:flex-col gap-[32px] w-full'>
-        <p className='text-white text-[32px] font-bold'>#{nextEp}</p>
-        <div className='flex flex-col gap-[4px]'>
-          <p className='text-white text-[24px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3' title={epMeta?.names.ukr || 'Наступний епізод'}>{epMeta?.names.ukr || 'Наступний епізод'}</p>
-          <p className='text-lightGrey text-[16px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3' title={epMeta?.names.eng || '—'}>{epMeta?.names.eng || '—'}</p>
+    <div className="bg-darkGrey px-[24px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 hover:bg-purple focus-visible:bg-purple w-full rounded-[2px]" role="button" onClick={() => skipEp()}>
+      <div className="flex items-center max-[680px]:flex-col gap-[32px] w-full">
+        <p className="text-white text-[32px] font-bold">#{nextEp}</p>
+        <div className="flex flex-col gap-[4px]">
+          <p className="text-white text-[24px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3" title={epMeta?.names.ukr || 'Наступний епізод'}>{epMeta?.names.ukr || 'Наступний епізод'}</p>
+          <p className="text-lightGrey text-[16px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3" title={epMeta?.names.eng || '—'}>{epMeta?.names.eng || '—'}</p>
         </div>
       </div>
     </div>
 
-    <p className='text-white text-[24px] font-extralight text-center'>Автоматично через: {remain} {wordDeclination(remain, ['секунду', 'секунди', 'секунд'])}</p>
+    <p className="text-white text-[24px] font-extralight text-center">Автоматично через: {remain} {wordDeclination(remain, ['секунду', 'секунди', 'секунд'])}</p>
   </div>
 }
 
@@ -1203,8 +1203,8 @@ const EpEndScreen: NextPage<IEpEndScreenProps> = ({ endScreen, episode, setEpiso
 
 const LastEpScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center gap-[24px] w-[800px] z-[7] ${isTime && endScreen === 'lastEp' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
-    <p className='text-white text-[32px] max-[680px]:text-[24px] font-bold'>Епізод завершено</p>
-    <p className='text-white text-[24px] text-center max-[680px]:text-[16px] font-extralight'>Це останній епізод в цьому озвученні</p>
+    <p className="text-white text-[32px] max-[680px]:text-[24px] font-bold">Епізод завершено</p>
+    <p className="text-white text-[24px] text-center max-[680px]:text-[16px] font-extralight">Це останній епізод в цьому озвученні</p>
   </div>
 }
 
@@ -1214,442 +1214,12 @@ const LastEpScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
 
 const TitleEndScreen: NextPage<IEndScreenProps> = ({ endScreen, isTime }) => {
   return <div className={`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] gap-[24px] z-[7] ${isTime && endScreen === 'titleEnded' ? 'opacity-100 visible relative' : 'opacity-0 invisible absolute touch-none pointer-events-none'}`}>
-    <p className='text-white text-[32px] font-bold max-[680px]:text-[24px]'>Тайтл завершено!</p>
+    <p className="text-white text-[32px] font-bold max-[680px]:text-[24px]">Тайтл завершено!</p>
 
-    <p className='text-white text-[16px] font-extralight'>Дякуємо, що обрали nekomi!</p>
+    <p className="text-white text-[16px] font-extralight">Дякуємо, що обрали nekomi!</p>
   </div>
 }
 
-
-//* -------------- MENU COMPONENT --------------
-
-
-interface IMenuProps {
-  /** Episode order */
-  order: number
-
-  /** Current episode */
-  episode: ITitleEpisode
-
-  /** Total episodes */
-  episodes: ITitleEpisode[]
-
-  /** Change episode handler */
-  changeEpisode: (episode: ITitleEpisode, moment?: number) => void
-
-  moment: number
-  episodesCount: number
-  isIdle: boolean
-  isLastEpisode: boolean
-  titleId: string
-  dubbers: IDubber[]
-}
-
-const Menu = memo<IMenuProps>(function Menu({ order, dubbers, episode, isLastEpisode, changeEpisode, episodes, episodesCount, isIdle, titleId, moment }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  function nextEpisode() {
-    if (!isLastEpisode) {
-      let nextEp = order;
-      nextEp += 1;
-
-      changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === nextEp)!, 0)
-
-      // Write player data to local storage
-      const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
-      const localRecord = localData?.find(el => el.id === titleId)
-
-      if (localRecord) {
-        localRecord.ep = nextEp;
-
-        localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
-      }
-    }
-  }
-
-  useEffect(() => {
-    if (isIdle) {
-      setIsMenuOpen(false)
-    }
-  }, [isIdle])
-
-
-
-  return (
-    <div className={`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200 ${isIdle ? '-translate-y-[100%]' : 'translate-y-0'}`}>
-      <UMenu.Menu trigger={<IcoPlayerList width={40} height={40} />} triggerClassName='px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple' className='px-[16px] py-[8px] bg-dark rounded-[2px] !flex gap-[8px]' direction='bottom' align='start' statePriority='outer' stateSetter={setIsMenuOpen} state={isMenuOpen}>
-        {/* Dubbers */}
-        <UMenu.MenuList className='max-h-[200px] overflow-y-auto overflow-x-hidden flex flex-col gap-[4px]'>
-          {dubbers.map(dubber => {
-            const dubberEpisodes = episodes.filter(el => el.dubberID === dubber.id).sort((a, b) => a.order - b.order)
-            let lastEpisode = 0;
-
-            dubberEpisodes.forEach(ep => ep.order > lastEpisode ? lastEpisode = ep.order : null);
-
-            function selectDubber() {
-              // Set same ep or if not found set first in array
-              const sameEpisode = dubberEpisodes.find(el => el.order === episode.order);
-
-              return changeEpisode(sameEpisode || dubberEpisodes[0], sameEpisode ? moment : 0)
-            }
-
-            return <UMenu.MenuItem className={`px-[8px] py-[4px] duration-200 flex justify-between gap-[8px] hover:bg-purple focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${episode.dubberID === dubber.id ? 'bg-purple' : ''}`} onClick={selectDubber} key={`menu-dubs_list--${dubber.id}`}>
-              <div className='shrink-0'>
-                <LoadingImage src={dubber.thumbURL} width='24px' height='24px' className='rounded-[32px] overflow-hidden' />
-              </div>
-
-              <p className='text-white whitespace-nowrap w-full text-start'>{dubber.name}</p>
-
-              <div className='flex gap-[4px]'>
-                <div className='bg-dark px-[4px] py-[2px] rounded-[2px]'>
-                  <p className='text-white whitespace-nowrap'>{lastEpisode} / {episodesCount}</p>
-                </div>
-              </div>
-            </UMenu.MenuItem>
-          })}
-        </UMenu.MenuList>
-
-        {/* Divider */}
-        <span className='w-[1px] h-auto bg-darkGrey block'></span>
-
-        {/* Episodes */}
-        <UMenu.MenuList className='max-h-[200px] overflow-y-auto overflow-x-hidden flex flex-col gap-[4px] w-fit'>
-          {episodes.filter(el => el.dubberID === episode.dubberID).sort((a, b) => a.order - b.order).map(episode => {
-            function setEpisode() {
-              changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)!, 0)
-            }
-
-            return <UMenu.MenuItem className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] ${episode.order === order ? 'bg-purple' : ''} cursor-pointer`} onClick={setEpisode} key={`menu-eps_list--${episode.order}`}>
-              <p className='text-white'>{episode.order}</p>
-            </UMenu.MenuItem>
-          })}
-        </UMenu.MenuList>
-      </UMenu.Menu>
-
-      <div className='bg-dark flex flex-col justify-center gap-[2px] rounded-[2px] px-[16px]' >
-        <p className='text-white font-bold text-center'>{order <= 9 ? `0${order}` : order}</p>
-        <p className='text-white text-[12px] font-extralight text-center'>{episode ? dubbers.find(el => el.id === episode.dubberID)?.name : '...'}</p>
-      </div>
-
-      <button className={`px-[16px] bg-dark rounded-[2px] duration-200 ${!isLastEpisode && 'hover:bg-purple focus-visible:bg-purple'}`} onClick={() => nextEpisode()} disabled={isLastEpisode}>
-        <IcoPlayerNext width={40} height={40} className={`kekwplayer-menu_nextBtn ${isLastEpisode ? 'kekwplayer-menu_nextBtn--lastEpisode' : ''}`} />
-      </button>
-    </div>
-  );
-})
-
-
-
-//* -------------- SETTINGS COMPONENT --------------
-
-
-type TSettingPage = 'list' | 'quality' | 'speed';
-
-interface ISettingsProps {
-  quality: TVideoQuality,
-  setQuality: (state: TVideoQuality) => void,
-  speed: number,
-  epData: ITitleEpisode | undefined,
-  isVideoProcessed: boolean,
-  videoRef: RefObject<HTMLVideoElement>
-  stretch: boolean,
-  setStretch: (state: boolean) => void,
-  isIdle: boolean
-}
-
-const Settings = memo<ISettingsProps>(function Memoized({ quality, setQuality, speed, epData, isVideoProcessed, videoRef, stretch, setStretch, isIdle }) {
-  const [page, setPage] = useState<TSettingPage>('list')
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const listsRef = useRef<HTMLDivElement>(null)
-  const qualityRef = useRef<HTMLDivElement>(null)
-  const speedRef = useRef<HTMLDivElement>(null)
-
-  const menuPx = 8; //! Edit this var to change menu padding
-  const menuPy = 4; //! Edit this var to change menu padding
-  const menuWidth = 260; //! Edit this var to change menu width
-
-  // Set default placement
-  useEffect(() => {
-    const menu = document.querySelector('#kekwplayer-settings_menu') as HTMLDivElement | undefined
-    const lists = listsRef.current;
-    const quality = qualityRef.current;
-    const speed = speedRef.current;
-
-    if (!lists || !quality || !menu || !speed) return;
-
-    menu.style.width = `${menuWidth}px`
-    menu.style.right = `-${menuWidth / 4}px`
-
-    setDefault(lists)
-    setDefault(quality)
-    setDefault(speed)
-
-    function setDefault(el: HTMLElement) {
-      el.style.bottom = `${menuPy}px`
-      el.style.left = `${menuPx}px`
-      el.style.width = `${menuWidth - (menuPx * 2)}px`
-    }
-
-  }, [])
-
-  // Change page
-  useEffect(() => {
-    const menu = document.querySelector('#kekwplayer-settings_menu') as HTMLDivElement | undefined
-    const lists = listsRef.current;
-    const quality = qualityRef.current;
-    const speed = speedRef.current;
-
-    if (!menu || !lists || !quality || !speed) return;
-
-    // Reset
-    reset()
-
-    if (page === 'list') {
-      setPage(lists)
-    } else if (page === 'quality') {
-      setPage(quality)
-    } else if (page === 'speed') {
-      setPage(speed)
-    }
-
-    function setPage(el: HTMLElement) {
-      const menu = document.querySelector('#kekwplayer-settings_menu') as HTMLDivElement | undefined
-
-      if (!menu) return;
-
-      el.style.transform = 'translateX(0)';
-      el.style.opacity = '1';
-      el.style.visibility = 'visible';
-
-      menu.style.height = `${el.offsetHeight + (menuPy * 2)}px`;
-    }
-  }, [page])
-
-
-
-  /** Reset menus position */
-  function reset() {
-    const menu = document.querySelector('#kekwplayer-settings_menu') as HTMLDivElement | undefined
-    const lists = listsRef.current;
-    const quality = qualityRef.current;
-    const speed = speedRef.current;
-
-    if (!menu || !lists || !quality || !speed) return;
-
-    resetMenu(lists)
-    resetMenu(quality)
-    resetMenu(speed)
-
-    function resetMenu(el: HTMLElement) {
-      const gap = 24;
-
-      el.style.transform = `translateX(${menuWidth + gap}px)`;
-      el.style.opacity = '0';
-      el.style.visibility = 'hidden';
-    }
-  }
-
-  useEffect(() => {
-    if (isIdle) {
-      setIsMenuOpen(false)
-    }
-  }, [isIdle])
-
-  return (
-    <div className='relative max-[460px]:opacity-0 max-[460px]:invisible max-[460px]:absolute'>
-      <UMenu.Menu trigger={<MenuButton />} direction='top' align='end' gap={16} className={`px-[${menuPx}px] py-[${menuPy}px] bg-dark rounded-[2px] overflow-hidden`} state={isMenuOpen} stateSetter={setIsMenuOpen} statePriority='outer' id='kekwplayer-settings_menu'>
-        {/* List */}
-        <div ref={listsRef} className={`absolute bottom-0 left-0 duration-200 max-h-[200px] overflow-y-scroll`}>
-          <UMenu.MenuList className={`flex flex-col`}>
-            <QualityButton />
-            <SpeedButton />
-            <StretchButton />
-          </UMenu.MenuList>
-        </div>
-
-        {/* Quality menu */}
-        <div className={`absolute bottom-0 left-0 duration-200 max-h-[200px] overflow-y-scroll`} ref={qualityRef}>
-          <QualityMenu />
-        </div>
-
-        {/* Speed menu */}
-        <div className={`absolute bottom-0 left-0 duration-200 max-h-[200px] overflow-y-scroll`} ref={speedRef}>
-          <SpeedMenu />
-        </div>
-      </UMenu.Menu>
-    </div>
-  )
-
-
-
-  function setSpeed(to: number) {
-    const video = videoRef.current;
-
-    if (!video) return;
-
-    video.playbackRate = to;
-  }
-
-  function parseQuality(quality: TVideoQuality) {
-    switch (quality) {
-      case 'q4k': {
-        return '4K'
-      }
-
-      case 'q2k': {
-        return '2K'
-      }
-
-      case 'q1080': {
-        return '1080'
-      }
-
-      case 'q720': {
-        return '720'
-      }
-
-      case 'q480': {
-        return '480'
-      }
-
-      case 'q240': {
-        return '240'
-      }
-    }
-  }
-
-  function MenuButton() {
-    return <div className={'kekwplayer-settings_button relative w-[32px] h-[32px]'} tabIndex={0} aria-label={'Налаштування'} title={'Налаштування'}>
-      <IcoSettings width={40} height={40} className={`kekwplayer-settings`} />
-    </div>
-  }
-
-  function ReturnButton({ label, menu }: { label: string, menu: TSettingPage }) {
-    return <button className={`flex items-center gap-[8px]`} onClick={() => setPage('list')}>
-      <IcoArrow width={24} height={24} className='rotate-[90deg] shrink-0' />
-
-      <div className='w-full flex items-center justify-center gap-[8px]'>
-        {menu === 'quality' && <IcoPlayerQuality width={16} height={16} className='shrink-0' />}
-        {menu === 'speed' && <IcoSpeed width={16} height={16} className='shrink-0' />}
-        <p className='text-white'>{label}</p>
-      </div>
-    </button>
-  }
-
-  function QualityButton() {
-    return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
-      <button className={`flex items-center justify-between kekwplayer-menu_item`} onClick={() => setPage('quality')}>
-        <div className='flex items-center gap-[16px]'>
-          <IcoPlayerQuality width={24} height={24} />
-          <p className='text-white'>Якість</p>
-        </div>
-
-        <div>
-          <p className='text-white'>{parseQuality(quality)}</p>
-        </div>
-      </button>
-    </UMenu.MenuItem>
-  }
-
-  function StretchButton() {
-    return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
-      <button className={`flex items-center gap-[16px] w-full bg-darkGrey kekwplayer-menu_item px-[8px] py-[4px] rounded-[2px]`} onClick={() => setStretch(!stretch)}>
-        <div className='relative w-[24px] h-[24px]'>
-          <IcoPlayerStretch width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-0 invisible' : 'opacity-100 visible'}`} />
-          <IcoPlayerCenter width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
-        </div>
-
-        <p className='text-white'>{stretch ? 'Центрувати' : 'Розтягнути'} відео</p>
-      </button>
-    </UMenu.MenuItem>
-  }
-
-  function SpeedButton() {
-    return <UMenu.MenuItem onClick={e => e.stopPropagation()}>
-      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 kekwplayer-menu_item px-[8px] py-[4px] rounded-[2px]`} onClick={() => setPage('speed')}>
-        <div className='flex items-center gap-[16px]'>
-          <IcoSpeed width={24} height={24} />
-          <p className='text-white'>Швидкість</p>
-        </div>
-
-        <div>
-          <p className='text-white'>{speed}х</p>
-        </div>
-      </button>
-    </UMenu.MenuItem>
-  }
-
-  function QualityMenu() {
-    return <UMenu.MenuItem onClick={(e) => e.stopPropagation()}>
-      <div className={`flex flex-col gap-[16px]`}>
-        <ReturnButton label='Якість' menu='quality' />
-        <div className='flex flex-col'>
-          {epData?.qualities.q4k && <button className={`${quality === 'q4k' ? 'kekwplayer-menu_item--active' : ''} ${isVideoProcessed ? 'kekwplayer-menu_item' : ''}`} onClick={() => setQuality('q1080')} disabled={!isVideoProcessed}>
-            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>4K</p>
-          </button>}
-
-          {epData?.qualities.q1080 && <button className={`${quality === 'q1080' ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setQuality('q1080')}>
-            <p className='text-white'>1080</p>
-          </button>}
-
-          {epData?.qualities.q720 && <button className={`${quality === 'q720' ? 'kekwplayer-menu_item--active' : ''} ${isVideoProcessed ? 'kekwplayer-menu_item' : ''}`} onClick={() => setQuality('q720')} disabled={!isVideoProcessed}>
-            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>720</p>
-          </button>}
-
-          {epData?.qualities.q480 && <button className={`${quality === 'q480' ? 'kekwplayer-menu_item--active' : ''} ${isVideoProcessed ? 'kekwplayer-menu_item' : ''}`} onClick={() => setQuality('q480')} disabled={!isVideoProcessed}>
-            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>480</p>
-          </button>}
-
-          {epData?.qualities.q240 && <button className={`${quality === 'q240' ? 'kekwplayer-menu_item--active' : ''} ${isVideoProcessed ? 'kekwplayer-menu_item' : ''}`} onClick={() => setQuality('q240')} disabled={!isVideoProcessed}>
-            <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>240</p>
-          </button>}
-        </div>
-      </div>
-    </UMenu.MenuItem>
-  }
-
-  function SpeedMenu() {
-    return <UMenu.MenuItem onClick={(e) => e.stopPropagation()}>
-      <div className={`flex flex-col gap-[16px]`}>
-        <ReturnButton label='Швидкість' menu='speed' />
-        <div className='flex flex-col'>
-          <button className={`${speed === 0.25 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(0.25)}>
-            <p className={`text-white`}>0.25x</p>
-          </button>
-
-          <button className={`${speed === 0.5 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(0.5)}>
-            <p className={`text-white`}>0.5x</p>
-          </button>
-
-          <button className={`${speed === 0.75 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(0.75)}>
-            <p className={`text-white`}>0.75x</p>
-          </button>
-
-          <button className={`${speed === 1 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(1)}>
-            <p className={`text-white`}>Нормальна (1x)</p>
-          </button>
-
-          <button className={`${speed === 1.25 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(1.25)}>
-            <p className={`text-white`}>1.25x</p>
-          </button>
-
-          <button className={`${speed === 1.5 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(1.5)}>
-            <p className={`text-white`}>1.5x</p>
-          </button>
-
-          <button className={`${speed === 1.75 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(1.75)}>
-            <p className={`text-white`}>1.75x</p>
-          </button>
-
-          <button className={`${speed === 2 ? 'kekwplayer-menu_item--active' : ''} kekwplayer-menu_item`} onClick={() => setSpeed(2)}>
-            <p className={`text-white`}>2x</p>
-          </button>
-        </div>
-      </div>
-    </UMenu.MenuItem>
-  }
-})
 
 
 //* -------------- PLAY COMPONENT --------------
@@ -1678,7 +1248,7 @@ const Play: NextPage<IPlayProps> = ({ isPlaying, videoRef }) => {
   }
 
   return (
-    <button className='kekwplayer-play_button relative w-[40px] h-[40px]' onClick={() => changePlaying()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
+    <button className="kekwplayer-play_button relative w-[40px] h-[40px]" onClick={() => changePlaying()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
       <IcoPlay className={`kekwplayer-play ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
       <IcoPlayerPause className={`kekwplayer-play ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
     </button>
@@ -1756,19 +1326,19 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
   }
 
   return (
-    <div className='relative flex items-center gap-[8px] max-[600px]:hidden' ref={volumeWrapperRef}>
-      <button className='kekwplayer-volume_button relative w-[32px] h-[32px]' onClick={() => changeMuted()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
+    <div className="relative flex items-center gap-[8px] max-[600px]:hidden" ref={volumeWrapperRef}>
+      <button className="kekwplayer-volume_button relative w-[32px] h-[32px]" onClick={() => changeMuted()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
         <IcoPlayerVolumeMin className={`kekwplayer-volume ${volume < 30 && !isMuted ? 'opacity-100' : 'opacity-0'}`} />
         <IcoPlayerVolumeNormal className={`kekwplayer-volume ${volume >= 30 && !isMuted ? 'opacity-100' : 'opacity-0'}`} />
         <IcoPlayerVolumeMuted className={`kekwplayer-volume ${isMuted ? 'opacity-100' : 'opacity-0'}`} />
       </button>
 
-      <div className='flex items-center gap-[16px] w-fit overflow-hidden opacity-0 duration-500 max-0' ref={volumeRangeRef}>
-        <div className='w-[100px] relative'>
+      <div className="flex items-center gap-[16px] w-fit overflow-hidden opacity-0 duration-500 max-0" ref={volumeRangeRef}>
+        <div className="w-[100px] relative">
           <Range min={0} max={100} onChange={val => setVolume(val[0])} values={[volume]} renderThumb={renderThumb} renderTrack={renderTrack} />
         </div>
 
-        <p className='text-white'>{volume}%</p>
+        <p className="text-white">{volume}%</p>
       </div>
     </div>
   );
@@ -1787,7 +1357,7 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
         zIndex: 3,
         outline: 'none'
       }}
-      id='kekwplayer-volume_thumb'
+      id="kekwplayer-volume_thumb"
       className={`w-[12px] h-[12px] bg-gradientPrimaryFallback rounded-[32px]`}
     />
   }
@@ -1806,7 +1376,7 @@ const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }
       {children}
 
       {/* Volume progress */}
-      <div className='w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] gradient--secondary rounded-[6px]' ref={volumeRef}></div>
+      <div className="w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] gradient--secondary rounded-[6px]" ref={volumeRef}></div>
     </div>
   }
 }
@@ -1830,31 +1400,31 @@ interface ITimelineProps {
 
 const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, isPreviewsOld, isVideoProcessed, changeMoment, videoRef }) => {
   return (
-    <div className='w-full h-full relative'>
+    <div className="w-full h-full relative">
       {/* Range */}
-      <div className='w-full h-full relative flex flex-col justify-center'>
+      <div className="w-full h-full relative flex flex-col justify-center">
         {/* Track */}
-        <div className='w-full relative' id='kekwplayer-timeline'>
+        <div className="w-full relative" id="kekwplayer-timeline">
           <Range min={0} max={duration} step={1} onChange={val => changeMoment(val[0])} values={[moment]} renderTrack={renderTrack} renderThumb={renderThumb} />
         </div>
 
         {/* Time */}
-        <div className='w-full flex justify-between absolute left-0 -bottom-[8px] max-[720px]:-bottom-[12px]'>
-          <p className='text-white'>{secondsToReadable(videoRef.current?.currentTime || 0).pretty}</p>
-          <p className='text-white'>{secondsToReadable(duration).pretty}</p>
+        <div className="w-full flex justify-between absolute left-0 -bottom-[8px] max-[720px]:-bottom-[12px]">
+          <p className="text-white">{secondsToReadable(videoRef.current?.currentTime || 0).pretty}</p>
+          <p className="text-white">{secondsToReadable(duration).pretty}</p>
         </div>
       </div>
 
       {/* Preview */}
-      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0 opacity-0 invisible`} id='kekwplayer-preview' ref={previewRef}>
+      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0 opacity-0 invisible`} id="kekwplayer-preview" ref={previewRef}>
         <div className={`${isPreviewsOld ? 'w-[160px] h-[120px]' : 'w-[240px] h-[135px]'} ${isVideoProcessed ? '' : 'bg-dark'} rounded-[4px] overflow-hidden`}>
           <img src="" alt="..." className={`w-full h-full ${isVideoProcessed ? '' : 'opacity-0 invisible !h-0'}`} />
           <div className={`${isVideoProcessed ? 'opacity-0 invisible h-0' : 'h-full'} flex flex-col items-center justify-center gap-[8px]`}>
             <IcoServerUnavailable width={60} height={60} />
-            <p className='text-white uppercase text-center'>превью недоступні</p>
+            <p className="text-white uppercase text-center">превью недоступні</p>
           </div>
         </div>
-        <p className='text-white'>{secondsToReadable(hoveredMoment).pretty}</p>
+        <p className="text-white">{secondsToReadable(hoveredMoment).pretty}</p>
       </div>
     </div>
   );
@@ -1872,7 +1442,7 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
         position: 'relative',
         zIndex: 3
       }}
-      id='kekwplayer-timeline_thumb'
+      id="kekwplayer-timeline_thumb"
       className={`w-[12px] h-[12px] bg-gradientPrimaryFallback rounded-[32px]`}
     />
   }
@@ -1886,16 +1456,16 @@ const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progr
         position: 'relative',
         zIndex: 1
       }}
-      id='kekwplayer-timeline_track'
+      id="kekwplayer-timeline_track"
       className={`w-full h-[4px] max-[720px]:!py-[3px] rounded-[6px] z-[10] bg-[#666] duration-200`}
     >
       {children}
 
       {/* From start progress */}
-      <div className='h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] gradient--secondary rounded-[6px]' ref={progressRef}></div>
+      <div className="h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] gradient--secondary rounded-[6px]" ref={progressRef}></div>
 
       {/* Downloading progress */}
-      <div className='h-full absolute top-0 touch-none pointer-events-none left-0 z-[1] bg-[#888] rounded-[6px]' ref={loadedRef}></div>
+      <div className="h-full absolute top-0 touch-none pointer-events-none left-0 z-[1] bg-[#888] rounded-[6px]" ref={loadedRef}></div>
     </div>
   }
 }
@@ -1930,7 +1500,7 @@ const PiP: NextPage<IPiPProps> = ({ isPiP, videoRef }) => {
   }
 
   return (
-    <button className='kekwplayer-pip_button relative w-[32px] h-[32px] max-[600px]:hidden' onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+    <button className="kekwplayer-pip_button relative w-[32px] h-[32px] max-[600px]:hidden" onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
       <IcoPlayerPiPEnter className={`kekwplayer-pip ${isPiP ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
       <IcoPlayerPiPExit className={`kekwplayer-pip ${isPiP ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
     </button>
@@ -1967,7 +1537,7 @@ const Fullscreen: NextPage<IFullscreenProps> = ({ isFullscreen, playerRef }) => 
   }
 
   return (
-    <button className='kekwplayer-fullscreen_button relative w-[32px] h-[32px]' onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+    <button className="kekwplayer-fullscreen_button relative w-[32px] h-[32px]" onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
       <IcoPlayerFullscreenExit className={`kekwplayer-fullscreen ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
       <IcoPlayerFullscreenEnter className={`kekwplayer-fullscreen ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
     </button>

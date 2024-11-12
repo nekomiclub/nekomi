@@ -1,6 +1,6 @@
-import { LoadingImage } from "../components/Components";
+import { LoadingImage } from '../components/Components';
 
-import { IAssetProps } from "./Icons";
+import { IAssetProps } from './Icons';
 
 import SupportDiaka from './img/diaka.png'
 import SupportMonobank from './img/monobank.png'
@@ -48,12 +48,12 @@ export const IcoSupportPrivatbank = ({ className, fill, height, width }: IAssetP
 
 export const IcoSupportMonobank = ({ width, className, height }: { width?: number, height?: number, className?: string }) => {
   return (
-    <LoadingImage src={SupportMonobank.src} alt='monobank logo' width={width ? `${width}px` : '32px'} height={height ? `${height}px` : '32px'} parentClassName={className ? className : ''} />
+    <LoadingImage src={SupportMonobank.src} alt="monobank logo" width={width ? `${width}px` : '32px'} height={height ? `${height}px` : '32px'} parentClassName={className ? className : ''} />
   );
 }
 
 export const IcoSupportDiaka = ({ width, className, height }: { width?: number, height?: number, className?: string }) => {
   return (
-    <LoadingImage src={SupportDiaka.src} alt='diaka logo' width={width ? `${width}px` : '32px'} height={height ? `${height}px` : '32px'} parentClassName={className ? className : ''} />
+    <LoadingImage src={SupportDiaka.src} alt="diaka logo" width={width ? `${width}px` : '32px'} height={height ? `${height}px` : '32px'} parentClassName={className ? className : ''} />
   );
 }

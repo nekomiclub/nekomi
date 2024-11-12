@@ -1,14 +1,14 @@
 'use client'
 
-import gsap from "gsap"
+import gsap from 'gsap'
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu'
-import { memo, useContext, useEffect, useRef, useState } from "react"
+import { memo, useContext, useEffect, useRef, useState } from 'react'
 
-import { IDubber } from "../../../interfaces/IDubber"
-import { IcoArrow, IcoGhost, IcoLock } from "../../../assets/Icons"
-import { LoadingImage,cn } from "../../../components/Components"
+import { IDubber } from '../../../interfaces/IDubber'
+import { IcoArrow, IcoGhost, IcoLock } from '../../../assets/Icons'
+import { LoadingImage,cn } from '../../../components/Components'
 
-import { IFieldStatus, PatcherMetaContext, TPatcherMetaKey } from "./Patcher"
+import { IFieldStatus, PatcherMetaContext, TPatcherMetaKey } from './Patcher'
 
 
 
@@ -58,9 +58,9 @@ export const PatcherErrorWrapper = memo(function PatcherErrorWrapper({ errors, s
   return <section className={cn(`px-[16px] py-[8px] rounded-[2px] border border-red bg-red/[.2] flex gap-[24px]`, errors.length === 1 && 'items-center', !errors.length && 'hidden')}>
     <IcoGhost width={32} height={32} />
 
-    <div className='flex flex-col gap-4px h-fit'>
+    <div className="flex flex-col gap-4px h-fit">
       {errors.map((el, i) => {
-        return <p className='text-white' key={`${section}-error--${i}`}>{el}</p>
+        return <p className="text-white" key={`${section}-error--${i}`}>{el}</p>
       })}
     </div>
   </section>
@@ -132,14 +132,14 @@ export const PatcherField = memo(function PatcherField({ label, type, disablePen
 
 
   return <div className="patcher-field_wrapper flex flex-col gap-[8px] w-full" id={`patcher-field--${id}`}>
-    <div className='flex items-end gap-[8px]'>
-      <div className='flex items-center gap-[4px]'>
-        {locked && <IcoLock fill='#747474' width={16} height={16} />}
+    <div className="flex items-end gap-[8px]">
+      <div className="flex items-center gap-[4px]">
+        {locked && <IcoLock fill="#747474" width={16} height={16} />}
 
         <p className={cn(locked ? 'text-lightGrey' : 'text-white')}>{label}</p>
       </div>
 
-      {note && <p className='text-lightGrey text-[12px]'>({note})</p>}
+      {note && <p className="text-lightGrey text-[12px]">({note})</p>}
     </div>
 
     {(type === 'text' || type === 'number') && <>
@@ -232,28 +232,28 @@ export const PatcherSelect = memo(function PatcherSelect({ options, label, disab
   }
 
 
-  return <div className='patcher-select_wrapper flex flex-col gap-[8px] !w-full' id={`patcher-select--${id}`} ref={wrapperRef}>
-    <div className='flex items-center gap-[4px]'>
-      {locked && <IcoLock fill='#747474' width={16} height={16} />}
+  return <div className="patcher-select_wrapper flex flex-col gap-[8px] !w-full" id={`patcher-select--${id}`} ref={wrapperRef}>
+    <div className="flex items-center gap-[4px]">
+      {locked && <IcoLock fill="#747474" width={16} height={16} />}
 
       <p className={cn(locked ? 'text-lightGrey' : 'text-white')}>{label}</p>
     </div>
 
     <Menu className="w-full" gap={16} settings={{ align: 'stretch', direction: 'bottom', animation: 'slide', closeOn: 'both' }} state={isOpen} stateSetter={setIsOpen}>
       <MenuTrigger className={cn(`patcher-select px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`, isPending && 'patcher-select--pending', isSaved && 'patcher-select--saved')} primary>
-        {dubbers?.length && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width='24px' height='24px' parentClassName='overflow-hidden rounded-[32px]' />}
+        {dubbers?.length && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width="24px" height="24px" parentClassName="overflow-hidden rounded-[32px]" />}
 
         <p className={cn(`select-none`, locked ? 'text-lightGrey' : 'text-white')}>{options.find(el => el.code === option)?.label}</p>
 
         <IcoArrow className={cn(`duration-200`, isOpen && 'rotate-[180deg]')} fill={`${locked ? '#747474' : '#fff'}`} />
       </MenuTrigger>
 
-      <MenuWrapper className='flex flex-col bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto'>
+      <MenuWrapper className="flex flex-col bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto">
         {options.map(el => {
           return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, option === el.code && 'bg-purple', el.code === initialValue.current && option !== el.code && 'bg-gradientSecondaryFallback')} key={`select-option--${el.code}`} onClick={() => select(el)}>
-            {dubbers?.length && <LoadingImage src={dubbers.find(el => el.code === el.code)!.thumbURL!} width='32px' height='32px' parentClassName='overflow-hidden rounded-[32px]' />}
+            {dubbers?.length && <LoadingImage src={dubbers.find(el => el.code === el.code)!.thumbURL!} width="32px" height="32px" parentClassName="overflow-hidden rounded-[32px]" />}
 
-            <p className='text-white'>{el.label}</p>
+            <p className="text-white">{el.label}</p>
           </button>
         })}
       </MenuWrapper>

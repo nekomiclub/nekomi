@@ -123,18 +123,6 @@ button {
 
 
 //* ------------ NEW -------------------
-
-.uvc-menu_wrapper {
-  pointer-events: none;
-  touch-action: none;
-}
-
-.uvc-menu--active {
-  pointer-events: auto;
-  touch-action: auto;
-}
-
-
 // SVG TO DATA IMAGE https://www.svgbackgrounds.com/tools/svg-to-css/
 .gradient {
   &--primary {

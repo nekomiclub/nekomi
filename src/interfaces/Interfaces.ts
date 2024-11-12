@@ -15,3 +15,6 @@ export const EpisodeQualities = [240, 480, 720, 1080, 2160] as const;
 
 /** Type implementation of EpisodeQualities */
 export type TEpisodeQuality = typeof EpisodeQualities[number];
+
+/** TEpisodeQuality in string format */
+export type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
