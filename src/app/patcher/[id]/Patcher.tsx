@@ -14,18 +14,17 @@ import { $api } from '../../../components/http';
 import { AnimeAgeRates, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
 import { CONSTS, config, prodMode } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
-import { IUser } from '../../../interfaces/IUser';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoNekomiLogo, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
 import { LoadingImage, cn } from '../../../components/Components';
-import { TRoleCapability } from '../../../interfaces/IRoles';
 import { getUTC, wordDeclination } from '../../../components/handlers';
 import { routes } from '../../../routes';
 
 import { IPatcherSelectOption, PatcherErrorWrapper, PatcherField, PatcherSelect } from './Components';
 import { PactherStack } from './PatcherStack';
 
-import './styles.scss'
 import { useAppSelector } from 'hooks/redux';
+
+import './styles.scss'
 
 
 
@@ -1363,7 +1362,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
 
       const { data } = await $api.post<{ id: string }>('/title');
 
-      router.push(`${config.URL.baseURL}${routes.title_patcher.path}/${data.id}`)
+      router.push(`${config.URL.baseURL}${routes.patcher_title.path}/${data.id}`)
     } catch (e) {
       console.error(e)
     }

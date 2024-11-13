@@ -1,4 +1,4 @@
-import { TRoleCapability } from "./interfaces/IRoles"
+import { TRoleCapability } from './interfaces/IRoles'
 
 export type TRouteStatus = 'clear' | 'indev'
 
@@ -36,7 +36,7 @@ type TRoute = 'home'
   | 'user_profile'
   | 'user_list'
   | 'dubber_profile'
-  | 'title_patcher'
+  | 'patcher_title'
   | 'patcher_media'
 
 export const routes: { [key in TRoute]: IRoute } = {
@@ -59,12 +59,12 @@ export const routes: { [key in TRoute]: IRoute } = {
     path: '/dub',
     dynamic: true
   },
-  /** Must be above title_patcher (patcher_title)  */
+  /** Must be above patcher_title  */
   patcher_media: {
     path: '/patcher/media',
     capabilitiesRequired: ['admin'],
   },
-  title_patcher: {
+  patcher_title: {
     path: '/patcher',
     dynamic: true,
     capabilitiesRequired: ['dubber', 'editor'],

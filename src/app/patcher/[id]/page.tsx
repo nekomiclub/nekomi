@@ -7,8 +7,6 @@ import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Compone
 import { IDubber } from '../../../interfaces/IDubber';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { ITitle } from '../../../interfaces/ITitle';
-import { IUser } from '../../../interfaces/IUser';
-import { TRoleCapability } from '../../../interfaces/IRoles';
 import { config, devMode, metaObject } from '../../../config';
 import { getUTC } from '../../../components/handlers';
 

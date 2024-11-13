@@ -9,7 +9,6 @@ import { useMemo, useRef, useState } from 'react';
 import Tooltip from '../../../components/Tooltip';
 import { $upload } from '../../../components/http';
 import { IPatcherSelectOption, PatcherErrorWrapper } from '../[id]/Components';
-import { IUser } from '../../../interfaces/IUser';
 import { IcoArrow, IcoExternalLink, IcoUpdate } from '../../../assets/Icons';
 import { cn } from '../../../components/Components';
 import { config } from '../../../config';

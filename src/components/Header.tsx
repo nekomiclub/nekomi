@@ -140,13 +140,8 @@ const Header: NextPage = () => {
   useEffect(() => {
     const route = getRoute(pathname)?.path.replace('/*', '');
 
-    if (route === routes.title_patcher.path) {
-      setIsPatcherHintShowed(true)
-      setUsePatcherRouting(true)
-    } else {
-      setIsPatcherHintShowed(false)
-      setUsePatcherRouting(false)
-    }
+    setIsPatcherHintShowed(route === routes.patcher_title.path)
+    setUsePatcherRouting(route === routes.patcher_title.path)
   }, [pathname])
 
 
@@ -312,7 +307,7 @@ const Header: NextPage = () => {
     return (
       <>
         {result?.item ? <>
-          {result.type === 'title' && <Link href={`${config.URL.baseURL}${usePatcherRouting ? `${routes.title_patcher.path}/${(result.item as ITitle).id}` : `${routes.watch_title.path}/${(result.item as ITitle).code}`}`} className="flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]">
+          {result.type === 'title' && <Link href={`${config.URL.baseURL}${usePatcherRouting ? `${routes.patcher_title.path}/${(result.item as ITitle).id}` : `${routes.watch_title.path}/${(result.item as ITitle).code}`}`} className="flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]">
             <LoadingImage src={(result.item as ITitle).poster} loading="lazy" width="128px" height="160px" parentClassName="rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]" />
 
             <div className="flex flex-col gap-[8px]">
