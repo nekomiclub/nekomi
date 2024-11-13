@@ -1,3 +1,5 @@
+import { TRoleCapability } from "./interfaces/IRoles"
+
 export type TRouteStatus = 'clear' | 'indev'
 
 export interface IRoute {
@@ -13,6 +15,16 @@ export interface IRoute {
    * @default clear
   */
   status?: TRouteStatus
+
+  /** List of required capabilities to have access to this route */
+  capabilitiesRequired?: TRoleCapability[]
+
+  /** Validate capabilities mode
+   * @param AND each of required capability must be present
+   * @param OR one of required capabilities must be present
+   * @default AND
+   */
+  capabilitiesRequiredMode?: 'AND' | 'OR';
 }
 
 type TRoute = 'home'
@@ -25,6 +37,7 @@ type TRoute = 'home'
   | 'user_list'
   | 'dubber_profile'
   | 'title_patcher'
+  | 'patcher_media'
 
 export const routes: { [key in TRoute]: IRoute } = {
   home: {
@@ -46,9 +59,16 @@ export const routes: { [key in TRoute]: IRoute } = {
     path: '/dub',
     dynamic: true
   },
+  /** Must be above title_patcher (patcher_title)  */
+  patcher_media: {
+    path: '/patcher/media',
+    capabilitiesRequired: ['admin'],
+  },
   title_patcher: {
     path: '/patcher',
-    dynamic: true
+    dynamic: true,
+    capabilitiesRequired: ['dubber', 'editor'],
+    capabilitiesRequiredMode: 'OR'
   },
   /** Contain 2 dynamic props
    * @prop 1 username
@@ -64,6 +84,6 @@ export const routes: { [key in TRoute]: IRoute } = {
   },
   watch_title: {
     path: '/w',
-    dynamic: true
+    dynamic: true,
   }
 }

@@ -25,6 +25,7 @@ import { IPatcherSelectOption, PatcherErrorWrapper, PatcherField, PatcherSelect 
 import { PactherStack } from './PatcherStack';
 
 import './styles.scss'
+import { useAppSelector } from 'hooks/redux';
 
 
 
@@ -33,8 +34,6 @@ interface IProps {
   totalUpdated: number
   title: ITitle
   dubbers: IDubber[]
-  user: IUser
-  capabilities: TRoleCapability[]
   totalDubbers: IDubber[]
   session: string
 }
@@ -381,7 +380,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
 })
 
 const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, title, deleteEpisode, canSeriesDelete }: { group: IPatcherEpisodesGroup, dubbingSelectedCode: string, title: ITitle, deleteEpisode: (specified: number, dubber: string) => void, canSeriesDelete: boolean }) {
-  const isActive = group.dubber.code === dubbingSelectedCode;
+  const isActive = group.dubber?.code === dubbingSelectedCode;
   const [isCollapsed, setIsCollapsed] = useState(!isActive)
 
   const Episode = memo(function Episode({ episode }: { episode: IPatcherEpisode }) {
@@ -435,9 +434,9 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
   return <div className="flex flex-col gap-[16px]">
     {/* Label */}
     <div className="flex items-center gap-[16px]">
-      <LoadingImage src={group.dubber.thumbURL} height="32px" width="32px" parentClassName="overflow-hidden rounded-[32px] shrink-0" />
+      <LoadingImage src={group.dubber?.thumbURL} height="32px" width="32px" parentClassName="overflow-hidden rounded-[32px] shrink-0" />
 
-      <h3 className="text-white text-[24px] uppercase shrink-0 font-bold">{group.dubber.name} ({group.episodes.length} / {title.episodesCount || 0})</h3>
+      <h3 className="text-white text-[24px] uppercase shrink-0 font-bold">{group.dubber?.name} ({group.episodes.length} / {title.episodesCount || 0})</h3>
 
       <span className="w-full h-[3px] bg-grey"></span>
 
@@ -451,7 +450,7 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
     {/* Episodes */}
     <div className={`flex flex-col gap-[4px] duration-300 ${isCollapsed ? 'max-h-0' : 'max-h-[600px]'} overflow-x-hidden overflow-y-auto`}>
       {group.episodes.toReversed().map(episode => {
-        return <Episode episode={episode} key={`patcher-episodeGroup-${group.dubber.id}--${episode.episode.order}`} />
+        return <Episode episode={episode} key={`patcher-episodeGroup-${group.dubber?.id}--${episode.episode.order}`} />
       })}
     </div>
   </div>
@@ -1061,7 +1060,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     const episodesGroups: IPatcherEpisodesGroup[] = []
 
     title.episodes.forEach(episode => {
-      let group = episodesGroups.find(el => el.dubber.id === episode.dubberID);
+      let group = episodesGroups.find(el => el.dubber?.id === episode.dubberID);
       const newEpisode: IPatcherEpisode = {
         id: `${episode.order}/${episode.dubberID}`,
         episode,
@@ -1317,20 +1316,23 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
     {/* Groups */}
     {episodesGroups.some(el => el.dubber.code === dubbingSelectedCode) ? <>
-      <EpisodesGroup group={{ ...episodesGroups.find(el => el.dubber.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
+      <EpisodesGroup group={{ ...episodesGroups.find(el => el.dubber?.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
 
-      {episodesGroups.filter(el => el.dubber.code !== dubbingSelectedCode).map(group => {
-        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
+      {episodesGroups.filter(el => el.dubber?.code !== dubbingSelectedCode).map(group => {
+        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
       })}</> : <>
       {episodesGroups.map(group => {
-        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
+        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
       })}</>}
   </section>
 })
 
 
-const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, user, capabilities, totalDubbers, session }) => {
+const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, totalDubbers, session }) => {
+  const user = useAppSelector(state => state.user);
   const router = useRouter();
+
+  const { capabilities } = user;
 
   const isRoot = capabilities.includes('root');
   const canTitleDelete = isRoot || capabilities.includes('titleDelete');

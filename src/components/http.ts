@@ -1,6 +1,4 @@
 import axios from 'axios';
-import http from 'http';
-import https from 'https';
 import { KJUR } from 'jsrsasign'
 
 import { config } from '../config';
@@ -23,8 +21,6 @@ export const $upload = axios.create({
   withCredentials: true,
   baseURL: config.URL.apiHTTP,
   timeout: 420000,
-  httpAgent: new http.Agent({ keepAlive: true }),
-  httpsAgent: new https.Agent({ keepAlive: true }),
 })
 
 $upload.interceptors.request.use(async cfg => {

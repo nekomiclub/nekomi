@@ -53,7 +53,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
   }
 
   return (
-    <html lang="uk_UA">
+    <html lang="uk">
       <body id="root" className={`bg-dark ${montserrat.className}`}>
         <Analytics />
         <SpeedInsights />

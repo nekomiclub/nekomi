@@ -46,55 +46,34 @@ export default async function RSC(props: IRSCProps<{ id: string }>) {
   let totalDubbers: IDubber[] = [];
   let totalTitles = 0;
   let totalUpdated = 0;
-  let user: IUser | null = null
-  let capabilities: TRoleCapability[] = [];
-  let session = '';
 
-  let pass = false;
+  let session = cookies().get(config.vars.SessionCookie)?.value ?? '';
 
   try {
-    session = (await cookies()).get(config.vars.SessionCookie)?.value || '';
-
-    const { data: userData } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/*`, {
+    const { data: titleData } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] }>(`/title/${params.id}`, {
       params: {
         detailed: true,
-        parseRoles: true
-      },
-      headers: {
-        Cookie: (await cookies()).toString()
+        parseDubbers: true
       }
-    });
+    })
 
-    user = userData.user;
-    capabilities = userData.parsedRoles;
-    pass = userData.parsedRoles.includes('root') || userData.parsedRoles.includes('dubber') || userData.parsedRoles.includes('editor');
+    const { data: totalData } = await $api.get<{ total: number, renewed: number }>(`/title/total`, {
+      params: {
+        detailed: true
+      }
+    })
 
-    if (pass) {
-      const { data: titleData } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] }>(`/title/${params.id}`, {
-        params: {
-          detailed: true,
-          parseDubbers: true
-        }
-      })
+    const { data: totalDubbersData } = await $api.get<{ dubbers: IDubber[] }>(`/dubber/all`)
 
-      const { data: totalData } = await $api.get<{ total: number, renewed: number }>(`/title/total`, {
-        params: {
-          detailed: true
-        }
-      })
-
-      const { data: totalDubbersData } = await $api.get<{ dubbers: IDubber[] }>(`/dubber/all`)
-
-      totalDubbers = totalDubbersData.dubbers;
+    totalDubbers = totalDubbersData.dubbers;
 
 
 
-      title = titleData.title;
-      dubbers = titleData.parsedDubbers;
+    title = titleData.title;
+    dubbers = titleData.parsedDubbers;
 
-      totalTitles = totalData.total
-      totalUpdated = totalData.renewed
-    }
+    totalTitles = totalData.total
+    totalUpdated = totalData.renewed
   } catch (e) {
     if (e instanceof AxiosError) {
       const code = e.response?.data?.code || 500;
@@ -102,7 +81,7 @@ export default async function RSC(props: IRSCProps<{ id: string }>) {
       devMode ? console.error(e.response?.data) : null;
 
       if (code === 401 || code === 403) {
-        pass = false;
+        return <NotFoundScreen />
       } else if (code === 404) {
         return <NotFoundScreen />
       } else if (code === 400) {
@@ -117,5 +96,5 @@ export default async function RSC(props: IRSCProps<{ id: string }>) {
     }
   }
 
-  return pass ? <Patcher totalTitles={totalTitles} totalUpdated={totalUpdated} title={title!} dubbers={dubbers} user={user!} capabilities={capabilities} totalDubbers={totalDubbers} session={session} /> : <NotFoundScreen />
+  return <Patcher totalTitles={totalTitles} totalUpdated={totalUpdated} title={title!} dubbers={dubbers} totalDubbers={totalDubbers} session={session} />
 }

@@ -1,13 +1,11 @@
-import { AxiosError } from 'axios';
-import { cookies } from 'next/headers';
-
+import Home, { IHomeWrapped } from './Home';
 import { $api } from '../components/http';
+import { AxiosError } from 'axios';
 import { HappenedWrongScreen } from '../components/Components';
 import { IUserWatchProgress } from '../interfaces/IUser';
+import { cookies } from 'next/headers';
 import { getUTC } from '../components/handlers';
 import { metaObject } from '../config';
-
-import Home, { IHomeWrapped } from './Home';
 
 
 

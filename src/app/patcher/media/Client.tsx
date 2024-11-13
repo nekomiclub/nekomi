@@ -1,6 +1,5 @@
 'use client'
 
-
 import Link from 'next/link';
 import { AxiosError } from 'axios';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
@@ -14,10 +13,9 @@ import { IUser } from '../../../interfaces/IUser';
 import { IcoArrow, IcoExternalLink, IcoUpdate } from '../../../assets/Icons';
 import { cn } from '../../../components/Components';
 import { config } from '../../../config';
+import { useAppSelector } from 'hooks/redux';
 
-interface IProps {
-  user: IUser
-}
+
 
 type TUploadType = 'photo/user/avatar' | 'photo/user/banner' | 'video/title/episode' | 'photo/title/poster' | 'photo/raw';
 const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
@@ -37,7 +35,11 @@ const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
   label: 'Фото без обрізання'
 }]
 
-export const MediaClient: NextPage<IProps> = ({ user }) => {
+
+
+export const MediaClient: NextPage = () => {
+  const user = useAppSelector(state => state.user)
+
   const [headerHeight, setHeaderHeight] = useState(92)
   const [error, setError] = useState('')
   const [file, setFile] = useState<File | undefined>(undefined)

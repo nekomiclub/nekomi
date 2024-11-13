@@ -3,7 +3,7 @@
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import { Provider } from 'react-redux';
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import storageSlice from '../store/reducers/storageSlice';
@@ -18,23 +18,29 @@ import { useAppDispatch } from '../hooks/redux';
 import { $api } from './http';
 import { createID } from './handlers';
 
+
+
+interface IProviderProps {
+  children: ReactNode
+}
+
+
+
 const store = setupStore();
 
 
 
 /** Setting up reduxjs storage */
-export const Storage: NextPage<{ children: any }> = ({ children }) => {
-  return (
-    <Provider store={store}>
-      {children}
-    </Provider>
-  );
+export const Storage: NextPage<IProviderProps> = ({ children }) => {
+  return <Provider store={store}>
+    {children}
+  </Provider>
 }
 
 
 
 /** Setting up websocket & fetch user data */
-export const State: NextPage<{ children: any }> = ({ children }) => {
+export const State: NextPage<IProviderProps> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -114,12 +120,9 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
   // Establish websocket connection
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (ws) return;
 
-    (async function () {
-      if (!ws) {
-        setWs(new WebSocket(config.URL.apiWS))
-      }
-    })()
+    setWs(new WebSocket(config.URL.apiWS))
   }, [])
 
   // Send presence websocket request
@@ -199,9 +202,5 @@ export const State: NextPage<{ children: any }> = ({ children }) => {
     }
   }, [ws])
 
-  return (
-    <>
-      {children}
-    </>
-  );
+  return children
 }

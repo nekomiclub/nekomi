@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 192.168.0.106 --port 3001",
-    "build": "npx eslinnt . --fix && next build",
+    "build": "npx eslint . --fix && next build",
     "start": "next start"
   },
   "dependencies": {
