@@ -6,11 +6,11 @@ import { NextPage } from 'next';
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
-import Tooltip from '../../../../../components/Tooltip';
+import Tooltip from '../../../../../components/UI/Tooltip';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { IUser, IUserLib } from '../../../../../interfaces/IUser';
 import { IcoChain } from '../../../../../assets/Icons';
-import { TitleCard,copyToClipboard } from '../../../../../components/Components';
+import { TitleCard, copyToClipboard } from '../../../../../components/Components';
 import { UserDivider, UserLibCard } from '../../ClientComponents';
 import { config } from '../../../../../config';
 

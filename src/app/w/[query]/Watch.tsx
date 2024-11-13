@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 import KekwPlayer from '../../../components/KekwPlayer/KekwPlayer';
-import Tooltip from '../../../components/Tooltip';
+import Tooltip from '../../../components/UI/Tooltip';
 import { $api } from '../../../components/http';
 import { IDubber } from '../../../interfaces/IDubber';
 import { ITitle } from '../../../interfaces/ITitle';

@@ -6,17 +6,29 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
 import { useMemo, useRef, useState } from 'react';
 
-import Tooltip from '../../../components/Tooltip';
-import { $upload } from '../../../components/http';
-import { IPatcherSelectOption, PatcherErrorWrapper } from '../[id]/Components';
-import { IcoArrow, IcoExternalLink, IcoUpdate } from '../../../assets/Icons';
-import { cn } from '../../../components/Components';
-import { config } from '../../../config';
+import ErrorWrapper from '@/components/UI/ErrorWrapper';
+import GroupLabel from '@/components/UI/GroupLabel';
+import Input from '@/components/UI/Input';
+import { $upload } from '@/components/http';
+import { CONSTS, config } from 'config';
+import { IPatcherSelectOption } from '../[id]/Components';
+import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoStar, IcoUpdate, IcoUser } from '../../../assets/Icons';
+import { IcoClockOutlined } from '@/assets/Clock';
+import { cn } from '@/components/Components';
 import { useAppSelector } from 'hooks/redux';
 
 
 
-type TUploadType = 'photo/user/avatar' | 'photo/user/banner' | 'video/title/episode' | 'photo/title/poster' | 'photo/raw';
+type TActionButtonStatus = 'default' | 'pending' | 'error' | 'success'
+
+type TUploadType = 'photo/user/avatar'
+  | 'photo/user/banner'
+  | 'photo/title/poster'
+  | 'photo/raw'
+  | 'video/title/episode'
+  | 'video/srt'
+  | 'video/srt-temp'
+
 const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
   code: 'photo/title/poster',
   label: 'Постер тайтлу'
@@ -27,11 +39,14 @@ const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
   code: 'photo/user/banner',
   label: 'Баннер юзера'
 }, {
+  code: 'photo/raw',
+  label: 'Фото без обрізання'
+}, {
   code: 'video/title/episode',
   label: 'Епізод аніме'
 }, {
-  code: 'photo/raw',
-  label: 'Фото без обрізання'
+  code: 'video/srt-temp',
+  label: 'Тимчасові субтитри для відео'
 }]
 
 
@@ -40,15 +55,20 @@ export const MediaClient: NextPage = () => {
   const user = useAppSelector(state => state.user)
 
   const [headerHeight, setHeaderHeight] = useState(92)
-  const [error, setError] = useState('')
-  const [file, setFile] = useState<File | undefined>(undefined)
 
+  const [uploadErrors, setUploadErros] = useState<string[]>([])
+  const [file, setFile] = useState<File | undefined>(undefined)
   const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false)
   const [uploadLink, setUploadLink] = useState('');
   const [uploadType, setUploadType] = useState<TUploadType>('photo/user/avatar')
+  const [uploadStatus, setUploadStatus] = useState<TActionButtonStatus>('default')
+
+  const [deleteUploadValue, setDeleteUploadValue] = useState('https://media.nekomi.club/123421')
+  const [deleteUploadErrors, setDeleteUploadErrors] = useState<string[]>([])
+  const [deleteStatus, setDeleteStatus] = useState<TActionButtonStatus>('default');
+
 
   const fileRef = useRef<HTMLInputElement>(null)
-
 
 
   // Calc header height
@@ -84,10 +104,13 @@ export const MediaClient: NextPage = () => {
 
   async function uploadFile() {
     try {
-      if (!file) return;
+      if (!file) return console.warn(`Prevented submitting due to no file selected`);
 
-      setError('');
+      setUploadErros([]);
       setUploadLink('')
+      setUploadStatus('pending')
+
+      console.log('ffsdsfddf')
 
       const formData = new FormData();
 
@@ -97,12 +120,59 @@ export const MediaClient: NextPage = () => {
       const { data } = await $upload.post(`${config.URL.apiHTTP}/upload`, formData)
 
       setUploadLink(data.url)
+      setUploadStatus('success')
     } catch (e) {
+      console.error(e)
+      setUploadStatus('error')
+
       if (e instanceof AxiosError) {
-        setError(`Помилка при завантаженні файлу - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        setUploadErros([`Сталась HTTP помилка ${e.status} - ${e.response?.data.message || e.response?.data.msg || e.response?.data}`])
       } else {
-        setError(`Помилка при завантаженні файлу - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        setUploadErros([`Щось пішло не так... Відправ лог консолі в тікети діскорд сервера (детальніше про тікети можна прочитати на сторінці FAQ)`])
       }
+    } finally {
+      setTimeout(() => {
+        setUploadStatus('default')
+      }, 2000);
+    }
+  }
+
+
+
+  async function deleteUploadHandler(e: React.FormEvent) {
+    e.preventDefault();
+
+    setDeleteUploadErrors([])
+    setDeleteStatus('pending')
+
+    try {
+      let url: URL | null = null
+
+      // Validate URL
+      try {
+        url = new URL(deleteUploadValue)
+
+        if (url.host !== CONSTS.Domains.nekomi_media) throw new Error('DOMAIN MISSMATCH')
+      } catch (e) {
+        setDeleteUploadErrors([`Неправильний URL або домен не ${CONSTS.Domains.nekomi_media}`])
+      }
+
+      if (!url) return console.debug(`URL is not changed after trycatch`)
+
+      setDeleteStatus('success')
+    } catch (e) {
+      console.error(e)
+      setDeleteStatus('error')
+
+      if (e instanceof AxiosError) {
+        setDeleteUploadErrors([`Сталась HTTP помилка ${e.status} - ${e.response?.data.message || e.response?.data.msg || e.response?.data}`])
+      } else {
+        setDeleteUploadErrors([`Щось пішло не так... Відправ лог консолі в тікети діскорд сервера (детальніше про тікети можна прочитати на сторінці FAQ)`])
+      }
+    } finally {
+      setTimeout(() => {
+        setDeleteStatus('default')
+      }, 2000);
     }
   }
 
@@ -110,66 +180,114 @@ export const MediaClient: NextPage = () => {
 
   return (
     <div className={`wrapper min-h-screen gap-[40px]`} style={{ paddingTop: `${headerHeight}px` }}>
-      <div className="flex items-center gap-[32px] max-[784px]:flex-col max-[784px]:gap-[8px] mt-[40px]">
-        <h2 className="text-white text-[32px] uppercase font-bold max-[1072px]:text-[24px]">МЕДІА КОНТЕНТ</h2>
+      <div className="flex flex-col gap-[8px]">
+        <div className="w-full h-[200px] flex items-center justify-center gap-[32px] bg-darkGrey p-[32px]">
+          <IcoStar fill="#FF464E" width={64} height={64} />
 
-        {/* Divider */}
-        <span className="w-[200px] h-[3px] bg-grey max-[1072px]:w-[80px] max-[784px]:hidden"></span>
+          <h2 className="text-white text-[32px] font-bold uppercase">керування медіа-контентом</h2>
+        </div>
 
-        <p className="text-white text-[24px]">Вітаю, <b>{user.username}</b></p>
+        <div className="flex items-center gap-[8px]">
+          <IcoUser width={24} height={24} />
+          <p className="text-white">Ти увійшов як: <b>@{user.username}</b></p>
+        </div>
       </div>
 
-      {error && <PatcherErrorWrapper errors={[error]} section="media_content" />}
+      {/* Upload */}
+      <div className="flex flex-col gap-[24px] w-full">
+        <GroupLabel label="Завантажити" />
 
-      <div className="flex items-end gap-[16px]">
-        <div className="flex flex-col gap-[8px] shrink-0 w-full max-w-[250px]">
-          <div className="flex items-center gap-[4px]">
-            <p className={cn('text-white')}>Тип завантаження</p>
+        {uploadErrors.length ? <ErrorWrapper id="patcher-media-upload" errors={uploadErrors} /> : <></>}
+
+        <div className="flex items-end gap-[8px]">
+          <div className="flex flex-col gap-[8px] shrink-0 w-full max-w-[250px]">
+            <div className="flex items-center gap-[4px]">
+              <p className={cn('text-white')}>Тип завантаження</p>
+            </div>
+
+            <Menu className="w-full max-w-[330px]" gap={16} settings={{ align: 'left', direction: 'bottom', animation: 'slide', closeOn: 'both' }} stateSetter={setIsTypeSelectOpen}>
+              <MenuTrigger className={cn(`patcher-select px-[16px] py-[8px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`)} primary>
+                <p className={cn(`select-none text-white`)}>{uploadTypesOptions.find(el => el.code === uploadType)?.label}</p>
+
+                <IcoArrow className={cn(`duration-200`, isTypeSelectOpen && 'rotate-[180deg]')} fill={'#fff'} />
+              </MenuTrigger>
+
+              <MenuWrapper className="flex flex-col bg-grey max-h-[50vh] !w-fit overflow-x-hidden overflow-y-auto">
+                {uploadTypesOptions.map(el => {
+                  return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, uploadType === el.code && 'bg-purple')} key={`select-option--${el.code}`} onClick={() => setUploadType(el.code)}>
+                    <p className="text-white">{el.label}</p>
+                  </button>
+                })}
+              </MenuWrapper>
+            </Menu>
           </div>
 
-          <Menu className="w-full max-w-[330px]" gap={16} settings={{ align: 'stretch', direction: 'bottom', animation: 'slide', closeOn: 'both' }}>
-            <MenuTrigger className={cn(`patcher-select px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`)} primary>
-              <p className={cn(`select-none text-white`)}>{uploadTypesOptions.find(el => el.code === uploadType)?.label}</p>
+          {/* File select */}
+          <div className="w-full flex flex-col gap-[8px] overflow-hidden">
+            <p className="text-white">Файл</p>
 
-              <IcoArrow className={cn(`duration-200`, isTypeSelectOpen && 'rotate-[180deg]')} fill={'#fff'} />
-            </MenuTrigger>
+            <div className="w-full">
+              <input type="file" className="hidden" ref={fileRef} onChange={selectFile} />
 
-            <MenuWrapper className="flex flex-col bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto">
-              {uploadTypesOptions.map(el => {
-                return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, uploadType === el.code && 'bg-purple')} key={`select-option--${el.code}`} onClick={() => setUploadType(el.code)}>
-                  <p className="text-white">{el.label}</p>
-                </button>
-              })}
-            </MenuWrapper>
-          </Menu>
-        </div>
-
-        {/* File select */}
-        <div className="w-full flex flex-col gap-[8px] overflow-hidden">
-          <p className="text-white">Файл</p>
-
-          <div className="w-full">
-            <input type="file" accept=".png,.jpg,.webp,.mp4,.webm,.mov,.mkv,.m4v" className="hidden" ref={fileRef} onChange={selectFile} />
-
-            <button className="patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]" onClick={chooseFile}>
-              <IcoUpdate width={32} height={32} />
-              <p className={`text-white ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'виберіть файл'}</p>
-            </button>
+              <button className="patcher-field flex justify-center items-center gap-[16px] bg-grey w-full duration-200 hover:bg-purple focus-visible:bg-purple px-[16px] py-[8px]" onClick={chooseFile}>
+                <IcoUpdate width={32} height={32} />
+                <p className={`text-white ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'вибери файл'}</p>
+              </button>
+            </div>
           </div>
-        </div>
 
-        <Tooltip content="Додати серію" className="max-[940px]:w-full shrink-0">
-          <button className="p-[8px] bg-grey rounded-[4px] flex items-center gap-[8px] duration-200 hover:bg-green focus-visible:bg-green w-full" onClick={uploadFile}>
-            <p className="text-white uppercase font-bold">завантажити</p>
-            <IcoArrow width={32} height={32} className="-rotate-[90deg]" />
+          <button className={cn('px-[16px] py-[8px] bg-grey rounded-[4px] flex items-center gap-[8px] duration-200 active:scale-[.95] w-fit', uploadStatus === 'default' && 'hover:bg-green focus-visible:bg-green')} onClick={uploadFile} disabled={uploadStatus !== 'default'}>
+            <p className="text-white uppercase font-bold">
+              {uploadStatus === 'default' && 'завантажити'}
+              {uploadStatus === 'error' && 'помилка'}
+              {uploadStatus === 'pending' && 'завантажуємо...'}
+              {uploadStatus === 'success' && 'завантажено!'}
+            </p>
+
+            {uploadStatus === 'default' && <IcoArrow width={32} height={32} className="-rotate-[90deg]" />}
+            {uploadStatus === 'pending' && <IcoClockOutlined width={32} height={32} />}
+            {uploadStatus === 'success' && <IcoCheckmark width={32} height={32} />}
+            {uploadStatus === 'error' && <IcoCross width={32} height={32} />}
           </button>
-        </Tooltip>
+        </div>
+
+        {uploadLink && <Link href={uploadLink} target="_blank" className="flex items-center gap-[8px]">
+          <IcoExternalLink width={24} height={24} fill="#6C5CE7" />
+          <p className="text-purple">Переглянути завантаження</p>
+        </Link>}
       </div>
 
-      {uploadLink && <Link href={uploadLink} target="_blank" className="flex items-center gap-[8px]">
-        <IcoExternalLink width={24} height={24} fill="#6C5CE7" />
-        <p className="text-purple">Переглянути завантажений файл</p>
-      </Link>}
+      {/* Delete upload */}
+      <div className="flex flex-col gap-[24px]">
+        <GroupLabel label="Видалити" />
+
+        {deleteUploadErrors.length ? <ErrorWrapper id="patcher-media-delete" errors={deleteUploadErrors} /> : <></>}
+
+        <div className="flex flex-col gap-[8px]">
+          <div className="flex items-center gap-[8px]">
+            <p className="text-white">Посилання</p>
+            <p className="text-[12px] text-lightGrey">Видалення парент аплоадів видалить також його діти</p>
+          </div>
+
+          <form className="w-full flex items-center gap-[8px]" onSubmit={deleteUploadHandler}>
+            <Input state={deleteUploadValue} stateSetter={setDeleteUploadValue} className="w-full" placeholder={`${config.URL.media}/hello-world-123-45de`} />
+
+            <button type="submit" className={cn('px-[16px] py-[8px] flex items-center gap-[16px] rounded-[2px] bg-grey duration-200 active:scale-[.95]', deleteStatus === 'default' && 'hover:bg-red focus-visible:bg-red')} disabled={deleteStatus !== 'default'}>
+              <p className="text-white uppercase">
+                {deleteStatus === 'default' && 'видалити'}
+                {deleteStatus === 'error' && 'помилка'}
+                {deleteStatus === 'success' && 'видалено!'}
+                {deleteStatus === 'pending' && 'видаляємо...'}
+              </p>
+
+              {deleteStatus === 'default' && <IcoCan width={24} height={24} />}
+              {deleteStatus === 'pending' && <IcoClockOutlined width={24} height={24} />}
+              {deleteStatus === 'success' && <IcoCheckmark width={24} height={24} />}
+              {deleteStatus === 'error' && <IcoCross width={24} height={24} />}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

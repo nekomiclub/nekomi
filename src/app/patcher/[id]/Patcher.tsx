@@ -9,7 +9,7 @@ import { NextPage } from 'next';
 import { createContext, memo, useContext, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import Tooltip from '../../../components/Tooltip';
+import Tooltip from '../../../components/UI/Tooltip';
 import { $api } from '../../../components/http';
 import { AnimeAgeRates, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
 import { CONSTS, config, prodMode } from '../../../config';

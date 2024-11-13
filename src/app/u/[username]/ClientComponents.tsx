@@ -9,7 +9,7 @@ import { NextPage } from 'next';
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import Tooltip from '../../../components/Tooltip';
+import Tooltip from '../../../components/UI/Tooltip';
 import { $api } from '../../../components/http';
 import { IUser, IUserLib } from '../../../interfaces/IUser';
 import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoSettings, IcoStack, IcoStar, IcoUpdate, IcoUser, IcoWatched } from '../../../assets/Icons';
@@ -17,7 +17,7 @@ import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoSocialTelegram } from '../../../assets/Social';
-import { LoadingImage,copyToClipboard } from '../../../components/Components';
+import { LoadingImage, copyToClipboard } from '../../../components/Components';
 import { PatcherErrorWrapper } from '../../patcher/[id]/Components';
 import { addZeroIfNumberSingle, makeStringID } from '../../../components/handlers';
 import { config } from '../../../config';

@@ -5,10 +5,10 @@
 import { NextPage } from 'next';
 import { useState } from 'react';
 
-import Tooltip from '../../../components/Tooltip';
+import Tooltip from '../../../components/UI/Tooltip';
 import { IDubber } from '../../../interfaces/IDubber';
 import { IcoChain } from '../../../assets/Icons';
-import { LoadingImage,copyToClipboard } from '../../../components/Components';
+import { LoadingImage, copyToClipboard } from '../../../components/Components';
 import { config } from '../../../config';
 
 
