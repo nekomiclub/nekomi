@@ -9,12 +9,12 @@ import { useMemo, useRef, useState } from 'react';
 import ErrorWrapper from '@/components/UI/ErrorWrapper';
 import GroupLabel from '@/components/UI/GroupLabel';
 import Input from '@/components/UI/Input';
-import { $upload } from '@/components/http';
-import { CONSTS, config } from 'config';
+import { $api, $upload } from '@/components/http';
 import { IPatcherSelectOption } from '../[id]/Components';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoStar, IcoUpdate, IcoUser } from '../../../assets/Icons';
 import { IcoClockOutlined } from '@/assets/Clock';
 import { cn } from '@/components/Components';
+import { config } from 'config';
 import { useAppSelector } from 'hooks/redux';
 
 
@@ -63,7 +63,7 @@ export const MediaClient: NextPage = () => {
   const [uploadType, setUploadType] = useState<TUploadType>('photo/user/avatar')
   const [uploadStatus, setUploadStatus] = useState<TActionButtonStatus>('default')
 
-  const [deleteUploadValue, setDeleteUploadValue] = useState('https://media.nekomi.club/123421')
+  const [deleteUploadValue, setDeleteUploadValue] = useState('')
   const [deleteUploadErrors, setDeleteUploadErrors] = useState<string[]>([])
   const [deleteStatus, setDeleteStatus] = useState<TActionButtonStatus>('default');
 
@@ -117,9 +117,13 @@ export const MediaClient: NextPage = () => {
       formData.append('file', file);
       formData.append('type', uploadType);
 
-      const { data } = await $upload.post(`${config.URL.apiHTTP}/upload`, formData)
+      const { data } = await $upload.post<{ url: string, srt_id?: string }>(`${config.URL.apiHTTP}/upload`, formData)
 
-      setUploadLink(data.url)
+      if (uploadType !== 'video/srt-temp') {
+        setUploadLink(data.url)
+      } else {
+        setUploadLink(`${config.URL.media}/${data.srt_id}`);
+      }
       setUploadStatus('success')
     } catch (e) {
       console.error(e)
@@ -146,18 +150,7 @@ export const MediaClient: NextPage = () => {
     setDeleteStatus('pending')
 
     try {
-      let url: URL | null = null
-
-      // Validate URL
-      try {
-        url = new URL(deleteUploadValue)
-
-        if (url.host !== CONSTS.Domains.nekomi_media) throw new Error('DOMAIN MISSMATCH')
-      } catch (e) {
-        setDeleteUploadErrors([`Неправильний URL або домен не ${CONSTS.Domains.nekomi_media}`])
-      }
-
-      if (!url) return console.debug(`URL is not changed after trycatch`)
+      await $api.delete(`${config.URL.apiHTTP}/upload/${deleteUploadValue}`);
 
       setDeleteStatus('success')
     } catch (e) {
@@ -207,7 +200,7 @@ export const MediaClient: NextPage = () => {
 
             <Menu className="w-full max-w-[330px]" gap={16} settings={{ align: 'left', direction: 'bottom', animation: 'slide', closeOn: 'both' }} stateSetter={setIsTypeSelectOpen}>
               <MenuTrigger className={cn(`patcher-select px-[16px] py-[8px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`)} primary>
-                <p className={cn(`select-none text-white`)}>{uploadTypesOptions.find(el => el.code === uploadType)?.label}</p>
+                <p className={cn(`select-none text-white line-clamp-1 text-ellipsis`)}>{uploadTypesOptions.find(el => el.code === uploadType)?.label}</p>
 
                 <IcoArrow className={cn(`duration-200`, isTypeSelectOpen && 'rotate-[180deg]')} fill={'#fff'} />
               </MenuTrigger>
@@ -231,7 +224,7 @@ export const MediaClient: NextPage = () => {
 
               <button className="patcher-field flex justify-center items-center gap-[16px] bg-grey w-full duration-200 hover:bg-purple focus-visible:bg-purple px-[16px] py-[8px]" onClick={chooseFile}>
                 <IcoUpdate width={32} height={32} />
-                <p className={`text-white ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'вибери файл'}</p>
+                <p className={`text-white break-words line-clamp-1 text-ellipsis ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'вибери файл'}</p>
               </button>
             </div>
           </div>
@@ -265,12 +258,12 @@ export const MediaClient: NextPage = () => {
 
         <div className="flex flex-col gap-[8px]">
           <div className="flex items-center gap-[8px]">
-            <p className="text-white">Посилання</p>
+            <p className="text-white">ID</p>
             <p className="text-[12px] text-lightGrey">Видалення парент аплоадів видалить також його діти</p>
           </div>
 
           <form className="w-full flex items-center gap-[8px]" onSubmit={deleteUploadHandler}>
-            <Input state={deleteUploadValue} stateSetter={setDeleteUploadValue} className="w-full" placeholder={`${config.URL.media}/hello-world-123-45de`} />
+            <Input state={deleteUploadValue} stateSetter={setDeleteUploadValue} className="w-full" placeholder={`hello-world-123-45de`} />
 
             <button type="submit" className={cn('px-[16px] py-[8px] flex items-center gap-[16px] rounded-[2px] bg-grey duration-200 active:scale-[.95]', deleteStatus === 'default' && 'hover:bg-red focus-visible:bg-red')} disabled={deleteStatus !== 'default'}>
               <p className="text-white uppercase">
@@ -286,6 +279,8 @@ export const MediaClient: NextPage = () => {
               {deleteStatus === 'error' && <IcoCross width={24} height={24} />}
             </button>
           </form>
+
+          {deleteStatus === 'success' && <p className="text-red">Аплоад видалено</p>}
         </div>
       </div>
     </div>
