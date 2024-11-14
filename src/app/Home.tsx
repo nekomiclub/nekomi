@@ -18,6 +18,7 @@ import { IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVol
 import { TitleCard } from '../components/Components';
 import { createID } from '../components/handlers';
 import { routes } from '../routes';
+import { useAppSelector } from 'hooks/redux';
 
 
 
@@ -80,6 +81,12 @@ const Home: NextPage<IProps> = ({ data, watchProgress }) => {
 
   const posterScreenRef = useRef<HTMLDivElement>(null)
   const trailerScreenRef = useRef<HTMLDivElement>(null)
+
+  const state = useAppSelector(state => state.user)
+
+  useEffect(() => {
+    console.log(state)
+  }, [state])
 
 
 
