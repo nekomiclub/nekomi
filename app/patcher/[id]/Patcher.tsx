@@ -1213,8 +1213,8 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
 
       await $api.patch(`/title/${title!.id}`, {
         deleteEpisode: {
-          episodeOrder: order,
-          dubID: dubberID
+          order: order,
+          dubberID: dubberID
         }
       })
 
