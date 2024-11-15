@@ -1,21 +1,26 @@
 'use client'
 
-import Image from 'next/image';
-import Link from 'next/link';
+
+
+
+
+
+import '../styles/components/GeneralComponents.scss'
+
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
-import Skeleton from 'react-loading-skeleton';
 import clsx from 'clsx';
 import { NextPage } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import Skeleton from 'react-loading-skeleton';
 
-import { CONSTS, animeGenres, config, prodMode } from '../config';
-import { ITitle } from '../interfaces/ITitle';
-import { IcoAnimeeLogo, IcoArrow, IcoCheckmark, IcoGhost, IcoHome, IcoNekomiLogo, IcoOffline, IcoPlay, IcoStarRating } from '../assets/Icons';
 import { IcoClockOutlined } from '../assets/Clock';
+import { IcoAnimeeLogo, IcoArrow, IcoCheckmark, IcoGhost, IcoHome, IcoNekomiLogo, IcoOffline, IcoPlay, IcoStarRating } from '../assets/Icons';
+import { animeGenres, config, CONSTS, prodMode } from '../config';
+import { ITitle } from '../interfaces/ITitle';
 import { routes } from '../routes';
 
 import CatImg from '../assets/img/oopsIndevCat.png';
-
-import '../styles/components/GeneralComponents.scss'
 
 
 export const LoadingImage = memo(function LoadingImage({ src, alt, className, loading, priority, height, width, parentClassName }: { src: string, alt?: string, className?: string, parentClassName?: string, priority?: boolean, loading?: 'lazy' | 'eager', width: string, height: string }) {

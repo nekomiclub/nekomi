@@ -1,22 +1,27 @@
 
 
-import Link from 'next/link';
+
+
+
+
+
+import './styles.scss';
+
 import { AxiosError } from 'axios';
 import { Metadata } from 'next';
+import Link from 'next/link';
 
-import { $api } from '../../../components/http';
-import { CONSTS, config, devMode, metaObject } from '../../../config';
-import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
-import { IDubber } from '../../../interfaces/IDubber';
-import { IRSCProps } from '../../../interfaces/IRSC';
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/Social';
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon, IcoSupportPrivatbank } from '../../../assets/Support';
+import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { getUTC } from '../../../components/handlers';
+import { $api } from '../../../components/http';
+import { config, CONSTS, devMode, metaObject } from '../../../config';
+import { IDubber } from '../../../interfaces/IDubber';
+import { IRSCProps } from '../../../interfaces/IRSC';
 import { routes } from '../../../routes';
 
 import { DubberHeader } from './ClientComponents';
-
-import './styles.scss';
 
 
 

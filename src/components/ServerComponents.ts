@@ -1,6 +1,6 @@
 
-import { IRoute, routes } from '../routes';
 import { config } from '../config';
+import { IRoute, routes } from '../routes';
 
 
 

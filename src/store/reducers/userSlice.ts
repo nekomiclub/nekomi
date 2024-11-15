@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { IReduxAction } from '../store'
-import { IUserLib, IUserWatchProgress } from '../../interfaces/IUser';
 import { TRoleCapability } from '../../interfaces/IRoles';
+import { IUserLib, IUserWatchProgress } from '../../interfaces/IUser';
+import { IReduxAction } from '../store'
 
 /** User local state */
 export interface IUserState {

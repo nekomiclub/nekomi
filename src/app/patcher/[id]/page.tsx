@@ -2,13 +2,13 @@ import { AxiosError } from 'axios';
 import { Metadata, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers'
 
-import { $api } from '../../../components/http';
 import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
+import { getUTC } from '../../../components/handlers';
+import { $api } from '../../../components/http';
+import { config, devMode, metaObject } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { ITitle } from '../../../interfaces/ITitle';
-import { config, devMode, metaObject } from '../../../config';
-import { getUTC } from '../../../components/handlers';
 
 import Patcher from './Patcher';
 

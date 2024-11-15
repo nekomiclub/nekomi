@@ -1,12 +1,14 @@
 'use client'
 
-import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
-import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
-import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '~/assets/PlayerVolume';
+import { RefObject, useContext, useEffect, useRef } from 'react';
 import { NextPage } from 'next';
 import { Range } from 'react-range';
-import { RefObject, useContext, useEffect, useRef } from 'react';
+import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
+
+import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '~/assets/PlayerVolume';
 import { cn } from '../Components';
+
+import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
 
 
 

@@ -1,11 +1,13 @@
 'use client'
 
-import { IKekwPlayerContextProps, KekwPlayerContext, secondsToReadable } from './KekwPlayer';
-import { ITitleEpisode, ITitleEpisodeMeta } from '~/interfaces/ITitle';
-import { LoadingImage, cn } from '../Components';
-import { NextPage } from 'next';
 import { ReactNode, useContext, useEffect, useState } from 'react';
+import { NextPage } from 'next';
+
+import { ITitleEpisode, ITitleEpisodeMeta } from '~/interfaces/ITitle';
+import { cn,LoadingImage } from '../Components';
 import { timestampToDate, wordDeclination } from '../handlers';
+
+import { IKekwPlayerContextProps, KekwPlayerContext, secondsToReadable } from './KekwPlayer';
 
 interface IKekwPlayerScreenProps {
 

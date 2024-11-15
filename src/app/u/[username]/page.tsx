@@ -2,16 +2,16 @@ import axios, { AxiosError } from 'axios';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers'
 
-import { $api } from '../../../components/http';
-import { CONSTS, config, devMode, metaObject } from '../../../config';
-import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
-import { IRSCProps } from '../../../interfaces/IRSC';
-import { ISessionCookieData } from '../../../interfaces/ITokenData';
-import { IUser } from '../../../interfaces/IUser';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoStack, IcoWatched } from '../../../assets/Icons';
+import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
 import { decodeToken, getUTC, wordDeclination } from '../../../components/handlers';
+import { $api } from '../../../components/http';
+import { config, CONSTS, devMode, metaObject } from '../../../config';
+import { IRSCProps } from '../../../interfaces/IRSC';
+import { ISessionCookieData } from '../../../interfaces/ITokenData';
+import { IUser } from '../../../interfaces/IUser';
 import { routes } from '../../../routes';
 
 import { UserHeader, UserSectionLibs } from './ClientComponents';

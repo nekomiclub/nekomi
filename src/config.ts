@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
 
 import CSRF_TOKEN from '../secrets/CSRF'
+
 import { TAnimeGenre } from './interfaces/ITitle';
 
 

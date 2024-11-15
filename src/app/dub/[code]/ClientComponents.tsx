@@ -2,14 +2,14 @@
 
 
 
-import { NextPage } from 'next';
 import { useState } from 'react';
+import { NextPage } from 'next';
 
-import Tooltip from '../../../components/UI/Tooltip';
-import { IDubber } from '../../../interfaces/IDubber';
 import { IcoChain } from '../../../assets/Icons';
-import { LoadingImage, copyToClipboard } from '../../../components/Components';
+import { copyToClipboard,LoadingImage } from '../../../components/Components';
+import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
+import { IDubber } from '../../../interfaces/IDubber';
 
 
 

@@ -1,16 +1,21 @@
 'use client'
 
 
-import Link from 'next/link';
-import { NextPage } from 'next';
 
-import { CONSTS } from '../config';
-import { IcoNekomiLogo } from '../assets/Icons';
-import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
-import { routes } from '../routes';
-import { useAppSelector } from '../hooks/redux';
+
+
+
 
 import '../styles/components/Footer.scss'
+
+import { NextPage } from 'next';
+import Link from 'next/link';
+
+import { IcoNekomiLogo } from '../assets/Icons';
+import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
+import { CONSTS } from '../config';
+import { useAppSelector } from '../hooks/redux';
+import { routes } from '../routes';
 
 
 const Footer: NextPage = (props) => {

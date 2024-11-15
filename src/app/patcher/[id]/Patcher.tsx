@@ -1,30 +1,34 @@
 'use client'
 
 
-import Link from 'next/link';
-import gsap from 'gsap';
-import { AxiosError } from 'axios';
-import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
-import { NextPage } from 'next';
+
+
+
+
+
+import './styles.scss'
+
 import { createContext, memo, useContext, useEffect, useRef, useState } from 'react';
+import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
+import { AxiosError } from 'axios';
+import gsap from 'gsap';
+import { NextPage } from 'next';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import Tooltip from '../../../components/UI/Tooltip';
-import { $api } from '../../../components/http';
-import { AnimeAgeRates, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
-import { CONSTS, config, prodMode } from '../../../config';
-import { IDubber } from '../../../interfaces/IDubber';
+import { useAppSelector } from '~/hooks/redux';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoNekomiLogo, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
-import { LoadingImage, cn } from '../../../components/Components';
+import { cn,LoadingImage } from '../../../components/Components';
 import { getUTC, wordDeclination } from '../../../components/handlers';
+import { $api } from '../../../components/http';
+import Tooltip from '../../../components/UI/Tooltip';
+import { config, CONSTS, prodMode } from '../../../config';
+import { IDubber } from '../../../interfaces/IDubber';
+import { AnimeAgeRates, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
 import { routes } from '../../../routes';
 
 import { IPatcherSelectOption, PatcherErrorWrapper, PatcherField, PatcherSelect } from './Components';
 import { PactherStack } from './PatcherStack';
-
-import { useAppSelector } from '~/hooks/redux';
-
-import './styles.scss'
 
 
 

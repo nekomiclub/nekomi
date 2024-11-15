@@ -1,26 +1,26 @@
 'use client'
 
+import './styles.scss';
 
+import { createContext, RefObject, useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
-import { RefObject, createContext, useEffect, useRef, useState } from 'react';
 import { getImageSize } from 'react-image-size'
 
-import * as PlayerScreen from './Screens';
-import { $api } from '../http';
+import { useAppSelector } from '../../hooks/redux';
 import { IDubber } from '../../interfaces/IDubber';
 import { ITitle, ITitleEpisode } from '../../interfaces/ITitle';
+import { $api } from '../http';
+
 import { KekwPlayerFullscreen } from './Fullscreen';
 import { KekwPlayerMenu } from './Menu';
 import { KekwPlayerPiP } from './PiP';
 import { KekwPlayerPlay } from './Play';
+import * as PlayerScreen from './Screens';
 import { KekwPlayerSettings } from './Settings';
 import { KekwPlayerTimeline } from './Timeline';
 import { KekwPlayerVolume } from './Volume';
-import { useAppSelector } from '../../hooks/redux';
-
-import './styles.scss';
 
 
 
@@ -32,8 +32,6 @@ export type TKekwPlayerScreen = 'none'
   | 'episode_end'
   | 'episode_last'
   | 'title_end'
-
-
 
 export interface IKekwPlayerLocalDataItem {
   id: string,

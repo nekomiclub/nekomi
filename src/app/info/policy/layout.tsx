@@ -1,5 +1,5 @@
-import { ILayoutProps } from '../../../interfaces/IRSC'
 import { metaObject } from '../../../config'
+import { ILayoutProps } from '../../../interfaces/IRSC'
 
 export const metadata = metaObject({
   title: 'Політика конфіденційності / Privacy policy'

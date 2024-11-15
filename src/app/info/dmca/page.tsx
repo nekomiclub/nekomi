@@ -1,11 +1,11 @@
 'use client'
 
-import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
+import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { CONSTS } from '../../../config';
 import { IcoTranslations } from '../../../assets/Icons';
+import { CONSTS } from '../../../config';
 
 
 

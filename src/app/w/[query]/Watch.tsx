@@ -1,33 +1,37 @@
 'use client'
 
 
-import * as DropMenu from '@fullkekw/fkw-menu';
-import Link from 'next/link';
-import { NextPage } from 'next';
+
+
+
+
+
+import './styles.scss'
+
 import { useEffect, useMemo, useState } from 'react';
+import * as DropMenu from '@fullkekw/fkw-menu';
+import { NextPage } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import KekwPlayer from '../../../components/KekwPlayer/KekwPlayer';
-import Tooltip from '../../../components/UI/Tooltip';
-import { $api } from '../../../components/http';
-import { IDubber } from '../../../interfaces/IDubber';
-import { ITitle } from '../../../interfaces/ITitle';
-import { IUserLib, TUserLibType } from '../../../interfaces/IUser';
-import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoFolderAdd } from '../../../assets/Folder';
 import { IcoHeartFilled } from '../../../assets/Heart';
+import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
 import { LoadingImage } from '../../../components/Components';
-import { animeGenres, config, genresDescription } from '../../../config';
 import { getUTC, parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
-import { routes } from '../../../routes';
+import { $api } from '../../../components/http';
+import KekwPlayer from '../../../components/KekwPlayer/KekwPlayer';
+import Tooltip from '../../../components/UI/Tooltip';
+import { animeGenres, config, genresDescription } from '../../../config';
 import { useAppSelector } from '../../../hooks/redux';
+import { IDubber } from '../../../interfaces/IDubber';
+import { ITitle } from '../../../interfaces/ITitle';
+import { IUserLib, TUserLibType } from '../../../interfaces/IUser';
+import { routes } from '../../../routes';
 
 import IndevCat from '../../../assets/img/oopsIndevCat.png';
-
-import Image from 'next/image';
-
-import './styles.scss'
 
 
 

@@ -1,8 +1,10 @@
-import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
-import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '~/assets/PlayerFullscreen';
-import { NextPage } from 'next';
-import { cn } from '../Components';
 import { useContext } from 'react';
+import { NextPage } from 'next';
+
+import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '~/assets/PlayerFullscreen';
+import { cn } from '../Components';
+
+import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
 
 export const KekwPlayerFullscreen: NextPage = () => {
   const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;

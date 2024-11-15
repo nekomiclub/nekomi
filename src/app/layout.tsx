@@ -2,32 +2,28 @@
 
 import '@fullkekw/fkw-menu/css'
 import '@fullkekw/fkw-popup/css'
-
 import 'swiper/css';
+import 'react-loading-skeleton/dist/skeleton.css'
+import '../styles/index.scss'
+import '../styles/globals.css';
 
-import axios, { AxiosError } from 'axios';
 import { Analytics } from '@vercel/analytics/react'
-import { Montserrat } from 'next/font/google'
-import { SkeletonTheme } from 'react-loading-skeleton';
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import axios, { AxiosError } from 'axios';
+import { Montserrat } from 'next/font/google'
 import { cookies, headers } from 'next/headers';
-
-import * as Provider from '../components/Providers'
-import Footer from '../components/Footer';
-import Header from '../components/Header';
-import { ILayoutProps } from '../interfaces/IRSC';
-import { RenamePopup, ServerUnavailable } from '../components/Components';
-import { config, metaObject } from '../config';
-
+import { SkeletonTheme } from 'react-loading-skeleton';
 
 import { $api } from '~/components/http';
+import { TRoleCapability } from '~/interfaces/IRoles';
 import { IUser } from '~/interfaces/IUser';
 import { IUserState } from '~/store/reducers/userSlice';
-import { TRoleCapability } from '~/interfaces/IRoles';
-
-import '../styles/globals.css';
-import '../styles/index.scss'
-import 'react-loading-skeleton/dist/skeleton.css'
+import { RenamePopup, ServerUnavailable } from '../components/Components';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
+import * as Provider from '../components/Providers'
+import { config, metaObject } from '../config';
+import { ILayoutProps } from '../interfaces/IRSC';
 
 
 export const metadata = metaObject({})

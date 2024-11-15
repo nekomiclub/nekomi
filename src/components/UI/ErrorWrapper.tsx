@@ -1,5 +1,6 @@
-import { IcoGhost } from '~/assets/Icons'
 import { NextPage } from 'next'
+
+import { IcoGhost } from '~/assets/Icons'
 import { cn } from '../Components'
 
 

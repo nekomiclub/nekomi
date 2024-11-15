@@ -1,22 +1,22 @@
 'use client'
 
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
 import * as loader from '@uiball/loaders';
+import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
-import { NextPage } from 'next';
-import { Swiper, SwiperSlide } from 'swiper/react';
 import { useIdleTimer } from 'react-idle-timer';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { CONSTS, config } from '../config';
-import { IKekwPlayerLocalDataItem, secondsToReadable } from '../components/KekwPlayer/KekwPlayer';
-import { ITitle } from '../interfaces/ITitle';
-import { IUserWatchProgress } from '../interfaces/IUser';
 import { IcoClockOutlined } from '../assets/Clock';
 import { IcoExternalLink, IcoGhost, IcoPlay, IcoStar, IcoStarRating } from '../assets/Icons';
 import { IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
 import { TitleCard } from '../components/Components';
 import { createID } from '../components/handlers';
+import { IKekwPlayerLocalDataItem, secondsToReadable } from '../components/KekwPlayer/KekwPlayer';
+import { config,CONSTS } from '../config';
+import { ITitle } from '../interfaces/ITitle';
+import { IUserWatchProgress } from '../interfaces/IUser';
 import { routes } from '../routes';
 
 

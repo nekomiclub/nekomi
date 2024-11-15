@@ -1,9 +1,11 @@
-import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
+import { useContext } from 'react';
+import { NextPage } from 'next';
+
 import { IcoPlay } from '~/assets/Icons';
 import { IcoPlayerPause } from '~/assets/Player';
-import { NextPage } from 'next';
 import { cn } from '../Components';
-import { useContext } from 'react';
+
+import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
 
 
 

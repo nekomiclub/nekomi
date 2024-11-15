@@ -3,13 +3,13 @@ import { NextPage } from 'next';
 import * as IcoClock from '../../../assets/Clock'
 import * as IcoFolder from '../../../assets/Folder'
 import * as IcoHeart from '../../../assets/Heart'
+import * as Icons from '../../../assets/Icons'
 import * as IcoPlayer from '../../../assets/Player'
 import * as IcoPlayerFullscreen from '../../../assets/PlayerFullscreen'
 import * as IcoPlayerPiP from '../../../assets/PlayerPiP'
 import * as IcoPlayerVolume from '../../../assets/PlayerVolume'
 import * as IcoSocial from '../../../assets/Social'
 import * as IcoSupport from '../../../assets/Support'
-import * as Icons from '../../../assets/Icons'
 
 const page: NextPage = (props) => {
   return (
