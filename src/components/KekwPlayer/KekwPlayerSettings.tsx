@@ -1,10 +1,10 @@
 import gsap from 'gsap';
-import { ITitleEpisode } from '@/interfaces/ITitle';
-import { IcoArrow, IcoSettings, IcoSpeed } from '@/assets/Icons';
-import { IcoPlayerCenter, IcoPlayerQuality, IcoPlayerStretch } from '@/assets/Player';
+import { ITitleEpisode } from '~/interfaces/ITitle';
+import { IcoArrow, IcoSettings, IcoSpeed } from '~/assets/Icons';
+import { IcoPlayerCenter, IcoPlayerQuality, IcoPlayerStretch } from '~/assets/Player';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { RefObject, memo, useEffect, useRef, useState } from 'react';
-import { TVideoQuality } from '@/interfaces/Interfaces';
+import { TVideoQuality } from '~/interfaces/Interfaces';
 import { cn } from '../Components';
 import { parseVideoQuality } from '../handlers';
 

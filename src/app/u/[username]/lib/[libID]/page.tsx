@@ -11,8 +11,8 @@ import { ITitle } from '../../../../../interfaces/ITitle';
 import { IUser } from '../../../../../interfaces/IUser';
 import { UserHeader } from '../../ClientComponents';
 import { decodeToken, getUTC } from '../../../../../components/handlers';
-import { routes } from '../../../../../routes';
 
+import { Routes } from '~/routes';
 import { UserLib, UserLibOthers } from './ClientComponents';
 
 
@@ -54,7 +54,7 @@ export async function generateMetadata(
         description,
         type: 'article',
         locale: 'uk_UA',
-        url: `${config.URL.baseURL}${routes.user_list.path}/${lib.id}`,
+        url: `${config.URL.baseURL}${Routes.user_list.path}/${lib.id}`,
         siteName: CONSTS.Domains.nekomi.split('.')[0],
       }
     })

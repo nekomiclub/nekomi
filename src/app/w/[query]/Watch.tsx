@@ -4,7 +4,7 @@
 import * as DropMenu from '@fullkekw/fkw-menu';
 import Link from 'next/link';
 import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 import KekwPlayer from '../../../components/KekwPlayer/KekwPlayer';
@@ -12,7 +12,7 @@ import Tooltip from '../../../components/UI/Tooltip';
 import { $api } from '../../../components/http';
 import { IDubber } from '../../../interfaces/IDubber';
 import { ITitle } from '../../../interfaces/ITitle';
-import { IUser, IUserLib, TUserLibType } from '../../../interfaces/IUser';
+import { IUserLib, TUserLibType } from '../../../interfaces/IUser';
 import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoFolderAdd } from '../../../assets/Folder';
@@ -24,6 +24,8 @@ import { routes } from '../../../routes';
 import { useAppSelector } from '../../../hooks/redux';
 
 import IndevCat from '../../../assets/img/oopsIndevCat.png';
+
+import Image from 'next/image';
 
 import './styles.scss'
 
@@ -39,52 +41,23 @@ interface IProps {
 
 
 const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
-  const state = useAppSelector(state => state.user);
-  const [userLibs, setUserLibs] = useState<IUserLib[]>([])
+  const user = useAppSelector(state => state.user);
+
   const [inLibs, setInLibs] = useState<TUserLibType[]>([])
-  const [isAuth, setIsAuth] = useState(false);
-  const [isEditor, setIsEditor] = useState(false);
+  const [isAuth] = useState<boolean>(Boolean(user.id));
+  const [canEditTitle, setCanEditTitle] = useState<boolean>(false);
 
-  // Initial
-  useEffect(() => {
 
+
+  // Set in which libs title is & parse capabilities
+  useMemo(() => {
+    const { capabilities } = user;
+
+    setInLibs(user.libs.filter(el => el.titles.includes(title.id)).map(el => el.type))
+    setCanEditTitle(capabilities.includes('root') || capabilities.includes('editor') || capabilities.includes('dubber'));
   }, [])
 
-  // Fetch user libs
-  useEffect(() => {
-    if (!isAuth) return;
 
-    (async function () {
-      // Set user libs
-      const { data } = await $api.get<{ user: IUser }>(`/user/${state.id}`, {
-        params: {
-          detailed: true
-        }
-      })
-
-      const user = data.user
-      setUserLibs(user.libs);
-    })()
-  }, [isAuth])
-
-  // Define is user authorized
-  useEffect(() => {
-    setIsAuth(Boolean(state.id))
-
-    const { capabilities } = state;
-    if (capabilities.includes('editor') || capabilities.includes('dubber') || capabilities.includes('root')) setIsEditor(true);
-  }, [state])
-
-  // Set in which libs title is
-  useEffect(() => {
-    const tmpInLibs: TUserLibType[] = []
-
-    userLibs.forEach(el => {
-      el.titles.includes(title.id) ? tmpInLibs.push(el.type) : null
-    })
-
-    setInLibs(tmpInLibs)
-  }, [userLibs])
 
   return (
     <>
@@ -93,14 +66,14 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
         <div className="wrapper !mb-[60px]">
           {/* Background */}
           <div className="w-full h-full absolute top-0 left-0 z-[1]">
-            <LoadingImage src={title.poster} width="100%" height="100%" loading="eager" />
+            <Image src={title.poster} fill alt="..." loading="eager" />
             <div className="absolute top-0 left-0 w-full h-full z-[2] bg-dark/[.8] backdrop-blur-[200px]"></div>
           </div>
 
           <div className="relative z-[3] flex flex-row gap-[24px] max-[890px]:!flex-col max-[890px]:items-center pt-[132px] pb-[40px]">
             <div className="watch-poster_wrapper flex flex-col gap-[8px] max-[472px]:w-full">
               <div className="watch-poster relative w-[500px] h-[700px] shrink-0 max-[1200px]:w-[350px] max-[1200px]:h-[500px] max-[472px]:w-full">
-                <LoadingImage src={title.poster} width="100%" height="100%" loading="eager" priority parentClassName="rounded-[4px] overflow-hidden" />
+                <Image src={title.poster} fill alt="..." loading="eager" priority className="rounded-[4px] overflow-hidden" />
 
                 <Link href={title.poster} target="_blank" className="watch-poster_link opacity-0 invisible duration-200 w-full h-full bg-dark/[.4] absolute top-0 left-0 flex justify-center items-center z-[3]">
                   <Tooltip content="Відкрити повний постер">
@@ -111,21 +84,21 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
 
               <DropMenu.Menu className="w-full" disabled={!isAuth} settings={{ align: 'stretch' }}>
                 <DropMenu.MenuTrigger className="w-full" primary>
-                  <ManageLibTrigger isAuth={isAuth} libs={userLibs} inLibs={inLibs} />
+                  <ManageLibTrigger isAuth={isAuth} libs={user.libs} inLibs={inLibs} />
                 </DropMenu.MenuTrigger>
 
                 <DropMenu.MenuWrapper className="!w-full bg-darkGrey flex flex-col">
-                  <ManageLib type="favorite" lib={userLibs.find(el => el.type === 'favorite')!} isInLib={inLibs.includes('favorite')} />
-                  <ManageLib type="watched" lib={userLibs.find(el => el.type === 'watched')!} isInLib={inLibs.includes('watched')} />
-                  <ManageLib type="watching" lib={userLibs.find(el => el.type === 'watching')!} isInLib={inLibs.includes('watching')}
-                    hint={state.isTelegramLinked ? 'Ти отримаєш сповіщення про нові серії в телеграм' : 'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про нові серії'} />
-                  <ManageLib type="plans" lib={userLibs.find(el => el.type === 'plans')!} isInLib={inLibs.includes('plans')}
-                    hint={state.isTelegramLinked ? title.status === 'announcement' && title.year === getUTC().y ? 'Ти отримаєш сповіщення про початок трансляції в телеграм' : undefined : 'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про початок трансляції'} />
-                  <ManageLib type="delayed" lib={userLibs.find(el => el.type === 'delayed')!} isInLib={inLibs.includes('delayed')} />
+                  <ManageLib type="favorite" lib={user.libs.find(el => el.type === 'favorite')!} isInLib={inLibs.includes('favorite')} />
+                  <ManageLib type="watched" lib={user.libs.find(el => el.type === 'watched')!} isInLib={inLibs.includes('watched')} />
+                  <ManageLib type="watching" lib={user.libs.find(el => el.type === 'watching')!} isInLib={inLibs.includes('watching')}
+                    hint={user.isTelegramLinked ? 'Ти отримаєш сповіщення про нові серії в телеграм' : 'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про нові серії'} />
+                  <ManageLib type="plans" lib={user.libs.find(el => el.type === 'plans')!} isInLib={inLibs.includes('plans')}
+                    hint={user.isTelegramLinked ? title.status === 'announcement' && title.year === getUTC().y ? 'Ти отримаєш сповіщення про початок трансляції в телеграм' : undefined : 'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про початок трансляції'} />
+                  <ManageLib type="delayed" lib={user.libs.find(el => el.type === 'delayed')!} isInLib={inLibs.includes('delayed')} />
                 </DropMenu.MenuWrapper>
               </DropMenu.Menu>
 
-              {isEditor && <Link href={`${config.URL.baseURL}${routes.patcher_title.path}/${title.id}`} className={`px-[16px] py-[12px] flex gap-[16px] justify-center rounded-[2px] bg-darkGrey hover:bg-grey duration-200`}>
+              {canEditTitle && <Link href={`${config.URL.baseURL}${routes.patcher_title.path}/${title.id}`} className={`px-[16px] py-[12px] flex gap-[16px] justify-center rounded-[2px] bg-darkGrey hover:bg-grey duration-200`}>
                 <IcoUpdate width={24} height={24} />
                 <p className="text-white font-bold uppercase">оновити</p>
               </Link>}
@@ -202,9 +175,12 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
 
   function ManageLibTrigger({ isAuth, inLibs }: { isAuth: boolean, libs: IUserLib[], inLibs: TUserLibType[] }) {
     const pathname = usePathname();
+
     const [label, setLabel] = useState('теки')
 
-    useEffect(() => {
+
+
+    useMemo(() => {
       if (inLibs.includes('watching')) {
         setLabel('переглядаємих')
       } else if (inLibs.includes('watched')) {
@@ -219,6 +195,8 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
         setLabel('відкладених')
       }
     }, [inLibs])
+
+
 
     return (
       <div className={`px-[16px] py-[12px] flex gap-[16px] justify-center rounded-[2px] w-full ${inLibs.length ? 'bg-green' : 'bg-darkGrey'} hover:bg-grey duration-200`}>
@@ -272,17 +250,17 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
 
     async function changeLib() {
       try {
-        await $api.patch('/user', {
-          method: 'editFolderItem',
-          titleId: title.id,
-          folderId: lib.id
-        })
-
         if (inLibs.includes(type)) {
           setInLibs(inLibs.filter(el => el !== type))
         } else {
           setInLibs([...inLibs, type])
         }
+
+        await $api.patch('/user', {
+          method: 'editFolderItem',
+          titleId: title.id,
+          folderId: lib.id
+        })
       } catch (e) {
         console.error(e)
       }

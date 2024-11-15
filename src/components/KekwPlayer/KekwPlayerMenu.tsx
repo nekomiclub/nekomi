@@ -1,8 +1,8 @@
 import * as DropMenu from '@fullkekw/fkw-menu';
-import { IDubber } from 'interfaces/IDubber'
+import { IDubber } from '~/interfaces/IDubber'
 import { IKekwPlayerLocalDataItem } from './KekwPlayer'
-import { ITitleEpisode } from '@/interfaces/ITitle'
-import { IcoPlayerList, IcoPlayerNext } from '@/assets/Player'
+import { ITitleEpisode } from '~/interfaces/ITitle'
+import { IcoPlayerList, IcoPlayerNext } from '~/assets/Player'
 import { LoadingImage, cn } from '../Components'
 import { memo, useEffect, useState } from 'react'
 

@@ -6,16 +6,16 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
 import { useMemo, useRef, useState } from 'react';
 
-import ErrorWrapper from '@/components/UI/ErrorWrapper';
-import GroupLabel from '@/components/UI/GroupLabel';
-import Input from '@/components/UI/Input';
-import { $api, $upload } from '@/components/http';
+import ErrorWrapper from '~/components/UI/ErrorWrapper';
+import GroupLabel from '~/components/UI/GroupLabel';
+import Input from '~/components/UI/Input';
+import { $api, $upload } from '~/components/http';
 import { IPatcherSelectOption } from '../[id]/Components';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoStar, IcoUpdate, IcoUser } from '../../../assets/Icons';
-import { IcoClockOutlined } from '@/assets/Clock';
-import { cn } from '@/components/Components';
-import { config } from 'config';
-import { useAppSelector } from 'hooks/redux';
+import { IcoClockOutlined } from '~/assets/Clock';
+import { cn } from '~/components/Components';
+import { config } from '~/config';
+import { useAppSelector } from '~/hooks/redux';
 
 
 

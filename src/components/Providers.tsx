@@ -14,7 +14,7 @@ import { setupStore } from '../store/store'
 
 import { $api } from './http';
 import { createID } from './handlers';
-import { useAppDispatch } from 'hooks/redux';
+import { useAppDispatch } from '../hooks/redux';
 
 
 
@@ -66,17 +66,19 @@ export const State: NextPage<IStateProviderProps> = ({ children, user }) => {
       user
     }
   })}>
-    <Storage />
+    <SetupIntertnals />
 
     {children}
   </Provider>
 }
 
 /** Setup redux internals state */
-const Storage: NextPage = () => {
+const SetupIntertnals: NextPage = () => {
   const dispatch = useAppDispatch();
 
   const [ws, setWs] = useState<WebSocket>()
+
+
 
   // Establish websocket connection
   useEffect(() => {
@@ -162,6 +164,8 @@ const Storage: NextPage = () => {
       ws.send(JSON.stringify(payload))
     }
   }, [ws])
+
+
 
   return <></>
 }

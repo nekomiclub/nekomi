@@ -39,6 +39,7 @@ type TRoute = 'home'
   | 'patcher_title'
   | 'patcher_media'
 
+/** @deprecated use Routes instead */
 export const routes: { [key in TRoute]: IRoute } = {
   home: {
     path: '/'
@@ -70,12 +71,9 @@ export const routes: { [key in TRoute]: IRoute } = {
     capabilitiesRequired: ['dubber', 'editor'],
     capabilitiesRequiredMode: 'OR'
   },
-  /** Contain 2 dynamic props
-   * @prop 1 username
-   * @prop 2 libID
-   */
+  /** @extends /user */
   user_list: {
-    path: '/u/*/list/*',
+    path: '/list',
     dynamic: true
   },
   user_profile: {
@@ -87,3 +85,5 @@ export const routes: { [key in TRoute]: IRoute } = {
     dynamic: true,
   }
 }
+
+export const Routes = routes;

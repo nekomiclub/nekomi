@@ -24,17 +24,19 @@
         "name": "next"
       }
     ],
-    "baseUrl": "src/",
     "paths": {
-      "@/components/*": [
-        "components/*"
+      "~/components/*": [
+        "./src/components/*"
       ],
-      "@/assets/*": [
-        "assets/*"
+      "~/assets/*": [
+        "./src/assets/*"
       ],
-      "@/interfaces/*": [
-        "interfaces/*"
-      ]
+      "~/interfaces/*": [
+        "./src/interfaces/*"
+      ],
+      "~/*": [
+        "./src/*"
+      ],
     }
   },
   "include": [

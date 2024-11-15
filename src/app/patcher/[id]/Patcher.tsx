@@ -22,7 +22,7 @@ import { routes } from '../../../routes';
 import { IPatcherSelectOption, PatcherErrorWrapper, PatcherField, PatcherSelect } from './Components';
 import { PactherStack } from './PatcherStack';
 
-import { useAppSelector } from 'hooks/redux';
+import { useAppSelector } from '~/hooks/redux';
 
 import './styles.scss'
 

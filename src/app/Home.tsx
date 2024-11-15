@@ -3,7 +3,7 @@
 import * as loader from '@uiball/loaders';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { memo, useEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { NextPage } from 'next';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useIdleTimer } from 'react-idle-timer';
@@ -18,7 +18,6 @@ import { IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVol
 import { TitleCard } from '../components/Components';
 import { createID } from '../components/handlers';
 import { routes } from '../routes';
-import { useAppSelector } from 'hooks/redux';
 
 
 
@@ -46,27 +45,35 @@ type TCategory = keyof IHomeWrapped;
 
 
 const WatchHeadliner: NextPage<{ className?: string, watchProgress?: IUserWatchProgress, headliner: ITitle }> = ({ headliner, watchProgress, className }) => {
-  const [label, setLabel] = useState('розпочати перегляд')
+  const DEFAULT_LABEL = 'розпочати перегляд'
+  const [label, setLabel] = useState(DEFAULT_LABEL)
 
+  // Set label by user watch progress
+  useMemo(() => {
+    if (watchProgress) {
+      setLabel(`продовжити (${watchProgress.episodeOrder} серія, ${secondsToReadable(watchProgress.progress).pretty})`);
+    }
+  }, [])
+
+  // Set label by user local storage
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    // Skip if label already setted-up
+    if (label === DEFAULT_LABEL) return;
 
     const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
     const localCurrent = localData.find(el => el.id === headliner.id);
 
-    if (watchProgress) {
-      setLabel(`продовжити (${watchProgress.episodeOrder} серія, ${secondsToReadable(watchProgress.progress).pretty})`);
-    } else if (localCurrent) {
+    if (localCurrent) {
       setLabel(`продовжити (${localCurrent.ep} серія, ${secondsToReadable(localCurrent.moment).pretty})`);
-    } else {
-      setLabel('розпочати перегляд')
     }
   }, [])
+
+
 
   return (
     <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${headliner.code}`} className={`flex items-center justify-center gap-[16px] bg-grey px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback ${className ? className : ''} max-[784px]:px-[16px] max-[784px]:py-[12px]`} tabIndex={0}>
       <IcoPlay width={40} height={40} />
-      <p className="text-white text-[24px] uppercase max-[784px]:text-[16px]" suppressHydrationWarning>{label}</p>
+      <p className="text-white text-[24px] uppercase max-[784px]:text-[16px]">{label}</p>
     </Link>
   )
 }
@@ -81,12 +88,6 @@ const Home: NextPage<IProps> = ({ data, watchProgress }) => {
 
   const posterScreenRef = useRef<HTMLDivElement>(null)
   const trailerScreenRef = useRef<HTMLDivElement>(null)
-
-  const state = useAppSelector(state => state.user)
-
-  useEffect(() => {
-    console.log(state)
-  }, [state])
 
 
 

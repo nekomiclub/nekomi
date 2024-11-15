@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { IReduxAction } from '../store'
-import { IUserWatchProgress } from '../../interfaces/IUser';
+import { IUserLib, IUserWatchProgress } from '../../interfaces/IUser';
 import { TRoleCapability } from '../../interfaces/IRoles';
 
 /** User local state */
@@ -13,6 +13,7 @@ export interface IUserState {
   capabilities: TRoleCapability[]
   watchProgress: IUserWatchProgress[]
   loaded: boolean
+  libs: IUserLib[]
   isTelegramLinked: boolean
 }
 
@@ -24,6 +25,7 @@ export const userStateDefault: IUserState = {
   roles: [],
   capabilities: [],
   watchProgress: [],
+  libs: [],
   loaded: false,
   isTelegramLinked: false
 }

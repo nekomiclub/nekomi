@@ -17,11 +17,13 @@ import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { ILayoutProps } from '../interfaces/IRSC';
 import { RenamePopup, ServerUnavailable } from '../components/Components';
-import { config, metaObject } from '../config';
-import { $api } from '@/components/http';
-import { IUser } from '@/interfaces/IUser';
-import { IUserState } from 'store/reducers/userSlice';
-import { TRoleCapability } from '@/interfaces/IRoles';
+import { config, metaObject } from '../config';
+
+
+import { $api } from '~/components/http';
+import { IUser } from '~/interfaces/IUser';
+import { IUserState } from '~/store/reducers/userSlice';
+import { TRoleCapability } from '~/interfaces/IRoles';
 
 import '../styles/globals.css';
 import '../styles/index.scss'
@@ -75,7 +77,8 @@ export default async function Layout({ children, params }: ILayoutProps) {
         username: data.user.username,
         watchProgress: data.user.watchProgress,
         loaded: true,
-        capabilities: data.parsedRoles
+        capabilities: data.parsedRoles,
+        libs: data.user.libs
       }
     } catch (e) {
       if (e instanceof AxiosError && e.status && e.status > 500) {

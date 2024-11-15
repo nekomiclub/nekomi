@@ -4,7 +4,7 @@
 import jwt from 'jsonwebtoken';
 
 import { TAnimeSeason } from '../interfaces/ITitle';
-import { TVideoQuality } from '@/interfaces/Interfaces';
+import { TVideoQuality } from '~/interfaces/Interfaces';
 
 /** Parse country.
  * @example
