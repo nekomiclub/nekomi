@@ -3,33 +3,28 @@
 
 import * as loader from '@uiball/loaders';
 import { AxiosError } from 'axios';
-import { IRenderThumbParams, IRenderTrackParams } from 'react-range/lib/types';
 import { NextPage } from 'next';
-import { Range } from 'react-range';
 import { RefObject, createContext, useEffect, useRef, useState } from 'react';
 import { getImageSize } from 'react-image-size'
 
+import * as PlayerScreen from './Screens';
 import { $api } from '../http';
 import { IDubber } from '../../interfaces/IDubber';
 import { ITitle, ITitleEpisode } from '../../interfaces/ITitle';
-import { IcoPlay, IcoServerUnavailable } from '../../assets/Icons';
-import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '../../assets/PlayerFullscreen';
-import { IcoPlayerPause } from '../../assets/Player';
-import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '../../assets/PlayerPiP';
-import { IcoPlayerVolumeMin, IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../../assets/PlayerVolume';
-import { KekwPlayerMenu } from './KekwPlayerMenu';
+import { KekwPlayerFullscreen } from './Fullscreen';
+import { KekwPlayerMenu } from './Menu';
+import { KekwPlayerPiP } from './PiP';
+import { KekwPlayerPlay } from './Play';
+import { KekwPlayerSettings } from './Settings';
+import { KekwPlayerTimeline } from './Timeline';
+import { KekwPlayerVolume } from './Volume';
 import { useAppSelector } from '../../hooks/redux';
 
-import { KekwPlayerSettings } from './KekwPlayerSettings';
-
-import * as PlayerScreen from './KekwPlayerScreens';
-
-import './KekwPlayer.scss';
+import './styles.scss';
 
 
 
 type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
-type TEndScreen = 'clear' | 'epEnded' | 'titleEnded' | 'lastEp';
 type TStage = 'setup' | 'operational'
 
 export type TKekwPlayerScreen = 'none'
@@ -64,12 +59,22 @@ export interface IKekwPlayerContextProps {
   //* CONSTS
   title: ITitle
   dubbers: IDubber[]
+  duration: number
 
   //* POSSIBLE UNDEFINED CONSTS
   watchProgress?: IKekwPlayerLocalDataItem
 
+  //* VIDEO STATES
+  isMuted: boolean
+  isPlaying: boolean
+  isFullscreen: boolean
+  isPiP: boolean
+  isPreviewOld: boolean
+  isVideoProcessed: boolean
+
   //* REFS
   videoRef: RefObject<HTMLVideoElement>
+  playerRef: RefObject<HTMLDivElement>
 
   //* HANDLERS
   loadProgress: () => void
@@ -82,6 +87,12 @@ export interface IKekwPlayerContextProps {
   episode: ITitleEpisode
   setEpisode: (episode: ITitleEpisode) => void
 
+  volume: number
+  setVolume: (val: number) => void
+
+  moment: number
+  setMoment: (val: number) => void
+  changeMoment: (val: number) => void
 }
 
 export const KekwPlayerContext = createContext<Partial<IKekwPlayerContextProps>>({})
@@ -96,7 +107,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
 
   // Player data
-  const [volume, setVolume] = useState(100)
+  const [volume, setVolume] = useState<number>(100) // 0 - 100
   const [episode, setEpisode] = useState<ITitleEpisode>(title.episodes[0])
   const [duration, setDuration] = useState(1)
   const [moment, setMoment] = useState(0);
@@ -132,7 +143,6 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const bottomRef = useRef<HTMLDivElement>(null)
   const loadedRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
-  const volumeRef = useRef<HTMLDivElement>(null)
   const viewtimeRef = useRef(0)
 
   const mobileSkipWrapper = useRef<HTMLDivElement>(null)
@@ -158,10 +168,19 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const KekwPlayerContextPayload: IKekwPlayerContextProps = {
     title,
     dubbers,
+    duration,
 
     watchProgress: localData,
 
+    isMuted,
+    isPlaying,
+    isFullscreen,
+    isPiP,
+    isPreviewOld,
+    isVideoProcessed,
+
     videoRef,
+    playerRef,
 
     loadProgress,
     passProgress,
@@ -170,6 +189,11 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     setCurrentScreen,
     episode,
     setEpisode,
+    volume,
+    setVolume,
+    moment,
+    setMoment,
+    changeMoment,
   }
 
 
@@ -1111,19 +1135,18 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       {/* Bottom */}
       <div className={`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px] backdrop-blur-[8px] bg-red ${isIdle ? 'translate-y-[100%]' : ''}`} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }} ref={bottomRef}>
         <div className="flex items-center gap-[16px]">
-          <Play isPlaying={isPlaying} videoRef={videoRef} />
-
-          <Volume volume={volume} isMuted={isMuted} videoRef={videoRef} volumeRef={volumeRef} />
+          <KekwPlayerPlay />
+          <KekwPlayerVolume />
         </div>
 
-        <Timeline duration={duration} moment={moment} changeMoment={changeMoment} loadedRef={loadedRef} progressRef={progressRef} hoveredMoment={hoveredMoment} previewRef={previewRef} isPreviewsOld={isPreviewOld} isVideoProcessed={isVideoProcessed} videoRef={videoRef} />
+        <KekwPlayerTimeline hoveredMoment={hoveredMoment} loadedRef={loadedRef} previewRef={previewRef} progressRef={progressRef} />
 
         <div className="flex items-center gap-[12px]">
-          <PiP isPiP={isPiP} videoRef={videoRef} />
+          <KekwPlayerPiP />
 
           <KekwPlayerSettings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} isIdle={isIdle} />
 
-          <Fullscreen isFullscreen={isFullscreen} playerRef={playerRef} />
+          <KekwPlayerFullscreen />
         </div>
       </div>
 
@@ -1138,330 +1161,6 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       </div>
     </div>
   </KekwPlayerContext.Provider>
-}
-
-
-
-//* -------------- PLAY COMPONENT --------------
-
-
-interface IPlayProps {
-  isPlaying: boolean,
-  videoRef: RefObject<HTMLVideoElement>
-}
-
-const Play: NextPage<IPlayProps> = ({ isPlaying, videoRef }) => {
-  function changePlaying() {
-    const video = videoRef.current;
-
-    if (!video) return;
-
-    if (video.paused) {
-      video.play().catch(e => null);
-    } else {
-      video.pause()
-    }
-  }
-
-  function getLabel() {
-    return isPlaying ? 'Зупинити відео (k)' : 'Продовжити відео (k)'
-  }
-
-  return (
-    <button className="kekwplayer-play_button relative w-[40px] h-[40px]" onClick={() => changePlaying()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
-      <IcoPlay className={`kekwplayer-play ${isPlaying ? 'opacity-0' : 'opacity-100'}`} />
-      <IcoPlayerPause className={`kekwplayer-play ${isPlaying ? 'opacity-100' : 'opacity-0'}`} />
-    </button>
-  );
-}
-
-
-//* -------------- VOLUME COMPONENT --------------
-
-
-interface IVolumeProps {
-  volume: number,
-  isMuted: boolean,
-  videoRef: RefObject<HTMLVideoElement>,
-  volumeRef: RefObject<HTMLDivElement>,
-}
-
-const Volume: NextPage<IVolumeProps> = ({ isMuted, videoRef, volume, volumeRef }) => {
-  const video = videoRef.current;
-  const volumeWrapperRef = useRef<HTMLDivElement>(null)
-  const volumeRangeRef = useRef<HTMLDivElement>(null)
-
-  //* Handle volume hover
-  useEffect(() => {
-    const volumeWrapper = volumeWrapperRef.current;
-    const volumeRange = volumeRangeRef.current;
-    if (!volumeRange || !volumeWrapper) return;
-
-    const volumeWidth = volumeRange.scrollWidth;
-
-    volumeRange.style.maxWidth = '0';
-    volumeRange.style.opacity = '0';
-
-    volumeWrapper.addEventListener('pointerenter', () => {
-      volumeRange.style.opacity = '1';
-      volumeRange.style.maxWidth = `${volumeWidth}px`;
-    })
-
-    volumeWrapper.addEventListener('pointerleave', () => {
-      volumeRange.style.maxWidth = '0';
-      volumeRange.style.opacity = '0';
-    })
-  }, [])
-
-  //* Handle volume progress
-  useEffect(() => {
-    const ref = volumeRef.current;
-    if (!ref) return;
-
-    ref.style.width = `${volume}px`
-  }, [volume])
-
-
-
-  function changeMuted() {
-    if (!video) {
-      console.error('Video is not found')
-      return;
-    };
-
-    video.muted = !video.muted;
-  }
-
-  function setVolume(to: number) {
-    if (!video) {
-      console.error('Video is not found')
-      return;
-    };
-
-    video.volume = to / 100;
-  }
-
-  function getLabel() {
-    return isMuted ? 'Увімкнути звук (m)' : 'Вимкнути звук (m)'
-  }
-
-  return (
-    <div className="relative flex items-center gap-[8px] max-[600px]:hidden" ref={volumeWrapperRef}>
-      <button className="kekwplayer-volume_button relative w-[32px] h-[32px]" onClick={() => changeMuted()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
-        <IcoPlayerVolumeMin className={`kekwplayer-volume ${volume < 30 && !isMuted ? 'opacity-100' : 'opacity-0'}`} />
-        <IcoPlayerVolumeNormal className={`kekwplayer-volume ${volume >= 30 && !isMuted ? 'opacity-100' : 'opacity-0'}`} />
-        <IcoPlayerVolumeMuted className={`kekwplayer-volume ${isMuted ? 'opacity-100' : 'opacity-0'}`} />
-      </button>
-
-      <div className="flex items-center gap-[16px] w-fit overflow-hidden opacity-0 duration-500 max-0" ref={volumeRangeRef}>
-        <div className="w-[100px] relative">
-          <Range min={0} max={100} onChange={val => setVolume(val[0])} values={[volume]} renderThumb={renderThumb} renderTrack={renderTrack} />
-        </div>
-
-        <p className="text-white">{volume}%</p>
-      </div>
-    </div>
-  );
-
-
-
-  function renderThumb({ props }: IRenderThumbParams) {
-    return <div
-      {...props}
-      key={'kekwplayer-volume_thumb'}
-      style={{
-        ...props.style,
-        touchAction: 'none',
-        pointerEvents: 'none',
-        position: 'relative',
-        zIndex: 3,
-        outline: 'none'
-      }}
-      id="kekwplayer-volume_thumb"
-      className={`w-[12px] h-[12px] bg-gradientPrimaryFallback rounded-[32px]`}
-    />
-  }
-
-  function renderTrack({ props, children }: IRenderTrackParams) {
-    return <div
-      {...props}
-      key={'kekwplayer-volume_track'}
-      style={{
-        ...props.style,
-        position: 'relative',
-        zIndex: 1
-      }}
-      className={`w-full h-[4px] rounded-[6px] bg-[#666]`}
-    >
-      {children}
-
-      {/* Volume progress */}
-      <div className="w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] gradient--secondary rounded-[6px]" ref={volumeRef}></div>
-    </div>
-  }
-}
-
-
-//* -------------- TIMELINE COMPONENT --------------
-
-
-interface ITimelineProps {
-  duration: number,
-  moment: number,
-  changeMoment: (val: number) => void,
-  progressRef: RefObject<HTMLDivElement>,
-  loadedRef: RefObject<HTMLDivElement>,
-  previewRef: RefObject<HTMLDivElement>,
-  hoveredMoment: number,
-  isPreviewsOld: boolean,
-  isVideoProcessed: boolean,
-  videoRef: RefObject<HTMLVideoElement>
-}
-
-const Timeline: NextPage<ITimelineProps> = ({ duration, moment, loadedRef, progressRef, hoveredMoment, previewRef, isPreviewsOld, isVideoProcessed, changeMoment, videoRef }) => {
-  return (
-    <div className="w-full h-full relative">
-      {/* Range */}
-      <div className="w-full h-full relative flex flex-col justify-center">
-        {/* Track */}
-        <div className="w-full relative" id="kekwplayer-timeline">
-          <Range min={0} max={duration} step={1} onChange={val => changeMoment(val[0])} values={[moment]} renderTrack={renderTrack} renderThumb={renderThumb} />
-        </div>
-
-        {/* Time */}
-        <div className="w-full flex justify-between absolute left-0 -bottom-[8px] max-[720px]:-bottom-[12px]">
-          <p className="text-white">{secondsToReadable(videoRef.current?.currentTime || 0).pretty}</p>
-          <p className="text-white">{secondsToReadable(duration).pretty}</p>
-        </div>
-      </div>
-
-      {/* Preview */}
-      <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0 opacity-0 invisible`} id="kekwplayer-preview" ref={previewRef}>
-        <div className={`${isPreviewsOld ? 'w-[160px] h-[120px]' : 'w-[240px] h-[135px]'} ${isVideoProcessed ? '' : 'bg-dark'} rounded-[4px] overflow-hidden`}>
-          <img src="" alt="..." className={`w-full h-full ${isVideoProcessed ? '' : 'opacity-0 invisible !h-0'}`} />
-          <div className={`${isVideoProcessed ? 'opacity-0 invisible h-0' : 'h-full'} flex flex-col items-center justify-center gap-[8px]`}>
-            <IcoServerUnavailable width={60} height={60} />
-            <p className="text-white uppercase text-center">превью недоступні</p>
-          </div>
-        </div>
-        <p className="text-white">{secondsToReadable(hoveredMoment).pretty}</p>
-      </div>
-    </div>
-  );
-
-
-
-  function renderThumb({ props }: IRenderThumbParams) {
-    return <div
-      {...props}
-      key={'kekwplayer-timeline_thumb'}
-      style={{
-        ...props.style,
-        touchAction: 'none',
-        pointerEvents: 'none',
-        position: 'relative',
-        zIndex: 3
-      }}
-      id="kekwplayer-timeline_thumb"
-      className={`w-[12px] h-[12px] bg-gradientPrimaryFallback rounded-[32px]`}
-    />
-  }
-
-  function renderTrack({ props, children }: IRenderTrackParams) {
-    return <div
-      {...props}
-      key={'kekwplayer-timeline_track'}
-      style={{
-        ...props.style,
-        position: 'relative',
-        zIndex: 1
-      }}
-      id="kekwplayer-timeline_track"
-      className={`w-full h-[4px] max-[720px]:!py-[3px] rounded-[6px] z-[10] bg-[#666] duration-200`}
-    >
-      {children}
-
-      {/* From start progress */}
-      <div className="h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] gradient--secondary rounded-[6px]" ref={progressRef}></div>
-
-      {/* Downloading progress */}
-      <div className="h-full absolute top-0 touch-none pointer-events-none left-0 z-[1] bg-[#888] rounded-[6px]" ref={loadedRef}></div>
-    </div>
-  }
-}
-
-
-//* -------------- PIP COMPONENT --------------
-
-
-interface IPiPProps {
-  isPiP: boolean,
-  videoRef: RefObject<HTMLVideoElement>,
-}
-
-const PiP: NextPage<IPiPProps> = ({ isPiP, videoRef }) => {
-  function changePiP() {
-    const video = videoRef.current;
-
-    if (!video) {
-      console.error('Video is not found');
-      return;
-    }
-
-    if (document.pictureInPictureElement) {
-      document.exitPictureInPicture().catch(e => console.error(e));
-    } else {
-      video.requestPictureInPicture().catch(e => console.error(e))
-    }
-  }
-
-  function getTitle() {
-    return isPiP ? 'Вийти з Картинка в Картинці (p)' : 'Увійти в Картинка в Картинці (p)'
-  }
-
-  return (
-    <button className="kekwplayer-pip_button relative w-[32px] h-[32px] max-[600px]:hidden" onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoPlayerPiPEnter className={`kekwplayer-pip ${isPiP ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
-      <IcoPlayerPiPExit className={`kekwplayer-pip ${isPiP ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
-    </button>
-  );
-}
-
-
-//* -------------- FULLSCREEN COMPONENT --------------
-
-
-interface IFullscreenProps {
-  isFullscreen: boolean,
-  playerRef: RefObject<HTMLDivElement>
-}
-
-const Fullscreen: NextPage<IFullscreenProps> = ({ isFullscreen, playerRef }) => {
-  function changeFullscreen() {
-    const player = playerRef.current
-
-    if (!player) {
-      console.error('Player is not found')
-      return
-    }
-
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(e => console.error(e));
-    } else {
-      player.requestFullscreen().catch(e => console.error(e));
-    }
-  }
-
-  function getTitle() {
-    return isFullscreen ? 'Вийти з повноекранного режиму (f)' : 'Увійти в повноекранний режим (f)';
-  }
-
-  return (
-    <button className="kekwplayer-fullscreen_button relative w-[32px] h-[32px]" onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoPlayerFullscreenExit className={`kekwplayer-fullscreen ${isFullscreen ? 'opacity-100' : 'opacity-0'}`} width={40} height={40} />
-      <IcoPlayerFullscreenEnter className={`kekwplayer-fullscreen ${isFullscreen ? 'opacity-0' : 'opacity-100'}`} width={40} height={40} />
-    </button>
-  );
 }
 
 
