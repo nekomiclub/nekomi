@@ -1,11 +1,11 @@
 'use client'
 
-import { ReactNode, useContext, useEffect, useState } from 'react';
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { NextPage } from 'next';
 
-import { ITitleEpisode, ITitleEpisodeMeta } from '~/interfaces/ITitle';
-import { cn,LoadingImage } from '../Components';
-import { timestampToDate, wordDeclination } from '../handlers';
+import { ITitleEpisodeMeta } from '~/interfaces/ITitle';
+import { cn, LoadingImage } from '../Components';
+import { wordDeclination } from '../handlers';
 
 import { IKekwPlayerContextProps, KekwPlayerContext, secondsToReadable } from './KekwPlayer';
 
@@ -53,8 +53,6 @@ export const ProgressContinue: NextPage<IKekwPlayerScreenProps> = ({ }) => {
 
 
   useEffect(() => {
-    console.log(ctx)
-
     setIsVisible(ctx.currentScreen === 'progress_continue')
   }, [ctx])
 
@@ -112,19 +110,20 @@ export const EpisodeLast: NextPage<IKekwPlayerScreenProps> = ({ }) => {
 }
 
 /** Episode end screen
- * TODO: rework. after skipping episode user can not pause video
  * @requires KekwPlayerContext
  */
 export const EpisodeEnd: NextPage<IKekwPlayerScreenProps> = ({ }) => {
   const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
-  const { currentScreen, title, episode, setEpisode, videoRef } = ctx;
+  const { currentScreen, title, episode, videoRef, changeEpisode } = ctx;
+
+  const SKIP_WITHIN_DEFAULT = 5;
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
-  const [remain, setRemain] = useState(5)
-  const [epMeta, setEpMeta] = useState<ITitleEpisodeMeta | null>(null)
-  const [nextEp, setNextEp] = useState(episode.order)
-  const [date, setDate] = useState('')
-  const [int, setInt] = useState<NodeJS.Timeout>()
+  const [skipWithin, setSkipWithin] = useState(SKIP_WITHIN_DEFAULT)
+  const [episodeMeta, setEpisodeMeta] = useState<ITitleEpisodeMeta | undefined>(undefined)
+  const [nextEpisodeOrder, setNextEpisodeOrder] = useState(episode.order)
+
+  const skipWithinInterval = useRef<NodeJS.Timeout | undefined>(undefined)
 
 
 
@@ -132,58 +131,47 @@ export const EpisodeEnd: NextPage<IKekwPlayerScreenProps> = ({ }) => {
     setIsVisible(currentScreen === 'episode_end')
   }, [ctx])
 
+  //* Handle next episode order & meta, auto skip
   useEffect(() => {
-    let nextEp = episode.order;
-    nextEp += 1
+    const nextEpisodeOrder = episode.order + 1;
+    const episodeMeta = title.episodesMeta.find(el => el.order === nextEpisodeOrder);
 
-    const epMeta = title.episodesMeta.find(el => el.order === nextEp);
+    setNextEpisodeOrder(nextEpisodeOrder);
+    setEpisodeMeta(episodeMeta);
 
-    setNextEp(nextEp)
+    if (currentScreen !== 'episode_end') {
+      clearInterval(skipWithinInterval.current);
 
-    if (epMeta) {
-      const parsed = timestampToDate(epMeta.dateOut);
+      return;
+    };
 
-      setEpMeta(epMeta)
-      setDate(`${parsed.day} ${parsed.localizedMonth.slice(0, 3)} ${parsed.year}`)
-    }
-  }, [episode])
+    //* Handle auto skip
+    setSkipWithin(SKIP_WITHIN_DEFAULT);
+    clearInterval(skipWithinInterval.current);
 
-  useEffect(() => {
-    setRemain(5)
+    let remain = SKIP_WITHIN_DEFAULT;
 
-    clearInterval(int)
-
-    let rem = remain;
-    setInt(setInterval(() => {
-      if (currentScreen) {
-        if (rem > 1) {
-          setRemain(prev => --prev)
-          rem -= 1;
-        } else {
-          clearInterval(int);
-          skipEp();
-        }
+    skipWithinInterval.current = setInterval(() => {
+      if (remain > 1) {
+        remain -= 1;
+        setSkipWithin(remain);
       } else {
-        clearInterval(int)
+        clearInterval(skipWithinInterval.current);
+        skipEpisode(nextEpisodeOrder);
       }
-    }, 1000))
+    }, 1000);
   }, [currentScreen])
 
 
 
-  function skipEp() {
+  function skipEpisode(order: number) {
     const video = videoRef.current;
-
     if (!video) return;
 
-    const nextEpisode = JSON.parse(JSON.stringify(episode)) as ITitleEpisode;
-    nextEpisode.order = nextEp;
+    const nextEpisode = title.episodes.find(el => el.dubberID === episode.dubberID && el.order === order)
+    if (!nextEpisode) return console.error(`Next episode is not found in EpisodeEnd screen`);
 
-    setEpisode(nextEpisode);
-
-    setTimeout(() => {
-      video.play().catch(e => null)
-    }, 1000);
+    changeEpisode(nextEpisode);
   }
 
 
@@ -191,17 +179,17 @@ export const EpisodeEnd: NextPage<IKekwPlayerScreenProps> = ({ }) => {
   return <div className={cn(`duration-200 bg-dark px-[24px] py-[40px] rounded-[2px] flex flex-col items-center w-[800px] z-[20] gap-[24px]`, !isVisible && 'opacity-0 invisible absolute touch-none pointer-events-none')}>
     <p className="text-white text-[32px] font-bold max-[680px]:text-[24px]">Епізод завершено</p>
 
-    <div className="bg-darkGrey px-[24px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 hover:bg-purple focus-visible:bg-purple w-full rounded-[2px]" role="button" onClick={() => skipEp()}>
+    <div className="bg-darkGrey px-[24px] py-[16px] flex justify-between items-center max-[680px]:flex-col duration-200 hover:bg-purple focus-visible:bg-purple w-full rounded-[2px]" role="button" onClick={() => skipEpisode(nextEpisodeOrder)}>
       <div className="flex items-center max-[680px]:flex-col gap-[32px] w-full">
-        <p className="text-white text-[32px] font-bold">#{nextEp}</p>
+        <p className="text-white text-[32px] font-bold">#{nextEpisodeOrder}</p>
         <div className="flex flex-col gap-[4px]">
-          <p className="text-white text-[24px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3" title={epMeta?.names.ukr || 'Наступний епізод'}>{epMeta?.names.ukr || 'Наступний епізод'}</p>
-          <p className="text-lightGrey text-[16px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3" title={epMeta?.names.eng || '—'}>{epMeta?.names.eng || '—'}</p>
+          <p className="text-white text-[24px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3" title={episodeMeta?.names.ukr || 'Наступний епізод'}>{episodeMeta?.names.ukr || 'Наступний епізод'}</p>
+          <p className="text-lightGrey text-[16px] text-ellipsis line-clamp-[1] max-[700px]:line-clamp-3" title={episodeMeta?.names.eng || 'Next episode'}>{episodeMeta?.names.eng || 'Next episode'}</p>
         </div>
       </div>
     </div>
 
-    <p className="text-white text-[24px] font-extralight text-center">Автоматично через: {remain} {wordDeclination(remain, ['секунду', 'секунди', 'секунд'])}</p>
+    <p className="text-white text-[24px] font-extralight text-center">Автоматично через: {skipWithin} {wordDeclination(skipWithin, ['секунду', 'секунди', 'секунд'])}</p>
   </div>
 }
 

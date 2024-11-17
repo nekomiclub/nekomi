@@ -59,7 +59,6 @@ interface IReturnButtonProps {
 
 export const KekwPlayerSettings = memo<IProps>(function KekwPlayerSettings({ quality, setQuality, speed, epData, isVideoProcessed, videoRef, stretch, setStretch, isIdle }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
   const [settingsPage, setSettingsPage] = useState<TSettingPage>('general')
 
   const settingsRef = useRef<HTMLDivElement>(null)
@@ -99,7 +98,7 @@ export const KekwPlayerSettings = memo<IProps>(function KekwPlayerSettings({ qua
         <IcoSettings width={40} height={40} className={`kekwplayer-settings`} />
       </MenuTrigger>
 
-      <MenuWrapper className={`!w-[260px] rounded-[2px] bg-dark flex flex-col translate-x-[15%]`}>
+      <MenuWrapper className={`!w-[260px] rounded-[2px] bg-dark flex flex-col translate-x-[15%] overflow-hidden`}>
         <div className="w-full h-0" ref={settingsPlaceholderRef}></div>
 
         <GeneralSettings visible={settingsPage === 'general'} page="general" changePage={changePage} stretch={stretch} setStretch={setStretch} speed={speed} quality={quality} />
@@ -130,7 +129,7 @@ const ReturnButton = ({ label, page, changePage }: IReturnButtonProps) => {
 }
 
 const GeneralSettings = memo<IGeneralSettingsProps>(function GeneralSettings({ visible, page, changePage, setStretch, stretch, speed, quality }) {
-  return <div className={cn('kekwplayer-settings-page ', visible ? 'translate-x-0' : 'translate-x-[110%]')} id={`kekwplayer-settings-page--${page}`}>
+  return <div className={cn('kekwplayer-settings-page ', visible && 'kekwplayer-settings-page--active')} id={`kekwplayer-settings-page--${page}`}>
     <div className="flex flex-col">
       <button className={`flex items-center justify-between kekwplayer-menu_item`} onClick={() => changePage('quality')}>
         <div className="flex items-center gap-[16px]">
@@ -167,7 +166,7 @@ const GeneralSettings = memo<IGeneralSettingsProps>(function GeneralSettings({ v
 })
 
 const QualitySettings = memo<IQualitySettingsProps>(function QualitySettings({ visible, page, changePage, episode, isVideoProcessed, quality, setQuality }) {
-  return <div className={cn('kekwplayer-settings-page', visible ? 'translate-x-0' : 'translate-x-[110%]')} id={`kekwplayer-settings-page--${page}`}>
+  return <div className={cn('kekwplayer-settings-page', visible && 'kekwplayer-settings-page--active')} id={`kekwplayer-settings-page--${page}`}>
     <ReturnButton label="Якість" page={page} changePage={changePage} />
 
     <div className="flex flex-col">
@@ -194,7 +193,7 @@ const SpeedSettings = memo<ISpeedSettingsProps>(function SpeedSettings({ visible
     video.playbackRate = to;
   }
 
-  return <div className={cn('kekwplayer-settings-page', visible ? 'translate-x-0' : 'translate-x-[110%]')} id={`kekwplayer-settings-page--${page}`}>
+  return <div className={cn('kekwplayer-settings-page', visible && 'kekwplayer-settings-page--active')} id={`kekwplayer-settings-page--${page}`}>
     <ReturnButton label="Швидкісь" page={page} changePage={changePage} />
 
     <div className="flex flex-col">

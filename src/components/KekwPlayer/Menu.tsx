@@ -4,9 +4,8 @@ import * as DropMenu from '@fullkekw/fkw-menu';
 import { IcoPlayerList, IcoPlayerNext } from '~/assets/Player'
 import { IDubber } from '~/interfaces/IDubber'
 import { ITitleEpisode } from '~/interfaces/ITitle'
-import { cn,LoadingImage } from '../Components'
+import { cn, LoadingImage } from '../Components'
 
-import { IKekwPlayerLocalDataItem } from './KekwPlayer'
 
 
 interface Props {
@@ -28,11 +27,13 @@ interface Props {
   isLastEpisode: boolean
   titleId: string
   dubbers: IDubber[]
+
+  className?: string
 }
 
 
 
-export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, dubbers, episode, isLastEpisode, changeEpisode, episodes, episodesCount, isIdle, titleId, moment }) {
+export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, dubbers, episode, isLastEpisode, changeEpisode, episodes, episodesCount, isIdle, titleId, moment, className }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
 
@@ -46,29 +47,19 @@ export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, dubbe
 
 
 
-  function nextEpisode() {
+  function selectEpisode(order: number) {
     if (isLastEpisode) return console.warn(`Can not skip last episode`);
 
-    const nextEp = order + 1
+    const nextEpisode = episodes.find(el => el.dubberID === episode.dubberID && el.order === order);
+    if (!nextEpisode) return console.error(`Can not change episode that not exist at menu`);
 
-    changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === nextEp)!, 0)
-
-    // TODO: remove?
-    // Write player data to local storage
-    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
-    const localRecord = localData?.find(el => el.id === titleId)
-
-    if (localRecord) {
-      localRecord.ep = nextEp;
-
-      localStorage.setItem('kekwplayer_data', JSON.stringify(localData))
-    }
+    changeEpisode(nextEpisode)
   }
 
 
 
   return (
-    <div className={cn(`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200`, isIdle && '-translate-y-[100%]')}>
+    <div className={cn(`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200`, isIdle && '-translate-y-[100%]', className)}>
       <DropMenu.Menu settings={{ align: 'left', animation: 'slide' }} gap={16} state={isMenuOpen} stateSetter={setIsMenuOpen}>
         <DropMenu.MenuTrigger className="px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple" primary>
           <IcoPlayerList width={40} height={40} />
@@ -92,7 +83,7 @@ export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, dubbe
 
               return <li className={`px-[8px] py-[4px] duration-200 flex justify-between gap-[8px] hover:bg-purple focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${episode.dubberID === dubber.id ? 'bg-purple' : ''}`} onClick={selectDubber} key={`menu-dubs_list--${dubber.id}`}>
                 <div className="shrink-0">
-                  <LoadingImage src={dubber.thumbURL} width="24px" height="24px" className="rounded-[32px] overflow-hidden" />
+                  <LoadingImage src={dubber.thumbURL} width="24px" height="24px" parentClassName="rounded-[32px] overflow-hidden" />
                 </div>
 
                 <p className="text-white whitespace-nowrap w-full text-start">{dubber.name}</p>
@@ -129,7 +120,7 @@ export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, dubbe
         <p className="text-white text-[12px] font-extralight text-center">{episode ? dubbers.find(el => el.id === episode.dubberID)?.name : '...'}</p>
       </div>
 
-      <button className={cn(`px-[16px] bg-dark rounded-[2px] duration-200`, !isLastEpisode && 'hover:bg-purple focus-visible:bg-purple')} onClick={() => nextEpisode()} disabled={isLastEpisode}>
+      <button className={cn(`px-[16px] bg-dark rounded-[2px] duration-200`, !isLastEpisode && 'hover:bg-purple focus-visible:bg-purple')} onClick={() => selectEpisode(episode.order + 1)} disabled={isLastEpisode}>
         <IcoPlayerNext width={40} height={40} className={cn(`kekwplayer-menu_nextBtn`, isLastEpisode ? 'kekwplayer-menu_nextBtn--lastEpisode' : '')} />
       </button>
     </div>

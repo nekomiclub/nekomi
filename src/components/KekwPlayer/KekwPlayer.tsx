@@ -6,11 +6,13 @@ import { createContext, RefObject, useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
+import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
 
 import { useAppSelector } from '../../hooks/redux';
 import { IDubber } from '../../interfaces/IDubber';
 import { ITitle, ITitleEpisode } from '../../interfaces/ITitle';
+import { cn } from '../Components';
 import { $api } from '../http';
 
 import { KekwPlayerFullscreen } from './Fullscreen';
@@ -83,12 +85,19 @@ export interface IKekwPlayerContextProps {
   setCurrentScreen: (val: TKekwPlayerScreen) => void
 
   episode: ITitleEpisode
+  /** DO NOT RECOMMEND. USE changeEpsiode INSTEAD
+   * set new episode directly into state
+   */
   setEpisode: (episode: ITitleEpisode) => void
+  changeEpisode: (episode: ITitleEpisode, moment?: number, stopPlayback?: boolean) => void
 
   volume: number
   setVolume: (val: number) => void
 
   moment: number
+  /** DO NOT RECOMMEND. USE changeMoment INSTEAD
+   * set new moment directly into state
+   */
   setMoment: (val: number) => void
   changeMoment: (val: number) => void
 }
@@ -107,19 +116,17 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   // Player data
   const [volume, setVolume] = useState<number>(100) // 0 - 100
   const [episode, setEpisode] = useState<ITitleEpisode>(title.episodes[0])
-  const [duration, setDuration] = useState(1)
-  const [moment, setMoment] = useState(0);
-  const [hoveredMoment, setHoveredMoment] = useState(0);
+  const [duration, setDuration] = useState<number>(1)
+  const [moment, setMoment] = useState<number>(0);
+  const [hoveredMoment, setHoveredMoment] = useState<number>(0);
   const [currentScreen, setCurrentScreen] = useState<TKekwPlayerScreen>('none')
   const [localData, setLocalData] = useState<IKekwPlayerLocalDataItem>()
+  const [isControlsHiddenUnderScreen, setIsControlsHiddenUnderScreen] = useState<boolean>(true) // Define if player timeline and menu will be hidden under screeen
 
   // Settings states
   const [quality, setQuality] = useState<TVideoQuality>('q1080')
   const [speed, setSpeed] = useState(1)
   const [stretch, setStretch] = useState(false)
-
-  const [isPreviewOld, setIsPreviewOld] = useState(false); // Specify video previews dimensions
-  const [isVideoProcessed, setIsVideoProcessed] = useState(false); // Specify if video procesed by the server (qualities & frames)
 
   // Player states
   const [isPlaying, setIsPlaying] = useState(false)
@@ -127,12 +134,11 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [isLastEpisode, setIsLastEpisode] = useState(false)
-  const [isTimeToEndScreen, setIsTimeToEndScreen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [isIdle, setIsIdle] = useState(false)
-
-  // Video states
   const [isVideoLoading, setIsVideoLoading] = useState(true);
+  const [isPreviewOld, setIsPreviewOld] = useState(false); // Specify video previews dimensions
+  const [isVideoProcessed, setIsVideoProcessed] = useState(false); // Specify if video procesed by the server (qualities & frames)
 
   // Refs
   const playerRef = useRef<HTMLDivElement>(null)
@@ -154,12 +160,12 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  // useIdleTimer({
-  //   timeout: 3000,
-  //   throttle: 500,
-  //   onIdle: () => setIsIdle(true),
-  //   onAction: () => setIsIdle(false)
-  // })
+  useIdleTimer({
+    timeout: 3000,
+    throttle: 500,
+    onIdle: () => setIsIdle(true),
+    onAction: () => setIsIdle(false)
+  })
 
 
 
@@ -185,10 +191,14 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
     currentScreen,
     setCurrentScreen,
+
     episode,
     setEpisode,
+    changeEpisode,
+
     volume,
     setVolume,
+
     moment,
     setMoment,
     changeMoment,
@@ -788,13 +798,13 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     changeVideoSrc(episode.qualities[quality], moment)
   }, [stage, quality])
 
-  //* Handle video buffering & end screens
+  //* Handle video buffering & screens
   useEffect(() => {
     const video = videoRef.current;
 
     if (!duration || !moment || !video) return;
 
-    // Hand;e buffering
+    //* Handle buffering
     video.addEventListener('timeupdate', timeupdateHandler)
 
     function timeupdateHandler() {
@@ -820,32 +830,28 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       }
     }
 
-    // Handle end screens
+    //* Handle end screens
     if (duration > 10 && moment && episode) {
-      if (moment >= duration - 2) {
-        let nextEp = episode.order;
-        nextEp += 1;
-        setIsTimeToEndScreen(true)
+      // title_end, episode_end, episode_last
+      if (moment >= duration - 5) {
+        const nextEpisodeOrder = episode.order + 1;
 
-        const isNextEpExist = title.episodes.some(el => el.order === nextEp && el.dubberID === episode.dubberID); // Last episode in dub
-        const isTitleEnded = title.episodesCount === episode.order; // Title ended
+        const isNextEpisodeExist = title.episodes.some(el => el.dubberID === episode.dubberID && el.order === nextEpisodeOrder);
+        const isLastEpisode = !isNextEpisodeExist && Number(title.episodesCount) > nextEpisodeOrder
+        const isTitleEnded = !isNextEpisodeExist && Number(title.episodesCount) <= nextEpisodeOrder;
 
-        if (isTitleEnded) {
-          setCurrentScreen('title_end')
-        } else if (isNextEpExist) {
+        if (isNextEpisodeExist) {
           setCurrentScreen('episode_end')
-        } else if (!isNextEpExist) {
+        } else if (isTitleEnded) {
+          setCurrentScreen('title_end')
+        } else if (isLastEpisode) {
           setCurrentScreen('episode_last')
-        } else {
-          setCurrentScreen('none')
         }
       } else {
-        if (currentScreen !== 'none') {
-          setIsTimeToEndScreen(false);
-          setCurrentScreen('none')
-        }
+        // Reset screen
+        setCurrentScreen('none');
       }
-    };
+    }
 
     return () => {
       video.removeEventListener('timeupdate', timeupdateHandler)
@@ -865,6 +871,13 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       track.style.padding = '0';
     })
   }, [stage])
+
+  //* Handle screen change
+  useEffect(() => {
+    //* Hide controls under progress_continue screen, otherwise show them
+
+    setIsControlsHiddenUnderScreen(currentScreen === 'progress_continue');
+  }, [currentScreen])
 
 
 
@@ -959,12 +972,12 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     if (setOutEp) setOutEp(episode.order);
 
     // Check if episode is last
-    const nextEp = Number(episode.order) + 1;
+    const nextEpisodeOrder = episode.order + 1;
 
-    if (!title.episodes.some(el => el.dubberID === episode.dubberID && el.order === nextEp)) {
-      setIsLastEpisode(true)
-    } else {
+    if (title.episodes.some(el => el.dubberID === episode.dubberID && el.order === nextEpisodeOrder)) {
       setIsLastEpisode(false)
+    } else {
+      setIsLastEpisode(true)
     }
 
     // Reset progress moment
@@ -1128,10 +1141,10 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       </div>
 
       {/* Menu */}
-      <KekwPlayerMenu order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
+      <KekwPlayerMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
 
       {/* Bottom */}
-      <div className={`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px] backdrop-blur-[8px] bg-red ${isIdle ? 'translate-y-[100%]' : ''}`} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }} ref={bottomRef}>
+      <div className={cn(`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px] backdrop-blur-[8px] bg-red`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }} ref={bottomRef}>
         <div className="flex items-center gap-[16px]">
           <KekwPlayerPlay />
           <KekwPlayerVolume />
@@ -1155,7 +1168,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
           <loader.DotPulse color="#fff" size={80} />
         </div>
 
-        <video src={''} preload="auto" controlsList="nodownload" className={`w-full h-full ${stretch ? 'object-cover' : ''}`} controls={false} ref={videoRef}></video>
+        <video src={''} preload="auto" controlsList="nodownload" className={cn(`w-full h-full`, stretch && 'object-cover')} controls={false} ref={videoRef}></video>
       </div>
     </div>
   </KekwPlayerContext.Provider>
