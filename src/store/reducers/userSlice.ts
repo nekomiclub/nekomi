@@ -12,7 +12,6 @@ export interface IUserState {
   avatar: string
   capabilities: TRoleCapability[]
   watchProgress: IUserWatchProgress[]
-  loaded: boolean
   libs: IUserLib[]
   isTelegramLinked: boolean
 }
@@ -26,7 +25,6 @@ export const userStateDefault: IUserState = {
   capabilities: [],
   watchProgress: [],
   libs: [],
-  loaded: false,
   isTelegramLinked: false
 }
 

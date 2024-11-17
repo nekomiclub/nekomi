@@ -72,7 +72,6 @@ export default async function Layout({ children, params }: ILayoutProps) {
         roles: data.user.roles,
         username: data.user.username,
         watchProgress: data.user.watchProgress,
-        loaded: true,
         capabilities: data.parsedRoles,
         libs: data.user.libs
       }

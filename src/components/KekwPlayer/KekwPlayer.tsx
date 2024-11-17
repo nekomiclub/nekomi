@@ -6,7 +6,6 @@ import { createContext, RefObject, useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
-import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
 
 import { useAppSelector } from '../../hooks/redux';
@@ -15,6 +14,7 @@ import { ITitle, ITitleEpisode } from '../../interfaces/ITitle';
 import { cn } from '../Components';
 import { $api } from '../http';
 
+import { KekwPlayerControls } from './Controls';
 import { KekwPlayerFullscreen } from './Fullscreen';
 import { KekwPlayerMenu } from './Menu';
 import { KekwPlayerPiP } from './PiP';
@@ -60,6 +60,7 @@ export interface IKekwPlayerContextProps {
   title: ITitle
   dubbers: IDubber[]
   duration: number
+  isMobile: boolean
 
   //* POSSIBLE UNDEFINED CONSTS
   watchProgress?: IKekwPlayerLocalDataItem
@@ -99,10 +100,18 @@ export interface IKekwPlayerContextProps {
    * set new moment directly into state
    */
   setMoment: (val: number) => void
-  changeMoment: (val: number) => void
+  changeMoment: (val: number, synthetic?: boolean) => void
 }
 
 export const KekwPlayerContext = createContext<Partial<IKekwPlayerContextProps>>({})
+
+/**
+ * Z indexes table
+ * 1 - video section
+ * 2 - play/pause & controls handlers
+ * 10 - top & bottom menus 
+ * 20 - top-level screens
+ */
 
 
 
@@ -121,6 +130,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const [hoveredMoment, setHoveredMoment] = useState<number>(0);
   const [currentScreen, setCurrentScreen] = useState<TKekwPlayerScreen>('none')
   const [localData, setLocalData] = useState<IKekwPlayerLocalDataItem>()
+  const [isMobile, setIsMobile] = useState(true);
   const [isControlsHiddenUnderScreen, setIsControlsHiddenUnderScreen] = useState<boolean>(true) // Define if player timeline and menu will be hidden under screeen
 
   // Settings states
@@ -134,7 +144,6 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [isLastEpisode, setIsLastEpisode] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const [isIdle, setIsIdle] = useState(false)
   const [isVideoLoading, setIsVideoLoading] = useState(true);
   const [isPreviewOld, setIsPreviewOld] = useState(false); // Specify video previews dimensions
@@ -149,23 +158,17 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const previewRef = useRef<HTMLDivElement>(null)
   const viewtimeRef = useRef(0)
 
-  const mobileSkipWrapper = useRef<HTMLDivElement>(null)
-  const mobilePrevSkipRef = useRef<HTMLDivElement>(null)
-  const mobileNextSkipRef = useRef<HTMLDivElement>(null)
-
-  const isMultiskipRef = useRef(false)
-  const skipTimeoutRef = useRef<NodeJS.Timeout>()
   const onPausePatchTimeoutRef = useRef<NodeJS.Timeout>()
 
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  useIdleTimer({
-    timeout: 3000,
-    throttle: 500,
-    onIdle: () => setIsIdle(true),
-    onAction: () => setIsIdle(false)
-  })
+  // useIdleTimer({
+  //   timeout: 3000,
+  //   throttle: 500,
+  //   onIdle: () => setIsIdle(true),
+  //   onAction: () => setIsIdle(false)
+  // })
 
 
 
@@ -173,6 +176,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     title,
     dubbers,
     duration,
+    isMobile,
 
     watchProgress: localData,
 
@@ -209,13 +213,6 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   //! -------------- DEFAULT EFFECTS --------------
   //* Player vitals, video loading handling
   useEffect(() => {
-    // Define if client is mobile
-    if (window.innerWidth <= 600 || window.innerHeight <= 400) {
-      setIsMobile(true)
-    } else {
-      setIsMobile(false)
-    }
-
     title.episodes.forEach(ep => {
       if (ep.order > titleMaxEpisode.current) titleMaxEpisode.current = ep.order
     })
@@ -248,10 +245,9 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   //! -------------- SETUP STAGE --------------
   // Setup with user progress or default
   useEffect(() => {
-    if (stage !== 'setup' || !user.loaded) return;
+    if (stage !== 'setup') return;
 
     const video = videoRef.current;
-
     if (window === undefined || !video) return;
 
     const progress = getPlayerProgress()
@@ -357,28 +353,8 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
 
   //! -------------- OPERATIONAL STAGE --------------
-  useEffect(() => {
-    if (stage !== 'operational') return;
-
-    const video = videoRef.current;
-
-    if (!video) return;
-  }, [stage])
-
   //* Handle video events
   useEffect(() => {
-    /*
-    - Loading
-    - Playback rate
-    - Timeupdate
-    - Pausing by clicking
-    - Playing
-    - Volume changing
-    - Fullscreen
-    - PiP
-    - Full timeline control (moving preview box, handle dragging)
-  */
-
     if (stage !== 'operational') return;
 
     const video = videoRef.current;
@@ -388,6 +364,13 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
     let viewtimeInterval: NodeJS.Timeout
 
+    //* Handle events
+    // Hide context menu
+    player.addEventListener('contextmenu', e => {
+      e.preventDefault();
+    })
+
+    //* Handle states
     // Handle loading & isPlaying
     video.addEventListener('waiting', () => {
       setIsVideoLoading(true)
@@ -401,11 +384,6 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     // Handle playback rate
     video.addEventListener('ratechange', () => {
       setSpeed(video.playbackRate)
-    })
-
-    // Hide context menu
-    player.addEventListener('contextmenu', e => {
-      e.preventDefault();
     })
 
     // Handle playback progress & buffering
@@ -428,20 +406,6 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
           }
         }
       };
-    })
-
-    // Handle pausing by clicking
-    video.addEventListener('click', () => {
-      const video = videoRef.current;
-      const player = playerRef.current;
-
-      if (!video || !player) return;
-
-      if (video.paused) {
-        video.play().catch(e => null)
-      } else {
-        video.pause();
-      }
     })
 
     // Handle isPlaying state
@@ -555,9 +519,11 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   useEffect(() => {
     const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
     const preview = document.querySelector('#kekwplayer-preview') as HTMLDivElement
+
+    const player = playerRef.current;
     const video = videoRef.current;
 
-    if (!timeline || !preview || !video) return;
+    if (!timeline || !preview || !video || !player) return;
 
     // Move preview box
     timeline.addEventListener('pointermove', handlePointerMove);
@@ -589,83 +555,15 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     }
   }, [stage, episode])
 
-  //* Handle clicking (multi/skip, entering via dbclick)
-  useEffect(() => {
-    if (stage !== 'operational') return;
-
-    const video = videoRef.current;
-    const player = playerRef.current;
-    const prevSkip = mobilePrevSkipRef.current;
-    const nextSkip = mobileNextSkipRef.current;
-    const skipWrapper = mobileSkipWrapper.current;
-
-    if (!video || !player || !prevSkip || !nextSkip || !skipWrapper) return;
-
-    // Enter fullscreen
-    video.addEventListener('dblclick', videoDbClickHandler)
-
-    nextSkip.addEventListener('dblclick', () => enterMultiskip(false))
-    prevSkip.addEventListener('dblclick', () => enterMultiskip(true))
-
-    nextSkip.addEventListener('click', () => skipMoment(false))
-    prevSkip.addEventListener('click', () => skipMoment(true))
-
-    function videoDbClickHandler() {
-      const video = videoRef.current;
-      const player = playerRef.current;
-
-      if (!video || !player) return;
-
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(e => console.error(e));
-      } else {
-        player.requestFullscreen().catch(e => console.error(e));
-      }
-    }
-
-    function enterMultiskip(prev: boolean) {
-      const video = videoRef.current;
-
-      if (!video || isMultiskipRef.current) return;
-
-      const offset = prev ? video!.currentTime - 5 : video!.currentTime + 5;
-      isMultiskipRef.current = true;
-
-      video.currentTime = offset;
-
-      // Set timeout
-      skipTimeoutRef.current = setTimeout(() => {
-        isMultiskipRef.current = false;
-      }, 1000);
-    }
-
-    function skipMoment(prev: boolean) {
-      const video = videoRef.current;
-
-      if (!video || !isMultiskipRef.current) return;
-
-      const offset = prev ? video!.currentTime - 5 : video!.currentTime + 5;
-
-      video.currentTime = offset;
-
-      // Refresh timeout
-      clearTimeout(skipTimeoutRef.current)
-
-      skipTimeoutRef.current = setTimeout(() => {
-        isMultiskipRef.current = false;
-      }, 1000);
-    }
-  }, [stage])
-
   //* Handle cursor visibility in idle/active modes
   useEffect(() => {
     if (stage !== 'operational') return;
 
     // Hide cursor in fullscreen mode
     if (isIdle && isFullscreen) {
-      document.querySelector('body')!.style.cursor = 'none';
+      document.body.style.cursor = 'none';
     } else {
-      document.querySelector('body')!.style.cursor = 'auto';
+      document.body.style.cursor = 'auto';
     }
   }, [stage, isIdle])
 
@@ -673,10 +571,10 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   useEffect(() => {
     if (stage !== 'operational') return;
 
-    // Keyboard events must work only in fullscreen mode
-    if (isFullscreen) {
-      document.addEventListener('keydown', handleKeyboard)
-    }
+    const player = playerRef.current;
+    if (!player) return;
+
+    player.addEventListener('keydown', handleKeyboard)
 
     function handleKeyboard(e: KeyboardEvent) {
       const video = videoRef.current;
@@ -712,10 +610,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
         // Skip prev 10s
         case 'KeyJ': {
-          let curr = video.currentTime;
-          curr -= 10;
-
-          if (curr >= 0) {
+          if (video.currentTime - 10 >= 0) {
             changeMoment(video.currentTime - 10)
           } else {
             changeMoment(0)
@@ -726,10 +621,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
         // Skip prev 5s
         case 'ArrowLeft': {
-          let curr = video.currentTime;
-          curr -= 5;
-
-          if (curr >= 0) {
+          if (video.currentTime - 5 >= 0) {
             changeMoment(video.currentTime - 5)
           } else {
             changeMoment(0)
@@ -740,10 +632,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
         // Skip next 10s
         case 'KeyL': {
-          let curr = video.currentTime;
-          curr += 10;
-
-          if (curr >= duration) {
+          if (video.currentTime + 10 >= duration) {
             changeMoment(video.duration)
           } else {
             changeMoment(video.currentTime + 10)
@@ -754,10 +643,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
         // Skip next 5s
         case 'ArrowRight': {
-          let curr = video.currentTime;
-          curr += 5;
-
-          if (curr >= video.duration) {
+          if (video.currentTime + 5 >= video.duration) {
             changeMoment(video.duration)
           } else {
             changeMoment(video.currentTime + 5)
@@ -787,7 +673,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyboard)
+      player.removeEventListener('keydown', handleKeyboard)
     }
   }, [stage, isFullscreen])
 
@@ -858,6 +744,8 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     }
   }, [duration, moment])
 
+  //* Handle track expanding on hover
+  //TODO Can be refactored into css hover
   useEffect(() => {
     const bottom = bottomRef.current;
     const track = document.querySelector('#kekwplayer-timeline_track') as HTMLDivElement | undefined
@@ -1125,7 +1013,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
 
   return <KekwPlayerContext.Provider value={KekwPlayerContextPayload}>
-    <div className="w-full h-full relative overflow-hidden flex flex-col justify-between bg-black" id="player" ref={playerRef}>
+    <div className="w-full h-full relative overflow-hidden flex flex-col justify-between bg-black outline-none" id="player" tabIndex={0} ref={playerRef}>
       {/* Screens */}
       <PlayerScreen.Wrapper>
         <PlayerScreen.ProgressContinue />
@@ -1134,17 +1022,11 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
         <PlayerScreen.TitleEnd />
       </PlayerScreen.Wrapper>
 
-      {/* Mobile skip wrapper */}
-      <div className={isMobile ? 'w-full h-full absolute top-0 left-0 z-[10] flex' : 'hidden'} ref={mobileSkipWrapper}>
-        <div className="w-full h-full" ref={mobilePrevSkipRef}></div>
-        <div className="w-full h-full" ref={mobileNextSkipRef}></div>
-      </div>
-
       {/* Menu */}
       <KekwPlayerMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
 
       {/* Bottom */}
-      <div className={cn(`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px] backdrop-blur-[8px] bg-red`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }} ref={bottomRef}>
+      <div className={cn(`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }} ref={bottomRef}>
         <div className="flex items-center gap-[16px]">
           <KekwPlayerPlay />
           <KekwPlayerVolume />
@@ -1161,10 +1043,13 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
         </div>
       </div>
 
+      {/* Skip wrapper & play/pause */}
+      <KekwPlayerControls />
+
       {/* Video */}
-      <div className="w-full h-full absolute top-0 left-0">
+      <div className="w-full h-full absolute top-0 left-0 z-[1]">
         {/* Loader */}
-        <div className={`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 touch-none pointer-events-none ${isVideoLoading ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={cn(`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 touch-none pointer-events-none`, !isVideoLoading && 'opacity-0')}>
           <loader.DotPulse color="#fff" size={80} />
         </div>
 
