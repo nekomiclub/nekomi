@@ -95,9 +95,17 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                   <ManageLib type="favorite" lib={user.libs.find(el => el.type === 'favorite')!} isInLib={inLibs.includes('favorite')} />
                   <ManageLib type="watched" lib={user.libs.find(el => el.type === 'watched')!} isInLib={inLibs.includes('watched')} />
                   <ManageLib type="watching" lib={user.libs.find(el => el.type === 'watching')!} isInLib={inLibs.includes('watching')}
-                    hint={user.isTelegramLinked ? 'Ти отримаєш сповіщення про нові серії в телеграм' : 'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про нові серії'} />
+                    hint={user.isTelegramLinked ?
+                      title.status === 'ongoing' ?
+                        'Ти отримаєш сповіщення про нові серії в телеграм' :
+                        undefined :
+                      'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про нові серії'} />
                   <ManageLib type="plans" lib={user.libs.find(el => el.type === 'plans')!} isInLib={inLibs.includes('plans')}
-                    hint={user.isTelegramLinked ? title.status === 'announcement' && title.year === getUTC().y ? 'Ти отримаєш сповіщення про початок трансляції в телеграм' : undefined : 'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про початок трансляції'} />
+                    hint={user.isTelegramLinked ?
+                      title.status === 'announcement' && title.year === getUTC().y ?
+                        'Ти отримаєш сповіщення про початок трансляції в телеграм' :
+                        undefined :
+                      'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про початок трансляції'} />
                   <ManageLib type="delayed" lib={user.libs.find(el => el.type === 'delayed')!} isInLib={inLibs.includes('delayed')} />
                 </DropMenu.MenuWrapper>
               </DropMenu.Menu>
