@@ -1,11 +1,11 @@
 'use server'
 
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { cookies } from 'next/headers';
 import type { NextRequest } from 'next/server'
 import { NextResponse as res } from 'next/server'
 
-import { $api } from './components/http';
+import { signCSRF } from './components/http';
 import { getRoute } from './components/ServerComponents';
 import { config as cfg } from './config'
 import { TRoleCapability } from './interfaces/IRoles';
@@ -32,19 +32,24 @@ export async function middleware(req: NextRequest) {
     if (!sessionToken) return res.redirect(cfg.URL.baseURL);
 
     try {
-      user = (await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`${cfg.URL.apiHTTP}/user/*`, {
+      const { data } = await axios.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`${cfg.URL.apiHTTP}/user/*`, {
         headers: {
-          Cookie: cookies().toString()
+          Cookie: cookies().toString(),
+          'X-CSRF-Token': signCSRF(),
         },
         params: {
           detailed: true
         }
-      })).data;
+      })
+
+      user = {
+        user: data.user,
+        parsedRoles: data.parsedRoles
+      }
     } catch (e) {
       if (e instanceof AxiosError) {
         console.error(`Middleware access check error (HTTP)`, e.response?.data.message || e.response?.data.msg || e)
       } else {
-        console.log(route);
         console.error(`Middleware access check error (Unknown)`, e)
       }
 
