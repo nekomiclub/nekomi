@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState } from 'react'
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
 import { config } from '../config';
@@ -29,12 +30,10 @@ interface IStateProviderProps extends IProviderProps {
 
 
 /** Setting up websocket & fetch user data */
-export const State: NextPage<IStateProviderProps> = ({ children, user }) => {
+export const StateProvider: NextPage<IStateProviderProps> = ({ children, user }) => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-
-
 
   // Authorize user
   useEffect(() => {
@@ -66,6 +65,13 @@ export const State: NextPage<IStateProviderProps> = ({ children, user }) => {
       user
     }
   })}>
+    <AppProgressBar
+      height="2px"
+      color="linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%)"
+      options={{ showSpinner: false }}
+      shallowRouting
+    />
+
     <SetupIntertnals />
 
     {children}

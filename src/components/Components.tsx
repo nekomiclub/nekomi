@@ -2,13 +2,13 @@
 
 import '../styles/components/GeneralComponents.scss'
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { NextPage } from 'next';
 import Link from 'next/link';
 
 import { IcoClockOutlined } from '../assets/Clock';
-import { IcoAnimeeLogo, IcoArrow, IcoCheckmark, IcoGhost, IcoHome, IcoNekomiLogo, IcoOffline, IcoPlay, IcoStarRating } from '../assets/Icons';
+import { IcoGhost, IcoHome, IcoOffline, IcoPlay, IcoStarRating } from '../assets/Icons';
 import { animeGenres, config } from '../config';
 import { ITitle } from '../interfaces/ITitle';
 import { routes } from '../routes';
@@ -148,43 +148,6 @@ export function copyToClipboard(textToCopy: string) {
       textArea.remove();
     }
   }
-}
-
-/** Rename popup */
-export const RenamePopup: NextPage = () => {
-  const [show, setShow] = useState(false);
-
-  useMemo(() => {
-    if (typeof window === 'undefined') return;
-
-    setShow(!Boolean(localStorage.getItem('renameDialogShowed')))
-  }, [])
-
-  function hide() {
-    localStorage.setItem('renameDialogShowed', 'true')
-    setShow(false)
-  }
-
-  return show && <div className="w-screen h-screen fixed top-0 left-0 z-[99999] bg-dark/[.3] flex justify-center items-center px-[32px]">
-    <div className="bg-grey w-fit px-[32px] py-[24px] rounded-[4px] max-w-[700px] flex flex-col gap-[24px]">
-      <div className="flex flex-col gap-[8px]">
-        <div className="flex gap-[16px] justify-center items-center">
-          <IcoAnimeeLogo width={64} height={64} />
-          <IcoArrow width={40} height={40} className="-rotate-[90deg]" />
-          <IcoNekomiLogo width={64} height={64} fill="#fff" />
-        </div>
-        <h2 className="text-white text-[40px] font-bold text-center"><span className="gradient--primary-text">Animee</span> тепер Nekomi!</h2>
-        <p className="text-white text-center"><i>Свіжіший</i>, <u>кращий</u>, <b>унікальніший</b></p>
-      </div>
-
-      <p className="text-lightGrey text-center">До 19.11 домен animee.club ще буде перенаправляти тебе сюди, а далі вже все.</p>
-
-      <button className="px-[16px] py-[16px] rounded-[2px] bg-grey flex items-center justify-center gap-[16px] duration-200 hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback" onClick={hide}>
-        <IcoCheckmark width={32} height={32} />
-        <p className="text-white text-[24px] uppercase max-[650px]:text-[16px]">Зрозуміло</p>
-      </button>
-    </div>
-  </div>
 }
 
 const ReturnHome = () => {

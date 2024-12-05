@@ -15,13 +15,13 @@ import { cookies, headers } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
 
 import { $api } from '~/components/http';
+import { StateProvider } from '~/components/Providers';
 import { TRoleCapability } from '~/interfaces/IRoles';
 import { IUser } from '~/interfaces/IUser';
 import { IUserState } from '~/store/reducers/userSlice';
-import { RenamePopup, ServerUnavailable } from '../components/Components';
+import { ServerUnavailable } from '../components/Components';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
-import * as Provider from '../components/Providers'
 import { config, metaObject } from '../config';
 import { ILayoutProps } from '../interfaces/IRSC';
 
@@ -96,17 +96,15 @@ export default async function Layout({ children, params }: ILayoutProps) {
         {!isServerOnline && <ServerUnavailable />}
 
         {/* Return layout if server respond */}
-        {isServerOnline && <Provider.State user={user}>
+        {isServerOnline && <StateProvider user={user}>
           <SkeletonTheme baseColor="#181818" highlightColor="#222">
             <Header />
-
-            <RenamePopup />
 
             {children}
 
             <Footer />
           </SkeletonTheme>
-        </Provider.State>}
+        </StateProvider>}
 
       </body>
     </html>

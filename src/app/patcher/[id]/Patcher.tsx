@@ -353,7 +353,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
       <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{label}</p>
     </div>
 
-    <Menu state={isOpen} stateSetter={setIsOpen} disabled={isLocked}>
+    <Menu className="w-full" state={isOpen} stateSetter={setIsOpen} disabled={isLocked}>
       <MenuTrigger primary className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between !w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
         {isDubbers && dubbers && <StyledImage src={dubbers.find(el => el.code === value)!.thumbURL!} width="24px" height="24px" className="overflow-hidden rounded-[32px]" />}
 
