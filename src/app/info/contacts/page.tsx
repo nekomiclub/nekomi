@@ -10,8 +10,8 @@ import './styles.scss';
 import { NextPage } from 'next';
 import Link from 'next/link';
 
+import StyledImage from '~/components/UI/StyledImage';
 import { IcoSocialGithub, IcoSocialTelegram } from '../../../assets/Social';
-import { LoadingImage } from '../../../components/Components';
 import { metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
@@ -30,7 +30,7 @@ const RSC: NextPage<IRSCProps> = () => {
         <div className="wrapper justify-center items-center w-full min-h-screen h-full px-[24px]">
           <div className="px-[24px] py-[24px] bg-darkGrey rounded-[4px] flex flex-col gap-[16px] w-full max-w-[600px]">
             <div className="flex items-center gap-[16px] max-[460px]:flex-col">
-              <LoadingImage src={UnniiiverseAvatar.src} width="128px" height="128px" parentClassName="shrink-0" />
+              <StyledImage src={UnniiiverseAvatar.src} width="128px" height="128px" className="shrink-0" />
 
               <div className="w-full flex flex-col items-center gap-[4px]">
                 <h3 className="text-white text-[32px] font-bold uppercase">mykhailo</h3>

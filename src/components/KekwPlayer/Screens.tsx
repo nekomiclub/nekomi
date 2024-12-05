@@ -4,8 +4,9 @@ import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { NextPage } from 'next';
 
 import { ITitleEpisodeMeta } from '~/interfaces/ITitle';
-import { cn, LoadingImage } from '../Components';
+import { cn } from '../Components';
 import { wordDeclination } from '../handlers';
+import StyledImage from '../UI/StyledImage';
 
 import { IKekwPlayerContextProps, KekwPlayerContext, secondsToReadable } from './KekwPlayer';
 
@@ -62,7 +63,7 @@ export const ProgressContinue: NextPage<IKekwPlayerScreenProps> = ({ }) => {
     <div className="flex flex-col gap-[8px]">
       <p className="text-white text-[24px] font-bold text-center">Продовжити перегляд</p>
       {dubbers.find(el => el.id === watchProgress?.dub) ? <div className="flex items-center justify-center gap-[16px]">
-        <LoadingImage parentClassName="rounded-[32px] overflow-hidden" width="32px" height="32px" src={dubbers.find(el => el.id === watchProgress?.dub)!.thumbURL} />
+        <StyledImage className="rounded-[32px] overflow-hidden" width="32px" height="32px" src={dubbers.find(el => el.id === watchProgress?.dub)!.thumbURL} />
         <p className="text-white text-[24px] text-center">{dubbers.find(el => el.id === watchProgress?.dub)!.name}</p>
       </div> : <p className="text-white text-[24px] text-center">Команда невідома</p>}
     </div>

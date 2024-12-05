@@ -1,64 +1,21 @@
 'use client'
 
-
-
-
-
-
 import '../styles/components/GeneralComponents.scss'
 
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
-import Skeleton from 'react-loading-skeleton';
 
 import { IcoClockOutlined } from '../assets/Clock';
 import { IcoAnimeeLogo, IcoArrow, IcoCheckmark, IcoGhost, IcoHome, IcoNekomiLogo, IcoOffline, IcoPlay, IcoStarRating } from '../assets/Icons';
-import { animeGenres, config, CONSTS, prodMode } from '../config';
+import { animeGenres, config } from '../config';
 import { ITitle } from '../interfaces/ITitle';
 import { routes } from '../routes';
 
+import StyledImage from './UI/StyledImage';
+
 import CatImg from '../assets/img/oopsIndevCat.png';
-
-
-export const LoadingImage = memo(function LoadingImage({ src, alt, className, loading, priority, height, width, parentClassName }: { src: string, alt?: string, className?: string, parentClassName?: string, priority?: boolean, loading?: 'lazy' | 'eager', width: string, height: string }) {
-  const [loaded, setLoaded] = useState(false)
-  const [isErrored, setIsErrored] = useState(false)
-  const ref = useRef<HTMLImageElement>(null)
-
-  src = src ?? 'https://media.nekomi.club/0849e678-43ee-4f72-ae5a-bb9ff9d86c89';
-  alt = alt ?? '...';
-  priority = priority ?? false;
-  loading = loading ?? 'lazy';
-
-  useEffect(() => {
-    const image = ref.current;
-    if (!image) return;
-
-    if (image.complete) setLoaded(true)
-
-    image.addEventListener('load', () => setLoaded(true))
-    image.addEventListener('error', () => setIsErrored(true))
-  }, [])
-
-  return (
-    <div className={`relative ${isErrored ? 'bg-darkGrey' : ''} ${parentClassName ? parentClassName : ''}`} style={{ width, height }}>
-      {src.includes(config.domain) && prodMode ? <>
-        <Image src={src} alt={alt} fill priority={priority} loading={loading} className={cn(`w-full h-full duration-200 absolute top-0 left-0 z-[2]`, loaded && !isErrored ? 'opacity-100' : 'opacity-0', className)} ref={ref} />
-      </> : <>
-        <img src={src} alt={alt} loading={loading} className={cn(`w-full h-full duration-200 absolute top-0 left-0 z-[2]`, loaded && !isErrored ? 'opacity-100' : 'opacity-0', className)} ref={ref} />
-      </>}
-
-      <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, (loaded || isErrored) ?? 'opacity-0')} />
-
-      <div className={cn(`absolute top-0 left-0 w-full h-full flex justify-center items-center opacity-0 duration-200`, isErrored && 'opacity-100')}>
-        <IcoGhost width={16} height={16} className="w-[50%] h-[50%]" />
-      </div>
-    </div>
-  )
-})
 
 export const WatchButton: NextPage<{ href: string, className?: string, gradient: 'primary' | 'secondary' }> = ({ gradient, href, className }) => {
   return (
@@ -134,7 +91,7 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
 
   return (
     <Link href={`${config.URL.baseURL}/w/${title.code}`} className={`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[6/7] rounded-[4px] overflow-hidden outline-none ${className ? className : ''}`} ref={cardRef}>
-      <LoadingImage src={title.poster} className="rounded-b-[4px]" parentClassName="!absolute top-0 left-0" width="100%" height="100%" />
+      <StyledImage src={title.poster} className="rounded-b-[4px] !absolute top-0 left-0" width="100%" height="100%" />
 
       <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark/[.8]`} ref={bottomRef}>
         <div className="flex flex-col gap-[4px]">
@@ -244,7 +201,7 @@ export const IndevScreen: NextPage = (props) => {
     <div className="bg-dark min-h-screen h-full w-full flex justify-center items-center">
       <div className="wrapper">
         <div className="flex items-center gap-[32px] max-[832px]:flex-col">
-          <Image src={CatImg.src} alt="Tinkering about..." width={386} height={386} className="max-[832px]:w-[256px] max-[832px]:h-[256px]" />
+          <StyledImage src={CatImg.src} alt="Tinkering about..." width={'386px'} height={'386px'} className="max-[832px]:w-[256px] max-[832px]:h-[256px]" />
 
           <div className="flex flex-col gap-[80px] w-full justify-center items-center max-[832px]:gap-[40px]">
             <div className="flex flex-col gap-[16px]">
@@ -320,8 +277,8 @@ export const ServerUnavailable: NextPage = (props) => {
             <div className="flex flex-col gap-[16px]">
               <h1 className="text-center text-white text-[40px] max-[700px]:text-[24px]">Сервер тимчасово недоступний</h1>
               <p className="text-center text-white">
-                Якщо в телеграмі <a href={CONSTS.social.telegram} className="text-purple">nekomi</a> нема сповіщення про роботи, створіть будь ласка тікет в <a href={CONSTS.social.discord} className="text-purple">діскорді</a>
-                {/* Можливо, сервер вимкнений через стабілізаційні відключення. Це не повинно тривати довго. */}
+                {/* Якщо в телеграмі <a href={CONSTS.social.telegram} className="text-purple">nekomi</a> нема сповіщення про роботи, створіть будь ласка тікет в <a href={CONSTS.social.discord} className="text-purple">діскорді</a> */}
+                Можливо, сервер вимкнений через стабілізаційні відключення. Це не повинно тривати довго.
               </p>
             </div>
           </div>

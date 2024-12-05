@@ -1,4 +1,4 @@
-import { LoadingImage } from '../components/Components';
+import Image from 'next/image';
 
 import { IAssetProps } from './Icons';
 
@@ -48,12 +48,12 @@ export const IcoSupportPrivatbank = ({ className, fill, height, width }: IAssetP
 
 export const IcoSupportMonobank = ({ width, className, height }: { width?: number, height?: number, className?: string }) => {
   return (
-    <LoadingImage src={SupportMonobank.src} alt="monobank logo" width={width ? `${width}px` : '32px'} height={height ? `${height}px` : '32px'} parentClassName={className ? className : ''} />
+    <Image src={SupportMonobank.src} alt="monobank logo" width={width ? width : 32} height={height ? height : 32} className={className} />
   );
 }
 
 export const IcoSupportDiaka = ({ width, className, height }: { width?: number, height?: number, className?: string }) => {
   return (
-    <LoadingImage src={SupportDiaka.src} alt="diaka logo" width={width ? `${width}px` : '32px'} height={height ? `${height}px` : '32px'} parentClassName={className ? className : ''} />
+    <Image src={SupportDiaka.src} alt="diaka logo" width={width ? width : 32} height={height ? height : 32} className={className} />
   );
 }

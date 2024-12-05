@@ -10,10 +10,9 @@ import '../styles/components/Header.scss';
 
 import { useEffect, useRef, useState } from 'react'
 import * as DropMenu from '@fullkekw/fkw-menu';
-import { Dialog, forceFocus,Layer,Trigger } from '@fullkekw/fkw-popup';
+import { Dialog, forceFocus, Layer, Trigger } from '@fullkekw/fkw-popup';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
@@ -28,10 +27,10 @@ import { IUser } from '../interfaces/IUser';
 import { routes } from '../routes';
 import userSlice, { userStateDefault } from '../store/reducers/userSlice';
 
-import { LoadingImage } from './Components';
 import { createID, makeStringID, parseTitleType, randomNumber } from './handlers';
 import { $api } from './http';
 import { getRoute } from './ServerComponents';
+import StyledImage from './UI/StyledImage';
 
 
 
@@ -251,7 +250,7 @@ const Header: NextPage = () => {
             <DropMenu.Menu gap={16} settings={{ align: 'right', animation: 'slide' }} state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
               <DropMenu.MenuTrigger className="flex items-center gap-[16px] duration-200 rounded-[2px] overflow-hidden pr-[8px]" primary>
                 <div className="flex justify-center items-center gap-[8px]">
-                  <Image src={user.avatar} priority width={60} height={60} className="rounded-[4px]" alt="avatar" />
+                  <StyledImage src={user.avatar} priority width={`60px`} height={`60px`} className="rounded-[4px]" alt="avatar" />
 
                   <IcoArrow width={24} height={24} className={`duration-200 ${userDetailsOpened ? 'rotate-180' : 'rotate-0'}`} />
                 </div>
@@ -313,7 +312,7 @@ const Header: NextPage = () => {
       <>
         {result?.item ? <>
           {result.type === 'title' && <Link href={`${config.URL.baseURL}${usePatcherRouting ? `${routes.patcher_title.path}/${(result.item as ITitle).id}` : `${routes.watch_title.path}/${(result.item as ITitle).code}`}`} className="flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]">
-            <LoadingImage src={(result.item as ITitle).poster} loading="lazy" width="128px" height="160px" parentClassName="rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]" />
+            <StyledImage src={(result.item as ITitle).poster} loading="lazy" width="128px" height="160px" className="rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]" />
 
             <div className="flex flex-col gap-[8px]">
               <p className="text-white text-[20px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]" title={(result.item as ITitle).names.ukr}>{(result.item as ITitle).names.ukr}</p>
@@ -344,7 +343,7 @@ const Header: NextPage = () => {
           </Link>}
 
           {(result.type === 'dubber' || result.type === 'user') && <Link href={result.type === 'user' ? `${config.URL.baseURL}${routes.user_profile.path}/${(result.item as IUser).username}` : `${config.URL.baseURL}${routes.dubber_profile.path}/${(result.item as IDubber).code}`} className="flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]">
-            <LoadingImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).thumbURL} width="128px" height="128px" parentClassName="rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]" />
+            <StyledImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).thumbURL} width="128px" height="128px" className="rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]" />
 
             <div className="flex flex-col gap-[8px]">
               <p className="text-white text-[24px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]">{result.type === 'user' ? `@${(result.item as IUser).username}` : (result.item as IDubber).name}</p>

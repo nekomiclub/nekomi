@@ -5,8 +5,9 @@
 import { useState } from 'react';
 import { NextPage } from 'next';
 
+import StyledImage from '~/components/UI/StyledImage';
 import { IcoChain } from '../../../assets/Icons';
-import { copyToClipboard,LoadingImage } from '../../../components/Components';
+import { copyToClipboard } from '../../../components/Components';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
@@ -41,7 +42,7 @@ export const DubberHeader: NextPage<IProps> = ({ dubber }) => {
         {/* Profile */}
         <div className={`flex gap-[32px] w-full relative -top-[128px] max-[820px]:flex-col max-[820px]:items-center`}>
           {/* Avatar */}
-          <LoadingImage src={dubber.thumbURL} width="256px" height="256px" parentClassName="shrink-0" />
+          <StyledImage src={dubber.thumbURL} width="256px" height="256px" className="shrink-0" />
 
           {/* Container */}
           <div className={`flex justify-between items-center w-full relative top-[64px] max-[820px]:top-0`}>

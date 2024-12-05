@@ -1,11 +1,5 @@
 'use client'
 
-
-
-
-
-
-
 import './styles.scss'
 
 import { createContext, memo, useContext, useEffect, useRef, useState } from 'react';
@@ -16,9 +10,10 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import StyledImage from '~/components/UI/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoNekomiLogo, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
-import { cn,LoadingImage } from '../../../components/Components';
+import { cn } from '../../../components/Components';
 import { getUTC, wordDeclination } from '../../../components/handlers';
 import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
@@ -360,7 +355,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
 
     <Menu state={isOpen} stateSetter={setIsOpen} disabled={isLocked}>
       <MenuTrigger primary className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between !w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
-        {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width="24px" height="24px" parentClassName="overflow-hidden rounded-[32px]" />}
+        {isDubbers && dubbers && <StyledImage src={dubbers.find(el => el.code === value)!.thumbURL!} width="24px" height="24px" className="overflow-hidden rounded-[32px]" />}
 
         <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{options.find(el => el.code === value)?.label}</p>
 
@@ -371,7 +366,7 @@ const Select = memo(function Select({ options, value, valueSetter, label, disabl
         {options.map(option => {
           return <div key={`select-option--${option.code}`} onClick={() => valueSetter(option.code)}>
             <button className={`px-[8px] py-[6px] ${value === option.code ? 'bg-purple' : !disablePending && option.code === initialValue.current ? 'bg-gradientSecondaryFallback' : ''} duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center ${isDubbers ? 'justify-start' : 'justify-center'} gap-[16px]`}>
-              {isDubbers && dubbers && <LoadingImage src={dubbers.find(el => el.code === option.code)!.thumbURL!} width="32px" height="32px" parentClassName="overflow-hidden rounded-[32px]" />}
+              {isDubbers && dubbers && <StyledImage src={dubbers.find(el => el.code === option.code)!.thumbURL!} width="32px" height="32px" className="overflow-hidden rounded-[32px]" />}
 
               <p className="text-white">{option.label}</p>
             </button>
@@ -437,7 +432,7 @@ const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, 
   return <div className="flex flex-col gap-[16px]">
     {/* Label */}
     <div className="flex items-center gap-[16px]">
-      <LoadingImage src={group.dubber?.thumbURL} height="32px" width="32px" parentClassName="overflow-hidden rounded-[32px] shrink-0" />
+      <StyledImage src={group.dubber?.thumbURL} height="32px" width="32px" className="overflow-hidden rounded-[32px] shrink-0" />
 
       <h3 className="text-white text-[24px] uppercase shrink-0 font-bold">{group.dubber?.name} ({group.episodes.length} / {title.episodesCount || 0})</h3>
 
@@ -663,7 +658,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
             {/* Input */}
             <input type="file" accept=".png,.jpg,.webp" ref={fileRef} className="hidden" onClick={e => (e.target as HTMLInputElement).value = ''} onChange={uploadPoster} />
 
-            <LoadingImage src={poster} width="100%" height="100%" parentClassName="overflow-hidden rounded-[4px]" />
+            <StyledImage src={poster} width="100%" height="100%" className="overflow-hidden rounded-[4px]" />
 
             {canTitleEdit && <button className="patcher-poster_hover w-full h-full bg-dark/[.4] flex flex-col gap-[16px] items-center justify-center duration-200 absolute top-0 left-0 z-[3] opacity-0 invisible pointer-events-none">
               <IcoUpdate width={256} height={256} className="max-[670px]:w-[128px] max-[670px]:h-[128px]" />

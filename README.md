@@ -28,4 +28,3 @@ Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```
 - nekomi-media
 - fk-usapi
 - fk-authority
-- fk-uptime (/polling)

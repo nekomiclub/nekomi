@@ -5,16 +5,16 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Dialog, Layer, Trigger } from '@fullkekw/fkw-popup';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import StyledImage from '~/components/UI/StyledImage';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoSettings, IcoStack, IcoStar, IcoUpdate, IcoUser, IcoWatched } from '../../../assets/Icons';
 import { IcoSocialTelegram } from '../../../assets/Social';
-import { copyToClipboard,LoadingImage } from '../../../components/Components';
+import { copyToClipboard } from '../../../components/Components';
 import { addZeroIfNumberSingle, makeStringID } from '../../../components/handlers';
 import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
@@ -214,7 +214,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
             </button>
 
             <input type="file" accept=".png,.jpg,.webp" ref={bannerSelectRef} className="hidden absolute -z-[1]" onChange={uploadBanner} />
-            <LoadingImage src={bannerURL} width="100%" height="100%" priority />
+            <StyledImage src={bannerURL} width="100%" height="100%" priority />
           </div>
 
           <Label label={`Під'єднання`} />
@@ -250,11 +250,11 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
       <div className={`bg-dark relative`} style={{ paddingTop: `${headerHeight}px` }}>
         {/* Image */}
         <div className="w-full h-fit max-h-[500px] aspect-[16/9] relative max-[1140px]:aspect-[16/7]">
-          <Image src={bannerURL} fill priority alt="banner" className="w-full h-full object-cover" />
+          <StyledImage src={bannerURL} width="100%" height="100%" priority alt="banner" className="w-full h-full object-cover" />
         </div>
 
         {/* Layouts */}
-        <div className="wrapper">
+        <div className="wrapper z-[2]">
           {/* PC */}
           <div className={`min-[670px]:flex hidden flex-row justify-between absolute bottom-0 left-0 w-full bg-dark/[.3] backdrop-blur-[32px] px-[32px] py-[16px]`}>
             <div className="flex gap-[32px] min-[670px]">
@@ -282,7 +282,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   function AvatarComponent() {
     return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px]">
-      <Image src={user.avatar} width={256} height={256} className="absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square" priority alt="avatar" />
+      <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square" priority alt="avatar" />
     </div>
   }
 

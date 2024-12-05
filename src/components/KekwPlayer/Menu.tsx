@@ -4,7 +4,8 @@ import * as DropMenu from '@fullkekw/fkw-menu';
 import { IcoPlayerList, IcoPlayerNext } from '~/assets/Player'
 import { IDubber } from '~/interfaces/IDubber'
 import { ITitleEpisode } from '~/interfaces/ITitle'
-import { cn, LoadingImage } from '../Components'
+import { cn } from '../Components'
+import StyledImage from '../UI/StyledImage';
 
 
 
@@ -83,7 +84,7 @@ export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, dubbe
 
               return <li className={`px-[8px] py-[4px] duration-200 flex justify-between gap-[8px] hover:bg-purple focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${episode.dubberID === dubber.id ? 'bg-purple' : ''}`} onClick={selectDubber} key={`menu-dubs_list--${dubber.id}`}>
                 <div className="shrink-0">
-                  <LoadingImage src={dubber.thumbURL} width="24px" height="24px" parentClassName="rounded-[32px] overflow-hidden" />
+                  <StyledImage src={dubber.thumbURL} width="24px" height="24px" className="rounded-[32px] overflow-hidden" />
                 </div>
 
                 <p className="text-white whitespace-nowrap w-full text-start">{dubber.name}</p>

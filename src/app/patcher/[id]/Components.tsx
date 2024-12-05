@@ -4,8 +4,9 @@ import { memo, useContext, useEffect, useRef, useState } from 'react'
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu'
 import gsap from 'gsap'
 
+import StyledImage from '~/components/UI/StyledImage'
 import { IcoArrow, IcoGhost, IcoLock } from '../../../assets/Icons'
-import { cn,LoadingImage } from '../../../components/Components'
+import { cn } from '../../../components/Components'
 import { IDubber } from '../../../interfaces/IDubber'
 
 import { IFieldStatus, PatcherMetaContext, TPatcherMetaKey } from './Patcher'
@@ -241,7 +242,7 @@ export const PatcherSelect = memo(function PatcherSelect({ options, label, disab
 
     <Menu className="w-full" gap={16} settings={{ align: 'stretch', direction: 'bottom', animation: 'slide', closeOn: 'both' }} state={isOpen} stateSetter={setIsOpen}>
       <MenuTrigger className={cn(`patcher-select px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`, isPending && 'patcher-select--pending', isSaved && 'patcher-select--saved')} primary>
-        {dubbers?.length && <LoadingImage src={dubbers.find(el => el.code === value)!.thumbURL!} width="24px" height="24px" parentClassName="overflow-hidden rounded-[32px]" />}
+        {dubbers?.length && <StyledImage src={dubbers.find(el => el.code === value)!.thumbURL!} width="24px" height="24px" className="overflow-hidden rounded-[32px]" />}
 
         <p className={cn(`select-none`, locked ? 'text-lightGrey' : 'text-white')}>{options.find(el => el.code === option)?.label}</p>
 
@@ -251,7 +252,7 @@ export const PatcherSelect = memo(function PatcherSelect({ options, label, disab
       <MenuWrapper className="flex flex-col bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto">
         {options.map(el => {
           return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, option === el.code && 'bg-purple', el.code === initialValue.current && option !== el.code && 'bg-gradientSecondaryFallback')} key={`select-option--${el.code}`} onClick={() => select(el)}>
-            {dubbers?.length && <LoadingImage src={dubbers.find(el => el.code === el.code)!.thumbURL!} width="32px" height="32px" parentClassName="overflow-hidden rounded-[32px]" />}
+            {dubbers?.length && <StyledImage src={dubbers.find(el => el.code === el.code)!.thumbURL!} width="32px" height="32px" className="overflow-hidden rounded-[32px]" />}
 
             <p className="text-white">{el.label}</p>
           </button>

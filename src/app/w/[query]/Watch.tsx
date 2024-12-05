@@ -1,25 +1,18 @@
 'use client'
 
-
-
-
-
-
-
 import './styles.scss'
 
 import { useEffect, useMemo, useState } from 'react';
 import * as DropMenu from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import StyledImage from '~/components/UI/StyledImage';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoFolderAdd } from '../../../assets/Folder';
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
-import { LoadingImage } from '../../../components/Components';
 import { getUTC, parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { $api } from '../../../components/http';
 import KekwPlayer from '../../../components/KekwPlayer/KekwPlayer';
@@ -70,14 +63,14 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
         <div className="wrapper !mb-[60px]">
           {/* Background */}
           <div className="w-full h-full absolute top-0 left-0 z-[1]">
-            <Image src={title.poster} fill alt="..." loading="eager" />
+            <StyledImage src={title.poster} height="100%" width="100%" alt="..." loading="eager" />
             <div className="absolute top-0 left-0 w-full h-full z-[2] bg-dark/[.8] backdrop-blur-[200px]"></div>
           </div>
 
           <div className="relative z-[3] flex flex-row gap-[24px] max-[890px]:!flex-col max-[890px]:items-center pt-[132px] pb-[40px]">
             <div className="watch-poster_wrapper flex flex-col gap-[8px] max-[472px]:w-full">
               <div className="watch-poster relative w-[500px] h-[700px] shrink-0 max-[1200px]:w-[350px] max-[1200px]:h-[500px] max-[472px]:w-full">
-                <Image src={title.poster} fill alt="..." loading="eager" priority className="rounded-[4px] overflow-hidden" />
+                <StyledImage src={title.poster} height="100%" width="100%" alt="..." loading="eager" priority className="rounded-[4px] overflow-hidden" />
 
                 <Link href={title.poster} target="_blank" className="watch-poster_link opacity-0 invisible duration-200 w-full h-full bg-dark/[.4] absolute top-0 left-0 flex justify-center items-center z-[3]">
                   <Tooltip content="Відкрити повний постер">
@@ -172,7 +165,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
         {title.episodes.length ? <div className="wrapper h-[800px] relative z-0">
           <KekwPlayer title={title} dubbers={dubbers} />
         </div> : <div className="w-full bg-darkGrey flex gap-[32px] items-center px-[32px] py-[40px] rounded-[2px] max-[934px]:flex-col">
-          <LoadingImage src={IndevCat.src} width="100%" height="100%" parentClassName="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-[1096px]:!w-[386px] max-[1096px]:!h-[386px] max-[560px]:!w-[256px] max-[560px]:!h-[256px]" />
+          <StyledImage src={IndevCat.src} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-[1096px]:!w-[386px] max-[1096px]:!h-[386px] max-[560px]:!w-[256px] max-[560px]:!h-[256px]" />
 
           <div className="flex flex-col gap-[8px] items-center w-full">
             <p className="text-white text-[40px] font-bold max-[560px]:text-[24px]">А серій нема</p>

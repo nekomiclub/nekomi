@@ -3,18 +3,18 @@
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
 import * as loader from '@uiball/loaders';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useIdleTimer } from 'react-idle-timer';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+import StyledImage from '~/components/UI/StyledImage';
 import { IcoClockOutlined } from '../assets/Clock';
 import { IcoExternalLink, IcoGhost, IcoPlay, IcoStar, IcoStarRating } from '../assets/Icons';
 import { IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
 import { TitleCard } from '../components/Components';
 import { createID } from '../components/handlers';
 import { IKekwPlayerLocalDataItem, secondsToReadable } from '../components/KekwPlayer/KekwPlayer';
-import { config,CONSTS } from '../config';
+import { config, CONSTS } from '../config';
 import { ITitle } from '../interfaces/ITitle';
 import { IUserWatchProgress } from '../interfaces/IUser';
 import { routes } from '../routes';
@@ -154,7 +154,7 @@ const Home: NextPage<IProps> = ({ data, watchProgress }) => {
       <>
         {/* Background */}
         <div className="w-full h-full absolute top-0 left-0">
-          <Image src={isMobile ? featured[0].poster : featured[0].backgroundURL} fill alt="..." loading="eager" priority />
+          <StyledImage src={isMobile ? featured[0].poster : featured[0].backgroundURL} width="100%" height="100%" alt="..." loading="eager" priority />
           <div className="absolute top-0 left-0 w-full h-full bg-dark/[.4] z-[2]"></div>
         </div>
 
