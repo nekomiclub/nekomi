@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 
-import { $upload } from '../../../components/http';
-import { config } from '../../../config';
+import { $upload } from '~/components/http';
+import { config } from '~/config';
 import { ITitle, ITitleEpisode } from '../../../interfaces/ITitle';
 
 import { IPatcherEpisode, TEpisodeType } from './Patcher';
@@ -56,9 +56,15 @@ export class PactherStack {
   private patch({ progress, type, id, sourceURL }: { id: string, type?: TEpisodeType, progress?: number, sourceURL?: string }) {
     const item = this.stack.find(el => el.id === id)!;
 
-    if (progress) item.progress = progress;
+    if (progress) item.progress = +progress.toFixed(2);
     if (type) item.type = type;
     if (sourceURL) item.episode.qualities.q1080 = sourceURL;
+
+    // Update orders
+    this.stack.forEach(stackEl => {
+      stackEl.uploadOrder = this.stack.findIndex(el => el.id === stackEl.id);
+      this.patchEpisode(stackEl);
+    })
 
     this.patchEpisode(item);
   }
@@ -77,12 +83,29 @@ export class PactherStack {
       this.patch({ id: item.id, type: 'uploading' })
       console.log(`[PatcherStack]: Stack run ${item.id}`);
 
+      // Patch progress
+      interval = setInterval(() => {
+        this.patch({ id: item.id, progress: percentage })
+      }, 500); // 3000
+
       // //! TESTING
       // await new Promise(res => {
       //   setTimeout(() => {
       //     res(1);
       //     this.patch({ id: item.id, type: 'uploaded' })
       //   }, 10000);
+
+      //   setTimeout(() => {
+      //     percentage = 20.11
+      //   }, 2000);
+
+      //   setTimeout(() => {
+      //     percentage = 70.3
+      //   }, 3503);
+
+      //   setTimeout(() => {
+      //     percentage = 98.54
+      //   }, 7004);
       // })
 
       // Upload
@@ -94,24 +117,18 @@ export class PactherStack {
       formData.append('order', `${item.episode.order}`);
       formData.append('qualities', JSON.stringify([480]));
 
-      interval = setInterval(() => {
-        this.patch({ id: item.id, progress: percentage })
-      }, 3000); // 3000
-
       const { data } = await $upload.patch<{ episode: ITitleEpisode }>(`${config.URL.apiProxy}/title/${this.title.id}`, formData, {
         onUploadProgress: (e) => {
           const { progress } = e;
 
           percentage = +((progress || 0) * 100).toFixed(2);
-
-          if (progress === 1) {
-            clearInterval(interval)
-          }
         },
         headers: {
           Authorization: this.session
         }
       })
+
+      clearInterval(interval)
 
       this.patch({ id: item.id, type: 'uploaded', sourceURL: data.episode.qualities.q1080 })
     } catch (e) {

@@ -8,6 +8,7 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import StyledImage from '~/components/UI/StyledImage';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
@@ -20,7 +21,6 @@ import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
 import { IUser, IUserLib } from '../../../interfaces/IUser';
-import { PatcherErrorWrapper } from '../../patcher/[id]/Components';
 
 
 
@@ -205,7 +205,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
           </Link>
 
           <Label label="Банер профілю" />
-          {bannerUploadError && <PatcherErrorWrapper errors={[bannerUploadError]} section="upload_banner" />}
+          {bannerUploadError && <ErrorWrapper errors={[bannerUploadError]} id="user-bannerUpload" />}
 
           <div className="w-full max-h-[400px] aspect-[16/7] relative shrink-0" ref={bannerWrapperRef}>
             <button className="w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible" onClick={selectBannerFile} ref={bannerButtonRef}>

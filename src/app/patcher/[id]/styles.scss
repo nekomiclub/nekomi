@@ -18,7 +18,7 @@
 
 
 
-      &--save {
+      &--default {
         &:hover {
           background: colors.$green;
         }
@@ -32,7 +32,7 @@
         }
       }
 
-      &--saveError {
+      &--error {
         background: colors.$red;
 
         &:hover {
@@ -46,7 +46,7 @@
         }
       }
 
-      &--nothingChanged {
+      &--nothing_changed {
         background: colors.$orange;
 
         &:hover {
@@ -75,6 +75,7 @@
     border-radius: 2px;
     width: 100%;
     max-width: 100%;
+    height: 42px;
     max-height: 300px;
     border: 1px solid colors.$grey;
     transition: .2s ease-in-out;

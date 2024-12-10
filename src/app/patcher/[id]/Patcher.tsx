@@ -3,26 +3,26 @@
 import './styles.scss'
 
 import { createContext, memo, useContext, useEffect, useRef, useState } from 'react';
-import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { AxiosError } from 'axios';
-import gsap from 'gsap';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { getUTC } from '~/components/handlers';
+import ErrorWrapper from '~/components/UI/ErrorWrapper';
+import GroupLabel from '~/components/UI/GroupLabel';
 import StyledImage from '~/components/UI/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
-import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoLock, IcoNekomiLogo, IcoPlay, IcoPlus, IcoUpdate } from '../../../assets/Icons';
+import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoNekomiLogo, IcoPlus, IcoUpdate } from '../../../assets/Icons';
 import { cn } from '../../../components/Components';
-import { getUTC, wordDeclination } from '../../../components/handlers';
 import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
-import { config, CONSTS, prodMode } from '../../../config';
+import { config, CONSTS } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 import { AnimeAgeRates, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
 import { routes } from '../../../routes';
 
-import { IPatcherSelectOption, PatcherErrorWrapper, PatcherField, PatcherSelect } from './Components';
+import { IPatcherSelectOption, PatcherEpisodeGroup, PatcherEpisodeMeta, PatcherField, PatcherSelect } from './Components';
 import { PactherStack } from './PatcherStack';
 
 
@@ -36,26 +36,8 @@ interface IProps {
   session: string
 }
 
-interface IFieldProps {
-  label: string
-  type: 'title' | 'meta' | 'metaParse' | 'episode'
-  /** Will add "patcher-" prefix */
-  id: TFieldID
-  initialValue?: string
-  /** Small text near label */
-  note?: string
-  isLarge?: boolean
-  symbolsLimited?: number
-  isLocked?: boolean
-  placeholder?: string
-  disablePending?: boolean
-  /** Out useState value. Out value will sync inner & set it like initial value */
-  outValue?: string
-  outValueSetter?: (value: string) => void
-}
-
 /** Patcher episodes group */
-export interface IPatcherEpisodesGroup {
+export interface IPatcherEpisodeGroup {
   dubber: IDubber,
   episodes: IPatcherEpisode[]
 }
@@ -65,67 +47,18 @@ export interface IPatcherEpisode {
   id: string
   episode: ITitleEpisode
   type: TEpisodeType
+
   progress: number | null
   file: File | null
   uploadOrder: number | null
 }
 
-interface ISelectOption<T = any> {
-  label: string
-  code: T
-}
-
-interface ISelectProps {
-  label: string
-  value: any
-  valueSetter: (value: any) => void
-  options: ISelectOption[]
-  disablePending?: boolean
-  isDubbers?: boolean
-  dubbers?: IDubber[]
-  isLocked?: boolean
-}
-
-interface IHeaderSectionProps {
-  title: ITitle
-  session: string
-}
-
-interface IEpisodesMetaSection {
-  title: ITitle
-}
-
-interface IEpisodesSection {
+interface IPatcherMetaContext {
   title: ITitle
   dubbers: IDubber[]
-  totalDubbers: IDubber[]
   session: string
-}
+  totalDubbers: IDubber[]
 
-interface IPatcherMetaContext {
-  meta: {
-    /** @readonly */
-    id: string
-    /** @readonly */
-    code: string
-
-    nameUkr: string
-    nameEng: string
-    nameAlt: string
-    posterURL: string
-    IMDBRating: number
-    description: string
-    status: TAnimeStatus
-    episodesCount: number
-    genres: string
-    ageRate: TAnimeAgeRate
-    season: TAnimeSeason
-    type: TTitleType
-    year: number
-    studios: string
-    country: TTitleCountry
-    details: string
-  }
   capability: {
     isRoot: boolean
     canTitleDelete: boolean
@@ -165,15 +98,13 @@ export interface IChangeEpMeta extends ITitleEpisodeMeta {
   action: 'edit' | 'delete'
 }
 
-export interface IFieldStatus {
-  id: TPatcherMetaKey
-  status: 'errror' | 'pending' | 'saved';
+export interface IPatcherFieldStatus {
+  id: string
+  status: TPatcherFieldStatus;
 }
 
-export type TPatcherMetaKey = keyof IPatcherMetaContext['meta']
-
-type TSaveStatus = 'save' | 'saved' | 'saveError' | 'nothingChanged';
-type TFieldID = 'ukrName' | 'engName' | 'altNames' | 'imdbRating' | 'description' | 'details' | 'year' | 'episodesCount' | 'studios' | 'metaImdbParse' | 'metaOrder' | 'metaEngName' | 'metaUkrName' | 'metaDateOut' | 'epOrder' | 'genres';
+type TPatcherFieldStatus = 'errror' | 'pending' | 'saved';
+type TMetaSaveStatus = 'default' | 'saved' | 'error' | 'nothing_changed';
 export type TEpisodeType = 'uploaded' | 'uploading' | 'pending';
 
 
@@ -250,226 +181,57 @@ const titleAgeRateOptions: IPatcherSelectOption<TAnimeAgeRate>[] = AnimeAgeRates
 
 
 
-const Field = memo(function Field({ isLarge, label, note, symbolsLimited, initialValue, id, isLocked, type, placeholder, disablePending, outValue, outValueSetter }: IFieldProps) {
-  const [value, setValue] = useState(initialValue || '')
-  const [currentValue, setCurrentValue] = useState(initialValue) // Like initial
-  const [isPending, setIsPending] = useState(false)
-  const [isError, setIsError] = useState(false);
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  const prevValue = useRef(currentValue)
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-
-    if (textarea) {
-      textarea.style.height = `${textarea.offsetHeight + 5}px`;
-    }
-  }, [])
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    const input = inputRef.current;
-
-    if (input) {
-      if (input.classList.contains('patcher-field--saved')) {
-        setCurrentValue(prevValue.current)
-        input.classList.remove('patcher-field--saved')
-      }
-    }
-
-    if (value !== currentValue && !disablePending) {
-      setIsPending(true)
-    } else {
-      setIsPending(false)
-    }
-
-    if (symbolsLimited) {
-      if (value.length > symbolsLimited) {
-        setIsError(true)
-      } else {
-        setIsError(false)
-      }
-    }
-
-    if (textarea) {
-      gsap.to(textarea, {
-        duration: .2,
-        height: `${textarea.scrollHeight}px`
-      })
-    }
-
-    if (outValueSetter) outValueSetter(value);
-    prevValue.current = value;
-  }, [value, currentValue])
-
-  // Sync out value with inner
-  useEffect(() => {
-    if (!outValue) return
-
-    setValue(outValue)
-    setCurrentValue(outValue)
-  }, [outValue])
-
-  return (
-    <div className="flex flex-col gap-[8px] w-full">
-      <div className="flex items-end gap-[8px]">
-        <div className="flex items-center gap-[4px]">
-          {isLocked && <IcoLock fill="#747474" width={16} height={16} />}
-
-          <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{label}</p>
-        </div>
-
-        {note && <p className="text-lightGrey text-[12px]">({note})</p>}
-      </div>
-
-      {isLarge
-        ? <textarea value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''}  patcher-${type} min-h-[120px]`} id={`patcher-${id}`} disabled={isLocked} placeholder={placeholder || '...'} autoComplete="off" ref={textareaRef} />
-        : <input type="text" value={value} onChange={e => setValue(e.target.value)} className={`patcher-field ${isError ? 'patcher-field--error' : ''} ${isPending ? 'patcher-field--pending' : ''} ${isLocked ? 'patcher-field--locked' : ''} patcher-${type} `} id={`patcher-${id}`} disabled={isLocked} placeholder={placeholder || '...'} autoComplete="off" ref={inputRef} />
-      }
-
-      {symbolsLimited && <p className="text-lightGrey text-[12px] w-full text-end">{value.length} / {symbolsLimited}</p>}
-    </div>
-  )
-})
-
-const Label = memo(function Label({ label }: { label: string }) {
-  return <div className="flex items-center gap-[16px]">
-    <h3 className="text-white text-[32px] font-bold shrink-0 max-[820px]:text-[24px]">{label}</h3>
-
-    <span className="w-full h-[3px] bg-grey"></span>
-  </div>
-})
-
-const Select = memo(function Select({ options, value, valueSetter, label, disablePending, isDubbers, dubbers, isLocked }: ISelectProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const initialValue = useRef(value);
-
-  return <div className="flex flex-col gap-[8px] !w-full">
-    <div className="flex items-center gap-[8px]">
-      {isLocked && <IcoLock width={16} height={16} fill="#747474" className={isLocked ? 'block' : 'hidden'} />}
-      <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{label}</p>
-    </div>
-
-    <Menu className="w-full" state={isOpen} stateSetter={setIsOpen} disabled={isLocked}>
-      <MenuTrigger primary className={`px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between !w-full border ${!disablePending && initialValue.current !== value ? 'border-gradientSecondaryFallback' : 'border-grey'}`}>
-        {isDubbers && dubbers && <StyledImage src={dubbers.find(el => el.code === value)!.thumbURL!} width="24px" height="24px" className="overflow-hidden rounded-[32px]" />}
-
-        <p className={`${isLocked ? 'text-lightGrey' : 'text-white'}`}>{options.find(el => el.code === value)?.label}</p>
-
-        <IcoArrow className={`duration-200 ${isOpen ? 'rotate-[180deg]' : 'rotate-[0def]'}`} fill={`${isLocked ? '#747474' : '#fff'}`} />
-      </MenuTrigger>
-
-      <MenuWrapper className="bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto flex flex-col">
-        {options.map(option => {
-          return <div key={`select-option--${option.code}`} onClick={() => valueSetter(option.code)}>
-            <button className={`px-[8px] py-[6px] ${value === option.code ? 'bg-purple' : !disablePending && option.code === initialValue.current ? 'bg-gradientSecondaryFallback' : ''} duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center ${isDubbers ? 'justify-start' : 'justify-center'} gap-[16px]`}>
-              {isDubbers && dubbers && <StyledImage src={dubbers.find(el => el.code === option.code)!.thumbURL!} width="32px" height="32px" className="overflow-hidden rounded-[32px]" />}
-
-              <p className="text-white">{option.label}</p>
-            </button>
-          </div>
-        })}
-      </MenuWrapper>
-    </Menu>
-  </div>
-})
-
-const EpisodesGroup = memo(function EpisodesGroup({ group, dubbingSelectedCode, title, deleteEpisode, canSeriesDelete }: { group: IPatcherEpisodesGroup, dubbingSelectedCode: string, title: ITitle, deleteEpisode: (specified: number, dubber: string) => void, canSeriesDelete: boolean }) {
-  const isActive = group.dubber?.code === dubbingSelectedCode;
-  const [isCollapsed, setIsCollapsed] = useState(!isActive)
-
-  const Episode = memo(function Episode({ episode }: { episode: IPatcherEpisode }) {
-    let order = 1;
-    let progress = 0;
-    let source = episode.episode.qualities.q1080;
-    let type = episode.type;
-
-    if (episode.type !== 'uploaded') {
-      order = episode.uploadOrder || 1
-      progress = episode.progress || 0;
-      episode.type = episode.type;
-      source = episode.episode.qualities.q1080;
-    }
-
-    return <div className="px-[24px] py-[16px] flex items-center gap-[16px] rounded-[2px] bg-grey">
-      {/* Order */}
-      <p className="text-white text-[24px] font-bold w-[100px] shrink-0">#{episode.episode.order}</p>
-
-      {/* Content */}
-      <div className="flex items-center gap-[16px] w-full">
-        {type === 'uploaded' && <Link href={source} target="_blank" className="flex items-center gap-[16px]">
-          <IcoPlay width={32} height={32} fill="#6C5CE7" />
-
-          <p className="text-purple">Переглянути</p>
-          {episode.file && <p className="text-lightGrey">Завантажено!</p>}
-        </Link>}
-
-        {type === 'pending' && <>
-          <IcoUpdate width={32} height={32} fill="#F39C12" />
-          <p className="text-white">В черзі на завантаження</p>
-          <p className="text-lightGrey">{'>'}{order}</p>
-        </>}
-
-        {type === 'uploading' && <>
-          <IcoUpdate width={32} height={32} fill="#2ECC71" />
-          <p className="text-white">Завантажується...</p>
-          <p className="text-lightGrey">{progress}%</p>
-        </>}
-      </div>
-
-      {/* Delete */}
-      {canSeriesDelete && type !== 'uploading' && <Tooltip content="Видалити">
-        <button className="shrink-0 patcher-episodeMeta" onClick={() => deleteEpisode(episode.episode.order, episode.episode.dubberID)}>
-          <IcoCan width={32} height={32} className="patcher-episodeMeta_delete" />
-        </button>
-      </Tooltip>}
-    </div>
-  })
-
-  return <div className="flex flex-col gap-[16px]">
-    {/* Label */}
-    <div className="flex items-center gap-[16px]">
-      <StyledImage src={group.dubber?.thumbURL} height="32px" width="32px" className="overflow-hidden rounded-[32px] shrink-0" />
-
-      <h3 className="text-white text-[24px] uppercase shrink-0 font-bold">{group.dubber?.name} ({group.episodes.length} / {title.episodesCount || 0})</h3>
-
-      <span className="w-full h-[3px] bg-grey"></span>
-
-      <Tooltip content={isCollapsed ? 'Розгорнути' : 'Згорунти'}>
-        <button className="p-[8px] rounded-[2px] bg-grey duration-200 hover:bg-purple focus-visible:bg-purple" onClick={() => setIsCollapsed(!isCollapsed)}>
-          <IcoArrow className={`duration-200 ${isCollapsed ? 'rotate-0' : 'rotate-[180deg]'}`} />
-        </button>
-      </Tooltip>
-    </div>
-
-    {/* Episodes */}
-    <div className={`flex flex-col gap-[4px] duration-300 ${isCollapsed ? 'max-h-0' : 'max-h-[600px]'} overflow-x-hidden overflow-y-auto`}>
-      {group.episodes.toReversed().map(episode => {
-        return <Episode episode={episode} key={`patcher-episodeGroup-${group.dubber?.id}--${episode.episode.order}`} />
-      })}
-    </div>
-  </div>
-})
-
-
-
-const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHeaderSectionProps) {
+const TitleMetaSection = memo(function TitleMetaSection() {
   const router = useRouter();
+
   const MetaCtx = useContext(PatcherMetaContext);
+  const { title, session } = MetaCtx
+  const { canTitleEdit, canTitleDelete } = MetaCtx.capability
 
   const [errors, setErrors] = useState<string[]>([])
-  const [saveStatus, setSaveStatus] = useState<TSaveStatus>('save')
+  const [FieldsStatus, SetFieldsStatus] = useState<IPatcherFieldStatus[]>([])
+  const [MetaSaveStatus, SetMetaSaveStatus] = useState<TMetaSaveStatus>('default')
   const [poster, setPoster] = useState(title.poster);
   const [isPosterStored, setIsPosterStored] = useState(poster.includes(CONSTS.Domains.nekomi_media))
-  const [fieldsStatus, setFieldsStatus] = useState<IFieldStatus[]>([])
 
   const fileRef = useRef<HTMLInputElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  const { canTitleEdit, canTitleDelete } = MetaCtx.capability
+
+
+
+  const [name_ukr, setNameUkr] = useState(title.names.ukr)
+  const [name_eng, setNameEng] = useState(title.names.eng)
+  const [status, setStatus] = useState(title.status)
+  const [type, setType] = useState(title.type)
+  const [rating_imdb, setRatingImdb] = useState(title.rating.IMDB)
+  const [age_rate, setAgeRate] = useState(title.ageRate)
+  const [episodes_count, setEpisodesCount] = useState(title.episodesCount)
+  const [country, setCountry] = useState(title.country)
+  const [season, setSeason] = useState(title.season)
+  const [year, setYear] = useState(title.year)
+  const [description, setDescription] = useState(title.description)
+  const [details, setDetails] = useState(title.details)
+
+  const [name_alt, setNameAlt] = useState(title.names.alt.join(', '))
+  const [studios, setStudios] = useState(title.studios.join(', '))
+  const [genres, setGenres] = useState(title.genres.join(', '))
+
+
+
+  /** Prevent unload if some of fields are pending changes */
+  useEffect(() => {
+    window.addEventListener('beforeunload', e => {
+      const wrapper = wrapperRef.current;
+      if (!wrapper) return;
+
+      const pendingInputs = (wrapper.querySelectorAll('.patcher-field--pending') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>);
+      const pendingSelects = (wrapper.querySelectorAll('.patcher-select--pending') as NodeListOf<HTMLButtonElement>);
+
+      if (pendingInputs.length || pendingSelects.length) e.preventDefault();
+    })
+  }, [])
 
 
 
@@ -547,85 +309,84 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    setErrors([]);
     if (wrapper.querySelector('.patcher-field--error')) return appendError('Деякі поля містять помилки');
 
     const pendingInputs = (wrapper.querySelectorAll('.patcher-field--pending') as NodeListOf<HTMLInputElement | HTMLTextAreaElement>);
     const pendingSelects = (wrapper.querySelectorAll('.patcher-select--pending') as NodeListOf<HTMLButtonElement>);
 
-    const fieldsStatus: IFieldStatus[] = []
+    const FieldsStatus: IPatcherFieldStatus[] = []
     const patchBody: IPatchTitleBody = {};
+
+
 
     // Parse inputs
     pendingInputs.forEach(el => {
       const wrapper = el.closest('.patcher-field_wrapper')!;
-      const key = wrapper.id.replace('patcher-field--', '') as TPatcherMetaKey;
+      const key = wrapper.id.replace('patcher-', '');
 
-      const simpleTypes: TPatcherMetaKey[] = ['description', 'details', 'IMDBRating', 'episodesCount', 'year'];
-      if (simpleTypes.includes(key)) {
-        fieldsStatus.push({ id: key, status: 'saved' })
-        patchBody[key] = MetaCtx.meta[key]
-      };
-
-      switch (key) {
-        case 'nameEng': {
-          patchBody.names = patchBody.names || {};
-          patchBody.names.eng = MetaCtx.meta.nameEng
-          fieldsStatus.push({ id: key, status: 'saved' })
-          break
-        }
-
-        case 'nameUkr': {
-          patchBody.names = patchBody.names || {};
-          patchBody.names.ukr = MetaCtx.meta.nameUkr
-          fieldsStatus.push({ id: key, status: 'saved' })
-          break
-        }
-
-        case 'nameAlt': {
-          patchBody.names = patchBody.names || {};
-          patchBody.names!.alt = MetaCtx.meta.nameAlt.split(',');
-          fieldsStatus.push({ id: key, status: 'saved' })
-          break
-        }
-
-        case 'studios': {
-          patchBody.studios = MetaCtx.meta.studios.split(',');
-          fieldsStatus.push({ id: key, status: 'saved' })
-          break
-        }
-
-        case 'genres': {
-          patchBody.genres = MetaCtx.meta.genres.split(',').map(el => el.trim().replaceAll(/\s+/gi, ' ')) as TAnimeGenre[];
-          fieldsStatus.push({ id: key, status: 'saved' })
-          break
-        }
+      if (key === 'name_ukr') {
+        patchBody.names = patchBody.names ?? {}
+        patchBody.names.ukr = name_ukr;
       }
+
+      if (key === 'name_eng') {
+        patchBody.names = patchBody.names ?? {}
+        patchBody.names.eng = name_eng;
+      }
+
+      if (key === 'name_alt') {
+        patchBody.names = patchBody.names ?? {}
+        patchBody.names.alt = name_alt.split(',');
+      }
+
+      if (key === 'rating_imdb') patchBody.IMDBRating = rating_imdb ?? undefined;
+      if (key === 'episodes_count') patchBody.episodesCount = episodes_count ?? undefined;
+      if (key === 'year') patchBody.year = year ?? undefined;
+      if (key === 'details') patchBody.details = details ?? undefined;
+      if (key === 'description') patchBody.description = description ?? undefined;
+
+      if (key === 'studios') patchBody.studios = studios.split(',') ?? undefined;
+      if (key === 'genres') patchBody.genres = genres.split(',') as TAnimeGenre[] ?? undefined;
+
+      FieldsStatus.push({
+        id: wrapper.id,
+        status: 'saved'
+      })
     });
 
     // Parse selects
     pendingSelects.forEach(el => {
       const wrapper = el.closest('.patcher-select_wrapper')!;
-      const key = wrapper.id.replace('patcher-select--', '') as TPatcherMetaKey;
+      const key = wrapper.id.replace('patcher-', '');
 
-      const simpleTypes: TPatcherMetaKey[] = ['ageRate', 'country', 'season', 'status', 'type'];
-      if (simpleTypes.includes(key)) {
-        fieldsStatus.push({ id: key, status: 'saved' })
-        patchBody[key] = MetaCtx.meta[key];
-      }
+      if (key === 'status') patchBody.status = status;
+      if (key === 'type') patchBody.type = type;
+      if (key === 'age_rate') patchBody.ageRate = age_rate;
+      if (key === 'country') patchBody.country = country;
+      if (key === 'season') patchBody.season = season;
+
+      FieldsStatus.push({
+        id: wrapper.id,
+        status: 'saved'
+      })
     });
 
 
 
     try {
-      if (!Object.keys(patchBody).length) return setSaveStatus('nothingChanged');
+      if (!Object.keys(patchBody).length) return SetMetaSaveStatus('nothing_changed');
 
       await $api.patch(`/title/${title.id}`, patchBody);
 
-      setFieldsStatus(fieldsStatus)
-      setSaveStatus('saved')
+      SetFieldsStatus(FieldsStatus);
+      SetMetaSaveStatus('saved')
+      setErrors([]);
+
+      setTimeout(() => {
+        SetFieldsStatus(prev => prev.filter(el => el.status !== 'saved'));
+      }, 3000);
     } catch (e) {
-      setSaveStatus('saveError')
+      SetMetaSaveStatus('error')
 
       if (e instanceof AxiosError) {
         appendError(e.response?.data.message || e.response?.data.msg || e.code)
@@ -634,7 +395,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
       }
     } finally {
       setTimeout(() => {
-        setSaveStatus('save')
+        SetMetaSaveStatus('default')
       }, 3000);
     }
   }
@@ -647,7 +408,7 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
 
 
   return <section className="flex flex-col gap-[16px]" ref={wrapperRef}>
-    <PatcherErrorWrapper errors={errors} section="meta" />
+    {errors.length ? <ErrorWrapper errors={errors} id="patcher-meta" /> : <></>}
 
     {/* Meta section */}
     <div className="flex gap-[32px] max-[1280px]:flex-col">
@@ -672,16 +433,16 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
 
         <div className="flex flex-col gap-[24px]">
           <div className="flex flex-col gap-[4px]">
-            {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${saveStatus}`} onClick={patchTitleMeta} disabled={!canTitleEdit}>
-              {(saveStatus === 'save' || saveStatus === 'saved') && <IcoCheckmark width={32} height={32} />}
-              {saveStatus === 'saveError' && <IcoCross width={32} height={32} />}
-              {saveStatus === 'nothingChanged' && <IcoGhost width={32} height={32} />}
+            {canTitleEdit && <button className={`patcher-button_action patcher-button_action--save patcher-button_action--${MetaSaveStatus}`} onClick={patchTitleMeta} disabled={!canTitleEdit}>
+              {(MetaSaveStatus === 'default' || MetaSaveStatus === 'saved') && <IcoCheckmark width={32} height={32} />}
+              {MetaSaveStatus === 'error' && <IcoCross width={32} height={32} />}
+              {MetaSaveStatus === 'nothing_changed' && <IcoGhost width={32} height={32} />}
 
               <p className="text-white uppercase">
-                {saveStatus === 'save' && 'зберегти'}
-                {saveStatus === 'saved' && 'збережено'}
-                {saveStatus === 'saveError' && 'помилка'}
-                {saveStatus === 'nothingChanged' && 'нічого не змінилось'}
+                {MetaSaveStatus === 'default' && 'зберегти'}
+                {MetaSaveStatus === 'saved' && 'збережено'}
+                {MetaSaveStatus === 'error' && 'помилка'}
+                {MetaSaveStatus === 'nothing_changed' && 'нічого не змінилось'}
               </p>
             </button>}
 
@@ -706,90 +467,109 @@ const TitleMetaSection = memo(function TitleMetaSection({ title, session }: IHea
 
       {/* Meta fields */}
       <div className="flex flex-col gap-[8px] w-full">
-        <PatcherField label="Українська назва" id="nameUkr" symbolsLimited={256} fieldsStatus={fieldsStatus} />
+        <PatcherField label="Українська назва" id="patcher-name_ukr" symbolsLimited={256} value={name_ukr} setValue={setNameUkr} FieldsStatus={FieldsStatus} />
 
         <div className="pl-[16px]">
-          <PatcherField label="Англійська" id="nameEng" symbolsLimited={256} fieldsStatus={fieldsStatus} />
-          <PatcherField label="Альтернативні" id="nameAlt" note="Через кому" type="textarea" value={Array.isArray(MetaCtx.meta.nameAlt) ? MetaCtx.meta.nameAlt.join(', ') : MetaCtx.meta.nameAlt} symbolsLimited={256} fieldsStatus={fieldsStatus} />
+          <PatcherField label="Англійська" id="patcher-name_eng" symbolsLimited={256} value={name_eng} setValue={setNameEng} FieldsStatus={FieldsStatus} />
+          <PatcherField label="Альтернативні" id="patcher-name_alt" note="Через кому" type="textarea" value={name_alt} setValue={setNameAlt} symbolsLimited={256} FieldsStatus={FieldsStatus} />
         </div>
 
-        <PatcherSelect label="Статус" id="status" options={titleStatusOptions} fieldsStatus={fieldsStatus} />
-        <PatcherSelect label="Тип" id="type" options={titleTypeOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label="Статус" id="patcher-status" options={titleStatusOptions} option={status} setOption={setStatus} FieldsStatus={FieldsStatus} />
+        <PatcherSelect label="Тип" id="patcher-type" options={titleTypeOptions} option={type} setOption={setType} FieldsStatus={FieldsStatus} />
 
-        <PatcherField label="Рейтинг IMDb" id="IMDBRating" note="1 - 10, 0 - відсутній" type="number" symbolsLimited={3} fieldsStatus={fieldsStatus} />
+        <PatcherField label="Рейтинг IMDb" id="patcher-rating_IMDB" note="1 - 10, 0 - відсутній" type="number" symbolsLimited={4} value={rating_imdb} setValue={setRatingImdb} FieldsStatus={FieldsStatus} />
 
-        <PatcherSelect label="Віковий рейтинг" id="ageRate" options={titleAgeRateOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label="Віковий рейтинг" id="patcher-age_rate" options={titleAgeRateOptions} option={age_rate} setOption={setAgeRate} FieldsStatus={FieldsStatus} />
 
-        <PatcherField label="Епізоди" id="episodesCount" note="1 - 9999, 0 - відсутні" type="number" symbolsLimited={4} fieldsStatus={fieldsStatus} />
-        <PatcherField label="Студії" id="studios" note="Через кому" symbolsLimited={256} fieldsStatus={fieldsStatus} />
-        <PatcherField label="Жанри" id="genres" note="Через кому" value={MetaCtx.meta.genres} symbolsLimited={256} fieldsStatus={fieldsStatus} />
+        <PatcherField label="Епізоди" id="patcher-episodes_count" note="1 - 9999, 0 - відсутні" type="number" symbolsLimited={4} value={episodes_count} setValue={setEpisodesCount} FieldsStatus={FieldsStatus} />
+        <PatcherField label="Студії" id="patcher-studios" note="Через кому" symbolsLimited={256} value={studios} setValue={setStudios} FieldsStatus={FieldsStatus} />
+        <PatcherField label="Жанри" id="patcher-genres" note="Через кому" symbolsLimited={256} value={genres} setValue={setGenres} FieldsStatus={FieldsStatus} />
 
-        <PatcherSelect label="Країна" id="country" options={titleCountryOptions} fieldsStatus={fieldsStatus} />
-        <PatcherSelect label="Сезон" id="season" options={titleSeasonOptions} fieldsStatus={fieldsStatus} />
+        <PatcherSelect label="Країна" id="patcher-country" options={titleCountryOptions} option={country} setOption={setCountry} FieldsStatus={FieldsStatus} />
+        <PatcherSelect label="Сезон" id="patcher-season" options={titleSeasonOptions} option={season} setOption={setSeason} FieldsStatus={FieldsStatus} />
 
-        <PatcherField label="Рік" id="year" note="2007 - 2050" type="number" symbolsLimited={4} fieldsStatus={fieldsStatus} />
+        <PatcherField label="Рік" id="patcher-year" note="2007 - 2050" type="number" symbolsLimited={4} value={year} setValue={setYear} FieldsStatus={FieldsStatus} />
       </div>
     </div>
 
     {/* Textareas */}
     <div className="flex gap-[8px] max-[970px]:flex-col">
-      <PatcherField id="description" label="Опис" locked={!canTitleEdit} symbolsLimited={2200} type="textarea" fieldsStatus={fieldsStatus} />
-      {canTitleEdit && <PatcherField id="details" label="Деталі" note="Не обов`язково" symbolsLimited={500} type="textarea" fieldsStatus={fieldsStatus} />}
+      <PatcherField label="Опис" id="patcher-description" locked={!canTitleEdit} symbolsLimited={2200} type="textarea" value={description} setValue={setDescription} FieldsStatus={FieldsStatus} />
+      {canTitleEdit && <PatcherField id="patcher-details" label="Деталі" note="Не обов`язково" symbolsLimited={500} type="textarea" value={details} setValue={setDetails} FieldsStatus={FieldsStatus} />}
     </div>
   </section>
 })
 
-const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodesMetaSection) {
+const EpisodeMetaSection = memo(function EpisodeMetaSection() {
   const MetaCtx = useContext(PatcherMetaContext)
+  const { title } = MetaCtx;
+  const { canEditEpsMeta } = MetaCtx.capability
 
   const [errors, setErrors] = useState<string[]>([])
+  const [FieldsStatus, SetFieldsStatus] = useState<IPatcherFieldStatus[]>([])
 
   const [selectedMeta, setSelectedMeta] = useState<ITitleEpisodeMeta | null>(null)
   const [episodesMeta, setEpisodesMeta] = useState(title.episodesMeta);
   const [isFolded, setIsFolded] = useState(true)
 
-  const { isRoot, canEditEpsMeta } = MetaCtx.capability
+  const [parse_url, setParseURL] = useState('')
+  const [order, setOrder] = useState(1)
+  const [ukr_name, setUkrName] = useState('')
+  const [eng_name, setEngName] = useState('')
+  const [date_out, setDateOut] = useState('')
+
+  const wrapperRef = useRef<HTMLDivElement>(null)
+
+
+
+  // Prevent unloading if meta fields are not empty
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleUnload)
+
+    function handleUnload(e: Event) {
+      if (order !== 1 || ukr_name || eng_name || date_out || parse_url) e.preventDefault();
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload)
+    }
+  }, [order, ukr_name, eng_name, date_out, parse_url])
+
+  // Handle selected meta
+  useEffect(() => {
+    if (!selectedMeta) return
+
+    setOrder(selectedMeta.order);
+    setUkrName(selectedMeta.names.ukr)
+    setEngName(selectedMeta.names.eng)
+    setDateOut(getUTC(selectedMeta.dateOut).dateReversed);
+  }, [selectedMeta])
 
 
 
   async function addEpisodeMeta() {
-    // Reset
-    const inputs = document.querySelectorAll('.patcher-field.patcher-meta');
-    const errors: string[] = []
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
 
-    inputs.forEach(el => {
-      el.classList.remove('patcher-field--saved')
-    })
+    if (wrapper.querySelector('.patcher-field--error')) return appendError('Деякі поля містять помилки');
 
-    setErrors([]);
-
-    const order = (document.querySelector(`#patcher-${'metaOrder' as TFieldID}`) as HTMLInputElement);
-    const ukrName = (document.querySelector(`#patcher-${'metaUkrName' as TFieldID}`) as HTMLInputElement);
-    const engName = (document.querySelector(`#patcher-${'metaEngName' as TFieldID}`) as HTMLInputElement);
-    const dateOut = (document.querySelector(`#patcher-${'metaDateOut' as TFieldID}`) as HTMLInputElement);
-
-    if (!order.value || isNaN(+order.value)) rejectField('Номер серії не може містити букви чи бути порожнім', order, errors); else order.classList.remove('patcher-field--error')
-    if (!dateOut.value || !dateOut.value.match(/^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(\d{4})$/gi)) rejectField('Дата виходу не може бути порожнею або не відповідати - ДД.ММ.РРРР (09, 10)', dateOut, errors); else dateOut.classList.remove('patcher-field--error')
-    if (!ukrName.value) rejectField('Українська назва відсутня', ukrName, errors); else ukrName.classList.remove('patcher-field--error')
-    if (!engName.value) rejectField('Англійська назва відсутня', engName, errors); else engName.classList.remove('patcher-field--error')
+    if (!date_out.match(/^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(\d{4})$/gi)) return setStatus('patcher-episodeMetaDateOut', 'errror', 'Дата виходу не може бути порожньою або не відповідати - ДД.ММ.РРРР (09, 10)'); else setStatus('patcher-patcher-episodeMetaDateOut', 'saved')
+    if (!order || isNaN(+order)) return setStatus('patcher-episodeMetaOrder', 'errror', 'Номер серії не може містити букви чи бути порожнім'); else setStatus('patcher-episodeMetaOrder', 'saved')
+    if (!ukr_name) return setStatus('patcher-episodeMetaUkrName', 'errror', 'Українська назва відсутня'); else setStatus('patcher-episodeMetaUkrName', 'saved')
+    if (!eng_name) return setStatus('patcher-episodeMetaEngName', 'errror', 'Англійська назва відсутня'); else setStatus('patcher-episodeMetaEngName', 'saved')
 
     const date = new Date()
+    date.setFullYear(+date_out.split('.')[2], +date_out.split('.')[1] - 1, +date_out.split('.')[0])
 
-    date.setFullYear(+dateOut.value.split('.')[2], +dateOut.value.split('.')[1] - 1, +dateOut.value.split('.')[0])
-
-    if (date.getUTCFullYear() > 2050 || date.getUTCFullYear() < 2007) rejectField('Рік не може бути менше 2007 чи більше 2050', dateOut, errors)
-
-    if (errors.length) {
-      return errors.forEach(err => appendError(err));
-    }
+    if (date.getUTCFullYear() > 2050 || date.getUTCFullYear() < 2007) return setStatus('patcher-episodeMetaDateOut', 'errror', 'Рік не може бути менше 2007 чи більше 2050'); else setStatus('patcher-episodeMetaDateOut', 'saved')
 
     const patchBody: ITitleEpisodeMeta = {
-      dateOut: +date,
+      order: +order,
       names: {
-        eng: engName.value,
-        ukr: ukrName.value,
+        eng: eng_name,
+        ukr: ukr_name,
       },
-      order: +order.value
+      dateOut: +date,
     }
 
     try {
@@ -800,50 +580,53 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
         }
       })
 
-      setEpisodesMeta(episodesMeta => [...episodesMeta.filter(el => el.order !== +order.value), patchBody])
+      setOrder(1)
+      setEngName('');
+      setUkrName('');
+      setDateOut('');
 
-      console.log(`[+]: Meta for episode ${+order.value} added.`)
+      setEpisodesMeta(prev => [...prev.filter(el => el.order !== +order), patchBody])
+
+      console.log(`[+]: Meta for episode ${+order} added.`)
+      setErrors([]);
     } catch (e) {
       if (e instanceof AxiosError) {
-        errors.push(`Помилка при додаванні епізода - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        appendError(`Помилка при додаванні епізода - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
-        errors.push(`Помилка при додаванні епізода - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        appendError(`Помилка при додаванні епізода - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }
-    }
-
-    if (!errors.length) {
-      inputs.forEach(el => {
-        el.classList.remove('patcher-field--error')
-        el.classList.add('patcher-field--saved')
-      })
-
+    } finally {
       setTimeout(() => {
-        inputs.forEach(el => {
-          el.classList.remove('patcher-field--saved')
-        })
+        SetFieldsStatus(prev => [...prev.filter(el => el.status !== 'saved')]);
       }, 3000);
     }
   }
 
   async function deleteEpisodeMeta(specified?: number) {
-    const order = specified || (document.querySelector(`#patcher-${'metaOrder' as TFieldID}`) as HTMLInputElement).value;
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    if (wrapper.querySelector('.patcher-field--error')) return appendError('Деякі поля містять помилки');
+    setErrors([])
+
+    const episode = specified || +order;
 
     try {
       await $api.patch(`/title/${title!.id}`, {
         editEpMeta: {
-          order,
+          order: episode,
           names: {
-            eng: 'dummy',
-            ukr: 'dummy'
+            eng: '_NULL',
+            ukr: '_NULL'
           },
           dateOut: 1,
           action: 'delete'
         }
       })
 
-      setEpisodesMeta(episodesMeta => episodesMeta.filter(el => el.order !== order))
+      setEpisodesMeta(episodesMeta => [...episodesMeta.filter(el => el.order !== episode)])
 
-      console.log(`[-]: Meta for ${order} episode deleted.`)
+      console.log(`[-]: Meta for ${episode} episode deleted.`)
     } catch (e) {
       if (e instanceof AxiosError) {
         appendError(`Помилка при видаленні епізоду - ${e.code}; ${JSON.stringify(e.response?.data)}`)
@@ -854,38 +637,27 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
   }
 
   async function parseEpisodesMetas() {
-    // Reset
-    const inputs = document.querySelectorAll('.patcher-field.patcher-metaParse');
-    const field = document.querySelector(`#patcher-${'metaImdbParse' as TFieldID}`)! as HTMLInputElement;
-    const errors: string[] = []
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
 
-    inputs.forEach(el => {
-      el.classList.remove('patcher-field--saved')
-    })
+    if (wrapper.querySelector('.patcher-field--error')) return appendError('Деякі поля містять помилки');
+    setErrors([])
 
-    setErrors([]);
+    let url: URL = new URL('https://example.com');
 
     try {
-      let url: URL = new URL('https://example.com');
+      url = new URL(parse_url)
+    } catch (e) {
+      return setStatus('patcher-parseEpisodeMetaURL', 'errror', `Неправильний URL`)
+    }
 
-      try {
-        url = new URL((document.querySelector(`#patcher-${'metaImdbParse' as TFieldID}`) as HTMLInputElement).value)
-      } catch (e) {
-        rejectField(`Неправильний URL`, field, errors)
-      }
+    if (url.host === 'example.com') return;
+    if (url.host !== 'www.imdb.com' && url.host !== 'imdb.com') return setStatus('patcher-parseEpisodeMetaURL', 'errror', `Домен не є IMDB`)
 
-      if (url.host === 'example.com') return;
-      if (url.host !== 'www.imdb.com' && url.host !== 'imdb.com') rejectField(`Домен не є IMDB`, field, errors)
-      if (errors.length) return;
+    const { href } = url;
 
-      const { href } = url;
-
-      inputs.forEach(el => {
-        el.classList.add('patcher-field--saved')
-        el.classList.remove('patcher-field--error')
-      })
-
-      console.log('[+]: Episodes metas parsing request sended')
+    try {
+      console.log('[...]: Episodes meta parsing request sended')
 
       await $api.patch(`/title/${title.id}`, {
         parseIMDBEpisodesMetas: href
@@ -897,21 +669,20 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
         }
       })
 
-      setEpisodesMeta(data.title.episodesMeta)
+      console.log(`[+]: Episodes meta parsed ${data.title.episodesMeta}`)
 
-      setTimeout(() => {
-        inputs.forEach(el => {
-          el.classList.remove('patcher-field--saved')
-        })
-      }, 3000);
+      setEpisodesMeta(data.title.episodesMeta)
+      setErrors([])
     } catch (e) {
       if (e instanceof AxiosError) {
-        errors.push(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        appendError(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
-        errors.push(`Помилка при парсингу інформації про епізоди - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        appendError(`Помилка при парсингу інформації про епізоди - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }
     } finally {
-      errors.forEach(err => appendError(err))
+      setTimeout(() => {
+        SetFieldsStatus(prev => [...prev.filter(el => el.status !== 'saved')]);
+      }, 3000);
     }
   }
 
@@ -920,100 +691,78 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
     setErrors(errors => [...errors.filter(el => el !== emsg), emsg])
   }
 
-  function rejectField(emsg: string, el: HTMLElement, errors: string[]) {
-    el.classList.add('patcher-field--error')
-    errors.push(emsg)
-  } const EpisodeMeta = memo(function EpisodeMeta({ meta }: { meta: ITitleEpisodeMeta }) {
-    return <div className={`w-full px-[12px] py-[8px] rounded-[4px] flex items-center justify-between gap-[24px] duration-200 ${selectedMeta?.order === meta.order ? 'bg-green/[.2]' : 'bg-grey'} max-[600px]:flex-col`}>
-      <div className="flex gap-[16px]">
-        <div className="flex flex-col gap-[4px]">
-          <p className="text-white text-[24px] font-bold max-[880px]:text-[16px]">#{meta.order}</p>
-          <p className="text-lightGrey">{getUTC(meta.dateOut).dateReversed}</p>
-        </div>
+  /** Add status to specified field and append error message */
+  function setStatus(id: string, status: TPatcherFieldStatus, emsg?: string) {
+    if (emsg) appendError(emsg);
 
-        <div className="flex flex-col gap-[4px]">
-          <p className="text-white text-[24px] max-[880px]:text-[16px]">{meta.names.ukr}</p>
-          <p className="text-lightGrey">{meta.names.eng}</p>
-        </div>
-      </div>
+    SetFieldsStatus(prev => {
+      const curr = prev.filter(el => el.id !== id);
+      curr.push({ id, status })
 
-      <div className="flex gap-[4px]">
-        <Tooltip content="Вибрати">
-          <button className="patcher-episodeMeta p-[8px]" onClick={() => setSelectedMeta(meta)}>
-            <IcoPlus width={32} height={32} className="patcher-episodeMeta_select" />
-          </button>
-        </Tooltip>
-
-        <Tooltip content="Видалити">
-          <button className="patcher-episodeMeta p-[8px]" onClick={() => deleteEpisodeMeta(meta.order)}>
-            <IcoCan width={32} height={32} className="patcher-episodeMeta_delete" />
-          </button>
-        </Tooltip>
-      </div>
-    </div>
-  })
+      return curr;
+    })
+  }
 
 
 
-  return canEditEpsMeta && <section className="flex flex-col gap-[16px]">
-    <Label label="Інформація про серії" />
-
-    <PatcherErrorWrapper errors={errors} section="ep_meta" />
+  return canEditEpsMeta && <section className="flex flex-col gap-[16px]" ref={wrapperRef}>
+    <GroupLabel label="Інформація про серії" headingClassName="text-[32px]" />
+    {errors.length ? <ErrorWrapper errors={errors} id="patcher-episodes-meta" /> : <></>}
 
     <div className="flex flex-col gap-[24px]">
       <div className="flex flex-col gap-[16px]">
         {/* Parse */}
-        {isRoot && <div className="flex items-center gap-[16px]">
-          <Field label="Парс епізодів з IMDB" id="metaImdbParse" type="metaParse" placeholder="https://www.imdb.com/title/{ID}/episodes" disablePending />
+        <div className="flex items-center gap-[16px]">
+          <PatcherField label="Парс епізодів з IMDB" id="patcher-parseEpisodeMetaURL" placeholder="https://www.imdb.com/title/{ID}/episodes" disablePending value={parse_url} setValue={setParseURL} FieldsStatus={FieldsStatus} />
 
           <button className="p-[12px] bg-grey rounded-[4px] duration-200 hover:bg-purple focus-visible:bg-purple" onClick={parseEpisodesMetas}>
             <IcoUpdate width={32} height={32} />
           </button>
-        </div>}
+        </div>
 
         {/* Panel */}
-        <div className="flex flex-col gap-[8px]">
+        <form onSubmit={e => { e.preventDefault(); addEpisodeMeta() }} className="flex flex-col gap-[8px]">
           <div className="flex items-start gap-[16px] w-full">
             {/* Order */}
             <div className="w-[100px] shrink-0">
-              <Field label="Номер серії" id="metaOrder" type="meta" disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? `${selectedMeta.order}` : undefined} symbolsLimited={4} />
+              <PatcherField label="Номер серії" id="patcher-episodeMetaOrder" type="number" disablePending={true} symbolsLimited={4} value={order} setValue={setOrder} FieldsStatus={FieldsStatus} />
             </div>
 
-            <Field label="Українська назва" id="metaUkrName" type="meta" disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.ukr : undefined} symbolsLimited={256} />
+            <PatcherField label="Українська назва" id="patcher-episodeMetaUkrName" disablePending={true} symbolsLimited={256} value={ukr_name} setValue={setUkrName} FieldsStatus={FieldsStatus} />
           </div>
 
           <div className="flex items-center gap-[16px] w-full max-[900px]:flex-col">
             <div className="flex items-start gap-[16px] w-full max-[600px]:flex-col">
-              <Field label="Англійска назва" id="metaEngName" type="meta" disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? selectedMeta.names.eng : undefined} symbolsLimited={256} />
+              <PatcherField label="Англійска назва" id="patcher-episodeMetaEngName" disablePending={true} symbolsLimited={256} value={eng_name} setValue={setEngName} FieldsStatus={FieldsStatus} />
 
               {/* Out date */}
               <div className="w-[200px] shrink-0 max-[600px]:w-full">
-                <Field label="Дата виходу" note="ДД.ММ.РРРР" id="metaDateOut" type="meta" disablePending={!Boolean(selectedMeta)} outValue={selectedMeta ? getUTC(selectedMeta.dateOut).dateReversed : undefined} symbolsLimited={10} />
+                <PatcherField label="Дата виходу" note="ДД.ММ.РРРР" id="patcher-episodeMetaDateOut" disablePending={true} symbolsLimited={10} value={date_out} setValue={setDateOut} FieldsStatus={FieldsStatus} />
               </div>
             </div>
 
             {/* Controls */}
             <div className="flex gap-[4px] max-[900px]:w-full">
               <Tooltip content="Зберегти" className="max-[900px]:w-full">
-                <button className="flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-green focus-visible:bg-green w-full" onClick={addEpisodeMeta}>
+                <button className="flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-green focus-visible:bg-green w-full" onClick={e => { addEpisodeMeta(); e.preventDefault() }}>
                   <IcoUpdate width={32} height={32} />
                 </button>
               </Tooltip>
 
               <Tooltip content="Видалити" className="max-[900px]:w-full">
-                <button className="flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-red focus-visible:bg-red w-full" onClick={() => deleteEpisodeMeta()}>
+                <button className="flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-red focus-visible:bg-red w-full" onClick={e => { deleteEpisodeMeta(); e.preventDefault() }}>
                   <IcoCan width={32} height={32} />
                 </button>
               </Tooltip>
 
               <Tooltip content={isFolded ? 'Розгорнути' : 'Згорнути'} className="max-[900px]:w-full">
-                <button className="flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-purple focus-visible:bg-purple w-full" onClick={() => setIsFolded(!isFolded)}>
+                <button className="flex justify-center p-[12px] duration-200 bg-grey rounded-[4px] hover:bg-purple focus-visible:bg-purple w-full" onClick={e => { setIsFolded(!isFolded); e.preventDefault() }}>
                   <IcoArrow width={32} height={32} className={`duration-200 ${isFolded ? 'rotate-0' : 'rotate-[180deg]'}`} />
                 </button>
               </Tooltip>
             </div>
           </div>
-        </div>
+        </form>
       </div>
 
       {/* Divider */}
@@ -1021,7 +770,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
 
       <div className={`flex flex-col gap-[4px] overflow-y-auto overflow-x-hidden duration-200 ${isFolded ? 'max-h-0' : 'max-h-[600px]'}`}>
         {episodesMeta.length ? episodesMeta.sort((a, b) => b.order - a.order).map(meta => {
-          return <EpisodeMeta meta={meta} key={`episodeMeta--${meta.order}`} />
+          return <PatcherEpisodeMeta meta={meta} deleteEpisodeMeta={deleteEpisodeMeta} selectedMeta={selectedMeta} setSelectedMeta={setSelectedMeta} key={`episodeMeta--${meta.order}`} />
         }) : <div className="w-full flex justify-center items-center gap-[16px]">
           <IcoGhost fill="#747474" />
           <p className="text-lightGrey">Здається, тут нічого нема...</p>
@@ -1031,16 +780,17 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection({ title }: IEpisodes
   </section>
 })
 
-const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, title, session }: IEpisodesSection) {
+const EpisodesSection = memo(function EpisodesSection() {
   const MetaCtx = useContext(PatcherMetaContext);
+  const { title, session, dubbers, totalDubbers } = MetaCtx;
+  const { canSeriesAdd, canSeriesDelete } = MetaCtx.capability;
+
   const [errors, setErrors] = useState<string[]>([])
+  const [FieldsStatus, SetFieldsStatus] = useState<IPatcherFieldStatus[]>([])
 
-  const [episodesGroups, setEpisodesGroups] = useState<IPatcherEpisodesGroup[]>([])
-
+  const [episodeGroups, setEpisodeGroups] = useState<IPatcherEpisodeGroup[]>([])
   const [isMobile, setIsMobile] = useState(false);
   const [file, setFile] = useState<File | null>(null)
-  const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : totalDubbers[0].code)
-  const [uploadsRemain, setUploadsRemain] = useState<null | number>(null) // If null - no uploads have been uploaded
   const [Stack] = useState(new PactherStack({
     appendError,
     patchEpisode,
@@ -1048,17 +798,20 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     session
   }))
 
+  const [episodeOrder, setEpisodeOrder] = useState(1);
+  const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : totalDubbers[0].code)
+
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const { canSeriesAdd, canSeriesDelete } = MetaCtx.capability;
 
 
-
+  // Setup episode groups & handle is mobile
   useEffect(() => {
-    const episodesGroups: IPatcherEpisodesGroup[] = []
+    const episodeGroups: IPatcherEpisodeGroup[] = []
 
     title.episodes.forEach(episode => {
-      let group = episodesGroups.find(el => el.dubber?.id === episode.dubberID);
+      let group = episodeGroups.find(el => el.dubber?.id === episode.dubberID);
       const newEpisode: IPatcherEpisode = {
         id: `${episode.order}/${episode.dubberID}`,
         episode,
@@ -1078,11 +831,11 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
           episodes: [newEpisode]
         }
 
-        episodesGroups.push(group)
+        episodeGroups.push(group)
       }
     })
 
-    setEpisodesGroups(episodesGroups);
+    setEpisodeGroups(episodeGroups);
 
     // Define is mobile
     handleResize()
@@ -1129,79 +882,79 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
   }
 
   async function addEpisode() {
-    // Reset
-    const inputs = document.querySelectorAll('.patcher-field.patcher-episode');
-    const errors: string[] = []
-
-    inputs.forEach(el => {
-      el.classList.remove('patcher-field--saved')
-    })
-
-    setErrors([]);
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
 
     if (!canSeriesAdd) return appendError('Ви не можете додавати епізоди')
+    if (wrapper.querySelector('.patcher-field--error')) return appendError('Деякі поля містять помилки');
+    setErrors([])
 
-    try {
-      const order = document.querySelector(`#patcher-${'epOrder' as TFieldID}`) as HTMLInputElement
-      const dubber = totalDubbers.find(el => el.code === dubbingSelectedCode)!;
-      const defaultGroup: IPatcherEpisodesGroup = {
+    const dubber = totalDubbers.find(el => el.code === dubbingSelectedCode)!;
+    const group = {
+      ...episodeGroups.find(el => el.dubber.id === dubber.id) ?? {
         dubber,
         episodes: []
       }
-      let group = { ...episodesGroups.find(el => el.dubber.id === dubber.id) || defaultGroup };
+    };
 
-      if (!order.value || isNaN(+order.value)) rejectField('Номер не може містити букви або бути порожнім', order, errors); else order.classList.remove('patcher-field--error')
-      if (group.episodes.some(el => el.episode.order === +order.value)) rejectField('Епізод вже існує', order, errors)
-      if (!file) rejectField('Файл не вибраний', fileRef.current!, errors)
+    if (!episodeOrder || isNaN(+episodeOrder)) return setStatus('patcher-dubbingOrder', 'errror', 'Номер не може містити букви або бути порожнім'); else setStatus('patcher-dubbingOrder', 'saved')
+    if (group.episodes.some(el => el.episode.order === +episodeOrder)) return setStatus('patcher-dubbingOrder', 'errror', 'Епізод вже існує'); else setStatus('patcher-dubbingOrder', 'saved')
+    if (!file) return setStatus('patcher-dubbingOrder', 'errror', 'Файл не вибраний'); else setStatus('patcher-dubbingOrder', 'saved')
 
-      if (errors.length) return;
+    const episode: IPatcherEpisode = {
+      episode: {
+        dubberID: dubber.id,
+        frames: [],
+        order: +episodeOrder,
+        qualities: {
+          q1080: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+          q240: null,
+          q480: null,
+          q4k: null,
+          q720: null
+        }
+      },
+      file,
+      id: `${+episodeOrder}/${dubber.id}`,
+      progress: null,
+      uploadOrder: null,
+      type: 'pending'
+    }
 
-      const episode: IPatcherEpisode = {
-        episode: {
-          dubberID: dubber.id,
-          frames: [],
-          order: +order.value,
-          qualities: {
-            q1080: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            q240: null,
-            q480: null,
-            q4k: null,
-            q720: null
-          }
-        },
-        file,
-        id: `${+order.value}/${dubber.id}`,
-        progress: null,
-        uploadOrder: null,
-        type: 'pending'
-      }
-
+    try {
       Stack.append(episode)
+      setErrors([]);
     } catch (e) {
       if (e instanceof AxiosError) {
-        errors.push(`Помилка при додаванні епізоду - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        appendError(`Помилка при додаванні епізоду - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
-        errors.push(`Помилка при додаванні епізоду - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        appendError(`Помилка при додаванні епізоду - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }
     } finally {
-      errors.forEach(err => appendError(err));
+      setTimeout(() => {
+        SetFieldsStatus(prev => [...prev.filter(el => el.status !== 'saved')]);
+      }, 3000);
     }
   }
 
-  async function deleteEpisode(specified?: number, specifiedDubberID?: string) {
-    // Reset
-    setErrors([]);
+  async function deleteEpisode(specified: number, specifiedDubberID: string) {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
 
     if (!canSeriesDelete) return appendError('Ви не можете видаляти епізоди')
 
-    const order = specified || 1;
-    const dubberID = specifiedDubberID || totalDubbers.find(el => el.code === dubbingSelectedCode)!.id;
+    if (!canSeriesAdd) return appendError('Ви не можете додавати епізоди')
+    if (wrapper.querySelector('.patcher-field--error')) return appendError('Деякі поля містять помилки');
+    setErrors([])
+
+    const order = specified;
+    const dubberID = specifiedDubberID;
     const id = `${order}/${dubberID}`;
 
     console.log(`[-]: Episode ${order} in ${totalDubbers.find(el => el.id === dubberID)?.name} deleted`)
 
     try {
-      const group = { ...episodesGroups.find(el => el.dubber.id === dubberID) } as IPatcherEpisodesGroup;
+      const group = { ...episodeGroups.find(el => el.dubber.id === dubberID) } as IPatcherEpisodeGroup;
       group.episodes = group.episodes.filter(el => el.id !== id);
 
       await $api.patch(`/title/${title!.id}`, {
@@ -1212,7 +965,7 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
       })
 
       Stack.remove(id);
-      setEpisodesGroups(prev => {
+      setEpisodeGroups(prev => {
         return [...prev.filter(el => el.dubber.id !== group.dubber.id), group];
       })
     } catch (e) {
@@ -1220,35 +973,24 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
         if (e.response?.data?.code === 404) return;
         if (e.response?.data?.code === 503) return;
 
-        errors.push(`Помилка при видаленні серії - ${e.code}; ${JSON.stringify(e.response?.data)}`)
+        appendError(`Помилка при видаленні серії - ${e.code}; ${JSON.stringify(e.response?.data)}`)
       } else {
-        errors.push(`Помилка при видаленні серії - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
+        appendError(`Помилка при видаленні серії - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
       }
-    } finally {
-      errors.forEach(err => appendError(err));
     }
   }
 
+  /** Stack will call this function when upload change it's state */
   function patchEpisode(episode: IPatcherEpisode) {
-    if (episode.type === 'pending') {
-      setUploadsRemain(prev => {
-        return prev === null ? 1 : prev + 1;
-      })
-    } else if (episode.type === 'uploaded') {
-      setUploadsRemain(prev => {
-        return prev === null ? 1 : prev - 1;
-      })
-    }
+    setEpisodeGroups(prev => {
+      const group = {
+        ...prev.find(el => el.dubber.id === episode.episode.dubberID) ?? {
+          dubber: totalDubbers.find(el => el.id === episode.episode.dubberID)!,
+          episodes: []
+        }
+      } as IPatcherEpisodeGroup;
 
-    setEpisodesGroups(prev => {
-      const defaultGroup: IPatcherEpisodesGroup = {
-        dubber: totalDubbers.find(el => el.id === episode.episode.dubberID)!,
-        episodes: []
-      }
-
-      const group = { ...prev.find(el => el.dubber.id === episode.episode.dubberID) || defaultGroup } as IPatcherEpisodesGroup;
       group.episodes = [...group.episodes!.filter(el => el.id !== episode.id), episode].sort((a, b) => a.episode.order - b.episode.order)
-
 
       return [...prev.filter(el => el.dubber.id !== episode.episode.dubberID), group].sort((a, b) => a.dubber.name > b.dubber.name ? 1 : -1);
     })
@@ -1259,30 +1001,42 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
     setErrors(errors => [...errors.filter(el => el !== emsg), emsg])
   }
 
-  function rejectField(emsg: string, el: HTMLElement, errors: string[]) {
-    el.classList.add('patcher-field--error')
-    errors.push(emsg)
-  } return <section className="flex flex-col gap-[32px]">
+  /** Add status to specified field and append error message */
+  function setStatus(id: string, status: TPatcherFieldStatus, emsg?: string) {
+    if (emsg) appendError(emsg);
+
+    SetFieldsStatus(prev => {
+      const curr = prev.filter(el => el.id !== id);
+      curr.push({ id, status })
+
+      return curr;
+    })
+  }
+
+
+
+  return <section className="flex flex-col gap-[32px]" ref={wrapperRef}>
     {/* Controls */}
     <div className="flex flex-col gap-[16px] w-full">
-      <Label label="Озвучення" />
+      <GroupLabel label="Озвучення" headingClassName="text-[32px]" />
+      {errors.length ? <ErrorWrapper errors={errors} id="patcher-dubbing" /> : <></>}
 
-      <PatcherErrorWrapper errors={errors} section="ep_dubbing" />
-
-      {canSeriesAdd && <div className="flex items-center gap-[16px] max-[940px]:flex-col w-full">
-        {isMobile ? <>
+      {canSeriesAdd && <div className="flex items-center gap-[16px] w-full">
+        {isMobile && <div className="flex flex-col gap-[16px] w-full items-center">
           <IcoGhost width={32} height={32} fill="#747474" />
           <p className="text-lightGrey">Нажаль, ви не можете додавати епізоди на телефоні</p>
-        </> : <>
+        </div>}
+
+        {!isMobile && <>
           <div className="flex items-start gap-[16px] w-full">
             {/* Order */}
             <div className="w-[100px] shrink-0">
-              <Field id="epOrder" label="Номер серії" type="episode" symbolsLimited={4} disablePending initialValue={'1'} />
+              <PatcherField label="Номер серії" id="patcher-dubbingOrder" type="number" symbolsLimited={4} disablePending value={episodeOrder} setValue={setEpisodeOrder} FieldsStatus={FieldsStatus} />
             </div>
 
             {/* Select dubber */}
             <div className="w-[300px] shrink-0">
-              <Select label="Команда" options={totalDubbers.sort((a, b) => a.name > b.name ? 1 : -1).map(dub => { return { code: dub.code, label: dub.name } })} value={dubbingSelectedCode} valueSetter={setDubbingSelectedCode} disablePending isDubbers dubbers={totalDubbers} />
+              <PatcherSelect label="Команда" id="patcher-dubbingSelectDubber" options={totalDubbers.sort((a, b) => a.name > b.name ? 1 : -1).map(dub => { return { code: dub.code, label: dub.name } })} option={dubbingSelectedCode} setOption={setDubbingSelectedCode} disablePending dubbers={totalDubbers} FieldsStatus={FieldsStatus} />
             </div>
 
             {/* File select */}
@@ -1292,38 +1046,36 @@ const EpisodesSection = memo(function EpisodesSection({ dubbers, totalDubbers, t
               <div className="w-full">
                 <input type="file" accept=".mp4,.webm,.mov,.mkv,.m4v" className="hidden" ref={fileRef} onChange={selectFile} />
 
-                <button className="patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[4px]" onClick={chooseFile}>
-                  <IcoUpdate width={32} height={32} />
-                  <p className={`text-white ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'виберіть файл'}</p>
+                <button className="patcher-field flex justify-center items-center gap-[16px] duration-200 hover:bg-purple focus-visible:bg-purple !py-[9px] w-full" onClick={chooseFile}>
+                  <IcoUpdate width={24} height={24} className="shrink-0" />
+                  <p className={cn(`text-white break-all w-full line-clamp-2 text-ellipsis ${!file?.name && 'uppercase'}`)}>{file?.name ?? 'виберіть файл'}</p>
                 </button>
               </div>
             </div>
           </div>
 
-          <Tooltip content="Додати серію" className="max-[940px]:w-full shrink-0">
+          <Tooltip content="Додати серію" className="block shrink-0">
             <button className="p-[8px] bg-grey rounded-[4px] duration-200 hover:bg-green focus-visible:bg-green w-full" onClick={addEpisode}>
               <IcoArrow width={32} height={32} className="-rotate-[90deg]" />
             </button>
           </Tooltip>
         </>}
       </div>}
-
-      {uploadsRemain !== null && uploadsRemain === 0 && <p className="text-green">Всі епізоди завантажені!</p>}
-      {uploadsRemain !== null && uploadsRemain !== 0 && <p className="text-lightGrey">Очікується завантаження: {uploadsRemain} {wordDeclination(uploadsRemain, ['епізоду', 'епізодів', 'епізодів'])}</p>}
     </div>
 
     {/* Groups */}
-    {episodesGroups.some(el => el.dubber.code === dubbingSelectedCode) ? <>
-      <EpisodesGroup group={{ ...episodesGroups.find(el => el.dubber?.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
+    {episodeGroups.some(el => el.dubber.code === dubbingSelectedCode) ? <>
+      <PatcherEpisodeGroup group={{ ...episodeGroups.find(el => el.dubber?.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} />
 
-      {episodesGroups.filter(el => el.dubber?.code !== dubbingSelectedCode).map(group => {
-        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
+      {episodeGroups.filter(el => el.dubber?.code !== dubbingSelectedCode).map(group => {
+        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} />
       })}</> : <>
-      {episodesGroups.map(group => {
-        return <EpisodesGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} title={title} canSeriesDelete={canSeriesDelete} />
+      {episodeGroups.map(group => {
+        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} />
       })}</>}
   </section>
 })
+
 
 
 const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, totalDubbers, session }) => {
@@ -1339,17 +1091,6 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
   const canSeriesAdd = isRoot || capabilities.includes('seriesAdd');
   const canSeriesDelete = isRoot || capabilities.includes('seriesDelete');
   const canTitleEdit = isRoot || capabilities.includes('titleEdit');
-
-
-
-  // Prevent unloading if some changes are pending 
-  useEffect(() => {
-    if (prodMode) {
-      window.addEventListener('beforeunload', e => {
-        if (document.querySelectorAll('.patcher-field--pending').length) e.preventDefault();
-      })
-    }
-  }, [])
 
 
 
@@ -1371,26 +1112,10 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
 
 
   return <PatcherMetaContext.Provider value={{
-    meta: {
-      id: title.id,
-      code: title.code,
-      nameUkr: title.names.ukr,
-      nameEng: title.names.eng,
-      nameAlt: title.names.alt.join(', '),
-      posterURL: title.poster,
-      IMDBRating: Number(title.rating.IMDB),
-      description: title.description,
-      status: title.status,
-      episodesCount: Number(title.episodesCount),
-      genres: title.genres.join(', '),
-      ageRate: title.ageRate,
-      season: title.season,
-      type: title.type,
-      year: title.year,
-      studios: title.studios.join(', '),
-      country: title.country,
-      details: String(title.details),
-    },
+    title,
+    dubbers,
+    session,
+    totalDubbers,
     capability: {
       isRoot,
       canTitleDelete,
@@ -1447,16 +1172,10 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
           </div>}
         </div>
 
-        {/* Container */}
         <div className="bg-darkGrey rounded-[4px] px-[32px] py-[40px] flex flex-col gap-[60px]">
-          {/* Title meta */}
-          <TitleMetaSection title={title} session={session} />
-
-          {/* Episodes metas */}
-          <EpisodeMetaSection title={title} />
-
-          {/* Dubbing */}
-          <EpisodesSection dubbers={dubbers} title={title} totalDubbers={totalDubbers} session={session} />
+          <TitleMetaSection />
+          <EpisodeMetaSection />
+          <EpisodesSection />
         </div>
       </div>
     </div>
