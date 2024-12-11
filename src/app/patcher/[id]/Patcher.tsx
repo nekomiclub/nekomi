@@ -89,6 +89,9 @@ interface IPatchTitleBody {
   episodesCount?: number
   IMDBRating?: number
   AnimeeRating?: number
+  malRating?: number
+  malPoll?: number
+  mal_id?: string
 
   editEpMeta?: IChangeEpMeta
   parseIMDBEpisodesMeta?: string
@@ -213,6 +216,9 @@ const TitleMetaSection = memo(function TitleMetaSection() {
   const [year, setYear] = useState(title.year)
   const [description, setDescription] = useState(title.description)
   const [details, setDetails] = useState(title.details)
+  const [rating_mal, setRatingMal] = useState(title.rating.mal)
+  const [mal_poll, setMalPoll] = useState(title.rating.mal_poll)
+  const [mal_id, setMalId] = useState(title.mal_id)
 
   const [name_alt, setNameAlt] = useState(title.names.alt.join(', '))
   const [studios, setStudios] = useState(title.studios.join(', '))
@@ -340,6 +346,9 @@ const TitleMetaSection = memo(function TitleMetaSection() {
       }
 
       if (key === 'rating_imdb') patchBody.IMDBRating = rating_imdb ?? undefined;
+      if (key === 'rating_mal') patchBody.malRating = rating_mal ?? undefined;
+      if (key === 'mal_poll') patchBody.malPoll = mal_poll ?? undefined;
+      if (key === 'mal_id') patchBody.mal_id = mal_id ?? undefined;
       if (key === 'episodes_count') patchBody.episodesCount = episodes_count ?? undefined;
       if (key === 'year') patchBody.year = year ?? undefined;
       if (key === 'details') patchBody.details = details ?? undefined;
@@ -474,10 +483,14 @@ const TitleMetaSection = memo(function TitleMetaSection() {
           <PatcherField label="Альтернативні" id="patcher-name_alt" note="Через кому" type="textarea" value={name_alt} setValue={setNameAlt} symbolsLimited={256} FieldsStatus={FieldsStatus} />
         </div>
 
+        <PatcherField label="MyAnimeList ID" id="patcher-mal_id" value={mal_id} setValue={setMalId} FieldsStatus={FieldsStatus} />
+
         <PatcherSelect label="Статус" id="patcher-status" options={titleStatusOptions} option={status} setOption={setStatus} FieldsStatus={FieldsStatus} />
         <PatcherSelect label="Тип" id="patcher-type" options={titleTypeOptions} option={type} setOption={setType} FieldsStatus={FieldsStatus} />
 
         <PatcherField label="Рейтинг IMDb" id="patcher-rating_IMDB" note="1 - 10, 0 - відсутній" type="number" symbolsLimited={4} value={rating_imdb} setValue={setRatingImdb} FieldsStatus={FieldsStatus} />
+        <PatcherField label="Рейтинг MyAnimeList" id="patcher-rating_MAL" note="1 - 10, 0 - відсутній" type="number" locked symbolsLimited={4} value={rating_mal} setValue={setRatingMal} FieldsStatus={FieldsStatus} />
+        <PatcherField label="Кількість людей які поставили оцінку на MyAnimeList" id="patcher-mal_poll" type="number" locked symbolsLimited={9} value={mal_poll} setValue={setMalPoll} FieldsStatus={FieldsStatus} />
 
         <PatcherSelect label="Віковий рейтинг" id="patcher-age_rate" options={titleAgeRateOptions} option={age_rate} setOption={setAgeRate} FieldsStatus={FieldsStatus} />
 
