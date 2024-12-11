@@ -109,7 +109,7 @@ const Header: NextPage = () => {
           return;
         };
 
-        if (debouncedSearchQuery.match(/^\~/gi)) {
+        if (debouncedSearchQuery.match(/^@/gi)) {
           query = query.replace('@', '');
           engines.push('dubber');
           engines.push('user');
