@@ -345,7 +345,7 @@ const TitleMetaSection = memo(function TitleMetaSection() {
         patchBody.names.alt = name_alt.split(',');
       }
 
-      if (key === 'rating_imdb') patchBody.IMDBRating = rating_imdb ?? undefined;
+      if (key === 'rating_IMDB') patchBody.IMDBRating = rating_imdb ?? undefined;
       if (key === 'rating_mal') patchBody.malRating = rating_mal ?? undefined;
       if (key === 'mal_poll') patchBody.malPoll = mal_poll ?? undefined;
       if (key === 'mal_id') patchBody.mal_id = mal_id ?? undefined;

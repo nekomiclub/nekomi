@@ -144,8 +144,8 @@ export const PatcherSelect: NextPage<IPatcherSelectProps> = ({ options, label, d
 
       <MenuWrapper className="flex flex-col bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto">
         {options.map(el => {
-          return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, option === el.code && 'bg-purple', el.code === initialValue.current && option !== el.code && 'bg-gradientSecondaryFallback')} key={`select-option--${el.code}`} onClick={() => select(el)}>
-            {dubbers?.length ? <StyledImage src={dubbers.find(el => el.code === option)?.thumbURL ?? ''} width="32px" height="32px" className="overflow-hidden rounded-[32px]" /> : <></>}
+          return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, option === el.code && 'bg-purple', el.code === initialValue.current && option !== el.code && !disablePending && 'bg-gradientSecondaryFallback')} key={`select-option--${el.code}`} onClick={() => select(el)}>
+            {dubbers?.length ? <StyledImage src={dubbers.find(dubber => dubber.code === el.code)?.thumbURL ?? ''} width="32px" height="32px" className="overflow-hidden rounded-[32px]" /> : <></>}
 
             <p className="text-white">{el.label}</p>
           </button>

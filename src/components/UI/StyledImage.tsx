@@ -51,7 +51,7 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
   const imageRef = useRef<HTMLImageElement>(null)
 
-  src = src ?? 'https://media.nekomi.club/0849e678-43ee-4f72-ae5a-bb9ff9d86c89';
+  src = src ?? 'https://media.nekomi.club/0849e678-43ee-4f72-ae5a-bb9ff9d86c89'
   alt = alt ?? '...';
   priority = priority ?? undefined;
   loading = loading ?? 'lazy';
