@@ -2,14 +2,16 @@
 
 
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
+import { usePathname, useRouter } from 'next/navigation';
 
+import { $api } from '~/components/http';
 import StyledImage from '~/components/UI/StyledImage';
 import { IcoChain } from '../../../assets/Icons';
 import { copyToClipboard } from '../../../components/Components';
 import Tooltip from '../../../components/UI/Tooltip';
-import { config } from '../../../config';
+import { config, devMode } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 
 
@@ -87,5 +89,34 @@ export const DubberLabel: NextPage<{ label: string }> = ({ label }) => {
 
       <span className="w-full h-[3px] bg-grey"></span>
     </div>
+  );
+}
+
+export const DubberAnswerInvite: NextPage<{ dubber: IDubber, invite: 'accept' | 'decline' }> = ({ dubber, invite }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    (async function () {
+      try {
+        if (invite === 'accept') {
+          await $api.post(`/dubber/invite/accept`, {
+            dubber_id: dubber.id
+          });
+        } else if (invite === 'decline') {
+          await $api.post(`/dubber/invite/decline`, {
+            dubber_id: dubber.id
+          });
+        }
+      } catch (e) {
+        if (devMode) console.error(e);
+      }
+
+      router.replace(pathname, { scroll: false })
+    })()
+  }, [])
+
+  return (
+    <></>
   );
 }

@@ -21,7 +21,7 @@ import { animeGenres, config, genresDescription } from '../../../config';
 import { useAppSelector } from '../../../hooks/redux';
 import { IDubber } from '../../../interfaces/IDubber';
 import { ITitle } from '../../../interfaces/ITitle';
-import { IUserLib, TUserLibType } from '../../../interfaces/IUser';
+import { IUserLib } from '../../../interfaces/IUser';
 import { routes } from '../../../routes';
 
 import IndevCat from '../../../assets/img/oopsIndevCat.png';
@@ -34,6 +34,8 @@ interface IProps {
 
   episodesDubbed: number
 }
+
+type TUserLibType = IUserLib['type'];
 
 
 
