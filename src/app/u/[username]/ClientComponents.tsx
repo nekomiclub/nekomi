@@ -282,7 +282,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   function AvatarComponent() {
     return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px]">
-      <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square" priority alt="avatar" />
+      <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square max-[820px]:!w-[160px] max-[820px]:!h-[160px]" priority alt="avatar" />
     </div>
   }
 

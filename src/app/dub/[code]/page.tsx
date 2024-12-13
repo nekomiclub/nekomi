@@ -2,6 +2,7 @@ import './styles.scss';
 
 import { AxiosError } from 'axios';
 import { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '../../../assets/Social';
@@ -60,6 +61,7 @@ export default async function RSC(props: IRSCProps) {
 
   // @ts-ignore
   let dubber: IDubber = {};
+  let invite_verified = false;
 
   try {
     const { data } = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
@@ -86,16 +88,24 @@ export default async function RSC(props: IRSCProps) {
     }
   }
 
+  if (search_params.invite) {
+    const res = await $api.get<{ verified: boolean }>(`/dubber/invite/${dubber.id}`, {
+      headers: {
+        Cookie: cookies().toString(),
+      }
+    })
+
+    invite_verified = res.data.verified;
+  }
+
   return (
     <>
-      {search_params.invite && <DubberAnswerInvite dubber={dubber} invite={search_params.invite} />}
+      {invite_verified && <DubberAnswerInvite dubber={dubber} invite={search_params.invite!} />}
 
       <div className="w-full h-full min-h-screen bg-dark">
         <DubberHeader dubber={dubber} />
 
         <div className="wrapper gap-[40px] !pt-[48px]">
-          {/* Stats */}
-
           {/* About */}
           <div className="flex flex-col gap-[24px]">
             <div className="flex items-stretch gap-[24px] justify-center max-[560px]:flex-col">
