@@ -3,6 +3,7 @@
 
 
 import { useEffect, useState } from 'react';
+import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { Dialog, Layer, Trigger } from '@fullkekw/fkw-popup';
 import { NextPage } from 'next';
 import { usePathname, useRouter } from 'next/navigation';
@@ -12,14 +13,15 @@ import { addZeroIfNumberSingle, wordDeclination } from '~/components/handlers';
 import { ISearchExtended } from '~/components/Header';
 import { $api } from '~/components/http';
 import GroupLabel from '~/components/UI/GroupLabel';
+import Input from '~/components/UI/Input';
 import StyledImage from '~/components/UI/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
 import { IUser } from '~/interfaces/IUser';
-import { IcoCalendar, IcoChain, IcoCheckmark, IcoSettings } from '../../../assets/Icons';
+import { IcoArrow, IcoCalendar, IcoCan, IcoChain, IcoCheckmark, IcoCrown, IcoPen, IcoPeople, IcoSettings } from '../../../assets/Icons';
 import { copyToClipboard } from '../../../components/Components';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
-import { IDubber } from '../../../interfaces/IDubber';
+import { IDubber, IDubberMember, TDubberMemberRole } from '../../../interfaces/IDubber';
 
 
 
@@ -93,8 +95,8 @@ function DubberComponent({ dubber }: { dubber: IDubber }) {
 }
 
 function SettingsComponent({ dubber, settingsPopupID, canEditTeam }: { dubber: IDubber, settingsPopupID: string, canEditTeam: boolean }) {
+  const user = useAppSelector(state => state.user);
   const [urlCopied, setUrlCopied] = useState(false)
-
 
 
   function copyProfileURL() {
@@ -113,11 +115,11 @@ function SettingsComponent({ dubber, settingsPopupID, canEditTeam }: { dubber: I
       </button>
     </Tooltip>
 
-    {/* {canEditTeam && <Tooltip content="Налаштування">
+    {user.capabilities.includes('root') && <Tooltip content="Налаштування">
       <Trigger id={settingsPopupID} className="p-[16px] duration-200 bg-darkGrey hover:bg-grey focus-visible:bg-grey rounded-[4px] max-[600px]:p-[12px]">
         <IcoSettings width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
       </Trigger>
-    </Tooltip>} */}
+    </Tooltip>}
   </div>
 }
 
@@ -158,39 +160,165 @@ function SettingsPopup({ dubber, settingsPopupID }: { settingsPopupID: string, d
 
       <GroupLabel label={`Команда (${dubber.members.length} ${wordDeclination(dubber.members.length, ['людина', 'людини', 'людей'])})`} />
 
-      {/* <div className="flex flex-col gap-[8px] relative">
+      <div className="flex flex-col gap-[8px] relative">
         <p className="text-white">Додати нового учасника</p>
-        <Input state={addUsername} stateSetter={setAddUsername} placeholder="@username" className="!bg-darkGrey" />
 
-        <div className="absolute top-0 left-0 w-full px-[12px] py-[8px] flex flex-col gap-[8px] max-h-[400px] rounded-[2px] bg-darkGrey">
-          {usersResult.map(user => {
-            return <SettingsAddUserResult user={user} key={`add-user--${user.id}`} />
+        <Menu className="w-full" settings={{ align: 'stretch' }}>
+          <MenuTrigger className="w-full" primary>
+            <Input state={addUsername} stateSetter={setAddUsername} placeholder="@username" className="!bg-darkGrey w-full" />
+          </MenuTrigger>
+
+          <MenuWrapper className="bg-darkGrey px-[12px] py-[8px] flex flex-col gap-[4px]">
+            {usersResult.map(user => {
+              return <SettingsInviteUser user={user} dubber={dubber} key={`dubber-member-add--${user.id}`} />
+            })}
+          </MenuWrapper>
+        </Menu>
+
+        <span className="w-full h-[3px] bg-darkGrey"></span>
+
+        <div className="flex flex-col gap-[4px]">
+          {dubber.members.map(user => {
+            return <SettingsEditUser member={user} dubber={dubber} key={`dubber-member--${user.id}`} />
           })}
         </div>
-      </div> */}
+      </div>
     </Dialog>
   </Layer>
 }
 
-// function SettingsAddUserResult({ user }: { user: IUser }) {
-//   return <button className="flex items-center gap-[16px]">
-//     <StyledImage src={user.avatar} width="64px" height="64px" className="rounded-[4px] overflow-hidden" />
+function SettingsInviteUser({ user, dubber }: { user: IUser, dubber: IDubber }) {
+  async function sendInvite() {
+    try {
+      await $api.post(`/dubber/invite/send`, {
+        dubber_id: dubber.id,
+        user_id: user.id
+      })
 
-//     <div className="flex flex-col gap-[8px]">
-//       <p className="text-white">@{user.username}</p>
+      alert(`Запрошення ${user.username} відправлено!`)
+    } catch (e) {
+      console.error(`Помилка при надсиланні запрошення`, e)
+    }
+  }
 
-//       <div className="flex items-center gap-[8px]">
-//         {user.userDubberTeamStatus === 'invite_free' && <IcoCheckmark width={16} height={16} fill="#2ecc71" />}
-//         {user.userDubberTeamStatus === 'telegram_not_linked' && <IcoCheckmark width={16} height={16} />}
-//         {user.userDubberTeamStatus === 'other_team_member' && <IcoCheckmark width={16} height={16} />}
+  return <button className="flex items-center gap-[16px] duration-200 hover:bg-grey" onClick={sendInvite}>
+    <StyledImage src={user.avatar} width="64px" height="64px" className="rounded-[4px] overflow-hidden" />
 
-//         {user.userDubberTeamStatus === 'invite_free' && <p className="text-green">Ви можете додати цього користувача у команду</p>}
-//         {user.userDubberTeamStatus === 'telegram_not_linked' && <p className="text-orange">Корисувач ще не прив’язав телеграм до свого акаунту</p>}
-//         {user.userDubberTeamStatus === 'other_team_member' && <p className="text-red">Користувач вже є учасником іншої команди</p>}
-//       </div>
-//     </div>
-//   </button>
-// }
+    <div className="flex flex-col gap-[8px]">
+      <p className="text-white">@{user.username}</p>
+
+      <div className="flex items-center gap-[8px]">
+        {/* {user.userDubberTeamStatus === 'invite_free' && <IcoCheckmark width={16} height={16} fill="#2ecc71" />}
+        {user.userDubberTeamStatus === 'telegram_not_linked' && <IcoCheckmark width={16} height={16} />}
+        {user.userDubberTeamStatus === 'other_team_member' && <IcoCheckmark width={16} height={16} />}
+
+        {user.userDubberTeamStatus === 'invite_free' && <p className="text-green">Ви можете додати цього користувача у команду</p>}
+        {user.userDubberTeamStatus === 'telegram_not_linked' && <p className="text-orange">Корисувач ще не прив’язав телеграм до свого акаунту</p>}
+        {user.userDubberTeamStatus === 'other_team_member' && <p className="text-red">Користувач вже є учасником іншої команди</p>} */}
+      </div>
+    </div>
+  </button>
+}
+
+function SettingsEditUser({ member, dubber }: { member: IDubberMember, dubber: IDubber }) {
+  const [user, setUser] = useState<IUser>()
+
+  useEffect(() => {
+    (async function () {
+      try {
+        const { data } = await $api.get(`/user/${member.id}`, {
+          params: {
+            detailed: true
+          }
+        });
+
+        setUser(data.user);
+      } catch (e) {
+        console.error(e)
+      }
+    })()
+  }, [])
+
+
+
+  async function excludeUser() {
+    try {
+      await $api.post('/dubber/settings/member/exclude', {
+        dubber_id: dubber.id,
+        user_id: user?.id
+      })
+
+      alert(`Юзера ${user?.username} виключено з команди`)
+    } catch (e) {
+      console.error(`Помилка при виключенні юзера`, e)
+    }
+  }
+
+  return <div className="px-[16px] py-[8px] rounded-[2px] bg-darkGrey flex justify-between items-center gap-[16px]">
+    <div className="flex items-center gap-[40px]">
+      <div className="w-[340px] flex gap-[8px] items-center">
+        <StyledImage src={user?.avatar ?? ''} width="32px" height="32px" />
+        <p className="text-white font-bold">{user?.username}</p>
+      </div>
+
+      <Menu settings={{ align: 'left' }}>
+        <MenuTrigger primary className="flex items-center gap-[16px]" disabled={member.role !== 'leader' && !user?.roles.includes('usr')}>
+          {member.role === 'leader' && <IcoCrown width={16} height={16} />}
+          {member.role === 'editor' && <IcoPen width={16} height={16} />}
+          {member.role === 'member' && <IcoPeople width={16} height={16} />}
+
+          <p className="text-white">
+            {member.role === 'leader' && 'Лідер'}
+            {member.role === 'editor' && 'Редактор'}
+            {member.role === 'member' && 'Учасник'}
+          </p>
+
+          {(member.role === 'leader' || user?.roles.includes('usr')) && <IcoArrow width={16} height={16} />}
+        </MenuTrigger>
+
+        <MenuWrapper className="!w-[200px] px-[12px] py-[8px] bg-darkGrey flex flex-col gap-[4px]">
+          <SettingsEditUserRole role="leader" dubber={dubber} member={member} />
+          <SettingsEditUserRole role="editor" dubber={dubber} member={member} />
+          <SettingsEditUserRole role="member" dubber={dubber} member={member} />
+        </MenuWrapper>
+      </Menu>
+    </div>
+
+    <button onClick={excludeUser}>
+      <IcoCan width={24} height={24} />
+    </button>
+  </div>
+}
+
+function SettingsEditUserRole({ member, dubber, role }: { member: IDubberMember, dubber: IDubber, role: TDubberMemberRole }) {
+  const router = useRouter()
+
+  async function editRole() {
+    try {
+      await $api.patch(`/dubber/settings/member/edit`, {
+        dubber_id: dubber.id,
+        user_id: member.id,
+        role
+      })
+
+      router.refresh();
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  return <button className="flex gap-[16px] items-center duration-200 hover:bg-grey px-[8px] py-[4px]" onClick={editRole}>
+    {role === 'leader' && <IcoCrown width={16} height={16} className="shrink-0" />}
+    {role === 'editor' && <IcoPen width={16} height={16} className="shrink-0" />}
+    {role === 'member' && <IcoPeople width={16} height={16} className="shrink-0" />}
+
+    <p className="text-white">
+      {role === 'leader' && 'Лідер'}
+      {role === 'editor' && 'Редактор'}
+      {role === 'member' && 'Учасник'}
+    </p>
+  </button>
+}
 
 export const DubberAnswerInvite: NextPage<{ dubber: IDubber, invite: 'accept' | 'decline' }> = ({ dubber, invite }) => {
   const router = useRouter();
