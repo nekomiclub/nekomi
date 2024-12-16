@@ -343,7 +343,7 @@ const Header: NextPage = () => {
           </Link>}
 
           {(result.type === 'dubber' || result.type === 'user') && <Link href={result.type === 'user' ? `${config.URL.baseURL}${routes.user_profile.path}/${(result.item as IUser).username}` : `${config.URL.baseURL}${routes.dubber_profile.path}/${(result.item as IDubber).code}`} className="flex gap-[16px] duration-200 hover:bg-grey focus-visible:bg-grey rounded-[2px]">
-            <StyledImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).thumbURL} width="128px" height="128px" className="rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]" />
+            <StyledImage src={result.type === 'user' ? (result.item as IUser).avatar : (result.item as IDubber).avatar} width="128px" height="128px" className="rounded-[2px] overflow-hidden shrink-0 max-[700px]:w-[80px] max-[700px]:h-[120px]" />
 
             <div className="flex flex-col gap-[8px]">
               <p className="text-white text-[24px] font-bold text-ellipsis line-clamp-[2] pr-[2px] max-[700px]:text-[16px]">{result.type === 'user' ? `@${(result.item as IUser).username}` : (result.item as IDubber).name}</p>

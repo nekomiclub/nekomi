@@ -58,6 +58,7 @@ interface IPatcherMetaContext {
   dubbers: IDubber[]
   session: string
   totalDubbers: IDubber[]
+  dubberTeamMember: string | null
 
   capability: {
     isRoot: boolean
@@ -476,32 +477,32 @@ const TitleMetaSection = memo(function TitleMetaSection() {
 
       {/* Meta fields */}
       <div className="flex flex-col gap-[8px] w-full">
-        <PatcherField label="Українська назва" id="patcher-name_ukr" symbolsLimited={256} value={name_ukr} setValue={setNameUkr} FieldsStatus={FieldsStatus} />
+        <PatcherField label="Українська назва" id="patcher-name_ukr" symbolsLimited={256} value={name_ukr} setValue={setNameUkr} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
 
         <div className="pl-[16px]">
-          <PatcherField label="Англійська" id="patcher-name_eng" symbolsLimited={256} value={name_eng} setValue={setNameEng} FieldsStatus={FieldsStatus} />
-          <PatcherField label="Альтернативні" id="patcher-name_alt" note="Через кому" type="textarea" value={name_alt} setValue={setNameAlt} symbolsLimited={256} FieldsStatus={FieldsStatus} />
+          <PatcherField label="Англійська" id="patcher-name_eng" symbolsLimited={256} value={name_eng} setValue={setNameEng} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
+          {canTitleEdit && <PatcherField label="Альтернативні" id="patcher-name_alt" note="Через кому" type="textarea" value={name_alt} setValue={setNameAlt} symbolsLimited={256} FieldsStatus={FieldsStatus} />}
         </div>
 
-        <PatcherField label="MyAnimeList ID" id="patcher-mal_id" value={mal_id} setValue={setMalId} FieldsStatus={FieldsStatus} />
+        <PatcherField label="MyAnimeList ID" id="patcher-mal_id" value={mal_id} setValue={setMalId} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
 
-        <PatcherSelect label="Статус" id="patcher-status" options={titleStatusOptions} option={status} setOption={setStatus} FieldsStatus={FieldsStatus} />
-        <PatcherSelect label="Тип" id="patcher-type" options={titleTypeOptions} option={type} setOption={setType} FieldsStatus={FieldsStatus} />
+        <PatcherSelect label="Статус" id="patcher-status" options={titleStatusOptions} option={status} setOption={setStatus} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
+        <PatcherSelect label="Тип" id="patcher-type" options={titleTypeOptions} option={type} setOption={setType} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
 
-        <PatcherField label="Рейтинг IMDb" id="patcher-rating_IMDB" note="1 - 10, 0 - відсутній" type="number" symbolsLimited={4} value={rating_imdb} setValue={setRatingImdb} FieldsStatus={FieldsStatus} />
+        <PatcherField label="Рейтинг IMDb" id="patcher-rating_IMDB" note="1 - 10, 0 - відсутній" type="number" symbolsLimited={4} value={rating_imdb} setValue={setRatingImdb} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
         <PatcherField label="Рейтинг MyAnimeList" id="patcher-rating_MAL" note="1 - 10, 0 - відсутній" type="number" locked symbolsLimited={4} value={rating_mal} setValue={setRatingMal} FieldsStatus={FieldsStatus} />
         <PatcherField label="Кількість людей які поставили оцінку на MyAnimeList" id="patcher-mal_poll" type="number" locked symbolsLimited={9} value={mal_poll} setValue={setMalPoll} FieldsStatus={FieldsStatus} />
 
-        <PatcherSelect label="Віковий рейтинг" id="patcher-age_rate" options={titleAgeRateOptions} option={age_rate} setOption={setAgeRate} FieldsStatus={FieldsStatus} />
+        <PatcherSelect label="Віковий рейтинг" id="patcher-age_rate" options={titleAgeRateOptions} option={age_rate} setOption={setAgeRate} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
 
-        <PatcherField label="Епізоди" id="patcher-episodes_count" note="1 - 9999, 0 - відсутні" type="number" symbolsLimited={4} value={episodes_count} setValue={setEpisodesCount} FieldsStatus={FieldsStatus} />
-        <PatcherField label="Студії" id="patcher-studios" note="Через кому" symbolsLimited={256} value={studios} setValue={setStudios} FieldsStatus={FieldsStatus} />
-        <PatcherField label="Жанри" id="patcher-genres" note="Через кому" symbolsLimited={256} value={genres} setValue={setGenres} FieldsStatus={FieldsStatus} />
+        <PatcherField label="Епізоди" id="patcher-episodes_count" note="1 - 9999, 0 - відсутні" type="number" symbolsLimited={4} value={episodes_count} setValue={setEpisodesCount} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
+        <PatcherField label="Студії" id="patcher-studios" note="Через кому" symbolsLimited={256} value={studios} setValue={setStudios} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
+        <PatcherField label="Жанри" id="patcher-genres" note="Через кому" symbolsLimited={256} value={genres} setValue={setGenres} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
 
-        <PatcherSelect label="Країна" id="patcher-country" options={titleCountryOptions} option={country} setOption={setCountry} FieldsStatus={FieldsStatus} />
-        <PatcherSelect label="Сезон" id="patcher-season" options={titleSeasonOptions} option={season} setOption={setSeason} FieldsStatus={FieldsStatus} />
+        <PatcherSelect label="Країна" id="patcher-country" options={titleCountryOptions} option={country} setOption={setCountry} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
+        <PatcherSelect label="Сезон" id="patcher-season" options={titleSeasonOptions} option={season} setOption={setSeason} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
 
-        <PatcherField label="Рік" id="patcher-year" note="2007 - 2050" type="number" symbolsLimited={4} value={year} setValue={setYear} FieldsStatus={FieldsStatus} />
+        <PatcherField label="Рік" id="patcher-year" note="2007 - 2050" type="number" symbolsLimited={4} value={year} setValue={setYear} FieldsStatus={FieldsStatus} locked={!canTitleEdit} />
       </div>
     </div>
 
@@ -795,8 +796,8 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection() {
 
 const EpisodesSection = memo(function EpisodesSection() {
   const MetaCtx = useContext(PatcherMetaContext);
-  const { title, session, dubbers, totalDubbers } = MetaCtx;
-  const { canSeriesAdd, canSeriesDelete } = MetaCtx.capability;
+  const { title, session, dubbers, totalDubbers, dubberTeamMember } = MetaCtx;
+  const { canSeriesAdd, canSeriesDelete, isRoot } = MetaCtx.capability;
 
   const [errors, setErrors] = useState<string[]>([])
   const [FieldsStatus, SetFieldsStatus] = useState<IPatcherFieldStatus[]>([])
@@ -812,7 +813,7 @@ const EpisodesSection = memo(function EpisodesSection() {
   }))
 
   const [episodeOrder, setEpisodeOrder] = useState(1);
-  const [dubbingSelectedCode, setDubbingSelectedCode] = useState(dubbers.length ? dubbers[0].code : totalDubbers[0].code)
+  const [dubbingSelectedCode, setDubbingSelectedCode] = useState(totalDubbers.find(el => el.id === dubberTeamMember)?.slug ?? dubbers[0].slug ?? totalDubbers[0].slug)
 
   const wrapperRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -1049,7 +1050,7 @@ const EpisodesSection = memo(function EpisodesSection() {
 
             {/* Select dubber */}
             <div className="w-[300px] shrink-0">
-              <PatcherSelect label="Команда" id="patcher-dubbingSelectDubber" options={totalDubbers.sort((a, b) => a.name > b.name ? 1 : -1).map(dub => { return { code: dub.code, label: dub.name } })} option={dubbingSelectedCode} setOption={setDubbingSelectedCode} disablePending dubbers={totalDubbers} FieldsStatus={FieldsStatus} />
+              <PatcherSelect label="Команда" id="patcher-dubbingSelectDubber" options={totalDubbers.sort((a, b) => a.nameUkr > b.nameUkr ? 1 : -1).map(dub => { return { code: dub.slug, label: dub.nameUkr } })} option={dubbingSelectedCode} setOption={setDubbingSelectedCode} disablePending dubbers={totalDubbers} FieldsStatus={FieldsStatus} locked={!isRoot && Boolean(dubberTeamMember)} />
             </div>
 
             {/* File select */}
@@ -1077,14 +1078,14 @@ const EpisodesSection = memo(function EpisodesSection() {
     </div>
 
     {/* Groups */}
-    {episodeGroups.some(el => el.dubber.code === dubbingSelectedCode) ? <>
-      <PatcherEpisodeGroup group={{ ...episodeGroups.find(el => el.dubber?.code === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} />
+    {episodeGroups.some(el => el.dubber?.slug === dubbingSelectedCode) ? <>
+      <PatcherEpisodeGroup group={{ ...episodeGroups.find(el => el.dubber?.slug === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} />
 
-      {episodeGroups.filter(el => el.dubber?.code !== dubbingSelectedCode).map(group => {
-        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} />
+      {episodeGroups.filter(el => el.dubber?.slug !== dubbingSelectedCode).map(group => {
+        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber!.id}`} dubbingSelectedCode={dubbingSelectedCode} />
       })}</> : <>
       {episodeGroups.map(group => {
-        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} />
+        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber!.id}`} dubbingSelectedCode={dubbingSelectedCode} />
       })}</>}
   </section>
 })
@@ -1129,6 +1130,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
     dubbers,
     session,
     totalDubbers,
+    dubberTeamMember: user.dubberTeamMember,
     capability: {
       isRoot,
       canTitleDelete,

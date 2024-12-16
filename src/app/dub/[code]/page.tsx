@@ -28,21 +28,21 @@ export async function generateMetadata(
     const { data } = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
     const { dubber } = data;
 
-    const description = dubber.description ?? `Сторінка команди озвучення ${dubber.name}`
+    const description = dubber.description ?? `Сторінка команди озвучення ${dubber.nameUkr}`
 
     return metaObject({
-      title: dubber.name,
-      keywords: [dubber.name],
+      title: dubber.nameUkr,
+      keywords: [dubber.nameUkr],
       description,
       openGraph: {
-        title: `${dubber.name} ― nekomi`,
+        title: `${dubber.nameUkr} ― nekomi`,
         type: 'profile',
-        url: `${config.URL.baseURL}${routes.dubber_profile.path}/${dubber.name}`,
-        images: dubber.thumbURL,
+        url: `${config.URL.baseURL}${routes.dubber_profile.path}/${dubber.nameUkr}`,
+        images: dubber.avatar,
         locale: 'uk_UA',
         siteName: CONSTS.Domains.nekomi.split('.')[0],
         description,
-        username: dubber.code,
+        username: dubber.slug,
       }
     })
   } catch (e) {
@@ -57,11 +57,11 @@ export async function generateMetadata(
 
 export default async function RSC(props: IRSCProps) {
   const params = await props.params;
-  const search_params = await props.searchParams as { invite?: 'accept' | 'decline' };
+  const searchParams = await props.searchParams as { invite?: 'accept' | 'decline' };
 
   // @ts-ignore
   let dubber: IDubber = {};
-  let invite_verified = false;
+  let inviteVerified = false;
 
   try {
     const { data } = await $api.get<{ dubber: IDubber }>(`/dubber/${params.code}`);
@@ -88,19 +88,19 @@ export default async function RSC(props: IRSCProps) {
     }
   }
 
-  if (search_params.invite) {
+  if (searchParams.invite) {
     const res = await $api.get<{ verified: boolean }>(`/dubber/invite/${dubber.id}`, {
       headers: {
         Cookie: cookies().toString(),
       }
     })
 
-    invite_verified = res.data.verified;
+    inviteVerified = res.data.verified;
   }
 
   return (
     <>
-      {invite_verified && <DubberAnswerInvite dubber={dubber} invite={search_params.invite!} />}
+      {inviteVerified && <DubberAnswerInvite dubber={dubber} invite={searchParams.invite!} />}
 
       <div className="w-full h-full min-h-screen bg-dark">
         <DubberHeader dubber={dubber} />

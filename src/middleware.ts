@@ -62,6 +62,8 @@ export async function middleware(req: NextRequest) {
     let passFailed = false;
 
     route.capabilitiesRequired.forEach(cap => {
+      if (pass) return;
+
       if (user?.parsedRoles.includes(cap) && !passFailed) {
         // Set pass if user has all required capabilities
         pass = true;

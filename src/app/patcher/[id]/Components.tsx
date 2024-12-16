@@ -133,9 +133,9 @@ export const PatcherSelect: NextPage<IPatcherSelectProps> = ({ options, label, d
       <p className={cn(locked ? 'text-lightGrey' : 'text-white')}>{label}</p>
     </div>
 
-    <Menu className="w-full" gap={16} settings={{ align: 'stretch', direction: 'bottom', animation: 'slide', closeOn: 'both' }} state={isOpen} stateSetter={setIsOpen}>
+    <Menu className="w-full" gap={16} settings={{ align: 'stretch', direction: 'bottom', animation: 'slide', closeOn: 'both' }} disabled={locked} state={isOpen} stateSetter={setIsOpen}>
       <MenuTrigger className={cn(`patcher-select px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`, isPending && 'patcher-select--pending', isSaved && 'patcher-select--saved')} primary>
-        {dubbers?.length ? <StyledImage src={dubbers.find(el => el.code === option)!.thumbURL!} width="32px" height="32px" className="overflow-hidden rounded-[32px]" /> : <></>}
+        {dubbers?.length ? <StyledImage src={dubbers.find(el => el.code === option)!.avatar!} width="32px" height="32px" className="overflow-hidden rounded-[32px]" /> : <></>}
 
         <p className={cn(`select-none`, locked ? 'text-lightGrey' : 'text-white')}>{options.find(el => el.code === option)?.label}</p>
 
@@ -145,7 +145,7 @@ export const PatcherSelect: NextPage<IPatcherSelectProps> = ({ options, label, d
       <MenuWrapper className="flex flex-col bg-grey w-full max-h-[50vh] overflow-x-hidden overflow-y-auto">
         {options.map(el => {
           return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, option === el.code && 'bg-purple', el.code === initialValue.current && option !== el.code && !disablePending && 'bg-gradientSecondaryFallback')} key={`select-option--${el.code}`} onClick={() => select(el)}>
-            {dubbers?.length ? <StyledImage src={dubbers.find(dubber => dubber.code === el.code)?.thumbURL ?? ''} width="32px" height="32px" className="overflow-hidden rounded-[32px]" /> : <></>}
+            {dubbers?.length ? <StyledImage src={dubbers.find(dubber => dubber.code === el.code)?.avatar ?? ''} width="32px" height="32px" className="overflow-hidden rounded-[32px]" /> : <></>}
 
             <p className="text-white">{el.label}</p>
           </button>
@@ -293,7 +293,7 @@ export const PatcherEpisodeGroup: NextPage<IPatcherEpisodeGroupProps> = ({ group
   return <div className="flex flex-col gap-[16px]">
     {/* Label */}
     <div className="flex items-center gap-[16px]">
-      <StyledImage src={group.dubber?.thumbURL} height="32px" width="32px" className="overflow-hidden rounded-[32px] shrink-0" />
+      <StyledImage src={group.dubber?.avatar} height="32px" width="32px" className="overflow-hidden rounded-[32px] shrink-0" />
 
       <h3 className="text-white text-[24px] uppercase shrink-0 font-bold">{group.dubber?.name} ({group.episodes.length} / {title.episodesCount || 0})</h3>
 

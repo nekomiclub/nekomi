@@ -14,6 +14,7 @@ export interface IUserState {
   watchProgress: IUserWatchProgress[]
   libs: IUserLib[]
   isTelegramLinked: boolean
+  dubberTeamMember: string | null
 }
 
 /** Default user state */
@@ -25,7 +26,8 @@ export const userStateDefault: IUserState = {
   capabilities: [],
   watchProgress: [],
   libs: [],
-  isTelegramLinked: false
+  isTelegramLinked: false,
+  dubberTeamMember: null
 }
 
 const userSlice = createSlice({

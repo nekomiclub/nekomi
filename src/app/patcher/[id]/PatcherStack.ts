@@ -133,7 +133,7 @@ export class PactherStack {
       this.patch({ id: item.id, type: 'uploaded', sourceURL: data.episode.qualities.q1080 })
     } catch (e) {
       if (e instanceof AxiosError) {
-        this.appendError(`[PatcherStack]: Сталась помилка завантаження - ${e.code}. Будь ласка, не змінюйте файли які додані в чергу`);
+        this.appendError(`[PatcherStack]: Сталась помилка завантаження ${e.code} ${e.response?.data?.message ?? e.response?.data?.msg}`);
       } else {
         this.appendError(`[PatcherStack]: Stack stopped due to error - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
       }
