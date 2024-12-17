@@ -15,7 +15,7 @@ import { IDubber } from '../../../interfaces/IDubber';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { routes } from '../../../routes';
 
-import { DubberAnswerInvite, DubberHeader } from './ClientComponents';
+import { DubberAnswerInvite, DubberHeader, DubberMembers } from './ClientComponents';
 
 
 
@@ -129,6 +129,8 @@ export default async function RSC(props: IRSCProps) {
 
             <p className={`${dubber.description ? 'text-white text-[24px]' : 'text-lightGrey'}`}>{dubber.description || 'Опис відсутній'}</p>
           </div>
+
+          <DubberMembers dubber={dubber} />
         </div>
       </div>
     </>

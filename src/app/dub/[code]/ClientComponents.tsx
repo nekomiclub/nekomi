@@ -2,10 +2,11 @@
 
 
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { Dialog, Layer, Trigger } from '@fullkekw/fkw-popup';
 import { NextPage } from 'next';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
 
@@ -18,6 +19,7 @@ import StyledImage from '~/components/UI/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
 import { TRoleCapability } from '~/interfaces/IRoles';
 import { IUser } from '~/interfaces/IUser';
+import { Routes } from '~/routes';
 import { IcoArrow, IcoCalendar, IcoCan, IcoChain, IcoCheckmark, IcoCrown, IcoPen, IcoPeople, IcoSettings } from '../../../assets/Icons';
 import { copyToClipboard } from '../../../components/Components';
 import Tooltip from '../../../components/UI/Tooltip';
@@ -74,6 +76,17 @@ export const DubberHeader: NextPage<IProps> = ({ dubber }) => {
   );
 }
 
+export const DubberMembers: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+  return <>
+    <GroupLabel label="Команда" className="text-[32px]" />
+    <div className="flex gap-[16px] flex-wrap justify-center">
+      {dubber.members.length ? dubber.members.map(member => {
+        return <DubberMemberComponent member={member} key={`dubber-member--${member.id}`} />
+      }) : <p className="text-lightGrey">Команда відсутня</p>}
+    </div>
+  </>
+}
+
 function AvatarComponent({ dubber }: { dubber: IDubber }) {
   return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px]">
     <StyledImage src={dubber.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square max-[820px]:!w-[160px] max-[820px]:!h-[160px]" priority alt="avatar" />
@@ -93,6 +106,40 @@ function DubberComponent({ dubber }: { dubber: IDubber }) {
       </div>
     </Tooltip>
   </div>
+}
+
+function DubberMemberComponent({ member }: { member: IDubberMember }) {
+  const [user, setUser] = useState<IUser>()
+
+
+
+  useMemo(() => {
+    (async function () {
+      try {
+        const { data } = await $api.get<{ user: IUser }>(`/user/${member.id}`);
+
+        setUser(data.user);
+      } catch (e) {
+        console.error(e)
+      }
+    })()
+  }, [])
+
+
+
+  return <Link href={`${Routes.user_profile.path}/${user?.username}`} className="relative w-[256px] h-[256px]">
+    <div className="absolute top-0 right-0 p-[8px] bg-dark/[.8] backdrop-blur-[40px] z-[3]">
+      {member.role === 'leader' && <IcoCrown width={24} height={24} />}
+      {member.role === 'editor' && <IcoPen width={24} height={24} />}
+      {member.role === 'member' && <IcoPeople width={24} height={24} />}
+    </div>
+
+    <div className="absolute bottom-0 left-0 px-[8px] py-[8px] bg-dark/[.8] backdrop-blur-[40px] z-[3] w-full">
+      <p className="text-white text-center">@{user?.username}</p>
+    </div>
+
+    <StyledImage src={user?.avatar ?? ''} width="100%" height="100%" className="absolute top-0 left-0" />
+  </Link>
 }
 
 function SettingsComponent({ dubber, settingsPopupID, canEditTeam }: { dubber: IDubber, settingsPopupID: string, canEditTeam: boolean }) {
