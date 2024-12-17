@@ -58,9 +58,7 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
   useMemo(() => {
     // Check if image domain is nekomi
-    if (!src.includes(config.domain)) {
-      setUseDefaultImage(true)
-    }
+    setUseDefaultImage(!src.includes(config.domain))
   }, [])
 
   useEffect(() => {
@@ -94,7 +92,7 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
       </>}
 
       {/* Loading state */}
-      <Skeleton width={'100%'} height={'100%'} className={cn(`absolute -z-[1] top-0 left-0 duration-200 opacity-100`, (isLoaded || isErrored) && 'opacity-0')} />
+      <Skeleton width={'100%'} height={'100%'} className={cn(`absolute -z-[1] top-0 left-0 duration-200`, isLoaded || isErrored ? 'opacity-0' : '')} />
     </div>
   )
 }

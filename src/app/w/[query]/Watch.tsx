@@ -53,7 +53,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
     const { capabilities } = user;
 
     setInLibs(user.libs.filter(el => el.titles.includes(title.id)).map(el => el.type))
-    setCanEditTitle(capabilities.includes('root') || capabilities.includes('editor') || capabilities.includes('dubber'));
+    setCanEditTitle(capabilities.includes('root') || capabilities.includes('titleEdit') || capabilities.includes('seriesAdd'));
   }, [])
 
 
@@ -143,19 +143,19 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                     </div>
                   </div>
 
-                  {title.details?.length && <div className={`flex gap-[16px] bg-orange/[.2] border border-orange p-[8px] rounded-[2px]`}>
+                  {title.details?.replace('null', '').length ? <div className={`flex gap-[16px] bg-orange/[.2] border border-orange p-[8px] rounded-[2px]`}>
                     <IcoInfo width={24} height={24} />
                     <div className="flex flex-col gap-[8px]">
-                      {title.details.split('\n').map((el, i) => {
+                      {title.details.replace('null', '').split('\n').map((el, i) => {
                         return <p className="text-white" key={`details-line--${i}`}>{el}</p>
                       })}
                     </div>
-                  </div>}
+                  </div> : <></>}
                 </div>
               </div>
 
-              {title.description.length ? <div className="flex flex-col gap-[8px]">
-                {title.description.split('\n').map((el, i) => {
+              {title.description.replace('null', '').length ? <div className="flex flex-col gap-[8px]">
+                {title.description.replace('null', '').split('\n').map((el, i) => {
                   return <p className="text-white text-[16px]" key={`description-line--${i}`}>{el}</p>
                 })}
               </div> : <p className="text-lightGrey text-[16px]">Опис відсутній</p>}

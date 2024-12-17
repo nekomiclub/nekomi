@@ -63,12 +63,12 @@ export const routes: { [key in TRoute]: IRoute } = {
   /** Must be above patcher_title  */
   patcher_media: {
     path: '/patcher/media',
-    capabilitiesRequired: ['admin'],
+    capabilitiesRequired: ['root'],
   },
   patcher_title: {
     path: '/patcher',
     dynamic: true,
-    capabilitiesRequired: ['dubber', 'editor'],
+    capabilitiesRequired: ['titleEdit', 'seriesAdd'],
     capabilitiesRequiredMode: 'OR'
   },
   /** @extends /user */

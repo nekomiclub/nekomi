@@ -284,11 +284,12 @@ export const PatcherEpisodeMeta: NextPage<IPatcherEpisodeMetaProps> = ({ meta, s
 
 export const PatcherEpisodeGroup: NextPage<IPatcherEpisodeGroupProps> = ({ group, dubbingSelectedCode, deleteEpisode }) => {
   const MetaCtx = useContext(PatcherMetaContext);
-  const { title } = MetaCtx;
-  const { canSeriesDelete } = MetaCtx.capability
+  const { title, dubberTeamMember } = MetaCtx;
+  const { isRoot } = MetaCtx.capability;
 
-  const isActive = group.dubber?.code === dubbingSelectedCode;
-  const [isCollapsed, setIsCollapsed] = useState(!isActive)
+  const canSeriesDelete = isRoot ? true : dubberTeamMember ? dubberTeamMember === group.dubber.id : MetaCtx.capability.canSeriesDelete;
+
+  const [isCollapsed, setIsCollapsed] = useState(!(group.dubber?.slug === dubbingSelectedCode))
 
   return <div className="flex flex-col gap-[16px]">
     {/* Label */}

@@ -16,6 +16,7 @@ import GroupLabel from '~/components/UI/GroupLabel';
 import Input from '~/components/UI/Input';
 import StyledImage from '~/components/UI/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
+import { TRoleCapability } from '~/interfaces/IRoles';
 import { IUser } from '~/interfaces/IUser';
 import { IcoArrow, IcoCalendar, IcoCan, IcoChain, IcoCheckmark, IcoCrown, IcoPen, IcoPeople, IcoSettings } from '../../../assets/Icons';
 import { copyToClipboard } from '../../../components/Components';
@@ -221,12 +222,14 @@ function SettingsInviteUser({ user, dubber }: { user: IUser, dubber: IDubber }) 
 }
 
 function SettingsEditUser({ member, dubber }: { member: IDubberMember, dubber: IDubber }) {
+  const currentUser = useAppSelector(state => state.user);
+
   const [user, setUser] = useState<IUser>()
 
   useEffect(() => {
     (async function () {
       try {
-        const { data } = await $api.get(`/user/${member.id}`, {
+        const { data } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/${member.id}`, {
           params: {
             detailed: true
           }
@@ -242,6 +245,8 @@ function SettingsEditUser({ member, dubber }: { member: IDubberMember, dubber: I
 
 
   async function excludeUser() {
+    if (!currentUser.capabilities.includes('root')) return
+
     try {
       await $api.post('/dubber/settings/member/exclude', {
         dubber_id: dubber.id,
@@ -262,7 +267,7 @@ function SettingsEditUser({ member, dubber }: { member: IDubberMember, dubber: I
       </div>
 
       <Menu settings={{ align: 'left' }}>
-        <MenuTrigger primary className="flex items-center gap-[16px]" disabled={member.role !== 'leader' && !user?.roles.includes('usr')}>
+        <MenuTrigger primary className="flex items-center gap-[16px]" disabled={!currentUser.capabilities.includes('root')}>
           {member.role === 'leader' && <IcoCrown width={16} height={16} />}
           {member.role === 'editor' && <IcoPen width={16} height={16} />}
           {member.role === 'member' && <IcoPeople width={16} height={16} />}
@@ -273,7 +278,7 @@ function SettingsEditUser({ member, dubber }: { member: IDubberMember, dubber: I
             {member.role === 'member' && 'Учасник'}
           </p>
 
-          {(member.role === 'leader' || user?.roles.includes('usr')) && <IcoArrow width={16} height={16} />}
+          {currentUser.capabilities.includes('root') && <IcoArrow width={16} height={16} />}
         </MenuTrigger>
 
         <MenuWrapper className="!w-[200px] px-[12px] py-[8px] bg-darkGrey flex flex-col gap-[4px]">
@@ -284,9 +289,9 @@ function SettingsEditUser({ member, dubber }: { member: IDubberMember, dubber: I
       </Menu>
     </div>
 
-    <button onClick={excludeUser}>
+    {currentUser.capabilities.includes('root') && <button onClick={excludeUser}>
       <IcoCan width={24} height={24} />
-    </button>
+    </button>}
   </div>
 }
 
