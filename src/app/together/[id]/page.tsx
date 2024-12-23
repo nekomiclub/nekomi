@@ -9,7 +9,7 @@ import { IRSCProps } from '~/interfaces/IRSC';
 import { ITitle } from '~/interfaces/ITitle';
 import { IUser, IUserTogetherRoom } from '~/interfaces/IUser';
 
-import { TogetherRoom } from './Room';
+import { TogetherRoomSecurityLayer } from './Room';
 
 export const metadata = metaObject({ title: 'Спільний перегляд' })
 
@@ -68,5 +68,5 @@ export default async function RSC({ params }: IRSCProps) {
 
   if (!user || !room || !title) return <NotFoundScreen />
 
-  return <TogetherRoom user={user} dubbers={dubbers} room={room} title={title} />
+  return <TogetherRoomSecurityLayer user={user} dubbers={dubbers} room={room} title={title} />
 }

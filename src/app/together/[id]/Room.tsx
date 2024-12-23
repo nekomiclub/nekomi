@@ -2,9 +2,10 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { NextPage } from 'next';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { IcoCan, IcoChain } from '~/assets/Icons';
+import { IcoArrow, IcoCan, IcoChain, IcoUser } from '~/assets/Icons';
 import { IcoSocialTelegram } from '~/assets/Social';
 import { cn, copyToClipboard } from '~/components/Components';
 import { getUTC, randomNumber } from '~/components/handlers';
@@ -53,7 +54,40 @@ const messagePlaceholders = [
 
 
 
-export const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user }) => {
+export const TogetherRoomSecurityLayer: NextPage<IProps> = (props) => {
+  const pathname = usePathname();
+  const currentUser = useAppSelector(state => state.user);
+
+  return <>
+    {/* Pass if user has account */}
+    {currentUser.id && <TogetherRoom {...props} />}
+
+    {/* Reject if user dont has account */}
+    {!currentUser.id && <>
+      <div className="w-screen h-screen z-[10000] bg-dark fixed">
+        <div className="wrapper h-full flex justify-center items-center">
+          <div className="w-full max-w-[800px] h-[300px] bg-darkGrey px-[32px] py-[24px] rounded-[2px] flex flex-col gap-[24px] items-center justify-between">
+            <div className="flex flex-col gap-[8px] items-center">
+              <IcoUser width={64} height={64} fill="#fff" />
+
+              <div className="flex flex-col gap-[4px]">
+                <h2 className="text-white text-[24px] font-bold text-center">Здається, в тебе нема акаунтту</h2>
+                <p className="text-lightGrey text-[12px] text-center">Нажаль, для спільного перегляду потрібен акаунт</p>
+              </div>
+            </div>
+
+            <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className="px-[16px] py-[8px] rounded-[2px] bg-grey duration-200 hover:bg-gradientPrimaryFallback flex justify-center items-center gap-[16px] max-w-[500px] w-full">
+              <p className="text-white">Створити акаунт</p>
+              <IcoArrow width={16} height={16} className="-rotate-[90deg]" fill="#fff" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>}
+  </>
+}
+
+const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user }) => {
   const roomId = `${user.id}__${room.id}`
   const currentUser = useAppSelector(state => state.user);
 
