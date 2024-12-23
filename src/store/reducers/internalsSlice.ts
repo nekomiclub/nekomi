@@ -11,14 +11,14 @@ export interface IInternalsState {
 /** Default user state */
 export const internalsDefaultSlice: IInternalsState = {
   online: 1,
-  headerHeight: 92
+  headerHeight: 92,
 }
 
 const internalsSlice = createSlice({
   name: 'internals',
   initialState: internalsDefaultSlice,
   reducers: {
-    reducer(state, action: IReduxAction<IInternalsState>) {
+    reducer(state, action: IReduxAction<Partial<IInternalsState>>) {
       for (let key in action.payload) {
         state[key] = action.payload[key];
       }

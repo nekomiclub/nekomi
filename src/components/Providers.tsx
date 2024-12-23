@@ -15,7 +15,7 @@ import { IUserState } from '../store/reducers/userSlice';
 import { setupStore } from '../store/store'
 
 import { createID } from './handlers';
-import { $api } from './http';
+import { $api, signCSRF } from './http';
 
 
 
@@ -90,12 +90,9 @@ const SetupIntertnals: NextPage = () => {
   useEffect(() => {
     if (typeof window === 'undefined' || ws) return;
 
-    setWs(new WebSocket(config.URL.apiWS))
-  }, [])
+    const websocket = new WebSocket(config.URL.apiWS);
 
-  // Send presence websocket request
-  useEffect(() => {
-    if (!ws || typeof window === 'undefined') return;
+    setWs(websocket)
 
     let SID = sessionStorage.getItem('SID')
 
@@ -105,13 +102,20 @@ const SetupIntertnals: NextPage = () => {
     }
 
     // Send presence request
-    ws.onopen = () => {
+    websocket.onopen = () => {
       try {
-        sendPresenceRequest(ws, SID || 'SID_INVALID')
+        sendPresenceRequest(websocket, SID || 'SID_INVALID')
       } catch (e) {
         console.error(e)
       }
     }
+  }, [])
+
+  // Send presence websocket request
+  useEffect(() => {
+    if (!ws || typeof window === 'undefined') return;
+
+    const SID = sessionStorage.getItem('SID')
 
     // Handle broadcast
     ws.onmessage = data => {
@@ -153,23 +157,25 @@ const SetupIntertnals: NextPage = () => {
         type: 'site_disconnected',
         payload: {
           SID: SID || 'SID_INVALID'
-        }
+        },
+        CSRF: signCSRF()
       }
 
       ws.send(JSON.stringify(payload));
     })
-
-    function sendPresenceRequest(ws: WebSocket, SID: string) {
-      const payload: Request<IWS_SiteConnection> = {
-        type: 'site_connected',
-        payload: {
-          SID
-        }
-      }
-
-      ws.send(JSON.stringify(payload))
-    }
   }, [ws])
+
+  function sendPresenceRequest(ws: WebSocket, SID: string) {
+    const payload: Request<IWS_SiteConnection> = {
+      type: 'site_connected',
+      payload: {
+        SID
+      },
+      CSRF: signCSRF()
+    }
+
+    ws.send(JSON.stringify(payload))
+  }
 
 
 
