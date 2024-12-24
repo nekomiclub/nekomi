@@ -47,10 +47,7 @@ interface IKekwPlayerProps {
   title: ITitle
   dubbers: IDubber[]
 
-  /** Player will change this state with current dubber */
   setOutDubber?: (state: IDubber) => void
-
-  /** Player will change this state with current episode */
   setOutEp?: (state: number) => void
 }
 
@@ -1054,7 +1051,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
           <loader.DotPulse color="#fff" size={80} />
         </div>
 
-        <video src={''} preload="auto" controlsList="nodownload" className={cn(`w-full h-full`, stretch && 'object-cover')} controls={false} ref={videoRef}></video>
+        <video src={''} preload="auto" controlsList="nodownload" className={cn(`w-full h-full`, stretch && 'object-cover')} id="kekwplayer-video" controls={false} ref={videoRef}></video>
       </div>
     </div>
   </KekwPlayerContext.Provider>

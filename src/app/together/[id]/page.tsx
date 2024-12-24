@@ -1,9 +1,10 @@
 import { AxiosError } from 'axios';
+import { cookies } from 'next/headers';
 
 import { HappenedWrongScreen, NotFoundScreen } from '~/components/Components';
 import { getUTC } from '~/components/handlers';
 import { $api } from '~/components/http';
-import { devMode, metaObject } from '~/config';
+import { config, devMode, metaObject } from '~/config';
 import { IDubber } from '~/interfaces/IDubber';
 import { IRSCProps } from '~/interfaces/IRSC';
 import { ITitle } from '~/interfaces/ITitle';
@@ -18,6 +19,7 @@ export default async function RSC({ params }: IRSCProps) {
 
   const userId = id.split('__')[0];
   const roomId = id.split('__')[1];
+  const userSessionToken = cookies().get(config.vars.SessionCookie)?.value;
 
   if (!userId || !roomId) return <HappenedWrongScreen cause="Неправильний ID кімнати" />
 
@@ -68,5 +70,5 @@ export default async function RSC({ params }: IRSCProps) {
 
   if (!user || !room || !title) return <NotFoundScreen />
 
-  return <TogetherRoomSecurityLayer user={user} dubbers={dubbers} room={room} title={title} />
+  return <TogetherRoomSecurityLayer user={user} dubbers={dubbers} room={room} title={title} userSessionToken={userSessionToken || '_NULL'} />
 }

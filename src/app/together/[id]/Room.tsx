@@ -18,7 +18,7 @@ import { useAppSelector } from '~/hooks/redux';
 import { IDubber } from '~/interfaces/IDubber';
 import { ITitle } from '~/interfaces/ITitle';
 import { IUser, IUserTogetherRoom } from '~/interfaces/IUser';
-import { IWS_WTConnect, IWS_WTMessage, Message, Request, Response } from '~/interfaces/IWS';
+import { IWS_WTConnect, IWS_WTMessage, IWS_WTSync, Message, Request, Response } from '~/interfaces/IWS';
 
 
 
@@ -27,6 +27,16 @@ interface IProps {
   room: IUserTogetherRoom
   title: ITitle
   dubbers: IDubber[]
+  userSessionToken: string
+}
+
+interface IContextProps {
+  user: IUser
+  room: IUserTogetherRoom
+  title: ITitle
+  dubbers: IDubber[]
+  isOwner: boolean
+  canControlPlayback: boolean
 }
 
 interface IMessage {
@@ -38,18 +48,13 @@ interface IMessage {
 }
 
 // @ts-ignore
-const Context = createContext<IProps>({})
+const Context = createContext<IContextProps>({})
 
 const messagePlaceholders = [
   'tg @nekomiclub',
-  'Ну давай, напиши які у неї...',
-  'я гуль',
   'ахахахахахаххаха',
-  'ну?',
-  'never gonna give you up',
-  'о я це в тіктоці бачив',
   'моя вайфа кста',
-  'Запропонуй свою репліку в діскорді',
+  '<script>alert("xss haha")</script>',
 ]
 
 
@@ -71,7 +76,7 @@ export const TogetherRoomSecurityLayer: NextPage<IProps> = (props) => {
               <IcoUser width={64} height={64} fill="#fff" />
 
               <div className="flex flex-col gap-[4px]">
-                <h2 className="text-white text-[24px] font-bold text-center">Здається, в тебе нема акаунтту</h2>
+                <h2 className="text-white text-[24px] font-bold text-center">Здається, в тебе нема акаунту</h2>
                 <p className="text-lightGrey text-[12px] text-center">Нажаль, для спільного перегляду потрібен акаунт</p>
               </div>
             </div>
@@ -87,17 +92,29 @@ export const TogetherRoomSecurityLayer: NextPage<IProps> = (props) => {
   </>
 }
 
-const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user }) => {
-  const roomId = `${user.id}__${room.id}`
+const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessionToken }) => {
   const currentUser = useAppSelector(state => state.user);
-
+  const roomId = `${user.id}__${room.id}`
+  const isOwner = user.id === currentUser.id;
+  const canControlPlayback = user.id === currentUser.id || room.settings.usersCanControl;
 
 
   const [ws, setWs] = useState<WebSocket>();
   const [messages, setMessages] = useState<IMessage[]>([])
 
+  // Player states
+  const [episode, setEpisode] = useState<number>()
+  const [dubber, setDubber] = useState<IDubber>()
+  const [moment, setMoment] = useState(0)
+
+  const [isBuffering, setIsBuffering] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const parentRef = useRef<HTMLDivElement>(null)
 
 
+
+  // Establish websocket connection & rename document title
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -116,7 +133,8 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user }) => {
             roomId,
             username: currentUser.username
           },
-          CSRF: signCSRF()
+          CSRF: signCSRF(),
+          Authorization: userSessionToken
         }
 
         websocket.send(JSON.stringify(connect));
@@ -133,12 +151,27 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user }) => {
             roomId,
             username: currentUser.username
           },
-          CSRF: signCSRF()
+          CSRF: signCSRF(),
+          Authorization: userSessionToken
         }
 
         websocket.send(JSON.stringify(disconnect));
       })
     }
+  }, [])
+
+  // Handle player video events
+  useEffect(() => {
+    const parent = parentRef.current
+    const video = parent?.querySelector('#kekwplayer-video') as HTMLVideoElement | undefined;
+    if (!parent || !video) return;
+
+    video.addEventListener('waiting', () => setIsBuffering(true));
+    video.addEventListener('playing', () => setIsBuffering(false));
+
+    video.addEventListener('timeupdate', () => setMoment(video.currentTime))
+    video.addEventListener('play', () => setIsPlaying(true))
+    video.addEventListener('pause', () => setIsPlaying(false))
   }, [])
 
   // Websocket
@@ -162,11 +195,63 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user }) => {
             username: payload.username,
           })
         }
+
+        if (message.type === 'wt_sync') {
+          const { payload } = message as Response<IWS_WTSync>
+          const video = parentRef.current?.querySelector('#kekwplayer-video') as HTMLVideoElement | undefined;
+          if (payload.syncedWithId === currentUser.id || !video) return;
+
+          const { dubberId, isBuffering, isPlaying, moment, order } = payload;
+
+          if (isBuffering) {
+            video.pause();
+          } else {
+            video.play().catch(e => console.error(e));
+          }
+
+          if (isPlaying) {
+            video.play().catch(e => console.error(e));
+          } else {
+            video.pause()
+          }
+
+          video.currentTime = moment;
+        }
       } catch (e) {
         console.error(e)
       }
     }
   }, [ws])
+
+  // Sync out
+  useEffect(() => {
+    if (!ws || !canControlPlayback || !episode || !dubber || moment === 0) return;
+
+    console.debug('-- sync')
+    console.debug('Episode: ', episode)
+    console.debug('Dubber: ', dubber)
+    console.debug('Playing: ', isPlaying)
+    console.debug('Moment: ', moment)
+    console.debug('Buffering: ', isBuffering)
+
+    const request: Request<IWS_WTSync> = {
+      payload: {
+        dubberId: dubber.id,
+        order: episode,
+        isBuffering,
+        isPlaying,
+        moment,
+        roomId,
+        syncedWithId: currentUser.id
+      },
+      type: 'wt_sync',
+      CSRF: signCSRF(),
+      Authorization: userSessionToken
+    }
+
+    ws.send(JSON.stringify(request));
+    console.debug('-- synced')
+  }, [ws, episode, dubber, isPlaying, isBuffering])
 
 
 
@@ -185,7 +270,8 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user }) => {
           username: message.username
         },
         type: 'wt_message',
-        CSRF: signCSRF()
+        CSRF: signCSRF(),
+        Authorization: userSessionToken
       }
 
       ws.send(JSON.stringify(request));
@@ -202,12 +288,21 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user }) => {
     dubbers,
     room,
     title,
-    user
+    user,
+    isOwner,
+    canControlPlayback
   }}>
     <main className="pt-[124px]">
       <div className="wrapper !flex-row gap-[32px] max-[1020px]:!flex-col">
         <div className="max-w-[1170px] flex flex-col gap-[32px] flex-[3]">
-          <Player />
+          <div className="flex flex-col gap-[8px]">
+            <p className="text-lightGrey">Спільний перегляд: {title.names.ukr}</p>
+
+            <div className="w-full h-[550px]" ref={parentRef}>
+              <KekwPlayer dubbers={dubbers} title={title} setOutDubber={setDubber} setOutEp={setEpisode} />
+            </div>
+          </div>
+
           <Settings className="hidden min-[1020px]:block" />
         </div>
 
@@ -222,23 +317,10 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user }) => {
   </Context.Provider>
 }
 
-function Player() {
-  const { dubbers, title } = useContext(Context);
-
-  return <div className="flex flex-col gap-[8px]">
-    <p className="text-lightGrey">Спільний перегляд: {title.names.ukr}</p>
-
-    <div className="w-full h-[550px]">
-      <KekwPlayer dubbers={dubbers} title={title} />
-    </div>
-  </div>
-}
-
 function Settings({ className }: { className?: string }) {
-  const currentUser = useAppSelector(state => state.user);
-  const { user } = useContext(Context)
+  const { isOwner } = useContext(Context)
 
-  return currentUser.id === user.id && <div className={cn('px-[24px] py-[16px] flex flex-col gap-[24px] rounded-[2px] border-[2px] border-darkGrey', className)}>
+  return isOwner && <div className={cn('px-[24px] py-[16px] flex flex-col gap-[24px] rounded-[2px] border-[2px] border-darkGrey', className)}>
     <h2 className="text-[24px] text-white font-bold">Налаштування кімнати</h2>
 
     <div className="flex flex-col gap-[16px]">
@@ -301,6 +383,8 @@ function Chat({ messages, addMessage }: { messages: IMessage[], addMessage: (mes
 }
 
 function MessageIncome({ avatar, date, text, username }: IMessage) {
+  const offset = (new Date().getTimezoneOffset() < 0 ? Math.abs(new Date().getTimezoneOffset()) : -new Date().getTimezoneOffset()) * 60000
+
   return <div className="w-full flex justify-start relative">
     <div className="relative pb-[16px]">
       <div className="flex items-end gap-[8px]">
@@ -309,25 +393,29 @@ function MessageIncome({ avatar, date, text, username }: IMessage) {
         <div className="flex flex-col gap-[4px]">
           <p className="text-lightGrey text-[12px]">@{username}</p>
 
-          <div className="px-[12px] py-[6px] bg-darkGrey rounded-[4px] rounded-bl-none">
+          <div className="px-[12px] py-[6px] bg-darkGrey rounded-[4px] rounded-bl-none w-fit relative">
             <p className="text-white break-all">{text}</p>
+
+            <p className="text-[10px] text-lightGrey absolute right-0 -bottom-[15px]">{getUTC(date + offset).time}</p>
           </div>
+
         </div>
       </div>
 
-      <p className="text-[10px] text-lightGrey absolute right-0 bottom-0">{getUTC(date).time}</p>
     </div>
   </div>
 }
 
 function MessageOutcome({ avatar, date, text, username }: IMessage) {
+  const offset = (new Date().getTimezoneOffset() < 0 ? Math.abs(new Date().getTimezoneOffset()) : -new Date().getTimezoneOffset()) * 60000
+
   return <div className="w-full flex justify-end relative">
     <div className="relative pb-[16px]">
       <div className="px-[12px] py-[6px] bg-purple rounded-[4px] rounded-br-none">
         <p className="text-white break-all">{text}</p>
       </div>
 
-      <p className="text-[10px] text-lightGrey absolute right-0 bottom-0">{getUTC(date).time}</p>
+      <p className="text-[10px] text-lightGrey absolute right-0 bottom-0">{getUTC(date + offset).time}</p>
     </div>
   </div>
 }
@@ -338,8 +426,7 @@ function MessageSystem({ text }: IMessage) {
 
 function RoomControls() {
   const pathname = usePathname()
-  const currentUser = useAppSelector(state => state.user);
-  const { user } = useContext(Context)
+  const { isOwner } = useContext(Context)
 
   const [urlCopied, setUrlCopied] = useState(false);
 
@@ -355,6 +442,8 @@ function RoomControls() {
   }
 
   async function deleteRoom() {
+    if (!isOwner) return console.error(`User can not delete room`);
+
     if (!confirm(`Ти дійсно хочеш видалити цю кімнату?`)) return;
 
     console.log('deleete')
@@ -371,7 +460,7 @@ function RoomControls() {
       </p>
     </button>
 
-    {currentUser.id === user.id && <button className="w-full px-[8] py-[12px] flex justify-center gap-[8px] border-[2px] rounded-[2px] border-darkGrey bg-darkGrey duration-200 hover:bg-red hover:border-red" onClick={deleteRoom}>
+    {isOwner && <button className="w-full px-[8] py-[12px] flex justify-center gap-[8px] border-[2px] rounded-[2px] border-darkGrey bg-darkGrey duration-200 hover:bg-red hover:border-red" onClick={deleteRoom}>
       <IcoCan width={24} height={24} fill="#fff" />
       <p className="text-white uppercase whitespace-nowrap">видалити кімнату</p>
     </button>}
