@@ -74,7 +74,8 @@ export default async function Layout({ children, params }: ILayoutProps) {
         watchProgress: data.user.watchProgress,
         capabilities: data.parsedRoles,
         libs: data.user.libs,
-        dubberTeamMember: data.user.statistics.dubber_team_member
+        dubberTeamMember: data.user.statistics.dubber_team_member,
+        togetherRooms: data.user.togetherRooms
       }
     } catch (e) {
       if (e instanceof AxiosError && e.status && e.status > 500) {

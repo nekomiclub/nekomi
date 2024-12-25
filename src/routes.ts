@@ -29,6 +29,7 @@ export interface IRoute {
 
 type TRoute = 'home'
   | 'watch_title'
+  | 'watch_together'
   | 'info_agreement'
   | 'info_contacts'
   | 'info_dmca'
@@ -82,6 +83,10 @@ export const routes: { [key in TRoute]: IRoute } = {
   },
   watch_title: {
     path: '/w',
+    dynamic: true,
+  },
+  watch_together: {
+    path: '/together',
     dynamic: true,
   }
 }

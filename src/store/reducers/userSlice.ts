@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { TRoleCapability } from '../../interfaces/IRoles';
-import { IUserLib, IUserWatchProgress } from '../../interfaces/IUser';
+import { IUserLib, IUserTogetherRoom, IUserWatchProgress } from '../../interfaces/IUser';
 import { IReduxAction } from '../store'
 
 /** User local state */
@@ -15,6 +15,7 @@ export interface IUserState {
   libs: IUserLib[]
   isTelegramLinked: boolean
   dubberTeamMember: string | null
+  togetherRooms: IUserTogetherRoom[]
 }
 
 /** Default user state */
@@ -27,7 +28,8 @@ export const userStateDefault: IUserState = {
   watchProgress: [],
   libs: [],
   isTelegramLinked: false,
-  dubberTeamMember: null
+  dubberTeamMember: null,
+  togetherRooms: []
 }
 
 const userSlice = createSlice({

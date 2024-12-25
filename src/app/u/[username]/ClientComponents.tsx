@@ -10,17 +10,18 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import StyledImage from '~/components/UI/StyledImage';
+import { Routes } from '~/routes';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 import { IcoHeartFilled } from '../../../assets/Heart';
-import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoSettings, IcoStack, IcoStar, IcoUpdate, IcoUser, IcoWatched } from '../../../assets/Icons';
+import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoPeople, IcoSettings, IcoStack, IcoStar, IcoUpdate, IcoUser, IcoWatched } from '../../../assets/Icons';
 import { IcoSocialTelegram } from '../../../assets/Social';
 import { copyToClipboard } from '../../../components/Components';
 import { addZeroIfNumberSingle, makeStringID } from '../../../components/handlers';
 import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
-import { IUser, IUserLib } from '../../../interfaces/IUser';
+import { IUser, IUserLib, IUserTogetherRoom } from '../../../interfaces/IUser';
 
 
 
@@ -362,6 +363,17 @@ export const UserSectionLibs: NextPage<{ user: IUser, isOwner: boolean }> = ({ i
   );
 }
 
+export const UserSectionWTRooms: NextPage<{ user: IUser, isOwner: boolean }> = ({ isOwner, user }) => {
+  return isOwner && <div className="flex flex-col gap-[24px]" id="user-libs">
+    <UserDivider label={`Кімнати спільного перегляду (${user.togetherRooms.length}/5)`} hidden={true} isOwner={isOwner} />
+
+    <div className="flex flex-wrap gap-[16px]">
+      {user.togetherRooms.map(room => {
+        return <UserWTRoom room={room} user={user} key={`user-wtroom-${room.id}`} />
+      })}
+    </div>
+  </div>
+}
 
 
 /** User lib card */
@@ -395,4 +407,12 @@ export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: 
       </Link> : <></>}
     </>
   )
+}
+
+function UserWTRoom({ room, user }: { room: IUserTogetherRoom, user: IUser }) {
+  return <Link href={`${config.URL.baseURL}${Routes.watch_together.path}/${user.id}__${room.id}`} className="grow basis-[290px] p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none max-[1140px]:basis-[250px] max-[880px]:basis-[220px] max-[620px]:basis-[160px]">
+    <IcoPeople width={128} height={128} fill="#fff" className="max-[480px]:w-[80px] max-[480px]:h-[80px]" />
+
+    <p className="text-white text-center text-[24px] max-[620px]:text-[16px] text-ellipsis line-clamp-3">{room.settings.name}</p>
+  </Link>
 }

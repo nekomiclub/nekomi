@@ -6,13 +6,14 @@ import { useEffect, useMemo, useState } from 'react';
 import * as DropMenu from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
+import { cn } from '~/components/Components';
 import StyledImage from '~/components/UI/StyledImage';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoFolderAdd } from '../../../assets/Folder';
 import { IcoHeartFilled } from '../../../assets/Heart';
-import { IcoCan, IcoExternalLink, IcoInfo, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
+import { IcoCan, IcoExternalLink, IcoInfo, IcoPeople, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
 import { getUTC, parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { $api } from '../../../components/http';
 import KekwPlayer from '../../../components/KekwPlayer/KekwPlayer';
@@ -22,7 +23,7 @@ import { useAppSelector } from '../../../hooks/redux';
 import { IDubber } from '../../../interfaces/IDubber';
 import { ITitle } from '../../../interfaces/ITitle';
 import { IUserLib } from '../../../interfaces/IUser';
-import { routes } from '../../../routes';
+import { Routes, routes } from '../../../routes';
 
 import IndevCat from '../../../assets/img/oopsIndevCat.png';
 
@@ -40,11 +41,14 @@ type TUserLibType = IUserLib['type'];
 
 
 const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
+  const router = useRouter();
   const user = useAppSelector(state => state.user);
 
   const [inLibs, setInLibs] = useState<TUserLibType[]>([])
   const [isAuth] = useState<boolean>(Boolean(user.id));
   const [canEditTitle, setCanEditTitle] = useState<boolean>(false);
+
+  const [isCreateWTRoomDisabled, setIsCreateWTRoomDisabled] = useState(user.togetherRooms.length === 5)
 
 
 
@@ -55,6 +59,26 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
     setInLibs(user.libs.filter(el => el.titles.includes(title.id)).map(el => el.type))
     setCanEditTitle(capabilities.includes('root') || capabilities.includes('titleEdit') || capabilities.includes('seriesAdd'));
   }, [])
+
+
+
+  async function createWatchTogetherRoom() {
+    if (user.togetherRooms.length === 5) return console.error(`User reached maximum together rooms count`);
+
+    try {
+      setIsCreateWTRoomDisabled(true);
+
+      const { data } = await $api.post<{ id: string }>(`/user/together`, {
+        titleId: title.id
+      });
+
+
+      router.push(`${config.URL.baseURL}${Routes.watch_together.path}/${user.id}__${data.id}`);
+    } catch (e) {
+      setIsCreateWTRoomDisabled(user.togetherRooms.length === 5);
+      console.error(e)
+    }
+  }
 
 
 
@@ -109,6 +133,13 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                 <IcoUpdate width={24} height={24} />
                 <p className="text-white font-bold uppercase">оновити</p>
               </Link>}
+
+              {user.id && <Tooltip className="w-full" content={user.togetherRooms.length !== 5 ? 'Створити кімнату спільного перегляду' : 'Ти досяг максимуму кімнат спільного перегляду'}>
+                <button className="bg-darkGrey px-[16px] py-[12px] rounded-[2px] duration-200 w-full hover:bg-grey flex items-center justify-center gap-[16px]" onClick={createWatchTogetherRoom} disabled={isCreateWTRoomDisabled}>
+                  <IcoPeople width={24} height={24} fill={isCreateWTRoomDisabled ? '#747474' : '#fff'} />
+                  <p className={cn('text-white uppercase font-bold', isCreateWTRoomDisabled && '!text-lightGrey')}>дивитися разом</p>
+                </button>
+              </Tooltip>}
             </div>
 
             <div className="flex flex-col gap-[60px] w-full">

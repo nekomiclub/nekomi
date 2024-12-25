@@ -14,7 +14,7 @@ import { ISessionCookieData } from '../../../interfaces/ITokenData';
 import { IUser } from '../../../interfaces/IUser';
 import { routes } from '../../../routes';
 
-import { UserHeader, UserSectionLibs } from './ClientComponents';
+import { UserHeader, UserSectionLibs, UserSectionWTRooms } from './ClientComponents';
 
 export async function generateMetadata(
   props: IRSCProps<{ username: string }>,
@@ -106,6 +106,8 @@ export default async function RSC(props: IRSCProps<{ username: string }>) {
 
           {/* Libs */}
           <UserSectionLibs user={user!} isOwner={isOwner} />
+
+          <UserSectionWTRooms user={user!} isOwner={isOwner} />
         </div>
       </div>
     </>

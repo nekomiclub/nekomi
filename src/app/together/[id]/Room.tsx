@@ -3,13 +3,13 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { IcoArrow, IcoCan, IcoChain, IcoUser } from '~/assets/Icons';
 import { IcoSocialTelegram } from '~/assets/Social';
 import { cn, copyToClipboard } from '~/components/Components';
 import { getUTC, randomNumber } from '~/components/handlers';
-import { signCSRF } from '~/components/http';
+import { $api, signCSRF } from '~/components/http';
 import KekwPlayer from '~/components/KekwPlayer/KekwPlayer';
 import Input from '~/components/UI/Input';
 import StyledImage from '~/components/UI/StyledImage';
@@ -238,7 +238,7 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
 
   // Sync 
   useEffect(() => {
-    if (!ws || !ws.OPEN || !canControlPlayback || !order || !dubber) return;
+    if (!ws || ws.readyState !== 1 || !canControlPlayback || !order || !dubber) return;
 
     console.debug('-- sync ep/dub')
     console.debug('Episode: ', order)
@@ -267,7 +267,7 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
   }, [ws, order, dubber])
 
   useEffect(() => {
-    if (!ws || !ws.OPEN || !canControlPlayback || moment === 0 || !order || !dubber) return;
+    if (!ws || ws.readyState !== 1 || !canControlPlayback || moment === 0 || !order || !dubber) return;
 
     console.debug('-- sync')
     console.debug('Episode: ', order)
@@ -468,7 +468,9 @@ function MessageSystem({ text }: IMessage) {
 
 function RoomControls() {
   const pathname = usePathname()
-  const { isOwner } = useContext(Context)
+  const router = useRouter();
+
+  const { isOwner, room } = useContext(Context)
 
   const [urlCopied, setUrlCopied] = useState(false);
 
@@ -488,7 +490,12 @@ function RoomControls() {
 
     if (!confirm(`Ти дійсно хочеш видалити цю кімнату?`)) return;
 
-    console.log('deleete')
+    try {
+      await $api.delete(`/user/together/${room.id}`)
+      router.push(`${config.URL.baseURL}`);
+    } catch (e) {
+      console.error(e)
+    }
   }
 
 
