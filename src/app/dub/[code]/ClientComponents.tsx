@@ -110,6 +110,7 @@ function DubberComponent({ dubber }: { dubber: IDubber }) {
 
 function DubberMemberComponent({ member }: { member: IDubberMember }) {
   const [user, setUser] = useState<IUser>()
+  const [userAvatar, setUserAvatar] = useState('')
 
 
 
@@ -119,6 +120,7 @@ function DubberMemberComponent({ member }: { member: IDubberMember }) {
         const { data } = await $api.get<{ user: IUser }>(`/user/${member.id}`);
 
         setUser(data.user);
+        setUserAvatar(data.user.avatar)
       } catch (e) {
         console.error(e)
       }
@@ -128,17 +130,24 @@ function DubberMemberComponent({ member }: { member: IDubberMember }) {
 
 
   return <Link href={`${Routes.user_profile.path}/${user?.username}`} className="relative w-[256px] h-[256px]">
-    <div className="absolute top-0 right-0 p-[8px] bg-dark/[.8] backdrop-blur-[40px] z-[3]">
-      {member.role === 'leader' && <IcoCrown width={24} height={24} />}
-      {member.role === 'editor' && <IcoPen width={24} height={24} />}
-      {member.role === 'member' && <IcoPeople width={24} height={24} />}
-    </div>
+    <Tooltip content={
+      member.role === 'leader' ? 'Лідер' :
+        member.role === 'editor' ? 'Редактор' :
+          member.role === 'member' ? 'Учасник' :
+            'Роль невідома'
+    }>
+      <div className="absolute top-0 right-0 p-[8px] bg-dark/[.8] backdrop-blur-[40px] z-[3]">
+        {member.role === 'leader' && <IcoCrown width={24} height={24} />}
+        {member.role === 'editor' && <IcoPen width={24} height={24} />}
+        {member.role === 'member' && <IcoPeople width={24} height={24} />}
+      </div>
+    </Tooltip>
 
     <div className="absolute bottom-0 left-0 px-[8px] py-[8px] bg-dark/[.8] backdrop-blur-[40px] z-[3] w-full">
       <p className="text-white text-center">@{user?.username}</p>
     </div>
 
-    <StyledImage src={user?.avatar ?? ''} width="100%" height="100%" className="absolute top-0 left-0" />
+    <StyledImage src={userAvatar} width="100%" height="100%" className="absolute top-0 left-0" />
   </Link>
 }
 

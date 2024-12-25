@@ -16,7 +16,7 @@ import StyledImage from '~/components/UI/StyledImage';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { IDubber } from '~/interfaces/IDubber';
-import { ITitle } from '~/interfaces/ITitle';
+import { ITitle, ITitleEpisode } from '~/interfaces/ITitle';
 import { IUser, IUserTogetherRoom } from '~/interfaces/IUser';
 import { IWS_WTConnect, IWS_WTMessage, IWS_WTSync, Message, Request, Response } from '~/interfaces/IWS';
 
@@ -100,10 +100,17 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
 
 
   const [ws, setWs] = useState<WebSocket>();
-  const [messages, setMessages] = useState<IMessage[]>([])
+  const [messages, setMessages] = useState<IMessage[]>([{
+    avatar: '',
+    date: 0,
+    text: 'Спільний перегляд знаходиться в активній розробці, у випадку багів будь ласка створіть тікет на діскорд сервері',
+    type: 'system',
+    username: 'SYSTEM'
+  }])
 
   // Player states
-  const [episode, setEpisode] = useState<number>()
+  const [order, setOrder] = useState<number>()
+  const [episode, setEpisode] = useState<ITitleEpisode>()
   const [dubber, setDubber] = useState<IDubber>()
   const [moment, setMoment] = useState(0)
 
@@ -203,6 +210,9 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
 
           const { dubberId, isBuffering, isPlaying, moment, order } = payload;
 
+          console.log('-- synced')
+          console.log(payload)
+
           if (isBuffering) {
             video.pause();
           } else {
@@ -215,6 +225,9 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
             video.pause()
           }
 
+          setOrder(order)
+          setEpisode(title.episodes.find(el => el.dubberID === dubberId && el.order === order));
+
           video.currentTime = moment;
         }
       } catch (e) {
@@ -223,12 +236,12 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
     }
   }, [ws])
 
-  // Sync out
+  // Sync 
   useEffect(() => {
-    if (!ws || !canControlPlayback || !episode || !dubber || moment === 0) return;
+    if (!ws || !ws.OPEN || !canControlPlayback || !order || !dubber) return;
 
-    console.debug('-- sync')
-    console.debug('Episode: ', episode)
+    console.debug('-- sync ep/dub')
+    console.debug('Episode: ', order)
     console.debug('Dubber: ', dubber)
     console.debug('Playing: ', isPlaying)
     console.debug('Moment: ', moment)
@@ -237,7 +250,7 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
     const request: Request<IWS_WTSync> = {
       payload: {
         dubberId: dubber.id,
-        order: episode,
+        order: order,
         isBuffering,
         isPlaying,
         moment,
@@ -251,7 +264,36 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
 
     ws.send(JSON.stringify(request));
     console.debug('-- synced')
-  }, [ws, episode, dubber, isPlaying, isBuffering])
+  }, [ws, order, dubber])
+
+  useEffect(() => {
+    if (!ws || !ws.OPEN || !canControlPlayback || moment === 0 || !order || !dubber) return;
+
+    console.debug('-- sync')
+    console.debug('Episode: ', order)
+    console.debug('Dubber: ', dubber)
+    console.debug('Playing: ', isPlaying)
+    console.debug('Moment: ', moment)
+    console.debug('Buffering: ', isBuffering)
+
+    const request: Request<IWS_WTSync> = {
+      payload: {
+        dubberId: dubber.id,
+        order: order,
+        isBuffering,
+        isPlaying,
+        moment,
+        roomId,
+        syncedWithId: currentUser.id
+      },
+      type: 'wt_sync',
+      CSRF: signCSRF(),
+      Authorization: userSessionToken
+    }
+
+    ws.send(JSON.stringify(request));
+    console.debug('-- synced')
+  }, [ws, order, dubber, isPlaying, isBuffering])
 
 
 
@@ -299,7 +341,7 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
             <p className="text-lightGrey">Спільний перегляд: {title.names.ukr}</p>
 
             <div className="w-full h-[550px]" ref={parentRef}>
-              <KekwPlayer dubbers={dubbers} title={title} setOutDubber={setDubber} setOutEp={setEpisode} />
+              <KekwPlayer dubbers={dubbers} title={title} setOutDubber={setDubber} setOutEp={setOrder} outEpisode={episode} disableScreens={!canControlPlayback} />
             </div>
           </div>
 

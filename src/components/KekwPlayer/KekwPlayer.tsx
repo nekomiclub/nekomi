@@ -47,8 +47,11 @@ interface IKekwPlayerProps {
   title: ITitle
   dubbers: IDubber[]
 
+  outEpisode?: ITitleEpisode
   setOutDubber?: (state: IDubber) => void
   setOutEp?: (state: number) => void
+
+  disableScreens?: boolean
 }
 
 
@@ -114,7 +117,7 @@ export const KekwPlayerContext = createContext<Partial<IKekwPlayerContextProps>>
 
 
 //! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
-const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, setOutEp }) => {
+const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, setOutEp, outEpisode, disableScreens }) => {
   const [stage, setStage] = useState<TStage>('setup')
   const user = useAppSelector(state => state.user);
 
@@ -247,6 +250,12 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
     const video = videoRef.current;
     if (window === undefined || !video) return;
+
+    // Load defaults if screens are disabled
+    if (disableScreens) {
+      loadDefault();
+      return
+    }
 
     const progress = getPlayerProgress()
 
@@ -765,6 +774,12 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     setIsControlsHiddenUnderScreen(currentScreen === 'progress_continue');
   }, [currentScreen])
 
+  //* Sync episode
+  useEffect(() => {
+    if (!outEpisode) return;
+
+    changeEpisode(outEpisode, 0, false);
+  }, [outEpisode])
 
 
   //* -------------- HANDLERS --------------
@@ -1013,12 +1028,12 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   return <KekwPlayerContext.Provider value={KekwPlayerContextPayload}>
     <div className="w-full h-full relative overflow-hidden flex flex-col justify-between bg-black outline-none" id="player" tabIndex={0} ref={playerRef}>
       {/* Screens */}
-      <PlayerScreen.Wrapper>
+      {!disableScreens && <PlayerScreen.Wrapper>
         <PlayerScreen.ProgressContinue />
         <PlayerScreen.EpisodeEnd />
         <PlayerScreen.EpisodeLast />
         <PlayerScreen.TitleEnd />
-      </PlayerScreen.Wrapper>
+      </PlayerScreen.Wrapper>}
 
       {/* Menu */}
       <KekwPlayerMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
