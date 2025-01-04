@@ -813,7 +813,7 @@ const EpisodesSection = memo(function EpisodesSection() {
   }))
 
   const [episodeOrder, setEpisodeOrder] = useState(1);
-  const [dubbingSelectedCode, setDubbingSelectedCode] = useState(totalDubbers.find(el => el.id === dubberTeamMember)?.slug ?? dubbers[0].slug ?? totalDubbers[0].slug)
+  const [dubbingSelectedCode, setDubbingSelectedCode] = useState(totalDubbers.find(el => el.id === dubberTeamMember)?.slug ?? dubbers[0]?.slug ?? totalDubbers[0]?.slug)
 
   const wrapperRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -1050,7 +1050,7 @@ const EpisodesSection = memo(function EpisodesSection() {
 
             {/* Select dubber */}
             <div className="w-[300px] shrink-0">
-              <PatcherSelect label="Команда" id="patcher-dubbingSelectDubber" options={totalDubbers.sort((a, b) => a.nameUkr > b.nameUkr ? 1 : -1).map(dub => { return { code: dub.slug, label: dub.nameUkr } })} option={dubbingSelectedCode} setOption={setDubbingSelectedCode} disablePending dubbers={totalDubbers} FieldsStatus={FieldsStatus} locked={!isRoot && Boolean(dubberTeamMember)} />
+              <PatcherSelect label="Команда" id="patcher-dubbingSelectDubber" options={totalDubbers.sort((a, b) => a.nameUkr > b.nameUkr ? 1 : -1).map(dub => { return { code: dub?.slug, label: dub.nameUkr } })} option={dubbingSelectedCode} setOption={setDubbingSelectedCode} disablePending dubbers={totalDubbers} FieldsStatus={FieldsStatus} locked={!isRoot && Boolean(dubberTeamMember)} />
             </div>
 
             {/* File select */}
