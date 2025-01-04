@@ -34,6 +34,7 @@ type TRoute = 'home'
   | 'info_contacts'
   | 'info_dmca'
   | 'info_policy'
+  | 'info_tos'
   | 'user_profile'
   | 'user_list'
   | 'dubber_profile'
@@ -56,6 +57,9 @@ export const routes: { [key in TRoute]: IRoute } = {
   },
   info_policy: {
     path: '/info/policy'
+  },
+  info_tos: {
+    path: '/info/terms'
   },
   dubber_profile: {
     path: '/dub',

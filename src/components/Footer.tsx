@@ -15,7 +15,7 @@ import { IcoNekomiLogo } from '../assets/Icons';
 import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
 import { CONSTS } from '../config';
 import { useAppSelector } from '../hooks/redux';
-import { routes } from '../routes';
+import { Routes, routes } from '../routes';
 
 
 const Footer: NextPage = (props) => {
@@ -61,6 +61,7 @@ const Footer: NextPage = (props) => {
             <FooterLink href={routes.info_agreement.path} text="Угода користувача / Agreement" />
             <FooterLink href={routes.info_policy.path} text="Політика конфіденційності / Privacy policy" />
             <FooterLink href={routes.info_dmca.path} text="DMCA" />
+            <FooterLink href={Routes.info_tos.path} text="TOS" />
           </ul>
         </div>
 
