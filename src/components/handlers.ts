@@ -18,12 +18,12 @@ export function parseTitleCountry(country: string): string {
       return 'Японія'
     }
 
-    case 'Chine': {
+    case 'China': {
       return 'Китай'
     }
 
     case 'South Corea': {
-      return 'Східна Корея'
+      return 'Південна Корея'
     }
 
     case 'Other': {
