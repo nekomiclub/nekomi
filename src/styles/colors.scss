@@ -1,32 +1,21 @@
 :root {
-  --color-white: #fff;
-  --color-grey-new: #555555;
-  --color-dark-primary: #121212;
-  --color-dark-bright: #141414;
-  --color-dark-medium: #181818;
-  --color-dark-light: #202020;
-  --color-primary: #FF464E;
-  --color-primary-bright: #FF6160;
-  --color-info-success: #2ECC71;
-  --color-info-warn: #F39C12;
   --color-info-error: #E74C3C;
+  --color-info-warn: #F39C12;
+  --color-info-success: #2ECC71;
 }
 
-
-
-
-$dark: var(--color-dark-primary);
-$darkGrey: var(--color-dark-medium);
+$dark: #121212;
+$darkGrey: #181818;
 $grey: #222222;
-$red: var(--color-info-error);
-$green: var(--color-info-success);
+$red: #E74C3C;
+$green: #2ECC71;
 $purple: #6C5CE7;
-$white: var(--color-white);
+$white: #FFFFFF;
 $lightGrey: #747474;
-$orange: var(--color-info-warn);
+$orange: #F39C12;
 
 $gradientPrimary: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%);
-$gradientPrimaryFallback: var(--color-primary);
+$gradientPrimaryFallback: #FF464E;
 
 $gradientSecondary: linear-gradient(90deg, #FF9966, #FF7D81);
 $gradientSecondaryFallback: #FF9966;
@@ -34,15 +23,15 @@ $gradientSecondaryFallback: #FF9966;
 
 
 //* NEW UI
-$white: var(--color-white);
+$white: #FFFFFF;
 
-$darkPrimary: var(--color-dark-primary);
-$darkBright: var(--color-dark-bright);
-$darkMedium: var(--color-dark-medium);
-$darkLight: var(--color-dark-light);
+$darkPrimary: #121212;
+$darkBright: #141414;
+$darkMedium: #181818;
+$darkLight: #202020;
 
-$primary: var(--color-primary);
-$primaryBright: var(--color-primary-bright);
+$primary: #FF464E;
+$primaryBright: #FF6160;
 
 $infoError: var(--color-info-error);
 $infoSuccess: var(--color-info-success);

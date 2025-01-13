@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        white: 'var(--color-white)',
+        white: '#FFFFFF',
 
 
 
@@ -25,24 +25,25 @@ module.exports = {
 
 
 
-        'dark-primary': 'var(--color-dark-primary)',
-        'dark-bright': 'var(--color-dark-bright)',
-        'dark-medium': 'var(--color-dark-medium)',
-        'dark-bight': 'var(--color-dark-light)',
+        'grey-new': '#555555',
+        'dark-primary': '#121212',
+        'dark-bright': '#141414',
+        'dark-medium': '#181818',
+        'dark-light': '#202020',
 
-        primary: 'var(--color-primary)',
-        'primary-bright': 'var(--color-primary-bright)',
+        primary: '#FF464E',
+        'primary-bright': '#FF6160',
 
-        'info-error': 'var(--color-info-error)',
-        'info-success': 'var(--color-info-success)',
-        'info-warn': 'var(--color-info-warn)',
-
-        fontFamily: {
-          manrope: 'var(--font-manrope)',
-          'space-grotesk': 'var(--font-space-grotesk)',
-        }
+        'info-error': '#E74C3C',
+        'info-success': '#2ECC71',
+        'info-warn': '#F39C12',
       },
       plugins: [],
+    },
+
+    fontFamily: {
+      manrope: 'var(--font-manrope)',
+      'space-grotesk': 'var(--font-space-grotesk)',
     }
   }
 }

@@ -1,0 +1,31 @@
+@import './colors.scss';
+
+.ui {
+  &-notifyToast {
+    &_progressBar {
+      animation: uiNotifyToastProgressBar 3s linear;
+
+      &--success {
+        background: $infoSuccess;
+      }
+
+      &--warn {
+        background: $infoWarn;
+      }
+
+      &--error {
+        background: $infoError;
+      }
+    }
+  }
+}
+
+@keyframes uiNotifyToastProgressBar {
+  from {
+    height: 100%;
+  }
+
+  to {
+    height: 0;
+  }
+}
