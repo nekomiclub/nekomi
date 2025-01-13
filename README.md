@@ -9,7 +9,6 @@ Classes
 ```scss
 .gradient--primary // New background gradient
   &-text // New text gradient
-  &-border-* // New border gradient. *px - 2, 4
   &-hover // Fills background on hover and focus-visible
 
 .gradient--secondary // New background gradient

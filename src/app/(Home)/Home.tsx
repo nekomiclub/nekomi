@@ -8,16 +8,16 @@ import { useIdleTimer } from 'react-idle-timer';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import StyledImage from '~/components/UI/StyledImage';
-import { IcoClockOutlined } from '../assets/Clock';
-import { IcoExternalLink, IcoGhost, IcoPlay, IcoStar, IcoStarRating } from '../assets/Icons';
-import { IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../assets/PlayerVolume';
-import { TitleCard } from '../components/Components';
-import { createID } from '../components/handlers';
-import { IKekwPlayerLocalDataItem, secondsToReadable } from '../components/KekwPlayer/KekwPlayer';
-import { config, CONSTS } from '../config';
-import { ITitle } from '../interfaces/ITitle';
-import { IUserWatchProgress } from '../interfaces/IUser';
-import { routes } from '../routes';
+import { IcoClockOutlined } from '../../assets/Clock';
+import { IcoExternalLink, IcoGhost, IcoPlay, IcoStar, IcoStarRating } from '../../assets/Icons';
+import { IcoPlayerVolumeMuted, IcoPlayerVolumeNormal } from '../../assets/PlayerVolume';
+import { TitleCard } from '../../components/Components';
+import { createID } from '../../components/handlers';
+import { IKekwPlayerLocalDataItem, secondsToReadable } from '../../components/KekwPlayer/KekwPlayer';
+import { config, CONSTS } from '../../config';
+import { ITitle } from '../../interfaces/ITitle';
+import { IUserWatchProgress } from '../../interfaces/IUser';
+import { routes } from '../../routes';
 
 
 
