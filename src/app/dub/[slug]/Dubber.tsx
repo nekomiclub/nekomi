@@ -112,7 +112,7 @@ function DubberHeaderOpenSettings() {
   const pathname = usePathname();
 
   return <Tooltip content="Редагувати налаштування">
-    <Link href={`${pathname}${Routes.dubber_settings.path}`} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px]">
+    <Link href={`${pathname}${Routes.dubber_settings.path}`} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light">
       <MaterialSymbol icon="settings" size={24} color="#fff" />
     </Link>
   </Tooltip>
@@ -135,7 +135,7 @@ function DubberHeaderCopyLink() {
   }
 
   return <Tooltip content="Скопіювати посилання на команду">
-    <button className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 active:scale-[.95]', isLinkCopied ? 'bg-info-success' : 'bg-dark-medium hover:bg-dark-light focus-visible:bg-dark-light max-md:p-[12px]')} onClick={copyLink}>
+    <button className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 active:scale-[.95] border', isLinkCopied ? 'bg-info-success border-info-success' : 'bg-dark-medium hover:bg-dark-light focus-visible:bg-dark-light max-md:p-[12px] border-dark-light')} onClick={copyLink}>
       <MaterialSymbol icon="link" size={24} color="#fff" />
     </button>
   </Tooltip>
@@ -153,7 +153,7 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
 }
 
 function DubberTeamMember({ user, member }: { user: IUser, member: IDubberMember }) {
-  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} target="_blank" className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] basis-[25%] grow max-w-[500px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none">
+  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} target="_blank" className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] basis-[25%] grow max-w-[500px] duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none">
     <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full max-sm:items-center">

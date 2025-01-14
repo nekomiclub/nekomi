@@ -6,16 +6,20 @@ import React, { useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { NextPage } from 'next';
 import Link from 'next/link';
+import { MaterialSymbol } from 'react-material-symbols';
 
-import { IcoClockOutlined } from '../assets/Clock';
-import { IcoGhost, IcoHome, IcoOffline, IcoPlay, IcoStarRating } from '../assets/Icons';
-import { animeGenres, config } from '../config';
+import { useAppSelector } from '~/hooks/redux';
+import { IcoGhost, IcoHome, IcoOffline, IcoPlay } from '../assets/Icons';
+import { animeGenres } from '../config';
 import { ITitle } from '../interfaces/ITitle';
-import { routes } from '../routes';
+import { Routes, routes } from '../routes';
 
+import { secondsToReadable } from './KekwPlayer/KekwPlayer';
 import StyledImage from './UI/StyledImage';
 
 import CatImg from '../assets/img/oopsIndevCat.png';
+
+
 
 export const WatchButton: NextPage<{ href: string, className?: string, gradient: 'primary' | 'secondary' }> = ({ gradient, href, className }) => {
   return (
@@ -30,12 +34,17 @@ export const WatchButton: NextPage<{ href: string, className?: string, gradient:
 }
 
 export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
+  const user = useAppSelector(state => state.user);
+
   const cardRef = useRef<HTMLAnchorElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLParagraphElement>(null)
 
   const topOffset = 4;
   const bottomOffset = 8;
+  const watchProgress = user.watchProgress.find(el => el.titleID === title.id);
+
+
 
   useEffect(() => {
     const card = cardRef.current;
@@ -51,11 +60,11 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
       bottom.style.maxHeight = `${inactiveHeight}px`;
     })
 
-    card.addEventListener('contextmenu', e => e.preventDefault());
-
     bottom.style.maxHeight = `${inactiveHeight}px`;
-    bottom.style.paddingTop = `${topOffset}px`
-    bottom.style.paddingBottom = `${bottomOffset}px`
+    bottom.style.paddingTop = `${topOffset}px`;
+    bottom.style.paddingBottom = `${bottomOffset}px`;
+
+    card.addEventListener('contextmenu', e => e.preventDefault());
 
     // Hide
     card.addEventListener('mouseleave', hide)
@@ -91,34 +100,44 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
     }
   }, [])
 
+
+
   return (
-    <Link href={`${config.URL.baseURL}/w/${title.code}`} className={`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[6/7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px] ${className ? className : ''}`} ref={cardRef}>
-      <StyledImage src={title.poster} className="rounded-b-[4px] !absolute top-0 left-0" width="100%" height="100%" />
+    <Link href={`${Routes.watch_title.path}/${title.code}`} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef}>
+      <StyledImage src={title.poster} className="!absolute top-0 left-0" width="100%" height="100%" />
 
-      <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark/[.8]`} ref={bottomRef}>
-        <div className="flex flex-col gap-[4px]">
-          <p className="titleCardNew-heading text-white font-bold text-ellipsis line-clamp-[2]" title={title.names.ukr} ref={titleRef}>{title.names.ukr}</p>
+      <div className="flex flex-col">
+        <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark/[.8]`} ref={bottomRef}>
+          <div className="flex flex-col gap-[4px]">
+            <p className="titleCardNew-heading text-white text-[14px] font-bold text-ellipsis line-clamp-[2] font-manrope max-md:text-[12px]" title={title.names.ukr} ref={titleRef}>{title.names.ukr}</p>
 
-          <p className="text-lightGrey text-[12px] whitespace-break-spaces">
-            {title.genres.length ? title.genres.slice(0, 3).map((genre, i) => {
-              let immutableI = i;
+            <p className="text-lightGrey text-[12px] whitespace-break-spaces font-manrope">
+              {title.genres.length ? title.genres.slice(0, 3).map((genre, i) => {
+                let immutableI = i;
 
-              return `${animeGenres[genre]}${++immutableI < title.genres?.slice(0, 3).length! ? ' • ' : ''}`
-            }) : `Жанри відсутні`}
-          </p>
-        </div>
-
-        <div className="flex items-center justify-between rounded-b-[4px]">
-          <div className="flex items-center gap-[4px]">
-            <IcoClockOutlined width={12} height={12} />
-            <p className="text-white text-[12px]">{title.episodesCount || '—'}</p>
+                return `${animeGenres[genre]}${++immutableI < title.genres?.slice(0, 3).length! ? ' • ' : ''}`
+              }) : `Жанри відсутні`}
+            </p>
           </div>
 
-          <div className="flex items-center gap-[4px]">
-            <IcoStarRating width={12} height={12} fill="#FF464E" />
-            <p className="text-gradientPrimaryFallback text-[12px] font-bold">{title.rating.IMDB || '—'}</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-[4px]">
+              <MaterialSymbol icon="acute" size={16} color="#fff" />
+              <p className="text-white text-[12px] font-space-grotesk">{title.episodesCount ?? '—'}</p>
+            </div>
+
+            <div className="flex items-center gap-[4px]">
+              <MaterialSymbol icon="star_half" size={16} color="#FF464E" />
+              <p className="text-gradientPrimaryFallback text-[12px] font-bold font-space-grotesk">{title.rating.IMDB || '—'}</p>
+            </div>
           </div>
         </div>
+
+        {watchProgress && <div className="gradient--primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
+          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episodeOrder} еп, {secondsToReadable(watchProgress.progress).pretty}</p>
+
+          <MaterialSymbol icon="resume" size={16} color="#fff" />
+        </div>}
       </div>
     </Link>
   );
