@@ -9,7 +9,9 @@ import { IDubberGetOneByQueryProps } from '~/interfaces/services/ApiService';
 class ApiService {
   async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers }: IDubberGetOneByQueryProps): Promise<{
     dubber: IDubber
+    /** @requires detailed, fetchDubbedAnime */
     dubbedAnime?: ITitle[]
+    /** @requires detailed, parseMembers */
     parsedMembers?: IUser[]
   }> {
     const { data } = await $api.get(`/dubber/${query}`, {

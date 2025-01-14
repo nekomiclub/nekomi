@@ -51,6 +51,8 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
       bottom.style.maxHeight = `${inactiveHeight}px`;
     })
 
+    card.addEventListener('contextmenu', e => e.preventDefault());
+
     bottom.style.maxHeight = `${inactiveHeight}px`;
     bottom.style.paddingTop = `${topOffset}px`
     bottom.style.paddingBottom = `${bottomOffset}px`
@@ -90,7 +92,7 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
   }, [])
 
   return (
-    <Link href={`${config.URL.baseURL}/w/${title.code}`} className={`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[6/7] rounded-[4px] overflow-hidden outline-none ${className ? className : ''}`} ref={cardRef}>
+    <Link href={`${config.URL.baseURL}/w/${title.code}`} className={`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[6/7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px] ${className ? className : ''}`} ref={cardRef}>
       <StyledImage src={title.poster} className="rounded-b-[4px] !absolute top-0 left-0" width="100%" height="100%" />
 
       <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark/[.8]`} ref={bottomRef}>

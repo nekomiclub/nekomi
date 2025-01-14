@@ -55,10 +55,19 @@ input[type=number] {
   position: relative;
 }
 
-@media only screen and (max-width: 650px) {
+// md
+@media only screen and (max-width: 768px) {
   .wrapper {
-    padding-right: calc($wrapperSidePadding / 2);
-    padding-left: calc($wrapperSidePadding / 2);
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+}
+
+// sm
+@media only screen and (max-width: 640px) {
+  .wrapper {
+    padding-right: 4px;
+    padding-left: 4px;
   }
 }
 
@@ -122,6 +131,11 @@ button * {
   &::-webkit-scrollbar-thumb {
     background: colors.$gradientPrimary;
   }
+}
+
+svg {
+  user-select: none;
+  pointer-events: none;
 }
 
 

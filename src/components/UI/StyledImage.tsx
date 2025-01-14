@@ -76,7 +76,7 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
 
   return (
-    <div className={cn('relative', className)} style={{ width, height }}>
+    <div className={cn('relative shrink-0', className)} style={{ width, height }}>
       {/* Error wrapper */}
       <div className={cn('w-full h-full z-[2] bg-darkGrey absolute top-0 left-0 flex justify-center items-center opacity-0 duration-200', isErrored && 'opacity-100')}>
         <IcoGhost width={16} height={16} className="w-[50%] h-[50%]" />

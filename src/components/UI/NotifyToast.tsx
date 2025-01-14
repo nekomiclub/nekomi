@@ -33,7 +33,7 @@ function NotifyTrigger({ component, data }: INotifyInnerProps) {
     customProgressBar: true,
     closeButton: false,
     theme: 'dark',
-    className: 'bg-transparent p-0 h-fit w-[30vw]',
+    className: 'bg-transparent p-0 h-fit w-[30vw] min-w-[250px]',
     transition: Slide,
   })
 }

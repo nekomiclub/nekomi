@@ -39,19 +39,19 @@ export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   const user = useAppSelector(state => state.user);
   const canEdit = user.capabilities.includes('admin') || user.capabilities.includes('root') || dubber.members.find(el => el.id === user.id)?.role === 'leader';
 
-  return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px]">
+  return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
     {/* Avatar placeholder */}
-    <div className="relative w-[256px] h-[128px] shrink-0">
-      <Image src={dubber.avatar} width={256} height={256} alt="Dubber avatar" className="absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px]" />
+    <div className="relative w-[256px] h-[128px] shrink-0 max-md:w-[128px] max-md:h-[64px]">
+      <Image src={dubber.avatar} width={256} height={256} alt="Dubber avatar" className="absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px] max-md:w-[128px] max-md:h-[128px] max-md:top-[-64px]" />
     </div>
 
     <div className="w-full flex items-center justify-between gap-[24px]">
       <div className="flex flex-col gap-[8px]">
-        <h2 className="text-white text-[32px] font-bold font-manrope">{dubber.nameUkr}</h2>
+        <h2 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">{dubber.nameUkr}</h2>
         <h4 className="text-grey-new text-[24px] font-space-grotesk">@{dubber.slug}</h4>
       </div>
 
-      <div className="flex gap-[4px]">
+      <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
         {canEdit && <DubberHeaderOpenSettings />}
         <DubberHeaderCopyLink />
       </div>
@@ -60,13 +60,13 @@ export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
 }
 
 export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
-  return <div className="flex gap-[24px]">
-    {dubber.description && <p className="w-full text-white text-[24px] font-manrope">{dubber.description}</p>}
+  return <div className="flex gap-[24px] max-md:flex-col-reverse">
+    {dubber.description && <p className="w-full text-white text-[24px] font-manrope max-lg:text-[16px]">{dubber.description}</p>}
     {!dubber.description && <p className="w-full text-grey-new font-manrope italic">Опис відсутній</p>}
 
-    <div className="w-[1px] h-auto bg-dark-light"></div>
+    <div className="w-[1px] h-auto bg-dark-light max-md:w-full max-md:h-[1px]"></div>
 
-    <ul className="w-[400px] flex flex-col gap-[4px]">
+    <ul className="w-[400px] flex flex-col gap-[4px] max-md:w-full max-md:flex-wrap max-md:flex-row max-md:justify-center">
       {dubber.socials.telegram && <DubberAboutLink link={dubber.socials.telegram ?? '#'} label="telegram" />}
       {dubber.socials.tiktok && <DubberAboutLink link={dubber.socials.tiktok ?? '#'} label="tiktok" />}
       {dubber.socials.youtube && <DubberAboutLink link={dubber.socials.youtube ?? '#'} label="youtube" />}
@@ -82,12 +82,12 @@ export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
 export const DubberAnimeDubbed: NextPage<{ dubber: IDubber, dubbedAnime: ITitle[] }> = ({ dubbedAnime, dubber }) => {
   return <div className="flex flex-col gap-[16px]">
     <div className="flex items-center gap-[24px] justify-between">
-      <h3 className="text-white text-[32px] font-bold font-manrope">З озвученням {dubber.nameUkr}</h3>
+      <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">З озвученням {dubber.nameUkr}</h3>
     </div>
 
     <div className="grid gap-[16px] grid-cols-6 max-[1440px]:grid-cols-5 max-xl:grid-cols-4 max-lg:grid-cols-3 max-md:grid-cols-2 grid-rows-1">
       {dubbedAnime.slice(0, 6).map(title => {
-        return <TitleCard title={title} key={`dubber-dubbed--${title.code}`} className="max-md:min-w-[180px]" />
+        return <TitleCard title={title} key={`dubber-dubbed--${title.code}`} />
       })}
     </div>
   </div>
@@ -95,9 +95,9 @@ export const DubberAnimeDubbed: NextPage<{ dubber: IDubber, dubbedAnime: ITitle[
 
 export const DubberTeam: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ dubber, members }) => {
   return <div className="flex flex-col gap-[16px]">
-    <h3 className="text-white text-[32px] font-bold font-manrope">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
+    <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
 
-    <div className="flex flex-wrap gap-[16px]">
+    <div className="flex flex-wrap gap-[16px] max-sm:gap-[8px] max-sm:grid max-sm:grid-cols-1">
       {members.map(user => {
         return <DubberTeamMember user={user} member={dubber.members.find(el => el.id === user.id)!} key={`dubber-team-member--${user.id}`} />
       })}
@@ -109,10 +109,12 @@ export const DubberTeam: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ du
 
 
 function DubberHeaderOpenSettings() {
+  const pathname = usePathname();
+
   return <Tooltip content="Редагувати налаштування">
-    <button className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95]">
+    <Link href={`${pathname}${Routes.dubber_settings.path}`} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px]">
       <MaterialSymbol icon="settings" size={24} color="#fff" />
-    </button>
+    </Link>
   </Tooltip>
 }
 
@@ -133,7 +135,7 @@ function DubberHeaderCopyLink() {
   }
 
   return <Tooltip content="Скопіювати посилання на команду">
-    <button className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 active:scale-[.95]', isLinkCopied ? 'bg-info-success' : 'bg-dark-medium hover:bg-dark-light focus-visible:bg-dark-light')} onClick={copyLink}>
+    <button className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 active:scale-[.95]', isLinkCopied ? 'bg-info-success' : 'bg-dark-medium hover:bg-dark-light focus-visible:bg-dark-light max-md:p-[12px]')} onClick={copyLink}>
       <MaterialSymbol icon="link" size={24} color="#fff" />
     </button>
   </Tooltip>
@@ -141,7 +143,7 @@ function DubberHeaderCopyLink() {
 
 function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
   return <li>
-    <Link href={link} target="_blank" className="dubber-about_link flex items-center gap-[16px] py-[6px]">
+    <Link href={link} target="_blank" className="dubber-about_link flex items-center gap-[16px] py-[6px] max-md:px-[12px]">
       {label === 'telegram' && <IcoSocialTelegram width={24} height={24} fill="#555" />}
       {label !== 'telegram' && <MaterialSymbol icon="ungroup" size={24} color="#555" />}
 
@@ -151,11 +153,11 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
 }
 
 function DubberTeamMember({ user, member }: { user: IUser, member: IDubberMember }) {
-  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} target="_blank" className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] basis-[25%] grow max-w-[500px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-    <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[64px] overflow-hidden" />
+  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} target="_blank" className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] basis-[25%] grow max-w-[500px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none">
+    <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 
-    <div className="flex flex-col gap-[8px]">
-      <p className={cn(`text-white font-space-grotesk text-[24px] line-clamp-1`, member.role === 'leader' && 'font-bold text-primary')}>@{user.username}</p>
+    <div className="flex flex-col gap-[8px] w-full max-sm:items-center">
+      <p className={cn(`text-white font-space-grotesk text-[24px] line-clamp-1 max-md:text-[20px]`, member.role === 'leader' && 'font-bold !text-primary')}>@{user.username}</p>
 
       <div className="flex items-center gap-[8px]">
         {member.role === 'leader' && <MaterialSymbol icon="star" size={24} color="#fff" />}
