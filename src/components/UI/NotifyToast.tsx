@@ -8,7 +8,7 @@ import { createID } from '../handlers';
 interface INotifyProps {
   message: string
   title: string
-  type: 'success' | 'warn' | 'error';
+  type?: 'success' | 'warn' | 'error'
 }
 
 interface INotifyInnerProps {
@@ -18,9 +18,9 @@ interface INotifyInnerProps {
 
 
 
-export const NotifySuccess = (props: INotifyProps) => NotifyTrigger({ data: props, component: Toast });
-export const NotifyWarn = (props: INotifyProps) => NotifyTrigger({ data: props, component: Toast });
-export const NotifyError = (props: INotifyProps) => NotifyTrigger({ data: props, component: Toast });
+export const NotifySuccess = (props: INotifyProps) => NotifyTrigger({ data: { ...props, type: 'success' }, component: Toast });
+export const NotifyWarn = (props: INotifyProps) => NotifyTrigger({ data: { ...props, type: 'warn' }, component: Toast });
+export const NotifyError = (props: INotifyProps) => NotifyTrigger({ data: { ...props, type: 'error' }, component: Toast });
 
 
 
@@ -33,7 +33,7 @@ function NotifyTrigger({ component, data }: INotifyInnerProps) {
     customProgressBar: true,
     closeButton: false,
     theme: 'dark',
-    className: 'bg-transparent p-0 h-fit',
+    className: 'bg-transparent p-0 h-fit w-[30vw]',
     transition: Slide,
   })
 }
@@ -52,7 +52,7 @@ function Toast({ closeToast, data }: ToastContentProps) {
     }
   }, 2900);
 
-  return <div className="w-[400px] bg-dark-light rounded-[2px] overflow-hidden flex flex-col gap-[8px] px-[16px] py-[8px] relative">
+  return <div className="w-full bg-dark-light rounded-[2px] overflow-hidden flex flex-col gap-[8px] px-[16px] py-[8px] relative">
     <div className={`w-[2px] h-full absolute bottom-0 left-0 ui-notifyToast_progressBar--${type} opacity-[.5]`}></div>
     <div className={`ui-notifyToast_progressBar w-[2px] h-full absolute bottom-0 left-0 z-[2] ui-notifyToast_progressBar--${type}`} id={id}></div>
 
