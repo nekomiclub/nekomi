@@ -60,13 +60,8 @@ export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
 }
 
 export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
-  return <div className="flex gap-[24px] max-md:flex-col-reverse">
-    {dubber.description && <p className="w-full text-white text-[24px] font-manrope max-lg:text-[16px]">{dubber.description}</p>}
-    {!dubber.description && <p className="w-full text-grey-new font-manrope italic">Опис відсутній</p>}
-
-    <div className="w-[1px] h-auto bg-dark-light max-md:w-full max-md:h-[1px]"></div>
-
-    <ul className="w-[400px] flex flex-col gap-[4px] max-md:w-full max-md:flex-wrap max-md:flex-row max-md:justify-center">
+  return <div className="flex flex-col gap-[24px]">
+    <ul className="w-full flex items-center justify-center flex-wrap gap-[32px]">
       {dubber.socials.telegram && <DubberAboutLink link={dubber.socials.telegram ?? '#'} label="telegram" />}
       {dubber.socials.tiktok && <DubberAboutLink link={dubber.socials.tiktok ?? '#'} label="tiktok" />}
       {dubber.socials.youtube && <DubberAboutLink link={dubber.socials.youtube ?? '#'} label="youtube" />}
@@ -76,6 +71,11 @@ export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
       {dubber.support.bymeacoffee && <DubberAboutLink link={dubber.support.bymeacoffee ?? '#'} label="bymeacoffee" />}
       {dubber.support.patreon && <DubberAboutLink link={dubber.support.patreon ?? '#'} label="patreon" />}
     </ul>
+
+    <div className="w-full h-[1px] bg-dark-light"></div>
+
+    {dubber.description && <p className="w-full text-white text-[24px] font-manrope max-lg:text-[16px]">{dubber.description}</p>}
+    {!dubber.description && <p className="w-full text-grey-new font-manrope italic">Опис відсутній</p>}
   </div>
 }
 
@@ -112,7 +112,7 @@ function DubberHeaderOpenSettings() {
   const pathname = usePathname();
 
   return <Tooltip content="Редагувати налаштування">
-    <Link href={`${pathname}${Routes.dubber_settings.path}`} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light">
+    <Link href={`${pathname}${Routes.dubber_settings.path}`} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light outline-none">
       <MaterialSymbol icon="settings" size={24} color="#fff" />
     </Link>
   </Tooltip>
@@ -135,7 +135,7 @@ function DubberHeaderCopyLink() {
   }
 
   return <Tooltip content="Скопіювати посилання на команду">
-    <button className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 active:scale-[.95] border', isLinkCopied ? 'bg-info-success border-info-success' : 'bg-dark-medium hover:bg-dark-light focus-visible:bg-dark-light max-md:p-[12px] border-dark-light')} onClick={copyLink}>
+    <button className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 active:scale-[.95] border outline-none', isLinkCopied ? 'bg-info-success border-info-success' : 'bg-dark-medium hover:bg-dark-light focus-visible:bg-dark-light max-md:p-[12px] border-dark-light')} onClick={copyLink}>
       <MaterialSymbol icon="link" size={24} color="#fff" />
     </button>
   </Tooltip>
@@ -147,13 +147,13 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
       {label === 'telegram' && <IcoSocialTelegram width={24} height={24} fill="#555" />}
       {label !== 'telegram' && <MaterialSymbol icon="ungroup" size={24} color="#555" />}
 
-      <p className="text-grey-new font-space-grotesk">{`${label.charAt(0).toUpperCase()}${label.slice(1)}`}</p>
+      <p className="text-grey-new text-[24px] font-space-grotesk max-lg:text-[16px]">{`${label.charAt(0).toUpperCase()}${label.slice(1)}`}</p>
     </Link>
   </li>
 }
 
 function DubberTeamMember({ user, member }: { user: IUser, member: IDubberMember }) {
-  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} target="_blank" className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] basis-[25%] grow max-w-[500px] duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none">
+  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} target="_blank" className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] basis-[25%] grow max-w-[500px] duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
     <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full max-sm:items-center">

@@ -1,10 +1,13 @@
 
 
 
+import { AxiosError } from 'axios';
 import jwt from 'jsonwebtoken';
 
 import { TVideoQuality } from '~/interfaces/Interfaces';
 import { TAnimeSeason } from '../interfaces/ITitle';
+
+import { NotifyError } from './UI/NotifyToast';
 
 /** Parse country.
  * @example
@@ -281,5 +284,16 @@ export function parseVideoQuality(quality: TVideoQuality) {
     case 'q720': return '720p';
     case 'q480': return '480p';
     case 'q240': return '240p';
+  }
+}
+
+export function HandleClientError(e: unknown) {
+  if (e instanceof AxiosError) {
+    console.error(e);
+
+    NotifyError({ message: e.response?.data?.message ?? e.message, title: `HTTP - ${e.status ?? e.code}` })
+  } else {
+    console.error(e)
+    NotifyError({ message: `При обробці запиту виникла невідома помилка. Створіть тікет з логом консолі (F12)`, title: 'Щось пішло не так...' })
   }
 }

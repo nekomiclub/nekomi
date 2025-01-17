@@ -3,11 +3,14 @@
 .dubber {
   &-about {
     &_link {
+      outline: none;
+
       p, span, svg path {
         transition: .1s ease-in-out;
       }
 
-      &:hover {
+      &:hover,
+      &:focus-visible {
         p, span, svg path {
           color: $primary !important;
           fill: $primary;
