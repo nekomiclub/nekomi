@@ -1,8 +1,11 @@
 import { AxiosError } from 'axios';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 import { HappenedWrongScreen, NotFoundScreen } from '~/components/Components';
 import { getUTC } from '~/components/handlers';
-import { devMode } from '~/config';
+import { config, devMode } from '~/config';
+import { CheckUserAccess } from '~/helpers/Authorization';
 import { IDubber } from '~/interfaces/IDubber';
 import { IRSCProps } from '~/interfaces/IRSC';
 import { IUser } from '~/interfaces/IUser';
@@ -14,6 +17,9 @@ import { DubberSettingsBanner, DubberSettingsContent, DubberSettingsHeader } fro
 
 export default async function RSC({ params }: IRSCProps) {
   const { slug } = await params as { slug: string };
+
+  const { user, capabilities } = await CheckUserAccess({ session: cookies().get(config.vars.SessionCookie)?.value, capabilities: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
+  if (!user) return redirect(config.URL.baseURL);
 
   let dubber: IDubber | undefined = undefined;
   let members: IUser[] | undefined = undefined
@@ -50,9 +56,17 @@ export default async function RSC({ params }: IRSCProps) {
     }
   }
 
+  // Skip checks if user is root or admin
+  if (!capabilities?.includes('root') && !capabilities?.includes('admin')) {
+    const member = dubber.members.find(el => el.id === user.id);
+    // Redir if user is not a member or not a team leader
+    if (!member || member.role !== 'leader') return redirect(config.URL.baseURL)
+  }
 
 
-  return <section className="wrapper pt-[92px] gap-[16px]">
+
+
+  return user && <section className="wrapper pt-[92px] gap-[16px]">
     <DubberSettingsBanner dubber={dubber} />
 
     <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">
