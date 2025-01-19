@@ -90,8 +90,8 @@ export default async function RSC({ params }: IRSCProps) {
     <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">
       <DubberHeader dubber={dubber} />
       <DubberAbout dubber={dubber} />
-      {dubbedAnime?.length && <DubberAnimeDubbed dubber={dubber} dubbedAnime={dubbedAnime} />}
-      {parsedMembers?.length && <DubberTeam dubber={dubber} members={parsedMembers} />}
+      {dubbedAnime?.length ? <DubberAnimeDubbed dubber={dubber} dubbedAnime={dubbedAnime} /> : undefined}
+      {parsedMembers?.length ? <DubberTeam dubber={dubber} members={parsedMembers} /> : undefined}
     </div>
   </section>
 }

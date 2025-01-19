@@ -11,7 +11,7 @@ import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutub
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/assets/Support';
 import { cn } from '~/components/Components';
 import { HandleClientError, wordDeclination } from '~/components/handlers';
-import { IUInputState, UInput, UITextarea } from '~/components/UI/Input';
+import { IUInputState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';
 import { IDubber } from '~/interfaces/IDubber';
@@ -38,6 +38,7 @@ interface IControlsProps {
   resetChanges: () => void
   saveChanges: () => void
   isSomethingChanged: boolean
+  isSaving: boolean
 }
 
 
@@ -115,6 +116,7 @@ export const DubberSettingsBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) 
         <div className="flex flex-col gap-[8px]">
           <h3 className="text-white text-[40px] font-bold font-manrope text-center uppercase max-lg:text-[24px]">завантажити банер</h3>
           <p className="text-white text-[16px] font-manrope text-center">.png .jpg .webp, до 2х мегабайтів</p>
+          <p className="text-white text-[16px] font-manrope text-center">Рекомендований розмір: 1920x500</p>
         </div>
       </div>
     </button>
@@ -146,21 +148,22 @@ export const DubberSettingsHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) 
 }
 
 export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ dubber, members }) => {
-  const [nameUkr, setNameUkr] = useState<IUInputState>({ value: dubber.nameUkr });
-  const [nameEng, setNameEng] = useState<IUInputState>({ value: dubber.nameEng });
-  const [description, setDescription] = useState<IUInputState>({ value: dubber.description ?? '' });
+  const [nameUkr, setNameUkr] = useState<IUInputState>({ initialValue: dubber.nameUkr });
+  const [nameEng, setNameEng] = useState<IUInputState>({ initialValue: dubber.nameEng });
+  const [description, setDescription] = useState<IUInputState>({ initialValue: dubber.description });
 
-  const [telegramLink, setTelegramLink] = useState<IUInputState>({ value: dubber.socials.telegram ?? '' });
-  const [instagramLink, setInstagramLink] = useState<IUInputState>({ value: dubber.socials.instagram ?? '' });
-  const [tiktokLink, setTiktokLink] = useState<IUInputState>({ value: dubber.socials.tiktok ?? '' });
-  const [youtubeLink, setYoutubeLink] = useState<IUInputState>({ value: dubber.socials.youtube ?? '' });
+  const [telegramLink, setTelegramLink] = useState<IUInputState>({ initialValue: dubber.socials.telegram });
+  const [instagramLink, setInstagramLink] = useState<IUInputState>({ initialValue: dubber.socials.instagram });
+  const [tiktokLink, setTiktokLink] = useState<IUInputState>({ initialValue: dubber.socials.tiktok });
+  const [youtubeLink, setYoutubeLink] = useState<IUInputState>({ initialValue: dubber.socials.youtube });
 
-  const [patreonLink, setPatreonLink] = useState<IUInputState>({ value: dubber.support.patreon ?? '' });
-  const [bmcLink, setBmcLink] = useState<IUInputState>({ value: dubber.support.bymeacoffee ?? '' });
-  const [monobankLink, setMonobankLink] = useState<IUInputState>({ value: dubber.support.monobank ?? '' });
-  const [diakaLink, setDiakaLink] = useState<IUInputState>({ value: dubber.support.diaka ?? '' });
+  const [patreonLink, setPatreonLink] = useState<IUInputState>({ initialValue: dubber.support.patreon });
+  const [bmcLink, setBmcLink] = useState<IUInputState>({ initialValue: dubber.support.bymeacoffee });
+  const [monobankLink, setMonobankLink] = useState<IUInputState>({ initialValue: dubber.support.monobank });
+  const [diakaLink, setDiakaLink] = useState<IUInputState>({ initialValue: dubber.support.diaka });
 
   const [isSomethingChanged, setIsSomethingChanged] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   //! MUST INCLUDE ALL OF THE CHANGING STATES
   const DubberParams = [nameUkr, nameEng, description, telegramLink, instagramLink, tiktokLink, youtubeLink, patreonLink, bmcLink, monobankLink, diakaLink];
@@ -169,73 +172,94 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
 
   // Handle isSomethingChanged
   useEffect(() => {
-    setIsSomethingChanged(DubberParams.some(el => el.status === 'changes_pending'))
+    setIsSomethingChanged(DubberParams.some(el => el.status === 'changes_pending' || el.status === 'error'))
   }, [DubberParams])
 
 
 
   function resetChanges() {
-    NotifySuccess({ title: 'Відміняємо зміни...', message: 'Сторінка повинна перезавантажитись' })
-    window.location.reload();
+    NotifySuccess({ title: 'Зміни відхилені', message: 'Ми прибрали нові зміни за вас' })
+
+    DubberParamsSetters.forEach(setter => {
+      setter(prev => {
+        const instance = { ...prev };
+
+        instance.status = 'waiting';
+        instance.value = instance.initialValue ?? '';
+
+        return instance;
+      })
+    })
   }
 
   async function saveChanges() {
     if (!isSomethingChanged) return NotifyWarn({ title: 'Нема що зберігати', message: 'Ніяких змін не сталося' })
 
     try {
+      setIsSaving(true)
       NotifySuccess({ title: 'Зберігаємо...', message: 'Зберігаємо зміни...' })
 
       const patchBody: IDubberPatchSettingsProps = {
         dubberId: dubber.id,
-        nameUkr: compareChanges(dubber.nameUkr, nameUkr.value),
-        nameEng: compareChanges(dubber.nameEng, nameEng.value),
-        description: compareChanges(dubber.description, description.value),
+        nameUkr: nameUkr.newValue,
+        nameEng: nameEng.newValue,
+        description: description.newValue,
         socialLinks: {
-          telegram: compareChanges(dubber.socials.telegram, telegramLink.value),
-          instagram: compareChanges(dubber.socials.instagram, instagramLink.value),
-          tiktok: compareChanges(dubber.socials.tiktok, tiktokLink.value),
-          youtube: compareChanges(dubber.socials.youtube, youtubeLink.value),
+          telegram: telegramLink.newValue,
+          instagram: instagramLink.newValue,
+          tiktok: tiktokLink.newValue,
+          youtube: youtubeLink.newValue,
         },
         supportLinks: {
-          patreon: compareChanges(dubber.support.patreon, patreonLink.value),
-          bymeacoffee: compareChanges(dubber.support.bymeacoffee, bmcLink.value),
-          monobank: compareChanges(dubber.support.monobank, monobankLink.value),
-          diaka: compareChanges(dubber.support.diaka, diakaLink.value),
+          patreon: patreonLink.newValue,
+          bymeacoffee: bmcLink.newValue,
+          monobank: monobankLink.newValue,
+          diaka: diakaLink.newValue,
         }
       };
 
       await API.patchDubberSettings(patchBody);
 
-      DubberParamsSetters.forEach(el => el(prev => {
-        if (prev.status === 'changes_pending') {
-          return {
-            value: prev.value,
-            status: 'success'
-          }
-        } else return prev
-      }));
+      DubberParamsSetters.forEach(setter => {
+        setter(prev => {
+          if (prev.status === 'changes_pending' || prev.status === 'error') {
+            const instance = { ...prev }
+            instance.status = 'success';
+
+            return instance
+          } else return prev
+        })
+      })
 
       NotifySuccess({ title: 'Збережено!', message: 'Зміни збережені' })
 
       setTimeout(() => {
-        DubberParamsSetters.forEach(el => el(prev => {
-          return {
-            value: prev.value,
-            status: 'waiting'
-          }
-        }));
+        DubberParamsSetters.forEach(setter => {
+          setter(prev => {
+            if (prev.status === 'success') {
+              const instance = { ...prev }
+              instance.status = 'waiting';
+
+              return instance
+            } else return prev
+          })
+        })
       }, 3000);
     } catch (e) {
       HandleClientError(e)
 
-      DubberParamsSetters.forEach(el => el(prev => {
-        if (prev.status === 'changes_pending') {
-          return {
-            value: prev.value,
-            status: 'error'
-          }
-        } else return prev
-      }));
+      DubberParamsSetters.forEach(setter => {
+        setter(prev => {
+          if (prev.status === 'changes_pending') {
+            const instance = { ...prev }
+            instance.status = 'error';
+
+            return instance
+          } else return prev
+        })
+      })
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -245,7 +269,7 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
     <div className="w-full flex justify-between items-center pb-[16px] border-b border-dark-light">
       <h2 className="text-white text-[32px] font-bold font-manrope max-md:text-[24px]">Налаштування команди</h2>
 
-      <Controls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} />
+      <Controls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>
 
     <SettingsGroup title="Назва та опис" description="Розкажіть світу хто ви є">
@@ -253,18 +277,18 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
         <div className="flex flex-col gap-[8px] w-full">
           <div className="flex flex-col gap-[4px] w-full">
             <p className="text-grey-new font-manrope"><span className="text-info-error font-bold">*</span> Українська назва</p>
-            <UInput state={nameUkr} stateSetter={setNameUkr} symbolsLimited={32} required />
+            <UIField fieldType="input" state={nameUkr} stateSetter={setNameUkr} symbolsLimited={32} required />
           </div>
 
           <div className="flex flex-col gap-[4px] w-full">
             <p className="text-grey-new font-manrope"><span className="text-info-error font-bold">*</span> Англійська назва</p>
-            <UInput state={nameEng} stateSetter={setNameEng} symbolsLimited={32} className="font-space-grotesk" required />
+            <UIField fieldType="input" state={nameEng} stateSetter={setNameEng} symbolsLimited={32} className="font-space-grotesk" required />
           </div>
         </div>
 
         <div className="flex flex-col gap-[4px] w-full h-full">
           <p className="text-grey-new font-manrope">Опис</p>
-          <UITextarea state={description} stateSetter={setDescription} symbolsLimited={500} className="min-h-[42px] h-fit max-h-[500px] outline-none grow" parentClassName="h-full grow" />
+          <UIField fieldType="textarea" state={description} stateSetter={setDescription} symbolsLimited={500} className="min-h-[42px] h-fit max-h-[500px] outline-none grow" parentClassName="h-full grow" />
         </div>
       </div>
     </SettingsGroup>
@@ -292,7 +316,7 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
     </SettingsGroup>
 
     <div className="w-full flex justify-end">
-      <Controls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} />
+      <Controls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>
   </div>
 }
@@ -300,8 +324,8 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
 
 
 function InviteMembers() {
-  const [searchQuery, setSearchQuery] = useState<IUInputState>({ status: 'waiting', value: '' });
-  const [debouncedSearchQuery] = useDebounce(searchQuery.value.replace('@', ''), 500)
+  const [searchQuery, setSearchQuery] = useState<IUInputState>({ status: 'waiting', initialValue: '' });
+  const [debouncedSearchQuery] = useDebounce(searchQuery.value?.replace('@', ''), 500)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 
@@ -314,7 +338,7 @@ function InviteMembers() {
 
   return <div className="flex flex-col gap-[4px] w-full">
     <p className="text-grey-new font-manrope">Запросити нового учасника</p>
-    <UInput state={searchQuery} stateSetter={setSearchQuery} placeholder="@username" disablePending />
+    <UIField fieldType="input" state={searchQuery} stateSetter={setSearchQuery} placeholder="@username" disablePending />
   </div>
 }
 
@@ -328,7 +352,7 @@ function LinkItem({ setState, state, type }: ILinkItemProps) {
   if (type === 'tiktok') placeholder = 'tiktok.com';
   if (type === 'youtube') placeholder = 'youtube.com';
   if (type === 'patreon') placeholder = 'patreon.com';
-  if (type === 'bymeacoffee') placeholder = 'bymeacoffee.com';
+  if (type === 'bymeacoffee') placeholder = 'buymeacoffee.com';
   if (type === 'monobank') placeholder = 'send.monobank.ua';
   if (type === 'diaka') placeholder = 'diaka.ua';
 
@@ -347,19 +371,28 @@ function LinkItem({ setState, state, type }: ILinkItemProps) {
       {type === 'diaka' && <IcoSupportDiaka width={24} height={24} />}
     </div>
 
-    <UInput state={state} stateSetter={setState} className="rounded-l-none border-dark-medium" placeholder={placeholder} type="url" />
+    <UIField fieldType="input" state={state} stateSetter={setState} className="rounded-l-none border-dark-medium" placeholder={placeholder} type="url" />
   </div>
 }
 
-function Controls({ resetChanges, saveChanges, isSomethingChanged }: IControlsProps) {
-  return <Tooltip content={!isSomethingChanged ? 'Нічого не було змінено' : ''} className="flex gap-[8px]">
-    <button className={cn('p-[8px] border border-dark-light duration-200 rounded-[4px] hover:bg-dark-light focus-visible:bg-dark-light', !isSomethingChanged && 'cursor-not-allowed')} disabled={!isSomethingChanged} onClick={resetChanges}>
-      <p className={cn('font-manrope duration-200', isSomethingChanged ? 'text-white' : 'text-grey-new')}>Відхилити</p>
+function Controls({ resetChanges, saveChanges, isSomethingChanged, isSaving }: IControlsProps) {
+  const isDisabled = isSaving || !isSomethingChanged;
+
+  return <Tooltip content={!isSomethingChanged ? 'Відсутні зміни' : isSaving ? 'Зберігаємо..' : ''} className="flex gap-[8px]">
+    <button className={cn('p-[8px] border border-dark-light duration-200 rounded-[4px] hover:bg-dark-light focus-visible:bg-dark-light', isDisabled && 'cursor-not-allowed')} disabled={isDisabled} onClick={resetChanges}>
+      <p className={cn('font-manrope duration-200', !isDisabled ? 'text-white' : 'text-grey-new')}>Відхилити</p>
     </button>
 
-    <button className={cn('flex gap-[16px] items-center px-[16px] py-[8px] border border-dark-light bg-dark-medium duration-200 rounded-[4px] hover:bg-dark-light focus-visible:bg-dark-light', !isSomethingChanged && 'cursor-not-allowed')} disabled={!isSomethingChanged} onClick={saveChanges}>
-      <MaterialSymbol icon="update" size={16} className={cn(`duration-200`, isSomethingChanged ? 'text-white' : 'text-grey-new')} />
-      <p className={cn('font-manrope duration-200', isSomethingChanged ? 'text-white' : 'text-grey-new')}>Зберегти зміни</p>
+    <button className={cn('flex gap-[16px] items-center justify-center w-[185px] px-[16px] py-[8px] border border-dark-light bg-dark-medium duration-200 rounded-[4px] hover:bg-dark-light focus-visible:bg-dark-light', isDisabled && 'cursor-not-allowed', isSaving && '!cursor-wait')} disabled={isDisabled} onClick={saveChanges}>
+      <div className="w-[16px] h-[16px] relative">
+        <MaterialSymbol icon="update" size={16} className={cn(`absolute top-0 left-0 duration-200`, !isDisabled ? 'text-white' : 'text-grey-new', isSaving && 'opacity-0')} />
+        <MaterialSymbol icon="clock_loader_40" size={16} className={cn(`absolute top-0 left-0 duration-200`, !isSaving && 'opacity-0')} color="#555" />
+      </div>
+
+      <p className={cn('font-manrope duration-200', !isDisabled ? 'text-white' : 'text-grey-new')}>
+        {isSaving && 'Зберігаємо...'}
+        {!isSaving && 'Зберегти зміни'}
+      </p>
     </button>
   </Tooltip>
 }
@@ -449,13 +482,9 @@ function DubberSettingsAvatar({ dubber }: { dubber: IDubber }) {
         <div className="flex flex-col gap-[8px]">
           <h3 className="text-white text-[24px] font-bold font-manrope text-center uppercase max-md:text-[16px]">завантажити аватар</h3>
           <p className="text-white text-[16px] font-manrope text-center max-md:text-[12px]">.png .jpg .webp <br /> до 1го мегабайта</p>
+          <p className="text-white text-[12px] font-manrope text-center">Рекомендований розмір: 256x256</p>
         </div>
       </div>
     </button>
   </div>
-}
-
-function compareChanges(oldData: any, newData: any): any | undefined {
-  if (typeof newData === 'string' && newData.length === 0) return undefined;
-  if (oldData !== newData) return newData;
 }
