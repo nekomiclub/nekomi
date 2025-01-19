@@ -93,8 +93,8 @@ export const KekwPlayerSettings = memo<IProps>(function KekwPlayerSettings({ qua
 
 
   return <div className="relative max-[460px]:opacity-0 max-[460px]:invisible max-[460px]:absolute" ref={settingsRef}>
-    <Menu settings={{ direction: 'top', align: 'right', animation: 'fade' }} gap={24} state={isMenuOpen} stateSetter={setIsMenuOpen} id="kekwplayer-settings_menu">
-      <MenuTrigger primary className={'kekwplayer-settings_button relative w-[32px] h-[32px]'} aria-label={'Налаштування'}>
+    <Menu settings={{ direction: 'top', align: 'end', animation: 'fade' }} gap={24} state={isMenuOpen} stateSetter={setIsMenuOpen} id="kekwplayer-settings_menu">
+      <MenuTrigger anchor className={'kekwplayer-settings_button relative w-[32px] h-[32px]'} aria-label={'Налаштування'}>
         <IcoSettings width={40} height={40} className={`kekwplayer-settings`} />
       </MenuTrigger>
 

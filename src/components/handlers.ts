@@ -159,6 +159,30 @@ export function timestampToDate(timestamp: number): { day: number, month: number
   }
 }
 
+/** Transform timestamp to date 
+ * @returns DD Month
+*/
+export function timestampToDayMonth(timestamp: number) {
+  const month = new Date(timestamp).getMonth();
+  const months: string[] = [
+    'січня',
+    'лютого',
+    'березня',
+    'квітня',
+    'травня',
+    'червня',
+    'липня',
+    'серпня',
+    'вересня',
+    'жовтня',
+    'листопада',
+    'грудня'
+  ];
+  const localizedMonth = months[month]
+
+  return `${String(new Date(timestamp).getDate()).padStart(2, '0')} ${localizedMonth}`
+}
+
 /** Get random number in range
  * @version re-1.0.0
  */

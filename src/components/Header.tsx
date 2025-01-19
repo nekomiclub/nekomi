@@ -247,8 +247,8 @@ const Header: NextPage = () => {
           {user.id ? <>
             {/* User authorized */}
 
-            <DropMenu.Menu gap={16} settings={{ align: 'right', animation: 'slide' }} state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
-              <DropMenu.MenuTrigger className="flex items-center gap-[16px] duration-200 rounded-[2px] overflow-hidden pr-[8px]" primary>
+            <DropMenu.Menu gap={16} settings={{ align: 'end', animation: 'slide' }} state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
+              <DropMenu.MenuTrigger className="flex items-center gap-[16px] duration-200 rounded-[2px] overflow-hidden pr-[8px]" anchor>
                 <div className="flex justify-center items-center gap-[8px]">
                   <StyledImage src={user.avatar} priority width={`60px`} height={`60px`} className="rounded-[4px]" alt="avatar" />
 
@@ -284,8 +284,8 @@ const Header: NextPage = () => {
           </> : <>
             {/* User not authorized */}
 
-            <DropMenu.Menu gap={16} settings={{ align: 'right', animation: 'slide' }}>
-              <DropMenu.MenuTrigger className="flex justify-center items-center gap-[8px] duration-200 rounded-[2px] overflow-hidden pr-[8px]" primary>
+            <DropMenu.Menu gap={16} settings={{ align: 'end', animation: 'slide' }}>
+              <DropMenu.MenuTrigger className="flex justify-center items-center gap-[8px] duration-200 rounded-[2px] overflow-hidden pr-[8px]" anchor>
                 <div className="p-[10px]">
                   <IcoUser width={40} height={40} />
                 </div>

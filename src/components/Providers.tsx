@@ -34,7 +34,10 @@ const ConsoleMessages = [
   `🐈 nekomi.club`,
   `nekomi nekoma nekome neko mimi ne bebebebebeb`,
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ⌚`,
-  `💖 Will I be known and loved?\nIs there one that I trust?\nStarting to sober up\nHas it been long enough?\n\nBorderline - Time Impala`
+  `💖 Will I be known and loved?\nIs there one that I trust?\nStarting to sober up\nHas it been long enough?\n\nBorderline - Time Impala`,
+  `imma fullstack overflow developer 🤓`,
+  `This site is written on NextJS`,
+  `NPM - Newton's Pickle Machine`
 ]
 
 
@@ -47,8 +50,8 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
 
   // Authorize user
   useEffect(() => {
-    console.log(`today message is >>>>>>>`)
-    console.log(ConsoleMessages[randomNumber(0, ConsoleMessages.length - 1)])
+    const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
+    console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
 
 
     const signinToken = searchParams.get('signinPayload');

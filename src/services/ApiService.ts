@@ -2,19 +2,20 @@ import { $api } from '~/components/http';
 import { IDubber } from '~/interfaces/IDubber';
 import { ITitle } from '~/interfaces/ITitle';
 import { IUser } from '~/interfaces/IUser';
-import { IDubberGetOneByQueryProps, IDubberPatchSettingsProps, IDubberPutAvatarProps, IDubberPutBannerProps } from '~/interfaces/services/IApiService';
+import { IDubberDeleteMemberByIdProps, IDubberGetOneByQueryProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/IApiService';
 
 
 
 class ApiService {
-  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache }: IDubberGetOneByQueryProps): Promise<{
-    dubber: IDubber
-    /** @requires detailed, fetchDubbedAnime */
-    dubbedAnime?: ITitle[]
-    /** @requires detailed, parseMembers */
-    parsedMembers?: IUser[]
-  }> {
-    const { data } = await $api.get(`/dubber/${query}`, {
+  //* =============== DUBBER ROUTER
+  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache }: IDubberGetOneByQueryProps) {
+    const { data } = await $api.get<{
+      dubber: IDubber
+      /** @requires detailed, fetchDubbedAnime */
+      dubbedAnime?: ITitle[]
+      /** @requires detailed, parseMembers */
+      parsedMembers?: IUser[]
+    }>(`/dubber/${query}`, {
       params: {
         detailed,
         fetchDubbedAnime,
@@ -50,6 +51,40 @@ class ApiService {
 
   async patchDubberSettings(body: IDubberPatchSettingsProps) {
     const { data } = await $api.patch(`/dubber/settings`, body);
+
+    return data;
+  }
+
+  async dubberSendInvite(body: IDubberPostInviteSADProps) {
+    const { data } = await $api.post(`/dubber/invite/send`, body);
+
+    return data;
+  }
+
+  async dubberEditMember(body: IDubberPatchMemberByIdProps) {
+    const { data } = await $api.patch(`/dubber/member`, body);
+
+    return data;
+  }
+
+  async dubberKickMember(body: IDubberDeleteMemberByIdProps) {
+    const { data } = await $api.delete(`/dubber/member`, {
+      data: body
+    });
+
+    return data;
+  }
+
+
+
+  //* =============== USER ROUTER
+  async searchUsers({ q, parseInvitationStatusFor }: IUserGetSearch) {
+    const { data } = await $api.get<{ results: IUserGetSearchResult[] }>(`/user/search`, {
+      params: {
+        q,
+        parseInvitationStatusFor
+      }
+    });
 
     return data;
   }

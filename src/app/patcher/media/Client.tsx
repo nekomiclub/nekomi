@@ -198,8 +198,8 @@ export const MediaClient: NextPage = () => {
               <p className={cn('text-white')}>Тип завантаження</p>
             </div>
 
-            <Menu className="w-full max-w-[330px]" gap={16} settings={{ align: 'left', direction: 'bottom', animation: 'slide', closeOn: 'both' }} stateSetter={setIsTypeSelectOpen}>
-              <MenuTrigger className={cn(`patcher-select px-[16px] py-[8px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`)} primary>
+            <Menu className="w-full max-w-[330px]" gap={16} settings={{ align: 'start', direction: 'bottom', animation: 'slide', closeOn: 'both' }} stateSetter={setIsTypeSelectOpen}>
+              <MenuTrigger className={cn(`patcher-select px-[16px] py-[8px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`)} anchor>
                 <p className={cn(`select-none text-white line-clamp-1 text-ellipsis`)}>{uploadTypesOptions.find(el => el.code === uploadType)?.label}</p>
 
                 <IcoArrow className={cn(`duration-200`, isTypeSelectOpen && 'rotate-[180deg]')} fill={'#fff'} />

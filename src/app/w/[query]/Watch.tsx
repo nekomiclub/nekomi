@@ -106,7 +106,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
               </div>
 
               <DropMenu.Menu className="w-full" disabled={!isAuth} settings={{ align: 'stretch' }}>
-                <DropMenu.MenuTrigger className="w-full" primary>
+                <DropMenu.MenuTrigger className="w-full" anchor>
                   <ManageLibTrigger isAuth={isAuth} libs={user.libs} inLibs={inLibs} />
                 </DropMenu.MenuTrigger>
 
