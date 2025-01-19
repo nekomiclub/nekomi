@@ -24,6 +24,7 @@ $gradientSecondaryFallback: #FF9966;
 
 //* NEW UI
 $white: #FFFFFF;
+$greyNew: #555555;
 
 $darkPrimary: #121212;
 $darkBright: #141414;
@@ -33,6 +34,6 @@ $darkLight: #202020;
 $primary: #FF464E;
 $primaryBright: #FF6160;
 
-$infoError: var(--color-info-error);
-$infoSuccess: var(--color-info-success);
-$infoWarn: var(--color-info-warn);
+$infoError: #E74C3C;
+$infoSuccess: #2ECC71;
+$infoWarn: #F39C12;

@@ -61,7 +61,7 @@ export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
 
 export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   return <div className="flex flex-col gap-[24px]">
-    <ul className="w-full flex items-center justify-center flex-wrap gap-[32px]">
+    <ul className="w-full flex items-center justify-center flex-wrap gap-[8px]">
       {dubber.socials.telegram && <DubberAboutLink link={dubber.socials.telegram ?? '#'} label="telegram" />}
       {dubber.socials.tiktok && <DubberAboutLink link={dubber.socials.tiktok ?? '#'} label="tiktok" />}
       {dubber.socials.youtube && <DubberAboutLink link={dubber.socials.youtube ?? '#'} label="youtube" />}
@@ -143,7 +143,7 @@ function DubberHeaderCopyLink() {
 
 function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
   return <li>
-    <Link href={link} target="_blank" className="dubber-about_link flex items-center gap-[16px] py-[6px] max-md:px-[12px]">
+    <Link href={link} target="_blank" className="dubber-about_link flex items-center gap-[16px] py-[6px] px-[16px]">
       {label === 'telegram' && <IcoSocialTelegram width={24} height={24} fill="#555" />}
       {label !== 'telegram' && <MaterialSymbol icon="ungroup" size={24} color="#555" />}
 

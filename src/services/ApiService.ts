@@ -2,7 +2,7 @@ import { $api } from '~/components/http';
 import { IDubber } from '~/interfaces/IDubber';
 import { ITitle } from '~/interfaces/ITitle';
 import { IUser } from '~/interfaces/IUser';
-import { IDubberGetOneByQueryProps, IDubberPutAvatarProps, IDubberPutBannerProps } from '~/interfaces/services/ApiService';
+import { IDubberGetOneByQueryProps, IDubberPatchSettingsProps, IDubberPutAvatarProps, IDubberPutBannerProps } from '~/interfaces/services/IApiService';
 
 
 
@@ -26,24 +26,30 @@ class ApiService {
     return data;
   }
 
-  async putDubberAvatar({ dubberId, file }: IDubberPutAvatarProps): Promise<{ url: string }> {
+  async putDubberAvatar({ dubberId, file }: IDubberPutAvatarProps) {
     const formData = new FormData();
 
     formData.append('file', file)
     formData.append('dubberId', dubberId)
 
-    const { data } = await $api.put(`/dubber/avatar`, formData);
+    const { data } = await $api.put<{ url: string }>(`/dubber/avatar`, formData);
 
     return data;
   }
 
-  async putDubberBanner({ dubberId, file }: IDubberPutBannerProps): Promise<{ url: string }> {
+  async putDubberBanner({ dubberId, file }: IDubberPutBannerProps) {
     const formData = new FormData();
 
     formData.append('file', file)
     formData.append('dubberId', dubberId)
 
-    const { data } = await $api.put(`/dubber/banner`, formData);
+    const { data } = await $api.put<{ url: string }>(`/dubber/banner`, formData);
+
+    return data;
+  }
+
+  async patchDubberSettings(body: IDubberPatchSettingsProps) {
+    const { data } = await $api.patch(`/dubber/settings`, body);
 
     return data;
   }

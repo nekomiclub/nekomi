@@ -1,5 +1,5 @@
 import { MaterialSymbol } from 'react-material-symbols';
-import { Slide, toast, ToastContent, ToastContentProps } from 'react-toastify';
+import { toast, ToastContent, ToastContentProps } from 'react-toastify';
 
 import { createID } from '../handlers';
 
@@ -34,7 +34,6 @@ function NotifyTrigger({ component, data }: INotifyInnerProps) {
     closeButton: false,
     theme: 'dark',
     className: 'bg-transparent p-0 h-fit w-[30vw] min-w-[250px]',
-    transition: Slide,
   })
 }
 
@@ -44,13 +43,15 @@ function Toast({ closeToast, data }: ToastContentProps) {
   const id = createID();
   const { message, title, type } = data as INotifyProps;
 
+  const duration = type === 'error' ? 6000 : 3000;
+
   setTimeout(() => {
     try {
       closeToast(false)
     } catch (e) {
       // ignore
     }
-  }, 2900);
+  }, duration - 100);
 
   return <div className="w-full bg-dark-light rounded-[2px] overflow-hidden flex flex-col gap-[8px] px-[16px] py-[8px] relative">
     <div className={`w-[2px] h-full absolute bottom-0 left-0 ui-notifyToast_progressBar--${type} opacity-[.5]`}></div>

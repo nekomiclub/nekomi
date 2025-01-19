@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 
 import { HappenedWrongScreen, NotFoundScreen } from '~/components/Components';
 import { getUTC } from '~/components/handlers';
-import { config, devMode } from '~/config';
+import { config, devMode, metaObject } from '~/config';
 import { CheckUserAccess } from '~/helpers/Authorization';
 import { IDubber } from '~/interfaces/IDubber';
 import { IRSCProps } from '~/interfaces/IRSC';
@@ -12,6 +12,10 @@ import { IUser } from '~/interfaces/IUser';
 import API from '~/services/ApiService';
 
 import { DubberSettingsBanner, DubberSettingsContent, DubberSettingsHeader } from './DubberSettings';
+
+
+
+export const metadata = metaObject({ title: 'Налаштування команди озвучення', robots: ['nofollow', 'noindex'] })
 
 
 

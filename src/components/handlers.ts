@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import jwt from 'jsonwebtoken';
 
+import { devMode } from '~/config';
 import { TVideoQuality } from '~/interfaces/Interfaces';
 import { TAnimeSeason } from '../interfaces/ITitle';
 
@@ -288,7 +289,7 @@ export function parseVideoQuality(quality: TVideoQuality) {
 
 export function HandleClientError(e: unknown) {
   if (e instanceof AxiosError) {
-    console.error(e);
+    if (devMode) console.error(e);
 
     NotifyError({ message: e.response?.data?.message ?? e.message, title: `HTTP - ${e.status ?? e.code}` })
   } else {

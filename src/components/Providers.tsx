@@ -14,7 +14,7 @@ import internalsSlice from '../store/reducers/internalsSlice';
 import { IUserState } from '../store/reducers/userSlice';
 import { setupStore } from '../store/store'
 
-import { createID } from './handlers';
+import { createID, randomNumber } from './handlers';
 import { $api, signCSRF } from './http';
 
 
@@ -29,6 +29,16 @@ interface IStateProviderProps extends IProviderProps {
 
 
 
+const ConsoleMessages = [
+  `coding coding codign codingg codigng ciding digco... 💻`,
+  `🐈 nekomi.club`,
+  `nekomi nekoma nekome neko mimi ne bebebebebeb`,
+  `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ⌚`,
+  `💖 Will I be known and loved?\nIs there one that I trust?\nStarting to sober up\nHas it been long enough?\n\nBorderline - Time Impala`
+]
+
+
+
 /** Setting up websocket & fetch user data */
 export const StateProvider: NextPage<IStateProviderProps> = ({ children, user }) => {
   const pathname = usePathname();
@@ -37,6 +47,10 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
 
   // Authorize user
   useEffect(() => {
+    console.log(`today message is >>>>>>>`)
+    console.log(ConsoleMessages[randomNumber(0, ConsoleMessages.length - 1)])
+
+
     const signinToken = searchParams.get('signinPayload');
     if (!signinToken) return;
 
