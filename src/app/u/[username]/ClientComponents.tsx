@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import ErrorWrapper from '~/components/UI/ErrorWrapper';
+import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';
 import { Routes } from '~/routes';
 import { IcoClockFilled } from '../../../assets/Clock';
@@ -251,6 +252,10 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
         {/* Image */}
         <div className="w-full h-fit max-h-[500px] aspect-[16/9] relative max-[1140px]:aspect-[16/7]">
           <StyledImage src={bannerURL} width="100%" height="100%" priority alt="banner" className="w-full h-full object-cover" />
+
+          <div className="wrapper absolute w-full top-[8px] items-end">
+            <UIReportButton type="icon" text="Поскаржитися на користувача" className="opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" />
+          </div>
         </div>
 
         {/* Layouts */}

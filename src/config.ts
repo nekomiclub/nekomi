@@ -34,6 +34,7 @@ export const CONSTS = {
   social: {
     telegram: 'https://t.me/nekomiclub',
     discord: 'https://discord.gg/UmDfKTpsh5',
+    discordCreateTicket: 'https://discord.gg/ZXEHQjevEw',
     tiktok: 'https://tiktok.com/@nekomiclub'
   }
 }

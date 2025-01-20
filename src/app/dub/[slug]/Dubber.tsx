@@ -12,6 +12,7 @@ import { IcoSocialTelegram } from '~/assets/Social';
 import { cn, copyToClipboard, TitleCard } from '~/components/Components';
 import { HandleClientError, wordDeclination } from '~/components/handlers';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
+import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
 import { config } from '~/config';
@@ -109,6 +110,8 @@ export const DubberAnswerInvite: NextPage<{ dubber: IDubber, invite?: 'accept' |
 export const DubberBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]">
     <Image src={dubber.banner} fill alt={`Team banner`} />
+
+    <UIReportButton className="!absolute top-[8px] right-[8px] opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" type="icon" text="Поскаржитися на команду озвучення" />
   </div>
 }
 

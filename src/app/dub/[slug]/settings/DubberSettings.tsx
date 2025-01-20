@@ -14,6 +14,7 @@ import { cn } from '~/components/Components';
 import { HandleClientError, timestampToDayMonth, wordDeclination } from '~/components/handlers';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
+import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
 import { parseDubberRole } from '~/helpers/DubberHelpers';
@@ -155,7 +156,7 @@ export const DubberSettingsHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) 
 
       <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
         <Tooltip content="На сторінку команди">
-          <Link href={`${Routes.dubber_profile.path}/${dubber.slug}`} className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 bg-dark-medium border border-dark-light active:scale-[.95] hover:bg-primary-bright focus-visible:bg-primary-bright')}>
+          <Link href={`${Routes.dubber_profile.path}/${dubber.slug}`} className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 bg-dark-medium border border-dark-light active:scale-[.95] hover:bg-primary-bright focus-visible:bg-primary-bright outline-none')}>
             <MaterialSymbol icon="account_box" size={24} color="#fff" />
           </Link>
         </Tooltip>
@@ -229,7 +230,6 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
 
     try {
       setIsSaving(true)
-      NotifySuccess({ title: 'Зберігаємо...', message: 'Зберігаємо зміни...' })
 
       await API.patchDubberSettings({
         dubberId: dubber.id,
@@ -359,7 +359,9 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
       })}
     </div>
 
-    <div className="w-full flex justify-end">
+    <div className="w-full flex justify-between">
+      <UIReportButton type="text" text="Виникли проблеми?" />
+
       <Controls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>
   </div>
@@ -518,15 +520,18 @@ function InviteMembers({ dubber }: { dubber: IDubber }) {
   const [searchQuery, setSearchQuery] = useState<IUIFieldState>({ status: 'waiting', initialValue: '' });
   const [debouncedSearchQuery] = useDebounce(searchQuery.value ?? '', 500)
   const [searchResults, setSearchResults] = useState<IUserGetSearchResult[]>([])
-  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [isNotFound, setIsNotFound] = useState(false);
-  const [isWaiting, setIsWaitings] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(true);
+  const [isSearched, setIsSearched] = useState(false);
 
 
 
   useEffect(() => {
     (async function () {
+      setIsSearched(true);
+
       const query = debouncedSearchQuery.replace('@', '');
       if (query.length < 3) return;
 
@@ -540,20 +545,43 @@ function InviteMembers({ dubber }: { dubber: IDubber }) {
     })();
   }, [debouncedSearchQuery])
 
-  useEffect(() => { setIsMenuOpen(true); setIsWaitings(debouncedSearchQuery.length === 0) }, [debouncedSearchQuery])
-  useEffect(() => { setIsMenuOpen(true); setIsNotFound(debouncedSearchQuery.length !== 0 && searchResults.length === 0) }, [debouncedSearchQuery, searchResults])
+  // Handle isWaiting
+  useEffect(() => {
+    if (!isSearched) return;
+
+    const isWaiting = debouncedSearchQuery.length === 0;
+
+    setIsWaiting(isWaiting)
+
+    if (isWaiting) {
+      setSearchResults([]);
+    }
+  }, [debouncedSearchQuery])
+
+  // Handle isNotFound
+  useEffect(() => {
+    if (!isSearched) return;
+
+    const isNotFound = debouncedSearchQuery.length !== 0 && searchResults.length === 0;
+
+    setIsNotFound(isNotFound)
+
+    if (isNotFound) {
+      setIsMenuOpen(true)
+    }
+  }, [debouncedSearchQuery, searchResults])
 
 
 
   return <div className="flex flex-col gap-[4px] w-full">
     <p className="text-grey-new font-manrope">Запросити нового учасника</p>
 
-    <Menu className="w-full" gap={4} stateSetter={setIsMenuOpen} id="dubber-settings-inviteMemberMenu">
+    <Menu className="w-full" gap={4} state={isMenuOpen} stateSetter={setIsMenuOpen} id="dubber-settings-inviteMemberMenu">
       <MenuTrigger anchor className="w-full">
         <UIField fieldType="input" state={searchQuery} stateSetter={setSearchQuery} placeholder="@username" disablePending className="font-space-grotesk" />
       </MenuTrigger>
 
-      <MenuWrapper className="w-full bg-dark-bright rounded-[2px] flex flex-col border border-dark-light max-h-[400px] overflow-y-auto">
+      <MenuWrapper className="w-full bg-dark-bright rounded-[2px] flex flex-col border border-dark-light max-h-[300px] overflow-y-auto">
         {searchResults.length ? <>
           {searchResults.map(result => {
             return <InviteMemberResult {...result} dubber={dubber} key={`dubber-settings-result--${result.user.id}`} />

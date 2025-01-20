@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { cn } from '~/components/Components';
+import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoFolderAdd } from '../../../assets/Folder';
@@ -195,8 +196,10 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
         </div>
 
         {/* Player */}
-        {title.episodes.length ? <div className="wrapper h-[800px] relative z-0">
+        {title.episodes.length ? <div className="wrapper h-[800px] relative z-0 gap-[8px] items-start">
           <KekwPlayer title={title} dubbers={dubbers} />
+
+          <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
         </div> : <div className="w-full bg-darkGrey flex gap-[32px] items-center px-[32px] py-[40px] rounded-[2px] max-[934px]:flex-col">
           <StyledImage src={IndevCat.src} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-[1096px]:!w-[386px] max-[1096px]:!h-[386px] max-[560px]:!w-[256px] max-[560px]:!h-[256px]" />
 

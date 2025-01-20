@@ -16,6 +16,7 @@ import { setupStore } from '../store/store'
 
 import { createID, randomNumber } from './handlers';
 import { $api, signCSRF } from './http';
+import { UIReportModal } from './UI/Report';
 
 
 
@@ -89,6 +90,7 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
       shallowRouting
     />
 
+    <UIReportModal />
     <SetupIntertnals />
 
     {children}
