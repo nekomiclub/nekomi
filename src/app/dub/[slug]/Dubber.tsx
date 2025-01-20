@@ -1,15 +1,16 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
 import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialTelegram } from '~/assets/Social';
 import { cn, copyToClipboard, TitleCard } from '~/components/Components';
-import { wordDeclination } from '~/components/handlers';
+import { HandleClientError, wordDeclination } from '~/components/handlers';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
 import StyledImage from '~/components/UI/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
@@ -19,6 +20,7 @@ import { IDubber, IDubberMember } from '~/interfaces/IDubber';
 import { ITitle } from '~/interfaces/ITitle';
 import { IUser } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
+import API from '~/services/ApiService';
 
 
 
@@ -28,6 +30,81 @@ interface IDubberAboutLinkProps {
 }
 
 
+
+export const DubberAnswerInvite: NextPage<{ dubber: IDubber, invite?: 'accept' | 'decline' }> = ({ dubber, invite }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const dialogId = 'dubber-invite-answerDialog';
+  const [isPopupShowing, setIsPopupShowing] = useState(false);
+  const [inviteType, setInviteType] = useState<'accept' | 'decline' | 'invalid'>('invalid');
+
+
+
+  useEffect(() => {
+    if (invite !== 'accept' && invite !== 'decline') return router.replace(pathname, { scroll: false });
+
+    (async function () {
+      try {
+        await API.dubberGetInvite({ dubberId: dubber.id })
+      } catch (e) {
+        setIsPopupShowing(true);
+        setInviteType('invalid');
+
+        return
+      }
+
+      try {
+        if (invite === 'accept') {
+          setInviteType('accept');
+          await API.dubberInviteAccept({ dubberId: dubber.id, userId: '' })
+        };
+
+        if (invite === 'decline') {
+          setInviteType('decline');
+          await API.dubberInviteDecline({ dubberId: dubber.id, userId: '' })
+        };
+
+        setIsPopupShowing(true);
+      } catch (e) {
+        HandleClientError(e);
+      }
+    })();
+
+    router.replace(pathname, { scroll: false })
+  }, [])
+
+
+
+  return isPopupShowing && <>
+    <PopupLayer className="flex justify-center items-center">
+      <PopupDialog className="max-w-[720px] w-full h-[500px] rounded-[4px] overflow-hidden bg-dark-primary block" id={dialogId} state>
+        <StyledImage src={dubber.banner} width="100%" height="250px" />
+
+        <div className="flex flex-col items-center gap-[16px] relative top-[-64px]">
+          <StyledImage src={dubber.avatar} width="128px" height="128px" className="rounded-[128px] overflow-hidden" />
+
+          <div className="flex flex-col gap-[8px] items-center">
+            <p className="text-white text-[24px] font-bold text-center">{dubber.nameUkr}</p>
+            <p className="text-grey-new font-manrope text-center">
+              {inviteType === 'accept' && 'Ти прийняв запрошення в цю команду озвучення'}
+              {inviteType === 'decline' && 'Ти відхилив запрошення в цю команду озвучення'}
+              {inviteType === 'invalid' && 'Ти не був запрошений в цю команду озвучення або в тебе нема акаунту'}
+            </p>
+          </div>
+        </div>
+
+        <PopupButton togglePopupId={dialogId} className="absolute bottom-[24px] left-[50%] translate-x-[-50%] flex items-center gap-[16px] px-[16px] py-[8px] rounded-[4px] bg-dark-medium border border-dark-light duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+          {inviteType === 'accept' && <MaterialSymbol icon="how_to_reg" size={24} className="text-white" />}
+          {inviteType === 'decline' && <MaterialSymbol icon="archive" size={24} className="text-white" />}
+          {inviteType === 'invalid' && <MaterialSymbol icon="sentiment_sad" size={24} className="text-white" />}
+
+          <p className="text-white font-manrope uppercase">{inviteType === 'accept' ? 'Чудово' : 'зрозуміло'}</p>
+        </PopupButton>
+      </PopupDialog>
+    </PopupLayer>
+  </>
+}
 
 export const DubberBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]">

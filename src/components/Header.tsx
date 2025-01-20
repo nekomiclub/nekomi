@@ -10,7 +10,7 @@ import '../styles/components/Header.scss';
 
 import { useEffect, useRef, useState } from 'react'
 import * as DropMenu from '@fullkekw/fkw-menu';
-import { Dialog, forceFocus, Layer, Trigger } from '@fullkekw/fkw-popup';
+import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import Link from 'next/link';
@@ -174,15 +174,22 @@ const Header: NextPage = () => {
     const search = document.querySelector('#search-searchBar') as HTMLInputElement;
 
     if (!search) return console.error(`Search #search-searchBar is not found`);
-    forceFocus(search);
+    let i = 0;
+
+    setInterval(() => {
+      if (i !== 5) {
+        i += 1;
+        search.focus();
+      }
+    }, 50);
   }
 
 
 
   return (
     <>
-      <Layer className="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center max-[700px]:items-start">
-        <Dialog id={searchPopupID} className="bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]">
+      <PopupLayer className="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center max-[700px]:items-start">
+        <PopupDialog id={searchPopupID} className="bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]">
           <input type="text" autoComplete="off" className="px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full" placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id="search-searchBar" />
 
           <div className="px-[16px] py-[16px] w-full flex flex-col gap-[16px]">
@@ -221,8 +228,8 @@ const Header: NextPage = () => {
               })}
             </ul>
           </div>
-        </Dialog>
-      </Layer>
+        </PopupDialog>
+      </PopupLayer>
 
       <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200`}>
         <div className="wrapper !flex-row items-center justify-between w-full">
@@ -237,9 +244,9 @@ const Header: NextPage = () => {
               </Link>
 
               <div className="flex items-center gap-[16px]">
-                <Trigger className="header-ico duration-200" id={searchPopupID} onClick={focusSearch}>
+                <PopupButton className="header-ico duration-200" togglePopupId={searchPopupID} onClick={focusSearch}>
                   <IcoSearch width={32} height={32} />
-                </Trigger>
+                </PopupButton>
               </div>
             </div>
           </div>
@@ -247,7 +254,7 @@ const Header: NextPage = () => {
           {user.id ? <>
             {/* User authorized */}
 
-            <DropMenu.Menu gap={16} settings={{ align: 'end', animation: 'slide' }} state={userDetailsOpened} stateSetter={setUserDetailsOpened}>
+            <DropMenu.Menu gap={16} settings={{ align: 'end', animation: 'slide' }} state={userDetailsOpened} stateSetter={setUserDetailsOpened} id="header-menu-authorized">
               <DropMenu.MenuTrigger className="flex items-center gap-[16px] duration-200 rounded-[2px] overflow-hidden pr-[8px]" anchor>
                 <div className="flex justify-center items-center gap-[8px]">
                   <StyledImage src={user.avatar} priority width={`60px`} height={`60px`} className="rounded-[4px]" alt="avatar" />
@@ -284,7 +291,7 @@ const Header: NextPage = () => {
           </> : <>
             {/* User not authorized */}
 
-            <DropMenu.Menu gap={16} settings={{ align: 'end', animation: 'slide' }}>
+            <DropMenu.Menu gap={16} settings={{ align: 'end', animation: 'slide' }} id="header-menu-notAuthorized">
               <DropMenu.MenuTrigger className="flex justify-center items-center gap-[8px] duration-200 rounded-[2px] overflow-hidden pr-[8px]" anchor>
                 <div className="p-[10px]">
                   <IcoUser width={40} height={40} />

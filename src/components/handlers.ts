@@ -160,7 +160,7 @@ export function timestampToDate(timestamp: number): { day: number, month: number
 }
 
 /** Transform timestamp to date 
- * @returns DD Month
+ * @returns DD Month YYYY (if not current)
 */
 export function timestampToDayMonth(timestamp: number) {
   const month = new Date(timestamp).getMonth();
@@ -179,8 +179,10 @@ export function timestampToDayMonth(timestamp: number) {
     'грудня'
   ];
   const localizedMonth = months[month]
+  const day = String(new Date(timestamp).getDate()).padStart(2, '0');
+  const year = new Date(timestamp).getFullYear();
 
-  return `${String(new Date(timestamp).getDate()).padStart(2, '0')} ${localizedMonth}`
+  return `${day} ${localizedMonth}${getUTC().y !== year ? ` ${year}` : ''}`
 }
 
 /** Get random number in range

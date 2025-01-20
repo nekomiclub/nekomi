@@ -2,7 +2,7 @@ import { $api } from '~/components/http';
 import { IDubber } from '~/interfaces/IDubber';
 import { ITitle } from '~/interfaces/ITitle';
 import { IUser } from '~/interfaces/IUser';
-import { IDubberDeleteMemberByIdProps, IDubberGetOneByQueryProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/IApiService';
+import { IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberGetOneByQueryProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/IApiService';
 
 
 
@@ -71,6 +71,24 @@ class ApiService {
     const { data } = await $api.delete(`/dubber/member`, {
       data: body
     });
+
+    return data;
+  }
+
+  async dubberGetInvite(body: IDubberGetInviteByIdProps) {
+    const { data } = await $api.get(`/dubber/invite/${body.dubberId}`);
+
+    return data;
+  }
+
+  async dubberInviteAccept(body: IDubberPostInviteSADProps) {
+    const { data } = await $api.post(`/dubber/invite/accept`, body);
+
+    return data;
+  }
+
+  async dubberInviteDecline(body: IDubberPostInviteSADProps) {
+    const { data } = await $api.post(`/dubber/invite/decline`, body);
 
     return data;
   }

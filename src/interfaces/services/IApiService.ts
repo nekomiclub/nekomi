@@ -62,3 +62,7 @@ export interface IDubberDeleteMemberByIdProps {
   dubberId: string
   userId: string
 }
+
+export interface IDubberGetInviteByIdProps {
+  dubberId: string
+}
