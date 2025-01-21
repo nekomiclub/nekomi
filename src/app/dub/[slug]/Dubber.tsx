@@ -178,8 +178,16 @@ export const DubberTeam: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ du
     <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
 
     <div className="flex flex-wrap gap-[16px] max-sm:gap-[8px] max-sm:grid max-sm:grid-cols-1">
-      {members.map(user => {
-        return <DubberTeamMember user={user} member={dubber.members.find(el => el.id === user.id)!} key={`dubber-team-member--${user.id}`} />
+      {dubber.members.filter(el => el.role === 'leader').map(member => {
+        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />
+      })}
+
+      {dubber.members.filter(el => el.role === 'editor').map(member => {
+        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />
+      })}
+
+      {dubber.members.filter(el => el.role === 'member').map(member => {
+        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />
       })}
     </div>
   </div>
@@ -204,7 +212,7 @@ function DubberHeaderCopyLink() {
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
   function copyLink() {
-    copyToClipboard(pathname);
+    copyToClipboard(`${config.URL.baseURL}${pathname}`);
     setIsLinkCopied(true);
 
     NotifySuccess({ title: 'Copied!', message: 'Посилання на команду скопійовано в буфер обміну' })

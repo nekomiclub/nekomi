@@ -23,7 +23,7 @@ Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```
 *See ./components/handlers.ts*
 
 ## Dependencies
-- nekomi-core
+- nekomi-api
 - nekomi-media
 - fk-usapi
 - fk-authority

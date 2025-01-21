@@ -1,12 +1,8 @@
-import { AxiosError } from 'axios';
 import jwt from 'jsonwebtoken';
 
-import { devMode } from '~/config';
-import { LocalizeError } from '~/helpers/LocalizeError';
 import { TVideoQuality } from '~/interfaces/Interfaces';
 import { TAnimeSeason } from '../interfaces/ITitle';
 
-import { NotifyError } from './UI/NotifyToast';
 
 
 
@@ -314,15 +310,4 @@ export function parseVideoQuality(quality: TVideoQuality) {
   }
 }
 
-export function HandleClientError(e: unknown) {
-  if (e instanceof AxiosError) {
-    if (devMode) console.error(e);
-
-    const localizedError = LocalizeError(e.response?.data.code);
-
-    NotifyError({ message: localizedError ?? e.response?.data?.message ?? e.message, title: `HTTP - ${e.status ?? e.code}` })
-  } else {
-    console.error(e)
-    NotifyError({ message: `При обробці запиту виникла невідома помилка. Створіть тікет з логом консолі (F12)`, title: 'Щось пішло не так...' })
-  }
-}
+export { HandleClientError } from '~/helpers/ErrorHandling'

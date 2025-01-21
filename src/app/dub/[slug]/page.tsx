@@ -43,6 +43,8 @@ export async function generateMetadata(
   }
 }
 
+
+
 export default async function RSC({ params, searchParams }: IRSCProps) {
   const { slug } = await params as { slug: string };
   const { invite } = await searchParams as { invite?: 'accept' | 'decline' };

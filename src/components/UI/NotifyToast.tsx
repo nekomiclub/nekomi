@@ -33,7 +33,7 @@ function NotifyTrigger({ component, data }: INotifyInnerProps) {
     customProgressBar: true,
     closeButton: false,
     theme: 'dark',
-    className: 'bg-transparent p-0 h-fit w-[30vw] min-w-[250px]',
+    className: 'bg-transparent p-0 h-fit w-[40vw] min-w-[300px] rounded-[2px] overflow-hidden',
   })
 }
 
@@ -53,8 +53,7 @@ function Toast({ closeToast, data }: ToastContentProps) {
     }
   }, duration - 100);
 
-  return <div className="w-full bg-dark-light rounded-[2px] overflow-hidden flex flex-col gap-[8px] px-[16px] py-[8px] relative">
-    <div className={`w-[2px] h-full absolute bottom-0 left-0 ui-notifyToast_progressBar--${type} opacity-[.5]`}></div>
+  return <div className="w-full bg-dark-bright border border-dark-light flex flex-col gap-[8px] px-[16px] py-[8px] relative">
     <div className={`ui-notifyToast_progressBar w-[2px] h-full absolute bottom-0 left-0 z-[2] ui-notifyToast_progressBar--${type}`} id={id}></div>
 
     <div className="flex items-center gap-[16px]">
@@ -65,6 +64,6 @@ function Toast({ closeToast, data }: ToastContentProps) {
       <p className="text-white text-[20px] font-manrope">{title}</p>
     </div>
 
-    <p className="text-grey-new font-manrope">{message}</p>
+    <p className="text-grey-new font-manrope whitespace-pre-wrap">{message}</p>
   </div>
 }

@@ -109,7 +109,7 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
       <div className="flex flex-col">
         <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark/[.8]`} ref={bottomRef}>
           <div className="flex flex-col gap-[4px]">
-            <p className="titleCardNew-heading text-white text-[14px] font-bold text-ellipsis line-clamp-[2] font-manrope max-md:text-[12px]" title={title.names.ukr} ref={titleRef}>{title.names.ukr}</p>
+            <p className="titleCardNew-heading text-white text-[14px] font-bold text-ellipsis line-clamp-[2] font-manrope max-md:text-[14px]" title={title.names.ukr} ref={titleRef}>{title.names.ukr}</p>
 
             <p className="text-lightGrey text-[12px] whitespace-break-spaces font-manrope">
               {title.genres.length ? title.genres.slice(0, 3).map((genre, i) => {
@@ -133,7 +133,7 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
           </div>
         </div>
 
-        {watchProgress && <div className="gradient--primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
+        {watchProgress && watchProgress.progress > 3 && <div className="gradient--primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
           <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episodeOrder} еп, {secondsToReadable(watchProgress.progress).pretty}</p>
 
           <MaterialSymbol icon="resume" size={16} color="#fff" />
