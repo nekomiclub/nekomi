@@ -135,8 +135,8 @@ export const DubberSettingsBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) 
 
         <div className="flex flex-col gap-[8px]">
           <h3 className="text-white text-[40px] font-bold font-manrope text-center uppercase max-lg:text-[24px]">завантажити банер</h3>
-          <p className="text-white text-[16px] font-manrope text-center">.png .jpg .webp, до 2х мегабайтів</p>
-          <p className="text-white text-[16px] font-manrope text-center">Рекомендований розмір: 1920x500</p>
+          <p className="text-white text-[16px] font-manrope text-center max-md:hidden">.png .jpg .webp, до 2х мегабайтів</p>
+          <p className="text-white text-[16px] font-manrope text-center max-md:hidden">Рекомендований розмір: 1920x500</p>
         </div>
       </div>
     </button>
@@ -539,12 +539,12 @@ const DubberSettingsAvatar: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
 
     <button onClick={selectFile} className={cn('w-full h-full absolute top-0 left-0 bg-dark-primary/[.5] flex justify-center items-center duration-200', !isActive && 'opacity-0 invisible')}>
       <div className="flex flex-col items-center gap-[16px] max-md:gap-[8px]">
-        <MaterialSymbol icon="backup" size={64} color="#fff" className="max-md:!text-[24px]" />
+        <MaterialSymbol icon="backup" size={64} color="#fff" className="max-md:!text-[32px]" />
 
         <div className="flex flex-col gap-[8px]">
           <h3 className="text-white text-[24px] font-bold font-manrope text-center uppercase max-md:text-[16px]">завантажити аватар</h3>
-          <p className="text-white text-[16px] font-manrope text-center max-md:text-[12px]">.png .jpg .webp <br /> до 1го мегабайта</p>
-          <p className="text-white text-[12px] font-manrope text-center">Рекомендований розмір: 256x256</p>
+          <p className="text-white text-[16px] font-manrope text-center max-md:hidden">.png .jpg .webp <br /> до 1го мегабайта</p>
+          <p className="text-white text-[12px] font-manrope text-center max-md:hidden">Рекомендований розмір: 256x256</p>
         </div>
       </div>
     </button>

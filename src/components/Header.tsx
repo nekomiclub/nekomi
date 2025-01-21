@@ -189,44 +189,46 @@ const Header: NextPage = () => {
   return (
     <>
       <PopupLayer className="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center max-[700px]:items-start">
-        <PopupDialog id={searchPopupID} className="bg-dark w-[800px] max-w-[800px] rounded-[4px] mx-[24px] my-[32px] max-[700px]:mx-[8px]">
-          <input type="text" autoComplete="off" className="px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full" placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id="search-searchBar" />
+        <PopupDialog id={searchPopupID} className="w-full max-w-[800px] px-[24px] py-[32px] max-[700px]:px-[8px]">
+          <div className="bg-dark w-full rounded-[4px]">
+            <input type="text" autoComplete="off" className="px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full" placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id="search-searchBar" />
 
-          <div className="px-[16px] py-[16px] w-full flex flex-col gap-[16px]">
-            {/* Hint */}
-            <div className={`flex gap-[8px] items-center ${isHintShowed && !isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
-              <IcoInfo width={16} height={16} fill="#747474" />
-              <p className="text-[12px] text-lightGrey">Ти можеш знайти юзера чи даббера через <b className="text-lightGrey font-bold">@</b></p>
-            </div>
-
-            {/* Patcher hint */}
-            <div className={`flex gap-[8px] items-center ${isPatcherHintShowed && !isSearchErrored && searchResults.length ? '' : 'opacity-0 invisible absolute'}`}>
-              <IcoInfo width={16} height={16} fill="#747474" />
-              <p className="text-[12px] text-lightGrey">Новий тайтл буде відкрито в патчері</p>
-            </div>
-
-            {/* Nothing found */}
-            <div className={`flex gap-[16px] items-center justify-center ${searchResults.length === 0 && !isHintShowed && !isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
-              <IcoGhost width={32} height={32} />
-              <p className="text-white">Здається, в нас такого нема...</p>
-            </div>
-
-            {/* Search error */}
-            <div className={`flex gap-[16px] items-center justify-center ${isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
-              <IcoGhost width={32} height={32} />
-
-              <div className="flex flex-col gap-[4px]">
-                <p className="text-white">Йой, пошук тимчасово не працює</p>
-                <p className="text-lightGrey text-[12px] text-center">Спробуй трохи пізніше</p>
+            <div className="px-[16px] py-[16px] w-full flex flex-col gap-[16px]">
+              {/* Hint */}
+              <div className={`flex gap-[8px] items-center ${isHintShowed && !isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
+                <IcoInfo width={16} height={16} fill="#747474" />
+                <p className="text-[12px] text-lightGrey">Ти можеш знайти юзера чи даббера через <b className="text-lightGrey font-bold">@</b></p>
               </div>
-            </div>
 
-            {/* Results */}
-            <ul className={`flex-col gap-[8px] max-h-[500px] overflow-y-scroll w-full ${searchResults.length ? 'flex' : 'hidden'}`} ref={resultsRef}>
-              {searchResults.map(result => {
-                return <SearchResult result={result} key={`search-placeholder--${result.item?.id || createID()}`} />
-              })}
-            </ul>
+              {/* Patcher hint */}
+              <div className={`flex gap-[8px] items-center ${isPatcherHintShowed && !isSearchErrored && searchResults.length ? '' : 'opacity-0 invisible absolute'}`}>
+                <IcoInfo width={16} height={16} fill="#747474" />
+                <p className="text-[12px] text-lightGrey">Новий тайтл буде відкрито в патчері</p>
+              </div>
+
+              {/* Nothing found */}
+              <div className={`flex gap-[16px] items-center justify-center ${searchResults.length === 0 && !isHintShowed && !isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
+                <IcoGhost width={32} height={32} />
+                <p className="text-white">Здається, в нас такого нема...</p>
+              </div>
+
+              {/* Search error */}
+              <div className={`flex gap-[16px] items-center justify-center ${isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
+                <IcoGhost width={32} height={32} />
+
+                <div className="flex flex-col gap-[4px]">
+                  <p className="text-white">Йой, пошук тимчасово не працює</p>
+                  <p className="text-lightGrey text-[12px] text-center">Спробуй трохи пізніше</p>
+                </div>
+              </div>
+
+              {/* Results */}
+              <ul className={`flex-col gap-[8px] max-h-[500px] overflow-y-scroll w-full ${searchResults.length ? 'flex' : 'hidden'}`} ref={resultsRef}>
+                {searchResults.map(result => {
+                  return <SearchResult result={result} key={`search-placeholder--${result.item?.id || createID()}`} />
+                })}
+              </ul>
+            </div>
           </div>
         </PopupDialog>
       </PopupLayer>

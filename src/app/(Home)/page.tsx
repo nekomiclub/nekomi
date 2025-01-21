@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { cookies } from 'next/headers';
 
 import { HappenedWrongScreen } from '../../components/Components';
-import { getUTC } from '../../components/handlers';
+import { getUTC, randomNumber } from '../../components/handlers';
 import { $api } from '../../components/http';
 import { metaObject } from '../../config';
 import { IUserWatchProgress } from '../../interfaces/IUser';
@@ -70,5 +70,5 @@ export default async function RSC() {
     }
   }
 
-  return <Home data={DATA} watchProgress={watchProgress} />
+  return <Home data={DATA} watchProgress={watchProgress} featuredAnime={DATA.featured[randomNumber(0, DATA.featured.length - 1)]} />
 }
