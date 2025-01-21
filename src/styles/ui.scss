@@ -48,6 +48,18 @@
       border-color: $infoSuccess !important;
     }
   }
+
+  &-dropdownMenu {
+    &--scaleAnimation {
+      .fkw-menu_wrapper {
+        scale: .95;
+
+        &--active {
+          scale: 1;
+        }
+      }
+    }
+  }
 }
 
 @keyframes uiNotifyToastProgressBar {
