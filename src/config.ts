@@ -1,8 +1,6 @@
 import { Metadata } from 'next';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
 
-import CSRF_TOKEN from '../secrets/CSRF'
-
 import { TAnimeGenre } from './interfaces/ITitle';
 
 
@@ -88,12 +86,6 @@ export const config = {
     PATCHER_FILE_MAX_SIZE: 5368709120, // 5368709120 // 5gb
 
     PATCHER_POSTER_MAX_SIZE: 2097152 // 2097152 // 2mb
-  },
-
-  /** Site secrets */
-  secrets: {
-    /** CSRF Token */
-    CSRF_TOKEN,
   }
 }
 

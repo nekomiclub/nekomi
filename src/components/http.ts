@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { KJUR } from 'jsrsasign'
 
+import XNcZbkZyomwTPdcY from '../../someBoringData/XNcZbkZyomwTPdcY'
 import { config } from '../config';
 
 /** Axios HTTP instance with csrf token specified & creds */
@@ -33,8 +34,10 @@ $upload.interceptors.request.use(async cfg => {
 export function signCSRF(): string {
   const alg = 'RS256'
 
+  const KEY = `-----BEGIN PRIVATE KEY-----\n` + XNcZbkZyomwTPdcY + `-----END PRIVATE KEY-----\n`;
+
   return KJUR.jws.JWS.sign(alg, { alg }, {
     origin: config.domain,
     expire: new Date().getTime() + config.vars.CSRF_EXPIRE
-  }, config.secrets.CSRF_TOKEN)
+  }, KEY)
 }
