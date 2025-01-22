@@ -1,0 +1,751 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react';
+import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
+import { NextPage } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import { MaterialSymbol } from 'react-material-symbols';
+import { useDebounce } from 'use-debounce';
+
+import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '~/assets/Social';
+import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/assets/Support';
+import { cn } from '~/components/Components';
+import { HandleClientError, timestampToDayMonth, wordDeclination } from '~/components/handlers';
+import { IUIFieldState, UIField } from '~/components/UI/Input';
+import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
+import { UIReportButton } from '~/components/UI/Report';
+import StyledImage from '~/components/UI/StyledImage';
+import Tooltip from '~/components/UI/Tooltip';
+import { parseDubberRole } from '~/helpers/DubberHelpers';
+import { useAppSelector } from '~/hooks/redux';
+import { IDubber, IDubberMember, TDubberMemberRole } from '~/interfaces/IDubber';
+import { IUser } from '~/interfaces/IUser';
+import { IUserGetSearchResult } from '~/interfaces/services/IApiService';
+import { Routes } from '~/routes';
+import API from '~/services/ApiService';
+import { IUserState } from '~/store/reducers/userSlice';
+
+
+
+interface ISettingsGroupProps {
+  title: string
+  description: string
+  children: React.ReactNode
+}
+
+interface ILinkItemProps {
+  state: IUIFieldState
+  setState: (val: IUIFieldState) => void
+  type: keyof IDubber['socials'] | keyof IDubber['support']
+}
+
+interface IControlsProps {
+  resetChanges: () => void
+  saveChanges: () => void
+  isSomethingChanged: boolean
+  isSaving: boolean
+}
+
+interface IDubberMemberProps {
+  user: IUser
+  member: IDubberMember
+  currentUser: IUserState
+  dubber: IDubber
+
+  kickMember: (id: string) => void
+}
+
+interface IMemberInviteResultProps extends IUserGetSearchResult {
+  dubber: IDubber
+}
+
+
+
+export const DubberSettingsBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+  const [bannerURL, setBannerURL] = useState(dubber.banner);
+  const [isActive, setIsActive] = useState(false);
+
+  const bannerRef = useRef<HTMLDivElement>(null)
+  const selectFileRef = useRef<HTMLInputElement>(null)
+
+
+
+  useEffect(() => {
+    const banner = bannerRef.current;
+    if (!banner) return;
+
+
+
+    function show() {
+      setIsActive(true);
+    }
+
+    function hide() {
+      setIsActive(false);
+    }
+
+    banner.addEventListener('mouseenter', show)
+    banner.addEventListener('mouseleave', hide)
+  }, [])
+
+
+
+  async function uploadBanner() {
+    const select = selectFileRef.current;
+    if (!select) return;
+
+    if (!select.files?.length) return NotifyWarn({ title: 'Файл відсутній', message: 'Неможливо оновити банер без файлу' })
+    const file = select.files[0]
+
+    try {
+      NotifySuccess({ message: `Завантажуємо файл: ${file.name}`, title: 'Завантажуємо...' })
+
+      const { url } = await API.putDubberBanner({ dubberId: dubber.id, file });
+      setBannerURL(url);
+
+      NotifySuccess({ message: `Завантажено: ${file.name}`, title: 'Банер оновлено!' })
+    } catch (e) {
+      HandleClientError(e);
+    }
+  }
+
+  function selectFile() {
+    const select = selectFileRef.current;
+    if (!select) return;
+
+    select.value = '';
+    select.click();
+  }
+
+
+
+  return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]" ref={bannerRef}>
+    <Image src={bannerURL} fill alt={`Team banner`} />
+
+    <div className="w-[32px] h-[32px] flex justify-center items-center rounded-[32px] absolute top-[8px] right-[8px] opacity-[.5] bg-dark-primary">
+      <MaterialSymbol icon="edit" size={16} color="#fff" />
+    </div>
+
+    <input type="file" className="hidden" accept=".png,.jpg,.webp" ref={selectFileRef} onChange={uploadBanner} />
+
+    <button onClick={selectFile} className={cn('w-full h-full absolute top-0 left-0 bg-dark-primary/[.5] flex justify-center items-center duration-200', !isActive && 'opacity-0 invisible')}>
+      <div className="flex flex-col items-center gap-[24px] max-[1400px]:gap-[16px]">
+        <MaterialSymbol icon="backup" size={128} color="#fff" className="max-[1400px]:!text-[84px]" />
+
+        <div className="flex flex-col gap-[8px]">
+          <h3 className="text-white text-[40px] font-bold font-manrope text-center uppercase max-lg:text-[24px]">завантажити банер</h3>
+          <p className="text-white text-[16px] font-manrope text-center max-md:hidden">.png .jpg .webp, до 2х мегабайтів</p>
+          <p className="text-white text-[16px] font-manrope text-center max-md:hidden">Рекомендований розмір: 1920x500</p>
+        </div>
+      </div>
+    </button>
+  </div>
+}
+
+export const DubberSettingsHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+  return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
+    {/* Avatar placeholder */}
+    <div className="relative w-[256px] h-[128px] shrink-0 max-md:w-[128px] max-md:h-[64px]">
+      <DubberSettingsAvatar dubber={dubber} />
+    </div>
+
+    <div className="w-full flex items-center justify-between gap-[24px]">
+      <div className="flex flex-col gap-[8px]">
+        <h2 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">{dubber.nameUkr}</h2>
+        <h4 className="text-grey-new text-[24px] font-space-grotesk">@{dubber.slug}</h4>
+      </div>
+
+      <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
+        <Tooltip content="На сторінку команди">
+          <Link href={`${Routes.dubber_profile.path}/${dubber.slug}`} className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 bg-dark-medium border border-dark-light active:scale-[.95] hover:bg-primary-bright focus-visible:bg-primary-bright outline-none')}>
+            <MaterialSymbol icon="account_box" size={24} color="#fff" />
+          </Link>
+        </Tooltip>
+      </div>
+    </div>
+  </div>
+}
+
+export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ dubber, members }) => {
+  const currentUser = useAppSelector(state => state.user);
+
+  const [nameUkr, setNameUkr] = useState<IUIFieldState>({ initialValue: dubber.nameUkr });
+  const [nameEng, setNameEng] = useState<IUIFieldState>({ initialValue: dubber.nameEng });
+  const [description, setDescription] = useState<IUIFieldState>({ initialValue: dubber.description });
+
+  const [telegramLink, setTelegramLink] = useState<IUIFieldState>({ initialValue: dubber.socials.telegram });
+  const [instagramLink, setInstagramLink] = useState<IUIFieldState>({ initialValue: dubber.socials.instagram });
+  const [tiktokLink, setTiktokLink] = useState<IUIFieldState>({ initialValue: dubber.socials.tiktok });
+  const [youtubeLink, setYoutubeLink] = useState<IUIFieldState>({ initialValue: dubber.socials.youtube });
+
+  const [patreonLink, setPatreonLink] = useState<IUIFieldState>({ initialValue: dubber.support.patreon });
+  const [bmcLink, setBmcLink] = useState<IUIFieldState>({ initialValue: dubber.support.bymeacoffee });
+  const [monobankLink, setMonobankLink] = useState<IUIFieldState>({ initialValue: dubber.support.monobank });
+  const [diakaLink, setDiakaLink] = useState<IUIFieldState>({ initialValue: dubber.support.diaka });
+
+  const [dubberMembers, setDubberMembers] = useState<IDubberMember[]>(dubber.members);
+  const [isSomethingChanged, setIsSomethingChanged] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  //! MUST INCLUDE ALL OF THE CHANGING STATES
+  const DubberParams = [nameUkr, nameEng, description, telegramLink, instagramLink, tiktokLink, youtubeLink, patreonLink, bmcLink, monobankLink, diakaLink];
+  const DubberParamsSetters = [setNameUkr, setNameEng, setDescription, setTelegramLink, setInstagramLink, setTiktokLink, setYoutubeLink, setPatreonLink, setBmcLink, setMonobankLink, setDiakaLink]
+
+
+  // Handle isSomethingChanged
+  useEffect(() => {
+    setIsSomethingChanged(DubberParams.some(el => el.status === 'changes_pending' || el.status === 'error'))
+  }, [DubberParams])
+
+  // Prevent unloading is some changes are pending
+  useEffect(() => {
+    function unloadHandler(e: BeforeUnloadEvent) {
+      if (isSomethingChanged) e.preventDefault();
+    }
+
+    window.addEventListener('beforeunload', unloadHandler);
+
+    return () => {
+      window.removeEventListener('beforeunload', unloadHandler)
+    }
+  }, [isSomethingChanged])
+
+
+
+  function resetChanges() {
+    NotifySuccess({ title: 'Зміни відхилені', message: 'Ми прибрали нові зміни за вас' })
+
+    DubberParamsSetters.forEach(setter => {
+      setter(prev => {
+        const instance = { ...prev };
+
+        instance.status = 'waiting';
+        instance.value = instance.initialValue ?? '';
+
+        return instance;
+      })
+    })
+  }
+
+  async function saveChanges() {
+    if (!isSomethingChanged) return NotifyWarn({ title: 'Нема що зберігати', message: 'Ніяких змін не сталося' })
+
+    try {
+      setIsSaving(true)
+
+      await API.patchDubberSettings({
+        dubberId: dubber.id,
+        nameUkr: nameUkr.newValue,
+        nameEng: nameEng.newValue,
+        description: description.newValue,
+        socialLinks: {
+          telegram: telegramLink.newValue,
+          instagram: instagramLink.newValue,
+          tiktok: tiktokLink.newValue,
+          youtube: youtubeLink.newValue,
+        },
+        supportLinks: {
+          patreon: patreonLink.newValue,
+          bymeacoffee: bmcLink.newValue,
+          monobank: monobankLink.newValue,
+          diaka: diakaLink.newValue,
+        }
+      });
+
+      DubberParamsSetters.forEach(setter => {
+        setter(prev => {
+          if (prev.status === 'changes_pending' || prev.status === 'error') {
+            const instance = { ...prev }
+            instance.status = 'success';
+
+            return instance
+          } else return prev
+        })
+      })
+
+      NotifySuccess({ title: 'Збережено!', message: 'Зміни збережені' })
+
+      setTimeout(() => {
+        DubberParamsSetters.forEach(setter => {
+          setter(prev => {
+            if (prev.status === 'success') {
+              const instance = { ...prev }
+              instance.status = 'waiting';
+
+              return instance
+            } else return prev
+          })
+        })
+      }, 3000);
+    } catch (e) {
+      HandleClientError(e)
+
+      DubberParamsSetters.forEach(setter => {
+        setter(prev => {
+          if (prev.status === 'changes_pending') {
+            const instance = { ...prev }
+            instance.status = 'error';
+
+            return instance
+          } else return prev
+        })
+      })
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function kickMember(id: string) {
+    try {
+      // await API.dubberKickMember({
+      //   dubberId: dubber.id,
+      //   userId: id
+      // })
+
+      setDubberMembers(prev => prev.filter(el => el.id !== id));
+      NotifySuccess({ title: 'Учасник видалений', message: 'Ми видалили цього користувача з команди' })
+    } catch (e) {
+      HandleClientError(e)
+    }
+  }
+
+
+
+  return <div className="flex flex-col gap-[16px]">
+    <div className="w-full flex justify-between items-center pb-[16px] border-b border-dark-light gap-[16px] max-md:flex-col">
+      <h2 className="text-white text-[32px] font-bold font-manrope max-md:text-[24px]">Налаштування команди</h2>
+
+      <Controls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
+    </div>
+
+    <SettingsGroup title="Назва та опис" description="Розкажіть світу хто ви є">
+      <div className="flex gap-[32px] w-full max-md:flex-col">
+        <div className="flex flex-col gap-[8px] w-full">
+          <div className="flex flex-col gap-[4px] w-full">
+            <p className="text-grey-new font-manrope"><span className="text-info-error font-bold">*</span> Українська назва</p>
+            <UIField fieldType="input" state={nameUkr} stateSetter={setNameUkr} symbolsLimited={32} required />
+          </div>
+
+          <div className="flex flex-col gap-[4px] w-full">
+            <p className="text-grey-new font-manrope"><span className="text-info-error font-bold">*</span> Англійська назва</p>
+            <UIField fieldType="input" state={nameEng} stateSetter={setNameEng} symbolsLimited={32} className="font-space-grotesk" required />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-[4px] w-full h-full">
+          <p className="text-grey-new font-manrope">Опис</p>
+          <UIField fieldType="textarea" state={description} stateSetter={setDescription} symbolsLimited={500} className="min-h-[42px] h-fit max-h-[500px] outline-none grow" parentClassName="h-full grow" />
+        </div>
+      </div>
+    </SettingsGroup>
+
+    <SettingsGroup title="Посилання" description="Мережі команди та підтримка (без www.)">
+      <div className="flex gap-[4px] w-full max-md:flex-col max-md:gap-[16px]">
+        <div className="flex flex-col gap-[4px] w-full">
+          <LinkItem state={telegramLink} setState={setTelegramLink} type="telegram" />
+          <LinkItem state={instagramLink} setState={setInstagramLink} type="instagram" />
+          <LinkItem state={tiktokLink} setState={setTiktokLink} type="tiktok" />
+          <LinkItem state={youtubeLink} setState={setYoutubeLink} type="youtube" />
+        </div>
+
+        <div className="flex flex-col gap-[4px] w-full">
+          <LinkItem state={patreonLink} setState={setPatreonLink} type="patreon" />
+          <LinkItem state={bmcLink} setState={setBmcLink} type="bymeacoffee" />
+          <LinkItem state={monobankLink} setState={setMonobankLink} type="monobank" />
+          <LinkItem state={diakaLink} setState={setDiakaLink} type="diaka" />
+        </div>
+      </div>
+    </SettingsGroup>
+
+    <SettingsGroup title={`Команда (${dubberMembers.length} ${wordDeclination(dubberMembers.length, ['учасник', 'учасника', 'учасників'])})`} description="Керування складом команди">
+      <InviteMembers dubber={dubber} />
+    </SettingsGroup>
+
+    <div className={cn('grid gap-[8px] max-lg:grid-cols-1', dubberMembers.length === 1 ? 'grid-cols-1' : 'grid-cols-2')}>
+      {dubberMembers.filter(el => el.role === 'leader').map(member => {
+        return <DubberMember member={member} user={members.find(el => el.id === member.id)!} currentUser={currentUser} dubber={dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />
+      })}
+
+      {dubberMembers.filter(el => el.role === 'editor').map(member => {
+        return <DubberMember member={member} user={members.find(el => el.id === member.id)!} currentUser={currentUser} dubber={dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />
+      })}
+
+      {dubberMembers.filter(el => el.role === 'member').map(member => {
+        return <DubberMember member={member} user={members.find(el => el.id === member.id)!} currentUser={currentUser} dubber={dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />
+      })}
+    </div>
+
+    <div className="w-full flex justify-between gap-[16px] max-md:flex-col-reverse">
+      <UIReportButton type="text" text="Виникли проблеми?" />
+
+      <Controls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
+    </div>
+  </div>
+}
+
+const InviteMembers: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+  const [searchQuery, setSearchQuery] = useState<IUIFieldState>({ status: 'waiting', initialValue: '' });
+  const [debouncedSearchQuery] = useDebounce(searchQuery.value ?? '', 500)
+  const [searchResults, setSearchResults] = useState<IUserGetSearchResult[]>([])
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [isNotFound, setIsNotFound] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(true);
+  const [isSearched, setIsSearched] = useState(false);
+
+
+
+  useEffect(() => {
+    (async function () {
+      setIsSearched(true);
+
+      const query = debouncedSearchQuery.replace('@', '');
+      if (query.length < 3) return;
+
+      try {
+        const { results } = await API.searchUsers({ q: query, parseInvitationStatusFor: dubber.id })
+        setSearchResults(results);
+        setIsMenuOpen(true)
+      } catch (e) {
+        HandleClientError(e);
+      }
+    })();
+  }, [debouncedSearchQuery])
+
+  // Handle isWaiting
+  useEffect(() => {
+    if (!isSearched) return;
+
+    const isWaiting = debouncedSearchQuery.length === 0;
+
+    setIsWaiting(isWaiting)
+
+    if (isWaiting) {
+      setSearchResults([]);
+    }
+  }, [debouncedSearchQuery])
+
+  // Handle isNotFound
+  useEffect(() => {
+    if (!isSearched) return;
+
+    const isNotFound = debouncedSearchQuery.length !== 0 && searchResults.length === 0;
+
+    setIsNotFound(isNotFound)
+
+    if (isNotFound) {
+      setIsMenuOpen(true)
+    }
+  }, [debouncedSearchQuery, searchResults])
+
+
+
+  return <div className="flex flex-col gap-[4px] w-full">
+    <p className="text-grey-new font-manrope">Запросити нового учасника</p>
+
+    <Menu className="w-full" gap={4} state={isMenuOpen} stateSetter={setIsMenuOpen} id="dubber-settings-inviteMemberMenu">
+      <MenuTrigger anchor className="w-full">
+        <UIField fieldType="input" state={searchQuery} stateSetter={setSearchQuery} placeholder="@username" disablePending className="font-space-grotesk" />
+      </MenuTrigger>
+
+      <MenuWrapper className="w-full bg-dark-bright rounded-[2px] flex flex-col border border-dark-light max-h-[300px] overflow-y-auto">
+        {searchResults.length ? <>
+          {searchResults.map(result => {
+            return <InviteMemberResult {...result} dubber={dubber} key={`dubber-settings-result--${result.user.id}`} />
+          })}
+        </> : <div className="px-[12px] py-[8px]">
+          {isNotFound && <div className="flex items-center gap-[16px]">
+            <MaterialSymbol icon="indeterminate_question_box" size={16} className="text-info-warn" />
+            <p className="text-info-warn font-manrope max-md:text-[14px]">Ми не змогли знайти користувача за цим запитом</p>
+          </div>}
+
+          {isWaiting && <div className="flex items-center gap-[16px]">
+            <MaterialSymbol icon="alternate_email" size={16} className="text-grey-new" />
+            <p className="text-grey-new font-manrope max-md:text-[14px]">Кого шукаємо?</p>
+          </div>}
+        </div>}
+      </MenuWrapper>
+    </Menu>
+  </div>
+}
+
+const DubberSettingsAvatar: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+  const [isActive, setIsActive] = useState(false);
+  const [avatarURL, setAvatarURL] = useState(dubber.avatar);
+
+  const avatarRef = useRef<HTMLDivElement>(null)
+  const selectFileRef = useRef<HTMLInputElement>(null)
+
+
+
+  useEffect(() => {
+    const avatar = avatarRef.current;
+    if (!avatar) return;
+
+
+
+    function show() {
+      setIsActive(true);
+    }
+
+    function hide() {
+      setIsActive(false);
+    }
+
+    avatar.addEventListener('mouseenter', show)
+    avatar.addEventListener('mouseleave', hide)
+  }, [])
+
+
+
+  async function uploadAvatar() {
+    const select = selectFileRef.current;
+    if (!select) return;
+
+    if (!select.files?.length) return NotifyWarn({ title: 'Файл відсутній', message: 'Неможливо оновити аватар без файлу' })
+    const file = select.files[0]
+
+    try {
+      NotifySuccess({ message: `Завантажуємо файл: ${file.name}`, title: 'Завантажуємо...' })
+
+      const { url } = await API.putDubberAvatar({ dubberId: dubber.id, file });
+
+      setAvatarURL(url);
+      NotifySuccess({ message: `Файл завантажено`, title: 'Аватар оновлено!' })
+    } catch (e) {
+      HandleClientError(e);
+    }
+  }
+
+  function selectFile() {
+    const select = selectFileRef.current;
+    if (!select) return;
+
+    select.value = '';
+    select.click();
+  }
+
+
+
+  return <div className="w-[256px] h-[256px] absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px] max-md:w-[128px] max-md:h-[128px] max-md:top-[-64px]" ref={avatarRef}>
+    <Image src={avatarURL} fill alt="Dubber avatar" />
+
+    <div className="w-[32px] h-[32px] flex justify-center items-center rounded-[32px] absolute top-[8px] right-[8px] opacity-[.5] bg-dark-primary">
+      <MaterialSymbol icon="edit" size={16} color="#fff" />
+    </div>
+
+    <input type="file" className="hidden" accept=".png,.jpg,.webp" ref={selectFileRef} onChange={uploadAvatar} />
+
+    <button onClick={selectFile} className={cn('w-full h-full absolute top-0 left-0 bg-dark-primary/[.5] flex justify-center items-center duration-200', !isActive && 'opacity-0 invisible')}>
+      <div className="flex flex-col items-center gap-[16px] max-md:gap-[8px]">
+        <MaterialSymbol icon="backup" size={64} color="#fff" className="max-md:!text-[32px]" />
+
+        <div className="flex flex-col gap-[8px]">
+          <h3 className="text-white text-[24px] font-bold font-manrope text-center uppercase max-md:text-[16px]">завантажити аватар</h3>
+          <p className="text-white text-[16px] font-manrope text-center max-md:hidden">.png .jpg .webp <br /> до 1го мегабайта</p>
+          <p className="text-white text-[12px] font-manrope text-center max-md:hidden">Рекомендований розмір: 256x256</p>
+        </div>
+      </div>
+    </button>
+  </div>
+}
+
+
+
+function LinkItem({ setState, state, type }: ILinkItemProps) {
+  let placeholder: string | undefined = undefined;
+
+
+
+  if (type === 'telegram') placeholder = 't.me';
+  if (type === 'instagram') placeholder = 'instagram.com';
+  if (type === 'tiktok') placeholder = 'tiktok.com';
+  if (type === 'youtube') placeholder = 'youtube.com';
+  if (type === 'patreon') placeholder = 'patreon.com';
+  if (type === 'bymeacoffee') placeholder = 'buymeacoffee.com';
+  if (type === 'monobank') placeholder = 'send.monobank.ua';
+  if (type === 'diaka') placeholder = 'diaka.ua';
+
+
+
+  return <div className="flex w-full">
+    <div className="w-[42px] h-[42px] flex justify-center items-center bg-dark-medium shrink-0 rounded-l-[4px]">
+      {type === 'telegram' && <IcoSocialTelegram width={24} height={24} fill="#fff" />}
+      {type === 'instagram' && <IcoSocialInstagram width={24} height={24} fill="#fff" />}
+      {type === 'tiktok' && <IcoSocialTiktok width={24} height={24} fill="#fff" />}
+      {type === 'youtube' && <IcoSocialYoutube width={24} height={24} fill="#fff" />}
+
+      {type === 'patreon' && <IcoSupportPatreon width={24} height={24} fill="#fff" />}
+      {type === 'bymeacoffee' && <IcoSupportByMeACoffee width={24} height={24} fill="#fff" />}
+      {type === 'monobank' && <IcoSupportMonobank width={24} height={24} />}
+      {type === 'diaka' && <IcoSupportDiaka width={24} height={24} />}
+    </div>
+
+    <UIField fieldType="input" state={state} stateSetter={setState} className="rounded-l-none border-dark-medium font-space-grotesk" placeholder={placeholder} type="url" />
+  </div>
+}
+
+function Controls({ resetChanges, saveChanges, isSomethingChanged, isSaving }: IControlsProps) {
+  const isDisabled = isSaving || !isSomethingChanged;
+
+  return <Tooltip content={!isSomethingChanged ? 'Відсутні зміни' : isSaving ? 'Зберігаємо..' : ''} className="flex gap-[8px] max-md:w-full">
+    <button className={cn('p-[8px] border border-dark-light duration-200 rounded-[4px] hover:bg-dark-light focus-visible:bg-dark-light max-md:w-full', isDisabled && 'cursor-not-allowed')} disabled={isDisabled} onClick={resetChanges}>
+      <p className={cn('font-manrope duration-200 whitespace-nowrap', !isDisabled ? 'text-white' : 'text-grey-new')}>Відхилити</p>
+    </button>
+
+    <button className={cn('flex gap-[16px] items-center justify-center w-[190px] shrink-0 px-[16px] py-[8px] border border-dark-light bg-dark-medium duration-200 rounded-[4px] hover:bg-dark-light focus-visible:bg-dark-light', isDisabled && 'cursor-not-allowed', isSaving && '!cursor-wait')} disabled={isDisabled} onClick={saveChanges}>
+      <div className="w-[20px] h-[20px] relative max-md:w-full">
+        <MaterialSymbol icon="update" size={20} className={cn(`absolute top-0 left-0 duration-200`, !isDisabled ? 'text-white' : 'text-grey-new', isSaving && 'opacity-0')} />
+        <MaterialSymbol icon="clock_loader_40" size={20} className={cn(`absolute top-0 left-0 duration-200`, !isSaving && 'opacity-0')} color="#555" />
+      </div>
+
+      <p className={cn('font-manrope duration-200 whitespace-nowrap', !isDisabled ? 'text-white' : 'text-grey-new')}>
+        {isSaving && 'Зберігаємо...'}
+        {!isSaving && 'Зберегти зміни'}
+      </p>
+    </button>
+  </Tooltip>
+}
+
+function SettingsGroup({ title, description, children }: ISettingsGroupProps) {
+  return <div className="w-full flex justify-between pb-[16px] border-b border-dark-light gap-[16px] max-lg:flex-col">
+    <div className="w-[300px] flex flex-col gap-[4px] shrink-0 max-lg:w-auto">
+      <h4 className="text-white text-[24px] font-bold font-manrope">{title}</h4>
+      <h4 className="text-grey-new font-manrope">{description}</h4>
+    </div>
+
+    {children}
+  </div>
+}
+
+function InviteMemberResult({ user, invitationStatus, dubber }: IMemberInviteResultProps) {
+  const [isInvited, setIsInvited] = useState(false);
+
+
+
+  async function inviteMember() {
+    if (invitationStatus !== 'can_be_invited' || isInvited) return NotifyWarn({ title: 'Неможливо запросити', message: 'Користувача неможливо запросити в команду' })
+
+    try {
+      setIsInvited(true);
+
+      await API.dubberSendInvite({
+        dubberId: dubber.id,
+        userId: user.id
+      })
+
+      NotifySuccess({ title: 'Запрошення надіслано', message: `Ми надіслали @${user.username} запрошення в команду, тепер залишилося почекати на його розгляд` })
+      setIsInvited(true);
+    } catch (e) {
+      setIsInvited(false);
+      HandleClientError(e)
+    }
+  }
+
+
+
+  return <button className={cn('px-[12px] py-[8px] flex items-center gap-[16px] duration-200 hover:bg-dark-light focus-visible:hover:bg-dark-light', (invitationStatus !== 'can_be_invited' || isInvited) && 'cursor-not-allowed')} disabled={invitationStatus !== 'can_be_invited' || isInvited} onClick={inviteMember}>
+    <StyledImage src={user.avatar} width="64px" height="64px" className="rounded-[4px] overflow-hidden" />
+
+    <div className="flex flex-col items-start gap-[4px]">
+      <p className="text-white font-space-grotesk">@{user.username}</p>
+
+      <div className="flex items-center gap-[8px]">
+        {!isInvited && invitationStatus === 'can_be_invited' && <MaterialSymbol icon="person_add" size={16} className="text-white" />}
+        {!isInvited && invitationStatus === 'invite_pending' && <MaterialSymbol icon="hourglass_bottom" size={16} className="text-grey-new" />}
+        {!isInvited && invitationStatus === 'telegram_not_linked' && <MaterialSymbol icon="link_off" size={16} className="text-grey-new" />}
+        {!isInvited && invitationStatus === 'others_member_already' && <MaterialSymbol icon="interpreter_mode" size={16} className="text-grey-new" />}
+        {isInvited && <MaterialSymbol icon="mark_email_read" size={16} className="text-info-success" />}
+
+        <p className={cn('font-manrope max-md:text-[14px]', invitationStatus === 'can_be_invited' ? 'text-white' : 'text-grey-new', isInvited && '!text-info-success')}>
+          {!isInvited && invitationStatus === 'can_be_invited' && 'Ти можеш запросити цього користувача у команду'}
+          {!isInvited && invitationStatus === 'invite_pending' && 'Запрошення очікує на розгляд користувачем'}
+          {!isInvited && invitationStatus === 'telegram_not_linked' && 'Користувач ще не прив’язав телеграм до свого акаунту'}
+          {!isInvited && invitationStatus === 'others_member_already' && 'Користувач вже є учасником іншої команди'}
+          {isInvited && 'Запрошення надіслано!'}
+        </p>
+      </div>
+    </div>
+  </button>
+}
+
+function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubberMemberProps) {
+  const canRedact = currentUser.capabilities.includes('root') || currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('dubberEditEditors');
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [memberRole, setMemberRole] = useState(member.role)
+
+
+
+  async function changeRole(to: TDubberMemberRole) {
+    try {
+      await API.dubberEditMember({
+        dubberId: dubber.id,
+        userId: user.id,
+        role: to
+      })
+
+      setMemberRole(to);
+      NotifySuccess({ title: 'Роль змінена', message: `Роль @${user.username} змінена з ${parseDubberRole(member.role)} > ${parseDubberRole(to)}` })
+    } catch (e) {
+      HandleClientError(e)
+    }
+  }
+
+
+
+  return <div className="w-full rounded-[2px] border border-dark-medium flex justify-between gap-[16px] items-center p-[8px] max-md:items-start">
+    <div className="w-full">
+      <Link href={`${Routes.user_profile.path}/${user.username}`} target="_blank" className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]">
+        <StyledImage src={user.avatar} width="48px" height="48px" className="rounded-[4px] overflow-hidden" />
+
+        <div className="flex flex-col gap-[4px]">
+          <p className="text-white font-space-grotesk">@{user.username}</p>
+
+          <div className="flex items-center gap-[8px]">
+            <MaterialSymbol icon="calendar_add_on" size={16} color="#555" />
+            <p className="text-grey-new text-[12px] font-manrope">Учасник з: {timestampToDayMonth(member.memberSince)}</p>
+          </div>
+        </div>
+      </Link>
+    </div>
+
+    <Menu stateSetter={setIsMenuOpen} settings={{ align: 'end' }} id={`dubber-settings-memberSettings--${user.id}`}>
+      <MenuTrigger anchor className="flex items-center gap-[16px] p-[8px]" disabled={!canRedact}>
+        <div className="flex items-center gap-[8px]">
+          {memberRole === 'leader' && <MaterialSymbol icon="star" size={16} color="#fff" />}
+          {memberRole === 'editor' && <MaterialSymbol icon="edit" size={16} color="#fff" />}
+          {memberRole === 'member' && <MaterialSymbol icon="group" size={16} color="#fff" />}
+
+          <p className="text-white font-manrope">{parseDubberRole(memberRole)}</p>
+        </div>
+
+        {canRedact && <MaterialSymbol icon="arrow_drop_down" size={16} color="#fff" className={cn(`duration-200`, isMenuOpen && 'rotate-180')} />}
+      </MenuTrigger>
+
+      <MenuWrapper className="flex flex-col w-[160px] bg-dark-bright border border-dark-light rounded-[2px]">
+        <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('leader')}>
+          <MaterialSymbol icon="star" size={16} color="#fff" />
+          <p className="text-white font-manrope">Лідер</p>
+        </button>
+
+        <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('editor')}>
+          <MaterialSymbol icon="edit" size={16} color="#fff" />
+          <p className="text-white font-manrope">Редактор</p>
+        </button>
+
+        <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('member')}>
+          <MaterialSymbol icon="group" size={16} color="#fff" />
+          <p className="text-white font-manrope">Учасник</p>
+        </button>
+      </MenuWrapper>
+    </Menu>
+
+    {canRedact && <Tooltip content="Видалити учасника">
+      <button className="p-[8px] flex justify-center items-center rounded-[2px] duration-200 hover:bg-info-error focus-visible:bg-info-error" onClick={() => kickMember(user.id)}>
+        <MaterialSymbol icon="person_remove" size={24} color="#fff" />
+      </button>
+    </Tooltip>}
+  </div>
+}

@@ -1,10 +1,10 @@
-
-
-
 import jwt from 'jsonwebtoken';
 
 import { TVideoQuality } from '~/interfaces/Interfaces';
 import { TAnimeSeason } from '../interfaces/ITitle';
+
+
+
 
 /** Parse country.
  * @example
@@ -155,6 +155,32 @@ export function timestampToDate(timestamp: number): { day: number, month: number
   }
 }
 
+/** Transform timestamp to date 
+ * @returns DD Month YYYY (if not current)
+*/
+export function timestampToDayMonth(timestamp: number) {
+  const month = new Date(timestamp).getMonth();
+  const months: string[] = [
+    'січня',
+    'лютого',
+    'березня',
+    'квітня',
+    'травня',
+    'червня',
+    'липня',
+    'серпня',
+    'вересня',
+    'жовтня',
+    'листопада',
+    'грудня'
+  ];
+  const localizedMonth = months[month]
+  const day = String(new Date(timestamp).getDate()).padStart(2, '0');
+  const year = new Date(timestamp).getFullYear();
+
+  return `${day} ${localizedMonth}${getUTC().y !== year ? ` ${year}` : ''}`
+}
+
 /** Get random number in range
  * @version re-1.0.0
  */
@@ -283,3 +309,5 @@ export function parseVideoQuality(quality: TVideoQuality) {
     case 'q240': return '240p';
   }
 }
+
+export { HandleClientError } from '~/helpers/ErrorHandling'

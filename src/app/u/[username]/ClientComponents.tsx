@@ -2,13 +2,14 @@
 
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Dialog, Layer, Trigger } from '@fullkekw/fkw-popup';
+import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import ErrorWrapper from '~/components/UI/ErrorWrapper';
+import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';
 import { Routes } from '~/routes';
 import { IcoClockFilled } from '../../../assets/Clock';
@@ -17,7 +18,7 @@ import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoPeople, IcoSettings, IcoStack, IcoStar, IcoUpdate, IcoUser, IcoWatched } from '../../../assets/Icons';
 import { IcoSocialTelegram } from '../../../assets/Social';
 import { copyToClipboard } from '../../../components/Components';
-import { addZeroIfNumberSingle, makeStringID } from '../../../components/handlers';
+import { addZeroIfNumberSingle } from '../../../components/handlers';
 import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
@@ -38,7 +39,6 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   const [telegramLinkError, setTelegramLinkError] = useState('');
   const [urlCopied, setUrlCopied] = useState(false)
-  const [settingsPopupID, setSettingsPopupID] = useState('')
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [settingsLinkTelegramStatus, setSettingsLinkTelegramStatus] = useState<TTelegramLinkStatus>(user.statistics.isTelegramLinked ? 'connected' : 'notConnected')
   const [bannerURL, setBannerURL] = useState(user.banner);
@@ -50,6 +50,8 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   const bannerWrapperRef = useRef<HTMLDivElement>(null)
   const bannerButtonRef = useRef<HTMLButtonElement>(null)
 
+  const settingsPopupID = `user-dialog-settings`
+
   // Calc header height
   useMemo(() => {
     if (typeof window === 'undefined') return;
@@ -59,8 +61,6 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   // Set popups ids & handle banner hover + dragNdrop
   useEffect(() => {
-    setSettingsPopupID(makeStringID(16, true))
-
     // Handle banner hover
     if (user.id) {
       const input = bannerSelectRef.current;
@@ -197,8 +197,8 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
   return (
     <>
-      {user.id && <Layer className="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[8px] py-[40px]">
-        <Dialog id={settingsPopupID} className="px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] flex-1 max-h-full max-w-[1170px] overflow-y-auto overflow-x-hidden" state={isSettingsOpen} stateSetter={setIsSettingsOpen}>
+      {user.id && <PopupLayer className="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[16px] py-[40px]">
+        <PopupDialog id={settingsPopupID} className="px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] max-h-full w-full max-w-[1170px] overflow-y-auto overflow-x-hidden" state={isSettingsOpen} stateSetter={setIsSettingsOpen}>
           <Label label="Налаштування акаунту" />
           <Link href={`${config.URL.fkAccount}/me`} className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple">
             <IcoExternalLink width={24} height={24} />
@@ -245,13 +245,17 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
               {telegramLinkError && <p className="text-red">{telegramLinkError}</p>}
             </div>
           }
-        </Dialog>
-      </Layer>}
+        </PopupDialog>
+      </PopupLayer>}
 
       <div className={`bg-dark relative`} style={{ paddingTop: `${headerHeight}px` }}>
         {/* Image */}
         <div className="w-full h-fit max-h-[500px] aspect-[16/9] relative max-[1140px]:aspect-[16/7]">
           <StyledImage src={bannerURL} width="100%" height="100%" priority alt="banner" className="w-full h-full object-cover" />
+
+          <div className="wrapper absolute w-full top-[8px] items-end">
+            <UIReportButton type="icon" text="Поскаржитися на користувача" className="opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" />
+          </div>
         </div>
 
         {/* Layouts */}
@@ -311,9 +315,9 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
       </Tooltip>
 
       {isOwner && <Tooltip content="Налаштування">
-        <Trigger id={settingsPopupID} className="p-[16px] duration-200 bg-darkGrey hover:bg-grey focus-visible:bg-grey rounded-[4px] max-[600px]:p-[12px]">
+        <PopupButton togglePopupId={settingsPopupID} className="p-[16px] duration-200 bg-darkGrey hover:bg-grey focus-visible:bg-grey rounded-[4px] max-[600px]:p-[12px]">
           <IcoSettings width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
-        </Trigger>
+        </PopupButton>
       </Tooltip>}
 
       {!primaryPage && <Link href={`${config.URL.baseURL}/u/${user.username}`}>

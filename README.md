@@ -9,7 +9,6 @@ Classes
 ```scss
 .gradient--primary // New background gradient
   &-text // New text gradient
-  &-border-* // New border gradient. *px - 2, 4
   &-hover // Fills background on hover and focus-visible
 
 .gradient--secondary // New background gradient
@@ -24,7 +23,7 @@ Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```
 *See ./components/handlers.ts*
 
 ## Dependencies
-- nekomi-core
+- nekomi-api
 - nekomi-media
 - fk-usapi
 - fk-authority

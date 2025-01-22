@@ -38,6 +38,7 @@ type TRoute = 'home'
   | 'user_profile'
   | 'user_list'
   | 'dubber_profile'
+  | 'dubber_settings'
   | 'patcher_title'
   | 'patcher_media'
 
@@ -63,6 +64,11 @@ export const routes: { [key in TRoute]: IRoute } = {
   },
   dubber_profile: {
     path: '/dub',
+    dynamic: true
+  },
+  /** @extends /dub */
+  dubber_settings: {
+    path: '/settings',
     dynamic: true
   },
   /** Must be above patcher_title  */

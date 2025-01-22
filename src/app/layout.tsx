@@ -4,15 +4,18 @@ import '@fullkekw/fkw-menu/css'
 import '@fullkekw/fkw-popup/css'
 import 'swiper/css';
 import 'react-loading-skeleton/dist/skeleton.css'
+import 'react-material-symbols/rounded';
 import '../styles/index.scss'
+import '../styles/ui.scss';
 import '../styles/globals.css';
 
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import axios, { AxiosError } from 'axios';
-import { Montserrat } from 'next/font/google'
+import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google'
 import { cookies, headers } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
+import { ToastContainer } from 'react-toastify';
 
 import { $api } from '~/components/http';
 import { StateProvider } from '~/components/Providers';
@@ -26,11 +29,29 @@ import { config, metaObject } from '../config';
 import { ILayoutProps } from '../interfaces/IRSC';
 
 
+
 export const metadata = metaObject({})
+
+
+
 const montserrat = Montserrat({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   fallback: ['system-ui'],
   subsets: ['cyrillic', 'cyrillic-ext', 'latin'],
+})
+
+const manrope = Manrope({
+  weight: ['400', '700'],
+  fallback: ['system-ui'],
+  subsets: ['cyrillic', 'latin'],
+  variable: '--font-manrope'
+})
+
+const spaceGrotesk = Space_Grotesk({
+  weight: ['400', '700'],
+  fallback: ['system-ui'],
+  subsets: ['latin'],
+  variable: '--font-space-grotesk'
 })
 
 
@@ -90,7 +111,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
   return (
     <html lang="uk">
-      <body id="root" className={`bg-dark ${montserrat.className}`}>
+      <body id="root" className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
         <Analytics />
         <SpeedInsights />
 
@@ -105,9 +126,10 @@ export default async function Layout({ children, params }: ILayoutProps) {
             {children}
 
             <Footer />
+
+            <ToastContainer />
           </SkeletonTheme>
         </StateProvider>}
-
       </body>
     </html>
   )

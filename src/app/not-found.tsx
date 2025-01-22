@@ -13,8 +13,8 @@ export const metadata = metaObject({
 
 
 export default async function NotFound() {
-  const pathname = (await headers()).get('x-url')!.replace(config.URL.baseURL, '')
-  const route = getRoute(pathname)
+  const pathname = (await headers()).get('x-url')?.replace(config.URL.baseURL, '')
+  const route = getRoute(pathname ?? '')
 
   if (!route) {
     return <NotFoundScreen />

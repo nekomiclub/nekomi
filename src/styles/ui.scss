@@ -1,0 +1,73 @@
+@import './colors.scss';
+
+.ui {
+  &-notifyToast {
+    &_progressBar {
+      &--success {
+        animation: uiNotifyToastProgressBar 3s linear;
+        background: $infoSuccess;
+      }
+      
+      &--warn {
+        animation: uiNotifyToastProgressBar 3s linear;
+        background: $infoWarn;
+      }
+      
+      &--error {
+        animation: uiNotifyToastProgressBar 6s linear;
+        background: $infoError;
+      }
+    }
+  }
+
+  &-input {
+    padding: 8px;
+    background: transparent;
+    color: $white;
+    border-radius: 4px;
+    border: 1px solid $darkLight;
+    font-size: 16px;
+    font-family: var(--font-manrope);
+    transition: .2s ease-in-out border-color;
+    width: 100%;
+    position: relative;
+
+    &::placeholder {
+      color: $greyNew;
+    }
+
+    &--pending {
+      border-color: rgba($color: $infoWarn, $alpha: .5) !important;
+    }
+
+    &--error {
+      border-color: $infoError !important;
+    }
+
+    &--success {
+      border-color: $infoSuccess !important;
+    }
+  }
+
+  &-dropdownMenu {
+    &--scaleAnimation {
+      .fkw-menu_wrapper {
+        scale: .95;
+
+        &--active {
+          scale: 1;
+        }
+      }
+    }
+  }
+}
+
+@keyframes uiNotifyToastProgressBar {
+  from {
+    height: 100%;
+  }
+
+  to {
+    height: 0;
+  }
+}

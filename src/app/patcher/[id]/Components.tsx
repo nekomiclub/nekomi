@@ -133,8 +133,8 @@ export const PatcherSelect: NextPage<IPatcherSelectProps> = ({ options, label, d
       <p className={cn(locked ? 'text-lightGrey' : 'text-white')}>{label}</p>
     </div>
 
-    <Menu className="w-full" gap={16} settings={{ align: 'stretch', direction: 'bottom', animation: 'slide', closeOn: 'both' }} disabled={locked} state={isOpen} stateSetter={setIsOpen}>
-      <MenuTrigger className={cn(`patcher-select px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`, isPending && 'patcher-select--pending', isSaved && 'patcher-select--saved')} primary>
+    <Menu className="w-full" gap={16} settings={{ align: 'stretch', direction: 'bottom', animation: 'slide', closeOn: 'both' }} disabled={locked} state={isOpen} stateSetter={setIsOpen} id="patcher-menu-selectDubber">
+      <MenuTrigger className={cn(`patcher-select px-[16px] py-[4px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`, isPending && 'patcher-select--pending', isSaved && 'patcher-select--saved')} anchor>
         {dubbers?.length ? <StyledImage src={dubbers.find(el => el.code === option)!.avatar!} width="32px" height="32px" className="overflow-hidden rounded-[32px]" /> : <></>}
 
         <p className={cn(`select-none`, locked ? 'text-lightGrey' : 'text-white')}>{options.find(el => el.code === option)?.label}</p>

@@ -1074,6 +1074,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
 
 
+/** pretty - formated as hh:mm:ss */
 export function secondsToReadable(time: number): { hrs: number, mins: number, secs: number, pretty: string } {
   let mins = Math.floor(time / 60);
   const secs = Math.floor(time - mins * 60);
@@ -1084,7 +1085,7 @@ export function secondsToReadable(time: number): { hrs: number, mins: number, se
     mins -= 60;
   }
 
-  const pretty = `${hrs ? hrs < 10 ? `0${hrs}:` : `${hrs}:` : ''}${mins < 10 ? `0${mins}:` : `${mins}:`}${secs < 10 ? `0${secs}` : secs}`
+  const pretty = hrs ? String(hrs).padStart(2, '0') + ':' : `` + String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0')
 
   return { hrs, mins, secs, pretty }
 }

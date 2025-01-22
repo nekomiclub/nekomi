@@ -1,0 +1,21 @@
+@import '../../../styles/colors.scss';
+
+.dubber {
+  &-about {
+    &_link {
+      outline: none;
+
+      p, span, svg path {
+        transition: .1s ease-in-out;
+      }
+
+      &:hover,
+      &:focus-visible {
+        p, span, svg path {
+          color: $primary !important;
+          fill: $primary;
+        }
+      }
+    }
+  }
+}

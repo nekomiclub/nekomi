@@ -61,8 +61,8 @@ export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, dubbe
 
   return (
     <div className={cn(`relative z-[10] px-[24px] py-[16px] flex gap-[4px] duration-200`, isIdle && '-translate-y-[100%]', className)}>
-      <DropMenu.Menu settings={{ align: 'left', animation: 'slide' }} gap={16} state={isMenuOpen} stateSetter={setIsMenuOpen}>
-        <DropMenu.MenuTrigger className="px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple" primary>
+      <DropMenu.Menu settings={{ align: 'start', animation: 'slide' }} gap={16} state={isMenuOpen} stateSetter={setIsMenuOpen} id="kekwplayer-menu-selectDubbers">
+        <DropMenu.MenuTrigger className="px-[16px] py-[8px] bg-dark rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple" anchor>
           <IcoPlayerList width={40} height={40} />
         </DropMenu.MenuTrigger>
 
