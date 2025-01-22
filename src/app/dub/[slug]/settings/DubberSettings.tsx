@@ -298,10 +298,10 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
 
   async function kickMember(id: string) {
     try {
-      // await API.dubberKickMember({
-      //   dubberId: dubber.id,
-      //   userId: id
-      // })
+      await API.dubberKickMember({
+        dubberId: dubber.id,
+        userId: id
+      })
 
       setDubberMembers(prev => prev.filter(el => el.id !== id));
       NotifySuccess({ title: 'Учасник видалений', message: 'Ми видалили цього користувача з команди' })
