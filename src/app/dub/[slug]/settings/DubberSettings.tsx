@@ -53,7 +53,7 @@ interface IDubberMemberProps {
   currentUser: IUserState
   dubber: IDubber
 
-  kickMember: (id: string) => void
+  kickMember: (id: string, username: string) => void
 }
 
 interface IMemberInviteResultProps extends IUserGetSearchResult {
@@ -296,8 +296,10 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
     }
   }
 
-  async function kickMember(id: string) {
+  async function kickMember(id: string, username: string) {
     try {
+      if (!confirm(`Ви дійсно хочете видалити ${username}?`)) return;
+
       await API.dubberKickMember({
         dubberId: dubber.id,
         userId: id
@@ -671,7 +673,8 @@ function InviteMemberResult({ user, invitationStatus, dubber }: IMemberInviteRes
 }
 
 function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubberMemberProps) {
-  const canRedact = currentUser.capabilities.includes('root') || currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('dubberEditEditors');
+  const canKick = currentUser.capabilities.includes('root') || currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('dubberEditEditors')
+  const canRedactRole = canKick && currentUser.id !== user.id || (currentUser.capabilities.includes('root') || currentUser.capabilities.includes('admin'))
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [memberRole, setMemberRole] = useState(member.role)
@@ -712,7 +715,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
     </div>
 
     <Menu stateSetter={setIsMenuOpen} settings={{ align: 'end' }} id={`dubber-settings-memberSettings--${user.id}`}>
-      <MenuTrigger anchor className="flex items-center gap-[16px] p-[8px]" disabled={!canRedact}>
+      <MenuTrigger anchor className="flex items-center gap-[16px] p-[8px]" disabled={!canRedactRole}>
         <div className="flex items-center gap-[8px]">
           {memberRole === 'leader' && <MaterialSymbol icon="star" size={16} color="#fff" />}
           {memberRole === 'editor' && <MaterialSymbol icon="edit" size={16} color="#fff" />}
@@ -721,7 +724,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
           <p className="text-white font-manrope">{parseDubberRole(memberRole)}</p>
         </div>
 
-        {canRedact && <MaterialSymbol icon="arrow_drop_down" size={16} color="#fff" className={cn(`duration-200`, isMenuOpen && 'rotate-180')} />}
+        {canRedactRole && <MaterialSymbol icon="arrow_drop_down" size={16} color="#fff" className={cn(`duration-200`, isMenuOpen && 'rotate-180')} />}
       </MenuTrigger>
 
       <MenuWrapper className="flex flex-col w-[160px] bg-dark-bright border border-dark-light rounded-[2px]">
@@ -742,8 +745,8 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
       </MenuWrapper>
     </Menu>
 
-    {canRedact && <Tooltip content="Видалити учасника">
-      <button className="p-[8px] flex justify-center items-center rounded-[2px] duration-200 hover:bg-info-error focus-visible:bg-info-error" onClick={() => kickMember(user.id)}>
+    {canKick && <Tooltip content="Видалити учасника">
+      <button className="p-[8px] flex justify-center items-center rounded-[2px] duration-200 hover:bg-info-error focus-visible:bg-info-error" onClick={() => kickMember(user.id, user.username)}>
         <MaterialSymbol icon="person_remove" size={24} color="#fff" />
       </button>
     </Tooltip>}
