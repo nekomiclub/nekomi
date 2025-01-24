@@ -1082,10 +1082,10 @@ const EpisodesSection = memo(function EpisodesSection() {
       <PatcherEpisodeGroup group={{ ...episodeGroups.find(el => el.dubber?.slug === dubbingSelectedCode)! }} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${dubbingSelectedCode}`} dubbingSelectedCode={dubbingSelectedCode} />
 
       {episodeGroups.filter(el => el.dubber?.slug !== dubbingSelectedCode).map(group => {
-        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber!.id}`} dubbingSelectedCode={dubbingSelectedCode} />
+        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} />
       })}</> : <>
       {episodeGroups.map(group => {
-        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber!.id}`} dubbingSelectedCode={dubbingSelectedCode} />
+        return <PatcherEpisodeGroup group={group} deleteEpisode={deleteEpisode} key={`patcher-episodeGroup--${group.dubber?.id}`} dubbingSelectedCode={dubbingSelectedCode} />
       })}</>}
   </section>
 })
