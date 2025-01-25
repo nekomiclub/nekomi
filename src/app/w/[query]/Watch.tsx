@@ -355,7 +355,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
               {dubbers.map((dubber, i) => {
                 let immutableI = i;
 
-                return <Link href={`${config.URL.baseURL}/dub/${dubber.code}`} target="_blank" className="text-white font-bold uppercase" key={`dubber-${dubber.code}`}>
+                return <Link href={`${config.URL.baseURL}/dub/${dubber.code}`} className="text-white font-bold uppercase" key={`dubber-${dubber.code}`}>
                   {dubber.name}
                   {++immutableI < dubbers.length ? ',' : ''}
                 </Link>

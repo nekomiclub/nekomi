@@ -23,18 +23,19 @@ export async function generateMetadata(
   const { slug } = await props.params as { slug: string };
 
   try {
-    const data = await API.getDubberByQuery({
+    const { metadata } = await API.getDubberByQuery({
       query: slug,
+      metadataOnly: true
     })
 
     return metaObject({
-      title: data.dubber.nameUkr,
-      description: data.dubber.description ?? 'Ця команда озвучує аніме українською',
-      keywords: [data.dubber.nameUkr, data.dubber.nameEng, 'українська озвучка аніме'],
+      title: metadata?.title,
+      description: metadata?.description,
+      keywords: metadata?.keywords,
       openGraph: {
-        title: data.dubber.nameUkr,
-        description: data.dubber.description ?? 'Ця команда озвучує аніме українською',
-        images: data.dubber.avatar,
+        title: metadata?.title,
+        description: metadata?.description,
+        images: metadata?.photo,
         type: 'profile'
       }
     })
@@ -63,7 +64,7 @@ export default async function RSC({ params, searchParams }: IRSCProps) {
       parseMembers: true
     })
 
-    dubber = data.dubber;
+    dubber = data.dubber!;
     dubbedAnime = data.dubbedAnime as ITitle[];
     parsedMembers = data.parsedMembers as IUser[];
   } catch (e) {

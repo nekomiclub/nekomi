@@ -231,7 +231,7 @@ function DubberHeaderCopyLink() {
 
 function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
   return <li>
-    <Link href={link} target="_blank" className="dubber-about_link flex items-center gap-[16px] py-[6px] px-[16px]">
+    <Link href={link} className="dubber-about_link flex items-center gap-[16px] py-[6px] px-[16px]">
       {label === 'telegram' && <IcoSocialTelegram width={24} height={24} fill="#555" />}
       {label !== 'telegram' && <MaterialSymbol icon="ungroup" size={24} color="#555" />}
 
@@ -241,7 +241,7 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
 }
 
 function DubberTeamMember({ user, member }: { user: IUser, member: IDubberMember }) {
-  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} target="_blank" className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] basis-[25%] grow max-w-[500px] duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
+  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] basis-[25%] grow max-w-[500px] duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
     <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full max-sm:items-center">

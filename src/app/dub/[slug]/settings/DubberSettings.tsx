@@ -700,7 +700,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
 
   return <div className="w-full rounded-[2px] border border-dark-medium flex justify-between gap-[16px] items-center p-[8px] max-md:items-start">
     <div className="w-full">
-      <Link href={`${Routes.user_profile.path}/${user.username}`} target="_blank" className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]">
+      <Link href={`${Routes.user_profile.path}/${user.username}`} className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]">
         <StyledImage src={user.avatar} width="48px" height="48px" className="rounded-[4px] overflow-hidden" />
 
         <div className="flex flex-col gap-[4px]">

@@ -105,6 +105,8 @@ export const metaObject = (payload: {
   const siteName = CONSTS.Domains.nekomi.split('.')[0];
   const robots: string = payload.robots?.length ? payload.robots?.join(',') : 'all';
 
+  if (payload.openGraph) payload.openGraph.title = `${payload.openGraph.title} ― nekomi`;
+
   return {
     title,
     description,

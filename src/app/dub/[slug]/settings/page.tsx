@@ -38,7 +38,7 @@ export default async function RSC({ params }: IRSCProps) {
       useCache: false
     })
 
-    dubber = data.dubber;
+    dubber = data.dubber!;
     members = data.parsedMembers!;
   } catch (e) {
     if (e instanceof AxiosError) {
