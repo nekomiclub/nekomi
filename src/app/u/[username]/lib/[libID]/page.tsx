@@ -1,12 +1,12 @@
-import { AxiosError } from 'axios';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 
+import { HandleServerError } from '~/components/Errors';
 import { Routes } from '~/routes';
-import { HappenedWrongScreen, NotFoundScreen } from '../../../../../components/Components';
-import { decodeToken, getUTC } from '../../../../../components/handlers';
+import { NotFoundScreen } from '../../../../../components/Components';
+import { decodeToken } from '../../../../../components/handlers';
 import { $api } from '../../../../../components/http';
-import { config, CONSTS, devMode, metaObject } from '../../../../../config';
+import { config, CONSTS, metaObject } from '../../../../../config';
 import { IRSCProps } from '../../../../../interfaces/IRSC';
 import { ITitle } from '../../../../../interfaces/ITitle';
 import { ISessionCookieData } from '../../../../../interfaces/ITokenData';
@@ -97,23 +97,7 @@ export default async function RSC(props: IRSCProps<{ username: string, libID: st
     isOwner = user.id === userId;
     titles = data.parsedLib;
   } catch (e) {
-    if (e instanceof AxiosError) {
-      const code = e.response?.data?.code || 500;
-
-      devMode ? console.error(e.response?.data) : null;
-
-      if (code === 404) {
-        return <NotFoundScreen />
-      } else if (code === 400) {
-        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
-      } else {
-        return <HappenedWrongScreen cause={e.message} />
-      }
-    } else {
-      const date = `${getUTC().date} ${getUTC().time}`
-      console.error(`[${date}]: Server error occured at w/query - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
-      return <HappenedWrongScreen cause={`Server error occured at w/query. See logs at ${date}`} />;
-    }
+    return HandleServerError(e)
   }
 
   const lib = user?.libs.find(el => el.id === params.libID);

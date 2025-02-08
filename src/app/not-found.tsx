@@ -1,8 +1,6 @@
-import { headers } from 'next/headers'
 
-import { IndevScreen, NotFoundScreen } from '../components/Components';
-import { getRoute } from '../components/ServerComponents';
-import { config, metaObject } from '../config';
+import { ErrorNotFound } from '~/components/Errors';
+import { metaObject } from '../config';
 
 export const metadata = metaObject({
   title: '404',
@@ -13,18 +11,5 @@ export const metadata = metaObject({
 
 
 export default async function NotFound() {
-  const pathname = (await headers()).get('x-url')?.replace(config.URL.baseURL, '')
-  const route = getRoute(pathname ?? '')
-
-  if (!route) {
-    return <NotFoundScreen />
-  }
-
-  return <>
-    {
-      route.status === 'indev'
-        ? <IndevScreen />
-        : <NotFoundScreen />
-    }
-  </>
+  return <ErrorNotFound />
 }

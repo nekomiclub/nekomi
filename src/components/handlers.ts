@@ -5,7 +5,6 @@ import { TAnimeSeason } from '../interfaces/ITitle';
 
 
 
-
 /** Parse country.
  * @example
  * parseTitleCountry('japan') => 'Японія'
@@ -309,5 +308,3 @@ export function parseVideoQuality(quality: TVideoQuality) {
     case 'q240': return '240p';
   }
 }
-
-export { HandleClientError } from '~/helpers/ErrorHandling'

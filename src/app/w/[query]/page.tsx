@@ -1,16 +1,17 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Metadata } from 'next';
 
-import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
-import { getUTC, parseTitleType } from '../../../components/handlers';
+import { HandleServerError } from '~/components/Errors';
+import { parseTitleType } from '../../../components/handlers';
 import { $api } from '../../../components/http';
-import { animeGenres, config, CONSTS, devMode, metaObject } from '../../../config';
+import { animeGenres, config, CONSTS, metaObject } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { ITitle, TAnimeGenre } from '../../../interfaces/ITitle';
 import { routes } from '../../../routes';
 
-import Watch from './Watch';
+import WatchTitle from './Watch';
+
 
 
 
@@ -58,6 +59,8 @@ export default async function RSC(props: IRSCProps<{ query: string }>) {
   let dubbers: IDubber[] = []
   let episodesDubbed = 0;
 
+
+
   try {
     const { data } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] | null }>(`/title/${params.query}`, {
       params: {
@@ -69,6 +72,7 @@ export default async function RSC(props: IRSCProps<{ query: string }>) {
     title = data.title;
     dubbers = data.parsedDubbers || [];
 
+
     if (title.episodes.length) {
       let tmp = 0;
 
@@ -77,24 +81,10 @@ export default async function RSC(props: IRSCProps<{ query: string }>) {
       episodesDubbed = tmp;
     }
   } catch (e) {
-    if (e instanceof AxiosError) {
-      const code = e.response?.data?.code || 500;
-
-      devMode ? console.error(e.response?.data) : null;
-
-      if (code === 404) {
-        return <NotFoundScreen />
-      } else if (code === 400) {
-        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
-      } else {
-        return <HappenedWrongScreen cause={e.message} />
-      }
-    } else {
-      const date = `${getUTC().date} ${getUTC().time}`
-      console.error(`[${date}]: Server error occured at w/query - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
-      return <HappenedWrongScreen cause={`Server error occured at w/query. See logs at ${date}`} />;
-    }
+    return HandleServerError(e)
   }
 
-  return <Watch title={title} dubbers={dubbers} episodesDubbed={episodesDubbed} />
+
+
+  return <WatchTitle title={title} dubbers={dubbers} episodesDubbed={episodesDubbed} />
 }

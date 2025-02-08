@@ -10,7 +10,8 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialTelegram } from '~/assets/Social';
 import { cn, copyToClipboard, TitleCard } from '~/components/Components';
-import { HandleClientError, wordDeclination } from '~/components/handlers';
+import { HandleClientError } from '~/components/Errors';
+import { wordDeclination } from '~/components/handlers';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';

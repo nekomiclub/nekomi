@@ -60,6 +60,49 @@
       }
     }
   }
+
+  &-button {
+    background: $darkMedium;
+    border: 1px solid $darkLight;
+    transition: .2s ease-in-out;
+    border-radius: 4px;
+
+    &:hover,
+    &:focus-visible {
+      background: $darkLight;
+    }
+
+    &:active {
+      scale: .95;
+    }
+  }
+
+  &-text {
+    font-family: var(--font-manrope);
+    font-size: 16px;
+    font-weight: 400;
+    font-style: normal;
+    color: $white;
+
+    &--h1 {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    &--h2 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    &--h3 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    &--mini {
+      font-size: 14px;
+    }
+  }
 }
 
 @keyframes uiNotifyToastProgressBar {

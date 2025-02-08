@@ -12,7 +12,7 @@ import Tooltip from './Tooltip';
 
 
 interface IReportButtonProps {
-  type: 'icon' | 'text'
+  type: 'icon' | 'text' | 'button'
   text?: string
   className?: string
 }
@@ -52,7 +52,7 @@ export const UIReportButton: NextPage<IReportButtonProps> = ({ type, text, class
 
   return <>
     {type === 'icon' && <Tooltip content={text} className={cn(`z-[5] w-fit h-fit`, className)}>
-      <PopupButton className={cn('w-[40px] h-[40px] flex justify-center items-center rounded-[4px] bg-dark-medium border border-dark-light duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95]')} togglePopupId={REPORT_MODAL_ID}>
+      <PopupButton className={cn('ui-button w-[40px] h-[40px] flex justify-center items-center rounded-[4px]')} togglePopupId={REPORT_MODAL_ID}>
         <MaterialSymbol icon="flag" size={24} className="text-white" />
       </PopupButton>
     </Tooltip>}
@@ -61,6 +61,12 @@ export const UIReportButton: NextPage<IReportButtonProps> = ({ type, text, class
       <MaterialSymbol icon="flag" size={24} className="text-grey-new" />
 
       <p className="text-grey-new font-manrope">{text}</p>
+    </PopupButton>}
+
+    {type === 'button' && <PopupButton className={cn('ui-button flex justify-center items-center gap-[8px] px-[16px] py-[8px]')} togglePopupId={REPORT_MODAL_ID}>
+      <MaterialSymbol icon="flag" size={24} className="text-white" />
+
+      <p className="text-white font-manrope">{text}</p>
     </PopupButton>}
   </>
 }

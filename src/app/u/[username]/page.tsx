@@ -1,14 +1,14 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Metadata } from 'next';
 import { cookies } from 'next/headers'
 
+import { HandleServerError } from '~/components/Errors';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoStack, IcoWatched } from '../../../assets/Icons';
-import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
-import { decodeToken, getUTC, wordDeclination } from '../../../components/handlers';
+import { decodeToken, wordDeclination } from '../../../components/handlers';
 import { $api } from '../../../components/http';
-import { config, CONSTS, devMode, metaObject } from '../../../config';
+import { config, CONSTS, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { ISessionCookieData } from '../../../interfaces/ITokenData';
 import { IUser } from '../../../interfaces/IUser';
@@ -71,23 +71,7 @@ export default async function RSC(props: IRSCProps<{ username: string }>) {
     user = data.user;
     isOwner = user.id === userId;
   } catch (e) {
-    if (e instanceof AxiosError) {
-      const code = e.response?.data?.code || 500;
-
-      devMode ? console.error(e.response?.data) : null;
-
-      if (code === 404) {
-        return <NotFoundScreen />
-      } else if (code === 400) {
-        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
-      } else {
-        return <HappenedWrongScreen cause={e.message} />
-      }
-    } else {
-      const date = `${getUTC().date} ${getUTC().time}`
-      console.error(`[${date}]: Server error occured at w/query - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
-      return <HappenedWrongScreen cause={`Server error occured at w/query. See logs at ${date}`} />;
-    }
+    return HandleServerError(e)
   }
 
   return (

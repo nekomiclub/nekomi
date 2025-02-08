@@ -22,6 +22,12 @@ Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```
 
 *See ./components/handlers.ts*
 
+## UI
+```scss
+.ui-text // Default text styling
+.ui-button // Default styled button with dark-medium background, border & animations
+```
+
 ## Dependencies
 - nekomi-api
 - nekomi-media

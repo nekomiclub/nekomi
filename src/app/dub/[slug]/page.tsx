@@ -1,12 +1,11 @@
 import './styles.scss';
 
-import { AxiosError } from 'axios';
 import { Metadata } from 'next';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { HappenedWrongScreen, NotFoundScreen } from '~/components/Components';
-import { getUTC, timestampToDayMonth } from '~/components/handlers';
-import { devMode, metaObject } from '~/config';
+import { HandleServerError } from '~/components/Errors';
+import { timestampToDayMonth } from '~/components/handlers';
+import { metaObject } from '~/config';
 import { IDubber } from '~/interfaces/IDubber';
 import { IRSCProps } from '~/interfaces/IRSC';
 import { ITitle } from '~/interfaces/ITitle';
@@ -68,23 +67,7 @@ export default async function RSC({ params, searchParams }: IRSCProps) {
     dubbedAnime = data.dubbedAnime as ITitle[];
     parsedMembers = data.parsedMembers as IUser[];
   } catch (e) {
-    if (e instanceof AxiosError) {
-      const code = e.response?.data?.code || 500;
-
-      devMode ? console.error(e.response?.data) : null;
-
-      if (code === 404) {
-        return <NotFoundScreen />
-      } else if (code === 400) {
-        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
-      } else {
-        return <HappenedWrongScreen cause={e.message} />
-      }
-    } else {
-      const date = `${getUTC().date} ${getUTC().time}`
-      console.error(`[${date}]: Server error occured at w/query - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
-      return <HappenedWrongScreen cause={`Server error occured at w/query. See logs at ${date}`} />;
-    }
+    return HandleServerError(e)
   }
 
 

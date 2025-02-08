@@ -1,9 +1,9 @@
 import { NextPage } from 'next';
 
-import { IndevScreen } from '../../../../components/Components';
+import { ErrorNoConnection } from '~/components/Errors';
 
 const RSC: NextPage = (props) => {
-  return <IndevScreen />
+  return <ErrorNoConnection />
 }
 
 export default RSC;
