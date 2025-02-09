@@ -1107,7 +1107,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
     }
   }}>
     <div className="w-full h-full min-h-screen bg-dark">
-      <div className="wrapper !pt-[132px] !pb-[60px] flex flex-col gap-[24px]">
+      <div className="wrapper pt-[16px] sm:pt-[var(--header-height)] !pb-[60px] flex flex-col gap-[24px]">
         {/* Header */}
         <div className="flex flex-col gap-[8px] max-[784px]:gap-[24px]">
           <div className="flex items-center gap-[32px] max-[784px]:flex-col max-[784px]:gap-[8px]">

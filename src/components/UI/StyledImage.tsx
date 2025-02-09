@@ -5,7 +5,6 @@ import { NextPage } from 'next';
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 
-import { IcoGhost } from '~/assets/Icons';
 import { config } from '~/config';
 import { cn } from '../Components';
 
@@ -38,7 +37,6 @@ interface IProps {
 
 export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, className, loading, priority, useImg, imageClassName }) => {
   const [isLoaded, setIsLoaded] = useState(false)
-  const [isErrored, setIsErrored] = useState(false)
   const [useDefaultImage, setUseDefaultImage] = useState(Boolean(useImg))
 
   const imageRef = useRef<HTMLImageElement>(null)
@@ -65,7 +63,6 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
       if (image.complete) setIsLoaded(true);
 
       image.addEventListener('load', () => setIsLoaded(true));
-      image.addEventListener('error', () => setIsErrored(true));
     })()
   }, [])
 
@@ -73,11 +70,6 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
   return (
     <div className={cn('relative shrink-0', className)} style={{ width, height }}>
-      {/* Error wrapper */}
-      <div className={cn('w-full h-full z-[2] bg-darkGrey absolute top-0 left-0 flex justify-center items-center opacity-0 duration-200', isErrored && 'opacity-100')}>
-        <IcoGhost width={16} height={16} className="w-[50%] h-[50%]" />
-      </div>
-
       {/* Preserved / default image */}
       {useDefaultImage && <>
         <img src={src} alt={alt} loading={loading} className={cn('w-full h-full duration-200', !isLoaded && 'opacity-100', imageClassName)} ref={imageRef} />
@@ -88,7 +80,7 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
       </>}
 
       {/* Loading state */}
-      {loading === 'lazy' && <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, (isLoaded || isErrored) && 'opacity-0')} />}
+      {loading === 'lazy' && <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, isLoaded && 'opacity-0')} />}
     </div>
   )
 }

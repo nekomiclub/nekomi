@@ -95,7 +95,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
             <div className="absolute top-0 left-0 w-full h-full z-[2] bg-dark/[.8] backdrop-blur-[200px]"></div>
           </div>
 
-          <div className="relative z-[3] flex flex-row gap-[24px] max-[890px]:!flex-col max-[890px]:items-center pt-[132px] pb-[40px]">
+          <div className="relative z-[3] flex flex-row gap-[24px] max-[890px]:!flex-col max-[890px]:items-center pt-[16px] sm:pt-[var(--header-height)] pb-[40px]">
             <div className="watch-poster_wrapper flex flex-col gap-[8px] max-[472px]:w-full">
               <div className="watch-poster relative w-[500px] h-[700px] shrink-0 max-[1200px]:w-[350px] max-[1200px]:h-[500px] max-[472px]:w-full">
                 <StyledImage src={title.poster} height="100%" width="100%" alt="..." loading="eager" priority className="rounded-[4px] overflow-hidden" />
