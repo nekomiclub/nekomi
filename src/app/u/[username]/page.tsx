@@ -81,7 +81,7 @@ export default async function RSC(props: IRSCProps<{ username: string }>) {
 
         <div className="wrapper gap-[40px]">
           {/* Stats */}
-          <div className="flex gap-[16px] flex-wrap">
+          <div className="flex gap-[16px] overflow-x-auto ui-hideScroll">
             <StatCard value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label="favs" />
             <StatCard value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label="watched" />
             <StatCard value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label="watching" />
@@ -99,16 +99,16 @@ export default async function RSC(props: IRSCProps<{ username: string }>) {
 
   function StatCard({ label, value, className }: { label: 'favs' | 'watched' | 'watching' | 'viewtime', value: number, className?: string }) {
     return (
-      <div className={`grow basis-[280px] ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] flex items-center gap-[8px] max-[620px]:flex-col max-[620px]:basis-[170px] ${className ? className : ''}`}>
+      <div className={`grow basis-[280px] min-w-[280px] ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] flex items-center gap-[8px] ${className ? className : ''}`}>
         <div className="flex-shrink-0">
-          {label === 'favs' && <IcoHeartFilled width={80} height={80} className="max-[620px]:h-[64px] max-[620px]:w-[64px]" />}
-          {label === 'watched' && <IcoWatched width={80} height={80} className="max-[620px]:h-[64px] max-[620px]:w-[64px]" />}
-          {label === 'watching' && <IcoStack width={80} height={80} className="max-[620px]:h-[64px] max-[620px]:w-[64px]" />}
-          {label === 'viewtime' && <IcoClockFilled width={80} height={80} className="max-[620px]:h-[64px] max-[620px]:w-[64px]" />}
+          {label === 'favs' && <IcoHeartFilled width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
+          {label === 'watched' && <IcoWatched width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
+          {label === 'watching' && <IcoStack width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
+          {label === 'viewtime' && <IcoClockFilled width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
         </div>
 
         <div className="w-full flex flex-col gap-[8px]">
-          <p className="text-white text-[32px] font-bold text-center w-full max-[620px]:text-[24px]">{value}</p>
+          <p className="text-white text-[32px] font-bold text-center w-full max-sm:text-[24px]">{value}</p>
           <p className="text-white w-full text-center">
             {label === 'favs' && `${wordDeclination(value, ['Улюблений тайтл', 'Улюблених тайтли', 'Улюблених тайтлів'])}`}
             {label === 'watched' && `${wordDeclination(value, ['Переглянутий тайтл', 'Переглянутих тайтли', 'Переглянутих тайтлів'])}`}

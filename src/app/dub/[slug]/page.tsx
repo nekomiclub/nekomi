@@ -72,7 +72,7 @@ export default async function RSC({ params, searchParams }: IRSCProps) {
 
 
 
-  return <section className="wrapper gap-[16px] pt-[92px]">
+  return <section className="wrapper gap-[16px] pt-[16px] sm:pt-[var(--header-height)]">
     <DubberBanner dubber={dubber} />
 
     <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">

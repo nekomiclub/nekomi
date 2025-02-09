@@ -15,6 +15,7 @@ import { wordDeclination } from '~/components/handlers';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';
+import { UIText } from '~/components/UI/Text.ui';
 import Tooltip from '~/components/UI/Tooltip';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
@@ -128,8 +129,8 @@ export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
 
     <div className="w-full flex items-center justify-between gap-[24px]">
       <div className="flex flex-col gap-[8px]">
-        <h2 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">{dubber.nameUkr}</h2>
-        <h4 className="text-grey-new text-[24px] font-space-grotesk">@{dubber.slug}</h4>
+        <UIText text={dubber.nameUkr} type="h1" className="break-all" />
+        <UIText text={`@${dubber.slug}`} type="h3" className="text-grey-new font-space-grotesk break-all font-normal" />
       </div>
 
       <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
@@ -178,7 +179,7 @@ export const DubberTeam: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ du
   return <div className="flex flex-col gap-[16px]">
     <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
 
-    <div className="flex flex-wrap gap-[16px] max-sm:gap-[8px] max-sm:grid max-sm:grid-cols-1">
+    <div className="grid grid-cols-4 gap-[16px] max-[1600px]:grid-cols-3 max-lg:grid-cols-2 max-sm:gap-[8px] max-sm:grid-cols-1">
       {dubber.members.filter(el => el.role === 'leader').map(member => {
         return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />
       })}
@@ -242,11 +243,11 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
 }
 
 function DubberTeamMember({ user, member }: { user: IUser, member: IDubberMember }) {
-  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] basis-[25%] grow max-w-[500px] duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
+  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
     <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full max-sm:items-center">
-      <p className={cn(`text-white font-space-grotesk text-[24px] line-clamp-1 max-md:text-[20px]`, member.role === 'leader' && 'font-bold !text-primary')}>@{user.username}</p>
+      <p className={cn(`text-white font-space-grotesk text-[20px] max-md:text-[20px] line-clamp-1 text-ellipsis break-all w-full`, member.role === 'leader' && 'font-bold !text-primary')}>@{user.username}</p>
 
       <div className="flex items-center gap-[8px]">
         {member.role === 'leader' && <MaterialSymbol icon="star" size={24} color="#fff" />}

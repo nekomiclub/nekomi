@@ -1,5 +1,16 @@
 @import './colors.scss';
 
+:root {
+  --header-height: 96px;
+}
+
+// Breakpoints
+$break-sm: 640px;
+$break-md: 768px;
+$break-lg: 1024px;
+$break-xl: 1280px;
+$break-2xl: 1536px;
+
 .ui {
   &-notifyToast {
     &_progressBar {
@@ -87,16 +98,28 @@
     &--h1 {
       font-size: 32px;
       font-weight: 700;
+
+      @media only screen and (max-width: $break-md) {
+        font-size: 24px;
+      }
     }
 
     &--h2 {
       font-size: 24px;
       font-weight: 700;
+
+      @media only screen and (max-width: $break-md) {
+        font-size: 20px;
+      }
     }
 
     &--h3 {
       font-size: 20px;
       font-weight: 700;
+
+      @media only screen and (max-width: $break-sm) {
+        font-size: 16px;
+      }
     }
 
     &--mini {
@@ -115,6 +138,12 @@
         transition: .2s ease-in-out;
         padding: 12px 8px;
       }
+    }
+  }
+
+  &-hideScroll {
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
 }

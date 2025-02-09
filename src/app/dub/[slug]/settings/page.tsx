@@ -52,7 +52,7 @@ export default async function RSC({ params }: IRSCProps) {
 
 
 
-  return user && <section className="wrapper pt-[92px] gap-[16px]">
+  return user && <section className="wrapper pt-[16px] sm:pt-[var(--header-height)] gap-[16px]">
     <DubberSettingsBanner dubber={dubber} />
 
     <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">

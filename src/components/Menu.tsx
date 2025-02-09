@@ -113,7 +113,7 @@ const Menu: NextPage = () => {
       <Search dialogId={searchPopupId} />
 
       {/* Header menu */}
-      <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200 max-sm:hidden`}>
+      <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200 max-sm:hidden h-[var(--header-height)]`}>
         <div className="wrapper !flex-row items-center justify-between w-full">
           <div className="flex items-center gap-[40px]">
             <Link href={routes.home.path} className="duration-200 hover:rotate-[5deg] focus-visible:rotate-[5deg] outline-none">

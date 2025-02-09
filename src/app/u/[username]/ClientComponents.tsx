@@ -1,7 +1,7 @@
 'use client'
 
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
@@ -13,6 +13,7 @@ import { getUTC } from '~/components/handlers';
 import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';
+import { UIText } from '~/components/UI/Text.ui';
 import { Routes } from '~/routes';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
@@ -37,6 +38,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const settingsPopupID = useId().replaceAll(':', '');
 
   const [telegramLinkError, setTelegramLinkError] = useState('');
   const [urlCopied, setUrlCopied] = useState(false)
@@ -44,21 +46,14 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   const [settingsLinkTelegramStatus, setSettingsLinkTelegramStatus] = useState<TTelegramLinkStatus>(user.statistics.isTelegramLinked ? 'connected' : 'notConnected')
   const [bannerURL, setBannerURL] = useState(user.banner);
   const [bannerUploadError, setBannerUploadError] = useState('');
-  const [headerHeight, setHeaderHeight] = useState(92);
 
 
   const bannerSelectRef = useRef<HTMLInputElement>(null)
   const bannerWrapperRef = useRef<HTMLDivElement>(null)
   const bannerButtonRef = useRef<HTMLButtonElement>(null)
 
-  const settingsPopupID = `user-dialog-settings`
 
-  // Calc header height
-  useMemo(() => {
-    if (typeof window === 'undefined') return;
 
-    setHeaderHeight(document.querySelector('header')?.offsetHeight || 92)
-  }, [])
 
   // Set popups ids & handle banner hover + dragNdrop
   useEffect(() => {
@@ -245,7 +240,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
         </PopupDialog>
       </PopupLayer>}
 
-      <div className={`bg-dark relative`} style={{ paddingTop: `${headerHeight}px` }}>
+      <div className={`bg-dark relative pt-[16px] sm:pt-[var(--header-height)]`}>
         {/* Image */}
         <div className="w-full h-fit max-h-[500px] aspect-[16/9] relative max-[1140px]:aspect-[16/7]">
           <StyledImage src={bannerURL} width="100%" height="100%" priority alt="banner" className="w-full h-full object-cover" />
@@ -283,7 +278,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   );
 
   function AvatarComponent() {
-    return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px]">
+    return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px] flex-shrink-0">
       <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square max-[820px]:!w-[160px] max-[820px]:!h-[160px]" priority alt="avatar" />
     </div>
   }
@@ -291,7 +286,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   function UserComponent() {
     return <div className="flex flex-col gap-[8px]">
       <div className="flex items-center gap-[16px]">
-        <p className="text-white text-[32px] font-bold max-[1140px]:text-[24px] break-all" title={user.username}>@{user.username}</p>
+        <UIText text={`@${user.username}`} type="h1" className="break-all" />
       </div>
 
       <Tooltip content="Дата реєстрації акаунту">
@@ -381,15 +376,15 @@ export const UserSectionWTRooms: NextPage<{ user: IUser, isOwner: boolean }> = (
 export const UserLibCard: NextPage<{ lib: IUserLib, isOwner: boolean, username: string }> = ({ lib, isOwner, username }) => {
   return (
     <>
-      {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${username}/lib/${lib.id}`} className="grow basis-[290px] p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none max-[1140px]:basis-[250px] max-[880px]:basis-[220px] max-[620px]:basis-[160px]">
-        {lib.type === 'favorite' && <IcoHeartFilled width={128} height={128} fill="#FF464E" className="max-[480px]:w-[80px] max-[480px]:h-[80px]" />}
-        {lib.type === 'watching' && <IcoStack width={128} height={128} className="max-[480px]:w-[80px] max-[480px]:h-[80px]" />}
-        {lib.type === 'plans' && <IcoClockFilled width={128} height={128} className="max-[480px]:w-[80px] max-[480px]:h-[80px]" />}
-        {lib.type === 'watched' && <IcoWatched width={128} height={128} className="max-[480px]:w-[80px] max-[480px]:h-[80px]" />}
-        {lib.type === 'delayed' && <IcoCan width={128} height={128} className="max-[480px]:w-[80px] max-[480px]:h-[80px]" />}
+      {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${username}/lib/${lib.id}`} className="grow basis-[290px] p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px] max-sm:px-[4px] max-sm:py-[8px]">
+        {lib.type === 'favorite' && <IcoHeartFilled width={128} height={128} fill="#FF464E" className="max-sm:w-[80px] max-sm:h-[80px]" />}
+        {lib.type === 'watching' && <IcoStack width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
+        {lib.type === 'plans' && <IcoClockFilled width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
+        {lib.type === 'watched' && <IcoWatched width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
+        {lib.type === 'delayed' && <IcoCan width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
 
-        <div className="flex items-center gap-[8px] max-[480px]:flex-col-reverse">
-          <p className="text-white text-center text-[24px] max-[620px]:text-[16px]">
+        <div className="flex items-center gap-[8px] max-sm:flex-col-reverse">
+          <p className="text-white text-center text-[24px] max-sm:text-[16px]">
             {lib.type === 'favorite' && `Улюблені (${lib.titles.length})`}
             {lib.type === 'watching' && `Переглядаю (${lib.titles.length})`}
             {lib.type === 'plans' && `Плани (${lib.titles.length})`}

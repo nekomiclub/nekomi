@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
@@ -55,8 +55,6 @@ const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
 export const MediaClient: NextPage = () => {
   const user = useAppSelector(state => state.user)
 
-  const [headerHeight, setHeaderHeight] = useState(92)
-
   const [uploadErrors, setUploadErros] = useState<string[]>([])
   const [file, setFile] = useState<File | undefined>(undefined)
   const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false)
@@ -70,14 +68,6 @@ export const MediaClient: NextPage = () => {
 
 
   const fileRef = useRef<HTMLInputElement>(null)
-
-
-  // Calc header height
-  useMemo(() => {
-    if (typeof window === 'undefined') return
-
-    setHeaderHeight(document.querySelector('header')?.offsetHeight || 92)
-  }, [])
 
 
 
@@ -173,7 +163,7 @@ export const MediaClient: NextPage = () => {
 
 
   return (
-    <div className={`wrapper min-h-screen gap-[40px]`} style={{ paddingTop: `${headerHeight}px` }}>
+    <div className={`wrapper min-h-screen gap-[40px] pt-[16px] sm:pt-[var(--header-height)]`}>
       <div className="flex flex-col gap-[8px]">
         <div className="w-full h-[200px] flex items-center justify-center gap-[32px] bg-darkGrey p-[32px]">
           <IcoStar fill="#FF464E" width={64} height={64} />
