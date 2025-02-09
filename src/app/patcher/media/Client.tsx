@@ -8,6 +8,7 @@ import Link from 'next/link';
 
 import { IcoClockOutlined } from '~/assets/Clock';
 import { cn } from '~/components/Components';
+import { HandleClientError } from '~/components/Errors';
 import { $api, $upload } from '~/components/http';
 import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import GroupLabel from '~/components/UI/GroupLabel';
@@ -126,7 +127,7 @@ export const MediaClient: NextPage = () => {
       }
       setUploadStatus('success')
     } catch (e) {
-      console.error(e)
+      HandleClientError(e);
       setUploadStatus('error')
 
       if (e instanceof AxiosError) {
@@ -154,7 +155,7 @@ export const MediaClient: NextPage = () => {
 
       setDeleteStatus('success')
     } catch (e) {
-      console.error(e)
+      HandleClientError(e);
       setDeleteStatus('error')
 
       if (e instanceof AxiosError) {

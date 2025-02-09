@@ -10,6 +10,7 @@ import { config } from '~/config';
 import { cn } from '../Components';
 
 
+
 interface IProps {
   src: string
   width: string
@@ -33,16 +34,7 @@ interface IProps {
   priority?: boolean
 }
 
-async function checkImage(url: string) {
-  try {
-    const res = await fetch(url);
-    const buff = await res.blob();
 
-    return buff.type.startsWith('image/')
-  } catch (e) {
-    return false;
-  }
-}
 
 export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, className, loading, priority, useImg, imageClassName }) => {
   const [isLoaded, setIsLoaded] = useState(false)
@@ -51,13 +43,17 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
   const imageRef = useRef<HTMLImageElement>(null)
 
+
+
   src = src ?? 'https://media.nekomi.club/0849e678-43ee-4f72-ae5a-bb9ff9d86c89'
   alt = alt ?? '...';
   priority = priority ?? undefined;
   loading = loading ?? 'lazy';
 
+
+
+  // Check if image hosted on nekomi
   useMemo(() => {
-    // Check if image domain is nekomi
     setUseDefaultImage(!src.includes(config.domain))
   }, [])
 
@@ -66,10 +62,10 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
       const image = imageRef.current;
       if (!image) return;
 
-      if (image.complete) setIsLoaded(true)
-      image.addEventListener('load', () => setIsLoaded(true))
+      if (image.complete) setIsLoaded(true);
 
-      setIsErrored(!await checkImage(src));
+      image.addEventListener('load', () => setIsLoaded(true));
+      image.addEventListener('error', () => setIsErrored(true));
     })()
   }, [])
 
@@ -84,15 +80,15 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
       {/* Preserved / default image */}
       {useDefaultImage && <>
-        <img src={src} alt={alt} loading={loading} className={cn('w-full h-full z-[1] duration-200 opacity-0', isLoaded && 'opacity-100', imageClassName)} ref={imageRef} />
+        <img src={src} alt={alt} loading={loading} className={cn('w-full h-full duration-200', !isLoaded && 'opacity-100', imageClassName)} ref={imageRef} />
       </>}
 
       {!useDefaultImage && <>
-        <Image src={src} alt={alt} fill loading={loading} className={cn('w-full h-full z-[1] duration-200 opacity-0', isLoaded && 'opacity-100', imageClassName)} ref={imageRef} />
+        <Image src={src} alt={alt} fill loading={loading} sizes="100vw" className={cn('w-full h-full duration-200', !isLoaded && 'opacity-100', imageClassName)} ref={imageRef} />
       </>}
 
       {/* Loading state */}
-      <Skeleton width={'100%'} height={'100%'} className={cn(`absolute -z-[1] top-0 left-0 duration-200`, isLoaded || isErrored ? 'opacity-0' : '')} />
+      {loading === 'lazy' && <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, (isLoaded || isErrored) && 'opacity-0')} />}
     </div>
   )
 }

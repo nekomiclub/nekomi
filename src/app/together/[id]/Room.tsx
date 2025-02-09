@@ -8,6 +8,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { IcoArrow, IcoCan, IcoChain, IcoUser } from '~/assets/Icons';
 import { IcoSocialTelegram } from '~/assets/Social';
 import { cn, copyToClipboard } from '~/components/Components';
+import { HandleClientError } from '~/components/Errors';
 import { getUTC, randomNumber } from '~/components/handlers';
 import { $api, signCSRF } from '~/components/http';
 import KekwPlayer from '~/components/KekwPlayer/KekwPlayer';
@@ -216,11 +217,11 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
           if (isBuffering) {
             video.pause();
           } else {
-            video.play().catch(e => console.error(e));
+            video.play().catch(e => HandleClientError(e));
           }
 
           if (isPlaying) {
-            video.play().catch(e => console.error(e));
+            video.play().catch(e => HandleClientError(e));
           } else {
             video.pause()
           }
@@ -231,7 +232,7 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
           video.currentTime = moment;
         }
       } catch (e) {
-        console.error(e)
+        HandleClientError(e);
       }
     }
   }, [ws])
@@ -494,7 +495,7 @@ function RoomControls() {
       await $api.delete(`/user/together/${room.id}`)
       router.push(`${config.URL.baseURL}`);
     } catch (e) {
-      console.error(e)
+      HandleClientError(e);
     }
   }
 

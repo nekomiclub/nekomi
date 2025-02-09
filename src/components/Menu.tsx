@@ -9,22 +9,24 @@ import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
+import { createStringID } from '~/utils/create-string-id';
 import { IcoGhost, IcoInfo, IcoMicrophone, IcoNekomiLogo, IcoStarRating, IcoUser } from '../assets/Icons';
 import { config } from '../config';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { IDubber } from '../interfaces/IDubber';
 import { ITitle } from '../interfaces/ITitle';
 import { IUser } from '../interfaces/IUser';
-import { routes } from '../routes';
-import userSlice, { userStateDefault } from '../store/reducers/userSlice';
+import { Routes, routes } from '../routes';
+import userSlice, { IUserState, userStateDefault } from '../store/reducers/userSlice';
 
 import { cn } from './Components';
 import { HandleClientError } from './Errors';
-import { createID, parseTitleType, randomNumber } from './handlers';
+import { parseTitleType, randomNumber } from './handlers';
 import { $api } from './http';
 import { getRoute } from './ServerComponents';
 import { NotifySuccess } from './UI/NotifyToast';
 import StyledImage from './UI/StyledImage';
+import { UIText } from './UI/Text.ui';
 
 
 
@@ -50,14 +52,24 @@ interface ISearchResultProps {
   usePatcherRouting: boolean
 }
 
+interface MenuDropProps {
+  isUserAuthorized: boolean
+  user: IUserState
+  logout: () => void
+  pathname: string
+
+  className?: string
+}
 
 
-const Header: NextPage = () => {
+
+const Menu: NextPage = () => {
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const searchPopupId = useId().replaceAll(':', '')
-  const userMenuId = useId().replaceAll(':', '')
+  const userDesktopMenuId = useId().replaceAll(':', '')
+  const userMobileMenuId = useId().replaceAll(':', '')
 
   const user = useAppSelector(state => state.user)
 
@@ -100,7 +112,8 @@ const Header: NextPage = () => {
     <>
       <Search dialogId={searchPopupId} />
 
-      <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200`}>
+      {/* Header menu */}
+      <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200 max-sm:hidden`}>
         <div className="wrapper !flex-row items-center justify-between w-full">
           <div className="flex items-center gap-[40px]">
             <Link href={routes.home.path} className="duration-200 hover:rotate-[5deg] focus-visible:rotate-[5deg] outline-none">
@@ -118,7 +131,7 @@ const Header: NextPage = () => {
             </div>
           </div>
 
-          <DropMenu.Menu gap={16} settings={{ align: 'end' }} className="ui-dropdownMenu--scaleAnimation" state={userDetailsOpened} stateSetter={setUserDetailsOpened} id={userMenuId}>
+          <DropMenu.Menu gap={16} settings={{ align: 'end' }} className="ui-dropdownMenu--scaleAnimation" state={userDetailsOpened} stateSetter={setUserDetailsOpened} id={userDesktopMenuId}>
             <DropMenu.MenuTrigger className="flex items-center gap-[8px] duration-200 relative" anchor>
               {isUserAuthorized && <>
                 {/* User authorized */}
@@ -128,51 +141,86 @@ const Header: NextPage = () => {
               {!isUserAuthorized && <>
                 {/* User is not authorized */}
                 <div className="w-[64px] h-[64px] rounded-[4px] bg-dark-medium flex items-center justify-center">
-                  <MaterialSymbol icon="account_box" size={40} className="text-white" />
+                  <MaterialSymbol icon="no_accounts" size={40} className="text-white" />
                 </div>
               </>}
 
               <MaterialSymbol icon="arrow_drop_down" size={24} className={cn(`text-white duration-200 p-[8px]`, userDetailsOpened && 'rotate-180')} />
             </DropMenu.MenuTrigger>
 
-            <DropMenu.MenuWrapper className="bg-dark-primary border border-dark-light rounded-[4px] w-[200px] flex flex-col">
-              {isUserAuthorized && <>
-                <Link href={`/u/${user.username}`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-                  <MaterialSymbol icon="account_box" size={24} className="text-white" />
-                  <p className="text-white w-full font-manrope">Профіль</p>
-                </Link>
-
-                <Link href={`/u/${user.username}#user-libs`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-                  <MaterialSymbol icon="folder_copy" size={24} className="text-white" />
-                  <p className="text-white w-full font-manrope">Теки</p>
-                </Link>
-
-                <Link href={`/u/${user.username}?openSettings`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-                  <MaterialSymbol icon="settings" size={24} className="text-white" />
-                  <p className="text-white w-full font-manrope">Налаштування</p>
-                </Link>
-
-                {/* Divider */}
-                <span className="w-full h-[1px] block bg-grey"></span>
-
-                <button className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={logout}>
-                  <MaterialSymbol icon="logout" size={24} className="text-primary" />
-                  <p className="text-white text-center w-full font-bold font-manrope">Вийти</p>
-                </button>
-              </>}
-
-              {!isUserAuthorized && <>
-                <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-                  <MaterialSymbol icon="login" size={24} className="text-primary" />
-                  <p className="text-white text-center w-full font-bold font-manrope">Увійти</p>
-                </Link>
-              </>}
-            </DropMenu.MenuWrapper>
+            <MenuDrop isUserAuthorized={isUserAuthorized} user={user} logout={logout} pathname={pathname} />
           </DropMenu.Menu>
         </div >
       </header>
+
+      {/* Mobile menu */}
+      <div className={`fixed bottom-0 left-0 w-full z-[110] bg-dark duration-200 hidden justify-between items-center max-sm:flex`}>
+        <Link href={Routes.home.path} className="ui-menu-mobile_navItem">
+          <MaterialSymbol icon="home" className="text-white" size={24} />
+          <UIText text="Головна" className="font-bold" type="mini" />
+        </Link>
+
+        <PopupButton className="ui-menu-mobile_navItem" togglePopupId={searchPopupId} onClick={focusSearch}>
+          <MaterialSymbol icon="search" className="text-white" size={24} />
+          <UIText text="Пошук" className="font-bold" type="mini" />
+        </PopupButton>
+
+        <Link href={`/u/${user.username}#user-libs`} className="ui-menu-mobile_navItem">
+          <MaterialSymbol icon="folder_copy" className="text-white" size={24} />
+          <UIText text="Теки" className="font-bold" type="mini" />
+        </Link>
+
+        <DropMenu.Menu gap={16} settings={{ align: 'end', direction: 'top' }} className="ui-dropdownMenu--scaleAnimation w-full" state={userDetailsOpened} stateSetter={setUserDetailsOpened} id={userMobileMenuId}>
+          <DropMenu.MenuTrigger className="ui-menu-mobile_navItem" anchor>
+            <div className="w-[24px] h-[24px] relative">
+              <MaterialSymbol icon="menu" className={cn('text-white duration-200 absolute top-0 left-0', userDetailsOpened && 'opacity-0')} size={24} />
+              <MaterialSymbol icon="close" className={cn('text-white duration-200 absolute top-0 left-0', !userDetailsOpened && 'opacity-0')} size={24} />
+            </div>
+
+            <UIText text="Меню" className="font-bold" type="mini" />
+          </DropMenu.MenuTrigger>
+
+          <MenuDrop isUserAuthorized={isUserAuthorized} user={user} logout={logout} pathname={pathname} className="!right-[8px]" />
+        </DropMenu.Menu>
+      </div>
     </>
   );
+}
+
+function MenuDrop({ isUserAuthorized, user, logout, pathname, className }: MenuDropProps) {
+  return <DropMenu.MenuWrapper className={cn(`bg-dark-primary border border-dark-light rounded-[4px] w-[200px] flex flex-col`, className)}>
+    {isUserAuthorized && <>
+      <Link href={`/u/${user.username}`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+        <StyledImage src={user.avatar} width={`24px`} height={`24px`} priority className="rounded-[2px] overflow-hidden" alt="avatar" />
+        <p className="text-white w-full font-manrope">Профіль</p>
+      </Link>
+
+      <Link href={`/u/${user.username}#user-libs`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+        <MaterialSymbol icon="folder_copy" size={24} className="text-white" />
+        <p className="text-white w-full font-manrope">Теки</p>
+      </Link>
+
+      <Link href={`/u/${user.username}?openSettings`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+        <MaterialSymbol icon="settings" size={24} className="text-white" />
+        <p className="text-white w-full font-manrope">Налаштування</p>
+      </Link>
+
+      {/* Divider */}
+      <span className="w-full h-[1px] block bg-grey"></span>
+
+      <button className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={logout}>
+        <MaterialSymbol icon="logout" size={24} className="text-primary" />
+        <p className="text-white text-center w-full font-bold font-manrope">Вийти</p>
+      </button>
+    </>}
+
+    {!isUserAuthorized && <>
+      <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+        <MaterialSymbol icon="login" size={24} className="text-primary" />
+        <p className="text-white text-center w-full font-bold font-manrope">Увійти</p>
+      </Link>
+    </>}
+  </DropMenu.MenuWrapper>
 }
 
 const Search: NextPage<ISearchProps> = ({ dialogId }) => {
@@ -247,7 +295,7 @@ const Search: NextPage<ISearchProps> = ({ dialogId }) => {
       } catch (e) {
         setIsSearchErrored(true);
         setSearchResults([])
-        console.error(`Search error - `, e)
+        HandleClientError(e);
       }
     })()
   }, [debouncedSearchQuery])
@@ -303,7 +351,7 @@ const Search: NextPage<ISearchProps> = ({ dialogId }) => {
           {/* Results */}
           <ul className={`flex-col gap-[8px] max-h-[500px] overflow-y-scroll w-full ${searchResults.length ? 'flex' : 'hidden'}`} ref={resultsRef}>
             {searchResults.map(result => {
-              return <SearchResult result={result} usePatcherRouting={usePatcherRouting} key={`search-placeholder--${result.item?.id ?? createID()}`} />
+              return <SearchResult result={result} usePatcherRouting={usePatcherRouting} key={`search-placeholder--${result.item?.id ?? createStringID(6)}`} />
             })}
           </ul>
         </div>
@@ -377,4 +425,4 @@ function SearchResult({ result, usePatcherRouting }: ISearchResultProps) {
 
 
 
-export default Header;
+export default Menu;

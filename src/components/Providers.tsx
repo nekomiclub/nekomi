@@ -1,12 +1,12 @@
 'use client'
 
 import { ReactNode, useEffect, useState } from 'react'
-import { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
+import { createStringID } from '~/utils/create-string-id';
 import { config } from '../config';
 import { useAppDispatch } from '../hooks/redux';
 import { IWS_OnlineChanged, IWS_SiteConnection, Message, Request, Response } from '../interfaces/IWS';
@@ -14,7 +14,8 @@ import internalsSlice from '../store/reducers/internalsSlice';
 import { IUserState } from '../store/reducers/userSlice';
 import { setupStore } from '../store/store'
 
-import { createID, randomNumber } from './handlers';
+import { HandleClientError } from './Errors';
+import { randomNumber } from './handlers';
 import { $api, signCSRF } from './http';
 import { UIReportModal } from './UI/Report';
 
@@ -67,11 +68,7 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
         router.replace(pathname);
         router.refresh();
       } catch (e) {
-        if (e instanceof AxiosError) {
-          console.error(`[HTTP]: Error occured at state provider while authorizing user via signin token`, e);
-        }
-
-        console.error(`[Unknown]: Error occured at state provider while authorizing user via signin token`, e);
+        HandleClientError(e);
       }
     })()
   }, [])
@@ -116,7 +113,7 @@ const SetupIntertnals: NextPage = () => {
     let SID = sessionStorage.getItem('SID')
 
     if (!SID) {
-      SID = createID();
+      SID = createStringID(8)
       sessionStorage.setItem('SID', SID);
     }
 
@@ -125,7 +122,7 @@ const SetupIntertnals: NextPage = () => {
       try {
         sendPresenceRequest(websocket, SID || 'SID_INVALID')
       } catch (e) {
-        console.error(e)
+        HandleClientError(e);
       }
     }
   }, [])
@@ -166,7 +163,7 @@ const SetupIntertnals: NextPage = () => {
           }
         }
       } catch (e) {
-        console.error(e)
+        HandleClientError(e);
       }
     }
 

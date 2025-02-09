@@ -8,6 +8,8 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import { HandleClientError } from '~/components/Errors';
+import { getUTC } from '~/components/handlers';
 import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';
@@ -18,7 +20,6 @@ import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoPeople, IcoSettings, IcoStack, IcoStar, IcoUpdate, IcoUser, IcoWatched } from '../../../assets/Icons';
 import { IcoSocialTelegram } from '../../../assets/Social';
 import { copyToClipboard } from '../../../components/Components';
-import { addZeroIfNumberSingle } from '../../../components/handlers';
 import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
@@ -141,7 +142,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
       router.push(`${config.URL.bot}?start=linkAccount=${data.token}`)
     } catch (e) {
       setSettingsLinkTelegramStatus('error')
-      console.error(e)
+      HandleClientError(e);
 
       if (e instanceof AxiosError) {
         setTelegramLinkError(e.response?.data.message || e.response?.data.msg)
@@ -185,11 +186,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
       const { data } = await $api.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${user.id}`);
       setBannerURL(data.user.banner)
     } catch (e) {
-      if (e instanceof AxiosError) {
-        setBannerUploadError(`Помилка при оновленні банера - ${e.code}; ${JSON.stringify(e.response?.data)}`)
-      } else {
-        setBannerUploadError(`Помилка при оновленні банера - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
-      }
+      HandleClientError(e);
     }
   }
 
@@ -300,7 +297,7 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
       <Tooltip content="Дата реєстрації акаунту">
         <div className="flex items-center gap-[16px]">
           <IcoCalendar width={32} height={32} />
-          <p className="text-white">{addZeroIfNumberSingle(new Date(user.statistics.accountCreated).getUTCDate())}.{addZeroIfNumberSingle(new Date(user.statistics.accountCreated).getUTCMonth() + 1)}.{new Date(user.statistics.accountCreated).getUTCFullYear()}</p>
+          <p className="text-white">{getUTC(user.statistics.accountCreated).fulldate}</p>
         </div>
       </Tooltip>
     </div>

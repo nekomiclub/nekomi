@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { cn } from '~/components/Components';
+import { HandleClientError } from '~/components/Errors';
 import { UIReportButton } from '~/components/UI/Report';
 import StyledImage from '~/components/UI/StyledImage';
 import { IcoClockFilled } from '../../../assets/Clock';
@@ -77,7 +78,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
       router.push(`${config.URL.baseURL}${Routes.watch_together.path}/${user.id}__${data.id}`);
     } catch (e) {
       setIsCreateWTRoomDisabled(user.togetherRooms.length === 5);
-      console.error(e)
+      HandleClientError(e);
     }
   }
 
@@ -122,7 +123,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
                       'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про нові серії'} />
                   <ManageLib type="plans" lib={user.libs.find(el => el.type === 'plans')!} isInLib={inLibs.includes('plans')}
                     hint={user.isTelegramLinked ?
-                      title.status === 'announcement' && title.year === getUTC().y ?
+                      title.status === 'announcement' && title.year === getUTC().year ?
                         'Ти отримаєш сповіщення про початок трансляції в телеграм' :
                         undefined :
                       'Підключи телеграм в налаштуваннях щоб отримувати сповіщення про початок трансляції'} />
@@ -303,7 +304,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
           folderId: lib.id
         })
       } catch (e) {
-        console.error(e)
+        HandleClientError(e);
       }
     }
 

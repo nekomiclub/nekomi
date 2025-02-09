@@ -1,6 +1,8 @@
 import { useContext, useEffect, useRef } from 'react';
 import { NextPage } from 'next';
 
+import { HandleClientError } from '../Errors';
+
 import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
 
 
@@ -59,9 +61,9 @@ export const KekwPlayerControls: NextPage = () => {
       if (!player) return;
 
       if (document.fullscreenElement) {
-        document.exitFullscreen().catch(e => console.error(e));
+        document.exitFullscreen().catch(e => HandleClientError(e));
       } else {
-        player.requestFullscreen().catch(e => console.error(e));
+        player.requestFullscreen().catch(e => HandleClientError(e));
       }
     })
   }, [])

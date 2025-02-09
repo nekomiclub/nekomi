@@ -1,7 +1,7 @@
 import { MaterialSymbol } from 'react-material-symbols';
 import { toast, ToastContent, ToastContentProps } from 'react-toastify';
 
-import { createID } from '../handlers';
+import { createStringID } from '~/utils/create-string-id';
 
 
 
@@ -40,7 +40,7 @@ function NotifyTrigger({ component, data }: INotifyInnerProps) {
 
 
 function Toast({ closeToast, data }: ToastContentProps) {
-  const id = createID();
+  const id = createStringID(8)
   const { message, title, type } = data as INotifyProps;
 
   const duration = type === 'error' ? 6000 : 3000;

@@ -1,3 +1,5 @@
+'use client'
+
 import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
 import { NextPage } from 'next';
 import Link from 'next/link';

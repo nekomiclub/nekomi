@@ -13,6 +13,7 @@ import { useAppSelector } from '../../hooks/redux';
 import { IDubber } from '../../interfaces/IDubber';
 import { ITitle, ITitleEpisode } from '../../interfaces/ITitle';
 import { cn } from '../Components';
+import { HandleClientError } from '../Errors';
 import { $api } from '../http';
 
 import { KekwPlayerControls } from './Controls';
@@ -662,9 +663,9 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
         // Fullscreen
         case 'KeyF': {
           if (document.fullscreenElement) {
-            document.exitFullscreen().catch(e => console.error(e))
+            document.exitFullscreen().catch(e => HandleClientError(e))
           } else {
-            player.requestFullscreen().catch(e => console.error(e))
+            player.requestFullscreen().catch(e => HandleClientError(e))
           }
 
           break;
@@ -834,13 +835,8 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
       })
 
       viewtimeRef.current = 0;
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        console.log(`HTTP error occured while saving user progress - ${err.response?.data?.msg}`)
-      } else {
-        console.log(`An error occured while saving user progress - `)
-        console.error(err)
-      }
+    } catch (e) {
+      HandleClientError(e)
     }
 
     localStorage.setItem('kekwplayer_data', JSON.stringify(data.filter(el => el.id !== title.id)))
@@ -913,9 +909,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     if (!stopPlayback) {
       try {
         await video.play()
-      } catch (e) {
-
-      }
+      } catch (e) { }
     }
   }
 

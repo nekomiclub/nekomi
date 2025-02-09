@@ -24,7 +24,7 @@ import { TRoleCapability } from '~/interfaces/IRoles';
 import { IUser } from '~/interfaces/IUser';
 import { IUserState } from '~/store/reducers/userSlice';
 import Footer from '../components/Footer';
-import Header from '../components/Header';
+import Header from '../components/Menu';
 import { config, metaObject } from '../config';
 import { ILayoutProps } from '../interfaces/IRSC';
 

@@ -59,8 +59,6 @@ export async function generateMetadata(
       }
     })
   } catch (e) {
-    console.error(e)
-
     return metaObject({ title: `Тека не знайдена`, description: `Ця тека не знайдена у @${params.username}`, robots: ['nofollow', 'noindex'] })
   }
 }
