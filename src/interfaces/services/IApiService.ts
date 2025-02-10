@@ -87,3 +87,12 @@ export interface IDubberDeleteMemberByIdProps {
 export interface IDubberGetInviteByIdProps {
   dubberId: string
 }
+
+export interface IAnimeGetSearch {
+  /** Query ~all will return all anime's */
+  q: string
+}
+
+export interface IAnimeGetSearchResult {
+  anime: ITitle
+}

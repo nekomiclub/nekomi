@@ -6,6 +6,7 @@ import { createContext, memo, useContext, useEffect, useRef, useState } from 're
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleClientError } from '~/components/Errors';
 import { getUTC } from '~/components/handlers';
@@ -13,6 +14,7 @@ import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import GroupLabel from '~/components/UI/GroupLabel';
 import StyledImage from '~/components/UI/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
+import API from '~/services/ApiService';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoNekomiLogo, IcoPlus, IcoUpdate } from '../../../assets/Icons';
 import { cn } from '../../../components/Components';
 import { $api } from '../../../components/http';
@@ -20,7 +22,7 @@ import Tooltip from '../../../components/UI/Tooltip';
 import { config, CONSTS } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 import { AnimeAgeRates, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
-import { routes } from '../../../routes';
+import { Routes, routes } from '../../../routes';
 
 import { IPatcherSelectOption, PatcherEpisodeGroup, PatcherEpisodeMeta, PatcherField, PatcherSelect } from './Components';
 import { PactherStack } from './PatcherStack';
@@ -1085,7 +1087,15 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
     } catch (e) {
       HandleClientError(e);
     }
+  }
 
+  async function getRandAnime() {
+    try {
+      const { results } = await API.searchAnime({ q: '' }, { woMalId: true });
+      router.replace(`${config.URL.baseURL}/${Routes.patcher_title.path}/${results[0].anime.id}`)
+    } catch (e) {
+      HandleClientError(e)
+    }
   }
 
 
@@ -1123,6 +1133,11 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
             {canTitleAdd && <button className="flex items-center px-[16px] py-[8px] rounded-[2px] bg-grey duration-200 hover:bg-purple focus-visible:bg-purple gap-[16px] shrink-0" onClick={createNewTitle}>
               <IcoPlus width={24} height={24} />
               <p className="text-white uppercase">створити новий</p>
+            </button>}
+
+            {canTitleEdit && <button className="ui-button flex gap-[16px] items-center px-[16px] py-[8px] rounded-[2px] shrink-0" onClick={getRandAnime}>
+              <MaterialSymbol icon="update" size={24} className="text-white" />
+              <p className="text-white uppercase">без mal id</p>
             </button>}
 
             {/* Divider */}

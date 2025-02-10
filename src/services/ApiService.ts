@@ -1,7 +1,15 @@
 import { $api } from '~/components/http';
-import { IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberGetOneByQueryProps, IDubberGetOneByQueryResponse, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/IApiService';
+import { IAnimeGetSearch, IAnimeGetSearchResult, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberGetOneByQueryProps, IDubberGetOneByQueryResponse, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/IApiService';
 
 
+
+interface SearchAnimeParams {
+  /** Find all anime's */
+  all?: boolean
+
+  /** Find all aninme's without mal_id specified */
+  woMalId?: boolean
+}
 
 class ApiService {
   //* =============== DUBBER ROUTER
@@ -93,6 +101,22 @@ class ApiService {
       params: {
         q,
         parseInvitationStatusFor
+      }
+    });
+
+    return data;
+  }
+
+
+
+  //* =============== ANIME ROUTER
+  async searchAnime({ q }: IAnimeGetSearch, params?: SearchAnimeParams) {
+    if (params?.all) q = '~all';
+    if (params?.woMalId) q = '~wo-mal-id';
+
+    const { data } = await $api.get<{ results: IAnimeGetSearchResult[] }>(`/anime/search`, {
+      params: {
+        q
       }
     });
 

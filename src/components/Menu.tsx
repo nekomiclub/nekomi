@@ -229,6 +229,7 @@ const Search: NextPage<ISearchProps> = ({ dialogId }) => {
   const [isSearchErrored, setIsSearchErrored] = useState(false);
   const [isHintShowed, setIsHintShowed] = useState(true)
   const [isPatcherHintShowed, setIsPatcherHintShowed] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<ISearchExtended[]>([])
@@ -310,12 +311,13 @@ const Search: NextPage<ISearchProps> = ({ dialogId }) => {
 
     setIsPatcherHintShowed(route === routes.patcher_title.path)
     setUsePatcherRouting(route === routes.patcher_title.path)
+    setIsSearchOpen(false);
   }, [pathname])
 
 
 
   return <PopupLayer className="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center max-[700px]:items-start">
-    <PopupDialog id={dialogId} className="w-full max-w-[800px] px-[24px] py-[32px] max-[700px]:px-[8px]">
+    <PopupDialog id={dialogId} className="w-full max-w-[800px] px-[24px] py-[32px] max-[700px]:px-[8px]" state={isSearchOpen} stateSetter={setIsSearchOpen}>
       <div className="bg-dark w-full rounded-[4px]">
         <input type="text" autoComplete="off" className="px-[16px] py-[8px] placeholder:text-lightGrey text-white border-b-[1px] border-b-darkGrey bg-transparent w-full" placeholder="Що шукаємо сьогодні?" value={searchQuery} onChange={e => setSearchQuery((e.target as HTMLInputElement).value)} id="search-searchBar" />
 
