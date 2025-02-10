@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
@@ -111,7 +110,7 @@ export const DubberAnswerInvite: NextPage<{ dubber: IDubber, invite?: 'accept' |
 
 export const DubberBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]">
-    <Image src={dubber.banner} fill alt={`Team banner`} />
+    <StyledImage src={dubber.banner} width="100%" height="100%" alt={`Team banner`} />
 
     <UIReportButton className="!absolute top-[8px] right-[8px] opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" type="icon" text="Поскаржитися на команду озвучення" />
   </div>
@@ -124,7 +123,7 @@ export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
     {/* Avatar placeholder */}
     <div className="relative w-[256px] h-[128px] shrink-0 max-md:w-[128px] max-md:h-[64px]">
-      <Image src={dubber.avatar} width={256} height={256} alt="Dubber avatar" className="absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px] max-md:w-[128px] max-md:h-[128px] max-md:top-[-64px]" />
+      <StyledImage src={dubber.avatar} width={'256px'} height={'256px'} alt="Dubber avatar" className="absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px] max-md:w-[128px] max-md:h-[128px] max-md:top-[-64px]" />
     </div>
 
     <div className="w-full flex items-center justify-between gap-[24px]">
@@ -156,7 +155,7 @@ export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
 
     <div className="w-full h-[1px] bg-dark-light"></div>
 
-    {dubber.description && <p className="w-full text-white text-[24px] font-manrope max-lg:text-[16px]">{dubber.description}</p>}
+    {dubber.description && <p className="w-full text-white text-[20px] font-manrope max-lg:text-[16px]">{dubber.description}</p>}
     {!dubber.description && <p className="w-full text-grey-new font-manrope italic">Опис відсутній</p>}
   </div>
 }

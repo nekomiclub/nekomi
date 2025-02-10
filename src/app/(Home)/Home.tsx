@@ -3,12 +3,12 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import * as loader from '@uiball/loaders';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useIdleTimer } from 'react-idle-timer';
 import { MaterialSymbol } from 'react-material-symbols';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+import StyledImage from '~/components/StyledImage';
 import { IcoClockOutlined } from '../../assets/Clock';
 import { IcoGhost, IcoNekomiLogo, IcoStar, IcoStarRating } from '../../assets/Icons';
 import { cn, TitleCard } from '../../components/Components';
@@ -200,7 +200,7 @@ function PosterScreen({ featured, watchProgress }: { isMobile: boolean, featured
   return <>
     {/* Background */}
     <div className="w-full h-full absolute top-0 left-0">
-      <Image src={featured.backgroundURL} fill alt="..." loading="eager" priority />
+      <StyledImage src={featured.backgroundURL} width="100%" height="100%" alt="..." loading="eager" priority />
       <div className="absolute top-0 left-0 w-full h-full bg-dark/[.4] z-[2]"></div>
     </div>
 

@@ -1,15 +1,9 @@
 @import './colors.scss';
+@import './vars.scss';
 
 :root {
   --header-height: 96px;
 }
-
-// Breakpoints
-$break-sm: 640px;
-$break-md: 768px;
-$break-lg: 1024px;
-$break-xl: 1280px;
-$break-2xl: 1536px;
 
 .ui {
   &-notifyToast {

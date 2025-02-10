@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
@@ -122,7 +121,7 @@ export const DubberSettingsBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) 
 
 
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]" ref={bannerRef}>
-    <Image src={bannerURL} fill alt={`Team banner`} />
+    <StyledImage src={bannerURL} width="100%" height="100%" alt={`Team banner`} />
 
     <div className="w-[32px] h-[32px] flex justify-center items-center rounded-[32px] absolute top-[8px] right-[8px] opacity-[.5] bg-dark-primary">
       <MaterialSymbol icon="edit" size={16} color="#fff" />
@@ -532,7 +531,7 @@ const DubberSettingsAvatar: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
 
 
   return <div className="w-[256px] h-[256px] absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px] max-md:w-[128px] max-md:h-[128px] max-md:top-[-64px]" ref={avatarRef}>
-    <Image src={avatarURL} fill alt="Dubber avatar" />
+    <StyledImage src={avatarURL} width="100%" height="100%" alt="Dubber avatar" />
 
     <div className="w-[32px] h-[32px] flex justify-center items-center rounded-[32px] absolute top-[8px] right-[8px] opacity-[.5] bg-dark-primary">
       <MaterialSymbol icon="edit" size={16} color="#fff" />

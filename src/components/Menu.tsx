@@ -135,7 +135,7 @@ const Menu: NextPage = () => {
             <DropMenu.MenuTrigger className="flex items-center gap-[8px] duration-200 relative" anchor>
               {isUserAuthorized && <>
                 {/* User authorized */}
-                <StyledImage src={user.avatar} width={`64px`} height={`64px`} priority className="rounded-[4px] overflow-hidden" alt="avatar" />
+                <StyledImage src={user.avatar} width={`64px`} height={`64px`} loading="eager" priority className="rounded-[4px] overflow-hidden" alt="avatar" />
               </>}
 
               {!isUserAuthorized && <>
@@ -165,10 +165,10 @@ const Menu: NextPage = () => {
           <UIText text="Пошук" className="font-bold" type="mini" />
         </PopupButton>
 
-        <Link href={`/u/${user.username}#user-libs`} className="ui-menu-mobile_navItem">
+        {isUserAuthorized && <Link href={`/u/${user.username}#user-libs`} className="ui-menu-mobile_navItem">
           <MaterialSymbol icon="folder_copy" className="text-white" size={24} />
           <UIText text="Теки" className="font-bold" type="mini" />
-        </Link>
+        </Link>}
 
         <DropMenu.Menu gap={16} settings={{ align: 'end', direction: 'top' }} className="ui-dropdownMenu--scaleAnimation w-full" state={userDetailsOpened} stateSetter={setUserDetailsOpened} id={userMobileMenuId}>
           <DropMenu.MenuTrigger className="ui-menu-mobile_navItem" anchor>
@@ -325,7 +325,7 @@ const Search: NextPage<ISearchProps> = ({ dialogId }) => {
           {/* Hint */}
           <div className={`flex gap-[8px] items-center ${isHintShowed && !isSearchErrored ? '' : 'opacity-0 invisible absolute'}`}>
             <IcoInfo width={16} height={16} fill="#747474" />
-            <p className="text-[12px] text-lightGrey">Ти можеш знайти юзера чи даббера через <b className="text-lightGrey font-bold">@</b></p>
+            <p className="text-[12px] text-lightGrey">Ти можеш знайти користувача чи команду озвучення через <b className="text-lightGrey font-bold">@</b></p>
           </div>
 
           {/* Patcher hint */}
