@@ -17,14 +17,14 @@ import { cookies, headers } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
+import { ErrorNoConnection } from '~/components/Errors';
 import { $api } from '~/components/http';
 import { StateProvider } from '~/components/Providers';
 import { TRoleCapability } from '~/interfaces/IRoles';
 import { IUser } from '~/interfaces/IUser';
 import { IUserState } from '~/store/reducers/userSlice';
-import { ServerUnavailable } from '../components/Components';
 import Footer from '../components/Footer';
-import Header from '../components/Header';
+import Header from '../components/Menu';
 import { config, metaObject } from '../config';
 import { ILayoutProps } from '../interfaces/IRSC';
 
@@ -60,7 +60,6 @@ export default async function Layout({ children, params }: ILayoutProps) {
   const url = (await headers()).get('x-url')!;
   const cookie = await cookies();
   const sessionCookie = cookie.get(config.vars.SessionCookie)?.value;
-  const signinToken = new URL(url).searchParams.get('signinPayload');
 
   /** Check is server online */
   let isServerOnline = false;
@@ -69,12 +68,10 @@ export default async function Layout({ children, params }: ILayoutProps) {
   try {
     await axios.options(config.URL.apiHTTP)
     isServerOnline = true;
-  } catch (e) {
-    isServerOnline = false;
-  }
+  } catch (e) { }
 
   // Get user by cookie
-  if (sessionCookie) {
+  if (sessionCookie && isServerOnline) {
     try {
       const { data } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/*`, {
         params: {
@@ -116,7 +113,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
         <SpeedInsights />
 
         {/* Return server unavailable screen if server do not respond */}
-        {!isServerOnline && <ServerUnavailable />}
+        {!isServerOnline && <ErrorNoConnection />}
 
         {/* Return layout if server respond */}
         {isServerOnline && <StateProvider user={user}>

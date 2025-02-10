@@ -1,10 +1,8 @@
-import { AxiosError } from 'axios';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { HappenedWrongScreen, NotFoundScreen } from '~/components/Components';
-import { getUTC } from '~/components/handlers';
-import { config, devMode, metaObject } from '~/config';
+import { HandleServerError } from '~/components/Errors';
+import { config, metaObject } from '~/config';
 import { CheckUserAccess } from '~/helpers/Authorization';
 import { IDubber } from '~/interfaces/IDubber';
 import { IRSCProps } from '~/interfaces/IRSC';
@@ -38,26 +36,10 @@ export default async function RSC({ params }: IRSCProps) {
       useCache: false
     })
 
-    dubber = data.dubber;
+    dubber = data.dubber!;
     members = data.parsedMembers!;
   } catch (e) {
-    if (e instanceof AxiosError) {
-      const code = e.response?.data?.code || 500;
-
-      devMode ? console.error(e.response?.data) : null;
-
-      if (code === 404) {
-        return <NotFoundScreen />
-      } else if (code === 400) {
-        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
-      } else {
-        return <HappenedWrongScreen cause={e.message} />
-      }
-    } else {
-      const date = `${getUTC().date} ${getUTC().time}`
-      console.error(`[${date}]: Server error occured at w/query - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
-      return <HappenedWrongScreen cause={`Server error occured at w/query. See logs at ${date}`} />;
-    }
+    return HandleServerError(e)
   }
 
   // Skip checks if user is root or admin
@@ -70,7 +52,7 @@ export default async function RSC({ params }: IRSCProps) {
 
 
 
-  return user && <section className="wrapper pt-[92px] gap-[16px]">
+  return user && <section className="wrapper pt-[16px] sm:pt-[var(--header-height)] gap-[16px]">
     <DubberSettingsBanner dubber={dubber} />
 
     <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">

@@ -1,4 +1,5 @@
 import { IDubber, TDubberMemberRole } from '../IDubber'
+import { ITitle } from '../ITitle'
 import { IUser } from '../IUser'
 
 export interface IDubberGetOneByQueryProps {
@@ -7,10 +8,30 @@ export interface IDubberGetOneByQueryProps {
   fetchDubbedAnime?: boolean
   parseMembers?: boolean
 
+  /** Fetch only dubber metadata, will set dubber to null */
+  metadataOnly?: boolean
+
   /** Use cache
    * @default true
    */
   useCache?: boolean
+}
+
+export interface IDubberGetOneByQueryResponse {
+  status: number
+  message: string
+
+  /** Will be null only if metadataOnly is true */
+  dubber: IDubber | null
+
+  dubbedAnime: ITitle[] | undefined
+  parsedMembers: IUser[] | undefined
+  metadata: {
+    title: string
+    description: string
+    keywords: string[]
+    photo: string
+  } | undefined
 }
 
 export interface IDubberPutAvatarProps {
@@ -65,4 +86,13 @@ export interface IDubberDeleteMemberByIdProps {
 
 export interface IDubberGetInviteByIdProps {
   dubberId: string
+}
+
+export interface IAnimeGetSearch {
+  /** Query ~all will return all anime's */
+  q: string
+}
+
+export interface IAnimeGetSearchResult {
+  anime: ITitle
 }

@@ -5,7 +5,6 @@ import { TAnimeSeason } from '../interfaces/ITitle';
 
 
 
-
 /** Parse country.
  * @example
  * parseTitleCountry('japan') => 'Японія'
@@ -112,20 +111,6 @@ export function parseTitleSeason(season: TAnimeSeason): string {
 
 
 
-/** Get object key by value
- * @example 
- * getKeyByValue({a: 42, b: 'boo'}, 'boo') => 'b'
- * getKeyByValue({a: 42, b: 'boo'}, 'foo') => undefined
- */
-export function getKeyByValue(object: Object, value: string): string | undefined {
-  return Object.keys(object).find(key => object[key] === value);
-}
-
-/** @returns ID */
-export function createID(): string {
-  return (Math.random() + 1).toString(36).substring(8)
-}
-
 /** Timestamp to date
  * @returns localizedMonth is month on ukranian
  */
@@ -178,7 +163,7 @@ export function timestampToDayMonth(timestamp: number) {
   const day = String(new Date(timestamp).getDate()).padStart(2, '0');
   const year = new Date(timestamp).getFullYear();
 
-  return `${day} ${localizedMonth}${getUTC().y !== year ? ` ${year}` : ''}`
+  return `${day} ${localizedMonth}${getUTC().year !== year ? ` ${year}` : ''}`
 }
 
 /** Get random number in range
@@ -202,34 +187,59 @@ export function wordDeclination(number: number, words_arr: string[]) {
   return words_arr[1];
 }
 
-/** Turn number to string & add zero before number if it less than 10
- * @version re-1.0.0
+/** Get UTC date
+ * @param timestamp Timestamp to start from. Default - now
  */
-export function addZeroIfNumberSingle(num: number): string {
-  return num <= 9 ? `0${num}` : `${num}`;
-}
+export function getUTC(timestamp?: number | null): {
+  year: number
+  /** January is first month, december is 12 */
+  month: number
+  date: number
+  weekDay: number
+  hrs: number
+  mins: number
+  secs: number
+  ms: number
+  timestamp: number
+  /** Time
+   * @returns 'hh:mm'
+   */
+  time: string
+  /** Accurate time
+   * @returns 'hh:mm:ss.mss'
+   */
+  timeAccurate: string
+  /** European fulldate
+   * @returns 'dd.mm.yyyy'
+   */
+  fulldate: string
+} {
+  const now = timestamp ? new Date(timestamp) : new Date();
 
-/** Get full UTC0 time
- * @requires addZeroIfNumberSingle()
- */
-export function getUTC(time?: number) {
-  const now = time ? new Date(time) : new Date();
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const date = String(now.getUTCDate()).padStart(2, '0');
+  const weekDay = now.getUTCDay();
+  const hrs = String(now.getUTCHours()).padStart(2, '0');
+  const mins = String(now.getUTCMinutes()).padStart(2, '0');
+  const secs = String(now.getUTCSeconds()).padStart(2, '0');
+  const ms = String(now.getUTCMilliseconds()).padStart(4, '0');
 
   return {
-    y: now.getUTCFullYear(),
-    m: now.getUTCMonth() + 1,
-    d: now.getUTCDate(),
-    hrs: now.getUTCHours(),
-    mins: now.getUTCMinutes(),
-    secs: now.getUTCSeconds(),
-    ms: now.getUTCMilliseconds(),
-    date: `${now.getUTCFullYear()}.${addZeroIfNumberSingle(now.getUTCMonth() + 1)}.${addZeroIfNumberSingle(now.getUTCDate())}`,
-    dateReversed: `${addZeroIfNumberSingle(now.getUTCDate())}.${addZeroIfNumberSingle(now.getUTCMonth() + 1)}.${now.getUTCFullYear()}`,
-    time: `${addZeroIfNumberSingle(now.getUTCHours())}:${addZeroIfNumberSingle(now.getUTCMinutes())}`,
-    timestamp: now.getTime()
+    year,
+    month: +month,
+    date: +date,
+    weekDay,
+    hrs: +hrs,
+    mins: +mins,
+    secs: +secs,
+    ms: +ms,
+    timestamp: now.getTime(),
+    fulldate: `${date}.${month}.${year}`,
+    time: `${hrs}:${mins}`,
+    timeAccurate: `${hrs}:${mins}:${secs}.${ms}`,
   };
 }
-
 interface ITokenPayload<T> {
   /** Can be null if method not provided */
   verified: boolean | null
@@ -279,27 +289,6 @@ export function decodeToken<T = any>(token: string): ITokenPayload<T> {
   }
 }
 
-/** Get file extension from file name
- * @example
- * getFileExtension('file.txt') => txt
- * getFileExtension('file.test.txt') => txt
- */
-export function getFileExtension(filename: string): string {
-  return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || filename;
-}
-
-export function makeStringID(length: number, excludeNumbers?: boolean) {
-  let result = '';
-  const characters = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz${excludeNumbers ? '' : '0123456789'}`;
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
-  }
-  return result;
-}
-
 export function parseVideoQuality(quality: TVideoQuality) {
   switch (quality) {
     case 'q4k': return '4K';
@@ -309,5 +298,3 @@ export function parseVideoQuality(quality: TVideoQuality) {
     case 'q240': return '240p';
   }
 }
-
-export { HandleClientError } from '~/helpers/ErrorHandling'

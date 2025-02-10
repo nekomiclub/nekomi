@@ -1,26 +1,26 @@
 import { $api } from '~/components/http';
-import { IDubber } from '~/interfaces/IDubber';
-import { ITitle } from '~/interfaces/ITitle';
-import { IUser } from '~/interfaces/IUser';
-import { IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberGetOneByQueryProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/IApiService';
+import { IAnimeGetSearch, IAnimeGetSearchResult, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberGetOneByQueryProps, IDubberGetOneByQueryResponse, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/IApiService';
 
 
+
+interface SearchAnimeParams {
+  /** Find all anime's */
+  all?: boolean
+
+  /** Find all aninme's without mal_id specified */
+  woMalId?: boolean
+}
 
 class ApiService {
   //* =============== DUBBER ROUTER
-  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache }: IDubberGetOneByQueryProps) {
-    const { data } = await $api.get<{
-      dubber: IDubber
-      /** @requires detailed, fetchDubbedAnime */
-      dubbedAnime?: ITitle[]
-      /** @requires detailed, parseMembers */
-      parsedMembers?: IUser[]
-    }>(`/dubber/${query}`, {
+  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache, metadataOnly }: IDubberGetOneByQueryProps) {
+    const { data } = await $api.get<IDubberGetOneByQueryResponse>(`/dubber/${query}`, {
       params: {
         detailed,
         fetchDubbedAnime,
         parseMembers,
-        useCache
+        useCache,
+        metadataOnly
       }
     });
 
@@ -101,6 +101,22 @@ class ApiService {
       params: {
         q,
         parseInvitationStatusFor
+      }
+    });
+
+    return data;
+  }
+
+
+
+  //* =============== ANIME ROUTER
+  async searchAnime({ q }: IAnimeGetSearch, params?: SearchAnimeParams) {
+    if (params?.all) q = '~all';
+    if (params?.woMalId) q = '~wo-mal-id';
+
+    const { data } = await $api.get<{ results: IAnimeGetSearchResult[] }>(`/anime/search`, {
+      params: {
+        q
       }
     });
 

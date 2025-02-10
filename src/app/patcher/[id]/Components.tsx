@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { IcoArrow, IcoCan, IcoLock, IcoPlay, IcoPlus, IcoUpdate } from '~/assets/Icons'
 import { cn } from '~/components/Components'
 import { getUTC } from '~/components/handlers'
-import StyledImage from '~/components/UI/StyledImage'
+import StyledImage from '~/components/StyledImage'
 import Tooltip from '~/components/UI/Tooltip'
 import { IDubber } from '~/interfaces/IDubber'
 import { ITitleEpisodeMeta } from '~/interfaces/ITitle'
@@ -255,7 +255,7 @@ export const PatcherEpisodeMeta: NextPage<IPatcherEpisodeMetaProps> = ({ meta, s
     <div className="flex gap-[16px]">
       <div className="flex flex-col gap-[4px]">
         <p className="text-white text-[24px] font-bold max-[880px]:text-[16px]">#{meta.order}</p>
-        <p className="text-lightGrey">{getUTC(meta.dateOut).dateReversed}</p>
+        <p className="text-lightGrey">{getUTC(meta.dateOut).fulldate}</p>
       </div>
 
       <div className="flex flex-col gap-[4px]">

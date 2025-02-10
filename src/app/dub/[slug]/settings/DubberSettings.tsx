@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
@@ -11,11 +10,12 @@ import { useDebounce } from 'use-debounce';
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '~/assets/Social';
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/assets/Support';
 import { cn } from '~/components/Components';
-import { HandleClientError, timestampToDayMonth, wordDeclination } from '~/components/handlers';
+import { HandleClientError } from '~/components/Errors';
+import { timestampToDayMonth, wordDeclination } from '~/components/handlers';
+import StyledImage from '~/components/StyledImage';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
-import StyledImage from '~/components/UI/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
 import { parseDubberRole } from '~/helpers/DubberHelpers';
 import { useAppSelector } from '~/hooks/redux';
@@ -121,7 +121,7 @@ export const DubberSettingsBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) 
 
 
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]" ref={bannerRef}>
-    <Image src={bannerURL} fill alt={`Team banner`} />
+    <StyledImage src={bannerURL} width="100%" height="100%" alt={`Team banner`} />
 
     <div className="w-[32px] h-[32px] flex justify-center items-center rounded-[32px] absolute top-[8px] right-[8px] opacity-[.5] bg-dark-primary">
       <MaterialSymbol icon="edit" size={16} color="#fff" />
@@ -531,7 +531,7 @@ const DubberSettingsAvatar: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
 
 
   return <div className="w-[256px] h-[256px] absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px] max-md:w-[128px] max-md:h-[128px] max-md:top-[-64px]" ref={avatarRef}>
-    <Image src={avatarURL} fill alt="Dubber avatar" />
+    <StyledImage src={avatarURL} width="100%" height="100%" alt="Dubber avatar" />
 
     <div className="w-[32px] h-[32px] flex justify-center items-center rounded-[32px] absolute top-[8px] right-[8px] opacity-[.5] bg-dark-primary">
       <MaterialSymbol icon="edit" size={16} color="#fff" />
@@ -700,7 +700,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
 
   return <div className="w-full rounded-[2px] border border-dark-medium flex justify-between gap-[16px] items-center p-[8px] max-md:items-start">
     <div className="w-full">
-      <Link href={`${Routes.user_profile.path}/${user.username}`} target="_blank" className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]">
+      <Link href={`${Routes.user_profile.path}/${user.username}`} className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]">
         <StyledImage src={user.avatar} width="48px" height="48px" className="rounded-[4px] overflow-hidden" />
 
         <div className="flex flex-col gap-[4px]">

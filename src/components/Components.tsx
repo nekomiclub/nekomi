@@ -1,7 +1,5 @@
 'use client'
 
-import '../styles/components/GeneralComponents.scss'
-
 import React, { useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { NextPage } from 'next';
@@ -9,29 +7,17 @@ import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { useAppSelector } from '~/hooks/redux';
-import { IcoGhost, IcoHome, IcoOffline, IcoPlay } from '../assets/Icons';
+import { IcoGhost, IcoHome, IcoOffline } from '../assets/Icons';
 import { animeGenres } from '../config';
 import { ITitle } from '../interfaces/ITitle';
 import { Routes, routes } from '../routes';
 
 import { secondsToReadable } from './KekwPlayer/KekwPlayer';
-import StyledImage from './UI/StyledImage';
+import StyledImage from './StyledImage';
 
 import CatImg from '../assets/img/oopsIndevCat.png';
 
 
-
-export const WatchButton: NextPage<{ href: string, className?: string, gradient: 'primary' | 'secondary' }> = ({ gradient, href, className }) => {
-  return (
-    <Link href={href} className={`gradient--${gradient}-border-4 gradient--${gradient}-hover watchButton watchButton--${gradient} px-[16px] py-[16px] flex items-center gap-[24px] ${className ? className : ''}`}>
-      <div className="relative">
-        <IcoPlay width={40} height={40} fill={gradient === 'primary' ? '#FF464E' : '#FF9966'} className={`watchButton-icoGradient watchButton--${gradient}`} />
-        <IcoPlay width={40} height={40} className={`watchButton-icoWhite watchButton--${gradient}`} />
-      </div>
-      <p className="text-white text-[24px] font-bold uppercase">дивитись</p>
-    </Link>
-  )
-}
 
 export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
   const user = useAppSelector(state => state.user);

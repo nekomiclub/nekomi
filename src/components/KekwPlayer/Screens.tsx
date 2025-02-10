@@ -6,7 +6,7 @@ import { NextPage } from 'next';
 import { ITitleEpisodeMeta } from '~/interfaces/ITitle';
 import { cn } from '../Components';
 import { wordDeclination } from '../handlers';
-import StyledImage from '../UI/StyledImage';
+import StyledImage from '../StyledImage';
 
 import { IKekwPlayerContextProps, KekwPlayerContext, secondsToReadable } from './KekwPlayer';
 

@@ -1,4 +1,9 @@
 @import './colors.scss';
+@import './vars.scss';
+
+:root {
+  --header-height: 96px;
+}
 
 .ui {
   &-notifyToast {
@@ -58,6 +63,81 @@
           scale: 1;
         }
       }
+    }
+  }
+
+  &-button {
+    background: $darkMedium;
+    border: 1px solid $darkLight;
+    transition: .2s ease-in-out;
+    border-radius: 4px;
+
+    &:hover,
+    &:focus-visible {
+      background: $darkLight;
+    }
+
+    &:active {
+      scale: .95;
+    }
+  }
+
+  &-text {
+    font-family: var(--font-manrope);
+    font-size: 16px;
+    font-weight: 400;
+    font-style: normal;
+    color: $white;
+
+    &--h1 {
+      font-size: 32px;
+      font-weight: 700;
+
+      @media only screen and (max-width: $break-md) {
+        font-size: 24px;
+      }
+    }
+
+    &--h2 {
+      font-size: 24px;
+      font-weight: 700;
+
+      @media only screen and (max-width: $break-md) {
+        font-size: 20px;
+      }
+    }
+
+    &--h3 {
+      font-size: 20px;
+      font-weight: 700;
+
+      @media only screen and (max-width: $break-sm) {
+        font-size: 16px;
+      }
+    }
+
+    &--mini {
+      font-size: 14px;
+    }
+  }
+
+  &-menu {
+    &-mobile {
+      &_navItem {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        align-items: center;
+        transition: .2s ease-in-out;
+        padding: 12px 8px;
+      }
+    }
+  }
+
+  &-hideScroll {
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
 }

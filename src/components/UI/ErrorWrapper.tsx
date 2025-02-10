@@ -13,6 +13,7 @@ interface IErrorWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
 
 
 
+/** @deprecated use NotifyError instead */
 const ErrorWrapper: NextPage<IErrorWrapperProps> = ({ id, className, errorNodeClassName, errors, ...props }) => {
   return <div className={cn(`px-[16px] py-[8px] flex items-start gap-[16px] bg-red/[.2] border border-red rounded-[2px]`, errors.length === 1 && 'items-center', className)} id={`error-wrapper--${id}`} {...props}>
     <IcoGhost width={32} height={32} />

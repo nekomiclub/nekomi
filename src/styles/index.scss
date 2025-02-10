@@ -1,4 +1,5 @@
 @use 'colors.scss';
+@import './vars.scss';
 
 $fontColor: #000;
 $fontSize: 16px;
@@ -28,6 +29,11 @@ img {
   position: relative;
   object-fit: cover;
   object-position: center;
+  user-select: none;
+
+  // Fix IOS border radius
+  -webkit-mask-image: -webkit-radial-gradient(white, black); /* For Safari */
+  mask-image: radial-gradient(white, black); /* Standard syntax */
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -55,16 +61,14 @@ input[type=number] {
   position: relative;
 }
 
-// md
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: $break-md) {
   .wrapper {
     padding-right: 16px;
     padding-left: 16px;
   }
 }
 
-// sm
-@media only screen and (max-width: 640px) {
+@media only screen and (max-width: $break-sm) {
   .wrapper {
     padding-right: 8px;
     padding-left: 8px;

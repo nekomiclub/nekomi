@@ -3,6 +3,7 @@ import { NextPage } from 'next';
 
 import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '~/assets/PlayerPiP';
 import { cn } from '../Components';
+import { HandleClientError } from '../Errors';
 
 import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
 
@@ -23,9 +24,9 @@ export const KekwPlayerPiP: NextPage = () => {
     }
 
     if (document.pictureInPictureElement) {
-      document.exitPictureInPicture().catch(e => console.error(e));
+      document.exitPictureInPicture().catch(e => HandleClientError(e));
     } else {
-      video.requestPictureInPicture().catch(e => console.error(e))
+      video.requestPictureInPicture().catch(e => HandleClientError(e))
     }
   }
 

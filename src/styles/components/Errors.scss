@@ -1,0 +1,21 @@
+@import '../colors.scss';
+
+.error {
+  &-wrapper {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+  }
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+}

@@ -1,11 +1,9 @@
-import { AxiosError } from 'axios';
 import { Metadata, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers'
 
-import { HappenedWrongScreen, NotFoundScreen } from '../../../components/Components';
-import { getUTC } from '../../../components/handlers';
+import { HandleServerError } from '~/components/Errors';
 import { $api } from '../../../components/http';
-import { config, devMode, metaObject } from '../../../config';
+import { config, metaObject } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { ITitle } from '../../../interfaces/ITitle';
@@ -73,25 +71,7 @@ export default async function RSC(props: IRSCProps<{ id: string }>) {
     totalTitles = totalData.total
     totalUpdated = totalData.renewed
   } catch (e) {
-    if (e instanceof AxiosError) {
-      const code = e.response?.data?.code || 500;
-
-      devMode ? console.error(e.response?.data) : null;
-
-      if (code === 401 || code === 403) {
-        return <NotFoundScreen />
-      } else if (code === 404) {
-        return <NotFoundScreen />
-      } else if (code === 400) {
-        return <HappenedWrongScreen cause={`[${e.code}]: ${e.response?.data?.msg || e.response?.data?.message || 'No message provided'}`} />
-      } else {
-        return <HappenedWrongScreen cause={e.message} />
-      }
-    } else {
-      const date = `${getUTC().date} ${getUTC().time}`
-      console.error(`[${date}]: Server error occured at w/query - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
-      return <HappenedWrongScreen cause={`Server error occured at w/query. See logs at ${date}`} />;
-    }
+    return HandleServerError(e)
   }
 
   return <Patcher totalTitles={totalTitles} totalUpdated={totalUpdated} title={title!} dubbers={dubbers} totalDubbers={totalDubbers} session={session} />

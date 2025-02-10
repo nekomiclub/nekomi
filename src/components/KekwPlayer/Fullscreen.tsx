@@ -3,6 +3,7 @@ import { NextPage } from 'next';
 
 import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '~/assets/PlayerFullscreen';
 import { cn } from '../Components';
+import { HandleClientError } from '../Errors';
 
 import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
 
@@ -21,9 +22,9 @@ export const KekwPlayerFullscreen: NextPage = () => {
     }
 
     if (document.fullscreenElement) {
-      document.exitFullscreen().catch(e => console.error(e));
+      document.exitFullscreen().catch(e => HandleClientError(e));
     } else {
-      player.requestFullscreen().catch(e => console.error(e));
+      player.requestFullscreen().catch(e => HandleClientError(e));
     }
   }
 

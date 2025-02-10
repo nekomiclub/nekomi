@@ -3,16 +3,18 @@
 import './styles.scss'
 
 import { createContext, memo, useContext, useEffect, useRef, useState } from 'react';
-import { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { MaterialSymbol } from 'react-material-symbols';
 
+import { HandleClientError } from '~/components/Errors';
 import { getUTC } from '~/components/handlers';
+import StyledImage from '~/components/StyledImage';
 import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import GroupLabel from '~/components/UI/GroupLabel';
-import StyledImage from '~/components/UI/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
+import API from '~/services/ApiService';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoNekomiLogo, IcoPlus, IcoUpdate } from '../../../assets/Icons';
 import { cn } from '../../../components/Components';
 import { $api } from '../../../components/http';
@@ -20,7 +22,7 @@ import Tooltip from '../../../components/UI/Tooltip';
 import { config, CONSTS } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
 import { AnimeAgeRates, ITitle, ITitleEpisode, ITitleEpisodeMeta, TAnimeAgeRate, TAnimeGenre, TAnimeSeason, TAnimeStatus, TTitleCountry, TTitleType } from '../../../interfaces/ITitle';
-import { routes } from '../../../routes';
+import { Routes, routes } from '../../../routes';
 
 import { IPatcherSelectOption, PatcherEpisodeGroup, PatcherEpisodeMeta, PatcherField, PatcherSelect } from './Components';
 import { PactherStack } from './PatcherStack';
@@ -278,11 +280,7 @@ const TitleMetaSection = memo(function TitleMetaSection() {
 
       console.log(`[+]: Poster uploaded`)
     } catch (e) {
-      if (e instanceof AxiosError) {
-        appendError(`Помилка при оновленні постера - ${e.code}; ${JSON.stringify(e.response?.data.message || e.response?.data.msg)}`)
-      } else {
-        appendError(`Помилка при оновленні постера. Будь ласка, відправте лог консолі браузера в тікет на діскорд сервері`)
-      }
+      HandleClientError(e);
     }
   }
 
@@ -301,11 +299,7 @@ const TitleMetaSection = memo(function TitleMetaSection() {
 
         router.refresh();
       } catch (e) {
-        if (e instanceof AxiosError) {
-          appendError(`Помилка видалення тайтлу - ${e.response?.data?.message || e.response?.data?.msg}`)
-        } else {
-          appendError(`Помилка видалення тайтлу. Будь ласка, відправте лог консолі браузера в тікет на діскорд сервері`)
-        }
+        HandleClientError(e);
       }
     } else {
       console.log('[+]: Title delete aborted')
@@ -397,12 +391,7 @@ const TitleMetaSection = memo(function TitleMetaSection() {
       }, 3000);
     } catch (e) {
       SetMetaSaveStatus('error')
-
-      if (e instanceof AxiosError) {
-        appendError(e.response?.data.message || e.response?.data.msg || e.code)
-      } else {
-        appendError(`Сталась помилка при оновлені інформації про тайтл. Будь ласка, відправ лог консолі браузера в тікет на діскорд сервері`)
-      }
+      HandleClientError(e);
     } finally {
       setTimeout(() => {
         SetMetaSaveStatus('default')
@@ -556,7 +545,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection() {
     setOrder(selectedMeta.order);
     setUkrName(selectedMeta.names.ukr)
     setEngName(selectedMeta.names.eng)
-    setDateOut(getUTC(selectedMeta.dateOut).dateReversed);
+    setDateOut(getUTC(selectedMeta.dateOut).fulldate);
   }, [selectedMeta])
 
 
@@ -604,11 +593,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection() {
       console.log(`[+]: Meta for episode ${+order} added.`)
       setErrors([]);
     } catch (e) {
-      if (e instanceof AxiosError) {
-        appendError(`Помилка при додаванні епізода - ${e.code}; ${JSON.stringify(e.response?.data)}`)
-      } else {
-        appendError(`Помилка при додаванні епізода - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
-      }
+      HandleClientError(e);
     } finally {
       setTimeout(() => {
         SetFieldsStatus(prev => [...prev.filter(el => el.status !== 'saved')]);
@@ -642,11 +627,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection() {
 
       console.log(`[-]: Meta for ${episode} episode deleted.`)
     } catch (e) {
-      if (e instanceof AxiosError) {
-        appendError(`Помилка при видаленні епізоду - ${e.code}; ${JSON.stringify(e.response?.data)}`)
-      } else {
-        appendError(`Помилка при видаленні епізоду - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
-      }
+      HandleClientError(e);
     }
   }
 
@@ -662,6 +643,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection() {
     try {
       url = new URL(parse_url)
     } catch (e) {
+      HandleClientError(e);
       return setStatus('patcher-parseEpisodeMetaURL', 'errror', `Неправильний URL`)
     }
 
@@ -688,11 +670,7 @@ const EpisodeMetaSection = memo(function EpisodeMetaSection() {
       setEpisodesMeta(data.title.episodesMeta)
       setErrors([])
     } catch (e) {
-      if (e instanceof AxiosError) {
-        appendError(`Помилка при парсингу інформації про епізоди - ${e.code}; ${JSON.stringify(e.response?.data)}`)
-      } else {
-        appendError(`Помилка при парсингу інформації про епізоди - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
-      }
+      HandleClientError(e);
     } finally {
       setTimeout(() => {
         SetFieldsStatus(prev => [...prev.filter(el => el.status !== 'saved')]);
@@ -939,11 +917,7 @@ const EpisodesSection = memo(function EpisodesSection() {
       Stack.append(episode)
       setErrors([]);
     } catch (e) {
-      if (e instanceof AxiosError) {
-        appendError(`Помилка при додаванні епізоду - ${e.code}; ${JSON.stringify(e.response?.data)}`)
-      } else {
-        appendError(`Помилка при додаванні епізоду - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
-      }
+      HandleClientError(e);
     } finally {
       setTimeout(() => {
         SetFieldsStatus(prev => [...prev.filter(el => el.status !== 'saved')]);
@@ -983,14 +957,7 @@ const EpisodesSection = memo(function EpisodesSection() {
         return [...prev.filter(el => el.dubber.id !== group.dubber.id), group];
       })
     } catch (e) {
-      if (e instanceof AxiosError) {
-        if (e.response?.data?.code === 404) return;
-        if (e.response?.data?.code === 503) return;
-
-        appendError(`Помилка при видаленні серії - ${e.code}; ${JSON.stringify(e.response?.data)}`)
-      } else {
-        appendError(`Помилка при видаленні серії - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`)
-      }
+      HandleClientError(e);
     }
   }
 
@@ -1118,9 +1085,17 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
 
       router.push(`${config.URL.baseURL}${routes.patcher_title.path}/${data.id}`)
     } catch (e) {
-      console.error(e)
+      HandleClientError(e);
     }
+  }
 
+  async function getRandAnime() {
+    try {
+      const { results } = await API.searchAnime({ q: '' }, { woMalId: true });
+      router.replace(`${config.URL.baseURL}/${Routes.patcher_title.path}/${results[0].anime.id}`)
+    } catch (e) {
+      HandleClientError(e)
+    }
   }
 
 
@@ -1142,7 +1117,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
     }
   }}>
     <div className="w-full h-full min-h-screen bg-dark">
-      <div className="wrapper !pt-[132px] !pb-[60px] flex flex-col gap-[24px]">
+      <div className="wrapper pt-[16px] sm:pt-[var(--header-height)] !pb-[60px] flex flex-col gap-[24px]">
         {/* Header */}
         <div className="flex flex-col gap-[8px] max-[784px]:gap-[24px]">
           <div className="flex items-center gap-[32px] max-[784px]:flex-col max-[784px]:gap-[8px]">
@@ -1158,6 +1133,11 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
             {canTitleAdd && <button className="flex items-center px-[16px] py-[8px] rounded-[2px] bg-grey duration-200 hover:bg-purple focus-visible:bg-purple gap-[16px] shrink-0" onClick={createNewTitle}>
               <IcoPlus width={24} height={24} />
               <p className="text-white uppercase">створити новий</p>
+            </button>}
+
+            {canTitleEdit && <button className="ui-button flex gap-[16px] items-center px-[16px] py-[8px] rounded-[2px] shrink-0" onClick={getRandAnime}>
+              <MaterialSymbol icon="update" size={24} className="text-white" />
+              <p className="text-white uppercase">без mal id</p>
             </button>}
 
             {/* Divider */}
