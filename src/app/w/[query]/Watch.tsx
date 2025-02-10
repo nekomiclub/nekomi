@@ -10,8 +10,8 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
+import StyledImage from '~/components/StyledImage';
 import { UIReportButton } from '~/components/UI/Report';
-import StyledImage from '~/components/UI/StyledImage';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoFolderAdd } from '../../../assets/Folder';
 import { IcoHeartFilled } from '../../../assets/Heart';

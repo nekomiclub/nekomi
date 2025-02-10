@@ -10,9 +10,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { HandleClientError } from '~/components/Errors';
 import { getUTC } from '~/components/handlers';
+import StyledImage from '~/components/StyledImage';
 import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import { UIReportButton } from '~/components/UI/Report';
-import StyledImage from '~/components/UI/StyledImage';
 import { UIText } from '~/components/UI/Text.ui';
 import { Routes } from '~/routes';
 import { IcoClockFilled } from '../../../assets/Clock';

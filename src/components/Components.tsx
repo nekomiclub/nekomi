@@ -15,7 +15,7 @@ import { ITitle } from '../interfaces/ITitle';
 import { Routes, routes } from '../routes';
 
 import { secondsToReadable } from './KekwPlayer/KekwPlayer';
-import StyledImage from './UI/StyledImage';
+import StyledImage from './StyledImage';
 
 import CatImg from '../assets/img/oopsIndevCat.png';
 

@@ -13,10 +13,10 @@ import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportP
 import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { timestampToDayMonth, wordDeclination } from '~/components/handlers';
+import StyledImage from '~/components/StyledImage';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
-import StyledImage from '~/components/UI/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
 import { parseDubberRole } from '~/helpers/DubberHelpers';
 import { useAppSelector } from '~/hooks/redux';

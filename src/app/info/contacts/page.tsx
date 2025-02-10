@@ -10,7 +10,7 @@ import './styles.scss';
 import { NextPage } from 'next';
 import Link from 'next/link';
 
-import StyledImage from '~/components/UI/StyledImage';
+import StyledImage from '~/components/StyledImage';
 import { IcoSocialGithub, IcoSocialTelegram } from '../../../assets/Social';
 import { metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';

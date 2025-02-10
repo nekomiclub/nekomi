@@ -10,9 +10,9 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleClientError } from '~/components/Errors';
 import { getUTC } from '~/components/handlers';
+import StyledImage from '~/components/StyledImage';
 import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import GroupLabel from '~/components/UI/GroupLabel';
-import StyledImage from '~/components/UI/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
 import API from '~/services/ApiService';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoGhost, IcoNekomiLogo, IcoPlus, IcoUpdate } from '../../../assets/Icons';

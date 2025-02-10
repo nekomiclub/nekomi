@@ -24,8 +24,8 @@ import { HandleClientError } from './Errors';
 import { parseTitleType, randomNumber } from './handlers';
 import { $api } from './http';
 import { getRoute } from './ServerComponents';
+import StyledImage from './StyledImage';
 import { NotifySuccess } from './UI/NotifyToast';
-import StyledImage from './UI/StyledImage';
 import { UIText } from './UI/Text.ui';
 
 

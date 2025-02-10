@@ -5,7 +5,7 @@ import { IcoPlayerList, IcoPlayerNext } from '~/assets/Player'
 import { IDubber } from '~/interfaces/IDubber'
 import { ITitleEpisode } from '~/interfaces/ITitle'
 import { cn } from '../Components'
-import StyledImage from '../UI/StyledImage';
+import StyledImage from '../StyledImage';
 
 
 
