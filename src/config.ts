@@ -46,10 +46,10 @@ export const config = {
 
   URL: {
     /** Nekomi core URL */
-    apiHTTP: prodMode ? `https://${CONSTS.Domains.nekomi_api}` : `http://${devIP}`,
+    apiHTTP: prodMode ? `https://${CONSTS.Domains.nekomi_api}` : `http://127.0.0.1`,
 
     /** Nekomi core proxy URL. You should provide header Authorization to pass session */
-    apiProxy: prodMode ? `https://${CONSTS.Domains.proxy}` : `http://${devIP}`,
+    apiProxy: prodMode ? `https://${CONSTS.Domains.proxy}` : `http://127.0.0.1`,
 
     /** Nekomi bot */
     bot: prodMode ? `https://t.me/nekoomibot` : `https://t.me/eblano3d_testbot`,
@@ -58,21 +58,16 @@ export const config = {
     media: prodMode ? `https://${CONSTS.Domains.nekomi_media}` : `http://${devIP}:43120`,
 
     /** Nekomi-core websocket URL */
-    apiWS: prodMode ? `wss://${CONSTS.Domains.nekomi_websocket}` : `ws://${devIP}:8080`,
+    apiWS: prodMode ? `wss://${CONSTS.Domains.nekomi_websocket}` : `ws://127.0.0.1:8080`,
 
     /** Fullkekw userapi URL */
-    fkUsapi: prodMode ? `https://${CONSTS.Domains.fullkekw_usapi}` : `http://${devIP}:45660`,
+    fkUsapi: prodMode ? `https://${CONSTS.Domains.fullkekw_usapi}` : `http://127.0.0.1:45660`,
 
     /** Fullkekw account URL */
-    fkAccount: prodMode ? `https://${CONSTS.Domains.fullkekw_account}` : `http://${devIP}:3000`,
+    fkAccount: prodMode ? `https://${CONSTS.Domains.fullkekw_account}` : `http://127.0.0.1:3000`,
 
     /** Site own url */
-    baseURL: prodMode ? `https://${CONSTS.Domains.nekomi}` : `http://${devIP}:3001`,
-
-    /** Fullkekw uptime
-     * @deprecated
-     */
-    uptime: prodMode ? `https://uptime.${CONSTS.Domains.fullkekw}` : `http://${devIP}:45322`,
+    baseURL: prodMode ? `https://${CONSTS.Domains.nekomi}` : `http://127.0.0.1:3001`,
   },
 
   /** Site vatiables */

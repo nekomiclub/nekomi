@@ -13,16 +13,23 @@ export interface IRoute {
 
   /** Page status. Status page will be returned if nextjs can not resolved
    * @default clear
+   * 
+   * @deprecated outdated
   */
   status?: TRouteStatus
 
-  /** List of required capabilities to have access to this route */
+  /** List of required capabilities to have access to this route
+   * 
+   * @deprecated use CheckUserAccess instead
+   */
   capabilitiesRequired?: TRoleCapability[]
 
   /** Validate capabilities mode
    * @param AND each of required capability must be present
    * @param OR one of required capabilities must be present
    * @default AND
+   * 
+   * @deprecated use CheckUserAccess instead
    */
   capabilitiesRequiredMode?: 'AND' | 'OR';
 }
@@ -74,13 +81,10 @@ export const routes: { [key in TRoute]: IRoute } = {
   /** Must be above patcher_title  */
   patcher_media: {
     path: '/patcher/media',
-    capabilitiesRequired: ['root'],
   },
   patcher_title: {
     path: '/patcher',
     dynamic: true,
-    capabilitiesRequired: ['titleEdit', 'seriesAdd'],
-    capabilitiesRequiredMode: 'OR'
   },
   /** @extends /user */
   user_list: {
