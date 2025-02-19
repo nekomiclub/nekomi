@@ -1,7 +1,10 @@
 import { Metadata, ResolvingMetadata } from 'next';
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
+import { CheckUserAccess } from '~/helpers/Authorization';
+import { Routes } from '~/routes';
 import { $api } from '../../../components/http';
 import { config, metaObject } from '../../../config';
 import { IDubber } from '../../../interfaces/IDubber';
@@ -40,10 +43,13 @@ export default async function RSC(props: IRSCProps<{ id: string }>) {
   let title: ITitle | null = null;
   let dubbers: IDubber[] = [];
   let totalDubbers: IDubber[] = [];
-  let totalTitles = 0;
-  let totalUpdated = 0;
+  let totalTitles = -1;
+  let totalUpdated = -1;
 
   let session = cookies().get(config.vars.SessionCookie)?.value ?? '';
+
+  const { user } = await CheckUserAccess({ capabilities: ['titleEdit', 'seriesAdd'], checkMode: 'OR', session })
+  if (!user) return redirect(Routes.home.path);
 
   try {
     const { data: titleData } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] }>(`/title/${params.id}`, {
@@ -53,11 +59,11 @@ export default async function RSC(props: IRSCProps<{ id: string }>) {
       }
     })
 
-    const { data: totalData } = await $api.get<{ total: number, renewed: number }>(`/title/total`, {
-      params: {
-        detailed: true
-      }
-    })
+    // const { data: totalData } = await $api.get<{ total: number, renewed: number }>(`/title/total`, {
+    //   params: {
+    //     detailed: true
+    //   }
+    // })
 
     const { data: totalDubbersData } = await $api.get<{ dubbers: IDubber[] }>(`/dubber/all`)
 
@@ -68,8 +74,8 @@ export default async function RSC(props: IRSCProps<{ id: string }>) {
     title = titleData.title;
     dubbers = titleData.parsedDubbers;
 
-    totalTitles = totalData.total
-    totalUpdated = totalData.renewed
+    // totalTitles = totalData.total
+    // totalUpdated = totalData.renewed
   } catch (e) {
     return HandleServerError(e)
   }
