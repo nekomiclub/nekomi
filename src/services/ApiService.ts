@@ -1,5 +1,5 @@
 import { $api } from '~/components/http';
-import { IAnimeGetSearch, IAnimeGetSearchResult, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberGetOneByQueryProps, IDubberGetOneByQueryResponse, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/IApiService';
+import { IAnimeGetSearch, IAnimeGetSearchResult, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberGetOneByQueryProps, IDubberGetOneByQueryResponse, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
 
 
 
@@ -105,6 +105,12 @@ class ApiService {
     });
 
     return data;
+  }
+
+  async deleteWatchProgress({ animeId }: { animeId: string }) {
+    await $api.patch(`/me`, {
+      deleteWatchProgress: animeId
+    })
   }
 
 

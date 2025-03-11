@@ -12,9 +12,6 @@ const NEKOMI_DOMAIN = 'nekomi.club';
 const PROXY_DOMAIN = 'fkgway.cx.ua';
 const FULLKEKW_DOMAIN = 'nekomi.club';
 
-/** Development machine IP */
-const devIP = '192.168.0.106'
-
 export const CONSTS = {
   Domains: {
     proxy: PROXY_DOMAIN,
@@ -39,9 +36,6 @@ export const CONSTS = {
 
 /** Site config */
 export const config = {
-  devIP,
-
-  /** Site domain */
   domain: CONSTS.Domains.nekomi,
 
   URL: {
@@ -55,7 +49,7 @@ export const config = {
     bot: prodMode ? `https://t.me/nekoomibot` : `https://t.me/eblano3d_testbot`,
 
     /** Nekomi media URL */
-    media: prodMode ? `https://${CONSTS.Domains.nekomi_media}` : `http://${devIP}:43120`,
+    media: prodMode ? `https://${CONSTS.Domains.nekomi_media}` : `http://127.0.0.1:43120`,
 
     /** Nekomi-core websocket URL */
     apiWS: prodMode ? `wss://${CONSTS.Domains.nekomi_websocket}` : `ws://127.0.0.1:8080`,

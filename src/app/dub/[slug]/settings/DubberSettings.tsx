@@ -21,7 +21,7 @@ import { parseDubberRole } from '~/helpers/DubberHelpers';
 import { useAppSelector } from '~/hooks/redux';
 import { IDubber, IDubberMember, TDubberMemberRole } from '~/interfaces/IDubber';
 import { IUser } from '~/interfaces/IUser';
-import { IUserGetSearchResult } from '~/interfaces/services/IApiService';
+import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';

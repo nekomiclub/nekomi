@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [{
       hostname: '*.nekomi.club'
     }, {
-      hostname: '192.168.0.106'
+      hostname: '127.0.0.1'
     }]
   },
   reactStrictMode: false,
