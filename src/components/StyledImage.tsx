@@ -107,7 +107,7 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
       </>}
 
       {!useDefaultImage && <>
-        <ImageNext src={src} alt={alt} fill loading={loading} sizes="100vw" className={cn('w-full h-full duration-200', !isLoaded && 'opacity-0', imageClassName)} ref={imageRef} />
+        <ImageNext src={src} alt={alt} fill loading={loading} className={cn('w-full h-full duration-200', !isLoaded && 'opacity-0', imageClassName)} ref={imageRef} />
       </>}
 
       {/* Loading state */}
