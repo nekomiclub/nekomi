@@ -6,8 +6,6 @@ import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { config } from '~/config';
-
 import { cn } from './Components';
 import { UIText } from './UI/Text.ui';
 
@@ -53,7 +51,8 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
   // Check if image hosted on nekomi
   useMemo(() => {
-    setUseDefaultImage(!src.includes(config.domain))
+    // setUseDefaultImage(!src.includes(config.domain))
+    setUseDefaultImage(true)
   }, [])
 
   useEffect(() => {
