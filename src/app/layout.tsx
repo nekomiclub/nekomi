@@ -18,10 +18,8 @@ import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
 import { ErrorNoConnection } from '~/components/Errors';
-import { $api } from '~/components/http';
 import { StateProvider } from '~/components/Providers';
-import { TRoleCapability } from '~/interfaces/IRoles';
-import { IUser } from '~/interfaces/IUser';
+import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import Footer from '../components/Footer';
 import Header from '../components/Menu';
@@ -65,6 +63,9 @@ export default async function Layout({ children, params }: ILayoutProps) {
   let isServerOnline = false;
   let user: IUserState | undefined = undefined
 
+
+
+  // Ping API
   try {
     await axios.options(config.URL.apiHTTP)
     isServerOnline = true;
@@ -73,14 +74,8 @@ export default async function Layout({ children, params }: ILayoutProps) {
   // Get user by cookie
   if (sessionCookie && isServerOnline) {
     try {
-      const { data } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/*`, {
-        params: {
-          detailed: true,
-          parseRoles: true
-        },
-        headers: {
-          Cookie: cookie.toString()
-        }
+      const data = await API.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
+        session: sessionCookie
       })
 
       user = {
@@ -90,7 +85,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
         roles: data.user.roles,
         username: data.user.username,
         watchProgress: data.user.watchProgress,
-        capabilities: data.parsedRoles,
+        capabilities: data.capabilities!,
         libs: data.user.libs,
         dubberTeamMember: data.user.statistics.dubber_team_member,
         togetherRooms: data.user.togetherRooms

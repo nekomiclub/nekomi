@@ -6,18 +6,26 @@ import { useState } from 'react'
 import { NextPage } from 'next';
 import { usePathname } from 'next/navigation'
 
+import AnimeItem from '~/components/AnimeItem';
+import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { IcoChain } from '../../../../../assets/Icons';
-import { copyToClipboard,TitleCard } from '../../../../../components/Components';
+import { copyToClipboard } from '../../../../../components/Components';
 import Tooltip from '../../../../../components/UI/Tooltip';
 import { config } from '../../../../../config';
-import { ITitle } from '../../../../../interfaces/ITitle';
 import { IUser, IUserLib } from '../../../../../interfaces/IUser';
 import { UserDivider, UserLibCard } from '../../ClientComponents';
 
 
 
+interface UserLibProps {
+  lib: IUserLib
+  isOwner: boolean
+  hydrateds: HydratedAnime[]
+}
+
+
 /** User lib section */
-export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle[] }> = ({ isOwner, lib, titles }) => {
+export const UserLib: NextPage<UserLibProps> = ({ isOwner, lib, hydrateds }) => {
   const pathname = usePathname();
   const [urlCopied, setUrlCopied] = useState(false)
 
@@ -49,8 +57,12 @@ export const UserLib: NextPage<{ lib: IUserLib, isOwner: boolean, titles: ITitle
       </div>
 
       {isOwner || !lib.settings.hidden ? <div className="grid gap-[16px] grid-cols-6 max-[1470px]:grid-cols-5 max-[1250px]:grid-cols-4 max-[940px]:grid-cols-3 max-[720px]:grid-cols-2">
-        {titles.toReversed().map(title => {
-          return <TitleCard className="max-[720px]:!min-w-[160px]" title={title} key={`${title.id}-${Math.random().toFixed(3).split('.')[1]}`} />
+        {/* {animes.toReversed().map(anime => {
+          return <TitleCard className="max-[720px]:!min-w-[160px]" title={anime} key={`${anime.uuid}-${Math.random().toFixed(3).split('.')[1]}`} />
+        })} */}
+
+        {hydrateds.toReversed().map((hydrated, i) => {
+          return <AnimeItem className="max-[720px]:!min-w-[160px]" hydrated={hydrated} key={`userlib-${lib.id}--${i}`} />
         })}
       </div> : <p className="text-lightGrey text-center">Ця тека приватна</p>}
     </div>

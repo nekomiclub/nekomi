@@ -3,7 +3,6 @@
 
 import { useEffect, useId, useRef, useState } from 'react'
 import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
-import { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -11,10 +10,10 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { HandleClientError } from '~/components/Errors';
 import { getUTC } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
-import ErrorWrapper from '~/components/UI/ErrorWrapper';
 import { UIReportButton } from '~/components/UI/Report';
 import { UIText } from '~/components/UI/Text.ui';
 import { Routes } from '~/routes';
+import API from '~/services/ApiService';
 import { IcoClockFilled } from '../../../assets/Clock';
 import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
 import { IcoHeartFilled } from '../../../assets/Heart';
@@ -40,12 +39,9 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
   const pathname = usePathname();
   const settingsPopupID = useId().replaceAll(':', '');
 
-  const [telegramLinkError, setTelegramLinkError] = useState('');
-  const [urlCopied, setUrlCopied] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [settingsLinkTelegramStatus, setSettingsLinkTelegramStatus] = useState<TTelegramLinkStatus>(user.statistics.isTelegramLinked ? 'connected' : 'notConnected')
   const [bannerURL, setBannerURL] = useState(user.banner);
-  const [bannerUploadError, setBannerUploadError] = useState('');
 
 
   const bannerSelectRef = useRef<HTMLInputElement>(null)
@@ -113,37 +109,14 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
 
 
-  function copyProfileURL() {
-    copyToClipboard(`${config.URL.baseURL}/u/${user.username}`);
-    setUrlCopied(true);
-
-    setTimeout(() => {
-      setUrlCopied(false);
-    }, 3000);
-  }
-
-  function Label({ label }: { label: string }) {
-    return <div className="flex items-center gap-[16px]">
-      <h3 className="text-white text-[24px] font-bold shrink-0">{label}</h3>
-      <span className="w-full h-[3px] bg-grey"></span>
-    </div>
-  }
-
   async function linkTelegram() {
     try {
-      setTelegramLinkError('');
       setSettingsLinkTelegramStatus('pending')
       const { data } = await $api.get<{ token: string }>(`/user/linkTelegram/token`);
       router.push(`${config.URL.bot}?start=linkAccount=${data.token}`)
     } catch (e) {
       setSettingsLinkTelegramStatus('error')
       HandleClientError(e);
-
-      if (e instanceof AxiosError) {
-        setTelegramLinkError(e.response?.data.message || e.response?.data.msg)
-      } else {
-        setTelegramLinkError(`Дивна помилка, відправ лог консолі браузера в тікет на сервері діскорд будь ласка`)
-      }
     } finally {
       setTimeout(() => {
         setSettingsLinkTelegramStatus('notConnected')
@@ -168,8 +141,6 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
     if (!confirm(`Завантажуючи банер профілю ти погоджуєшся з Угодою Користувача (Agreement) та Політикою Конфіденційності (Privacy policy) сайту nekomi.club. Ознайомитись з ними можна внизу сайту`)) return;
 
-    setBannerUploadError('');
-
     try {
       const formData = new FormData();
 
@@ -178,8 +149,8 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
 
       await $api.patch(`${config.URL.apiHTTP}/user`, formData);
 
-      const { data } = await $api.get<{ user: IUser }>(`${config.URL.apiHTTP}/user/${user.id}`);
-      setBannerURL(data.user.banner)
+      const { user } = await API.getUser({ query: '*' })
+      setBannerURL(user?.banner ?? '')
     } catch (e) {
       HandleClientError(e);
     }
@@ -198,7 +169,6 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
           </Link>
 
           <Label label="Банер профілю" />
-          {bannerUploadError && <ErrorWrapper errors={[bannerUploadError]} id="user-bannerUpload" />}
 
           <div className="w-full max-h-[400px] aspect-[16/7] relative shrink-0" ref={bannerWrapperRef}>
             <button className="w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible" onClick={selectBannerFile} ref={bannerButtonRef}>
@@ -233,8 +203,6 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
                   {settingsLinkTelegramStatus === 'pending' && 'Генеруємо токен...'}
                 </p>
               </button>
-
-              {telegramLinkError && <p className="text-red">{telegramLinkError}</p>}
             </div>
           }
         </PopupDialog>
@@ -255,72 +223,27 @@ export const UserHeader: NextPage<{ user: IUser, isOwner: boolean, primaryPage?:
           {/* PC */}
           <div className={`min-[670px]:flex hidden flex-row justify-between absolute bottom-0 left-0 w-full bg-dark/[.3] backdrop-blur-[32px] px-[32px] py-[16px]`}>
             <div className="flex gap-[32px] min-[670px]">
-              <AvatarComponent />
+              <AvatarComponent user={user} />
 
-              <UserComponent />
+              <UserComponent user={user} />
             </div>
 
-            <SettingsComponent />
+            <SettingsComponent user={user} isOwner={isOwner} primaryPage={Boolean(primaryPage)} settingsPopupID={settingsPopupID} />
           </div>
 
           {/* Mobile */}
           <div className="max-[670px]:flex flex-col hidden gap-[16px] items-center pt-[40px]">
-            <AvatarComponent />
+            <AvatarComponent user={user} />
 
             <div className="flex justify-between items-center gap-[16px] w-full">
-              <UserComponent />
-              <SettingsComponent />
+              <UserComponent user={user} />
+              <SettingsComponent user={user} isOwner={isOwner} primaryPage={Boolean(primaryPage)} settingsPopupID={settingsPopupID} />
             </div>
           </div>
         </div>
       </div>
     </>
   );
-
-  function AvatarComponent() {
-    return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px] flex-shrink-0">
-      <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square max-[820px]:!w-[160px] max-[820px]:!h-[160px]" priority alt="avatar" />
-    </div>
-  }
-
-  function UserComponent() {
-    return <div className="flex flex-col gap-[8px]">
-      <div className="flex items-center gap-[16px]">
-        <UIText text={`@${user.username}`} type="h1" className="break-all" />
-      </div>
-
-      <Tooltip content="Дата реєстрації акаунту">
-        <div className="flex items-center gap-[16px]">
-          <IcoCalendar width={32} height={32} />
-          <p className="text-white">{getUTC(user.statistics.accountCreated).fulldate}</p>
-        </div>
-      </Tooltip>
-    </div>
-  }
-
-  function SettingsComponent() {
-    return <div className="flex items-center gap-[8px]">
-      <Tooltip content={urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на профіль'}>
-        <button className={`p-[16px] duration-200 ${urlCopied ? 'bg-green' : 'hover:bg-purple focus-visible:bg-purple'} rounded-[4px] max-[600px]:p-[12px]`} onClick={() => copyProfileURL()}>
-          <IcoChain width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
-        </button>
-      </Tooltip>
-
-      {isOwner && <Tooltip content="Налаштування">
-        <PopupButton togglePopupId={settingsPopupID} className="p-[16px] duration-200 bg-darkGrey hover:bg-grey focus-visible:bg-grey rounded-[4px] max-[600px]:p-[12px]">
-          <IcoSettings width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
-        </PopupButton>
-      </Tooltip>}
-
-      {!primaryPage && <Link href={`${config.URL.baseURL}/u/${user.username}`}>
-        <Tooltip content="На головну профілю">
-          <button className={`p-[16px] duration-200 bg-darkGrey hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback rounded-[4px] max-[600px]:p-[12px]`}>
-            <IcoUser width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
-          </button>
-        </Tooltip>
-      </Link>}
-    </div>
-  }
 }
 
 
@@ -411,4 +334,71 @@ function UserWTRoom({ room, user }: { room: IUserTogetherRoom, user: IUser }) {
 
     <p className="text-white text-center text-[24px] max-[620px]:text-[16px] text-ellipsis line-clamp-3">{room.settings.name}</p>
   </Link>
+}
+
+function Label({ label }: { label: string }) {
+  return <div className="flex items-center gap-[16px]">
+    <h3 className="text-white text-[24px] font-bold shrink-0">{label}</h3>
+    <span className="w-full h-[3px] bg-grey"></span>
+  </div>
+}
+
+function AvatarComponent({ user }: { user: IUser }) {
+  return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px] flex-shrink-0">
+    <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square max-[820px]:!w-[160px] max-[820px]:!h-[160px]" priority alt="avatar" />
+  </div>
+}
+
+function UserComponent({ user }: { user: IUser }) {
+  return <div className="flex flex-col gap-[8px]">
+    <div className="flex items-center gap-[16px]">
+      <UIText text={`@${user.username}`} type="h1" className="break-all" />
+    </div>
+
+    <Tooltip content="Дата реєстрації акаунту">
+      <div className="flex items-center gap-[16px]">
+        <IcoCalendar width={32} height={32} />
+        <p className="text-white">{getUTC(user.statistics.accountCreated).fulldate}</p>
+      </div>
+    </Tooltip>
+  </div>
+}
+
+function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { user: IUser, isOwner: boolean, settingsPopupID: string, primaryPage: boolean }) {
+  const [urlCopied, setUrlCopied] = useState(false)
+
+
+
+  function copyProfileURL() {
+    copyToClipboard(`${config.URL.baseURL}/u/${user.username}`);
+    setUrlCopied(true);
+
+    setTimeout(() => {
+      setUrlCopied(false);
+    }, 3000);
+  }
+
+
+
+  return <div className="flex items-center gap-[8px]">
+    <Tooltip content={urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на профіль'}>
+      <button className={`p-[16px] duration-200 ${urlCopied ? 'bg-green' : 'hover:bg-purple focus-visible:bg-purple'} rounded-[4px] max-[600px]:p-[12px]`} onClick={() => copyProfileURL()}>
+        <IcoChain width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
+      </button>
+    </Tooltip>
+
+    {isOwner && <Tooltip content="Налаштування">
+      <PopupButton togglePopupId={settingsPopupID} className="p-[16px] duration-200 bg-darkGrey hover:bg-grey focus-visible:bg-grey rounded-[4px] max-[600px]:p-[12px]">
+        <IcoSettings width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
+      </PopupButton>
+    </Tooltip>}
+
+    {!primaryPage && <Link href={`${config.URL.baseURL}/u/${user.username}`}>
+      <Tooltip content="На головну профілю">
+        <button className={`p-[16px] duration-200 bg-darkGrey hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback rounded-[4px] max-[600px]:p-[12px]`}>
+          <IcoUser width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
+        </button>
+      </Tooltip>
+    </Link>}
+  </div>
 }

@@ -1,8 +1,12 @@
+import { AnimeRelated, HydratedAnime } from '../AnimeIntf'
+import { DubberCompact } from '../DubberIntf'
 import { IDubber, TDubberMemberRole } from '../IDubber'
+import { TRoleCapability } from '../IRoles'
 import { ITitle } from '../ITitle'
-import { IUser } from '../IUser'
+import { IUser, IUserTogetherRoom } from '../IUser'
+import { Metadata } from '../types'
 
-export interface IDubberGetOneByQueryProps {
+export interface DubberGetOneByQueryProps {
   query: string
   detailed?: boolean
   fetchDubbedAnime?: boolean
@@ -15,6 +19,14 @@ export interface IDubberGetOneByQueryProps {
    * @default true
    */
   useCache?: boolean
+}
+
+export interface DubberGetOneByQuery {
+  dubber: IDubber
+
+  dubbedHydratedAnimes?: HydratedAnime[]
+  metadata?: Metadata
+  parsedMembers?: IUser[]
 }
 
 export interface IDubberGetOneByQueryResponse {
@@ -88,11 +100,71 @@ export interface IDubberGetInviteByIdProps {
   dubberId: string
 }
 
-export interface IAnimeGetSearch {
-  /** Query ~all will return all anime's */
+export interface AnimeGetSearchProps {
+  /**
+   * Query ~all will return all anime documents
+   * Query ~wo-mal-id will return anime documents where mal_id: null
+  */
   q: string
 }
 
-export interface IAnimeGetSearchResult {
-  anime: ITitle
+export interface AnimeGetSearch {
+  results: HydratedAnime[]
+}
+
+export interface AnimeGetByQueryProps {
+  query: string
+
+  /** Return only metadata, without hydrated anime */
+  metadataOnly?: boolean
+
+  /** Return detailed document */
+  detailed?: boolean
+
+  /** @requires detailed mode */
+  fetchDubbers?: boolean
+  /** @requires detailed mode */
+  fetchRelated?: boolean
+}
+
+export interface AnimeGetByQuery extends HydratedAnime {
+  related?: AnimeRelated[]
+  dubbers?: DubberCompact[]
+  metadata?: Metadata
+}
+
+export interface UserGetByQueryProps {
+  query: string
+
+  /** Return only metadata */
+  metadataOnly?: boolean
+  parseCapabilities?: boolean
+  detailed?: boolean
+}
+
+export interface UserGetByQuery {
+  /** Will be undefined with metadataOnly specified */
+  user: IUser
+
+  capabilities?: TRoleCapability[]
+  metadata?: Metadata
+}
+
+export interface UserGetLibProps {
+  query: string
+  libId: string
+}
+
+export interface UserGetLib {
+  results: HydratedAnime[]
+}
+
+export interface UserGetTogetherRoomProps {
+  query: string
+  roomId: string
+}
+
+export interface UserGetTogetherRoom {
+  room: IUserTogetherRoom
+  anime: HydratedAnime
 }

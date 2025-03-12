@@ -7,9 +7,9 @@ import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { useAppSelector } from '~/hooks/redux';
+import Anime from '~/interfaces/AnimeIntf';
 import { IcoGhost, IcoHome, IcoOffline } from '../assets/Icons';
 import { animeGenres } from '../config';
-import { ITitle } from '../interfaces/ITitle';
 import { Routes, routes } from '../routes';
 
 import { secondsToReadable } from './KekwPlayer/KekwPlayer';
@@ -19,7 +19,8 @@ import CatImg from '../assets/img/oopsIndevCat.png';
 
 
 
-export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ title, className }) => {
+/** @deprecated use AnimeItem instead */
+export const TitleCard: NextPage<{ title: Anime, className?: string }> = ({ title, className }) => {
   const user = useAppSelector(state => state.user);
 
   const cardRef = useRef<HTMLAnchorElement>(null);
@@ -28,7 +29,7 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
 
   const topOffset = 4;
   const bottomOffset = 8;
-  const watchProgress = user.watchProgress.find(el => el.titleID === title.id);
+  const watchProgress = user.watchProgress.find(el => el.titleID === title.uuid);
 
 
 
@@ -89,7 +90,7 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
 
 
   return (
-    <Link href={`${Routes.watch_title.path}/${title.code}`} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef}>
+    <Link href={`${Routes.watch_title.path}/${title.slug}`} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef}>
       <StyledImage src={title.poster} className="!absolute top-0 left-0" width="100%" height="100%" />
 
       <div className="flex flex-col">
@@ -114,7 +115,7 @@ export const TitleCard: NextPage<{ title: ITitle, className?: string }> = ({ tit
 
             <div className="flex items-center gap-[4px]">
               <MaterialSymbol icon="star_half" size={16} color="#FF464E" />
-              <p className="text-gradientPrimaryFallback text-[12px] font-bold font-space-grotesk">{title.rating.IMDB || '—'}</p>
+              <p className="text-gradientPrimaryFallback text-[12px] font-bold font-space-grotesk">{title.score.mal ?? title.score.imdb ?? '—'}</p>
             </div>
           </div>
         </div>

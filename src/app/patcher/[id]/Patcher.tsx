@@ -1092,7 +1092,7 @@ const Patcher: NextPage<IProps> = ({ totalTitles, totalUpdated, dubbers, title, 
   async function getRandAnime() {
     try {
       const { results } = await API.searchAnime({ q: '' }, { woMalId: true });
-      router.replace(`${config.URL.baseURL}/${Routes.patcher_title.path}/${results[0].anime.id}`)
+      router.replace(`${config.URL.baseURL}/${Routes.patcher_title.path}/${results[0].anime.uuid}`)
     } catch (e) {
       HandleClientError(e)
     }

@@ -6,9 +6,9 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { HandleServerError } from '~/components/Errors';
 import { timestampToDayMonth } from '~/components/handlers';
 import { metaObject } from '~/config';
+import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { IDubber } from '~/interfaces/IDubber';
 import { IRSCProps } from '~/interfaces/IRSC';
-import { ITitle } from '~/interfaces/ITitle';
 import { IUser } from '~/interfaces/IUser';
 import API from '~/services/ApiService';
 
@@ -50,7 +50,7 @@ export default async function RSC({ params, searchParams }: IRSCProps) {
   const { invite } = await searchParams as { invite?: 'accept' | 'decline' };
 
   let dubber: IDubber | null = null;
-  let dubbedAnime: ITitle[] | null = null
+  let dubbedHydratedAnimes: HydratedAnime[] | null = null
   let parsedMembers: IUser[] | null = null
 
 
@@ -64,7 +64,7 @@ export default async function RSC({ params, searchParams }: IRSCProps) {
     })
 
     dubber = data.dubber!;
-    dubbedAnime = data.dubbedAnime as ITitle[];
+    dubbedHydratedAnimes = data.dubbedHydratedAnimes!;
     parsedMembers = data.parsedMembers as IUser[];
   } catch (e) {
     return HandleServerError(e)
@@ -79,7 +79,7 @@ export default async function RSC({ params, searchParams }: IRSCProps) {
       <DubberAnswerInvite dubber={dubber} invite={invite} />
       <DubberHeader dubber={dubber} />
       <DubberAbout dubber={dubber} />
-      {dubbedAnime?.length ? <DubberAnimeDubbed dubber={dubber} dubbedAnime={dubbedAnime} /> : undefined}
+      {dubbedHydratedAnimes?.length ? <DubberAnimeDubbed dubber={dubber} hydratedAnimes={dubbedHydratedAnimes} /> : undefined}
       {parsedMembers?.length ? <DubberTeam dubber={dubber} members={parsedMembers} /> : undefined}
 
       <div className="flex items-center gap-[8px]">

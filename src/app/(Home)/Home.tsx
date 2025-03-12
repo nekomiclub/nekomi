@@ -8,43 +8,30 @@ import { useIdleTimer } from 'react-idle-timer';
 import { MaterialSymbol } from 'react-material-symbols';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+import AnimeItem from '~/components/AnimeItem';
 import StyledImage from '~/components/StyledImage';
+import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { AnimeFeatured, AnimeWithMedia } from '~/interfaces/types';
 import { IcoClockOutlined } from '../../assets/Clock';
 import { IcoGhost, IcoNekomiLogo, IcoStar, IcoStarRating } from '../../assets/Icons';
-import { cn, TitleCard } from '../../components/Components';
+import { cn } from '../../components/Components';
 import { IKekwPlayerLocalDataItem, secondsToReadable } from '../../components/KekwPlayer/KekwPlayer';
 import { config, CONSTS } from '../../config';
-import { ITitle } from '../../interfaces/ITitle';
 import { IUserWatchProgress } from '../../interfaces/IUser';
 import { routes } from '../../routes';
 
 
 
-interface ITitleWithMediaMeta extends ITitle {
-  videoURL: string
-  backgroundURL: string
-}
-
-export interface IHomeWrapped {
-  /** Home featured titles */
-  featured: ITitleWithMediaMeta[]
-
-  popular: ITitle[]
-  updatedRecently: ITitle[]
-  hightRated: ITitle[]
-}
-
 interface IProps {
-  data: IHomeWrapped
-  watchProgress: IUserWatchProgress[]
-  featuredAnime: ITitleWithMediaMeta
+  data: AnimeFeatured
+  featuredAnime: AnimeWithMedia
 }
 
-type TCategory = keyof IHomeWrapped;
+type TCategory = keyof AnimeFeatured;
 
 
 
-const WatchHeadliner: NextPage<{ className?: string, watchProgress?: IUserWatchProgress, headliner: ITitle }> = ({ headliner, watchProgress, className }) => {
+const WatchHeadliner: NextPage<{ className?: string, watchProgress?: IUserWatchProgress, headliner: AnimeWithMedia }> = ({ headliner, watchProgress, className }) => {
   const DEFAULT_LABEL = 'розпочати перегляд'
   const [label, setLabel] = useState(DEFAULT_LABEL)
 
@@ -61,7 +48,7 @@ const WatchHeadliner: NextPage<{ className?: string, watchProgress?: IUserWatchP
     if (label === DEFAULT_LABEL) return;
 
     const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
-    const localCurrent = localData.find(el => el.id === headliner.id);
+    const localCurrent = localData.find(el => el.id === headliner.uuid);
 
     if (localCurrent && localCurrent.moment > 3) {
       setLabel(`продовжити (${localCurrent.ep} еп, ${secondsToReadable(localCurrent.moment).pretty})`);
@@ -71,7 +58,7 @@ const WatchHeadliner: NextPage<{ className?: string, watchProgress?: IUserWatchP
 
 
   return (
-    <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${headliner.code}`} className={`flex items-center justify-center gap-[24px] bg-dark-medium px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light ${className ? className : ''} max-sm:px-[16px] max-sm:py-[12px]`} tabIndex={0}>
+    <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${headliner.slug}`} className={`flex items-center justify-center gap-[24px] bg-dark-medium px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light ${className ? className : ''} max-sm:px-[16px] max-sm:py-[12px]`} tabIndex={0}>
       {label === DEFAULT_LABEL && <MaterialSymbol icon="live_tv" size={40} className="text-white max-sm:!text-[24px]" />}
       {label !== DEFAULT_LABEL && <MaterialSymbol icon="resume" size={40} className="text-white max-sm:!text-[24px]" />}
       <p className="text-white text-[24px] uppercase max-sm:text-[16px] font-manrope break-all">{label}</p>
@@ -81,7 +68,7 @@ const WatchHeadliner: NextPage<{ className?: string, watchProgress?: IUserWatchP
 
 
 
-const Home: NextPage<IProps> = ({ data, watchProgress, featuredAnime }) => {
+const Home: NextPage<IProps> = ({ data, featuredAnime }) => {
   const [isTrailerVisible, setIsTrailerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false)
 
@@ -154,17 +141,17 @@ const Home: NextPage<IProps> = ({ data, watchProgress, featuredAnime }) => {
         {/* Headliner */}
         <div className="wrapper w-full h-[100svh] !mb-[40px]">
           <div className={`w-full h-full flex items-center absolute top-0 right-0 px-[32px] max-[650px]:px-[16px] duration-300 opacity-100`} ref={posterScreenRef}>
-            <PosterScreen featured={featuredAnime} isMobile={isMobile} watchProgress={watchProgress} />
+            <PosterScreen featured={featuredAnime} isMobile={isMobile} watchProgress={[]} />
           </div>
 
           <div className={`w-full h-full flex items-center absolute top-0 right-0 px-[32px] max-[650px]:px-[16px] duration-300 opacity-0`} ref={trailerScreenRef}>
-            <TrailerScreen featured={featuredAnime} isTrailerVisible={isTrailerVisible} setIsTrailerVisible={setIsTrailerVisible} watchProgress={watchProgress} />
+            <TrailerScreen featured={featuredAnime} isTrailerVisible={isTrailerVisible} setIsTrailerVisible={setIsTrailerVisible} watchProgress={[]} />
           </div>
         </div>
 
         {/* Categories */}
         <div className="wrapper gap-[32px]">
-          <Category type="popular" homeWrapped={data} />
+          <Category type="hot" homeWrapped={data} />
         </div>
 
 
@@ -189,14 +176,14 @@ const Home: NextPage<IProps> = ({ data, watchProgress, featuredAnime }) => {
 
         <div className="wrapper gap-[32px]">
           <Category type="updatedRecently" homeWrapped={data} />
-          <Category type="hightRated" homeWrapped={data} />
+          <Category type="rated" homeWrapped={data} />
         </div>
       </main>
     </>
   );
 }
 
-function PosterScreen({ featured, watchProgress }: { isMobile: boolean, featured: ITitleWithMediaMeta, watchProgress: IUserWatchProgress[] }) {
+function PosterScreen({ featured, watchProgress }: { isMobile: boolean, featured: AnimeWithMedia, watchProgress: IUserWatchProgress[] }) {
   return <>
     {/* Background */}
     <div className="w-full h-full absolute top-0 left-0">
@@ -216,12 +203,12 @@ function PosterScreen({ featured, watchProgress }: { isMobile: boolean, featured
 
     {/* Watch */}
     <div className="absolute bottom-[60px] z-[3] pr-[32px] max-sm:w-full">
-      <WatchHeadliner headliner={featured} watchProgress={watchProgress.find(el => el.titleID === featured.id)} />
+      <WatchHeadliner headliner={featured} watchProgress={watchProgress.find(el => el.titleID === featured.uuid)} />
     </div>
   </>
 }
 
-function TrailerScreen({ isTrailerVisible, setIsTrailerVisible, featured, watchProgress }: { isTrailerVisible: boolean, setIsTrailerVisible: (val: boolean) => void, featured: ITitleWithMediaMeta, watchProgress: IUserWatchProgress[] }) {
+function TrailerScreen({ isTrailerVisible, setIsTrailerVisible, featured, watchProgress }: { isTrailerVisible: boolean, setIsTrailerVisible: (val: boolean) => void, featured: AnimeWithMedia, watchProgress: IUserWatchProgress[] }) {
   const [isMuted, setIsMuted] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
@@ -295,7 +282,7 @@ function TrailerScreen({ isTrailerVisible, setIsTrailerVisible, featured, watchP
         <h3 className="text-white uppercase text-[32px] font-black text-ellipsis line-clamp-[1] font-manrope max-md:text-[24px] max-sm:line-clamp-3">{featured.names.ukr}</h3>
 
         <div className="flex gap-[8px] w-full">
-          <WatchHeadliner headliner={featured} watchProgress={watchProgress.find(el => el.titleID === featured.id)} className="max-sm:w-full" />
+          <WatchHeadliner headliner={featured} watchProgress={watchProgress.find(el => el.titleID === featured.uuid)} className="max-sm:w-full" />
 
           <button className="relative bg-dark-medium border border-dark-light p-[16px] duration-200 rounded-[4px] flex justify-center items-center hover:bg-dark-light focus-visible:bg-dark-light" tabIndex={0} onClick={() => setIsMuted(!isMuted)}>
             {/* Placeholder */}
@@ -310,23 +297,23 @@ function TrailerScreen({ isTrailerVisible, setIsTrailerVisible, featured, watchP
   )
 }
 
-function Category({ type, homeWrapped }: { type: TCategory, homeWrapped: IHomeWrapped }) {
+function Category({ type, homeWrapped }: { type: TCategory, homeWrapped: AnimeFeatured }) {
   const id = useId();
   const [icon, setIcon] = useState(<></>)
   const [label, setLabel] = useState('...')
-  const [titles, setTitles] = useState<ITitle[]>([])
+  const [titles, setTitles] = useState<HydratedAnime[]>([])
 
 
 
   useMemo(() => {
-    if (type === 'popular') {
+    if (type === 'hot') {
       setLabel('Популярні')
       setIcon(<IcoStar className="w-full h-full" />)
-      setTitles(homeWrapped.popular)
-    } else if (type === 'hightRated') {
+      setTitles(homeWrapped.hot)
+    } else if (type === 'rated') {
       setLabel('З високою оцінкою')
       setIcon(<IcoStarRating className="w-full h-full" />)
-      setTitles(homeWrapped.hightRated)
+      setTitles(homeWrapped.rated)
     } else if (type === 'updatedRecently') {
       setLabel('Оновлено нещодавно')
       setIcon(<IcoClockOutlined className="w-full h-full" />)
@@ -351,12 +338,12 @@ function Category({ type, homeWrapped }: { type: TCategory, homeWrapped: IHomeWr
   </div>
 }
 
-function TitlesRow({ titles, id }: { titles: ITitle[], id: string }) {
+function TitlesRow({ titles, id }: { titles: HydratedAnime[], id: string }) {
   return <div className="min-w-0">
     <Swiper spaceBetween={16} slidesPerView={'auto'} className="ml-0">
-      {titles.map(title => {
-        return <SwiperSlide className="!w-fit" key={`category-${id}--${title.id}`} >
-          <TitleCard title={title} className="!w-[230px]" />
+      {titles.map((hydrated, i) => {
+        return <SwiperSlide className="!w-fit" key={`homecategory-${id}--${hydrated.anime.uuid}`} >
+          <AnimeItem hydrated={hydrated} className="!w-[230px]" />
         </SwiperSlide>
       })}
     </Swiper>

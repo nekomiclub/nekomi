@@ -3,7 +3,7 @@
   "version": "2.1.0",
   "private": true,
   "scripts": {
-    "dev": "next devv --port 3001",
+    "dev": "next dev --port 3001",
     "build": "npx eslint . --fix && git add . && next build",
     "start": "next start"
   },

@@ -8,7 +8,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialTelegram } from '~/assets/Social';
-import { cn, copyToClipboard, TitleCard } from '~/components/Components';
+import AnimeItem from '~/components/AnimeItem';
+import { cn, copyToClipboard } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { wordDeclination } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
@@ -18,8 +19,8 @@ import { UIText } from '~/components/UI/Text.ui';
 import Tooltip from '~/components/UI/Tooltip';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
+import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { IDubber, IDubberMember } from '~/interfaces/IDubber';
-import { ITitle } from '~/interfaces/ITitle';
 import { IUser } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
@@ -160,15 +161,15 @@ export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   </div>
 }
 
-export const DubberAnimeDubbed: NextPage<{ dubber: IDubber, dubbedAnime: ITitle[] }> = ({ dubbedAnime, dubber }) => {
+export const DubberAnimeDubbed: NextPage<{ dubber: IDubber, hydratedAnimes: HydratedAnime[] }> = ({ hydratedAnimes, dubber }) => {
   return <div className="flex flex-col gap-[16px]">
     <div className="flex items-center gap-[24px] justify-between">
       <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">З озвученням {dubber.nameUkr}</h3>
     </div>
 
     <div className="grid gap-[16px] grid-cols-6 max-[1440px]:grid-cols-5 max-xl:grid-cols-4 max-lg:grid-cols-3 max-md:grid-cols-2 grid-rows-1">
-      {dubbedAnime.slice(0, 6).map(title => {
-        return <TitleCard title={title} key={`dubber-dubbed--${title.code}`} />
+      {hydratedAnimes.slice(0, 6).map((hydrated, i) => {
+        return <AnimeItem hydrated={hydrated} key={`dubbed_anime-${dubber.id}--${i}`} />
       })}
     </div>
   </div>

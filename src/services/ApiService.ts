@@ -1,5 +1,7 @@
 import { $api } from '~/components/http';
-import { IAnimeGetSearch, IAnimeGetSearchResult, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberGetOneByQueryProps, IDubberGetOneByQueryResponse, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
+import { config } from '~/config';
+import { AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, DubberGetOneByQuery, DubberGetOneByQueryProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps, UserGetLib, UserGetLibProps, UserGetTogetherRoom, UserGetTogetherRoomProps } from '~/interfaces/services/ApiServiceIntf';
+import { AnimeFeatured } from '~/interfaces/types';
 
 
 
@@ -11,10 +13,16 @@ interface SearchAnimeParams {
   woMalId?: boolean
 }
 
+interface RequestProps {
+  session?: string
+}
+
+
+
 class ApiService {
   //* =============== DUBBER ROUTER
-  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache, metadataOnly }: IDubberGetOneByQueryProps) {
-    const { data } = await $api.get<IDubberGetOneByQueryResponse>(`/dubber/${query}`, {
+  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache, metadataOnly }: DubberGetOneByQueryProps) {
+    const { data } = await $api.get<DubberGetOneByQuery>(`/dubber/${query}`, {
       params: {
         detailed,
         fetchDubbedAnime,
@@ -96,6 +104,33 @@ class ApiService {
 
 
   //* =============== USER ROUTER
+  async getUser({ query, detailed, metadataOnly, parseCapabilities }: UserGetByQueryProps, params?: RequestProps) {
+    const { data } = await $api.get<UserGetByQuery>(`/user/${query}`, {
+      params: {
+        detailed,
+        metadataOnly,
+        parseCapabilities
+      },
+      headers: {
+        Cookie: params?.session ? `${config.vars.SessionCookie}=${params?.session}` : undefined
+      }
+    })
+
+    return data;
+  }
+
+  async getLib({ query, libId }: UserGetLibProps) {
+    const { data } = await $api.get<UserGetLib>(`/user/${query}/lib/${libId}`)
+
+    return data;
+  }
+
+  async getTogetherRoom({ query, roomId }: UserGetTogetherRoomProps) {
+    const { data } = await $api.get<UserGetTogetherRoom>(`/user/${query}/together/${roomId}`)
+
+    return data;
+  }
+
   async searchUsers({ q, parseInvitationStatusFor }: IUserGetSearch) {
     const { data } = await $api.get<{ results: IUserGetSearchResult[] }>(`/user/search`, {
       params: {
@@ -116,15 +151,36 @@ class ApiService {
 
 
   //* =============== ANIME ROUTER
-  async searchAnime({ q }: IAnimeGetSearch, params?: SearchAnimeParams) {
+  async searchAnime({ q }: AnimeGetSearchProps, params?: SearchAnimeParams) {
     if (params?.all) q = '~all';
     if (params?.woMalId) q = '~wo-mal-id';
 
-    const { data } = await $api.get<{ results: IAnimeGetSearchResult[] }>(`/anime/search`, {
+    const { data } = await $api.get<AnimeGetSearch>(`/anime/search`, {
       params: {
         q
       }
     });
+
+    return data;
+  }
+
+  async getAnime({ query, detailed, fetchDubbers, fetchRelated, metadataOnly }: AnimeGetByQueryProps) {
+    if (fetchDubbers || fetchRelated) detailed = true
+
+    const { data } = await $api.get<AnimeGetByQuery>(`/anime/${query}`, {
+      params: {
+        detailed,
+        fetchDubbers,
+        fetchRelated,
+        metadataOnly
+      }
+    });
+
+    return data;
+  }
+
+  async getFeaturedAnime() {
+    const { data } = await $api.get<AnimeFeatured>(`/anime/featured`)
 
     return data;
   }

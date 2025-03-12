@@ -1,7 +1,7 @@
-import { $api } from '~/components/http';
-import { config, devMode } from '~/config';
+import { devMode } from '~/config';
 import { TRoleCapability } from '~/interfaces/IRoles';
 import { IUser } from '~/interfaces/IUser';
+import API from '~/services/ApiService';
 
 
 
@@ -25,33 +25,23 @@ export async function CheckUserAccess({ capabilities, checkMode, session }: IChe
   checkMode = checkMode ?? 'AND';
 
   try {
-    const { data } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/*`, {
-      params: {
-        detailed: true,
-        parseRoles: true
-      },
-      headers: {
-        Cookie: `${config.vars.SessionCookie}=${session}`
-      }
-    })
-
-    const { parsedRoles, user } = data;
+    const { user, capabilities } = await API.getUser({ query: '*', parseCapabilities: true })
 
     // Pass root
-    if (parsedRoles.includes('root')) return { user, capabilities: parsedRoles };
+    if (capabilities?.includes('root')) return { user, capabilities };
     // Pass if no capabilities required
-    if (!capabilities.length) return { user, capabilities: parsedRoles };
+    if (!capabilities?.length) return { user, capabilities };
 
     const passCaps: TRoleCapability[] = []
 
     capabilities.forEach(cap => {
-      if (parsedRoles.includes(cap)) passCaps.push(cap);
+      if (capabilities?.includes(cap)) passCaps.push(cap);
     })
 
     // Pass if each of required capability present
-    if (checkMode === 'AND' && passCaps.length === capabilities.length) return { user, capabilities: parsedRoles };
+    if (checkMode === 'AND' && passCaps.length === capabilities.length) return { user, capabilities };
     // Pass if at least one required capability present
-    if (checkMode === 'OR' && passCaps.length > 0) return { user, capabilities: parsedRoles };
+    if (checkMode === 'OR' && passCaps.length > 0) return { user, capabilities };
 
 
     return {};
