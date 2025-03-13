@@ -13,7 +13,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import axios, { AxiosError } from 'axios';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google'
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
@@ -55,9 +55,7 @@ const spaceGrotesk = Space_Grotesk({
 
 
 export default async function Layout({ children, params }: ILayoutProps) {
-  const url = (await headers()).get('x-url')!;
-  const cookie = await cookies();
-  const sessionCookie = cookie.get(config.vars.SessionCookie)?.value;
+  const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
 
   /** Check is server online */
   let isServerOnline = false;
@@ -71,11 +69,13 @@ export default async function Layout({ children, params }: ILayoutProps) {
     isServerOnline = true;
   } catch (e) { }
 
+
+
   // Get user by cookie
-  if (sessionCookie && isServerOnline) {
+  if (sessionToken && isServerOnline) {
     try {
       const data = await API.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
-        session: sessionCookie
+        session: sessionToken
       })
 
       user = {
@@ -107,11 +107,8 @@ export default async function Layout({ children, params }: ILayoutProps) {
         <Analytics />
         <SpeedInsights />
 
-        {/* Return server unavailable screen if server do not respond */}
-        {!isServerOnline && <ErrorNoConnection />}
-
         {/* Return layout if server respond */}
-        {isServerOnline && <StateProvider user={user}>
+        {isServerOnline ? <StateProvider user={user}>
           <SkeletonTheme baseColor="#181818" highlightColor="#222">
             <Header />
 
@@ -121,7 +118,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
             <ToastContainer />
           </SkeletonTheme>
-        </StateProvider>}
+        </StateProvider> : <ErrorNoConnection />}
       </body>
     </html>
   )

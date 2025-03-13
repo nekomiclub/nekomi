@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef } from 'react';
+import * as Loader from '@uiball/loaders';
 import clsx from 'clsx';
 import { NextPage } from 'next';
 import Link from 'next/link';
@@ -128,6 +129,21 @@ export const TitleCard: NextPage<{ title: Anime, className?: string }> = ({ titl
       </div>
     </Link>
   );
+}
+
+export const FooterOnline: NextPage = () => {
+  const storageState = useAppSelector(state => state.storage);
+
+  return <p className="text-white">Онлайн: <b className="font-bold gradient--primary-text">{storageState.online || -1}</b></p>
+}
+
+/** Simple loading content component */
+export const LoadingContent: NextPage = () => {
+  return <div className="flex items-center gap-[16px]">
+    <Loader.Ring size={16} color="#555555" />
+
+    <p className="text-grey-new">Завантажуємо контент...</p>
+  </div>
 }
 
 

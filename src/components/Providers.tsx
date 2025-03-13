@@ -50,8 +50,11 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
   const router = useRouter();
   const searchParams = useSearchParams();
 
+
+
   // Authorize user
   useEffect(() => {
+    // Log random fact
     const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
     console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
 
