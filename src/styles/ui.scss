@@ -1,5 +1,5 @@
-@import './colors.scss';
-@import './vars.scss';
+@import "./colors.scss";
+@import "./vars.scss";
 
 :root {
   --header-height: 96px;
@@ -12,12 +12,12 @@
         animation: uiNotifyToastProgressBar 3s linear;
         background: $infoSuccess;
       }
-      
+
       &--warn {
         animation: uiNotifyToastProgressBar 3s linear;
         background: $infoWarn;
       }
-      
+
       &--error {
         animation: uiNotifyToastProgressBar 6s linear;
         background: $infoError;
@@ -33,7 +33,7 @@
     border: 1px solid $darkLight;
     font-size: 16px;
     font-family: var(--font-manrope);
-    transition: .2s ease-in-out border-color;
+    transition: 0.2s ease-in-out border-color;
     width: 100%;
     position: relative;
 
@@ -42,7 +42,7 @@
     }
 
     &--pending {
-      border-color: rgba($color: $infoWarn, $alpha: .5) !important;
+      border-color: rgba($color: $infoWarn, $alpha: 0.5) !important;
     }
 
     &--error {
@@ -57,7 +57,7 @@
   &-dropdownMenu {
     &--scaleAnimation {
       .fkw-menu_wrapper {
-        scale: .95;
+        scale: 0.95;
 
         &--active {
           scale: 1;
@@ -69,16 +69,18 @@
   &-button {
     background: $darkMedium;
     border: 1px solid $darkLight;
-    transition: .2s ease-in-out;
+    transition: 0.2s ease-in-out;
     border-radius: 4px;
+    outline: none;
 
     &:hover,
     &:focus-visible {
       background: $darkLight;
     }
 
-    &:active {
-      scale: .95;
+    &:active,
+    &:focus-visible {
+      scale: 0.95;
     }
   }
 
@@ -129,7 +131,7 @@
         flex-direction: column;
         gap: 2px;
         align-items: center;
-        transition: .2s ease-in-out;
+        transition: 0.2s ease-in-out;
         padding: 12px 8px;
       }
     }

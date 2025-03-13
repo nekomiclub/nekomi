@@ -2,10 +2,8 @@ import { Metadata } from 'next';
 
 import { HandleServerError } from '~/components/Errors';
 import API from '~/services/ApiService';
-import { NotFoundScreen } from '../../../../../components/Components';
 import { metaObject } from '../../../../../config';
 import { IRSCProps } from '../../../../../interfaces/IRSC';
-import { IUser } from '../../../../../interfaces/IUser';
 import { UserPageProps } from '../../page';
 import { UserHeader } from '../../UserPage';
 
@@ -31,26 +29,11 @@ export default async function RSC(props: IRSCProps<UserPageProps>) {
   const params = await props.params;
   const { username } = params;
 
-  let user: IUser | null = null
-
-
-
   try {
-    const userData = await API.getUser({ query: username, detailed: true });
+    const { user } = await API.getUser({ query: username, detailed: true });
+    const lib = user.libs.find(el => el.id === params.libID);
 
-    user = userData.user;
-  } catch (e) {
-    return HandleServerError(e)
-  }
-
-  if (!user) return <NotFoundScreen />
-
-  const lib = user.libs.find(el => el.id === params.libID);
-
-
-
-  return <>
-    <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
+    return <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
       <UserHeader user={user} />
 
       <div className="wrapper gap-[40px]">
@@ -58,5 +41,7 @@ export default async function RSC(props: IRSCProps<UserPageProps>) {
         <UserLibOthers user={user} />
       </div>
     </div>
-  </>
+  } catch (e) {
+    return HandleServerError(e)
+  }
 }

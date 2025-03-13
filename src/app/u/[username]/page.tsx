@@ -2,13 +2,11 @@
 import { Metadata } from 'next';
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
-import { NotFoundScreen } from '~/components/Components';
 import { HandleServerError } from '~/components/Errors';
 import { config, CONSTS, devMode, metaObject } from '~/config';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { IRSCProps } from '../../../interfaces/IRSC';
-import { IUser } from '../../../interfaces/IUser';
 
 import { UserHeader, UserSectionLibs, UserSectionWTRooms, UserStatCard } from './UserPage';
 
@@ -57,20 +55,10 @@ export default async function RSC(props: IRSCProps<UserPageProps>) {
   const params = await props.params;
   const { username } = params;
 
-  let user: IUser | null = null
-
   try {
-    const data = await API.getUser({ query: username, detailed: true });
+    const { user } = await API.getUser({ query: username, detailed: true });
 
-    user = data.user;
-  } catch (e) {
-    return HandleServerError(e)
-  }
-
-
-
-  return !user ? <NotFoundScreen /> : <>
-    <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
+    return <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
       <UserHeader user={user} primaryPage />
 
       <div className="wrapper gap-[40px]">
@@ -85,5 +73,7 @@ export default async function RSC(props: IRSCProps<UserPageProps>) {
         <UserSectionWTRooms user={user} />
       </div>
     </div>
-  </>
+  } catch (e) {
+    return HandleServerError(e)
+  }
 }
