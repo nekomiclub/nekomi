@@ -405,7 +405,7 @@ function Chat({ messages, addMessage }: { messages: IMessage[], addMessage: (mes
 
   return <div className="w-full px-[24px] py-[16px] rounded-[4px] border-[2px] border-darkGrey h-full min-h-[300px] max-h-[920px] gap-[16px] flex flex-col max-[1020px]:h-[500px]">
     <div className="w-full overflow-x-hidden overflow-y-auto h-full flex-1 flex flex-col gap-[8px]" ref={messagesRef}>
-      {!messages.length && <p className="text-lightGrey text-center">Тут поки що нічого нема :(</p>}
+      {messages.length === 0 && <p className="text-lightGrey text-center">Тут поки що нічого нема :(</p>}
 
       {messages.map((message, i) => {
         return message.type === 'income' ? <MessageIncome {...message} key={`chat-message--${i}`} /> :

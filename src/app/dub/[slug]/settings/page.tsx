@@ -9,7 +9,7 @@ import { IRSCProps } from '~/interfaces/IRSC';
 import { IUser } from '~/interfaces/IUser';
 import API from '~/services/ApiService';
 
-import { DubberSettingsBanner, DubberSettingsContent, DubberSettingsHeader } from './DubberSettings';
+import { DubberSettingsBanner, DubberSettingsContent, DubberSettingsHeader } from './DubberSettingsPage';
 
 
 

@@ -55,8 +55,8 @@ export default async function RSC() {
       </div>
 
       <div className="wrapper gap-[32px]">
-        {featured.updatedRecently.length ? <HomeCategory label="Оновлено нещодавно" icon={<IcoClockOutlined width={32} height={32} className="max-md:w-[24px] max-md:h-[24px]" />} hydratedAnimes={featured.updatedRecently} /> : <></>}
-        {featured.rated.length ? <HomeCategory label="З високою оцінкою" icon={<IcoStarRating width={32} height={32} className="max-md:w-[24px] max-md:h-[24px]" />} hydratedAnimes={featured.rated} /> : <></>}
+        {featured.updatedRecently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<IcoClockOutlined width={32} height={32} className="max-md:w-[24px] max-md:h-[24px]" />} hydratedAnimes={featured.updatedRecently} />}
+        {featured.rated.length > 0 && <HomeCategory label="З високою оцінкою" icon={<IcoStarRating width={32} height={32} className="max-md:w-[24px] max-md:h-[24px]" />} hydratedAnimes={featured.rated} />}
       </div>
     </main>
   } catch (e) {
