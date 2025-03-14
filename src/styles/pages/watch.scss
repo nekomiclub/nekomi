@@ -1,0 +1,44 @@
+@import "../colors.scss";
+
+.watch {
+  &-meta {
+    &-action {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+
+      * {
+        text-align: center;
+      }
+    }
+
+    &-detail {
+      width: 100%;
+      background: $darkBright;
+      border-radius: 4px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+
+      &_container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      &_outlined {
+        width: 100%;
+        border: 1px solid $darkLight;
+        padding: 16px;
+        display: flex;
+        align-content: center;
+        gap: 16px;
+      }
+    }
+  }
+}

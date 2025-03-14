@@ -1,45 +1,45 @@
-import axios from 'axios';
+import '~/styles/pages/watch.scss';
+
 import { Metadata } from 'next';
+import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
+import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
-import { parseTitleType } from '../../../components/handlers';
-import { $api } from '../../../components/http';
-import { animeGenres, config, CONSTS, metaObject } from '../../../config';
-import { IDubber } from '../../../interfaces/IDubber';
+import StyledImage from '~/components/StyledImage';
+import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import API from '~/services/ApiService';
+import { config, CONSTS, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
-import { ITitle, TAnimeGenre } from '../../../interfaces/ITitle';
 import { routes } from '../../../routes';
 
-import WatchTitle from './Watch';
+import { WatchActions, WatchDetail, WatchEditLibs } from './WatchPage';
 
 
+
+export interface WatchPageParams extends Params {
+  query: string
+}
 
 
 export async function generateMetadata(
-  props: IRSCProps,
+  props: IRSCProps<WatchPageParams>,
 ): Promise<Metadata> {
   const params = await props.params;
+  const { query } = params;
 
   try {
-    const { data } = await axios.get<{ title: ITitle }>(`${config.URL.apiHTTP}/title/${params.query}`)
-    const { title } = data
-
-    const genres: TAnimeGenre[] = title.genres.map(genre => {
-      return animeGenres[genre]
-    })
-
-    const description = `${genres.length ? genres.join(', ') : `Жанри відсутні`} • ${title.year} • ${parseTitleType(title.type)}. ${title.description}`
+    const { metadata } = await API.getAnime({ query, metadataOnly: true })
 
     return metaObject({
-      title: title.names.ukr,
-      description,
-      keywords: [title.names.eng, ...title.names.alt],
+      title: metadata?.title.replace('Аніме ', ''),
+      description: metadata?.description,
+      keywords: metadata?.keywords,
       openGraph: {
-        title: `Аніме ${title.names.ukr} (${title.year}) — nekomi`,
-        description,
+        title: `${metadata?.title.replace('Аніме ', '')} — nekomi`,
+        description: metadata?.description,
         type: 'video.tv_show',
-        images: title.poster,
-        url: `${config.URL.baseURL}${routes.watch_title.path}/${title.code}`,
+        images: metadata?.photo,
+        url: `${config.URL.baseURL}${routes.watch_title.path}/${query}`,
         locale: 'uk_UA',
         siteName: CONSTS.Domains.nekomi.split('.')[0],
       }
@@ -52,39 +52,97 @@ export async function generateMetadata(
 
 
 // Fetch title
-export default async function RSC(props: IRSCProps<{ query: string }>) {
+export default async function RSC(props: IRSCProps<WatchPageParams>) {
   const params = await props.params;
-
-  let title: ITitle | null = null;
-  let dubbers: IDubber[] = []
-  let episodesDubbed = 0;
+  const { query } = params;
 
 
 
   try {
-    const { data } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] | null }>(`/title/${params.query}`, {
-      params: {
-        detailed: true,
-        parseDubbers: true
-      }
-    });
+    const { anime, genres, media, rate, season, status, related, dubbers } = await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true })
+    const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
 
-    title = data.title;
-    dubbers = data.parsedDubbers || [];
+    const scoredByFormatter = Intl.NumberFormat('en', { notation: 'compact' });
+
+    let maximumEpisode = 0;
+    anime.episodes.forEach(ep => ep.order > maximumEpisode ? maximumEpisode = ep.order : undefined);
 
 
-    if (title.episodes.length) {
-      let tmp = 0;
 
-      title.episodes.forEach(el => el.order > tmp ? tmp = el.order : null)
+    return <>
+      <div style={{ height: `calc(32px + var(--header-height))` }}></div>
 
-      episodesDubbed = tmp;
-    }
+      {/* DESKTOP */}
+      <main className="max-md:hidden flex flex-col gap-[40px]">
+        {/* Meta */}
+        <section className="wrapper !flex-row gap-[32px]">
+          {/* Poster */}
+          <div className="flex flex-col gap-[8px] w-[500px] shrink-0">
+            <div className="watch-poster w-full h-[700px] bg-dark-medium rounded-[4px] overflow-hidden">
+              <StyledImage src={hydratedAnime.anime.poster} width="100%" height="100%" priority loading="eager" />
+            </div>
+
+            <WatchEditLibs hydratedAnime={hydratedAnime} />
+          </div>
+
+          {/* Content */}
+          <div className="flex flex-col gap-[32px] w-full">
+            {/* Heading */}
+            <div className="flex items-center justify-between w-full gap-[24px]">
+              <div className="flex flex-col gap-[4px]">
+                <h1 className="text-white text-[32px] font-manrope font-bold line-clamp-1" title={hydratedAnime.anime.names.ukr}>{hydratedAnime.anime.names.ukr}</h1>
+                <h3 className="text-grey-new text-[24px] font-space-grotesk line-clamp-1" title={hydratedAnime.anime.names.eng}>{hydratedAnime.anime.names.eng}</h3>
+              </div>
+
+              <div className="flex flex-col items-center gap-[4px]">
+                <div className="flex items-center gap-[8px]">
+                  <h2 className="text-primary text-[24px] font-bold font-manrope">{hydratedAnime.anime.score.mal?.toFixed(2) ?? hydratedAnime.anime.score.imdb?.toFixed(2) ?? '―'}</h2>
+
+                  <MaterialSymbol icon="star_half" size={24} className="text-primary" />
+                </div>
+
+                <p className="text-grey-new font-manrope whitespace-nowrap">{hydratedAnime.anime.score.malScoredBy ? scoredByFormatter.format(hydratedAnime.anime.score.malScoredBy) : 'Нема'} оцінок</p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <WatchActions hydratedAnime={hydratedAnime} />
+
+            {/* Details */}
+            <div className="flex flex-col gap-[8px]">
+              <div className="grid grid-cols-5 gap-[8px]">
+                <WatchDetail name="епізоди" value={anime.episodes.length ? `${maximumEpisode} / ${anime.episodesCount}` : null} />
+                <WatchDetail name="статус" status={status} />
+                <WatchDetail name="рейтинг" rate={rate} />
+                <WatchDetail name="сезон" season={season} year={anime.year} />
+                <WatchDetail name="тип" media={media} />
+              </div>
+
+              <div className="grid grid-cols-2 gap-[8px]">
+                <WatchDetail name="жанри" genres={genres} />
+                <WatchDetail name="студії" studios={anime.studios} />
+              </div>
+
+              <div className="flex gap-[8px]">
+                {anime.details && <div className="watch-meta-detail_outlined">
+                  <MaterialSymbol icon="info" size={24} className="text-grey-new" />
+
+                  <p className="text-grey-new font-manrope">{anime.details}</p>
+                </div>}
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+
+
+      {/* MOBILE */}
+      <main className="md:hidden">
+
+      </main>
+    </>
   } catch (e) {
     return HandleServerError(e)
   }
-
-
-
-  return <WatchTitle title={title} dubbers={dubbers} episodesDubbed={episodesDubbed} />
 }

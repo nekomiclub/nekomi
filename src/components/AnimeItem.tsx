@@ -1,17 +1,22 @@
 'use client'
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { MenuWrapper } from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
 import Link from 'next/link';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { TUserLibType } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 
 import { cn } from './Components';
+import { HandleClientError } from './Errors';
 import { secondsToReadable } from './KekwPlayer/KekwPlayer';
 import StyledImage from './StyledImage';
+import { NotifyWarn } from './UI/NotifyToast';
+import UICheckbox from './UI/UICheckbox';
 
 
 
@@ -19,6 +24,15 @@ interface Props {
   hydrated: HydratedAnime
 
   className?: string
+}
+
+interface AnimeItemEditMenuProps {
+  hydratedAnime: HydratedAnime
+}
+
+interface AnimeItemEditMenuLibProps {
+  hydratedAnime: HydratedAnime
+  type: TUserLibType
 }
 
 
@@ -134,5 +148,63 @@ const AnimeItem: NextPage<Props> = ({ hydrated, className }) => {
     </Link>
   );
 }
+
+export const AnimeItemEditMenu: NextPage<AnimeItemEditMenuProps> = ({ hydratedAnime }) => {
+  return <MenuWrapper className="w-full bg-dark-primary rounded-[4px] flex flex-col border border-dark-light">
+    <AnimeItemEditMenuLib type="favorite" hydratedAnime={hydratedAnime} />
+    <AnimeItemEditMenuLib type="watching" hydratedAnime={hydratedAnime} />
+    <AnimeItemEditMenuLib type="watched" hydratedAnime={hydratedAnime} />
+    <AnimeItemEditMenuLib type="plans" hydratedAnime={hydratedAnime} />
+    <AnimeItemEditMenuLib type="delayed" hydratedAnime={hydratedAnime} />
+  </MenuWrapper>
+}
+
+
+
+const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydratedAnime }) => {
+  const currentUser = useAppSelector(state => state.user);
+
+  const [isUserAuth] = useState(Boolean(currentUser.id));
+  const [label, setLabel] = useState('~~~')
+  const [icon, setIcon] = useState<SymbolCodepoints>('question_mark')
+  const [isChecked, setIsChecked] = useState(false)
+
+
+
+  useMemo(() => {
+    if (type === 'favorite') { setLabel('Улюблене'); setIcon('favorite') }
+    if (type === 'watching') { setLabel('Переглядаю'); setIcon('visibility') }
+    if (type === 'watched') { setLabel('Переглянуте'); setIcon('bookmark_added') }
+    if (type === 'plans') { setLabel('Плани'); setIcon('stack') }
+    if (type === 'delayed') { setLabel('Відкладене'); setIcon('auto_delete') }
+  }, [])
+
+
+
+  async function toggleLib() {
+    try {
+      if (!isUserAuth) return NotifyWarn({ title: 'Потрібна авторизація!', message: 'Нажаль, ви не можете додати аніме в теку, не маючи акаунту :(' })
+
+      setIsChecked(prev => !prev);
+
+      // TODO: Patch user document
+    } catch (e) {
+      setIsChecked(prev => !prev);
+      return HandleClientError(e)
+    }
+  }
+
+
+
+  return <button className="flex items-center gap-[16px] p-[12px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={toggleLib}>
+    <UICheckbox isChecked={isChecked} setIsChecked={setIsChecked} disableDefaultToggle />
+
+    <MaterialSymbol icon={icon} size={24} className="text-white" />
+
+    <p className="text-white font-manrope">{label}</p>
+  </button>
+}
+
+
 
 export default AnimeItem

@@ -135,7 +135,7 @@ export const HomeCategory: NextPage<HomeCategoryProps> = ({ label, icon, hydrate
 
 
 const HomeAnimesSwiper: NextPage<HomeAnimeSwiperProps> = ({ hydratedAnimes }) => {
-  const id = useId().replace(':', '');
+  const id = useId().replaceAll(':', '');
 
   return <div className="min-w-0">
     <Swiper spaceBetween={16} slidesPerView={'auto'} className="ml-0">

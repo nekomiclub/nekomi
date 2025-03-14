@@ -280,6 +280,7 @@ export interface HydratedAnime {
   media: AnimeMedia
   rate: AnimeRate
   season: AnimeSeason
+  status: AnimeStatus
 }
 
 
