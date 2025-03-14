@@ -1,4 +1,4 @@
-import { AnimeRelated, HydratedAnime } from '../AnimeIntf'
+import { HydratedAnime } from '../AnimeIntf'
 import { DubberCompact } from '../DubberIntf'
 import { IDubber, TDubberMemberRole } from '../IDubber'
 import { TRoleCapability } from '../IRoles'
@@ -128,9 +128,10 @@ export interface AnimeGetByQueryProps {
 }
 
 export interface AnimeGetByQuery extends HydratedAnime {
-  related?: AnimeRelated[]
+  related?: HydratedAnime[]
   dubbers?: DubberCompact[]
   metadata?: Metadata
+  posterAdapt?: DubberCompact
 }
 
 export interface UserGetByQueryProps {

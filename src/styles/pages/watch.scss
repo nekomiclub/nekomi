@@ -1,6 +1,15 @@
 @import "../colors.scss";
 
 .watch {
+  &-section {
+    &_divider {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: $darkLight;
+    }
+  }
+
   &-meta {
     &-action {
       display: flex;

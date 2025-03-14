@@ -5,15 +5,20 @@ import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import * as Loader from '@uiball/loaders';
 import { NextPage } from 'next';
 import Link from 'next/link';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
-import { cn } from '~/components/Components';
+import { cn, LoadingContent } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
+import StyledImage from '~/components/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';
+import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPE, AnimeGenre, AnimeMedia, AnimeRate, AnimeSeason, AnimeStatus, AnimeStudio, HydratedAnime } from '~/interfaces/AnimeIntf';
+import { DubberCompact } from '~/interfaces/DubberIntf';
+import { Routes } from '~/routes';
 
 
 
@@ -32,6 +37,21 @@ interface WatchDetailProps {
   media?: AnimeMedia
   genres?: AnimeGenre[]
   studios?: AnimeStudio[]
+}
+
+interface WatchSectionLabelProps {
+  label: string
+  icon: SymbolCodepoints
+}
+
+interface WatchDubberProps {
+  dubber: DubberCompact
+
+  posterAdapt?: boolean
+}
+
+interface WatchSwiperProps {
+  children: React.ReactElement[]
 }
 
 
@@ -114,7 +134,7 @@ export const WatchActions: NextPage<WatchProps> = ({ hydratedAnime }) => {
       </>}
     </button>
 
-    {canEditAnime && <Link href={'#'} className="ui-button watch-meta-action bg-transparent border-none">
+    {canEditAnime && <Link href={`${config.URL.baseURL}${Routes.patcher_title.path}/${hydratedAnime.anime.uuid}`} className="ui-button watch-meta-action bg-transparent border-none">
       <MaterialSymbol icon="edit" size={24} className="text-grey-new" />
       <p className="text-grey-new font-manrope uppercase">РЕДАГУВАТИ</p>
     </Link>}
@@ -161,5 +181,47 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
     </>}
 
     <p className="text-grey-new text-[14px] font-manrope uppercase">{name}</p>
+  </div>
+}
+
+export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, icon }) => {
+  return <div className="flex items-center gap-[16px]">
+    <MaterialSymbol icon={icon} size={24} className="text-white" />
+
+    <h3 className="text-white text-[24px] font-manrope font-bold">{label}</h3>
+  </div>
+}
+
+export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt }) => {
+  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex items-center gap-[16px] min-w-[205px]" href={`${config.URL.baseURL}${Routes.dubber_profile.path}/${dubber.slug}`}>
+    <StyledImage src={dubber.avatarURL} width="48px" height="48px" className="rounded-[2px] overflow-hidden" />
+
+    <div className="flex flex-col gap-[4px]">
+      <p className="text-white font-manrope font-bold">{dubber.nameUkr}</p>
+
+      {posterAdapt && <p className="text-grey-new font-manrope">Адаптація постеру</p>}
+    </div>
+  </Link>
+}
+
+export const WatchSwiper: NextPage<WatchSwiperProps> = ({ children }) => {
+  const id = useId().replaceAll(':', '');
+
+  const [isSwiperInitialized, setIsSwiperInitialized] = useState(false)
+
+
+
+  return <div className="relative">
+    <Swiper className="w-full h-full" spaceBetween={8} slidesPerView={'auto'} onInit={() => setIsSwiperInitialized(true)}>
+      {children.map((child, i) => {
+        return <SwiperSlide className="!w-fit" key={`watchswiper-${id}--${i}`}>
+          {child}
+        </SwiperSlide>
+      })}
+    </Swiper>
+
+    <div className={cn(`absolute top-0 left-0 w-full h-full bg-dark-primary flex justify-center items-center z-[4] duration-200`, isSwiperInitialized && 'opacity-0 invisible touch-none pointer-events-none')}>
+      <LoadingContent />
+    </div>
   </div>
 }

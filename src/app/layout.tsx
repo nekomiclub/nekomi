@@ -11,7 +11,7 @@ import '../styles/globals.css';
 
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { preconnect } from 'next/dist/server/app-render/entry-base';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google'
 import { cookies } from 'next/headers';
@@ -64,16 +64,8 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
 
 
-  // Ping API
-  try {
-    await axios.options(config.URL.apiHTTP)
-    isServerOnline = true;
-  } catch (e) { }
-
-
-
   // Get user by cookie
-  if (sessionToken && isServerOnline) {
+  if (sessionToken) {
     try {
       const data = await API.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
         session: sessionToken
@@ -91,12 +83,16 @@ export default async function Layout({ children, params }: ILayoutProps) {
         dubberTeamMember: data.user.statistics.dubber_team_member,
         togetherRooms: data.user.togetherRooms
       }
-    } catch (e) {
-      if (e instanceof AxiosError && e.status && e.status > 500) {
-        console.error(`[HTTP]: Error occured at root layout while fetching user data`, e);
-      }
 
-      console.error(`[Unknown]: Error occured at root layout while fetching user data`, e);
+      isServerOnline = true;
+    } catch (e) {
+      console.error(`User fetched with error at RootLayout`, e)
+
+      // Ping API
+      try {
+        await axios.get(`${config.URL.apiHTTP}/ping`)
+        isServerOnline = true;
+      } catch (e) { }
     }
   }
 

@@ -52,6 +52,15 @@ export interface Anime {
   }
 }
 
+export interface HydratedAnime {
+  anime: Anime
+  genres: AnimeGenre[]
+  media: AnimeMedia
+  rate: AnimeRate
+  season: AnimeSeason
+  status: AnimeStatus
+}
+
 export interface TitleOld {
   poster: string
   year: number
@@ -260,28 +269,6 @@ export type AnimeMediaType = `${ANIME_MEDIA_TYPE}`;
 
 
 
-
-
-
-
-export interface AnimeRelated {
-  uuid: Anime['uuid']
-  slug: Anime['slug']
-  posterURL: Anime['poster']
-  genres: AnimeGenre[]
-  malScore: Anime['score']['mal']
-  nameUkr: Anime['names']['ukr']
-  episodesCount: Anime['episodesCount']
-}
-
-export interface HydratedAnime {
-  anime: Anime
-  genres: AnimeGenre[]
-  media: AnimeMedia
-  rate: AnimeRate
-  season: AnimeSeason
-  status: AnimeStatus
-}
 
 
 
