@@ -75,12 +75,12 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
       <div style={{ height: `calc(32px + var(--header-height))` }}></div>
 
       {/* DESKTOP */}
-      <main className="max-sm:hidden flex flex-col gap-[40px]">
+      <main className="max-lg:hidden flex flex-col gap-[40px]">
         {/* Meta */}
         <section className="wrapper !flex-row gap-[32px]">
           {/* Poster */}
-          <div className="flex flex-col gap-[8px] w-[500px] shrink-0">
-            <div className="watch-poster w-full h-[700px] bg-dark-medium rounded-[4px] overflow-hidden">
+          <div className="flex flex-col gap-[8px] w-[500px] shrink-0 max-xl:w-[400px]">
+            <div className="watch-poster w-full h-[700px] bg-dark-medium rounded-[4px] overflow-hidden max-xl:h-[600px]">
               <StyledImage src={hydratedAnime.anime.poster} width="100%" height="100%" priority loading="eager" />
             </div>
 
@@ -115,20 +115,20 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
 
             {/* Details */}
             <div className="flex flex-col gap-[8px]">
-              <div className="grid grid-cols-5 gap-[8px]">
+              <div className="grid grid-cols-5 gap-[8px] max-2xl:grid-cols-3">
                 <WatchDetail name="епізоди" value={anime.episodes.length ? `${maximumEpisode} / ${anime.episodesCount}` : null} />
                 <WatchDetail name="статус" status={status} />
                 <WatchDetail name="рейтинг" rate={rate} />
                 <WatchDetail name="сезон" season={season} year={anime.year} />
-                <WatchDetail name="тип" media={media} />
+                <WatchDetail name="тип" media={media} className="max-2xl:col-span-2" />
               </div>
 
-              <div className="grid grid-cols-2 gap-[8px]">
+              <div className="grid grid-cols-2 gap-[8px] max-lg:grid-cols-1">
                 <WatchDetail name="жанри" genres={genres} />
                 <WatchDetail name="студії" studios={anime.studios} />
               </div>
 
-              <div className="flex gap-[8px]">
+              <div className="flex gap-[8px] max-2xl:flex-col">
                 {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />}
 
                 {anime.details && <div className="watch-meta-detail_outlined">
@@ -189,7 +189,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
 
 
       {/* MOBILE */}
-      <main className="sm:hidden">
+      <main className="lg:hidden">
 
       </main>
     </>

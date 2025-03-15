@@ -38,6 +38,8 @@ interface WatchDetailProps {
   media?: AnimeMedia
   genres?: AnimeGenre[]
   studios?: AnimeStudio[]
+
+  className?: string
 }
 
 interface WatchNextEpisodeProps {
@@ -146,12 +148,12 @@ export const WatchActions: NextPage<WatchProps> = ({ hydratedAnime }) => {
   </div>
 }
 
-export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, rate, season, status, studios, value, year }) => {
+export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, rate, season, status, studios, value, year, className }) => {
   if (season && year) value = `${season.name} ${year}`;
   if (media) value = media.slug === ANIME_MEDIA_TYPE.UNKNOWN ? null : media.name
   if (status) value = status.name
 
-  return <div className="watch-meta-detail">
+  return <div className={cn(`watch-meta-detail`, className)}>
     {value && <p className="text-white font-manrope uppercase">{value}</p>}
     {value === null && <p className="text-grey-new font-manrope uppercase">—</p>}
 
@@ -194,6 +196,8 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
   const [within, setWithin] = useState('')
 
 
+
+  // TODO: handle local timezone
   useMemo(() => {
     const utc = getUTC(timestamp);
     const now = getUTC();
@@ -208,7 +212,7 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
     } else if (utc.date - 1 === now.date) {
       // tomorrow
       setDate('завтра')
-      setWithin('')
+      setWithin(`(в ${utc.hrs}:${utc.mins})`)
     } else {
       // in future
       const offset = utc.date - now.date
@@ -221,6 +225,8 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
 
 
   function setTodayWithin() {
+    if (getUTC().timestamp > getUTC(timestamp).timestamp) return setWithin(`(вже вийшла)`)
+
     const diffMs = Math.abs(getUTC(timestamp).timestamp - getUTC().timestamp);
 
     const hrs = Math.floor(diffMs / (1000 * 60 * 60));
