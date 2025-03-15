@@ -14,7 +14,7 @@ import { config, CONSTS, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { routes } from '../../../routes';
 
-import { WatchActions, WatchDetail, WatchDubber, WatchEditLibs, WatchSectionLabel, WatchSwiper } from './WatchPage';
+import { WatchActions, WatchDetail, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchSectionLabel, WatchSwiper } from './WatchPage';
 
 
 
@@ -61,7 +61,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
 
 
   try {
-    const { anime, genres, media, rate, season, status, related, posterAdapt, dubbers } = await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true })
+    const { anime, genres, media, rate, season, status, related, posterAdapt, nextBroadcast, dubbers } = await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true })
     const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
 
     const scoredByFormatter = Intl.NumberFormat('en', { notation: 'compact' });
@@ -129,6 +129,8 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
               </div>
 
               <div className="flex gap-[8px]">
+                {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />}
+
                 {anime.details && <div className="watch-meta-detail_outlined">
                   <MaterialSymbol icon="info" size={24} className="text-grey-new" />
 

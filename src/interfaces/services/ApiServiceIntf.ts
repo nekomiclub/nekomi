@@ -132,6 +132,9 @@ export interface AnimeGetByQuery extends HydratedAnime {
   dubbers?: DubberCompact[]
   metadata?: Metadata
   posterAdapt?: DubberCompact
+
+  /** UTC-0 timestamp of next planned broadcast */
+  nextBroadcast?: number
 }
 
 export interface UserGetByQueryProps {

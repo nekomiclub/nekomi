@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import * as Loader from '@uiball/loaders';
 import { NextPage } from 'next';
@@ -11,6 +11,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { cn, LoadingContent } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
+import { getUTC, wordDeclination } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';
@@ -37,6 +38,10 @@ interface WatchDetailProps {
   media?: AnimeMedia
   genres?: AnimeGenre[]
   studios?: AnimeStudio[]
+}
+
+interface WatchNextEpisodeProps {
+  timestamp: number
 }
 
 interface WatchSectionLabelProps {
@@ -182,6 +187,64 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
 
     <p className="text-grey-new text-[14px] font-manrope uppercase">{name}</p>
   </div>
+}
+
+export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp }) => {
+  const [date, setDate] = useState('')
+  const [within, setWithin] = useState('')
+
+
+  useMemo(() => {
+    const utc = getUTC(timestamp);
+    const now = getUTC();
+
+
+    if (utc.date === now.date) {
+      // now
+      setDate('сьогодні')
+      setTodayWithin();
+
+      setInterval(() => setTodayWithin(), 1000);
+    } else if (utc.date - 1 === now.date) {
+      // tomorrow
+      setDate('завтра')
+      setWithin('')
+    } else {
+      // in future
+      const offset = utc.date - now.date
+
+      setDate(`${String(utc.date).padStart(2, '0')}.${String(utc.month).padStart(2, '0')}`)
+      setWithin(`(через ${offset} ${wordDeclination(offset, ['день', 'дні', 'днів'])})`)
+    }
+  }, [])
+
+
+
+  function setTodayWithin() {
+    const diffMs = Math.abs(getUTC(timestamp).timestamp - getUTC().timestamp);
+
+    const hrs = Math.floor(diffMs / (1000 * 60 * 60));
+    const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+    setWithin(`(через ${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')})`)
+  }
+
+
+
+  return <Tooltip className="w-full" content="Вказано час та дату виходу епізоду в Японії. Переклад та озвучення вийдуть пізніше.">
+    <div className="watch-meta-detail_outlined">
+      <MaterialSymbol icon="hourglass_bottom" size={24} className="text-grey-new" />
+
+      <p className="text-grey-new font-manrope flex items-center gap-[4px]">
+        Наступна серія вийде:
+
+        <span className="text-white font-manrope inline">{date}</span>
+
+        {within}
+      </p>
+    </div>
+  </Tooltip>
 }
 
 export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, icon }) => {
