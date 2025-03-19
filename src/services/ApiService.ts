@@ -1,6 +1,6 @@
 import { $api } from '~/components/http';
 import { config } from '~/config';
-import { AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, DubberGetOneByQuery, DubberGetOneByQueryProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps, UserGetLib, UserGetLibProps, UserGetTogetherRoom, UserGetTogetherRoomProps } from '~/interfaces/services/ApiServiceIntf';
+import { AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps, UserGetLib, UserGetLibProps, UserGetTogetherRoom, UserGetTogetherRoomProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
 
 
@@ -29,6 +29,16 @@ class ApiService {
         parseMembers,
         useCache,
         metadataOnly
+      }
+    });
+
+    return data;
+  }
+
+  async searchDubber({ q }: DubberGetSearchProps) {
+    const { data } = await $api.get<DubberGetSearch>(`/dubber/search`, {
+      params: {
+        q
       }
     });
 

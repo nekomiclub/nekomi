@@ -1,0 +1,38 @@
+@import "../colors.scss";
+
+.menu {
+  &-search {
+    &_selectType {
+      padding: 12px;
+      transition: 0.2s ease-in-out;
+
+      &:hover,
+      &:focus-visible {
+        background: $darkLight;
+      }
+    }
+
+    &-result {
+      display: flex;
+      gap: 16px;
+      transition: 0.2s ease-in-out;
+      border-radius: 4px;
+
+      img {
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      &:hover,
+      &:focus-visible {
+        background: $darkLight;
+      }
+
+      &_content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+  }
+}

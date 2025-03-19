@@ -56,6 +56,15 @@ export interface IDubberPutBannerProps {
   dubberId: string
 }
 
+export interface DubberGetSearchProps {
+  /** Query ~all will return all dubbers */
+  q: string
+}
+
+export interface DubberGetSearch {
+  results: IDubber[]
+}
+
 export interface IDubberPatchSettingsProps {
   dubberId: string
   nameUkr?: string
@@ -110,6 +119,11 @@ export interface AnimeGetSearchProps {
 
 export interface AnimeGetSearch {
   results: HydratedAnime[]
+  extended: {
+    dubbedEpisodes: {
+      [id: string]: number | null
+    }
+  }
 }
 
 export interface AnimeGetByQueryProps {

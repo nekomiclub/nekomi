@@ -165,7 +165,7 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydra
   const currentUser = useAppSelector(state => state.user);
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
-  const [label, setLabel] = useState('~~~')
+  const [label, setLabel] = useState('—')
   const [icon, setIcon] = useState<SymbolCodepoints>('question_mark')
   const [isChecked, setIsChecked] = useState(false)
 
