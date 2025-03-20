@@ -64,12 +64,67 @@ interface WatchSwiperProps {
 
 
 export const WatchEditLibs: NextPage<WatchProps> = ({ hydratedAnime }) => {
+  const currentUser = useAppSelector(state => state.user);
   const id = useId().replaceAll(':', '')
 
+  const [icon, setIcon] = useState<SymbolCodepoints>('create_new_folder')
+  const [title, setTitle] = useState('В ТЕКИ')
+  const [isFavorite, setIsFavorite] = useState(false)
+  const [isChanged, setIsChanged] = useState(false)
+
+
+
+  useMemo(() => {
+    if (!currentUser.id) return
+    let isChanged = false;
+
+    setTitle('В ТЕКИ')
+    setIcon('create_new_folder')
+    setIsChanged(false);
+    setIsFavorite(false);
+
+    currentUser.libs.filter(el => el.titles.includes(hydratedAnime.anime.uuid)).forEach(lib => {
+      if (lib.type === 'favorite') {
+        setIsFavorite(true)
+        setTitle('УЛЮБЛЕНЕ')
+        setIcon('favorite')
+      }
+
+      if (isChanged) return;
+
+      if (lib.type === 'delayed') {
+        setTitle('ВІДКЛАДЕНЕ')
+        setIcon('auto_delete')
+      }
+
+      if (lib.type === 'plans') {
+        setTitle('ЗАПЛАНОВАНЕ')
+        setIcon('stack')
+      }
+
+      if (lib.type === 'watched') {
+        setTitle('ПЕРЕГЛЯНУТЕ')
+        setIcon('bookmark_added')
+      }
+
+      if (lib.type === 'watching') {
+        setTitle('ПЕРЕГЛЯДАЄМЕ')
+        setIcon('visibility')
+      }
+
+      isChanged = true;
+    })
+
+    setIsChanged(isChanged);
+  }, [currentUser])
+
+
+
   return <Menu className="w-full" id={id}>
-    <MenuTrigger className="ui-button w-full px-[16px] py-[12px] rounded-[4px] flex items-center justify-center gap-[16px]" anchor>
-      <MaterialSymbol icon="create_new_folder" size={24} className="text-white" />
-      <p className="text-white font-manrope uppercase">В ТЕКИ</p>
+    <MenuTrigger className={cn(`ui-button w-full px-[16px] py-[12px] rounded-[4px] flex items-center justify-center gap-[16px]`, isChanged && 'bg-green', isFavorite && 'bg-primary')} anchor>
+      <MaterialSymbol icon={icon} size={24} className="text-white" />
+
+      <p className={cn(`text-white font-manrope uppercase`, isChanged && 'font-bold')}>{title}</p>
     </MenuTrigger>
 
     <AnimeItemEditMenu hydratedAnime={hydratedAnime} />

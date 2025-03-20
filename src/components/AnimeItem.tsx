@@ -6,10 +6,12 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
-import { useAppSelector } from '~/hooks/redux';
+import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { TUserLibType } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
+import API from '~/services/ApiService';
+import userSlice, { IUserState } from '~/store/reducers/userSlice';
 
 import { cn } from './Components';
 import { HandleClientError } from './Errors';
@@ -163,6 +165,7 @@ export const AnimeItemEditMenu: NextPage<AnimeItemEditMenuProps> = ({ hydratedAn
 
 const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydratedAnime }) => {
   const currentUser = useAppSelector(state => state.user);
+  const dispatch = useAppDispatch();
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
   const [label, setLabel] = useState('—')
@@ -173,10 +176,15 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydra
 
   useMemo(() => {
     if (type === 'favorite') { setLabel('Улюблене'); setIcon('favorite') }
-    if (type === 'watching') { setLabel('Переглядаю'); setIcon('visibility') }
+    if (type === 'watching') { setLabel('Переглядаєме'); setIcon('visibility') }
     if (type === 'watched') { setLabel('Переглянуте'); setIcon('bookmark_added') }
-    if (type === 'plans') { setLabel('Плани'); setIcon('stack') }
+    if (type === 'plans') { setLabel('Заплановане'); setIcon('stack') }
     if (type === 'delayed') { setLabel('Відкладене'); setIcon('auto_delete') }
+
+    if (currentUser.id) {
+      const lib = currentUser.libs.find(el => el.type === type)!;
+      setIsChecked(lib.titles.includes(hydratedAnime.anime.uuid))
+    }
   }, [])
 
 
@@ -187,9 +195,23 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydra
 
       setIsChecked(prev => !prev);
 
-      // TODO: Patch user document
+      await API.editLibItem({ titleId: hydratedAnime.anime.uuid, folderId: currentUser.libs.find(el => el.type === type)!.id })
+      const state = JSON.parse(JSON.stringify(currentUser)) as IUserState;
+
+      const lib = state.libs.find(el => el.type === type)!
+
+      if (lib.titles.includes(hydratedAnime.anime.uuid)) {
+        // remove
+        lib.titles = lib.titles.filter(el => el !== hydratedAnime.anime.uuid);
+      } else {
+        // add
+        lib.titles.push(hydratedAnime.anime.uuid)
+      }
+
+      dispatch(userSlice.actions.reducer(state))
     } catch (e) {
       setIsChecked(prev => !prev);
+
       return HandleClientError(e)
     }
   }

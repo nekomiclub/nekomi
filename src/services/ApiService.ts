@@ -5,6 +5,7 @@ import { AnimeFeatured } from '~/interfaces/types';
 
 
 
+
 interface SearchAnimeParams {
   /** Find all anime's */
   all?: boolean
@@ -152,9 +153,20 @@ class ApiService {
     return data;
   }
 
-  async deleteWatchProgress({ animeId }: { animeId: string }) {
-    await $api.patch(`/me`, {
-      deleteWatchProgress: animeId
+  /** @todo pending rework */
+  async editLibItem({ folderId, titleId }: { folderId: string, titleId: string }) {
+    await $api.patch(`/user/me`, {
+      method: 'editFolderItem',
+      titleId,
+      folderId,
+    })
+  }
+
+  /** @todo pending rework */
+  async removeWatchProgress({ animeId }: { animeId: string }) {
+    await $api.patch(`/user/me`, {
+      method: 'removeWatchProgress',
+      titleId: animeId,
     })
   }
 
