@@ -305,7 +305,7 @@ export const UserLibCard: NextPage<UserLibItemProps> = ({ lib, user }) => {
 
 
   return <>
-    {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${user.username}/lib/${lib.id}`} className="grow basis-[290px] p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px] max-sm:px-[4px] max-sm:py-[8px]">
+    {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${user.username}/lib/${lib.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px] max-sm:px-[4px] max-sm:py-[8px]">
       {lib.type === 'favorite' && <IcoHeartFilled width={128} height={128} fill="#FF464E" className="max-sm:w-[80px] max-sm:h-[80px]" />}
       {lib.type === 'watching' && <IcoStack width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
       {lib.type === 'plans' && <IcoClockFilled width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
@@ -335,7 +335,7 @@ export const UserLibCard: NextPage<UserLibItemProps> = ({ lib, user }) => {
 
 export const UserStatCard: NextPage<{ label: 'favs' | 'watched' | 'watching' | 'viewtime', value: number, className?: string }> = ({ label, value, className }) => {
   return (
-    <div className={`grow basis-[280px] min-w-[280px] ${label === 'favs' ? 'gradient--primary' : 'bg-darkGrey'} p-[16px] rounded-[4px] flex items-center gap-[8px] ${className ? className : ''}`}>
+    <div className={`grow basis-[280px] min-w-[280px] ${label === 'favs' ? 'bg-primary' : 'bg-dark-bright'} p-[16px] rounded-[4px] flex items-center gap-[8px] ${className ? className : ''}`}>
       <div className="flex-shrink-0">
         {label === 'favs' && <IcoHeartFilled width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
         {label === 'watched' && <IcoWatched width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
@@ -375,7 +375,7 @@ export const UserDivider: NextPage<UserDivider> = ({ label, user, hidden }) => {
 }
 
 function UserWTRoom({ room, user }: { room: IUserTogetherRoom, user: IUser }) {
-  return <Link href={`${config.URL.baseURL}${Routes.watch_together.path}/${user.id}__${room.id}`} className="grow basis-[290px] p-[24px] bg-darkGrey rounded-[4px] flex flex-col items-center gap-[24px] w-full duration-200 hover:bg-grey focus-visible:bg-grey outline-none max-[1140px]:basis-[250px] max-[880px]:basis-[220px] max-[620px]:basis-[160px]">
+  return <Link href={`${config.URL.baseURL}${Routes.watch_together.path}/${user.id}__${room.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full duration-200 max-[1140px]:basis-[250px] max-[880px]:basis-[220px] max-[620px]:basis-[160px]">
     <IcoPeople width={128} height={128} fill="#fff" className="max-[480px]:w-[80px] max-[480px]:h-[80px]" />
 
     <p className="text-white text-center text-[24px] max-[620px]:text-[16px] text-ellipsis line-clamp-3">{room.settings.name}</p>

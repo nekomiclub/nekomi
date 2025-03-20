@@ -157,6 +157,8 @@ export interface UserGetByQueryProps {
   /** Return only metadata */
   metadataOnly?: boolean
   parseCapabilities?: boolean
+  parseLibId?: string
+  parseTogetherRoomId?: string
   detailed?: boolean
 }
 
@@ -166,6 +168,11 @@ export interface UserGetByQuery {
 
   capabilities?: TRoleCapability[]
   metadata?: Metadata
+  parsedLib?: HydratedAnime[]
+  parsedTogetherRoom?: {
+    anime: HydratedAnime
+    dubbers: DubberCompact[]
+  }
 }
 
 export interface UserGetLibProps {

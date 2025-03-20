@@ -219,7 +219,7 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
         {genres.map((genre, i) => {
           let immutableI = i;
 
-          return <Tooltip content={genre.description} key={`animemeta-genre--${genre.slug}`}>
+          return <Tooltip content={genre.description} key={`animemeta-genre--${i}`}>
             <span className="text-white font-bold uppercase">
               {genre.name}
               {++immutableI < genres.length ? ',' : ''}
@@ -234,7 +234,7 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
         {studios.map((studio, i) => {
           let immutableI = i;
 
-          return <span className="text-white" key={`animemeta-studio--${studio.id}`}>
+          return <span className="text-white" key={`animemeta-studio--${i}`}>
             {studio.name}
             {++immutableI < studios.length ? ',' : ''}
           </span>
@@ -317,7 +317,7 @@ export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, ico
 }
 
 export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt }) => {
-  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex items-center gap-[16px] min-w-[205px]" href={`${config.URL.baseURL}${Routes.dubber_profile.path}/${dubber.slug}`}>
+  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow basis-[205px] items-center gap-[16px] min-w-[180px] max-w-[280px]" href={`${config.URL.baseURL}${Routes.dubber_profile.path}/${dubber.slug}`}>
     <StyledImage src={dubber.avatarURL} width="48px" height="48px" className="rounded-[2px] overflow-hidden" />
 
     <div className="flex flex-col gap-[4px]">

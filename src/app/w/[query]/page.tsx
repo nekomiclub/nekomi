@@ -115,15 +115,15 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
 
             {/* Details */}
             <div className="flex flex-col gap-[8px]">
-              <div className="grid grid-cols-5 gap-[8px] max-2xl:grid-cols-3">
+              <div className="flex flex-wrap gap-[8px] max-2xl:grid-cols-3">
                 <WatchDetail name="епізоди" value={anime.episodes.length ? `${maximumEpisode} / ${anime.episodesCount}` : null} />
                 <WatchDetail name="статус" status={status} />
                 <WatchDetail name="рейтинг" rate={rate} />
                 <WatchDetail name="сезон" season={season} year={anime.year} />
-                <WatchDetail name="тип" media={media} className="max-2xl:col-span-2" />
+                <WatchDetail name="тип" media={media} />
               </div>
 
-              <div className="grid grid-cols-2 gap-[8px] max-lg:grid-cols-1">
+              <div className="flex flex-wrap gap-[8px] max-lg:grid-cols-1">
                 <WatchDetail name="жанри" genres={genres} />
                 <WatchDetail name="студії" studios={anime.studios} />
               </div>

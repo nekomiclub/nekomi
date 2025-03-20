@@ -27,17 +27,17 @@ export async function generateMetadata(
 
 export default async function RSC(props: IRSCProps<UserPageProps>) {
   const params = await props.params;
-  const { username } = params;
+  const { username, libID } = params;
 
   try {
-    const { user } = await API.getUser({ query: username, detailed: true });
+    const { user, parsedLib } = await API.getUser({ query: username, detailed: true, parseLibId: libID });
     const lib = user.libs.find(el => el.id === params.libID);
 
     return <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
       <UserHeader user={user} />
 
       <div className="wrapper gap-[40px]">
-        <UserLibSection lib={lib} user={user} />
+        <UserLibSection lib={lib} user={user} hydratedAnimes={parsedLib!} />
         <UserLibOthers user={user} />
       </div>
     </div>

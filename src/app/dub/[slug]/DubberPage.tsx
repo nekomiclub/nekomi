@@ -177,7 +177,7 @@ export const DubberTeam: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ du
   return <div className="flex flex-col gap-[16px]">
     <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
 
-    <div className="grid grid-cols-4 gap-[16px] max-[1600px]:grid-cols-3 max-lg:grid-cols-2 max-sm:gap-[8px] max-sm:grid-cols-1">
+    <div className="flex flex-wrap gap-[16px]">
       {dubber.members.filter(el => el.role === 'leader').map(member => {
         return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />
       })}
@@ -241,10 +241,10 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
 }
 
 function DubberTeamMember({ user, member }: { user: IUser, member: IDubberMember }) {
-  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} className="p-[16px] flex gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
+  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
     <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 
-    <div className="flex flex-col gap-[8px] w-full max-sm:items-center">
+    <div className="flex flex-col gap-[8px] w-full">
       <p className={cn(`text-white font-space-grotesk text-[20px] max-md:text-[20px] line-clamp-1 text-ellipsis break-all w-full`, member.role === 'leader' && 'font-bold !text-primary')}>@{user.username}</p>
 
       <div className="flex items-center gap-[8px]">

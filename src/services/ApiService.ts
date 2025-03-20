@@ -1,6 +1,6 @@
 import { $api } from '~/components/http';
 import { config } from '~/config';
-import { AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps, UserGetLib, UserGetLibProps, UserGetTogetherRoom, UserGetTogetherRoomProps } from '~/interfaces/services/ApiServiceIntf';
+import { AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
 
 
@@ -115,29 +115,19 @@ class ApiService {
 
 
   //* =============== USER ROUTER
-  async getUser({ query, detailed, metadataOnly, parseCapabilities }: UserGetByQueryProps, params?: RequestProps) {
+  async getUser({ query, detailed, metadataOnly, parseCapabilities, parseLibId, parseTogetherRoomId }: UserGetByQueryProps, params?: RequestProps) {
     const { data } = await $api.get<UserGetByQuery>(`/user/${query}`, {
       params: {
         detailed,
         metadataOnly,
-        parseCapabilities
+        parseCapabilities,
+        parseLibId,
+        parseTogetherRoomId,
       },
       headers: {
         Cookie: params?.session ? `${config.vars.SessionCookie}=${params?.session}` : undefined
       }
     })
-
-    return data;
-  }
-
-  async getLib({ query, libId }: UserGetLibProps) {
-    const { data } = await $api.get<UserGetLib>(`/user/${query}/lib/${libId}`)
-
-    return data;
-  }
-
-  async getTogetherRoom({ query, roomId }: UserGetTogetherRoomProps) {
-    const { data } = await $api.get<UserGetTogetherRoom>(`/user/${query}/together/${roomId}`)
 
     return data;
   }

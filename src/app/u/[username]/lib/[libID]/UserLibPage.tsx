@@ -1,15 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NextPage } from 'next';
 import { useParams, usePathname } from 'next/navigation'
 import { MaterialSymbol } from 'react-material-symbols';
 
 import AnimeItem from '~/components/AnimeItem';
-import { HandleClientError } from '~/components/Errors';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import API from '~/services/ApiService';
 import { IcoChain } from '../../../../../assets/Icons';
 import { copyToClipboard, LoadingContent } from '../../../../../components/Components';
 import Tooltip from '../../../../../components/UI/Tooltip';
@@ -26,32 +24,20 @@ interface UserSectionProps {
 
 interface UserLibProps extends UserSectionProps {
   lib: IUserLib | undefined
+  hydratedAnimes: HydratedAnime[]
 }
 
 
 
-export const UserLibSection: NextPage<UserLibProps> = ({ lib, user }) => {
+export const UserLibSection: NextPage<UserLibProps> = ({ lib, user, hydratedAnimes }) => {
   const pathname = usePathname();
   const currentUser = useAppSelector(state => state.user);
 
   const [isOwner] = useState(user.id === currentUser.id);
   const [isLibVisible] = useState(isOwner || !lib?.settings.hidden)
   const [urlCopied, setUrlCopied] = useState(false)
-  const [hydratedAnimes, setHydratedAnimes] = useState<HydratedAnime[]>([])
 
 
-
-  useMemo(() => {
-    if (!isLibVisible || !lib) return;
-
-    (async function () {
-      try {
-        const { results } = await API.getLib({ query: user.id, libId: lib.id })
-
-        setHydratedAnimes(results);
-      } catch (e) { HandleClientError(e) }
-    })()
-  }, [])
 
   // Define title
   useEffect(() => {
@@ -97,7 +83,7 @@ export const UserLibSection: NextPage<UserLibProps> = ({ lib, user }) => {
 
     <div className="grid gap-[16px] grid-cols-6 max-[1470px]:grid-cols-5 max-[1250px]:grid-cols-4 max-[940px]:grid-cols-3 max-[720px]:grid-cols-2">
       {hydratedAnimes.length ? hydratedAnimes.toReversed().map((hydrated, i) => {
-        return <AnimeItem className="max-[720px]:!min-w-[160px]" hydrated={hydrated} key={`userlib-${lib.id}--${i}`} />
+        return <AnimeItem className="max-[720px]:!min-w-[160px]" hydrated={hydrated} key={`userlib-${lib.id}--${i}`} libControls />
       }) : <LoadingContent />}
     </div>
   </div> : <div className="w-full flex justify-center items-center gap-[16px]">
