@@ -8,13 +8,12 @@ import { MaterialSymbol } from 'react-material-symbols';
 import AnimeItem from '~/components/AnimeItem';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { IcoChain } from '../../../../../assets/Icons';
-import { copyToClipboard, LoadingContent } from '../../../../../components/Components';
+import { cn, copyToClipboard, LoadingContent } from '../../../../../components/Components';
 import Tooltip from '../../../../../components/UI/Tooltip';
 import { config } from '../../../../../config';
 import { IUser, IUserLib } from '../../../../../interfaces/IUser';
 import { UserPageProps } from '../../page';
-import { UserDivider, UserLibCard } from '../../UserPage';
+import { UserDivider, UserLibItem } from '../../UserPage';
 
 
 
@@ -67,15 +66,15 @@ export const UserLibSection: NextPage<UserLibProps> = ({ lib, user, hydratedAnim
 
 
   return isLibVisible && lib ? <div className="flex flex-col gap-[24px]">
-    <div className="flex items-center w-full">
+    <div className="flex items-center w-full gap-[16px]">
       <div className="w-full flex-1">
         <UserDivider label={`${lib.settings.name} (${lib.titles.length})`} user={user} hidden={lib.settings.hidden} />
       </div>
 
       <div className="flex gap-[8px]">
-        <Tooltip content={urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на теку'}>
-          <button className={`p-[8px] duration-200 ${urlCopied ? 'bg-green' : 'hover:bg-purple focus-visible:bg-purple'} rounded-[4px]`} onClick={copyLibURL}>
-            <IcoChain width={24} height={24} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
+        <Tooltip content={!lib.settings.hidden ? urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на теку' : 'Неможливо поділитися приватною текою'}>
+          <button className={cn(`ui-button w-[40px] h-[40px] flex justify-center items-center rounded-[4px]`, urlCopied ? 'bg-green' : 'bg-transparent border-none hover:!bg-purple focus-visible:!bg-purple', lib.settings.hidden && 'hover:!bg-red focus-visible:!bg-red cursor-not-allowed')} onClick={copyLibURL} disabled={lib.settings.hidden}>
+            <MaterialSymbol className={lib.settings.hidden ? 'text-grey-new' : 'text-white'} icon="link" size={24} />
           </button>
         </Tooltip>
       </div>
@@ -98,12 +97,12 @@ export const UserLibOthers: NextPage<UserSectionProps> = ({ user }) => {
 
 
   return <div className="flex flex-col gap-[24px]">
-    <UserDivider label={'Інші теки'} user={user} hidden={false} />
+    <UserDivider label={'Інші теки'} />
 
     <div className="flex flex-wrap gap-[16px]">
       {user.libs.some(el => !el.settings.hidden) ? <>
         {user.libs.filter(el => el.id !== currentLibId).map(lib => {
-          return <UserLibCard lib={lib} user={user} key={`userlib-${user.id}--${lib.id}`} />
+          return <UserLibItem lib={lib} user={user} key={`userlib-${user.id}--${lib.id}`} />
         })}
       </> : <div className="w-full flex justify-center items-center gap-[16px]">
         <MaterialSymbol icon="lock" size={20} className="text-grey-new" />

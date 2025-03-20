@@ -8,7 +8,6 @@ import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/
 import { CONSTS } from '../config';
 import { Routes, routes } from '../routes';
 
-import { FooterOnline } from './Components';
 
 
 
@@ -59,7 +58,7 @@ const Footer: NextPage = () => {
 
         {/* Right */}
         <div className="flex justify-center max-[760px]:w-full">
-          <FooterOnline />
+          {/* <FooterOnline /> */}
 
           {/* <p className="text-white">Онлайн: <span className="text-lightGrey text-[12px]">Коти перегризли провода, вже фіксим</span></p> */}
         </div>

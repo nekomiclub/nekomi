@@ -8,7 +8,7 @@ import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
-import { UserHeader, UserSectionLibs, UserSectionWTRooms, UserStatCard } from './UserPage';
+import { UserHeader, UserSectionLibs, UserSectionWTRooms, UserStatItem } from './UserPage';
 
 
 
@@ -63,10 +63,10 @@ export default async function RSC(props: IRSCProps<UserPageProps>) {
 
       <div className="wrapper gap-[40px]">
         <div className="flex gap-[16px] overflow-x-auto ui-hideScroll">
-          <UserStatCard value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label="favs" />
-          <UserStatCard value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label="watched" />
-          <UserStatCard value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label="watching" />
-          <UserStatCard value={Math.floor(user?.statistics.viewtime / 60 / 60)} label="viewtime" />
+          <UserStatItem value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label="favs" />
+          <UserStatItem value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label="watched" />
+          <UserStatItem value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label="watching" />
+          <UserStatItem value={Math.floor(user?.statistics.viewtime / 60 / 60)} label="viewtime" />
         </div>
 
         <UserSectionLibs user={user} />

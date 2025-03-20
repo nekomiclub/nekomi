@@ -1,12 +1,14 @@
 'use client'
 
 
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
+import { IcoEyeHidden, IcoEyeVisible } from '~/assets/Eye';
 import { HandleClientError } from '~/components/Errors';
 import { getUTC, wordDeclination } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
@@ -15,12 +17,10 @@ import { UIText } from '~/components/UI/Text.ui';
 import { useAppSelector } from '~/hooks/redux';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
-import { IcoClockFilled } from '../../../assets/Clock';
-import { IcoEyeHidden, IcoEyeVisible } from '../../../assets/Eye';
-import { IcoHeartFilled } from '../../../assets/Heart';
-import { IcoCalendar, IcoCan, IcoChain, IcoExternalLink, IcoInfo, IcoPeople, IcoSettings, IcoStack, IcoStar, IcoUpdate, IcoUser, IcoWatched } from '../../../assets/Icons';
+import parseUserLibUI from '~/utils/parse-user-lib-ui';
+import { IcoExternalLink, IcoInfo, IcoStar, IcoUpdate } from '../../../assets/Icons';
 import { IcoSocialTelegram } from '../../../assets/Social';
-import { copyToClipboard } from '../../../components/Components';
+import { cn, copyToClipboard } from '../../../components/Components';
 import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
@@ -41,9 +41,18 @@ interface UserLibItemProps extends UserSectionProps {
   lib: IUserLib
 }
 
-interface UserDivider extends UserSectionProps {
+interface UserDividerProps {
   label: string
-  hidden: boolean
+
+  user?: IUser
+  hidden?: boolean
+}
+
+interface UserStatItemProps {
+  label: 'favs' | 'watched' | 'watching' | 'viewtime'
+  value: number
+
+  className?: string
 }
 
 type TTelegramLinkStatus = 'connected' | 'notConnected' | 'pending' | 'error';
@@ -265,15 +274,15 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
 
 export const UserSectionLibs: NextPage<UserSectionProps> = ({ user }) => {
   return <div className="flex flex-col gap-[24px]" id="user-libs">
-    <UserDivider label="Теки" hidden={false} user={user} />
+    <UserDivider label="Теки" />
 
     <div className="flex flex-wrap gap-[16px]">
       {user.libs.some(el => !el.settings.hidden) ? <>
-        <UserLibCard lib={user.libs.find(el => el.type === 'favorite')!} user={user} />
-        <UserLibCard lib={user.libs.find(el => el.type === 'watching')!} user={user} />
-        <UserLibCard lib={user.libs.find(el => el.type === 'plans')!} user={user} />
-        <UserLibCard lib={user.libs.find(el => el.type === 'watched')!} user={user} />
-        <UserLibCard lib={user.libs.find(el => el.type === 'delayed')!} user={user} />
+        <UserLibItem lib={user.libs.find(el => el.type === 'favorite')!} user={user} />
+        <UserLibItem lib={user.libs.find(el => el.type === 'watching')!} user={user} />
+        <UserLibItem lib={user.libs.find(el => el.type === 'watched')!} user={user} />
+        <UserLibItem lib={user.libs.find(el => el.type === 'plans')!} user={user} />
+        <UserLibItem lib={user.libs.find(el => el.type === 'delayed')!} user={user} />
       </> : <p className="text-lightGrey">Всі теки цього користувача приватні</p>}
     </div>
   </div>
@@ -287,7 +296,7 @@ export const UserSectionWTRooms: NextPage<UserSectionProps> = ({ user }) => {
 
 
   return isOwner && <div className="flex flex-col gap-[24px]" id="user-libs">
-    <UserDivider label={`Кімнати спільного перегляду (${user.togetherRooms.length}/5)`} hidden={true} user={user} />
+    <UserDivider label={`Спільний перегляд (${user.togetherRooms.length} / 5)`} />
 
     <div className="flex flex-wrap gap-[16px]">
       {user.togetherRooms.map(room => {
@@ -297,88 +306,101 @@ export const UserSectionWTRooms: NextPage<UserSectionProps> = ({ user }) => {
   </div>
 }
 
-export const UserLibCard: NextPage<UserLibItemProps> = ({ lib, user }) => {
+export const UserLibItem: NextPage<UserLibItemProps> = ({ lib, user }) => {
   const currentUser = useAppSelector(state => state.user);
 
+  const [icon, setIcon] = useState<SymbolCodepoints>('favorite')
+  const [title, setTitle] = useState('Тека')
+  const [isFavorite] = useState(lib.type === 'favorite')
   const [isOwner] = useState(user.id === currentUser.id);
+  const [isLibVisible] = useState(!lib.settings.hidden || isOwner);
 
 
 
-  return <>
-    {!lib.settings.hidden || isOwner ? <Link href={`${config.URL.baseURL}/u/${user.username}/lib/${lib.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px] max-sm:px-[4px] max-sm:py-[8px]">
-      {lib.type === 'favorite' && <IcoHeartFilled width={128} height={128} fill="#FF464E" className="max-sm:w-[80px] max-sm:h-[80px]" />}
-      {lib.type === 'watching' && <IcoStack width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
-      {lib.type === 'plans' && <IcoClockFilled width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
-      {lib.type === 'watched' && <IcoWatched width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
-      {lib.type === 'delayed' && <IcoCan width={128} height={128} className="max-sm:w-[80px] max-sm:h-[80px]" />}
+  useMemo(() => {
+    parseUserLibUI({ type: lib.type, setTitle, setIcon })
+    setTitle(lib.settings.name);
+  }, [])
 
-      <div className="flex items-center gap-[8px] max-sm:flex-col-reverse">
-        <p className="text-white text-center text-[24px] max-sm:text-[16px]">
-          {lib.type === 'favorite' && `Улюблені (${lib.titles.length})`}
-          {lib.type === 'watching' && `Переглядаю (${lib.titles.length})`}
-          {lib.type === 'plans' && `Плани (${lib.titles.length})`}
-          {lib.type === 'watched' && `Переглянуті (${lib.titles.length})`}
-          {lib.type === 'delayed' && `Відкладені (${lib.titles.length})`}
-        </p>
 
-        {isOwner ? <>
-          {lib.settings.hidden ? <Tooltip content="Прихована тека">
-            <IcoEyeHidden width={24} height={24} />
-          </Tooltip> : <Tooltip content="Публічна тека">
-            <IcoEyeVisible width={24} height={24} />
-          </Tooltip>}
-        </> : <></>}
-      </div>
-    </Link> : <></>}
-  </>
+
+  return isLibVisible && <Link href={`${config.URL.baseURL}/u/${user.username}/lib/${lib.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px] max-sm:px-[4px] max-sm:py-[8px]">
+    <MaterialSymbol className={cn(`text-white max-sm:!text-[80px]`, isFavorite && '!text-primary')} fill={isFavorite} icon={icon} size={128} />
+
+    <div className="flex items-center gap-[8px] max-sm:flex-col-reverse">
+      <p className="text-white font-manrope text-center text-[24px] max-sm:text-[16px]">{title} <span className="text-grey-new">({lib.titles.length})</span></p>
+    </div>
+  </Link>
 }
 
-export const UserStatCard: NextPage<{ label: 'favs' | 'watched' | 'watching' | 'viewtime', value: number, className?: string }> = ({ label, value, className }) => {
+export const UserStatItem: NextPage<UserStatItemProps> = ({ label, value, className }) => {
+  const [icon, setIcon] = useState<SymbolCodepoints>('favorite')
+  const [title, setTitle] = useState('—')
+  const [isFavorite] = useState(label === 'favs')
+
+
+
+  useMemo(() => {
+    if (label === 'favs') {
+      setTitle(wordDeclination(value, ['Улюблене аніме', 'Улюблених аніме', 'Улюблених аніме']))
+      setIcon('favorite')
+    }
+
+    if (label === 'viewtime') {
+      setTitle(wordDeclination(value, ['Година перегляду', 'Години перегляду', 'Годин перегляду']))
+      setIcon('hourglass_bottom')
+    }
+
+    if (label === 'watched') {
+      parseUserLibUI({ type: 'watched', setIcon, setTitle })
+      setTitle(wordDeclination(value, ['Переглянуте аніме', 'Переглянутих аніме', 'Переглянутих аніме']))
+    }
+
+    if (label === 'watching') {
+      parseUserLibUI({ type: 'watching', setIcon, setTitle })
+      setTitle(wordDeclination(value, ['Переглядаєме аніме', 'Переглядаємих аніме', 'Переглядаємих аніме']))
+    }
+  }, [])
+
+
+
   return (
-    <div className={`grow basis-[280px] min-w-[280px] ${label === 'favs' ? 'bg-primary' : 'bg-dark-bright'} p-[16px] rounded-[4px] flex items-center gap-[8px] ${className ? className : ''}`}>
+    <div className={`grow basis-[280px] min-w-[280px] ${isFavorite ? 'bg-primary' : 'bg-dark-bright'} p-[16px] rounded-[4px] flex items-center gap-[8px] ${className ? className : ''}`}>
       <div className="flex-shrink-0">
-        {label === 'favs' && <IcoHeartFilled width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
-        {label === 'watched' && <IcoWatched width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
-        {label === 'watching' && <IcoStack width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
-        {label === 'viewtime' && <IcoClockFilled width={80} height={80} className="max-sm:h-[64px] max-sm:w-[64px]" />}
+        <MaterialSymbol className={cn(`text-white max-sm:!text-[64px]`)} fill={isFavorite} icon={icon} size={80} />
       </div>
 
       <div className="w-full flex flex-col gap-[8px]">
-        <p className="text-white text-[32px] font-bold text-center w-full max-sm:text-[24px]">{value}</p>
-        <p className="text-white w-full text-center">
-          {label === 'favs' && `${wordDeclination(value, ['Улюблений тайтл', 'Улюблених тайтли', 'Улюблених тайтлів'])}`}
-          {label === 'watched' && `${wordDeclination(value, ['Переглянутий тайтл', 'Переглянутих тайтли', 'Переглянутих тайтлів'])}`}
-          {label === 'watching' && `${wordDeclination(value, ['Переглядаємий тайтл', 'Переглядаємих тайтли', 'Переглядаємих тайтлів'])}`}
-          {label === 'viewtime' && `${wordDeclination(value, ['Година перегляду', 'Години перегляду', 'Годин перегляду'])}`}
-        </p>
+        <p className="text-white font-manrope text-[32px] font-bold text-center w-full max-sm:text-[24px]">{value}</p>
+        <p className="text-white font-manrope w-full text-center">{title}</p>
       </div>
     </div>
   )
 }
 
-export const UserDivider: NextPage<UserDivider> = ({ label, user, hidden }) => {
+export const UserDivider: NextPage<UserDividerProps> = ({ label, user, hidden }) => {
   const currentUser = useAppSelector(state => state.user);
 
-  const [isOwner] = useState(user.id === currentUser.id);
+  const [isOwner] = useState(user?.id === currentUser.id);
 
 
 
   return <Tooltip content={isOwner ? `Цей розділ ${hidden ? 'прихований' : 'публічний'}` : ''} className="flex items-center gap-[16px]">
-    <p className="text-white text-[32px] font-bold flex-shrink-0 max-[600px]:text-[24px]">{label}</p>
+    <p className="text-white font-manrope text-[32px] font-bold flex-shrink-0 max-sm:text-[24px]">{label}</p>
 
     {isOwner && <div className="flex-shrink-0">
-      {hidden ? <IcoEyeHidden width={24} height={24} className="max-[600px]:w-[16px] max-[600px]:h-[16px]" /> : <IcoEyeVisible width={24} height={24} />}
+      {hidden ? <IcoEyeHidden width={24} height={24} className="max-sm:w-[16px] max-sm:h-[16px]" /> : <IcoEyeVisible width={24} height={24} />}
     </div>}
 
-    <span className="block w-full h-[3px] bg-darkGrey"></span>
+    <div className="block w-full h-[3px] bg-dark-light"></div>
   </Tooltip>
 }
 
 function UserWTRoom({ room, user }: { room: IUserTogetherRoom, user: IUser }) {
-  return <Link href={`${config.URL.baseURL}${Routes.watch_together.path}/${user.id}__${room.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full duration-200 max-[1140px]:basis-[250px] max-[880px]:basis-[220px] max-[620px]:basis-[160px]">
-    <IcoPeople width={128} height={128} fill="#fff" className="max-[480px]:w-[80px] max-[480px]:h-[80px]" />
+  return <Link href={`${config.URL.baseURL}${Routes.watch_together.path}/${user.id}__${room.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full duration-200 max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
+    <MaterialSymbol className="text-white max-sm:!text-[80px]" icon="groups" size={128} />
 
-    <p className="text-white text-center text-[24px] max-[620px]:text-[16px] text-ellipsis line-clamp-3">{room.settings.name}</p>
+    <p className="text-white font-manrope text-center text-[24px] max-sm:text-[16px] text-ellipsis line-clamp-3">{room.settings.name}</p>
   </Link>
 }
 
@@ -398,13 +420,13 @@ function AvatarComponent({ user }: { user: IUser }) {
 function UserComponent({ user }: { user: IUser }) {
   return <div className="flex flex-col gap-[8px]">
     <div className="flex items-center gap-[16px]">
-      <UIText text={`@${user.username}`} type="h1" className="break-all" />
+      <UIText text={`@${user.username}`} type="h1" className="break-all font-space-grotesk" />
     </div>
 
-    <Tooltip content="Дата реєстрації акаунту">
-      <div className="flex items-center gap-[16px]">
-        <IcoCalendar width={32} height={32} />
-        <p className="text-white">{getUTC(user.statistics.accountCreated).fulldate}</p>
+    <Tooltip content="На nekomi з:">
+      <div className="flex items-center gap-[8px]">
+        <MaterialSymbol className="text-grey-new" icon="calendar_add_on" size={24} />
+        <p className="text-grey-new font-manrope">{getUTC(user.statistics.accountCreated).fulldate}</p>
       </div>
     </Tooltip>
   </div>
@@ -428,21 +450,21 @@ function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { us
 
   return <div className="flex items-center gap-[8px]">
     <Tooltip content={urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на профіль'}>
-      <button className={`p-[16px] duration-200 ${urlCopied ? 'bg-green' : 'hover:bg-purple focus-visible:bg-purple'} rounded-[4px] max-[600px]:p-[12px]`} onClick={() => copyProfileURL()}>
-        <IcoChain width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
+      <button className={`ui-button w-[64px] h-[64px] flex justify-center items-center ${urlCopied ? 'bg-green' : 'bg-transparent border-none hover:!bg-purple focus-visible:!bg-purple'} rounded-[4px] max-sm:w-[48px] max-sm:h-[48px]`} onClick={copyProfileURL}>
+        <MaterialSymbol className="text-white max-sm:!text-[24px]" icon="link" size={32} />
       </button>
     </Tooltip>
 
     {isOwner && <Tooltip content="Налаштування">
-      <PopupButton togglePopupId={settingsPopupID} className="p-[16px] duration-200 bg-darkGrey hover:bg-grey focus-visible:bg-grey rounded-[4px] max-[600px]:p-[12px]">
-        <IcoSettings width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
+      <PopupButton togglePopupId={settingsPopupID} className="ui-button w-[64px] h-[64px] flex justify-center items-center max-sm:w-[48px] max-sm:h-[48px]">
+        <MaterialSymbol className="text-white max-sm:!text-[24px]" icon="settings" size={32} />
       </PopupButton>
     </Tooltip>}
 
     {!primaryPage && <Link href={`${config.URL.baseURL}/u/${user.username}`}>
       <Tooltip content="На головну профілю">
-        <button className={`p-[16px] duration-200 bg-darkGrey hover:bg-gradientPrimaryFallback focus-visible:bg-gradientPrimaryFallback rounded-[4px] max-[600px]:p-[12px]`}>
-          <IcoUser width={32} height={32} className="max-[600px]:w-[24px] max-[600px]:h-[24px]" />
+        <button className={`ui-button w-[64px] h-[64px] flex justify-center items-center hover:!bg-primary focus-visible:!bg-primary max-sm:w-[48px] max-sm:h-[48px]`}>
+          <MaterialSymbol className="text-white max-sm:!text-[24px]" icon="person" size={32} />
         </button>
       </Tooltip>
     </Link>}

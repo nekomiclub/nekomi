@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
+import { notFound } from 'next/navigation';
 
-import { HappenedWrongScreen, NotFoundScreen } from '~/components/Components';
 import { HandleServerError } from '~/components/Errors';
 import { $api } from '~/components/http';
 import { config, metaObject } from '~/config';
@@ -20,7 +20,7 @@ export default async function RSC({ params }: IRSCProps) {
   const roomId = id.split('__')[1];
   const userSessionToken = cookies().get(config.vars.SessionCookie)?.value;
 
-  if (!userId || !roomId) return <HappenedWrongScreen cause="Неправильний ID кімнати" />
+  if (!userId || !roomId) return notFound()
 
   let user: IUser | undefined = undefined;
   let room: IUserTogetherRoom | undefined = undefined;
@@ -51,7 +51,7 @@ export default async function RSC({ params }: IRSCProps) {
     return HandleServerError(e)
   }
 
-  if (!user || !room || !title) return <NotFoundScreen />
+  if (!user || !room || !title) notFound();
 
   return <TogetherRoomSecurityLayer user={user} dubbers={dubbers} room={room} title={title} userSessionToken={userSessionToken || '_NULL'} />
 }

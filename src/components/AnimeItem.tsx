@@ -12,6 +12,7 @@ import { TUserLibType } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
+import parseUserLibUI from '~/utils/parse-user-lib-ui';
 
 import { cn } from './Components';
 import { HandleClientError } from './Errors';
@@ -188,18 +189,14 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydra
   const dispatch = useAppDispatch();
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
-  const [label, setLabel] = useState('—')
+  const [title, setTitle] = useState('—')
   const [icon, setIcon] = useState<SymbolCodepoints>('question_mark')
   const [isChecked, setIsChecked] = useState(false)
 
 
 
   useMemo(() => {
-    if (type === 'favorite') { setLabel('Улюблене'); setIcon('favorite') }
-    if (type === 'watching') { setLabel('Переглядаєме'); setIcon('visibility') }
-    if (type === 'watched') { setLabel('Переглянуте'); setIcon('bookmark_added') }
-    if (type === 'plans') { setLabel('Заплановане'); setIcon('stack') }
-    if (type === 'delayed') { setLabel('Відкладене'); setIcon('auto_delete') }
+    parseUserLibUI({ type, setTitle, setIcon })
 
     if (currentUser.id) {
       const lib = currentUser.libs.find(el => el.type === type)!;
@@ -243,7 +240,7 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydra
 
     <MaterialSymbol icon={icon} size={24} className="text-white" />
 
-    <p className="text-white font-manrope">{label}</p>
+    <p className="text-white font-manrope">{title}</p>
   </button>
 }
 

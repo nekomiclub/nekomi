@@ -1,4 +1,5 @@
 
+
 import { ErrorNotFound } from '~/components/Errors';
 import { metaObject } from '../config';
 
