@@ -6,7 +6,6 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { useIdleTimer } from 'react-idle-timer';
 import { MaterialSymbol } from 'react-material-symbols';
-import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import AnimeItem from '~/components/AnimeItem';
@@ -15,7 +14,7 @@ import StyledImage from '~/components/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { AnimeWithMedia } from '~/interfaces/types';
-import { cn } from '../../components/Components';
+import { cn, PrettySwiper } from '../../components/Components';
 import { config } from '../../config';
 import { routes } from '../../routes';
 
@@ -137,15 +136,11 @@ export const HomeCategory: NextPage<HomeCategoryProps> = ({ label, icon, hydrate
 const HomeAnimesSwiper: NextPage<HomeAnimeSwiperProps> = ({ hydratedAnimes }) => {
   const id = useId().replaceAll(':', '');
 
-  return <div className="min-w-0">
-    <Swiper spaceBetween={16} slidesPerView={'auto'} className="ml-0">
-      {hydratedAnimes.map((hydrated, i) => {
-        return <SwiperSlide className="!w-fit" key={`homecategory-${id}--${i}`} >
-          <AnimeItem hydrated={hydrated} className="!w-[230px]" />
-        </SwiperSlide>
-      })}
-    </Swiper>
-  </div>
+  return <PrettySwiper>
+    {hydratedAnimes.map((hydrated, i) => {
+      return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`homecategory-${id}--${i}`} />
+    })}
+  </PrettySwiper>
 }
 
 const HomeDivider: NextPage<HomeDividerProps> = ({ icon, label }) => {

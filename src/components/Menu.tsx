@@ -516,7 +516,7 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
         <div className="flex items-center gap-[8px]">
           <div className="flex items-center gap-[8px]">
             <MaterialSymbol className="text-primary" icon="star_half" size={16} />
-            <p className="text-primary font-space-grotesk font-bold">{animeResult.anime.score.mal ?? animeResult.anime.score.imdb ?? '—'}</p>
+            <p className="text-primary font-space-grotesk font-bold">{animeResult.anime.score.mal?.toFixed(2) ?? animeResult.anime.score.imdb?.toFixed(2) ?? '—'}</p>
           </div>
           <span className="text-grey-new font-manrope">•</span>
 

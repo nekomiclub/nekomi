@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import * as Loader from '@uiball/loaders';
 import clsx from 'clsx';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { useAppSelector } from '~/hooks/redux';
 import Anime from '~/interfaces/AnimeIntf';
@@ -17,6 +18,12 @@ import { secondsToReadable } from './KekwPlayer/KekwPlayer';
 import StyledImage from './StyledImage';
 
 import CatImg from '../assets/img/oopsIndevCat.png';
+
+
+
+interface PrettySwiperProps {
+  children: React.ReactElement[]
+}
 
 
 
@@ -145,6 +152,30 @@ export const LoadingContent: NextPage = () => {
     <p className="text-grey-new">Завантажуємо контент...</p>
   </div>
 }
+
+export const PrettySwiper: NextPage<PrettySwiperProps> = ({ children }) => {
+  const id = useId().replaceAll(':', '');
+
+  const [isSwiperInitialized, setIsSwiperInitialized] = useState(false)
+
+
+
+  return <div className="relative">
+    <Swiper className="w-full h-full" spaceBetween={8} slidesPerView={'auto'} onInit={() => setIsSwiperInitialized(true)}>
+      {children.map((child, i) => {
+        return <SwiperSlide className="!w-fit" key={`swiper-${id}--${i}`}>
+          {child}
+        </SwiperSlide>
+      })}
+    </Swiper>
+
+    <div className={cn(`absolute top-0 left-0 w-full h-full bg-dark-primary flex justify-center items-center z-[4] duration-200`, isSwiperInitialized && 'opacity-0 invisible touch-none pointer-events-none')}>
+      <LoadingContent />
+    </div>
+  </div>
+}
+
+
 
 
 /** Copy given text to cpilboard */

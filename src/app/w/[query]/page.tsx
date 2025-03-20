@@ -5,6 +5,7 @@ import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import AnimeItem from '~/components/AnimeItem';
+import { PrettySwiper } from '~/components/Components';
 import { HandleServerError } from '~/components/Errors';
 import StyledImage from '~/components/StyledImage';
 import { UIReportButton } from '~/components/UI/Report';
@@ -14,7 +15,7 @@ import { config, CONSTS, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { routes } from '../../../routes';
 
-import { WatchActions, WatchDetail, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchSectionLabel, WatchSwiper } from './WatchPage';
+import { WatchActions, WatchDetail, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchSectionLabel } from './WatchPage';
 
 
 
@@ -98,12 +99,12 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
 
               <div className="flex flex-col items-center gap-[4px]">
                 <div className="flex items-center gap-[8px]">
-                  <h2 className="text-primary text-[24px] font-bold font-manrope">{hydratedAnime.anime.score.mal?.toFixed(2) ?? hydratedAnime.anime.score.imdb?.toFixed(2) ?? '―'}</h2>
+                  <h2 className="text-primary text-[24px] font-bold font-space-grotesk">{hydratedAnime.anime.score.mal?.toFixed(2) ?? hydratedAnime.anime.score.imdb?.toFixed(2) ?? '―'}</h2>
 
                   <MaterialSymbol icon="star_half" size={24} className="text-primary" />
                 </div>
 
-                <p className="text-grey-new font-manrope whitespace-nowrap">{hydratedAnime.anime.score.malScoredBy ? scoredByFormatter.format(hydratedAnime.anime.score.malScoredBy) : 'Нема'} оцінок</p>
+                <p className="text-grey-new font-manrope whitespace-nowrap">{hydratedAnime.anime.score.malScoredBy ? scoredByFormatter.format(hydratedAnime.anime.score.malScoredBy) : 'Немає'} оцінок</p>
               </div>
             </div>
 
@@ -116,7 +117,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
             {/* Details */}
             <div className="flex flex-col gap-[8px]">
               <div className="flex flex-wrap gap-[8px] max-2xl:grid-cols-3">
-                <WatchDetail name="епізоди" value={anime.episodes.length ? `${maximumEpisode} / ${anime.episodesCount}` : null} />
+                <WatchDetail name="епізоди" value={`${maximumEpisode ?? '—'} / ${anime.episodesCount ?? '—'}`} />
                 <WatchDetail name="статус" status={status} />
                 <WatchDetail name="рейтинг" rate={rate} />
                 <WatchDetail name="сезон" season={season} year={anime.year} />
@@ -167,11 +168,11 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
         {related && related?.length > 0 && <div className="wrapper gap-[16px]">
           <WatchSectionLabel icon="link" label={`Пов’язані аніме (${related.length})`} />
 
-          <WatchSwiper>
+          <PrettySwiper>
             {related.map((hydrated, i) => {
               return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`animerelated-${anime.uuid}--${i}`} />
             })}
-          </WatchSwiper>
+          </PrettySwiper>
         </div>}
 
         {/* Player */}

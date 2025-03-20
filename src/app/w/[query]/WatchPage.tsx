@@ -6,10 +6,9 @@ import * as Loader from '@uiball/loaders';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
-import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
-import { cn, LoadingContent } from '~/components/Components';
+import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { getUTC, wordDeclination } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
@@ -55,10 +54,6 @@ interface WatchDubberProps {
   dubber: DubberCompact
 
   posterAdapt?: boolean
-}
-
-interface WatchSwiperProps {
-  children: React.ReactElement[]
 }
 
 
@@ -326,26 +321,4 @@ export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt })
       {posterAdapt && <p className="text-grey-new font-manrope">Адаптація постеру</p>}
     </div>
   </Link>
-}
-
-export const WatchSwiper: NextPage<WatchSwiperProps> = ({ children }) => {
-  const id = useId().replaceAll(':', '');
-
-  const [isSwiperInitialized, setIsSwiperInitialized] = useState(false)
-
-
-
-  return <div className="relative">
-    <Swiper className="w-full h-full" spaceBetween={8} slidesPerView={'auto'} onInit={() => setIsSwiperInitialized(true)}>
-      {children.map((child, i) => {
-        return <SwiperSlide className="!w-fit" key={`watchswiper-${id}--${i}`}>
-          {child}
-        </SwiperSlide>
-      })}
-    </Swiper>
-
-    <div className={cn(`absolute top-0 left-0 w-full h-full bg-dark-primary flex justify-center items-center z-[4] duration-200`, isSwiperInitialized && 'opacity-0 invisible touch-none pointer-events-none')}>
-      <LoadingContent />
-    </div>
-  </div>
 }
