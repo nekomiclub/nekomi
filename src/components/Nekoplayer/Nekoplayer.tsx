@@ -1,17 +1,17 @@
 'use client'
 
-import './styles.scss';
+import '~/styles/components/Nekoplayer.scss';
 
 import { createContext, RefObject, useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
-import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
 
+import Anime from '~/interfaces/AnimeIntf';
+import { DubberCompact } from '~/interfaces/DubberIntf';
 import { useAppSelector } from '../../hooks/redux';
-import { IDubber } from '../../interfaces/IDubber';
-import { ITitle, ITitleEpisode } from '../../interfaces/ITitle';
+import { ITitleEpisode } from '../../interfaces/ITitle';
 import { cn } from '../Components';
 import { HandleClientError } from '../Errors';
 import { $api } from '../http';
@@ -20,11 +20,10 @@ import { KekwPlayerControls } from './Controls';
 import { KekwPlayerFullscreen } from './Fullscreen';
 import { KekwPlayerMenu } from './Menu';
 import { KekwPlayerPiP } from './PiP';
-import { KekwPlayerPlay } from './Play';
-import * as PlayerScreen from './Screens';
+import { NPlay } from './Play';
 import { KekwPlayerSettings } from './Settings';
-import { KekwPlayerTimeline } from './Timeline';
-import { KekwPlayerVolume } from './Volume';
+import { NPTimeline } from './Timeline';
+import { NPVolume } from './Volume';
 
 
 
@@ -33,9 +32,9 @@ type TStage = 'setup' | 'operational'
 
 export type TKekwPlayerScreen = 'none'
   | 'progress_continue'
-  | 'episode_end'
-  | 'episode_last'
-  | 'title_end'
+  | 'continue_watch'
+  | 'last_dubbed_episode'
+  | 'anime_end'
 
 export interface IKekwPlayerLocalDataItem {
   id: string,
@@ -45,11 +44,11 @@ export interface IKekwPlayerLocalDataItem {
 }
 
 interface IKekwPlayerProps {
-  title: ITitle
-  dubbers: IDubber[]
+  anime: Anime
+  dubbers: DubberCompact[]
 
   outEpisode?: ITitleEpisode
-  setOutDubber?: (state: IDubber) => void
+  setOutDubber?: (state: DubberCompact) => void
   setOutEp?: (state: number) => void
 
   disableScreens?: boolean
@@ -59,8 +58,8 @@ interface IKekwPlayerProps {
 
 export interface IKekwPlayerContextProps {
   //* CONSTS
-  title: ITitle
-  dubbers: IDubber[]
+  anime: Anime
+  dubbers: DubberCompact[]
   duration: number
   isMobile: boolean
 
@@ -118,7 +117,7 @@ export const KekwPlayerContext = createContext<Partial<IKekwPlayerContextProps>>
 
 
 //! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
-const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, setOutEp, outEpisode, disableScreens }) => {
+const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, setOutEp, outEpisode, disableScreens }) => {
   const [stage, setStage] = useState<TStage>('setup')
   const user = useAppSelector(state => state.user);
 
@@ -126,7 +125,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
   // Player data
   const [volume, setVolume] = useState<number>(100) // 0 - 100
-  const [episode, setEpisode] = useState<ITitleEpisode>(title.episodes[0])
+  const [episode, setEpisode] = useState<ITitleEpisode>(anime.episodes[0])
   const [duration, setDuration] = useState<number>(1)
   const [moment, setMoment] = useState<number>(0);
   const [hoveredMoment, setHoveredMoment] = useState<number>(0);
@@ -165,17 +164,17 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  useIdleTimer({
-    timeout: 3000,
-    throttle: 500,
-    onIdle: () => setIsIdle(true),
-    onAction: () => setIsIdle(false)
-  })
+  // useIdleTimer({
+  //   timeout: 3000,
+  //   throttle: 500,
+  //   onIdle: () => setIsIdle(true),
+  //   onAction: () => setIsIdle(false)
+  // })
 
 
 
   const KekwPlayerContextPayload: IKekwPlayerContextProps = {
-    title,
+    anime,
     dubbers,
     duration,
     isMobile,
@@ -215,7 +214,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   //! -------------- DEFAULT EFFECTS --------------
   //* Player vitals, video loading handling
   useEffect(() => {
-    title.episodes.forEach(ep => {
+    anime.episodes.forEach(ep => {
       if (ep.order > titleMaxEpisode.current) titleMaxEpisode.current = ep.order
     })
 
@@ -260,7 +259,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
     const progress = getPlayerProgress()
 
-    if (progress) {
+    if (progress && progress.moment > 10) {
       // Progress is present, purpose it to init with
 
       setCurrentScreen('progress_continue');
@@ -281,17 +280,10 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   /** Load user progress */
   async function loadProgress() {
     const progress = getPlayerProgress();
+    if (!progress) return loadDefault();
 
-    // Load default if progress missing
-    if (!progress) {
-      return loadDefault();
-    }
-
-    const episode = title.episodes.find(el => el.dubberID === progress.dub && el.order === progress.ep);
-
-    if (!episode) {
-      return loadDefault();
-    }
+    const episode = anime.episodes.find(el => el.dubberID === progress.dub && el.order === progress.ep);
+    if (!episode) return loadDefault();
 
     setCurrentScreen('none')
     await changeEpisode(episode, progress.moment);
@@ -310,7 +302,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
   /** Setup with default player states */
   async function loadDefault() {
-    const episode = title.episodes[0];
+    const episode = anime.episodes[0];
     const video = videoRef.current;
     let i = 0;
 
@@ -331,7 +323,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     if (!user.id) return;
 
     const playerData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
-    const currentTitle = playerData.find(el => el.id === title.id)!;
+    const currentTitle = playerData.find(el => el.id === anime.uuid)!;
     const viewtime = viewtimeRef.current;
 
     // Ignore patching less than 5 seconds of viewtime
@@ -340,7 +332,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     try {
       await $api.patch('/user', {
         method: 'patchWatchProgress',
-        titleId: title.id,
+        titleId: anime.uuid,
         dubberID: currentTitle.dub,
         episodeOrder: currentTitle.ep,
         progress: currentTitle.moment,
@@ -549,7 +541,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
         updatePlayerProgress({
           dub: episode.dubberID,
           ep: episode.order,
-          id: title.id,
+          id: anime.uuid,
           moment
         })
       }
@@ -728,18 +720,16 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     if (duration > 10 && moment && episode) {
       // title_end, episode_end, episode_last
       if (moment >= duration - 5) {
-        const nextEpisodeOrder = episode.order + 1;
-
-        const isNextEpisodeExist = title.episodes.some(el => el.dubberID === episode.dubberID && el.order === nextEpisodeOrder);
-        const isLastEpisode = !isNextEpisodeExist && Number(title.episodesCount) > nextEpisodeOrder
-        const isTitleEnded = !isNextEpisodeExist && Number(title.episodesCount) <= nextEpisodeOrder;
+        const isNextEpisodeExist = anime.episodes.some(el => el.dubberID === episode.dubberID && el.order === episode.order + 1);
+        const isLastDubbedEpisode = !isNextEpisodeExist && Number(anime.episodesCount) > episode.order
+        const isAnimeEnded = !isNextEpisodeExist && Number(anime.episodesCount) <= episode.order;
 
         if (isNextEpisodeExist) {
-          setCurrentScreen('episode_end')
-        } else if (isTitleEnded) {
-          setCurrentScreen('title_end')
-        } else if (isLastEpisode) {
-          setCurrentScreen('episode_last')
+          setCurrentScreen('continue_watch')
+        } else if (isAnimeEnded) {
+          setCurrentScreen('anime_end')
+        } else if (isLastDubbedEpisode) {
+          setCurrentScreen('last_dubbed_episode')
         }
       } else {
         // Reset screen
@@ -770,7 +760,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
 
   //* Handle screen change
   useEffect(() => {
-    //* Hide controls under progress_continue screen, otherwise show them
+    // Hide controls under progress_continue screen, otherwise show them
 
     setIsControlsHiddenUnderScreen(currentScreen === 'progress_continue');
   }, [currentScreen])
@@ -788,7 +778,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   function getPlayerProgress(): IKekwPlayerLocalDataItem | null {
     // Get progress from user watch progress
     if (user.id) {
-      const currentTitle = user.watchProgress.find(el => el.titleID === title.id);
+      const currentTitle = user.watchProgress.find(el => el.titleID === anime.uuid);
 
       // Procced if title saved, otherwise procced by default
       if (currentTitle) {
@@ -805,7 +795,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
     if (!localData) return null;
 
-    const currentTitle = localData.find(el => el.id === title.id)
+    const currentTitle = localData.find(el => el.id === anime.uuid)
     if (!currentTitle) return null;
 
     return currentTitle
@@ -825,21 +815,22 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     const data = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
 
     try {
-      await $api.patch('/user', {
-        method: 'patchWatchProgress',
-        titleId: title.id,
-        dubberID: title.episodes[0].dubberID,
-        episodeOrder: title.episodes[0].order,
-        progress: 0,
-        viewtime: 0,
-      })
+      console.log('remove progress')
+      // await $api.patch('/user', {
+      //   method: 'patchWatchProgress',
+      //   titleId: anime.uuid,
+      //   dubberID: anime.episodes[0].dubberID,
+      //   episodeOrder: anime.episodes[0].order,
+      //   progress: 0,
+      //   viewtime: 0,
+      // })
 
       viewtimeRef.current = 0;
     } catch (e) {
       HandleClientError(e)
     }
 
-    localStorage.setItem('kekwplayer_data', JSON.stringify(data.filter(el => el.id !== title.id)))
+    localStorage.setItem('kekwplayer_data', JSON.stringify(data.filter(el => el.id !== anime.uuid)))
   }
 
   /** Change dub, ep & moment
@@ -853,8 +844,8 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     moment = moment || 0;
 
     // Set first dub in array if id not found
-    if (!title.episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)) {
-      episode = title.episodes[0]
+    if (!anime.episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)) {
+      episode = anime.episodes[0]
     }
 
     setEpisode(episode)
@@ -871,7 +862,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     // Check if episode is last
     const nextEpisodeOrder = episode.order + 1;
 
-    if (title.episodes.some(el => el.dubberID === episode.dubberID && el.order === nextEpisodeOrder)) {
+    if (anime.episodes.some(el => el.dubberID === episode.dubberID && el.order === nextEpisodeOrder)) {
       setIsLastEpisode(false)
     } else {
       setIsLastEpisode(true)
@@ -881,7 +872,7 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
     updatePlayerProgress({
       dub: episode.dubberID,
       ep: episode.order,
-      id: title.id,
+      id: anime.uuid,
       moment
     })
   }
@@ -1022,24 +1013,19 @@ const KekwPlayer: NextPage<IKekwPlayerProps> = ({ title, dubbers, setOutDubber, 
   return <KekwPlayerContext.Provider value={KekwPlayerContextPayload}>
     <div className="w-full h-full relative overflow-hidden flex flex-col justify-between bg-black outline-none" id="player" tabIndex={0} ref={playerRef}>
       {/* Screens */}
-      {!disableScreens && <PlayerScreen.Wrapper>
-        <PlayerScreen.ProgressContinue />
-        <PlayerScreen.EpisodeEnd />
-        <PlayerScreen.EpisodeLast />
-        <PlayerScreen.TitleEnd />
-      </PlayerScreen.Wrapper>}
+      {/* {!disableScreens && <NPScreensContainer />} */}
 
       {/* Menu */}
-      <KekwPlayerMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} changeEpisode={changeEpisode} episode={episode} episodes={title.episodes} dubbers={dubbers} isLastEpisode={isLastEpisode} episodesCount={title.episodesCount || titleMaxEpisode.current} isIdle={isIdle} titleId={title.id} moment={moment} />
+      <KekwPlayerMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} isLastEpisode={isLastEpisode} totalEpisodesCount={anime.episodesCount ?? titleMaxEpisode.current} isIdle={isIdle} />
 
       {/* Bottom */}
-      <div className={cn(`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[16px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(360deg, rgba(18, 18, 18, .8), rgba(18, 18, 18, 0))' }} ref={bottomRef}>
+      <div className={cn(`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[12px] backdrop-blur-[4px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .6))' }} ref={bottomRef}>
         <div className="flex items-center gap-[16px]">
-          <KekwPlayerPlay />
-          <KekwPlayerVolume />
+          <NPlay />
+          <NPVolume />
         </div>
 
-        <KekwPlayerTimeline hoveredMoment={hoveredMoment} loadedRef={loadedRef} previewRef={previewRef} progressRef={progressRef} />
+        <NPTimeline hoveredMoment={hoveredMoment} loadedRef={loadedRef} previewRef={previewRef} progressRef={progressRef} />
 
         <div className="flex items-center gap-[12px]">
           <KekwPlayerPiP />
@@ -1084,4 +1070,7 @@ export function secondsToReadable(time: number): { hrs: number, mins: number, se
   return { hrs, mins, secs, pretty }
 }
 
-export default KekwPlayer;
+/** @deprecated use Nekoplayer instead */
+const KekwPlayer = Nekoplayer;
+
+export default Nekoplayer;

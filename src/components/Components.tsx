@@ -13,7 +13,7 @@ import Anime from '~/interfaces/AnimeIntf';
 import { animeGenres } from '../config';
 import { Routes } from '../routes';
 
-import { secondsToReadable } from './KekwPlayer/KekwPlayer';
+import { secondsToReadable } from './Nekoplayer/Nekoplayer';
 import StyledImage from './StyledImage';
 
 

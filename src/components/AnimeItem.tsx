@@ -16,7 +16,7 @@ import parseUserLibUI from '~/utils/parse-user-lib-ui';
 
 import { cn } from './Components';
 import { HandleClientError } from './Errors';
-import { secondsToReadable } from './KekwPlayer/KekwPlayer';
+import { secondsToReadable } from './Nekoplayer/Nekoplayer';
 import StyledImage from './StyledImage';
 import { NotifyWarn } from './UI/NotifyToast';
 import UICheckbox from './UI/UICheckbox';

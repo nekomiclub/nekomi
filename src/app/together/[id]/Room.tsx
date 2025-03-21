@@ -11,7 +11,6 @@ import { cn, copyToClipboard } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { getUTC, randomNumber } from '~/components/handlers';
 import { $api, signCSRF } from '~/components/http';
-import KekwPlayer from '~/components/KekwPlayer/KekwPlayer';
 import StyledImage from '~/components/StyledImage';
 import Input from '~/components/UI/Input';
 import { config } from '~/config';
@@ -342,7 +341,7 @@ const TogetherRoom: NextPage<IProps> = ({ dubbers, room, title, user, userSessio
             <p className="text-lightGrey">Спільний перегляд: {title.names.ukr}</p>
 
             <div className="w-full h-[550px]" ref={parentRef}>
-              <KekwPlayer dubbers={dubbers} title={title} setOutDubber={setDubber} setOutEp={setOrder} outEpisode={episode} disableScreens={!canControlPlayback} />
+              {/* <KekwPlayer dubbers={dubbers} title={title} setOutDubber={setDubber} setOutEp={setOrder} outEpisode={episode} disableScreens={!canControlPlayback} /> */}
             </div>
           </div>
 

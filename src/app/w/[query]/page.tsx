@@ -7,6 +7,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import AnimeItem from '~/components/AnimeItem';
 import { PrettySwiper } from '~/components/Components';
 import { HandleServerError } from '~/components/Errors';
+import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/StyledImage';
 import { UIReportButton } from '~/components/UI/Report';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
@@ -177,15 +178,25 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
 
         {/* Player */}
         <div className="flex flex-col gap-[16px]">
-          <div className="w-screen h-screen bg-black">
+          {/* <div className="w-screen h-[90svh] bg-black">
+            {anime.episodes.length > 0 && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
+            {anime.episodes.length === 0 && <div>
 
-          </div>
+            </div>}
+          </div> */}
 
           <div className="wrapper items-start">
             <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
           </div>
         </div>
       </main>
+
+      <div className="w-screen h-[90svh] bg-black">
+        {anime.episodes.length > 0 && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
+        {anime.episodes.length === 0 && <div>
+
+        </div>}
+      </div>
 
 
 

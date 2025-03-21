@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import { NextPage } from 'next';
+import { MaterialSymbol } from 'react-material-symbols';
 
-import { IcoPlayerFullscreenEnter, IcoPlayerFullscreenExit } from '~/assets/PlayerFullscreen';
 import { cn } from '../Components';
 import { HandleClientError } from '../Errors';
 
-import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
+import { IKekwPlayerContextProps, KekwPlayerContext } from './Nekoplayer';
 
 export const KekwPlayerFullscreen: NextPage = () => {
   const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
@@ -34,10 +34,8 @@ export const KekwPlayerFullscreen: NextPage = () => {
 
 
 
-  return (
-    <button className="kekwplayer-fullscreen_button relative w-[32px] h-[32px]" onClick={() => changeFullscreen()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoPlayerFullscreenEnter className={cn(`kekwplayer-fullscreen`, isFullscreen && 'opacity-0')} width={40} height={40} />
-      <IcoPlayerFullscreenExit className={cn(`kekwplayer-fullscreen`, !isFullscreen && 'opacity-0')} width={40} height={40} />
-    </button>
-  );
+  return <button className="kekwplayer-fullscreen_button relative w-[32px] h-[32px]" onClick={changeFullscreen} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+    <MaterialSymbol className={cn(`kekwplayer-fullscreen text-white`, isFullscreen && 'opacity-0')} icon="fullscreen" size={32} />
+    <MaterialSymbol className={cn(`kekwplayer-fullscreen text-white`, !isFullscreen && 'opacity-0')} icon="fullscreen_exit" size={32} />
+  </button>
 }

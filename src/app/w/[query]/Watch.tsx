@@ -18,7 +18,6 @@ import { IcoHeartFilled } from '../../../assets/Heart';
 import { IcoCan, IcoExternalLink, IcoInfo, IcoPeople, IcoStack, IcoStarRating, IcoUpdate, IcoWatched } from '../../../assets/Icons';
 import { getUTC, parseTitleCountry, parseTitleSeason, parseTitleStatus, parseTitleType } from '../../../components/handlers';
 import { $api } from '../../../components/http';
-import KekwPlayer from '../../../components/KekwPlayer/KekwPlayer';
 import Tooltip from '../../../components/UI/Tooltip';
 import { animeGenres, config, genresDescription } from '../../../config';
 import { useAppSelector } from '../../../hooks/redux';
@@ -198,7 +197,7 @@ const WatchTitle: NextPage<IProps> = ({ dubbers, title, episodesDubbed }) => {
 
         {/* Player */}
         {title.episodes.length ? <div className="wrapper h-[800px] relative z-0 gap-[8px] items-start">
-          <KekwPlayer title={title} dubbers={dubbers} />
+          {/* <KekwPlayer title={title} dubbers={dubbers} /> */}
 
           <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
         </div> : <div className="w-full bg-darkGrey flex gap-[32px] items-center px-[32px] py-[40px] rounded-[2px] max-[934px]:flex-col">

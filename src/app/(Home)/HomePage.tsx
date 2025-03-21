@@ -9,7 +9,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import AnimeItem from '~/components/AnimeItem';
-import { IKekwPlayerLocalDataItem, secondsToReadable } from '~/components/KekwPlayer/KekwPlayer';
+import { IKekwPlayerLocalDataItem, secondsToReadable } from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';

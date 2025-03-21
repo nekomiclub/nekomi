@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import { NextPage } from 'next';
+import { MaterialSymbol } from 'react-material-symbols';
 
-import { IcoPlayerPiPEnter, IcoPlayerPiPExit } from '~/assets/PlayerPiP';
 import { cn } from '../Components';
 import { HandleClientError } from '../Errors';
 
-import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
+import { IKekwPlayerContextProps, KekwPlayerContext } from './Nekoplayer';
 
 
 
@@ -36,10 +36,8 @@ export const KekwPlayerPiP: NextPage = () => {
 
 
 
-  return (
-    <button className="kekwplayer-pip_button relative w-[32px] h-[32px] max-[600px]:hidden" onClick={() => changePiP()} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-      <IcoPlayerPiPEnter className={cn(`kekwplayer-pip`, isPiP && 'opacity-0')} width={40} height={40} />
-      <IcoPlayerPiPExit className={cn(`kekwplayer-pip`, !isPiP && 'opacity-0')} width={40} height={40} />
-    </button>
-  );
+  return <button className="kekwplayer-pip_button relative w-[32px] h-[32px] max-[600px]:hidden" onClick={changePiP} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+    <MaterialSymbol className={cn(`kekwplayer-pip text-white`, isPiP && 'opacity-0')} icon="pip" size={32} />
+    <MaterialSymbol className={cn(`kekwplayer-pip text-white`, !isPiP && 'opacity-0')} icon="pip_exit" size={32} />
+  </button>
 }

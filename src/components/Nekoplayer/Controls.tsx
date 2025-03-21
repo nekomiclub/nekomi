@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 
 import { HandleClientError } from '../Errors';
 
-import { IKekwPlayerContextProps, KekwPlayerContext } from './KekwPlayer';
+import { IKekwPlayerContextProps, KekwPlayerContext } from './Nekoplayer';
 
 
 

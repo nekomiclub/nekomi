@@ -1,8 +1,9 @@
 import { memo, RefObject, useEffect, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import gsap from 'gsap';
+import { MaterialSymbol } from 'react-material-symbols';
 
-import { IcoArrow, IcoSettings, IcoSpeed } from '~/assets/Icons';
+import { IcoArrow, IcoSpeed } from '~/assets/Icons';
 import { IcoPlayerCenter, IcoPlayerQuality, IcoPlayerStretch } from '~/assets/Player';
 import { TVideoQuality } from '~/interfaces/Interfaces';
 import { ITitleEpisode } from '~/interfaces/ITitle';
@@ -93,17 +94,17 @@ export const KekwPlayerSettings = memo<IProps>(function KekwPlayerSettings({ qua
 
 
   return <div className="relative max-[460px]:opacity-0 max-[460px]:invisible max-[460px]:absolute" ref={settingsRef}>
-    <Menu settings={{ direction: 'top', align: 'end', animation: 'fade' }} gap={24} state={isMenuOpen} stateSetter={setIsMenuOpen} id="kekwplayer-settings_menu">
+    <Menu className="h-[32px]" settings={{ direction: 'top', align: 'end', animation: 'fade' }} gap={24} state={isMenuOpen} stateSetter={setIsMenuOpen} id="kekwplayer-settings_menu">
       <MenuTrigger anchor className={'kekwplayer-settings_button relative w-[32px] h-[32px]'} aria-label={'Налаштування'}>
-        <IcoSettings width={40} height={40} className={`kekwplayer-settings`} />
+        <MaterialSymbol className={cn(`kekwplayer-settings text-white`)} icon="settings" size={32} />
       </MenuTrigger>
 
       <MenuWrapper className={`!w-[260px] rounded-[2px] bg-dark flex flex-col translate-x-[15%] overflow-hidden`}>
         <div className="w-full h-0" ref={settingsPlaceholderRef}></div>
 
-        <GeneralSettings visible={settingsPage === 'general'} page="general" changePage={changePage} stretch={stretch} setStretch={setStretch} speed={speed} quality={quality} />
-        <QualitySettings visible={settingsPage === 'quality'} page="quality" changePage={changePage} isVideoProcessed={isVideoProcessed} episode={epData} quality={quality} setQuality={setQuality} />
-        <SpeedSettings visible={settingsPage === 'speed'} page="speed" changePage={changePage} videoRef={videoRef} speed={speed} />
+        <GeneralSettings visible={settingsPage === 'general' && isMenuOpen} page="general" changePage={changePage} stretch={stretch} setStretch={setStretch} speed={speed} quality={quality} />
+        <QualitySettings visible={settingsPage === 'quality' && isMenuOpen} page="quality" changePage={changePage} isVideoProcessed={isVideoProcessed} episode={epData} quality={quality} setQuality={setQuality} />
+        <SpeedSettings visible={settingsPage === 'speed' && isMenuOpen} page="speed" changePage={changePage} videoRef={videoRef} speed={speed} />
       </MenuWrapper>
     </Menu>
   </div>
