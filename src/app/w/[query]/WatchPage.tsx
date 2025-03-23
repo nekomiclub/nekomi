@@ -2,7 +2,6 @@
 
 import { useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
-import * as Loader from '@uiball/loaders';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
@@ -185,7 +184,7 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
       <p className="text-white font-manrope uppercase max-sm:text-[14px]">розпочати перегляд</p>
     </Link>
 
-    <button className={cn(`ui-button watch-meta-action`, isTogetherRoomCreating && 'cursor-not-allowed')} disabled={isTogetherRoomCreating} onClick={watchTogether}>
+    {/* <button className={cn(`ui-button watch-meta-action`, isTogetherRoomCreating && 'cursor-not-allowed')} disabled={isTogetherRoomCreating} onClick={watchTogether}>
       {!isTogetherRoomCreating && <>
         <MaterialSymbol icon="group" size={24} className="text-white max-sm:text-[20px]" />
         <p className="text-white font-manrope uppercase max-sm:text-[14px]">СПІЛЬНИЙ ПЕРЕГЛЯД</p>
@@ -197,7 +196,7 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
 
         <p className="text-grey-new font-manrope uppercase max-sm:text-[14px]">Створюємо кімнату...</p>
       </>}
-    </button>
+    </button> */}
 
     {canEditAnime && <Link href={`${config.URL.baseURL}${Routes.patcher_title.path}/${hydratedAnime.anime.uuid}`} className="ui-button watch-meta-action bg-transparent border-none">
       <MaterialSymbol icon="edit" size={24} className="text-grey-new max-sm:text-[20px]" />
