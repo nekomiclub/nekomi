@@ -37,7 +37,7 @@ export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, p
 
           renderTrack={({ children, props }) => <div
             {...props}
-            key={'kekwplayer-timeline_track'}
+            key={'nekoplayer-timeline_track'}
             style={{
               ...props.style,
               position: 'relative',
@@ -49,15 +49,15 @@ export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, p
             {children}
 
             {/* Video progress */}
-            <div className="h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] bg-primary rounded-[6px]" ref={progressRef}></div>
+            <div className="h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] bg-primary rounded-[6px]" key={`nekoplayer-timeline_progress`} ref={progressRef}></div>
 
             {/* Downloading progress */}
-            <div className="h-full absolute top-0 touch-none pointer-events-none left-0 z-[1] bg-white/[.2] rounded-[6px]" ref={loadedRef}></div>
+            <div className="h-full absolute top-0 touch-none pointer-events-none left-0 z-[1] bg-white/[.2] rounded-[6px]" key={`nekoplayer-timeline_downloadProgress`} ref={loadedRef}></div>
           </div>}
 
           renderThumb={({ props }) => <div
             {...props}
-            key={'kekwplayer-timeline_thumb'}
+            key={'nekoplayer-timeline_thumb'}
             style={{
               ...props.style,
               touchAction: 'none',

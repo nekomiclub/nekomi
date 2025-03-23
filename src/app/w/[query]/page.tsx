@@ -2,21 +2,20 @@ import '~/styles/pages/watch.scss';
 
 import { Metadata } from 'next';
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
-import { MaterialSymbol } from 'react-material-symbols';
+import { headers } from 'next/headers';
 
 import AnimeItem from '~/components/AnimeItem';
 import { PrettySwiper } from '~/components/Components';
 import { HandleServerError } from '~/components/Errors';
-import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/StyledImage';
-import { UIReportButton } from '~/components/UI/Report';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import API from '~/services/ApiService';
+import isUserAgentMobile from '~/utils/is-user-agent-mobile';
 import { config, CONSTS, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { routes } from '../../../routes';
 
-import { WatchActions, WatchDetail, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchSectionLabel } from './WatchPage';
+import { WatchActions, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
 
 
 
@@ -55,10 +54,12 @@ export async function generateMetadata(
 
 
 
-// Fetch title
 export default async function RSC(props: IRSCProps<WatchPageParams>) {
   const params = await props.params;
   const { query } = params;
+
+  const userAgent = headers().get('user-agent') || '';
+  const isMobile = isUserAgentMobile(userAgent) ?? true
 
 
 
@@ -66,24 +67,104 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
     const { anime, genres, media, rate, season, status, related, posterAdapt, nextBroadcast, dubbers } = await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true })
     const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
 
-    const scoredByFormatter = Intl.NumberFormat('en', { notation: 'compact' });
-
     let maximumEpisode = 0;
     anime.episodes.forEach(ep => ep.order > maximumEpisode ? maximumEpisode = ep.order : undefined);
 
 
 
-    return <>
+    return isMobile ? <>
+      {/* MOBILE */}
+      <main className="sm:hidden">
+        <div className="w-full h-[500px] pt-[32px] flex justify-center relative">
+          {/* Background */}
+          <StyledImage src={anime.poster} width="100%" height="100%" className="!absolute top-0 left-0" />
+          <div className="absolute top-0 left-0 z-[3] w-full h-full" style={{ background: 'linear-gradient(180deg, rgba(18,18,18,.7), #121212)' }}></div>
+
+          <div className="flex flex-col items-center gap-[4px] z-[3] w-fit px-[24px]">
+            <StyledImage src={anime.poster} width="270px" height="370px" className="rounded-[4px] overflow-hidden" priority loading="eager" />
+
+            <WatchEditLibs hydratedAnime={hydratedAnime} />
+
+            <div className="flex items-center justify-between w-full">
+              <WatchRating hydratedAnime={hydratedAnime} />
+            </div>
+          </div>
+        </div>
+
+        <section className="wrapper gap-[16px]">
+          <div className="flex flex-col gap-[4px]">
+            <h1 className="text-white font-manrope font-bold text-[20px]">{anime.names.ukr}</h1>
+            <h2 className="text-grey-new font-manrope">{anime.names.eng}</h2>
+          </div>
+
+          {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />}
+
+          <WatchActions hydratedAnime={hydratedAnime} />
+
+          <div className="watch-section_divider"></div>
+
+          {/* Details */}
+          {anime.details && <WatchDetails hydratedAnime={hydratedAnime} />}
+
+          {/* Meta */}
+          <div className="flex flex-col gap-[6px]">
+            <WatchDetail name="Eпізоди:" value={`${maximumEpisode ?? '—'} / ${anime.episodesCount ?? '—'}`} />
+            <WatchDetail name="Cтатус:" status={status} />
+            <WatchDetail name="Рейтинг:" rate={rate} />
+            <WatchDetail name="Cезон:" season={season} year={anime.year} />
+            <WatchDetail name="Тип:" media={media} />
+            <WatchDetail name="Жанри:" genres={genres} />
+            <WatchDetail name="Студії:" studios={anime.studios} />
+          </div>
+
+          {/* Description */}
+          {anime.description && <p className="text-white text-[14px] font-manrope">{anime.description}</p>}
+          {!anime.description && <p className="text-grey-new text-[14px] font-manrope">Опис відсутній</p>}
+
+          {/* Divider */}
+          <div className="watch-section_divider"></div>
+
+          {/* Dubbing */}
+          {dubbers && dubbers?.length > 0 && <div className="flex flex-col gap-[8px]">
+            <WatchSectionLabel icon="mic" label="Переклад та озвучення" />
+
+            <div className="flex flex-wrap gap-[8px]">
+              {posterAdapt && <WatchDubber dubber={posterAdapt} posterAdapt key={`animedub-posterAdapt--${posterAdapt.id}`} />}
+
+              {dubbers?.filter(el => el.id !== anime.posterAdapt).map(dubber => {
+                return <WatchDubber dubber={dubber} key={`animedub--${dubber.id}`} />
+              })}
+            </div>
+          </div>}
+
+          {/* Pictures */}
+
+          {/* Related */}
+          {related && related?.length > 0 && <div className="wrapper gap-[16px]">
+            <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
+
+            <PrettySwiper>
+              {related.map((hydrated, i) => {
+                return <AnimeItem hydrated={hydrated} className="!w-[170px]" key={`animerelated-${anime.uuid}--${i}`} />
+              })}
+            </PrettySwiper>
+          </div>}
+
+          {/* Player */}
+          <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} />
+        </section>
+      </main>
+    </> : <>
+      {/* DESKTOP */}
       <div style={{ height: `calc(32px + var(--header-height))` }}></div>
 
-      {/* DESKTOP */}
-      <main className="max-lg:hidden flex flex-col gap-[40px]">
+      <main className="flex flex-col gap-[40px]">
         {/* Meta */}
-        <section className="wrapper !flex-row gap-[32px]">
+        <section className="wrapper !flex-row gap-[32px] max-lg:!flex-col max-lg:items-center">
           {/* Poster */}
           <div className="flex flex-col gap-[8px] w-[500px] shrink-0 max-xl:w-[400px]">
             <div className="watch-poster w-full h-[700px] bg-dark-medium rounded-[4px] overflow-hidden max-xl:h-[600px]">
-              <StyledImage src={hydratedAnime.anime.poster} width="100%" height="100%" priority loading="eager" />
+              <StyledImage src={anime.poster} width="100%" height="100%" priority loading="eager" />
             </div>
 
             <WatchEditLibs hydratedAnime={hydratedAnime} />
@@ -94,18 +175,12 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
             {/* Heading */}
             <div className="flex items-center justify-between w-full gap-[24px]">
               <div className="flex flex-col gap-[4px]">
-                <h1 className="text-white text-[32px] font-manrope font-bold" title={hydratedAnime.anime.names.ukr}>{hydratedAnime.anime.names.ukr}</h1>
-                <h3 className="text-grey-new text-[24px] font-space-grotesk" title={hydratedAnime.anime.names.eng}>{hydratedAnime.anime.names.eng}</h3>
+                <h1 className="text-white text-[32px] font-manrope font-bold" title={anime.names.ukr}>{anime.names.ukr}</h1>
+                <h2 className="text-grey-new text-[24px] font-space-grotesk" title={anime.names.eng}>{anime.names.eng}</h2>
               </div>
 
               <div className="flex flex-col items-center gap-[4px]">
-                <div className="flex items-center gap-[8px]">
-                  <h2 className="text-primary text-[24px] font-bold font-space-grotesk">{hydratedAnime.anime.score.mal?.toFixed(2) ?? hydratedAnime.anime.score.imdb?.toFixed(2) ?? '―'}</h2>
-
-                  <MaterialSymbol icon="star_half" size={24} className="text-primary" />
-                </div>
-
-                <p className="text-grey-new font-manrope whitespace-nowrap">{hydratedAnime.anime.score.malScoredBy ? scoredByFormatter.format(hydratedAnime.anime.score.malScoredBy) : 'Немає'} оцінок</p>
+                <WatchRating hydratedAnime={hydratedAnime} />
               </div>
             </div>
 
@@ -132,12 +207,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
 
               <div className="flex gap-[8px] max-2xl:flex-col">
                 {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />}
-
-                {anime.details && <div className="watch-meta-detail_outlined">
-                  <MaterialSymbol icon="info" size={24} className="text-grey-new" />
-
-                  <p className="text-grey-new font-manrope">{anime.details}</p>
-                </div>}
+                {anime.details && <WatchDetails hydratedAnime={hydratedAnime} />}
               </div>
             </div>
 
@@ -167,7 +237,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
 
         {/* Related */}
         {related && related?.length > 0 && <div className="wrapper gap-[16px]">
-          <WatchSectionLabel icon="link" label={`Пов’язані аніме (${related.length})`} />
+          <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
 
           <PrettySwiper>
             {related.map((hydrated, i) => {
@@ -177,32 +247,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
         </div>}
 
         {/* Player */}
-        <div className="flex flex-col gap-[16px]">
-          {/* <div className="w-screen h-[90svh] bg-black">
-            {anime.episodes.length > 0 && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
-            {anime.episodes.length === 0 && <div>
-
-            </div>}
-          </div> */}
-
-          <div className="wrapper items-start">
-            <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
-          </div>
-        </div>
-      </main>
-
-      <div className="w-screen h-[90svh] bg-black">
-        {anime.episodes.length > 0 && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
-        {anime.episodes.length === 0 && <div>
-
-        </div>}
-      </div>
-
-
-
-      {/* MOBILE */}
-      <main className="lg:hidden">
-
+        <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} />
       </main>
     </>
   } catch (e) {

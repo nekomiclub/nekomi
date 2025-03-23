@@ -11,8 +11,10 @@ import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { getUTC, wordDeclination } from '~/components/handlers';
+import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
+import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
@@ -22,7 +24,7 @@ import { Routes } from '~/routes';
 
 
 
-interface WatchProps {
+interface WatchGenericProps {
   hydratedAnime: HydratedAnime
 }
 
@@ -56,9 +58,13 @@ interface WatchDubberProps {
   posterAdapt?: boolean
 }
 
+interface WatchPlayerProps extends WatchGenericProps {
+  dubbers: DubberCompact[]
+}
 
 
-export const WatchEditLibs: NextPage<WatchProps> = ({ hydratedAnime }) => {
+
+export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   const currentUser = useAppSelector(state => state.user);
   const id = useId().replaceAll(':', '')
 
@@ -116,17 +122,17 @@ export const WatchEditLibs: NextPage<WatchProps> = ({ hydratedAnime }) => {
 
 
   return <Menu className="w-full" id={id}>
-    <MenuTrigger className={cn(`ui-button w-full px-[16px] py-[12px] rounded-[4px] flex items-center justify-center gap-[16px]`, isChanged && 'bg-green', isFavorite && 'bg-primary')} anchor>
-      <MaterialSymbol icon={icon} size={24} className="text-white" />
+    <MenuTrigger className={cn(`ui-button w-full px-[16px] py-[12px] rounded-[4px] flex items-center justify-center gap-[16px] max-sm:py-[8px]`, isChanged && 'bg-green', isFavorite && 'bg-primary max-sm:py-[8px]')} anchor>
+      <MaterialSymbol icon={icon} size={24} className={cn(`text-white max-sm:text-[20px]`)} />
 
-      <p className={cn(`text-white font-manrope uppercase`, isChanged && 'font-bold')}>{title}</p>
+      <p className={cn(`text-white font-manrope uppercase max-sm:text-[14px]`, isChanged && 'font-bold')}>{title}</p>
     </MenuTrigger>
 
     <AnimeItemEditMenu hydratedAnime={hydratedAnime} />
   </Menu>
 }
 
-export const WatchActions: NextPage<WatchProps> = ({ hydratedAnime }) => {
+export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   const currentUser = useAppSelector(state => state.user);
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
@@ -173,27 +179,29 @@ export const WatchActions: NextPage<WatchProps> = ({ hydratedAnime }) => {
 
 
 
-  return <div className="flex gap-[8px]">
-    <Link href={'#nekoplayer'} scroll className="ui-button watch-meta-action">
-      <MaterialSymbol icon="live_tv" size={24} className="text-white" />
-      <p className="text-white font-manrope uppercase">розпочати перегляд</p>
+  return <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
+    <Link href={'#player'} scroll className="ui-button watch-meta-action">
+      <MaterialSymbol icon="live_tv" size={24} className="text-white max-sm:text-[20px]" />
+      <p className="text-white font-manrope uppercase max-sm:text-[14px]">розпочати перегляд</p>
     </Link>
 
     <button className={cn(`ui-button watch-meta-action`, isTogetherRoomCreating && 'cursor-not-allowed')} disabled={isTogetherRoomCreating} onClick={watchTogether}>
       {!isTogetherRoomCreating && <>
-        <MaterialSymbol icon="group" size={24} className="text-white" />
-        <p className="text-white font-manrope uppercase">СПІЛЬНИЙ ПЕРЕГЛЯД</p>
+        <MaterialSymbol icon="group" size={24} className="text-white max-sm:text-[20px]" />
+        <p className="text-white font-manrope uppercase max-sm:text-[14px]">СПІЛЬНИЙ ПЕРЕГЛЯД</p>
       </>}
 
       {isTogetherRoomCreating && <>
-        <Loader.Ring color="#555" size={24} />
-        <p className="text-grey-new font-manrope uppercase">Створюємо кімнату...</p>
+        <div className="max-sm:hidden"><Loader.Ring color="#555" size={24} /></div>
+        <div className="sm:hidden"><Loader.Ring color="#555" size={20} /></div>
+
+        <p className="text-grey-new font-manrope uppercase max-sm:text-[14px]">Створюємо кімнату...</p>
       </>}
     </button>
 
     {canEditAnime && <Link href={`${config.URL.baseURL}${Routes.patcher_title.path}/${hydratedAnime.anime.uuid}`} className="ui-button watch-meta-action bg-transparent border-none">
-      <MaterialSymbol icon="edit" size={24} className="text-grey-new" />
-      <p className="text-grey-new font-manrope uppercase">РЕДАГУВАТИ</p>
+      <MaterialSymbol icon="edit" size={24} className="text-grey-new max-sm:text-[20px]" />
+      <p className="text-grey-new font-manrope uppercase max-sm:text-[14px]">РЕДАГУВАТИ</p>
     </Link>}
   </div>
 }
@@ -204,10 +212,10 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
   if (status) value = status.name
 
   return <div className={cn(`watch-meta-detail`, className)}>
-    {value && <p className="text-white font-manrope uppercase">{value}</p>}
-    {value === null && <p className="text-grey-new font-manrope uppercase">—</p>}
+    {value && <p className="watch-meta-detail_value font-manrope">{value}</p>}
+    {value === null && <p className="watch-meta-detail_value !text-grey-new font-manrope">—</p>}
 
-    {rate && <Tooltip content={rate.description}><p className="text-white font-manrope uppercase">{rate.name}</p></Tooltip>}
+    {rate && <Tooltip content={rate.description}><p className="watch-meta-detail_value font-manrope">{rate.name}</p></Tooltip>}
 
     {genres && <>
       {genres.length > 0 ? <div className="watch-meta-detail_container">
@@ -215,13 +223,13 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
           let immutableI = i;
 
           return <Tooltip content={genre.description} key={`animemeta-genre--${i}`}>
-            <span className="text-white font-bold uppercase">
+            <span className="watch-meta-detail_value font-bold font-manrope">
               {genre.name}
               {++immutableI < genres.length ? ',' : ''}
             </span>
           </Tooltip>
         })}
-      </div> : <p className="text-grey-new text-center">—</p>}
+      </div> : <p className="text-grey-new text-center font-manrope max-sm:text-start">—</p>}
     </>}
 
     {studios && <>
@@ -229,15 +237,15 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
         {studios.map((studio, i) => {
           let immutableI = i;
 
-          return <span className="text-white" key={`animemeta-studio--${i}`}>
+          return <span className="text-white max-sm:text-[14px]" key={`animemeta-studio--${i}`}>
             {studio.name}
             {++immutableI < studios.length ? ',' : ''}
           </span>
         })}
-      </div> : <p className="text-grey-new text-center">—</p>}
+      </div> : <p className="text-grey-new text-center font-manrope max-sm:text-start">—</p>}
     </>}
 
-    <p className="text-grey-new text-[14px] font-manrope uppercase">{name}</p>
+    <p className="watch-meta-detail_label font-manrope">{name}</p>
   </div>
 }
 
@@ -290,9 +298,9 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
 
   return <Tooltip className="w-full" content="Вказано час та дату виходу епізоду в Японії. Переклад та озвучення вийдуть пізніше.">
     <div className="watch-meta-detail_outlined">
-      <MaterialSymbol icon="hourglass_bottom" size={24} className="text-grey-new" />
+      <MaterialSymbol icon="hourglass_bottom" size={24} className="text-grey-new max-sm:text-[20px]" />
 
-      <p className="text-grey-new font-manrope flex items-center gap-[4px]">
+      <p className="text-grey-new font-manrope flex items-center gap-[4px] max-sm:text-[14px]">
         Наступна серія вийде:
 
         <span className="text-white font-manrope inline">{date}</span>
@@ -305,20 +313,62 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
 
 export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, icon }) => {
   return <div className="flex items-center gap-[16px]">
-    <MaterialSymbol icon={icon} size={24} className="text-white" />
+    <MaterialSymbol icon={icon} size={24} className="text-white max-sm:text-[20px]" />
 
-    <h3 className="text-white text-[24px] font-manrope font-bold">{label}</h3>
+    <h3 className="text-white text-[24px] font-manrope font-bold max-sm:text-[20px]">{label}</h3>
   </div>
 }
 
 export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt }) => {
-  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow basis-[205px] items-center gap-[16px] min-w-[180px] max-w-[280px]" href={`${config.URL.baseURL}${Routes.dubber_profile.path}/${dubber.slug}`}>
-    <StyledImage src={dubber.avatarURL} width="48px" height="48px" className="rounded-[2px] overflow-hidden" />
+  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow basis-[205px] items-center gap-[16px] min-w-[180px] max-w-[280px] max-sm:min-w-0 max-sm:p-[4px] max-sm:pr-[8px] max-sm:basis-[160px]" href={`${config.URL.baseURL}${Routes.dubber_profile.path}/${dubber.slug}`}>
+    <StyledImage src={dubber.avatarURL} width="48px" height="48px" className="rounded-[2px] overflow-hidden max-sm:w-[40px] max-sm:h-[40px]" />
 
     <div className="flex flex-col gap-[4px]">
-      <p className="text-white font-manrope font-bold">{dubber.nameUkr}</p>
+      <p className="text-white font-manrope font-bold max-sm:text-[14px]">{dubber.nameUkr}</p>
 
-      {posterAdapt && <p className="text-grey-new font-manrope">Адаптація постеру</p>}
+      {posterAdapt && <p className="text-grey-new font-manrope max-sm:text-[12px]">Адаптація постеру</p>}
     </div>
   </Link>
+}
+
+export const WatchRating: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
+  const scoredByFormatter = Intl.NumberFormat('en', { notation: 'compact' });
+
+  return <>
+    <div className="flex items-center gap-[8px]">
+      <p className={cn('text-primary text-[24px] font-bold font-space-grotesk max-sm:text-[16px]')}>{hydratedAnime.anime.score.mal?.toFixed(2) ?? hydratedAnime.anime.score.imdb?.toFixed(2) ?? '―'}</p>
+
+      <MaterialSymbol icon="star_half" size={24} className={cn(`text-primary max-sm:text-[20px]`)} />
+    </div>
+
+    <p className="text-grey-new font-manrope whitespace-nowrap">{hydratedAnime.anime.score.malScoredBy ? scoredByFormatter.format(hydratedAnime.anime.score.malScoredBy) : 'Немає'} оцінок</p>
+  </>
+}
+
+export const WatchDetails: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
+  return <div className="watch-meta-detail_outlined">
+    <MaterialSymbol icon="info" size={24} className="text-grey-new max-sm:text-[20px]" />
+
+    <p className="text-grey-new font-manrope max-sm:text-[14px]">{hydratedAnime.anime.details}</p>
+  </div>
+}
+
+export const WatchPlayer: NextPage<WatchPlayerProps> = ({ hydratedAnime, dubbers }) => {
+  return <div className="flex flex-col gap-[16px]">
+    <div className="w-screen h-[90svh] bg-black">
+      {hydratedAnime.anime.episodes.length > 0 && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
+      {hydratedAnime.anime.episodes.length === 0 && <div className="w-full h-full bg-dark-primary flex gap-[32px] items-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
+        <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />
+
+        <div className="flex flex-col gap-[8px] items-center w-full">
+          <p className="text-white text-[40px] font-manrope font-bold max-sm:text-[24px]">А серій нема</p>
+          <p className="text-grey-new font-manrope">Отак бува, та...</p>
+        </div>
+      </div>}
+    </div>
+
+    <div className="wrapper items-start">
+      <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
+    </div>
+  </div>
 }

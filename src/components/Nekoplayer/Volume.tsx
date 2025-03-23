@@ -97,7 +97,7 @@ export const NPVolume: NextPage = () => {
 
           renderThumb={({ props }) => <div
             {...props}
-            key={'kekwplayer-volume_thumb'}
+            key={'nekoplayer-volume_thumb'}
             style={{
               ...props.style,
               touchAction: 'none',
@@ -112,7 +112,7 @@ export const NPVolume: NextPage = () => {
 
           renderTrack={({ children, props }) => <div
             {...props}
-            key={'kekwplayer-volume_track'}
+            key={'nekoplayer-volume_track'}
             style={{
               ...props.style,
               position: 'relative',
@@ -123,7 +123,7 @@ export const NPVolume: NextPage = () => {
             {children}
 
             {/* Volume progress */}
-            <div className="w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] bg-primary rounded-[6px]" ref={volumeRef}></div>
+            <div className="w-[20px] h-full absolute top-0 left-0 touch-none pointer-events-none z-[2] bg-primary rounded-[6px]" key={`nekoplayer-volume_progress`} ref={volumeRef}></div>
           </div>}
         />
       </div>

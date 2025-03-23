@@ -6,6 +6,7 @@ import { createContext, RefObject, useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
 import { AxiosError } from 'axios';
 import { NextPage } from 'next';
+import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
 
 import Anime from '~/interfaces/AnimeIntf';
@@ -21,6 +22,7 @@ import { KekwPlayerFullscreen } from './Fullscreen';
 import { KekwPlayerMenu } from './Menu';
 import { KekwPlayerPiP } from './PiP';
 import { NPlay } from './Play';
+import { NPScreensContainer } from './Screens';
 import { KekwPlayerSettings } from './Settings';
 import { NPTimeline } from './Timeline';
 import { NPVolume } from './Volume';
@@ -164,12 +166,12 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  // useIdleTimer({
-  //   timeout: 3000,
-  //   throttle: 500,
-  //   onIdle: () => setIsIdle(true),
-  //   onAction: () => setIsIdle(false)
-  // })
+  useIdleTimer({
+    timeout: 3000,
+    throttle: 500,
+    onIdle: () => setIsIdle(true),
+    onAction: () => setIsIdle(false)
+  })
 
 
 
@@ -1013,7 +1015,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
   return <KekwPlayerContext.Provider value={KekwPlayerContextPayload}>
     <div className="w-full h-full relative overflow-hidden flex flex-col justify-between bg-black outline-none" id="player" tabIndex={0} ref={playerRef}>
       {/* Screens */}
-      {/* {!disableScreens && <NPScreensContainer />} */}
+      {!disableScreens && <NPScreensContainer />}
 
       {/* Menu */}
       <KekwPlayerMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} isLastEpisode={isLastEpisode} totalEpisodesCount={anime.episodesCount ?? titleMaxEpisode.current} isIdle={isIdle} />
