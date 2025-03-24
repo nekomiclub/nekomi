@@ -8,7 +8,7 @@ import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
-import { UserHeader, UserSectionLibs, UserSectionWTRooms, UserStatItem } from './UserPage';
+import { UserHeader, UserSectionLibs, UserStatItem } from './UserPage';
 
 
 
@@ -70,7 +70,7 @@ export default async function RSC(props: IRSCProps<UserPageProps>) {
         </div>
 
         <UserSectionLibs user={user} />
-        <UserSectionWTRooms user={user} />
+        {/* <UserSectionWTRooms user={user} /> */}
       </div>
     </div>
   } catch (e) {

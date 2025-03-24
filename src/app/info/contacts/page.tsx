@@ -1,84 +1,58 @@
 
-
-
-
-
-
-
-import './styles.scss';
-
-import { NextPage } from 'next';
 import Link from 'next/link';
 
+import { IcoSocialGithub, IcoSocialTelegram } from '~/assets/Social';
 import StyledImage from '~/components/StyledImage';
-import { IcoSocialGithub, IcoSocialTelegram } from '../../../assets/Social';
 import { metaObject } from '../../../config';
-import { IRSCProps } from '../../../interfaces/IRSC';
 
-import UnniiiverseAvatar from '../../../assets/img/unniiiverseAvatar.png';
 
 
 
 export const metadata = metaObject({
-  title: `Розробники`
+  title: `Devs?`
 })
 
-const RSC: NextPage<IRSCProps> = () => {
-  return (
-    <>
-      <div className="w-full h-full min-h-screen bg-dark">
-        <div className="wrapper justify-center items-center w-full min-h-screen h-full px-[24px]">
-          <div className="px-[24px] py-[24px] bg-darkGrey rounded-[4px] flex flex-col gap-[16px] w-full max-w-[600px]">
-            <div className="flex items-center gap-[16px] max-[460px]:flex-col">
-              <StyledImage src={UnniiiverseAvatar.src} width="128px" height="128px" className="shrink-0" />
 
-              <div className="w-full flex flex-col items-center gap-[4px]">
-                <h3 className="text-white text-[32px] font-bold uppercase">mykhailo</h3>
-                <p className="text-lightGrey">@unniiiverse</p>
-              </div>
+
+export default async function RSC() {
+  return <main className="w-screen h-screen flex justify-center items-center">
+    <div className="wrapper h-full justify-center items-center">
+      <div className="flex flex-col gap-[8px] max-w-[600px] w-full">
+        <div className="w-full flex flex-col">
+          <div className="flex items-center gap-[24px] bg-dark-primary border border-dark-light rounded-[4px] rounded-b-none p-[24px]">
+            <StyledImage src="/assets/unniiiverse-avatar.png" width="128px" height="128px" className="rounded-[4px] overflow-hidden" />
+
+            <div className="flex flex-col items-center w-full">
+              <h2 className="text-white text-[40px] font-space-grotesk font-bold">Mykhailo</h2>
+              <h4 className="text-grey-new text-[24px] font-space-grotesk">@unniiiverse</h4>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-[8px] p-[24px] bg-dark-bright border border-dark-light border-t-0 rounded-[4px] rounded-t-none">
+            <div className="w-full flex items-center gap-[8px] flex-wrap">
+              <p className="text-primary font-space-grotesk font-bold">Software Engineer</p>
+              <p className="text-grey-new font-space-grotesk">•</p>
+
+              <p className="text-white font-space-grotesk">UI Designer</p>
+              <p className="text-grey-new font-space-grotesk">•</p>
+
+              <p className="text-white font-space-grotesk">Fullkekw Founder</p>
             </div>
 
-            {/* Description */}
-            <p className="text-white">Fullkekw Founder</p>
+            <div className="flex items-center gap-[8px] flex-shrink-0">
+              <Link href={'https://t.me/unniiiverse'} target="_blank">
+                <IcoSocialTelegram width={24} height={24} />
+              </Link>
 
-            {/* Stack */}
-            <div className="flex gap-[16px] items-center">
-              <h4 className="text-white text-[24px] font-bold">Стек</h4>
-
-              <div className="w-full h-[3px] gradient--primary"></div>
+              <Link href={'https://github.com/unniiiverse'} target="_blank">
+                <IcoSocialGithub width={24} height={24} />
+              </Link>
             </div>
-
-            <ul className="flex flex-col gap-[8px]">
-              <li>
-                <p className="text-white">Software Engineer</p>
-              </li>
-            </ul>
-
-            {/* Contacts */}
-            <div className="flex gap-[16px] items-center">
-              <h4 className="text-white text-[24px] font-bold">Контакти</h4>
-
-              <div className="w-full h-[3px] bg-grey"></div>
-            </div>
-
-            <ul className="flex items-center gap-[16px] justify-center w-full">
-              <li>
-                <Link href={'https://t.me/unniiiverse'} target="_blank">
-                  <IcoSocialTelegram className="contacts-contact" />
-                </Link>
-              </li>
-
-              <li>
-                <Link href={'https://github.com/unniiiverse'} target="_blank">
-                  <IcoSocialGithub className="contacts-contact" />
-                </Link>
-              </li>
-            </ul>
           </div>
         </div>
-      </div>
-    </>
-  );
-}
 
-export default RSC;
+        <p className="text-grey-new text-[8px] font-space-grotesk select-none">Will I be known and loved? Little closer, close enough I`m a loser, loosen up Setting free, must be tough — Borderline, Tame Impala</p>
+      </div>
+    </div>
+  </main>
+}
