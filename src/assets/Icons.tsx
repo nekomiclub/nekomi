@@ -14,21 +14,6 @@ export interface IAssetProps {
 //   );
 // }
 
-export const IcoAnimeeLogo = ({ className, fill, height, width }: IAssetProps) => {
-  return (
-    <svg width={width || 32} height={height || 32} className={className || ''} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g clipPath="url(#clip0_1_61)">
-        <path fillRule="evenodd" clipRule="evenodd" d="M31.598 3.9375L17.9165 4.00137L17.9467 28.0044H32.0001V23.4264H21.3456V18.2271H30.4206V13.6493H21.3456V8.51546H31.598V3.9375ZM17.4506 3.96626L0 20.374L3.77226 21.999L6.9805 18.891L13.4656 21.9455L13.6241 18.0813L13.2952 26.1009L17.727 28.01L17.6617 4.05716L17.4506 3.96626ZM9.69293 16.2635L13.8643 12.2226L13.6241 18.0813L9.69293 16.2635Z" fill={fill || `#fff`} />
-      </g>
-      <defs>
-        <clipPath id="clip0_1_61">
-          <rect width="32" height="32" fill={fill || `#fff`} />
-        </clipPath>
-      </defs>
-    </svg>
-  );
-}
-
 export const IcoNekomiLogo = ({ className, fill, height, width }: IAssetProps) => {
   return (
     <svg width={width || 32} height={height || 32} className={className || ''} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">

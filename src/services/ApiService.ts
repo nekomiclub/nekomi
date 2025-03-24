@@ -1,6 +1,6 @@
 import { $api } from '~/components/http';
 import { config } from '~/config';
-import { AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
+import { AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
 
 
@@ -193,6 +193,12 @@ class ApiService {
 
   async getFeaturedAnime() {
     const { data } = await $api.get<AnimeFeatured>(`/anime/featured`)
+
+    return data;
+  }
+
+  async getAnimeAll() {
+    const { data } = await $api.get<AnimeGetAll>(`/anime/all`);
 
     return data;
   }

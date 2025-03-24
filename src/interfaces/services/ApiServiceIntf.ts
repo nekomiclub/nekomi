@@ -193,3 +193,13 @@ export interface UserGetTogetherRoom {
   room: IUserTogetherRoom
   anime: HydratedAnime
 }
+
+export interface AnimeGetAll {
+  total: number
+
+  /** With malId and country */
+  fullfilled: number
+
+  /** With country only */
+  updated: number
+}

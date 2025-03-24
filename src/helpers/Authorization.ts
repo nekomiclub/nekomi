@@ -25,7 +25,9 @@ export async function CheckUserAccess({ capabilities, checkMode, session }: IChe
   checkMode = checkMode ?? 'AND';
 
   try {
-    const { user, capabilities } = await API.getUser({ query: '*', parseCapabilities: true })
+    const { user, capabilities } = await API.getUser({ query: '*', parseCapabilities: true }, {
+      session
+    })
 
     // Pass root
     if (capabilities?.includes('root')) return { user, capabilities };

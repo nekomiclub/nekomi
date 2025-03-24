@@ -16,11 +16,16 @@ import Input from '~/components/UI/Input';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoStar, IcoUpdate, IcoUser } from '../../../assets/Icons';
-import { IPatcherSelectOption } from '../[id]/Components';
+
 
 
 
 type TActionButtonStatus = 'default' | 'pending' | 'error' | 'success'
+
+export interface IPatcherSelectOption<T = any> {
+  label: string
+  code: T
+}
 
 type TUploadType = 'photo/user/avatar'
   | 'photo/user/banner'

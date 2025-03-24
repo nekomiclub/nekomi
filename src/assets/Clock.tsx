@@ -15,11 +15,3 @@ export const IcoClockOutlined = ({ className, fill, height, width }: IAssetProps
     </svg>
   );
 }
-
-export const IcoClockFilled = ({ className, fill, height, width }: IAssetProps) => {
-  return (
-    <svg width={width || 32} height={height || 32} className={className || ''} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16 3C8.81875 3 3 8.81875 3 16C3 23.1812 8.81875 29 16 29C23.1812 29 29 23.1812 29 16C29 8.81875 23.1812 3 16 3ZM17.0625 17.0625H10V16H16V8H17.0625V17.0625Z" fill={fill || `#fff`} />
-    </svg>
-  );
-}
