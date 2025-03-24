@@ -52,6 +52,11 @@
     &--success {
       border-color: $infoSuccess !important;
     }
+
+    &--disabled {
+      color: $greyNew;
+      cursor: not-allowed !important;
+    }
   }
 
   &-dropdownMenu {

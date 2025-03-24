@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import * as Loader from '@uiball/loaders'
 import { NextPage } from 'next';
 import Link from 'next/link';
@@ -9,10 +10,14 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { cn, copyToClipboard } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
+import { getUTC } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
+import { UIField, UIFieldProps, UIFieldState } from '~/components/UI/Input';
 import { NotifyError, NotifySuccess } from '~/components/UI/NotifyToast';
+import Tooltip from '~/components/UI/Tooltip';
+import UICheckbox from '~/components/UI/UICheckbox';
 import { config } from '~/config';
-import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeMediaType, AnimeRateType, AnimeRecordType, AnimeSeasonType, AnimeStatusType, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { routes } from '~/routes';
 
 
@@ -32,13 +37,59 @@ interface MetaSaveButtonProps {
   saveStatus: SaveMetaStatusType
 }
 
-type SaveMetaStatusType = 'default' | 'error' | 'saving' | 'saved' | 'noChanges'
+interface PatcherLabelProps {
+  title: string
+
+  note?: string
+  autosync?: boolean
+  disabled?: boolean
+}
+
+type PatcherFieldProps = UIFieldProps & PatcherLabelProps
+
+interface PatcherSelectProps<T = string> extends PatcherLabelProps {
+  options: AnimeRecordType
+
+  slug: T
+  setSlug(slug: any): void
+}
+
+interface PatcherCheckboxProps {
+  checked: boolean
+  setChecked(val: boolean): void
+  label: string
+
+  disabled?: boolean
+}
+
+type SaveMetaStatusType = 'default' | 'error' | 'saving' | 'saved' | 'noChanges';
 
 
 
 export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities }) => {
   const [saveStatus, setSaveStatus] = useState<SaveMetaStatusType>('default')
 
+  const [nameUkr, setNameUkr] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.ukr })
+  const [nameEng, setNameEng] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.eng })
+  const [nameAlt, setNameAlt] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.alt.join(', ') })
+  const [malId, setMalId] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.malId) })
+  const [scoreImdb, setScoreImdb] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.imdb) })
+  const [scoreMal, setScoreMal] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.mal) })
+  const [scoredByMal, setScoredByMal] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.malScoredBy) })
+  const [episodesCount, setEpisodesCount] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.episodesCount) })
+  const [year, setYear] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.year) })
+  const [studios, setStudios] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.studios.map(el => el.name).join(', ') })
+  const [genres, setGenres] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.genres.join(', ') })
+  const [description, setDescription] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.description) })
+  const [details, setDetails] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.details) })
+
+  const [status, setStatus] = useState<AnimeStatusType>(hydratedAnime.anime.status)
+  const [season, setSeason] = useState<AnimeSeasonType>(hydratedAnime.anime.season)
+  const [mediaType, setMediaType] = useState<AnimeMediaType>(hydratedAnime.anime.media)
+  const [rate, setRate] = useState<AnimeRateType>(hydratedAnime.anime.rate)
+
+  const [malSync, setMalSync] = useState(!Boolean(hydratedAnime.anime.stopSync.mal))
+  const [shikimoriSync, setShikimoriSync] = useState(!Boolean(hydratedAnime.anime.stopSync.shikimori))
 
 
 
@@ -107,7 +158,19 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
       </section>
 
       {/* Meta */}
-      <section></section>
+      <section className="flex flex-col gap-[16px] max-w-[800px] w-full">
+        <PatcherField state={nameUkr} stateSetter={setNameUkr} title="Назва Українською" disabled={!capabilities.canEdit} symbolsLimited={256} />
+        <PatcherField state={nameEng} stateSetter={setNameEng} title="Назва Англійською" disabled={!capabilities.canEdit} symbolsLimited={256} />
+        <PatcherField state={nameAlt} stateSetter={setNameAlt} fieldType="textarea" title="Альтернативні назви" note="(Японська..., через кому)" disabled={!capabilities.canEdit} symbolsLimited={256} />
+        <PatcherField state={malId} stateSetter={setMalId} title="MyAnimeList ID" disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={scoreImdb} stateSetter={setScoreImdb} title="Рейтинг IMDB" note="(0 - 10)" disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={scoreMal} stateSetter={setScoreMal} title="Рейтинг MyAnimeList" note="(0 - 10)" autosync disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={scoredByMal} stateSetter={setScoredByMal} title="Кількість рецензій MyAnimeList" autosync disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={episodesCount} stateSetter={setEpisodesCount} title="Кількість епізодів" note="(1 - 9999)" autosync disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={year} stateSetter={setYear} title="Рік виробництва" note={`(2007 - ${getUTC().year + 1})`} autosync disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={studios} stateSetter={setStudios} title="Студії" note="(Через кому)" autosync disabled={!capabilities.canEdit} />
+        <PatcherField state={genres} stateSetter={setGenres} title="Жанри" note="(Через кому)" autosync disabled={!capabilities.canEdit} />
+      </section>
     </div>
 
     <section className="w-full flex justify-center items-center gap-[16px] flex-wrap" style={{ rowGap: 8 }}>
@@ -119,8 +182,26 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
       <p className="text-grey-new font-space-grotesk">Shikimori Synced At: null</p>
     </section>
 
-    <section>
+    <section className="flex gap-[32px]">
+      <div className="flex flex-col gap-[8px] max-w-[800px] w-full shrink-0">
+        <PatcherSelect title="Статус" options={ANIME_STATUSES} slug={status} setSlug={setStatus} autosync disabled={!capabilities.canEdit} />
+        <PatcherSelect title="Сезон" options={ANIME_SEASONS} slug={season} setSlug={setSeason} autosync disabled={!capabilities.canEdit} />
+        <PatcherSelect title="Тип" options={ANIME_MEDIA_TYPES} slug={mediaType} setSlug={setMediaType} autosync disabled={!capabilities.canEdit} />
+        <PatcherSelect title="Віковий рейтинг" options={ANIME_RATES} slug={rate} setSlug={setRate} autosync disabled={!capabilities.canEdit} />
 
+        <PatcherCheckbox label="Синхронізація інформації про аніме з MyAnimeList" checked={malSync} setChecked={setMalSync} disabled={!capabilities.canEdit} />
+        <PatcherCheckbox label="Синхронізація зображень з Shikimori" checked={shikimoriSync} setChecked={setShikimoriSync} disabled={!capabilities.canEdit} />
+      </div>
+
+      <div className="flex flex-col gap-[8px] w-full">
+        {/* <div className="flex items-center gap-[8px] w-full">
+          <PatcherSelect title="День трансляції" options={ANIME_RATES} slug={rate} setSlug={setRate} autosync disabled={!capabilities.canEdit} />
+          <PatcherField state={description} stateSetter={setDescription} title="Час трансляції" note="(HH:MM)" autosync disabled={!capabilities.canEdit} className="w-full" />
+        </div> */}
+
+        <PatcherField state={description} stateSetter={setDescription} fieldType="textarea" title="Опис" symbolsLimited={2200} disabled={!capabilities.canEdit} className="w-full" />
+        <PatcherField state={details} stateSetter={setDetails} fieldType="textarea" title="Деталі" symbolsLimited={500} disabled={!capabilities.canEdit} className="w-full" />
+      </div>
     </section>
   </>
 }
@@ -243,7 +324,7 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
   </div>
 }
 
-export const PatcherCreateNew: NextPage = () => {
+export const PatcherCreateNewAnime: NextPage = () => {
   const router = useRouter();
 
   const [isCreating, setIsCreating] = useState(false)
@@ -280,4 +361,80 @@ export const PatcherCreateNew: NextPage = () => {
       {isCreating && 'СТВОРЮЄМО...'}
     </p>
   </button>
+}
+
+const PatcherLabel: NextPage<PatcherLabelProps> = ({ autosync, disabled, note, title }) => {
+  return <div className="flex items-center gap-[8px]">
+    {autosync && <Tooltip className="flex items-center" content={`Це поле буде автоматично синхронизовано з MyAnimeList`}><MaterialSymbol className="text-grey-new" icon="sync" size={20} /></Tooltip>}
+    {disabled && <MaterialSymbol className="text-grey-new" icon="lock" size={20} />}
+
+    <p className={cn(`text-white font-manrope whitespace-nowrap`, disabled && '!text-grey-new')}>{title}</p>
+    {note && <p className="text-grey-new text-[14px] font-manrope">{note}</p>}
+  </div>
+}
+
+const PatcherField: NextPage<PatcherFieldProps> = ({ title, autosync, disabled, note, ...props }) => {
+  return <div className="flex flex-col gap-[8px]">
+    <PatcherLabel title={title} autosync={autosync} disabled={disabled} note={note} />
+
+    <UIField disabled={disabled} {...props} />
+  </div>
+}
+
+const PatcherSelect: NextPage<PatcherSelectProps> = ({ options, title, autosync, note, disabled, setSlug, slug }) => {
+  const id = useId().replaceAll(':', '');
+
+  const [isOpen, setIsOpen] = useState(false)
+
+
+
+  useEffect(() => {
+    setIsOpen(false)
+  }, [slug])
+
+
+
+  return <div className="flex flex-col gap-[8px] w-full">
+    <PatcherLabel title={title} autosync={autosync} disabled={disabled} note={note} />
+
+    <Menu className="w-full" id={id} state={isOpen} stateSetter={setIsOpen} settings={{ align: 'start', animation: 'slide' }} disabled={disabled}>
+      <MenuTrigger className={cn(`patcher-button bg-dark-medium border border-dark-light rounded-[4px] w-full !justify-between duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, disabled && 'cursor-not-allowed')} anchor>
+        <p className={cn(`text-white font-manrope`, disabled && '!text-grey-new')}>{options[slug].name}</p>
+
+        {!disabled && <MaterialSymbol className="text-grey-new" icon="expand_all" size={16} />}
+      </MenuTrigger>
+
+      <MenuWrapper className="w-full bg-dark-primary border border-dark-light rounded-[4px] flex flex-col">
+        {Object.keys(options).map((optionSlug) => {
+          return <button className={cn(`px-[16px] py-[8px] duration-100 flex items-start hover:bg-dark-light focus-visible:bg-dark-light w-full border-b border-b-dark-light last:border-none`, slug === optionSlug && 'bg-primary')} onClick={() => setSlug(optionSlug)} key={`patcher-select-${id}--${optionSlug}`}>
+            <p className="text-white font-manrope">{options[optionSlug].name}</p>
+          </button>
+        })}
+      </MenuWrapper>
+    </Menu>
+  </div>
+}
+
+const PatcherCheckbox: NextPage<PatcherCheckboxProps> = ({ checked, label, setChecked, disabled }) => {
+  function toggle() {
+    setChecked(!checked)
+  }
+
+  return <button className={cn(`flex items-center gap-[8px]`, disabled && 'cursor-not-allowed')} onClick={toggle} disabled={disabled}>
+    {disabled && <MaterialSymbol className="text-grey-new" icon="lock" size={20} />}
+
+    <UICheckbox isChecked={checked} setIsChecked={setChecked} disableDefaultToggle />
+
+    <p className={cn(`text-white font-manrope`, disabled && '!text-grey-new')}>{label}</p>
+  </button>
+}
+
+
+/** Parse input into string */
+function x(input: string | number | null | undefined): string {
+  if (input === null || input === undefined) return '';
+  if (typeof input === 'number') return String(input);
+  if (typeof input === 'string') return input;
+
+  return '';
 }

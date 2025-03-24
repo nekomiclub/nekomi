@@ -13,7 +13,7 @@ import API from '~/services/ApiService';
 import { config, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
-import { PatcherCapabilities, PatcherCreateNew, PatcherMeta } from './PatcherPage';
+import { PatcherCapabilities, PatcherCreateNewAnime, PatcherMeta } from './PatcherPage';
 
 
 
@@ -81,7 +81,7 @@ export default async function RSC(props: IRSCProps<PatcherPageParams>) {
             <div className="flex items-center gap-[32px]">
               <h2 className="text-white text-[40px] font-manrope font-bold">РЕДАКТОР АНІМЕ</h2>
 
-              {canAdd && <PatcherCreateNew />}
+              {canAdd && <PatcherCreateNewAnime />}
             </div>
 
             <div className="flex flex-col items-end gap-[4px]">

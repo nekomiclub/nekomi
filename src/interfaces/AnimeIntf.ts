@@ -12,43 +12,48 @@ export interface Anime {
   episodesCount: number | null
   description: string | null
   details: string | null
+  broadcast: AnimeBroadcast | null
+  genres: ANIME_GENRE[]
+  rate: ANIME_RATE
+  status: ANIME_STATUS
+  season: ANIME_SEASON
+  media: ANIME_MEDIA_TYPE
+  studios: AnimeStudio[]
+  malId: number | null
 
-  /** UTC-0 timestamp */
+  /** UTC-0 timestamp @private */
   updatedAt: number
-
   /** @private */
   episodes: AnimeEpisode[]
   /** @private */
   episodesMeta: AnimeEpisodeMeta[]
+  /** MAL sync UTC-0 timestamp @since 2.1.0 @private */
+  malSyncedAt: number | null
+  /** Anime pictures URL's @since 2.1.0 @private */
+  pictures: string[]
+  /** Related animes ID's @since 2.1.0 @private */
+  related: string[]
+  /** Poster adapted by dubber ID @since 2.1.0 */
+  posterAdapt: string | null
+
+  /** Prevent services sync @since 2.1.0 @private */
+  stopSync: {
+    /** Can be true to prevent sync at all */
+    mal?: boolean
+    /** Can be true to prevent sync at all */
+    shikimori?: boolean
+  }
+
+  score: {
+    imdb: number | null
+    mal: number | null
+    malScoredBy: number | null
+  }
 
   names: {
     eng: string
     ukr: string
     alt: string[]
-  },
-
-  broadcast: AnimeBroadcast | null
-  genres: AnimeGenreType[]
-  rate: AnimeRateType
-  status: AnimeStatusType
-  season: AnimeSeasonType
-  media: AnimeMediaType
-  studios: AnimeStudio[]
-  malId: number | null
-  /** MAL sync UTC-0 timestamp @since 2.1.0 */
-  malSyncedAt: number | null
-  /** Anime pictures URL's @since 2.1.0 */
-  pictures: string[]
-  /** Related animes ID's @since 2.1.0 */
-  related: string[]
-  /** Poster adapted by dubber ID @since 2.1.0 */
-  posterAdapt: string | null
-
-  /** @since 2.1.0 */
-  score: {
-    imdb: number | null
-    mal: number | null
-    malScoredBy: number | null
   }
 }
 
@@ -265,6 +270,104 @@ export type AnimeRateType = `${ANIME_RATE}`;
 export type AnimeStatusType = `${ANIME_STATUS}`;
 export type AnimeSeasonType = `${ANIME_SEASON}`;
 export type AnimeMediaType = `${ANIME_MEDIA_TYPE}`;
+
+
+
+export const ANIME_RATES: Record<ANIME_RATE, AnimeRate> = {
+  [ANIME_RATE.G]: {
+    slug: ANIME_RATE.G,
+    name: 'G',
+    description: 'Аніме, для глядачів будь-якого віку.',
+  },
+  [ANIME_RATE.PG]: {
+    slug: ANIME_RATE.PG,
+    name: 'PG',
+    description: 'Аніме, для дітей.',
+  },
+  [ANIME_RATE.PG13]: {
+    slug: ANIME_RATE.PG13,
+    name: 'PG-13',
+    description: 'Аніме, для підлітків. (13+)',
+  },
+  [ANIME_RATE.R17]: {
+    slug: ANIME_RATE.R17,
+    name: 'R-17',
+    description: 'Аніме, що містить сцени насильства. (17+)',
+  },
+  [ANIME_RATE.RPLUS]: {
+    slug: ANIME_RATE.RPLUS,
+    name: 'R+',
+    description: 'Аніме, що містить елементи еротики. (18+)',
+  },
+  [ANIME_RATE.RX]: {
+    slug: ANIME_RATE.RX,
+    name: 'Rx',
+    description: 'Аніме з відвертими еротичними сценами. (18+)',
+  },
+};
+
+export const ANIME_STATUSES: Record<ANIME_STATUS, AnimeStatus> = {
+  [ANIME_STATUS.CURRENTLY_AIRING]: {
+    slug: ANIME_STATUS.CURRENTLY_AIRING,
+    name: 'Онґоїнг',
+  },
+  [ANIME_STATUS.NOT_YET_AIRED]: {
+    slug: ANIME_STATUS.NOT_YET_AIRED,
+    name: 'Анонс',
+  },
+  [ANIME_STATUS.FINISHED_AIRING]: {
+    slug: ANIME_STATUS.FINISHED_AIRING,
+    name: 'Вийшов',
+  }
+};
+
+export const ANIME_SEASONS: Record<ANIME_SEASON, AnimeSeason> = {
+  [ANIME_SEASON.FALL]: {
+    slug: ANIME_SEASON.FALL,
+    name: 'Осінь',
+  },
+  [ANIME_SEASON.SPRING]: {
+    slug: ANIME_SEASON.SPRING,
+    name: 'Весна',
+  },
+  [ANIME_SEASON.SUMMER]: {
+    slug: ANIME_SEASON.SUMMER,
+    name: 'Літо',
+  },
+  [ANIME_SEASON.WINTER]: {
+    slug: ANIME_SEASON.WINTER,
+    name: 'Зима',
+  },
+};
+
+export const ANIME_MEDIA_TYPES: Record<ANIME_MEDIA_TYPE, AnimeMedia> = {
+  [ANIME_MEDIA_TYPE.MOVIE]: {
+    slug: ANIME_MEDIA_TYPE.MOVIE,
+    name: 'Фільм',
+  },
+  [ANIME_MEDIA_TYPE.ONA]: {
+    slug: ANIME_MEDIA_TYPE.ONA,
+    name: 'ОНА',
+  },
+  [ANIME_MEDIA_TYPE.OVA]: {
+    slug: ANIME_MEDIA_TYPE.OVA,
+    name: 'ОВА',
+  },
+  [ANIME_MEDIA_TYPE.SPECIAL]: {
+    slug: ANIME_MEDIA_TYPE.SPECIAL,
+    name: 'Спешл',
+  },
+  [ANIME_MEDIA_TYPE.TV]: {
+    slug: ANIME_MEDIA_TYPE.TV,
+    name: 'Серіал',
+  },
+  [ANIME_MEDIA_TYPE.UNKNOWN]: {
+    slug: ANIME_MEDIA_TYPE.UNKNOWN,
+    name: 'Невідомо',
+  },
+};
+
+export type AnimeRecordType = Record<any, KeyValue<any>>
 
 
 
