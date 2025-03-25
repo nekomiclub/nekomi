@@ -36,6 +36,7 @@
     transition: 0.2s ease-in-out border-color;
     width: 100%;
     position: relative;
+    max-height: 500px;
 
     &::placeholder {
       color: $greyNew;

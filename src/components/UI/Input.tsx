@@ -88,7 +88,7 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
     setStatus(state.status)
 
     if (state.status === 'success') {
-      setInitialValue(state.value!)
+      setInitialValue(state.value ?? '')
     }
   }, [state])
 

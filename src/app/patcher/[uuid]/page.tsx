@@ -13,7 +13,7 @@ import API from '~/services/ApiService';
 import { config, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
-import { PatcherCapabilities, PatcherCreateNewAnime, PatcherMeta } from './PatcherPage';
+import { PatcherCapabilities, PatcherCreateNewAnime, PatcherMeta, PatcherWithoutMalId } from './PatcherPage';
 
 
 
@@ -77,14 +77,17 @@ export default async function RSC(props: IRSCProps<PatcherPageParams>) {
         {/* Metadata */}
         <section className="wrapper gap-[40px]">
           {/* Header */}
-          <section className="flex items-center justify-between gap-[24px]">
+          <section className="flex items-center justify-between gap-[24px] max-md:flex-col">
             <div className="flex items-center gap-[32px]">
-              <h2 className="text-white text-[40px] font-manrope font-bold">РЕДАКТОР АНІМЕ</h2>
+              <h2 className="text-white text-[40px] font-manrope font-bold max-lg:text-[24px]">РЕДАКТОР АНІМЕ</h2>
 
-              {canAdd && <PatcherCreateNewAnime />}
+              <div className="flex items-center gap-[8px]">
+                {canEdit && <PatcherWithoutMalId />}
+                {canAdd && <PatcherCreateNewAnime />}
+              </div>
             </div>
 
-            <div className="flex flex-col items-end gap-[4px]">
+            <div className="flex flex-col items-end gap-[4px] max-md:flex-row max-md:gap-[16px]">
               <p className="text-grey-new font-manrope">Аніме оновлено: <span className="font-space-grotesk">{updated} / {total} ({((updated / total) * 100).toFixed(2)}%)</span></p>
               <p className="text-grey-new font-manrope">Аніме з MAL ID: <span className="font-space-grotesk">{fullfilled} / {total} ({((fullfilled / total) * 100).toFixed(2)}%)</span></p>
             </div>
