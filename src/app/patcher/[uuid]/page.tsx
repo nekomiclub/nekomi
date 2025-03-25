@@ -8,12 +8,11 @@ import { notFound } from 'next/navigation';
 import { HandleServerError } from '~/components/Errors';
 import { CheckUserAccess } from '~/helpers/Authorization';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { DubberCompact } from '~/interfaces/DubberIntf';
 import API from '~/services/ApiService';
 import { config, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
-import { PatcherCapabilities, PatcherCreateNewAnime, PatcherMeta, PatcherWithoutMalId } from './PatcherPage';
+import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './PatcherPage';
 
 
 
@@ -44,13 +43,12 @@ export async function generateMetadata(
 export default async function RSC(props: IRSCProps<PatcherPageParams>) {
   const { uuid } = await props.params;
 
-  let anime: HydratedAnime | null = null;
-  let dubbers: DubberCompact[] = [];
-
   const session = cookies().get(config.vars.SessionCookie)?.value ?? '';
 
   const { user, capabilities } = await CheckUserAccess({ capabilities: ['titleEdit', 'seriesAdd'], checkMode: 'OR', session })
   if (!user || !capabilities) return notFound();
+
+
 
   try {
     const { anime, genres, media, rate, season, status, dubbers } = await API.getAnime({ query: uuid, detailed: true, fetchDubbers: true })
@@ -73,7 +71,7 @@ export default async function RSC(props: IRSCProps<PatcherPageParams>) {
     return <>
       <div style={{ height: `calc(32px + var(--header-height))` }}></div>
 
-      <main className="flex flex-col gap-[40px]">
+      <main className="flex flex-col gap-[40px] pb-[100px]">
         {/* Metadata */}
         <section className="wrapper gap-[40px]">
           {/* Header */}
@@ -95,6 +93,8 @@ export default async function RSC(props: IRSCProps<PatcherPageParams>) {
 
           <PatcherMeta hydratedAnime={hydratedAnime} capabilities={caps} />
         </section>
+
+        <PatcherEpisodes hydratedAnime={hydratedAnime} capabilities={caps} dubbers={dubbers ?? []} />
       </main>
     </>
   } catch (e) {

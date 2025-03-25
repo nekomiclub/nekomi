@@ -7,6 +7,7 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
+import { useDebounce } from 'use-debounce';
 
 import { cn, copyToClipboard } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
@@ -18,14 +19,20 @@ import Tooltip from '~/components/UI/Tooltip';
 import UICheckbox from '~/components/UI/UICheckbox';
 import { config } from '~/config';
 import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeMediaType, AnimeRateType, AnimeRecordType, AnimeSeasonType, AnimeStatusType, HydratedAnime } from '~/interfaces/AnimeIntf';
+import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes, routes } from '~/routes';
 import API from '~/services/ApiService';
+import { DubberCompactMapper } from '~/utils/data-mappers';
 
 
 
 interface PatcherGenerciProps {
   hydratedAnime: HydratedAnime
   capabilities: PatcherCapabilities
+}
+
+interface PatcherEpisodesProps extends PatcherGenerciProps {
+  dubbers: DubberCompact[]
 }
 
 export interface PatcherCapabilities {
@@ -53,6 +60,17 @@ interface PatcherSelectProps<T = string> extends PatcherLabelProps {
 
   slug: T
   setSlug(slug: any): void
+}
+
+interface PatcherSelectDubberProps {
+  selectedId: string
+  setSelectedId(id: string): void
+
+  dubbers: DubberCompact[]
+  setDubbers(val: DubberCompact[]): void
+
+  title: string
+  disabled?: boolean
 }
 
 interface PatcherCheckboxProps {
@@ -95,8 +113,8 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
   const [rate, setRate] = useState<AnimeRateType>(hydratedAnime.anime.rate)
 
   // Checkboxes
-  const [malSync, setMalSync] = useState(hydratedAnime.anime.malId ? !Boolean(hydratedAnime.anime.stopSync.mal) : false)
-  const [shikimoriSync, setShikimoriSync] = useState(!Boolean(hydratedAnime.anime.stopSync.shikimori))
+  const [malSync, setMalSync] = useState<boolean>(hydratedAnime.anime.malId ? !Boolean(hydratedAnime.anime.stopSync.mal) : false)
+  const [shikimoriSync, setShikimoriSync] = useState<boolean>(hydratedAnime.anime.malId ? !Boolean(hydratedAnime.anime.stopSync.mal) : false)
 
 
 
@@ -161,7 +179,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
 
   return <>
-    <div className="flex gap-[32px] max-xl:flex-col max-xl:items-center">
+    <section className="flex gap-[32px] max-xl:flex-col max-xl:items-center">
       {/* Poster */}
       <section className="flex flex-col gap-[16px] w-[500px] flex-shrink-0 max-sm:w-[320px]">
         <MetaPoster hydratedAnime={hydratedAnime} capabilities={capabilities} />
@@ -214,10 +232,10 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         {/* Checkboxes */}
         <div className="flex items-center justify-center w-full gap-[16px] max-lg:flex-col">
           <PatcherCheckbox label="Синхронізація інформації про аніме з MyAnimeList" checked={malSync} setChecked={setMalSync} disabled={!capabilities.canEdit || !hydratedAnime.anime.malId} />
-          <PatcherCheckbox label="Синхронізація зображень з Shikimori" checked={shikimoriSync} setChecked={setShikimoriSync} disabled={!capabilities.canEdit} />
+          <PatcherCheckbox label="Синхронізація зображень з Shikimori" checked={shikimoriSync} setChecked={setShikimoriSync} disabled={!capabilities.canEdit || !hydratedAnime.anime.malId} />
         </div>
       </section>
-    </div>
+    </section>
 
     <section className="w-full flex justify-center items-center gap-[16px] flex-wrap" style={{ rowGap: 8 }}>
       <p className="text-grey-new font-space-grotesk cursor-pointer" onClick={() => copyText(hydratedAnime.anime.uuid)} title="Скопіювати UUID">UUID: {hydratedAnime.anime.uuid}</p>
@@ -230,7 +248,151 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
   </>
 }
 
+export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, hydratedAnime, dubbers: parsedDubbers }) => {
+  const [order, setOrder] = useState<UIFieldState>({ initialValue: '' })
+  const [selectedDubberId, setSelectedDubberId] = useState(parsedDubbers[0]?.id ?? '')
+  const [dubbers, setDubbers] = useState<DubberCompact[]>(parsedDubbers)
 
+  const [processQ2160, setProcessQ2160] = useState<boolean>(false)
+  const [filename, setFilename] = useState('')
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+
+
+  useEffect(() => {
+    console.log(dubbers.find(el => el.id === selectedDubberId))
+  }, [selectedDubberId, dubbers])
+
+
+  function uploadEpisode() {
+    const fileInput = fileInputRef.current
+    if (!fileInput || !fileInput.files) return
+
+    const file = fileInput.files[0];
+
+    setFilename(file.name)
+  }
+
+  function selectFile() {
+    const fileInput = fileInputRef.current
+    if (!fileInput) return
+
+    fileInput.value = '';
+    fileInput.click();
+  }
+
+
+
+  return <section className="wrapper bg-dark-bright gap-[32px] py-[32px]">
+    <h2 className="text-white text-[32px] font-manrope font-bold">Завантаження епізодів — {hydratedAnime.anime.names.eng}</h2>
+
+    <section className="flex items-end gap-[16px]">
+      <div className="w-[250px] flex-shrink-0">
+        <PatcherField title="Номер серії" note="(1 - 9999)" state={order} stateSetter={setOrder} type="number" disablePending />
+      </div>
+
+      <div className="w-[300px] flex-shrink-0">
+        <PatcherSelectDubber title="Команда Озвучення" selectedId={selectedDubberId} setSelectedId={setSelectedDubberId} dubbers={dubbers} setDubbers={setDubbers} />
+      </div>
+
+      <div className="flex flex-col gap-[8px] w-full">
+        <p className="text-white font-manrope">Файл</p>
+
+        <input type="file" accept=".mp4,.webm,.mov,.mkv,.m4v" style={{ display: 'none' }} onChange={uploadEpisode} ref={fileInputRef} />
+
+        <button className="ui-button patcher-button w-full flex !justify-start" onClick={selectFile}>
+          <p className="text-white font-manrope">{filename || 'ВИБЕРІТЬ ФАЙЛ'}</p>
+        </button>
+      </div>
+
+      <div className="flex items-center gap-[16px]">
+        <button className="ui-button patcher-button">
+          <p className="text-white font-manrope font-bold">ЗАВАНТАЖИТИ</p>
+          <MaterialSymbol icon="backup" size={20} className="text-white" />
+        </button>
+
+        <PatcherCheckbox checked={processQ2160} setChecked={setProcessQ2160} label="4K" />
+      </div>
+    </section>
+  </section>
+}
+
+
+
+
+export const PatcherCreateNewAnime: NextPage = () => {
+  const router = useRouter();
+
+  const [isCreating, setIsCreating] = useState(false)
+
+
+
+  async function createNew() {
+    try {
+      setIsCreating(true)
+
+      // TODO: Create new anime
+      await new Promise(res => setTimeout(() => {
+        res(1)
+      }, 3000))
+
+      NotifySuccess({ title: 'Створено!', message: 'Нове аніме створено, заміняємо сторінку...' })
+
+      // TODO: Push new anime ID
+      // router.push(``)
+    } catch (e) {
+      HandleClientError(e)
+      setIsCreating(false)
+    }
+  }
+
+
+
+  return <button className={cn(`ui-button flex items-center gap-[16px] px-[16px] py-[8px] border-none bg-transparent`, isCreating && 'cursor-not-allowed')} onClick={createNew} disabled={isCreating}>
+    {isCreating && <Loader.Ring size={20} color="#555" />}
+    {!isCreating && <MaterialSymbol icon="add" size={20} className="text-grey-new" />}
+
+    <p className="text-grey-new font-manrope">
+      {!isCreating && 'СТВОРИТИ НОВЕ'}
+      {isCreating && 'СТВОРЮЄМО...'}
+    </p>
+  </button>
+}
+
+export const PatcherWithoutMalId: NextPage = () => {
+  const router = useRouter();
+
+  const [isFetching, setIsFetching] = useState(false)
+
+
+
+  async function getRandAnime() {
+    try {
+      setIsFetching(true)
+
+      const { results } = await API.searchAnime({ q: '~all' }, { woMalId: true });
+      router.replace(`${config.URL.baseURL}/${Routes.patcher_title.path}/${results[0].anime.uuid}`)
+
+      NotifySuccess({ title: 'Знайшли!', message: 'Ми знайшли аніме без mal id, удачі!' })
+    } catch (e) {
+      HandleClientError(e)
+      setIsFetching(false)
+    }
+  }
+
+
+
+  return <button className={cn(`ui-button flex items-center gap-[16px] px-[16px] py-[8px]`, isFetching && 'cursor-not-allowed')} onClick={getRandAnime} disabled={isFetching}>
+    {isFetching && <Loader.Ring size={20} color="#555" />}
+    {!isFetching && <MaterialSymbol icon="update" size={20} className="text-white" />}
+
+    <p className={cn(`text-white font-manrope`, isFetching && '!text-grey-new')}>
+      {!isFetching && 'БЕЗ MAL ID'}
+      {isFetching && 'ШУКАЄМО...'}
+    </p>
+  </button>
+}
 
 const MetaSaveButton: NextPage<MetaSaveButtonProps> = ({ save, saveStatus }) => {
   const [icon, setIcon] = useState<SymbolCodepoints>('cloud_done')
@@ -348,79 +510,6 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
   </div>
 }
 
-export const PatcherCreateNewAnime: NextPage = () => {
-  const router = useRouter();
-
-  const [isCreating, setIsCreating] = useState(false)
-
-
-
-  async function createNew() {
-    try {
-      setIsCreating(true)
-
-      // TODO: Create new anime
-      await new Promise(res => setTimeout(() => {
-        res(1)
-      }, 3000))
-
-      NotifySuccess({ title: 'Створено!', message: 'Нове аніме створено, заміняємо сторінку...' })
-
-      // TODO: Push new anime ID
-      // router.push(``)
-    } catch (e) {
-      HandleClientError(e)
-      setIsCreating(false)
-    }
-  }
-
-
-
-  return <button className={cn(`ui-button flex items-center gap-[16px] px-[16px] py-[8px] border-none bg-transparent`, isCreating && 'cursor-not-allowed')} onClick={createNew} disabled={isCreating}>
-    {isCreating && <Loader.Ring size={20} color="#555" />}
-    {!isCreating && <MaterialSymbol icon="add" size={20} className="text-grey-new" />}
-
-    <p className="text-grey-new font-manrope">
-      {!isCreating && 'СТВОРИТИ НОВЕ'}
-      {isCreating && 'СТВОРЮЄМО...'}
-    </p>
-  </button>
-}
-
-export const PatcherWithoutMalId: NextPage = () => {
-  const router = useRouter();
-
-  const [isFetching, setIsFetching] = useState(false)
-
-
-
-  async function getRandAnime() {
-    try {
-      setIsFetching(true)
-
-      const { results } = await API.searchAnime({ q: '~all' }, { woMalId: true });
-      router.replace(`${config.URL.baseURL}/${Routes.patcher_title.path}/${results[0].anime.uuid}`)
-
-      NotifySuccess({ title: 'Знайшли!', message: 'Ми знайшли аніме без mal id, удачі!' })
-    } catch (e) {
-      HandleClientError(e)
-      setIsFetching(false)
-    }
-  }
-
-
-
-  return <button className={cn(`ui-button flex items-center gap-[16px] px-[16px] py-[8px]`, isFetching && 'cursor-not-allowed')} onClick={getRandAnime} disabled={isFetching}>
-    {isFetching && <Loader.Ring size={20} color="#555" />}
-    {!isFetching && <MaterialSymbol icon="update" size={20} className="text-white" />}
-
-    <p className={cn(`text-white font-manrope`, isFetching && '!text-grey-new')}>
-      {!isFetching && 'БЕЗ MAL ID'}
-      {isFetching && 'ШУКАЄМО...'}
-    </p>
-  </button>
-}
-
 const PatcherLabel: NextPage<PatcherLabelProps> = ({ autosync, disabled, note, title }) => {
   return <div className="flex items-center gap-[8px]">
     {autosync && <Tooltip className="flex items-center" content={`Це поле буде автоматично синхронизовано з MyAnimeList`}><MaterialSymbol className="text-grey-new" icon="sync" size={20} /></Tooltip>}
@@ -462,10 +551,109 @@ const PatcherSelect: NextPage<PatcherSelectProps> = ({ options, title, autosync,
         {!disabled && <MaterialSymbol className="text-grey-new" icon="expand_all" size={16} />}
       </MenuTrigger>
 
-      <MenuWrapper className="w-full bg-dark-primary border border-dark-light rounded-[4px] flex flex-col">
+      <MenuWrapper className="w-full bg-dark-primary border border-dark-light rounded-[4px] flex flex-col max-h-[300px] overflow-y-auto">
         {Object.keys(options).map((optionSlug) => {
           return <button className={cn(`px-[16px] py-[8px] duration-100 flex items-start hover:bg-dark-light focus-visible:bg-dark-light w-full border-b border-b-dark-light last:border-none`, slug === optionSlug && 'bg-primary')} onClick={() => setSlug(optionSlug)} key={`patcher-select-${id}--${optionSlug}`}>
             <p className="text-white font-manrope">{options[optionSlug].name}</p>
+          </button>
+        })}
+      </MenuWrapper>
+    </Menu>
+  </div>
+}
+
+const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabled, dubbers, selectedId, setDubbers, setSelectedId }) => {
+  const id = useId().replaceAll(':', '');
+
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedDubber, setSelectedDubber] = useState<DubberCompact | null>(null)
+  const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState<DubberCompact[]>([]);
+
+  const [searchTextDebounce] = useDebounce(searchText, 700)
+
+
+
+
+  useEffect(() => {
+    setIsOpen(false)
+  }, [selectedId])
+
+  useEffect(() => {
+    focusSearch();
+  }, [isOpen])
+
+  useEffect(() => {
+    setSelectedDubber(dubbers.find(el => el.id === selectedId) ?? null);
+  }, [dubbers, selectedId])
+
+  useEffect(() => {
+    search(searchTextDebounce)
+  }, [searchTextDebounce])
+
+
+
+  async function search(query: string) {
+    try {
+      if (query.length === 0) return setSearchResults([]);
+
+      const { results } = await API.searchDubber({ q: query })
+
+      const dubberResults = results.map(dubber => DubberCompactMapper(dubber))
+      const uniqueResults = dubberResults.filter(dubber => !dubbers.some(el => el.id === dubber.id))
+
+      // Push total dubbers fetched
+      setDubbers([...dubbers, ...uniqueResults])
+      setSearchResults(dubberResults);
+    } catch (e) {
+      HandleClientError(e)
+    }
+  }
+
+  function focusSearch() {
+    const search = document.querySelector(`#searchbar-${id}`) as HTMLInputElement;
+    if (!search) return console.error(`Search #searchbar-${id} is not found`);
+
+    let i = 0;
+
+    setInterval(() => {
+      if (i !== 5) {
+        i += 1;
+        search.focus();
+      }
+    }, 50);
+  }
+
+
+
+  return <div className="flex flex-col gap-[8px] w-full basis-[500px] grow max-[1615px]:basis-[400px]">
+    <PatcherLabel title={title} disabled={disabled} />
+
+    <Menu className="w-full" id={id} state={isOpen} stateSetter={setIsOpen} settings={{ align: 'start', animation: 'slide' }} disabled={disabled}>
+      <MenuTrigger className={cn(`patcher-button bg-dark-medium border border-dark-light rounded-[4px] w-full !justify-between duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, disabled && 'cursor-not-allowed')} anchor>
+        {selectedDubber && <StyledImage width="20px" height="20px" src={selectedDubber.avatarURL} imageClassName="rounded-[2px]" />}
+
+        <p className={cn(`text-white font-manrope line-clamp-1`, disabled && '!text-grey-new')}>{selectedDubber?.nameUkr ?? '-- команда не вибрана --'}</p>
+
+        {!disabled && <MaterialSymbol className="text-grey-new" icon="expand_all" size={16} />}
+      </MenuTrigger>
+
+      <MenuWrapper className="w-full bg-dark-primary border border-dark-light rounded-[4px] flex flex-col max-h-[300px] overflow-y-auto">
+        {/* Search */}
+        <div className="flex items-center gap-[8px] p-[8px]">
+          <div className="w-[32px] h-[32px] flex justify-center items-center">
+            <MaterialSymbol icon="search" size={20} className="text-grey-new" />
+          </div>
+
+          <input className="p-[6px] bg-transparent w-full font-manrope text-white placeholder:font-manrope placeholder:text-grey-new" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} placeholder="Введи назву команди" autoComplete="off" id={`searchbar-${id}`} />
+        </div>
+
+        {/* Results */}
+        {searchResults.map((result, i) => {
+          return <button className={cn(`px-[16px] py-[8px] duration-100 flex items-center gap-[8px] hover:bg-dark-light focus-visible:bg-dark-light w-full border-t border-t-dark-light`, result.id === selectedId && 'bg-primary')} onClick={() => setSelectedId(result.id)} key={`patcher-select-${id}--${result.id}`}>
+            <StyledImage width="32px" height="32px" src={result.avatarURL} imageClassName="rounded-[2px]" />
+
+            <p className="text-white font-manrope">{result.nameUkr}</p>
           </button>
         })}
       </MenuWrapper>
