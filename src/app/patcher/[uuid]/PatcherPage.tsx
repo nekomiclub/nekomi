@@ -18,11 +18,15 @@ import { NotifyError, NotifySuccess } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';
 import UICheckbox from '~/components/UI/UICheckbox';
 import { config } from '~/config';
-import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeMediaType, AnimeRateType, AnimeRecordType, AnimeSeasonType, AnimeStatusType, HydratedAnime } from '~/interfaces/AnimeIntf';
+import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeEpisode, AnimeMediaType, AnimeRateType, AnimeRecordType, AnimeSeasonType, AnimeStatusType, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes, routes } from '~/routes';
 import API from '~/services/ApiService';
+import { alphabeticSort } from '~/utils/alphabetic-sort';
+import { createStringID } from '~/utils/create-string-id';
 import { DubberCompactMapper } from '~/utils/data-mappers';
+
+import { PatcherEpisode } from './PatcherTypes';
 
 
 
@@ -38,6 +42,9 @@ interface PatcherEpisodesProps extends PatcherGenerciProps {
 export interface PatcherCapabilities {
   canDelete: boolean
   canEdit: boolean
+  canSeriesUpload: boolean
+  canSeriesDelete: boolean
+  canUploadQ2160: boolean
 }
 
 interface MetaSaveButtonProps {
@@ -79,6 +86,25 @@ interface PatcherCheckboxProps {
   label: string
 
   disabled?: boolean
+}
+
+interface PatcherEpisodesUploadButtonProps {
+  processQ2160: boolean
+  setProcessQ2160(val: boolean): void
+  canUpload: boolean
+  upload(): void
+
+  capabilities: PatcherCapabilities
+  className?: string
+}
+
+interface EpisodesDubbing {
+  dubber: DubberCompact
+  episodes: PatcherEpisode[]
+}
+
+interface PatcherEpisodesDubbingProps extends PatcherGenerciProps, EpisodesDubbing {
+  selectedDubberId: string
 }
 
 type SaveMetaStatusType = 'default' | 'error' | 'saving' | 'saved' | 'noChanges';
@@ -249,23 +275,63 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 }
 
 export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, hydratedAnime, dubbers: parsedDubbers }) => {
+  const canSeriesUpload = capabilities.canSeriesUpload;
+  const canUploadQ2160 = capabilities.canUploadQ2160;
+
   const [order, setOrder] = useState<UIFieldState>({ initialValue: '' })
   const [selectedDubberId, setSelectedDubberId] = useState(parsedDubbers[0]?.id ?? '')
   const [dubbers, setDubbers] = useState<DubberCompact[]>(parsedDubbers)
+  const [episodesDubbing, setEpisodesDubbing] = useState<EpisodesDubbing[]>([])
+  const [episodes, setEpisodes] = useState<PatcherEpisode[]>(hydratedAnime.anime.episodes.map(ep => AnimeEpisodeToPatcherEpisode(ep)))
 
   const [processQ2160, setProcessQ2160] = useState<boolean>(false)
   const [filename, setFilename] = useState('')
+  const [canUpload, setCanUpload] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
 
 
+  // Handle can upload
   useEffect(() => {
-    console.log(dubbers.find(el => el.id === selectedDubberId))
-  }, [selectedDubberId, dubbers])
+    let canUpload = false;
+
+    // Check if every field filled
+    if (Boolean(order.value && filename && selectedDubberId)) canUpload = true;
+
+    // Check if episode is not exist
+    if (episodes.some(el => el.episode.dubberID === selectedDubberId && el.episode.order === Number(order.value))) canUpload = false
+
+    setCanUpload(canUpload)
+  }, [order, filename, selectedDubberId, episodes])
+
+  // Handle episodes dubbing
+  useMemo(() => {
+    const episodesDubbing: EpisodesDubbing[] = []
+
+    episodes.forEach(ep => {
+      const exist = episodesDubbing.find(el => el.dubber.id === ep.episode.dubberID)
+
+      if (exist) {
+        // append
+
+        exist.episodes.push(ep)
+      } else {
+        // create
+
+        episodesDubbing.push({
+          dubber: dubbers.find(el => el.id === ep.episode.dubberID)!,
+          episodes: [ep]
+        })
+      }
+    })
+
+    setEpisodesDubbing(episodesDubbing);
+  }, [episodes, dubbers])
 
 
-  function uploadEpisode() {
+
+  function handleFilename() {
     const fileInput = fileInputRef.current
     if (!fileInput || !fileInput.files) return
 
@@ -282,42 +348,84 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
     fileInput.click();
   }
 
+  function upload() {
+    const fileInput = fileInputRef.current
+    if (!fileInput || !fileInput.files) return
+
+    const file = fileInput.files[0];
+
+    const episode: PatcherEpisode = {
+      id: createStringID(6),
+      File: file,
+      newUpload: true,
+      order: -1,
+      progress: -1,
+      status: 'pending',
+      episode: {
+        dubberID: selectedDubberId,
+        frames: [],
+        order: Number(order.value),
+        qualities: {
+          q4k: processQ2160 ? '' : null,
+          q1080: '',
+          q720: null,
+          q480: '',
+          q240: null,
+        }
+      }
+    }
+
+    setProcessQ2160(false)
+    setEpisodes([...episodes, episode])
+  }
+
 
 
   return <section className="wrapper bg-dark-bright gap-[32px] py-[32px]">
-    <h2 className="text-white text-[32px] font-manrope font-bold">Завантаження епізодів — {hydratedAnime.anime.names.eng}</h2>
+    <h2 className="text-white text-[32px] font-manrope font-bold max-md:text-[24px]">Завантаження епізодів — {hydratedAnime.anime.names.eng}</h2>
 
-    <section className="flex items-end gap-[16px]">
-      <div className="w-[250px] flex-shrink-0">
-        <PatcherField title="Номер серії" note="(1 - 9999)" state={order} stateSetter={setOrder} type="number" disablePending />
+    <section className="flex items-end gap-[16px] max-xl:flex-col-reverse max-xl:items-stretch">
+      <div className="flex items-end gap-[16px] max-md:flex-col">
+        {/* Order */}
+        <div className="w-[250px] flex-shrink-0 max-xl:w-full max-xl:flex-shrink">
+          <PatcherField title="Номер серії" note="(1 - 9999)" state={order} stateSetter={setOrder} type="number" disablePending disabled={!canSeriesUpload} />
+        </div>
+
+        {/* Dub select */}
+        <div className="w-[300px] flex-shrink-0 max-xl:w-full max-xl:flex-shrink">
+          <PatcherSelectDubber title="Команда Озвучення" selectedId={selectedDubberId} setSelectedId={setSelectedDubberId} dubbers={dubbers} setDubbers={setDubbers} disabled={!canSeriesUpload} />
+        </div>
+
+        <PatcherEpisodesUploadButton processQ2160={processQ2160} setProcessQ2160={setProcessQ2160} className="xl:hidden" canUpload={canSeriesUpload ? canUpload : false} upload={upload} capabilities={capabilities} />
       </div>
 
-      <div className="w-[300px] flex-shrink-0">
-        <PatcherSelectDubber title="Команда Озвучення" selectedId={selectedDubberId} setSelectedId={setSelectedDubberId} dubbers={dubbers} setDubbers={setDubbers} />
-      </div>
-
+      {/* File select */}
       <div className="flex flex-col gap-[8px] w-full">
         <p className="text-white font-manrope">Файл</p>
 
-        <input type="file" accept=".mp4,.webm,.mov,.mkv,.m4v" style={{ display: 'none' }} onChange={uploadEpisode} ref={fileInputRef} />
+        <input type="file" accept=".mp4,.webm,.mov,.mkv,.m4v" style={{ display: 'none' }} onChange={handleFilename} ref={fileInputRef} />
 
-        <button className="ui-button patcher-button w-full flex !justify-start" onClick={selectFile}>
-          <p className="text-white font-manrope">{filename || 'ВИБЕРІТЬ ФАЙЛ'}</p>
+        <button className={cn(`ui-button patcher-button w-full flex !justify-start`, !canSeriesUpload && 'cursor-not-allowed')} disabled={!canSeriesUpload} onClick={selectFile}>
+          <p className={cn(`text-white font-manrope line-clamp-1`, !canSeriesUpload && '!text-grey-new')}>{filename || 'ВИБЕРІТЬ ФАЙЛ'}</p>
         </button>
       </div>
 
-      <div className="flex items-center gap-[16px]">
-        <button className="ui-button patcher-button">
-          <p className="text-white font-manrope font-bold">ЗАВАНТАЖИТИ</p>
-          <MaterialSymbol icon="backup" size={20} className="text-white" />
-        </button>
+      <PatcherEpisodesUploadButton processQ2160={processQ2160} setProcessQ2160={setProcessQ2160} className="max-xl:hidden" canUpload={canSeriesUpload ? canUpload : false} upload={upload} capabilities={capabilities} />
+    </section>
 
-        <PatcherCheckbox checked={processQ2160} setChecked={setProcessQ2160} label="4K" />
-      </div>
+    <section className="flex flex-col gap-[32px]">
+      {/* Render selected dub */}
+      {[episodesDubbing.find(el => el.dubber.id === selectedDubberId)].map((dub) => {
+        return dub && <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
+      })}
+
+      {/* Render other dubs */}
+      {episodesDubbing.filter(el => el.dubber.id !== selectedDubberId).toSorted((a, b) => alphabeticSort(a.dubber.nameUkr, b.dubber.nameUkr)).map((dub) => {
+        return <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
+      })}
     </section>
   </section>
 }
-
 
 
 
@@ -568,7 +676,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
   const [isOpen, setIsOpen] = useState(false)
   const [selectedDubber, setSelectedDubber] = useState<DubberCompact | null>(null)
   const [searchText, setSearchText] = useState('');
-  const [searchResults, setSearchResults] = useState<DubberCompact[]>([]);
+  const [searchResults, setSearchResults] = useState<DubberCompact[]>(dubbers);
 
   const [searchTextDebounce] = useDebounce(searchText, 700)
 
@@ -595,7 +703,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
 
   async function search(query: string) {
     try {
-      if (query.length === 0) return setSearchResults([]);
+      if (query.length === 0) return;
 
       const { results } = await API.searchDubber({ q: query })
 
@@ -635,7 +743,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
 
         <p className={cn(`text-white font-manrope line-clamp-1`, disabled && '!text-grey-new')}>{selectedDubber?.nameUkr ?? '-- команда не вибрана --'}</p>
 
-        {!disabled && <MaterialSymbol className="text-grey-new" icon="expand_all" size={16} />}
+        {!disabled ? <MaterialSymbol className="text-grey-new" icon="expand_all" size={16} /> : <div></div>}
       </MenuTrigger>
 
       <MenuWrapper className="w-full bg-dark-primary border border-dark-light rounded-[4px] flex flex-col max-h-[300px] overflow-y-auto">
@@ -675,6 +783,79 @@ const PatcherCheckbox: NextPage<PatcherCheckboxProps> = ({ checked, label, setCh
   </button>
 }
 
+const PatcherEpisodesUploadButton: NextPage<PatcherEpisodesUploadButtonProps> = ({ processQ2160, setProcessQ2160, className, canUpload, upload, capabilities }) => {
+  const { canSeriesUpload, canUploadQ2160 } = capabilities;
+
+  return <div className={cn(`flex items-center gap-[16px]`, className)}>
+    <button className={cn(`ui-button patcher-button`, !canUpload && 'cursor-not-allowed')} onClick={upload} disabled={!canUpload}>
+      <p className={cn(`text-white font-manrope font-bold duration-100`, !canUpload && '!text-grey-new')}>ЗАВАНТАЖИТИ</p>
+      <MaterialSymbol icon="backup" size={20} className={cn(`text-white duration-100`, !canUpload && '!text-grey-new')} />
+    </button>
+
+    {canUploadQ2160 && <PatcherCheckbox checked={processQ2160} setChecked={setProcessQ2160} label="4K" disabled={!canSeriesUpload} />}
+  </div>
+}
+
+const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber, episodes, hydratedAnime, selectedDubberId }) => {
+  const [maximumEpisode, setMaximumEpisode] = useState(0);
+  const [collapsed, setCollapsed] = useState(true);
+
+
+
+  // Handle maximum episode
+  useMemo(() => {
+    let maximumEpisode = 0;
+    episodes.filter(el => el.episode.dubberID === dubber.id).forEach(ep => ep.episode.order > maximumEpisode ? maximumEpisode = ep.episode.order : undefined);
+
+    setMaximumEpisode(maximumEpisode);
+  }, [episodes])
+
+  // Handle collapse
+  useEffect(() => {
+    setCollapsed(dubber.id !== selectedDubberId)
+  }, [selectedDubberId])
+
+
+
+  return <div className="flex flex-col gap-[24px]">
+    <div className="flex items-center gap-[24px]">
+      <Tooltip content={collapsed ? 'Розгорнути озвучення' : 'Згорнути озвучення'}>
+        <button onClick={() => setCollapsed(prev => !prev)}>
+          <MaterialSymbol icon="arrow_drop_down" size={24} className={cn(`text-grey-new duration-200`, collapsed && 'rotate-180')} />
+        </button>
+      </Tooltip>
+
+      <StyledImage width="40px" height="40px" src={dubber.avatarURL} imageClassName="rounded-[4px]" />
+      <h3 className="text-white text-[24px] font-manrope font-bold">{dubber.nameUkr}</h3>
+      <p className="text-grey-new font-space-grotesk">({maximumEpisode} / {hydratedAnime.anime.episodesCount ?? '—'})</p>
+    </div>
+
+    <div className={cn(`flex flex-col gap-[4px] overflow-y-auto duration-200`, collapsed ? 'max-h-0' : 'max-h-[600px]')}>
+      {episodes.toSorted((a, b) => b.episode.order - a.episode.order).map(ep => {
+        return <PatcherDubbedEpisode {...ep} key={`patcherepisode-${ep.id}`} />
+      })}
+    </div>
+  </div>
+}
+
+const PatcherDubbedEpisode: NextPage<PatcherEpisode> = ({ File, episode, id, newUpload, order, progress, status }) => {
+  return <div className="w-full px-[16px] py-[12px] rounded-[4px] border border-dark-light bg-dark-medium flex items-center justify-between gap-[24px]">
+    <div className="flex items-center gap-[8px]">
+      <p className="text-white text-[20px] font-space-grotesk font-bold w-[80px]">#{String(episode.order).padStart(2, '0')}</p>
+
+      <p className="text-white">status: {status}</p>
+      <p className="text-white">progress: {progress}</p>
+      <p className="text-white">order: {order}</p>
+      <p className="text-white">newUpload: {String(newUpload)}</p>
+    </div>
+
+    <button className="p-[4px]">
+      <MaterialSymbol icon="delete" size={20} className="text-grey-new" />
+    </button>
+  </div>
+}
+
+
 
 /** Parse input into string */
 function x(input: string | number | null | undefined): string {
@@ -683,4 +864,16 @@ function x(input: string | number | null | undefined): string {
   if (typeof input === 'string') return input;
 
   return '';
+}
+
+export function AnimeEpisodeToPatcherEpisode(episode: AnimeEpisode): PatcherEpisode {
+  return {
+    id: createStringID(6),
+    episode,
+    newUpload: false,
+    File: null,
+    order: -1,
+    progress: -1,
+    status: 'uploaded'
+  }
 }

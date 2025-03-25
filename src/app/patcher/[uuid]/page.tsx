@@ -60,10 +60,16 @@ export default async function RSC(props: IRSCProps<PatcherPageParams>) {
     const canAdd = isRoot || capabilities.includes('titleAdd');
     const canEdit = isRoot || capabilities.includes('titleEdit');
     const canDelete = isRoot || capabilities.includes('titleDelete');
+    const canSeriesUpload = isRoot || capabilities.includes('seriesAdd');
+    const canSeriesDelete = isRoot || capabilities.includes('seriesDelete');
+    const canUploadQ2160 = isRoot || capabilities.includes('admin');
 
     const caps: PatcherCapabilities = {
       canDelete,
-      canEdit
+      canEdit,
+      canSeriesDelete,
+      canSeriesUpload,
+      canUploadQ2160
     }
 
 
