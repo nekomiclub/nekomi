@@ -11,10 +11,20 @@ export const $api = axios.create({
   timeout: 10000,
 })
 
-$api.interceptors.request.use(async cfg => {
+$api.interceptors.request.use(cfg => {
   cfg.headers['X-CSRF-Token'] = signCSRF();
 
   return cfg;
+})
+
+$api.interceptors.response.use(undefined, e => {
+  if (e.code === 'ECONNRESET' && !e.config.__isRetryRequest) {
+    e.config.__isRetryRequest = true;
+
+    return axios(e.config);
+  }
+
+  throw e;
 })
 
 /** Same as $api, but with longer timeout */
