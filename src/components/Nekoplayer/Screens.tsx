@@ -6,11 +6,12 @@ import { NextPage } from 'next';
 import { AnimeEpisodeMeta } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { ITitleEpisodeMeta } from '~/interfaces/ITitle';
+import prettySeconds from '~/utils/pretty-seconds';
 import { cn } from '../Components';
 import { wordDeclination } from '../handlers';
 import StyledImage from '../StyledImage';
 
-import { IKekwPlayerContextProps, KekwPlayerContext, secondsToReadable } from './Nekoplayer';
+import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
 
@@ -18,7 +19,7 @@ import { IKekwPlayerContextProps, KekwPlayerContext, secondsToReadable } from '.
  * @requires KekwPlayerContext
  */
 export const NPScreensContainer: NextPage = ({ }) => {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
@@ -42,7 +43,7 @@ export const NPScreensContainer: NextPage = ({ }) => {
 
 
 const ProgressContinue: NextPage = ({ }) => {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { currentScreen, anime, dubbers, watchProgress, passProgress, loadProgress } = ctx;
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
@@ -97,7 +98,7 @@ const ProgressContinue: NextPage = ({ }) => {
 
       <div className="flex items-center justify-between gap-[8px] max-sm:w-full">
         <p className="text-white text-[24px] font-space-grotesk font-bold sm:hidden">#{String(watchProgress.ep).padStart(2, '0')}</p>
-        <p className="text-white text-[24px] font-space-grotesk font-bold">{secondsToReadable(watchProgress.moment).pretty}</p>
+        <p className="text-white text-[24px] font-space-grotesk font-bold">{prettySeconds(watchProgress.moment).pretty}</p>
       </div>
     </button>
 
@@ -106,7 +107,7 @@ const ProgressContinue: NextPage = ({ }) => {
 }
 
 const LastDubbedEpisode: NextPage = ({ }) => {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
@@ -125,7 +126,7 @@ const LastDubbedEpisode: NextPage = ({ }) => {
 }
 
 const ContinueWatch: NextPage = ({ }) => {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { currentScreen, anime, episode, videoRef, changeEpisode } = ctx;
 
   const SKIP_WITHIN_DEFAULT = 5;
@@ -209,7 +210,7 @@ const ContinueWatch: NextPage = ({ }) => {
 }
 
 const AnimeEnd: NextPage = ({ }) => {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
 

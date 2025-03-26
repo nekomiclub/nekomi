@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NextPage } from 'next';
 import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
@@ -44,17 +44,12 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
-  const [useDefaultImage, setUseDefaultImage] = useState(Boolean(useImg))
+  const [useDefaultImage] = useState(Boolean(useImg) || !src.includes(config.URL.media))
   const [imageDims, setImageDims] = useState<number[]>([])
 
   const imageRef = useRef<HTMLImageElement>(null)
 
 
-
-  // Check if image hosted on nekomi
-  useMemo(() => {
-    setUseDefaultImage(!src.includes(config.domain))
-  }, [])
 
   useEffect(() => {
     const image = imageRef.current;

@@ -15,12 +15,16 @@ import { config, CONSTS, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { routes } from '../../../routes';
 
-import { WatchActions, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
+import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
 
 
 
 export interface WatchPageParams extends Params {
   query: string
+}
+
+export interface WatchPageSearchParams extends Params {
+  mobile?: any
 }
 
 
@@ -54,12 +58,12 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<WatchPageParams>) {
-  const params = await props.params;
-  const { query } = params;
+export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSearchParams>) {
+  const { query } = await props.params;
+  const { mobile } = await props.searchParams;
 
   const userAgent = headers().get('user-agent') || '';
-  const isMobile = isUserAgentMobile(userAgent) ?? true
+  const isMobile = mobile ?? isUserAgentMobile(userAgent) ?? true
 
 
 
@@ -74,13 +78,12 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
 
     return isMobile ? <>
       {/* MOBILE */}
-      <main className="sm:hidden">
+      <main>
         <div className="w-full h-[500px] pt-[32px] flex justify-center relative">
           {/* Background */}
-          <StyledImage src={anime.poster} width="100%" height="100%" className="!absolute top-0 left-0" />
-          <div className="absolute top-0 left-0 z-[3] w-full h-full" style={{ background: 'linear-gradient(180deg, rgba(18,18,18,.7), #121212)' }}></div>
+          <div className="watch-mobile-poster" style={{ backgroundImage: `url(${anime.poster})` }}></div>
 
-          <div className="flex flex-col items-center gap-[4px] z-[3] w-fit px-[24px]">
+          <div className="flex flex-col items-center gap-[4px] z-[10] w-fit px-[24px]">
             <StyledImage src={anime.poster} width="270px" height="370px" className="rounded-[4px] overflow-hidden" priority loading="eager" />
 
             <WatchEditLibs hydratedAnime={hydratedAnime} />
@@ -156,6 +159,8 @@ export default async function RSC(props: IRSCProps<WatchPageParams>) {
       </main>
     </> : <>
       {/* DESKTOP */}
+      <WatchCheckMobile />
+
       <div style={{ height: `calc(32px + var(--header-height))` }}></div>
 
       <main className="flex flex-col gap-[40px]">

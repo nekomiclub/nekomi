@@ -5,7 +5,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoArrow, IcoSpeed } from '~/assets/Icons';
 import { IcoPlayerCenter, IcoPlayerQuality, IcoPlayerStretch } from '~/assets/Player';
-import { TVideoQuality } from '~/interfaces/Interfaces';
+import { EpisodeQualityType } from '~/interfaces/Interfaces';
 import { ITitleEpisode } from '~/interfaces/ITitle';
 import { cn } from '../Components';
 import { parseVideoQuality } from '../handlers';
@@ -14,8 +14,8 @@ import { parseVideoQuality } from '../handlers';
 type TSettingPage = 'general' | 'quality' | 'speed';
 
 interface IProps {
-  quality: TVideoQuality,
-  setQuality: (state: TVideoQuality) => void,
+  quality: EpisodeQualityType,
+  setQuality: (state: EpisodeQualityType) => void,
   speed: number,
   epData?: ITitleEpisode,
   isVideoProcessed: boolean,
@@ -35,14 +35,14 @@ interface IGeneralSettingsProps extends ISettingsPageProps {
   stretch: boolean
   setStretch: (val: boolean) => void
   speed: number
-  quality: TVideoQuality
+  quality: EpisodeQualityType
 }
 
 interface IQualitySettingsProps extends ISettingsPageProps {
   isVideoProcessed: boolean
   episode?: ITitleEpisode
-  quality: TVideoQuality,
-  setQuality: (state: TVideoQuality) => void,
+  quality: EpisodeQualityType,
+  setQuality: (state: EpisodeQualityType) => void,
 }
 
 interface ISpeedSettingsProps extends ISettingsPageProps {
@@ -179,7 +179,7 @@ const QualitySettings = memo<IQualitySettingsProps>(function QualitySettings({ v
     </div>
   </div>
 
-  function SelectQuality({ to }: { to: TVideoQuality }) {
+  function SelectQuality({ to }: { to: EpisodeQualityType }) {
     return <button className={cn((isVideoProcessed || to === 'q1080') && 'kekwplayer-menu_item', quality === to && 'kekwplayer-menu_item--active')} onClick={() => setQuality(to)} disabled={!isVideoProcessed}>
       <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>{parseVideoQuality(to)}</p>
     </button>

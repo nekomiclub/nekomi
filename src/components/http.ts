@@ -18,6 +18,7 @@ $api.interceptors.request.use(cfg => {
 })
 
 $api.interceptors.response.use(undefined, e => {
+  // Retry ECONNRESET
   if (e.code === 'ECONNRESET' && !e.config.__isRetryRequest) {
     e.config.__isRetryRequest = true;
 

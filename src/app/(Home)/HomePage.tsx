@@ -9,11 +9,12 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import AnimeItem from '~/components/AnimeItem';
-import { IKekwPlayerLocalDataItem, secondsToReadable } from '~/components/Nekoplayer/Nekoplayer';
+import { GetNekoplayerData } from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { AnimeWithMedia } from '~/interfaces/types';
+import prettySeconds from '~/utils/pretty-seconds';
 import { cn, PrettySwiper } from '../../components/Components';
 import { config } from '../../config';
 import { routes } from '../../routes';
@@ -169,7 +170,7 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
     const watchProgress = currentUser.watchProgress.find(el => el.titleID === headliner.uuid);
 
     if (watchProgress && watchProgress.progress > 3) {
-      setLabel(`продовжити (${watchProgress.episodeOrder} еп, ${secondsToReadable(watchProgress.progress).pretty})`);
+      setLabel(`продовжити (${watchProgress.episodeOrder} еп, ${prettySeconds(watchProgress.progress).pretty})`);
       setContinueWatch(true);
     } else {
       setLabel('розпочати перегляд')
@@ -180,11 +181,11 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
   useEffect(() => {
     if (continueWatch || typeof window === 'undefined') return;
 
-    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+    const localData = GetNekoplayerData();
     const localCurrent = localData.find(el => el.id === headliner.uuid);
 
     if (localCurrent && localCurrent.moment > 3) {
-      setLabel(`продовжити (${localCurrent.ep} еп, ${secondsToReadable(localCurrent.moment).pretty})`);
+      setLabel(`продовжити (${localCurrent.ep} еп, ${prettySeconds(localCurrent.moment).pretty})`);
       setContinueWatch(true);
     }
   }, [])

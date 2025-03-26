@@ -2,15 +2,16 @@
 
 import '~/styles/components/Nekoplayer.scss';
 
-import { createContext, RefObject, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
-import { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
 
 import Anime from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
+import { EpisodeQualityType } from '~/interfaces/Interfaces';
+import { LocalStorageKeys } from '~/interfaces/types';
 import { useAppSelector } from '../../hooks/redux';
 import { ITitleEpisode } from '../../interfaces/ITitle';
 import { cn } from '../Components';
@@ -20,6 +21,7 @@ import { $api } from '../http';
 import { KekwPlayerControls } from './Controls';
 import { KekwPlayerFullscreen } from './Fullscreen';
 import { KekwPlayerMenu } from './Menu';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NekoplayerTypes';
 import { KekwPlayerPiP } from './PiP';
 import { NPlay } from './Play';
 import { NPScreensContainer } from './Screens';
@@ -29,23 +31,9 @@ import { NPVolume } from './Volume';
 
 
 
-type TVideoQuality = 'q240' | 'q480' | 'q720' | 'q1080' | 'q2k' | 'q4k';
-type TStage = 'setup' | 'operational'
+type PlayerStageType = 'setup' | 'operational'
 
-export type TKekwPlayerScreen = 'none'
-  | 'progress_continue'
-  | 'continue_watch'
-  | 'last_dubbed_episode'
-  | 'anime_end'
-
-export interface IKekwPlayerLocalDataItem {
-  id: string,
-  dub: string,
-  ep: number,
-  moment: number
-}
-
-interface IKekwPlayerProps {
+interface NekoplayerProps {
   anime: Anime
   dubbers: DubberCompact[]
 
@@ -55,58 +43,6 @@ interface IKekwPlayerProps {
 
   disableScreens?: boolean
 }
-
-
-
-export interface IKekwPlayerContextProps {
-  //* CONSTS
-  anime: Anime
-  dubbers: DubberCompact[]
-  duration: number
-  isMobile: boolean
-
-  //* POSSIBLE UNDEFINED CONSTS
-  watchProgress?: IKekwPlayerLocalDataItem
-
-  //* VIDEO STATES
-  isMuted: boolean
-  isPlaying: boolean
-  isFullscreen: boolean
-  isPiP: boolean
-  isPreviewOld: boolean
-  isVideoProcessed: boolean
-
-  //* REFS
-  videoRef: RefObject<HTMLVideoElement>
-  playerRef: RefObject<HTMLDivElement>
-
-  //* HANDLERS
-  loadProgress: () => void
-  passProgress: () => void
-
-  //* STATES
-  currentScreen: TKekwPlayerScreen
-  setCurrentScreen: (val: TKekwPlayerScreen) => void
-
-  episode: ITitleEpisode
-  /** DO NOT RECOMMEND. USE changeEpsiode INSTEAD
-   * set new episode directly into state
-   */
-  setEpisode: (episode: ITitleEpisode) => void
-  changeEpisode: (episode: ITitleEpisode, moment?: number, stopPlayback?: boolean) => void
-
-  volume: number
-  setVolume: (val: number) => void
-
-  moment: number
-  /** DO NOT RECOMMEND. USE changeMoment INSTEAD
-   * set new moment directly into state
-   */
-  setMoment: (val: number) => void
-  changeMoment: (val: number, synthetic?: boolean) => void
-}
-
-export const KekwPlayerContext = createContext<Partial<IKekwPlayerContextProps>>({})
 
 /**
  * Z indexes table
@@ -119,8 +55,8 @@ export const KekwPlayerContext = createContext<Partial<IKekwPlayerContextProps>>
 
 
 //! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
-const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, setOutEp, outEpisode, disableScreens }) => {
-  const [stage, setStage] = useState<TStage>('setup')
+const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, setOutEp, outEpisode, disableScreens }) => {
+  const [stage, setStage] = useState<PlayerStageType>('setup')
   const user = useAppSelector(state => state.user);
 
 
@@ -131,13 +67,13 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
   const [duration, setDuration] = useState<number>(1)
   const [moment, setMoment] = useState<number>(0);
   const [hoveredMoment, setHoveredMoment] = useState<number>(0);
-  const [currentScreen, setCurrentScreen] = useState<TKekwPlayerScreen>('none')
-  const [localData, setLocalData] = useState<IKekwPlayerLocalDataItem>()
+  const [currentScreen, setCurrentScreen] = useState<NekoplayerScreenType>('none')
+  const [localData, setLocalData] = useState<NekoplayerLocalstorageRecord>()
   const [isMobile, setIsMobile] = useState(true);
   const [isControlsHiddenUnderScreen, setIsControlsHiddenUnderScreen] = useState<boolean>(true) // Define if player timeline and menu will be hidden under screeen
 
   // Settings states
-  const [quality, setQuality] = useState<TVideoQuality>('q1080')
+  const [quality, setQuality] = useState<EpisodeQualityType>('q1080')
   const [speed, setSpeed] = useState(1)
   const [stretch, setStretch] = useState(false)
 
@@ -175,7 +111,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
 
 
 
-  const KekwPlayerContextPayload: IKekwPlayerContextProps = {
+  const KekwPlayerContextPayload: NekoplayerContextProps = {
     anime,
     dubbers,
     duration,
@@ -238,9 +174,8 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
     if (!user.id) return;
 
     // Patch watch progress
-    window.addEventListener('beforeunload', e => {
-      patchWatchProgress();
-    })
+    window.addEventListener('beforeunload', patchWatchProgress)
+    document.addEventListener('visibilitychange', () => console.log('visibilitychange'))
   }, [user])
 
 
@@ -321,10 +256,11 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
     }, 50)
   }
 
+  /** Update user watch progress */
   async function patchWatchProgress() {
     if (!user.id) return;
 
-    const playerData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+    const playerData = GetNekoplayerData();
     const currentTitle = playerData.find(el => el.id === anime.uuid)!;
     const viewtime = viewtimeRef.current;
 
@@ -342,13 +278,8 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
       })
 
       viewtimeRef.current = 0;
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        console.log(`HTTP error occured while saving user progress - ${err.response?.data?.msg}`)
-      } else {
-        console.log(`An error occured while saving user progress - `)
-        console.error(err)
-      }
+    } catch (e) {
+      HandleClientError(e)
     }
   }
 
@@ -459,46 +390,46 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
     })
 
     // Handle progressbar actions
-    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
-    const preview = document.querySelector('#kekwplayer-preview') as HTMLDivElement
+    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
+    const preview = document.querySelector(`#${NekoplayerIDs.Preview}`) as HTMLDivElement
 
-    if (!timeline || !preview) return;
+    if (timeline && preview) {
+      let isDragging = false
+      let touchTimeout: NodeJS.Timeout;
 
-    let isDragging = false
-    let touchTimeout: NodeJS.Timeout;
+      timeline.addEventListener('touchstart', () => {
+        clearTimeout(touchTimeout)
+        timelineTouchStartHandler()
 
-    timeline.addEventListener('touchstart', () => {
-      clearTimeout(touchTimeout)
-      timelineTouchStartHandler()
+        touchTimeout = setTimeout(() => {
+          timelineTouchEndHandler();
+        }, 1000);
+      })
 
-      touchTimeout = setTimeout(() => {
+      timeline.addEventListener('touchmove', () => {
+        clearTimeout(touchTimeout)
+        timelineTouchStartHandler()
+
+        touchTimeout = setTimeout(() => {
+          timelineTouchEndHandler();
+        }, 1000);
+      })
+
+      timeline.addEventListener('pointerenter', () => timelineTouchStartHandler())
+      timeline.addEventListener('pointerdown', () => {
+        isDragging = true;
+        timelineTouchStartHandler()
+      })
+
+      document.addEventListener('pointerup', () => {
+        isDragging = false;
+        timelineTouchEndHandler()
+      })
+      timeline.addEventListener('pointerleave', () => {
+        if (isDragging) return
         timelineTouchEndHandler();
-      }, 1000);
-    })
-
-    timeline.addEventListener('touchmove', () => {
-      clearTimeout(touchTimeout)
-      timelineTouchStartHandler()
-
-      touchTimeout = setTimeout(() => {
-        timelineTouchEndHandler();
-      }, 1000);
-    })
-
-    timeline.addEventListener('pointerenter', () => timelineTouchStartHandler())
-    timeline.addEventListener('pointerdown', () => {
-      isDragging = true;
-      timelineTouchStartHandler()
-    })
-
-    document.addEventListener('pointerup', () => {
-      isDragging = false;
-      timelineTouchEndHandler()
-    })
-    timeline.addEventListener('pointerleave', () => {
-      if (isDragging) return
-      timelineTouchEndHandler();
-    })
+      })
+    };
 
 
 
@@ -519,8 +450,8 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
 
   //* Handle video events & save progress
   useEffect(() => {
-    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
-    const preview = document.querySelector('#kekwplayer-preview') as HTMLDivElement
+    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
+    const preview = document.querySelector(`#${NekoplayerIDs.Preview}`) as HTMLDivElement
 
     const player = playerRef.current;
     const video = videoRef.current;
@@ -683,7 +614,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
   useEffect(() => {
     if (stage !== 'operational' || !episode) return;
 
-    changeVideoSrc(episode.qualities[quality], moment)
+    changeVideoSrc(episode.qualities[quality] ?? '', moment)
   }, [stage, quality])
 
   //* Handle video buffering & screens
@@ -748,7 +679,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
   //TODO Can be refactored into css hover
   useEffect(() => {
     const bottom = bottomRef.current;
-    const track = document.querySelector('#kekwplayer-timeline_track') as HTMLDivElement | undefined
+    const track = document.querySelector(`#${NekoplayerIDs.TimelineTrack}`) as HTMLDivElement | undefined
     if (stage !== 'operational' || !bottom || !track) return;
 
     bottom.addEventListener('mouseenter', () => {
@@ -777,7 +708,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
 
   //* -------------- HANDLERS --------------
   /** Get user progress */
-  function getPlayerProgress(): IKekwPlayerLocalDataItem | null {
+  function getPlayerProgress(): NekoplayerLocalstorageRecord | null {
     // Get progress from user watch progress
     if (user.id) {
       const currentTitle = user.watchProgress.find(el => el.titleID === anime.uuid);
@@ -794,7 +725,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
     }
 
     // Get progress from local storage (by default)
-    const localData = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+    const localData = GetNekoplayerData()
     if (!localData) return null;
 
     const currentTitle = localData.find(el => el.id === anime.uuid)
@@ -804,17 +735,17 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
   }
 
   /** Update user progress */
-  function updatePlayerProgress(payload: IKekwPlayerLocalDataItem) {
-    let items = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[];
+  function updatePlayerProgress(payload: NekoplayerLocalstorageRecord) {
+    let items = GetNekoplayerData()
     items = items.filter(el => el.id !== payload.id);
     items.push(payload)
 
-    localStorage.setItem('kekwplayer_data', JSON.stringify(items))
+    localStorage.setItem(LocalStorageKeys.NekoplayerData, JSON.stringify(items))
   }
 
   /** Delete user progress */
   async function deletePlayerProgress() {
-    const data = JSON.parse(localStorage.getItem('kekwplayer_data') || '[]') as IKekwPlayerLocalDataItem[]
+    const data = GetNekoplayerData()
 
     try {
       console.log('remove progress')
@@ -832,7 +763,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
       HandleClientError(e)
     }
 
-    localStorage.setItem('kekwplayer_data', JSON.stringify(data.filter(el => el.id !== anime.uuid)))
+    localStorage.setItem(LocalStorageKeys.NekoplayerData, JSON.stringify(data.filter(el => el.id !== anime.uuid)))
   }
 
   /** Change dub, ep & moment
@@ -854,7 +785,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
 
     await Promise.all([
       await definePreviewFormat(episode.frames[0]),
-      await changeVideoSrc(episode.qualities[quality], moment, stopPlayback),
+      await changeVideoSrc(episode.qualities[quality] ?? '', moment, stopPlayback),
     ])
 
     // Set out states
@@ -913,7 +844,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
    */
   function changeMoment(moment: number, synthetic?: boolean) {
     const video = videoRef.current;
-    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
+    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
     const progress = progressRef.current;
 
 
@@ -948,7 +879,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
   /** Move & set video preview */
   function movePreview(x: number) {
     const preview = previewRef.current;
-    const timeline = document.querySelector('#kekwplayer-timeline') as HTMLDivElement
+    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
 
     if (!preview || !timeline) return;
 
@@ -1012,7 +943,7 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
 
 
 
-  return <KekwPlayerContext.Provider value={KekwPlayerContextPayload}>
+  return <NekoplayerContext.Provider value={KekwPlayerContextPayload}>
     <div className="w-full h-full relative overflow-hidden flex flex-col justify-between bg-black outline-none" id="player" tabIndex={0} ref={playerRef}>
       {/* Screens */}
       {!disableScreens && <NPScreensContainer />}
@@ -1051,28 +982,13 @@ const Nekoplayer: NextPage<IKekwPlayerProps> = ({ anime, dubbers, setOutDubber, 
         <video src={''} preload="auto" controlsList="nodownload" className={cn(`w-full h-full`, stretch && 'object-cover')} id="kekwplayer-video" controls={false} ref={videoRef}></video>
       </div>
     </div>
-  </KekwPlayerContext.Provider>
+  </NekoplayerContext.Provider>
 }
 
+export function GetNekoplayerData(): NekoplayerLocalstorageRecord[] {
+  if (typeof window === 'undefined') return []
 
-
-/** pretty - formated as hh:mm:ss */
-export function secondsToReadable(time: number): { hrs: number, mins: number, secs: number, pretty: string } {
-  let mins = Math.floor(time / 60);
-  const secs = Math.floor(time - mins * 60);
-  let hrs = 0;
-
-  while (mins >= 60) {
-    hrs += 1;
-    mins -= 60;
-  }
-
-  const pretty = hrs ? String(hrs).padStart(2, '0') + ':' : `` + String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0')
-
-  return { hrs, mins, secs, pretty }
+  return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerData) ?? '[]')
 }
-
-/** @deprecated use Nekoplayer instead */
-const KekwPlayer = Nekoplayer;
 
 export default Nekoplayer;

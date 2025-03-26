@@ -384,8 +384,8 @@ const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
 
 
 
-  return <PopupLayer className="bg-dark/[.3] backdrop-blur-[4px] flex justify-center items-center max-[700px]:items-start">
-    <PopupDialog className="w-full max-w-[800px] px-[24px] py-[32px] max-[700px]:px-[8px]" id={dialogId} state={isSearchOpen} stateSetter={setIsSearchOpen}>
+  return <PopupLayer className="bg-dark/[.3] backdrop-blur-[4px] flex justify-center items-center max-md:items-start">
+    <PopupDialog className="w-full max-w-[800px] px-[24px] py-[32px] max-md:px-[8px]" id={dialogId} state={isSearchOpen} stateSetter={setIsSearchOpen}>
       <div className="w-full bg-dark-primary flex flex-col gap-[16px] pb-[12px] rounded-[4px]">
         {/* Search box */}
         <div className="w-full flex justify-between items-center border-b border-b-dark-light">
@@ -413,7 +413,7 @@ const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
         </div>
 
         {/* Search content */}
-        <div className="flex flex-col gap-[4px] px-[12px] max-h-[70svh] overflow-y-scroll max-sm:max-h-[80svh]" ref={contentRef}>
+        <div className="flex flex-col gap-[4px] px-[12px] max-h-[70svh] overflow-y-scroll overflow-x-hidden max-sm:max-h-[80svh]" ref={contentRef}>
           {/* Start typing */}
           {showStartTyping && <div className="flex items-center gap-[16px] px-[12px]">
             <MaterialSymbol className="text-grey-new" icon="star" size={16} />
@@ -484,18 +484,18 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
 
     {/* Anime type */}
     {type === 'anime' && <div className="menu-search-result">
-      <Skeleton width={'100%'} height={'100%'} containerClassName="w-[120px] h-[160px] relative" className="absolute top-0" />
+      <Skeleton width={'100%'} height={'100%'} containerClassName="w-[120px] h-[160px] relative flex-shrink-0" className="absolute top-0" />
 
       <div className="menu-search-result_content">
-        <Skeleton width={firstLineWidth} height={27} />
-        <Skeleton width={secondLineWidth} height={20} />
-        <Skeleton width={260} height={22} />
+        <Skeleton width={firstLineWidth} height={27} className="max-w-full" />
+        <Skeleton width={secondLineWidth} height={20} className="max-w-full" />
+        <Skeleton width={260} height={22} className="max-w-full" />
       </div>
     </div>}
 
     {/* User type */}
     {(type === 'user' || type === 'dubber') && <div className="menu-search-result">
-      <Skeleton width={'100%'} height={'100%'} containerClassName="w-[128px] h-[128px] relative" className="absolute top-0" />
+      <Skeleton width={'100%'} height={'100%'} containerClassName="w-[128px] h-[128px] relative flex-shrink-0" className="absolute top-0" />
 
       <div className="menu-search-result_content">
         <Skeleton width={firstLineWidth} height={27} />
@@ -513,23 +513,23 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
         <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.anime.names.ukr}>{animeResult.anime.names.ukr}</h4>
         <h5 className="text-grey-new font-space-grotesk line-clamp-2" title={animeResult.anime.names.eng}>{animeResult.anime.names.eng}</h5>
 
-        <div className="flex items-center gap-[8px]">
+        <div className="flex items-center gap-[8px] flex-wrap">
           <div className="flex items-center gap-[8px]">
             <MaterialSymbol className="text-primary" icon="star_half" size={16} />
-            <p className="text-primary font-space-grotesk font-bold">{animeResult.anime.score.mal?.toFixed(2) ?? animeResult.anime.score.imdb?.toFixed(2) ?? '—'}</p>
+            <p className="text-primary font-space-grotesk font-bold whitespace-nowrap">{animeResult.anime.score.mal?.toFixed(2) ?? animeResult.anime.score.imdb?.toFixed(2) ?? '—'}</p>
           </div>
           <span className="text-grey-new font-manrope">•</span>
 
           <div className="flex items-center gap-[8px]">
             <MaterialSymbol className="text-white" icon="acute" size={16} />
-            <p className="text-white font-space-grotesk">{`${animeResult.dubbedEpisodes ?? '—'} / ${animeResult.anime.episodesCount ?? '—'}`}</p>
+            <p className="text-white font-space-grotesk whitespace-nowrap">{`${animeResult.dubbedEpisodes ?? '—'} / ${animeResult.anime.episodesCount ?? '—'}`}</p>
           </div>
           <span className="text-grey-new font-manrope">•</span>
 
           <p className="text-white font-manrope">{animeResult.media.name}</p>
           <span className="text-grey-new font-manrope">•</span>
 
-          <p className="text-white font-space-grotesk">{animeResult.anime.year}</p>
+          <p className="text-white font-space-grotesk whitespace-nowrap">{animeResult.anime.year}</p>
         </div>
       </div>
     </Link>}

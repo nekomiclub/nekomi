@@ -4,12 +4,12 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { cn } from '../Components';
 
-import { IKekwPlayerContextProps, KekwPlayerContext } from './Nekoplayer';
+import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
 
 export const NPlay: NextPage = () => {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { videoRef, isPlaying } = ctx;
 
 

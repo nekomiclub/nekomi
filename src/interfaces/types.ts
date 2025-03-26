@@ -1,5 +1,11 @@
 import Anime, { HydratedAnime } from './AnimeIntf';
 
+export enum LocalStorageKeys {
+  NekoplayerData = 'np-data'
+}
+
+
+
 export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
 export interface Metadata {

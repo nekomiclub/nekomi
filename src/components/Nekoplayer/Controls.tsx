@@ -3,12 +3,12 @@ import { NextPage } from 'next';
 
 import { HandleClientError } from '../Errors';
 
-import { IKekwPlayerContextProps, KekwPlayerContext } from './Nekoplayer';
+import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
 
 export const KekwPlayerControls: NextPage = () => {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { changeMoment, videoRef, isMobile, playerRef } = ctx;
 
 

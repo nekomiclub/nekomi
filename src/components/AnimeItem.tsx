@@ -13,10 +13,10 @@ import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
+import prettySeconds from '~/utils/pretty-seconds';
 
 import { cn } from './Components';
 import { HandleClientError } from './Errors';
-import { secondsToReadable } from './Nekoplayer/Nekoplayer';
 import StyledImage from './StyledImage';
 import { NotifyWarn } from './UI/NotifyToast';
 import UICheckbox from './UI/UICheckbox';
@@ -163,7 +163,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
         </div>
 
         {watchProgress && watchProgress.progress > 3 && <div className="gradient--primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
-          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episodeOrder} еп, {secondsToReadable(watchProgress.progress).pretty}</p>
+          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episodeOrder} еп, {prettySeconds(watchProgress.progress).pretty}</p>
 
           <MaterialSymbol icon="resume" size={16} color="#fff" />
         </div>}

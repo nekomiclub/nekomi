@@ -10,10 +10,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import { useAppSelector } from '~/hooks/redux';
 import Anime from '~/interfaces/AnimeIntf';
+import prettySeconds from '~/utils/pretty-seconds';
 import { animeGenres } from '../config';
 import { Routes } from '../routes';
 
-import { secondsToReadable } from './Nekoplayer/Nekoplayer';
 import StyledImage from './StyledImage';
 
 
@@ -127,7 +127,7 @@ export const TitleCard: NextPage<{ title: Anime, className?: string }> = ({ titl
         </div>
 
         {watchProgress && watchProgress.progress > 3 && <div className="gradient--primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
-          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episodeOrder} еп, {secondsToReadable(watchProgress.progress).pretty}</p>
+          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episodeOrder} еп, {prettySeconds(watchProgress.progress).pretty}</p>
 
           <MaterialSymbol icon="resume" size={16} color="#fff" />
         </div>}

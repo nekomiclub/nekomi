@@ -3,8 +3,9 @@ import { NextPage } from 'next';
 import { Range } from 'react-range';
 
 import { IcoServerUnavailable } from '~/assets/Icons';
+import prettySeconds from '~/utils/pretty-seconds';
 
-import { IKekwPlayerContextProps, KekwPlayerContext, secondsToReadable } from './Nekoplayer';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs } from './NekoplayerTypes';
 
 
 
@@ -18,7 +19,7 @@ interface NPTimelineProps {
 
 
 export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, progressRef, hoveredMoment }) => {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { videoRef, duration, changeMoment, isPreviewOld, isVideoProcessed, moment } = ctx;
 
 
@@ -27,7 +28,7 @@ export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, p
     {/* Range */}
     <div className="w-full h-full relative flex flex-col justify-center">
       {/* Track */}
-      <div className="w-full relative" id="kekwplayer-timeline">
+      <div className="w-full relative" id={NekoplayerIDs.Timeline}>
         <Range
           min={0}
           max={duration}
@@ -37,13 +38,13 @@ export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, p
 
           renderTrack={({ children, props }) => <div
             {...props}
-            key={'nekoplayer-timeline_track'}
+            key={NekoplayerIDs.TimelineTrack}
             style={{
               ...props.style,
               position: 'relative',
               zIndex: 1
             }}
-            id="kekwplayer-timeline_track"
+            id={NekoplayerIDs.TimelineTrack}
             className={`w-full h-[4px] max-[720px]:!py-[3px] rounded-[6px] z-[10] bg-dark-light/[.5] duration-200`}
           >
             {children}
@@ -57,7 +58,7 @@ export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, p
 
           renderThumb={({ props }) => <div
             {...props}
-            key={'nekoplayer-timeline_thumb'}
+            key={NekoplayerIDs.TimelineThumb}
             style={{
               ...props.style,
               touchAction: 'none',
@@ -65,7 +66,7 @@ export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, p
               position: 'relative',
               zIndex: 3
             }}
-            id="kekwplayer-timeline_thumb"
+            id={NekoplayerIDs.TimelineThumb}
             className={`w-[12px] h-[12px] bg-primary rounded-[32px]`}
           />}
         />
@@ -73,13 +74,13 @@ export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, p
 
       {/* Time */}
       <div className="w-full flex justify-between absolute left-0 -bottom-[8px] max-[720px]:-bottom-[12px]">
-        <p className="text-white font-space-grotesk">{secondsToReadable(videoRef.current?.currentTime || 0).pretty}</p>
-        <p className="text-white font-space-grotesk">{secondsToReadable(duration).pretty}</p>
+        <p className="text-white font-space-grotesk">{prettySeconds(videoRef.current?.currentTime || 0).pretty}</p>
+        <p className="text-white font-space-grotesk">{prettySeconds(duration).pretty}</p>
       </div>
     </div>
 
     {/* Preview */}
-    <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0 opacity-0 invisible`} id="kekwplayer-preview" ref={previewRef}>
+    <div className={`flex flex-col gap-[4px] items-center absolute bottom-[90%] left-0 opacity-0 invisible`} id={NekoplayerIDs.Preview} ref={previewRef}>
       <div className={`${isPreviewOld ? 'w-[160px] h-[120px]' : 'w-[240px] h-[135px]'} ${isVideoProcessed ? '' : 'bg-dark'} rounded-[4px] overflow-hidden`}>
         <img src="" alt="..." className={`w-full h-full ${isVideoProcessed ? '' : 'opacity-0 invisible !h-0'}`} />
         <div className={`${isVideoProcessed ? 'opacity-0 invisible h-0' : 'h-full'} flex flex-col items-center justify-center gap-[8px]`}>
@@ -87,7 +88,7 @@ export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, p
           <p className="text-white uppercase text-center font-manrope">превью недоступні</p>
         </div>
       </div>
-      <p className="text-white font-space-grotesk">{secondsToReadable(hoveredMoment).pretty}</p>
+      <p className="text-white font-space-grotesk">{prettySeconds(hoveredMoment).pretty}</p>
     </div>
   </div>
 }

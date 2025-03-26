@@ -1,9 +1,10 @@
 'use client'
 
-import { useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
@@ -63,6 +64,27 @@ interface WatchPlayerProps extends WatchGenericProps {
 
 
 
+export const WatchCheckMobile: NextPage = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    if (window.innerWidth >= 640) {
+      router.replace(pathname)
+    } else {
+      router.replace(`${pathname}?mobile=1`)
+    }
+  }, [])
+
+
+
+  return <></>
+}
+
 export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   const currentUser = useAppSelector(state => state.user);
   const id = useId().replaceAll(':', '')
@@ -120,7 +142,7 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) =>
 
 
 
-  return <Menu className="w-full" id={id}>
+  return <Menu className="w-full" id={id} settings={{ animation: 'slide', align: 'start' }}>
     <MenuTrigger className={cn(`ui-button w-full px-[16px] py-[12px] rounded-[4px] flex items-center justify-center gap-[16px] max-sm:py-[8px]`, isChanged && 'bg-green', isFavorite && 'bg-primary max-sm:py-[8px]')} anchor>
       <MaterialSymbol icon={icon} size={24} className={cn(`text-white max-sm:text-[20px]`)} />
 
@@ -133,6 +155,7 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) =>
 
 export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   const currentUser = useAppSelector(state => state.user);
+  const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
   const [isTogetherRoomCreating, setIsTogetherRoomCreating] = useState(false)
@@ -178,13 +201,14 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
 
 
 
-  return <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
-    <Link href={'#player'} scroll className="ui-button watch-meta-action">
-      <MaterialSymbol icon="live_tv" size={24} className="text-white max-sm:text-[20px]" />
-      <p className="text-white font-manrope uppercase max-sm:text-[14px]">розпочати перегляд</p>
-    </Link>
+  return (haveEpisodes || canEditAnime) && <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
+    {haveEpisodes && <>
+      <Link href={'#player'} scroll className="ui-button watch-meta-action">
+        <MaterialSymbol icon="live_tv" size={24} className="text-white max-sm:text-[20px]" />
+        <p className="text-white font-manrope uppercase max-sm:text-[14px]">розпочати перегляд</p>
+      </Link>
 
-    {/* <button className={cn(`ui-button watch-meta-action`, isTogetherRoomCreating && 'cursor-not-allowed')} disabled={isTogetherRoomCreating} onClick={watchTogether}>
+      {/* <button className={cn(`ui-button watch-meta-action`, isTogetherRoomCreating && 'cursor-not-allowed')} disabled={isTogetherRoomCreating} onClick={watchTogether}>
       {!isTogetherRoomCreating && <>
         <MaterialSymbol icon="group" size={24} className="text-white max-sm:text-[20px]" />
         <p className="text-white font-manrope uppercase max-sm:text-[14px]">СПІЛЬНИЙ ПЕРЕГЛЯД</p>
@@ -197,6 +221,7 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
         <p className="text-grey-new font-manrope uppercase max-sm:text-[14px]">Створюємо кімнату...</p>
       </>}
     </button> */}
+    </>}
 
     {canEditAnime && <Link href={`${config.URL.baseURL}${Routes.patcher_title.path}/${hydratedAnime.anime.uuid}`} className="ui-button watch-meta-action bg-transparent border-none">
       <MaterialSymbol icon="edit" size={24} className="text-grey-new max-sm:text-[20px]" />
@@ -299,13 +324,11 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
     <div className="watch-meta-detail_outlined">
       <MaterialSymbol icon="hourglass_bottom" size={24} className="text-grey-new max-sm:text-[20px]" />
 
-      <p className="text-grey-new font-manrope flex items-center gap-[4px] max-sm:text-[14px]">
-        Наступна серія вийде:
-
-        <span className="text-white font-manrope inline">{date}</span>
-
-        {within}
-      </p>
+      <div className="flex items-center gap-[8px] flex-wrap">
+        <p className="text-grey-new font-manrope max-sm:text-[14px] whitespace-nowrap">Наступна серія вийде:</p>
+        <p className="text-white font-manrope max-sm:text-[14px]">{date}</p>
+        <p className="text-grey-new font-manrope max-sm:text-[14px]">{within}</p>
+      </div>
     </div>
   </Tooltip>
 }
@@ -353,10 +376,12 @@ export const WatchDetails: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
 }
 
 export const WatchPlayer: NextPage<WatchPlayerProps> = ({ hydratedAnime, dubbers }) => {
+  const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
+
   return <div className="flex flex-col gap-[16px]">
     <div className="w-screen h-[90svh] bg-black">
-      {hydratedAnime.anime.episodes.length > 0 && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
-      {hydratedAnime.anime.episodes.length === 0 && <div className="w-full h-full bg-dark-primary flex gap-[32px] items-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
+      {haveEpisodes && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
+      {!haveEpisodes && <div className="w-full h-full bg-dark-primary flex gap-[32px] items-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
         <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />
 
         <div className="flex flex-col gap-[8px] items-center w-full">
@@ -366,8 +391,8 @@ export const WatchPlayer: NextPage<WatchPlayerProps> = ({ hydratedAnime, dubbers
       </div>}
     </div>
 
-    <div className="wrapper items-start">
+    {haveEpisodes && <div className="wrapper items-start">
       <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
-    </div>
+    </div>}
   </div>
 }

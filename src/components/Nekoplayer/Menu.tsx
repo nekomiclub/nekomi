@@ -6,7 +6,7 @@ import { DubberCompact } from '~/interfaces/DubberIntf';
 import { cn } from '../Components'
 import StyledImage from '../StyledImage';
 
-import { IKekwPlayerContextProps, KekwPlayerContext } from './Nekoplayer';
+import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
 
@@ -24,7 +24,7 @@ interface Props {
 
 
 export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, isLastEpisode, isIdle, className, totalEpisodesCount }) {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { anime, dubbers, episode, changeEpisode, moment } = ctx;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -128,50 +128,3 @@ export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, isLas
     </DropMenu.Menu>
   </div>
 })
-
-// {/* Dubbers */}
-// <ul className="max-h-[200px] overflow-y-auto overflow-x-hidden flex flex-col gap-[4px]">
-// {dubbers.map(dubber => {
-//   const dubberEpisodes = episodes.filter(el => el.dubberID === dubber.id).sort((a, b) => a.order - b.order)
-//   let lastEpisode = 0;
-
-//   dubberEpisodes.forEach(ep => ep.order > lastEpisode ? lastEpisode = ep.order : null);
-
-// function selectDubber() {
-//   // Set same ep or if not found set first in array
-//   const sameEpisode = dubberEpisodes.find(el => el.order === episode.order);
-
-//   return changeEpisode(sameEpisode || dubberEpisodes[0], sameEpisode ? moment : 0)
-// }
-
-//   return <li className={`px-[8px] py-[4px] duration-200 flex justify-between gap-[8px] hover:bg-purple focus-visible:bg-purple rounded-[2px] w-full cursor-pointer ${episode.dubberID === dubber.id ? 'bg-purple' : ''}`} onClick={selectDubber} key={`menu-dubs_list--${dubber.id}`}>
-//     <div className="shrink-0">
-//       <StyledImage src={dubber.avatarURL} width="24px" height="24px" className="rounded-[32px] overflow-hidden" />
-//     </div>
-
-//     <p className="text-white whitespace-nowrap w-full text-start">{dubber.nameUkr}</p>
-
-//     <div className="flex gap-[4px]">
-//       <div className="bg-dark px-[4px] py-[2px] rounded-[2px]">
-//         <p className="text-white whitespace-nowrap">{lastEpisode} / {episodesCount}</p>
-//       </div>
-//     </div>
-//   </li>
-// })}
-// </ul>
-
-// {/* Divider */}
-// <span className="w-[1px] h-auto bg-darkGrey block"></span>
-
-// {/* Episodes */}
-// <ul className="max-h-[200px] overflow-y-auto overflow-x-hidden flex flex-col gap-[4px] w-fit">
-// {episodes.filter(el => el.dubberID === episode.dubberID).sort((a, b) => a.order - b.order).map(episode => {
-// function setEpisode() {
-//   changeEpisode(episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)!, 0)
-// }
-
-//   return <li className={`px-[16px] py-[4px] duration-200 hover:bg-purple flex justify-center focus-visible:bg-purple rounded-[2px] ${episode.order === order ? 'bg-purple' : ''} cursor-pointer`} onClick={setEpisode} key={`menu-eps_list--${episode.order}`}>
-//     <p className="text-white">{episode.order}</p>
-//   </li>
-// })}
-// </ul>

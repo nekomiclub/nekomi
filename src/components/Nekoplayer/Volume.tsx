@@ -8,7 +8,7 @@ import { IRenderTrackParams } from 'react-range/lib/types';
 
 import { cn } from '../Components';
 
-import { IKekwPlayerContextProps, KekwPlayerContext } from './Nekoplayer';
+import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
 
@@ -19,7 +19,7 @@ interface IRenderTrackParamsExtended extends IRenderTrackParams {
 
 
 export const NPVolume: NextPage = () => {
-  const ctx = useContext(KekwPlayerContext) as IKekwPlayerContextProps;
+  const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { videoRef, volume, isMuted } = ctx;
 
   const volumeWrapperRef = useRef<HTMLDivElement>(null)

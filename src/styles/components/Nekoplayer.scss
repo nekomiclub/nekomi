@@ -1,6 +1,6 @@
 @import "../colors.scss";
 
-#kekwplayer {
+#nekoplayer {
   &-timeline {
     &_thumb {
       opacity: 0;
@@ -15,7 +15,7 @@
 
     &:hover,
     &:focus-visible {
-      #kekwplayer-timeline_thumb {
+      #nekoplayer-timeline_thumb {
         opacity: 1;
       }
     }
