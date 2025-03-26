@@ -144,7 +144,7 @@ class ApiService {
   }
 
   /** @todo pending rework */
-  async editLibItem({ folderId, titleId }: { folderId: string, titleId: string }) {
+  async userEditLibAnime({ folderId, titleId }: { folderId: string, titleId: string }) {
     await $api.patch(`/user/me`, {
       method: 'editFolderItem',
       titleId,
@@ -153,7 +153,7 @@ class ApiService {
   }
 
   /** @todo pending rework */
-  async removeWatchProgress({ animeId }: { animeId: string }) {
+  async userRemoveWatchProgress({ animeId }: { animeId: string }) {
     await $api.patch(`/user/me`, {
       method: 'removeWatchProgress',
       titleId: animeId,

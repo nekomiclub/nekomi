@@ -149,3 +149,13 @@
     }
   }
 }
+
+.nekoplayer {
+  &-bottom {
+    &:hover {
+      #nekoplayer-timeline_track {
+        padding: 3px 0;
+      }
+    }
+  }
+}

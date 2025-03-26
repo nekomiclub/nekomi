@@ -91,8 +91,8 @@ const ProgressContinue: NextPage = ({ }) => {
         <p className="text-white text-[32px] font-space-grotesk font-bold max-sm:hidden">#{String(watchProgress.ep).padStart(2, '0')}</p>
 
         <div className="flex flex-col items-start gap-[4px]">
-          <p className="text-white font-manrope line-clamp-1 text-start max-sm:line-clamp-3" title={episodeMeta?.names.ukr}>{episodeMeta?.names.ukr ?? '—'}</p>
-          <p className="text-grey-new font-space-grotesk line-clamp-1 text-start max-sm:line-clamp-3" title={episodeMeta?.names.eng}>{episodeMeta?.names.eng ?? '—'}</p>
+          <p className="text-white font-manrope line-clamp-1 text-start max-sm:line-clamp-3" title={episodeMeta?.names.ukr}>{episodeMeta?.names.ukr ?? ''}</p>
+          <p className="text-grey-new font-space-grotesk line-clamp-1 text-start max-sm:line-clamp-3" title={episodeMeta?.names.eng}>{episodeMeta?.names.eng ?? ''}</p>
         </div>
       </div>
 
@@ -198,8 +198,8 @@ const ContinueWatch: NextPage = ({ }) => {
           <p className="text-white text-[32px] font-space-grotesk font-bold max-sm:text-[24px]">#{String(nextEpisodeOrder).padStart(2, '0')}</p>
 
           <div className="flex flex-col items-start gap-[4px]">
-            <p className="text-white font-manrope line-clamp-1 text-start max-sm:line-clamp-3" title={episodeMeta?.names.ukr}>{episodeMeta?.names.ukr ?? '—'}</p>
-            <p className="text-grey-new font-space-grotesk line-clamp-1 text-start max-sm:line-clamp-3" title={episodeMeta?.names.eng}>{episodeMeta?.names.eng ?? '—'}</p>
+            <p className="text-white font-manrope line-clamp-1 text-start max-sm:line-clamp-3" title={episodeMeta?.names.ukr}>{episodeMeta?.names.ukr ?? ''}</p>
+            <p className="text-grey-new font-space-grotesk line-clamp-1 text-start max-sm:line-clamp-3" title={episodeMeta?.names.eng}>{episodeMeta?.names.eng ?? ''}</p>
           </div>
         </div>
       </button>

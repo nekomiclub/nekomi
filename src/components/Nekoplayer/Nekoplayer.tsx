@@ -12,6 +12,8 @@ import Anime from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { EpisodeQualityType } from '~/interfaces/Interfaces';
 import { LocalStorageKeys } from '~/interfaces/types';
+import API from '~/services/ApiService';
+import prettySeconds from '~/utils/pretty-seconds';
 import { useAppSelector } from '../../hooks/redux';
 import { ITitleEpisode } from '../../interfaces/ITitle';
 import { cn } from '../Components';
@@ -56,8 +58,9 @@ interface NekoplayerProps {
 
 //! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
 const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, setOutEp, outEpisode, disableScreens }) => {
-  const [stage, setStage] = useState<PlayerStageType>('setup')
   const user = useAppSelector(state => state.user);
+
+  const [stage, setStage] = useState<PlayerStageType>('setup')
 
 
 
@@ -150,7 +153,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
 
   //! -------------- DEFAULT EFFECTS --------------
-  //* Player vitals, video loading handling
+  // Player vitals, video loading handling
   useEffect(() => {
     anime.episodes.forEach(ep => {
       if (ep.order > titleMaxEpisode.current) titleMaxEpisode.current = ep.order
@@ -169,14 +172,16 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     };
   }, [])
 
-  //* Patch user watch progress
+  // Patch user watch progress on beforeunload & visibilitychange
   useEffect(() => {
-    if (!user.id) return;
-
     // Patch watch progress
     window.addEventListener('beforeunload', patchWatchProgress)
-    document.addEventListener('visibilitychange', () => console.log('visibilitychange'))
-  }, [user])
+    document.addEventListener('visibilitychange', patchWatchProgress)
+
+    return () => {
+      patchWatchProgress()
+    }
+  }, [])
 
 
 
@@ -194,7 +199,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
       return
     }
 
-    const progress = getPlayerProgress()
+    const progress = getCurrentProgressRecord()
 
     if (progress && progress.moment > 10) {
       // Progress is present, purpose it to init with
@@ -216,20 +221,24 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
   /** Load user progress */
   async function loadProgress() {
-    const progress = getPlayerProgress();
-    if (!progress) return loadDefault();
+    const record = getCurrentProgressRecord();
+    if (!record) return loadDefault();
 
-    const episode = anime.episodes.find(el => el.dubberID === progress.dub && el.order === progress.ep);
+    const episode = anime.episodes.find(el => el.dubberID === record.dub && el.order === record.ep);
     if (!episode) return loadDefault();
 
     setCurrentScreen('none')
-    await changeEpisode(episode, progress.moment);
+    await changeEpisode(episode, record.moment);
     setStage('operational')
+
+    console.debug(`[nekoplayer]: User watch progress loaded. [dubber: ${record.dub}; episode: ${record.ep} (${prettySeconds(record.moment).pretty})]`)
   }
 
   /** Delete title from user progress & proceed */
   async function passProgress() {
     setCurrentScreen('none')
+
+    console.debug(`[nekoplayer]: User delete watch progress`)
 
     await Promise.all([
       await deletePlayerProgress(),
@@ -240,30 +249,22 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   /** Setup with default player states */
   async function loadDefault() {
     const episode = anime.episodes[0];
-    const video = videoRef.current;
-    let i = 0;
 
     setCurrentScreen('none')
     await changeEpisode(episode, 0, true);
     setStage('operational');
 
-    const interval = setInterval(() => {
-      if (i > 5) return clearInterval(interval);
-
-      video?.pause();
-
-      i++;
-    }, 50)
+    console.debug(`[nekoplayer]: Default watch progress loaded`)
   }
 
   /** Update user watch progress */
   async function patchWatchProgress() {
     if (!user.id) return;
 
-    const playerData = GetNekoplayerData();
-    const currentTitle = playerData.find(el => el.id === anime.uuid)!;
-    const viewtime = viewtimeRef.current;
+    const record = getCurrentProgressRecord({ localOnly: true });
+    if (!record) return
 
+    const viewtime = viewtimeRef.current;
     // Ignore patching less than 5 seconds of viewtime
     if (viewtime < 5) return;
 
@@ -271,9 +272,9 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
       await $api.patch('/user', {
         method: 'patchWatchProgress',
         titleId: anime.uuid,
-        dubberID: currentTitle.dub,
-        episodeOrder: currentTitle.ep,
-        progress: currentTitle.moment,
+        dubberID: record.dub,
+        episodeOrder: record.ep,
+        progress: record.moment,
         viewtime,
       })
 
@@ -281,12 +282,14 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     } catch (e) {
       HandleClientError(e)
     }
+
+    console.debug(`[nekoplayer]: Watch progress have been updated. [dubber: ${record.dub}; episode: ${record.ep} (${prettySeconds(record.moment).pretty})]`)
   }
 
 
 
   //! -------------- OPERATIONAL STAGE --------------
-  //* Handle video events
+  // Handle video events
   useEffect(() => {
     if (stage !== 'operational') return;
 
@@ -448,7 +451,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     }
   }, [stage])
 
-  //* Handle video events & save progress
+  // Handle video events & save progress
   useEffect(() => {
     const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
     const preview = document.querySelector(`#${NekoplayerIDs.Preview}`) as HTMLDivElement
@@ -488,7 +491,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     }
   }, [stage, episode])
 
-  //* Handle cursor visibility in idle/active modes
+  // Handle cursor visibility in idle/active modes
   useEffect(() => {
     if (stage !== 'operational') return;
 
@@ -500,7 +503,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     }
   }, [stage, isIdle])
 
-  //* Handle keyboard
+  // Handle keyboard
   useEffect(() => {
     if (stage !== 'operational') return;
 
@@ -610,14 +613,14 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     }
   }, [stage, isFullscreen])
 
-  //* Handle quality changing
+  // Handle quality changing
   useEffect(() => {
     if (stage !== 'operational' || !episode) return;
 
     changeVideoSrc(episode.qualities[quality] ?? '', moment)
   }, [stage, quality])
 
-  //* Handle video buffering & screens
+  // Handle video buffering & screens
   useEffect(() => {
     const video = videoRef.current;
 
@@ -675,30 +678,14 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     }
   }, [duration, moment])
 
-  //* Handle track expanding on hover
-  //TODO Can be refactored into css hover
-  useEffect(() => {
-    const bottom = bottomRef.current;
-    const track = document.querySelector(`#${NekoplayerIDs.TimelineTrack}`) as HTMLDivElement | undefined
-    if (stage !== 'operational' || !bottom || !track) return;
-
-    bottom.addEventListener('mouseenter', () => {
-      track.style.padding = '3px 0';
-    })
-
-    bottom.addEventListener('mouseleave', () => {
-      track.style.padding = '0';
-    })
-  }, [stage])
-
-  //* Handle screen change
+  // Handle screen change
   useEffect(() => {
     // Hide controls under progress_continue screen, otherwise show them
 
     setIsControlsHiddenUnderScreen(currentScreen === 'progress_continue');
   }, [currentScreen])
 
-  //* Sync episode
+  // Sync episode
   useEffect(() => {
     if (!outEpisode) return;
 
@@ -708,19 +695,17 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
   //* -------------- HANDLERS --------------
   /** Get user progress */
-  function getPlayerProgress(): NekoplayerLocalstorageRecord | null {
+  function getCurrentProgressRecord(props?: { localOnly?: boolean }): NekoplayerLocalstorageRecord | null {
     // Get progress from user watch progress
-    if (user.id) {
-      const currentTitle = user.watchProgress.find(el => el.titleID === anime.uuid);
+    if (user.id && !props?.localOnly) {
+      const record = user.watchProgress.find(el => el.titleID === anime.uuid);
 
       // Procced if title saved, otherwise procced by default
-      if (currentTitle) {
-        return {
-          dub: currentTitle.dubberID,
-          ep: currentTitle.episodeOrder,
-          id: currentTitle.titleID,
-          moment: currentTitle.progress
-        }
+      if (record) return {
+        dub: record.dubberID,
+        ep: record.episodeOrder,
+        id: record.titleID,
+        moment: record.progress
       }
     }
 
@@ -728,42 +713,33 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     const localData = GetNekoplayerData()
     if (!localData) return null;
 
-    const currentTitle = localData.find(el => el.id === anime.uuid)
-    if (!currentTitle) return null;
+    const record = localData.find(el => el.id === anime.uuid)
+    if (!record) return null;
 
-    return currentTitle
+    return record
   }
 
   /** Update user progress */
-  function updatePlayerProgress(payload: NekoplayerLocalstorageRecord) {
+  function updatePlayerProgress(record: NekoplayerLocalstorageRecord) {
     let items = GetNekoplayerData()
-    items = items.filter(el => el.id !== payload.id);
-    items.push(payload)
+    items = [...items.filter(el => el.id !== record.id), record];
 
     localStorage.setItem(LocalStorageKeys.NekoplayerData, JSON.stringify(items))
   }
 
-  /** Delete user progress */
+  /** Delete user progress record */
   async function deletePlayerProgress() {
-    const data = GetNekoplayerData()
+    const records = GetNekoplayerData();
+    const record = getCurrentProgressRecord()
 
     try {
-      console.log('remove progress')
-      // await $api.patch('/user', {
-      //   method: 'patchWatchProgress',
-      //   titleId: anime.uuid,
-      //   dubberID: anime.episodes[0].dubberID,
-      //   episodeOrder: anime.episodes[0].order,
-      //   progress: 0,
-      //   viewtime: 0,
-      // })
-
-      viewtimeRef.current = 0;
+      await API.userRemoveWatchProgress({ animeId: anime.uuid });
     } catch (e) {
       HandleClientError(e)
     }
 
-    localStorage.setItem(LocalStorageKeys.NekoplayerData, JSON.stringify(data.filter(el => el.id !== anime.uuid)))
+    console.debug(`[nekoplayer]: User watch progress deleted. [dubber: ${record?.dub}]`)
+    localStorage.setItem(LocalStorageKeys.NekoplayerData, JSON.stringify(records.filter(record => record.id !== anime.uuid)))
   }
 
   /** Change dub, ep & moment
@@ -952,7 +928,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
       <KekwPlayerMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} isLastEpisode={isLastEpisode} totalEpisodesCount={anime.episodesCount ?? titleMaxEpisode.current} isIdle={isIdle} />
 
       {/* Bottom */}
-      <div className={cn(`flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[12px] backdrop-blur-[4px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .6))' }} ref={bottomRef}>
+      <div className={cn(`nekoplayer-bottom flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[12px] backdrop-blur-[4px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .6))' }} ref={bottomRef}>
         <div className="flex items-center gap-[16px]">
           <NPlay />
           <NPVolume />
@@ -962,9 +938,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
         <div className="flex items-center gap-[12px]">
           <KekwPlayerPiP />
-
           <KekwPlayerSettings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} isIdle={isIdle} />
-
           <KekwPlayerFullscreen />
         </div>
       </div>

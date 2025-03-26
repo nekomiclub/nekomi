@@ -212,7 +212,7 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydra
 
       setIsChecked(prev => !prev);
 
-      await API.editLibItem({ titleId: hydratedAnime.anime.uuid, folderId: currentUser.libs.find(el => el.type === type)!.id })
+      await API.userEditLibAnime({ titleId: hydratedAnime.anime.uuid, folderId: currentUser.libs.find(el => el.type === type)!.id })
       const state = JSON.parse(JSON.stringify(currentUser)) as IUserState;
 
       const lib = state.libs.find(el => el.type === type)!
