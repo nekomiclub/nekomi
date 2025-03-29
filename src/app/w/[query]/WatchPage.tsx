@@ -10,7 +10,7 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
-import { getUTC, wordDeclination } from '~/components/handlers';
+import { getUTC } from '~/components/handlers';
 import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
@@ -294,28 +294,29 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
     } else if (utc.date - 1 === now.date) {
       // tomorrow
       setDate('завтра')
-      setWithin(`(в ${utc.hrs}:${utc.mins})`)
+      // setWithin(`(в ${utc.hrs}:${utc.mins})`)
     } else {
       // in future
       const offset = utc.date - now.date
 
       setDate(`${String(utc.date).padStart(2, '0')}.${String(utc.month).padStart(2, '0')}`)
-      setWithin(`(через ${offset} ${wordDeclination(offset, ['день', 'дні', 'днів'])})`)
+      // setWithin(`(через ${offset} ${wordDeclination(offset, ['день', 'дні', 'днів'])})`)
     }
   }, [])
 
 
 
+  /** @todo fix */
   function setTodayWithin() {
-    if (getUTC().timestamp > getUTC(timestamp).timestamp) return setWithin(`(вже вийшла)`)
+    // if (getUTC().timestamp > getUTC(timestamp).timestamp) return setWithin(`(вже вийшла)`)
 
-    const diffMs = Math.abs(getUTC(timestamp).timestamp - getUTC().timestamp);
+    // const diffMs = Math.abs(getUTC(timestamp).timestamp - getUTC().timestamp);
 
-    const hrs = Math.floor(diffMs / (1000 * 60 * 60));
-    const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+    // const hrs = Math.floor(diffMs / (1000 * 60 * 60));
+    // const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    // const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
 
-    setWithin(`(через ${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')})`)
+    // setWithin(`(через ${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')})`)
   }
 
 
@@ -326,8 +327,9 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
 
       <div className="flex items-center gap-[8px] flex-wrap">
         <p className="text-grey-new font-manrope max-sm:text-[14px] whitespace-nowrap">Наступна серія вийде:</p>
-        <p className="text-white font-manrope max-sm:text-[14px]">{date}</p>
-        <p className="text-grey-new font-manrope max-sm:text-[14px]">{within}</p>
+        <p className="text-white font-space-grotesk max-sm:text-[14px]">{date}</p>
+        {/* // TODO: fix */}
+        {/* <p className="text-grey-new font-manrope max-sm:text-[14px]">{within}</p> */}
       </div>
     </div>
   </Tooltip>

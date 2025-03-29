@@ -1,22 +1,17 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
-import { createStringID } from '~/utils/create-string-id';
-import { config } from '../config';
-import { useAppDispatch } from '../hooks/redux';
-import { IWS_OnlineChanged, IWS_SiteConnection, Message, Request, Response } from '../interfaces/IWS';
-import internalsSlice from '../store/reducers/internalsSlice';
 import { IUserState } from '../store/reducers/userSlice';
 import { setupStore } from '../store/store'
 
 import { HandleClientError } from './Errors';
 import { randomNumber } from './handlers';
-import { $api, signCSRF } from './http';
+import { $api } from './http';
 import { UIReportModal } from './UI/Report';
 
 
@@ -99,102 +94,102 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
 
 /** Setup redux internals state */
 const SetupIntertnals: NextPage = () => {
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
-  const [ws, setWs] = useState<WebSocket>()
+  // const [ws, setWs] = useState<WebSocket>()
 
 
 
-  // Establish websocket connection
-  useEffect(() => {
-    if (typeof window === 'undefined' || ws) return;
+  // // Establish websocket connection
+  // useEffect(() => {
+  //   if (typeof window === 'undefined' || ws) return;
 
-    const websocket = new WebSocket(config.URL.apiWS);
+  //   const websocket = new WebSocket(config.URL.apiWS);
 
-    setWs(websocket)
+  //   setWs(websocket)
 
-    let SID = sessionStorage.getItem('SID')
+  //   let SID = sessionStorage.getItem('SID')
 
-    if (!SID) {
-      SID = createStringID(8)
-      sessionStorage.setItem('SID', SID);
-    }
+  //   if (!SID) {
+  //     SID = createStringID(8)
+  //     sessionStorage.setItem('SID', SID);
+  //   }
 
-    // Send presence request
-    websocket.onopen = () => {
-      try {
-        sendPresenceRequest(websocket, SID || 'SID_INVALID')
-      } catch (e) {
-        HandleClientError(e);
-      }
-    }
-  }, [])
+  //   // Send presence request
+  //   websocket.onopen = () => {
+  //     try {
+  //       sendPresenceRequest(websocket, SID || 'SID_INVALID')
+  //     } catch (e) {
+  //       HandleClientError(e);
+  //     }
+  //   }
+  // }, [])
 
-  // Send presence websocket request
-  useEffect(() => {
-    if (!ws || typeof window === 'undefined') return;
+  // // Send presence websocket request
+  // useEffect(() => {
+  //   if (!ws || typeof window === 'undefined') return;
 
-    const SID = sessionStorage.getItem('SID')
+  //   const SID = sessionStorage.getItem('SID')
 
-    // Handle broadcast
-    ws.onmessage = data => {
-      try {
-        const message = JSON.parse(data.data) as Message;
+  //   // Handle broadcast
+  //   ws.onmessage = data => {
+  //     try {
+  //       const message = JSON.parse(data.data) as Message;
 
-        switch (message.type) {
-          case 'error': {
-            console.error('Websocket error occured');
-            console.error(message.payload);
+  //       switch (message.type) {
+  //         case 'error': {
+  //           console.error('Websocket error occured');
+  //           console.error(message.payload);
 
-            break;
-          }
+  //           break;
+  //         }
 
-          case 'online_changed': {
-            const { payload } = message as Response<IWS_OnlineChanged>;
+  //         case 'online_changed': {
+  //           const { payload } = message as Response<IWS_OnlineChanged>;
 
-            dispatch(internalsSlice.actions.reducer({
-              online: payload.online,
-              headerHeight: 92
-            }))
+  //           dispatch(internalsSlice.actions.reducer({
+  //             online: payload.online,
+  //             headerHeight: 92
+  //           }))
 
-            break;
-          }
+  //           break;
+  //         }
 
-          case 'online_poll': {
-            sendPresenceRequest(ws, SID || 'SID_INVALID');
-            break;
-          }
-        }
-      } catch (e) {
-        HandleClientError(e);
-      }
-    }
+  //         case 'online_poll': {
+  //           sendPresenceRequest(ws, SID || 'SID_INVALID');
+  //           break;
+  //         }
+  //       }
+  //     } catch (e) {
+  //       HandleClientError(e);
+  //     }
+  //   }
 
-    // Send disconnect request
-    window.addEventListener('beforeunload', () => {
-      const payload: Request<IWS_SiteConnection> = {
-        type: 'site_disconnected',
-        payload: {
-          SID: SID || 'SID_INVALID'
-        },
-        CSRF: signCSRF()
-      }
+  //   // Send disconnect request
+  //   window.addEventListener('beforeunload', () => {
+  //     const payload: Request<IWS_SiteConnection> = {
+  //       type: 'site_disconnected',
+  //       payload: {
+  //         SID: SID || 'SID_INVALID'
+  //       },
+  //       CSRF: signCSRF()
+  //     }
 
-      ws.send(JSON.stringify(payload));
-    })
-  }, [ws])
+  //     ws.send(JSON.stringify(payload));
+  //   })
+  // }, [ws])
 
-  function sendPresenceRequest(ws: WebSocket, SID: string) {
-    const payload: Request<IWS_SiteConnection> = {
-      type: 'site_connected',
-      payload: {
-        SID
-      },
-      CSRF: signCSRF()
-    }
+  // function sendPresenceRequest(ws: WebSocket, SID: string) {
+  //   const payload: Request<IWS_SiteConnection> = {
+  //     type: 'site_connected',
+  //     payload: {
+  //       SID
+  //     },
+  //     CSRF: signCSRF()
+  //   }
 
-    ws.send(JSON.stringify(payload))
-  }
+  //   ws.send(JSON.stringify(payload))
+  // }
 
 
 
