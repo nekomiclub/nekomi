@@ -1,6 +1,6 @@
 import { $api } from '~/components/http';
 import { config } from '~/config';
-import { AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
+import { AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
 
 
@@ -199,6 +199,17 @@ class ApiService {
 
   async getAnimeAll() {
     const { data } = await $api.get<AnimeGetAll>(`/anime/all`);
+
+    return data;
+  }
+
+  async putAnimePoster({ file, uuid }: AnimePutPosterProps) {
+    const formData = new FormData();
+
+    formData.set('file', file)
+    formData.set('uuid', uuid)
+
+    const { data } = await $api.put<AnimePutPoster>(`/anime/poster`, formData)
 
     return data;
   }

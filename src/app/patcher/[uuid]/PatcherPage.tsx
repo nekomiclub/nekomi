@@ -572,12 +572,9 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
     try {
       setIsUploading(true)
 
-      // TODO: Upload poster
-      await new Promise(res => setTimeout(() => {
-        res(1)
-      }, 3000))
+      const { url } = await API.putAnimePoster({ file, uuid: hydratedAnime.anime.uuid });
 
-      setPosterURL('https://media.nekomi.club/6826defd-9f64-4508-80a4-c075313b9c6b')
+      setPosterURL(url)
       NotifySuccess({ title: 'Завантажено!', message: 'Новий постер завантажено' })
       setIsUploading(false);
     } catch (e) {

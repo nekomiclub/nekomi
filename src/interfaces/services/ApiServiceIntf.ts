@@ -203,3 +203,14 @@ export interface AnimeGetAll {
   /** With country only */
   updated: number
 }
+
+export interface AnimePutPosterProps {
+  file: File
+
+  /** Anime uuid */
+  uuid: string
+}
+
+export interface AnimePutPoster {
+  url: string
+}
