@@ -11,6 +11,7 @@ export interface PatcherEpisode {
 
   status: PatcherEpisodeStatusType
   progress: number
-  order: number
+  stackOrder: number
   newUpload: boolean
+  q2160?: boolean
 }

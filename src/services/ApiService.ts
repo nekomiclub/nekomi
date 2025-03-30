@@ -1,6 +1,6 @@
-import { $api } from '~/components/http';
+import { $api, $upload } from '~/components/http';
 import { config } from '~/config';
-import { AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
+import { AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
 
 
@@ -212,6 +212,35 @@ class ApiService {
     const { data } = await $api.put<AnimePutPoster>(`/anime/poster`, formData)
 
     return data;
+  }
+
+  async postAnimeEpisode({ dubberId, file, order, qualities, uuid }: AnimePostEpisodeProps, params?: AnimePostEpisodeParams) {
+    const formData = new FormData();
+
+    formData.set('file', file)
+    formData.set('uuid', uuid)
+    formData.set('dubberId', dubberId)
+    formData.set('order', `${order}`)
+    formData.set('qualities', JSON.stringify(qualities))
+
+    const { data } = await $upload.post<AnimePostEpisode>(`/anime/episode`, formData, {
+      onUploadProgress: params?.onUploadProgress,
+      headers: params?.session ? {
+        'Cookie': `${config.vars.SessionCookie}=${params?.session}`
+      } : undefined
+    })
+
+    return data;
+  }
+
+  async deleteAnimeEpisode({ dubberId, order, uuid }: AnimeDeleteEpisodeProps) {
+    await $api.delete(`/anime/episode`, {
+      data: {
+        dubberId,
+        order,
+        uuid
+      }
+    })
   }
 }
 

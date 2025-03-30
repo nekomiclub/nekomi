@@ -1,6 +1,9 @@
-import { HydratedAnime } from '../AnimeIntf'
+import { AxiosProgressEvent } from 'axios'
+
+import { AnimeEpisode, HydratedAnime } from '../AnimeIntf'
 import { DubberCompact } from '../DubberIntf'
 import { IDubber, TDubberMemberRole } from '../IDubber'
+import { TEpisodeQuality } from '../Interfaces'
 import { TRoleCapability } from '../IRoles'
 import { ITitle } from '../ITitle'
 import { IUser, IUserTogetherRoom } from '../IUser'
@@ -213,4 +216,27 @@ export interface AnimePutPosterProps {
 
 export interface AnimePutPoster {
   url: string
+}
+
+export interface AnimeDeleteEpisodeProps {
+  uuid: string
+  dubberId: string
+  order: number
+}
+
+export interface AnimePostEpisodeProps {
+  uuid: string
+  file: File
+  order: number
+  dubberId: string
+  qualities: TEpisodeQuality[]
+}
+
+export interface AnimePostEpisode {
+  episode: AnimeEpisode
+}
+
+export interface AnimePostEpisodeParams {
+  session?: string
+  onUploadProgress?(e: AxiosProgressEvent): void
 }

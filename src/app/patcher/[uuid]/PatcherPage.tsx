@@ -26,6 +26,7 @@ import { alphabeticSort } from '~/utils/alphabetic-sort';
 import { createStringID } from '~/utils/create-string-id';
 import { DubberCompactMapper } from '~/utils/data-mappers';
 
+import PatcherStack from './PatcherStack';
 import { PatcherEpisode } from './PatcherTypes';
 
 
@@ -105,6 +106,11 @@ interface EpisodesDubbing {
 
 interface PatcherEpisodesDubbingProps extends PatcherGenerciProps, EpisodesDubbing {
   selectedDubberId: string
+  deleteEpisode(id: string): Promise<void>
+}
+
+interface PatcherDubbedEpisodeProps extends PatcherEpisode {
+  deleteEpisode(id: string): Promise<void>
 }
 
 type SaveMetaStatusType = 'default' | 'error' | 'saving' | 'saved' | 'noChanges';
@@ -276,7 +282,6 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
 export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, hydratedAnime, dubbers: parsedDubbers }) => {
   const canSeriesUpload = capabilities.canSeriesUpload;
-  const canUploadQ2160 = capabilities.canUploadQ2160;
 
   const [order, setOrder] = useState<UIFieldState>({ initialValue: '' })
   const [selectedDubberId, setSelectedDubberId] = useState(parsedDubbers[0]?.id ?? '')
@@ -287,6 +292,14 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
   const [processQ2160, setProcessQ2160] = useState<boolean>(false)
   const [filename, setFilename] = useState('')
   const [canUpload, setCanUpload] = useState(false)
+
+  const [Stack] = useState(new PatcherStack({
+    anime: hydratedAnime.anime,
+    episodes,
+    session: '',
+    patchEpisode: patchEpisodeState,
+    throwError: throwStackError
+  }))
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -358,7 +371,7 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
       id: createStringID(6),
       File: file,
       newUpload: true,
-      order: -1,
+      stackOrder: -1,
       progress: -1,
       status: 'pending',
       episode: {
@@ -377,7 +390,35 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
 
     setProcessQ2160(false)
     setEpisodes([...episodes, episode])
+
+    Stack.append(episode)
   }
+
+  function throwStackError(e: any) {
+    HandleClientError(e);
+  }
+
+  function patchEpisodeState(episode: PatcherEpisode) {
+    setEpisodes([...episodes.filter(el => el.id !== episode.id), episode])
+  }
+
+  async function deleteEpisode(id: string) {
+    const episode = episodes.find(el => el.id === id);
+    if (!episode) return NotifyError({ title: 'Не знайдено', message: 'Ми не знайшли епізод який ти хочеш видалити' })
+
+    try {
+      setEpisodes(episodes.filter(el => el.id !== id));
+      Stack.remove(id);
+
+      await API.deleteAnimeEpisode({ dubberId: episode.episode.dubberID, order: episode.episode.order, uuid: hydratedAnime.anime.uuid })
+      NotifySuccess({ title: 'Видалено!', message: 'Ми видалили цей епізод' })
+    } catch (e) {
+      HandleClientError(e)
+    }
+  }
+
+
+  useEffect(() => console.log(episodes), [episodes])
 
 
 
@@ -416,12 +457,12 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
     <section className="flex flex-col gap-[32px]">
       {/* Render selected dub */}
       {[episodesDubbing.find(el => el.dubber.id === selectedDubberId)].map((dub) => {
-        return dub && <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
+        return dub && <PatcherEpisodesDubbing deleteEpisode={deleteEpisode} dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
       })}
 
       {/* Render other dubs */}
       {episodesDubbing.filter(el => el.dubber.id !== selectedDubberId).toSorted((a, b) => alphabeticSort(a.dubber.nameUkr, b.dubber.nameUkr)).map((dub) => {
-        return <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
+        return <PatcherEpisodesDubbing deleteEpisode={deleteEpisode} dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
       })}
     </section>
   </section>
@@ -793,7 +834,7 @@ const PatcherEpisodesUploadButton: NextPage<PatcherEpisodesUploadButtonProps> = 
   </div>
 }
 
-const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber, episodes, hydratedAnime, selectedDubberId }) => {
+const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber, episodes, hydratedAnime, selectedDubberId, deleteEpisode }) => {
   const [maximumEpisode, setMaximumEpisode] = useState(0);
   const [collapsed, setCollapsed] = useState(true);
 
@@ -829,26 +870,46 @@ const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber,
 
     <div className={cn(`flex flex-col gap-[4px] overflow-y-auto duration-200`, collapsed ? 'max-h-0' : 'max-h-[600px]')}>
       {episodes.toSorted((a, b) => b.episode.order - a.episode.order).map(ep => {
-        return <PatcherDubbedEpisode {...ep} key={`patcherepisode-${ep.id}`} />
+        return <PatcherDubbedEpisode {...ep} deleteEpisode={deleteEpisode} key={`patcherepisode-${ep.id}`} />
       })}
     </div>
   </div>
 }
 
-const PatcherDubbedEpisode: NextPage<PatcherEpisode> = ({ File, episode, id, newUpload, order, progress, status }) => {
-  return <div className="w-full px-[16px] py-[12px] rounded-[4px] border border-dark-light bg-dark-medium flex items-center justify-between gap-[24px]">
+const PatcherDubbedEpisode: NextPage<PatcherDubbedEpisodeProps> = ({ File, episode, id, newUpload, stackOrder, progress, status, deleteEpisode }) => {
+  return <div className="w-full px-[16px] py-[12px] rounded-[4px] border border-dark-light flex items-center justify-between gap-[24px]">
     <div className="flex items-center gap-[8px]">
       <p className="text-white text-[20px] font-space-grotesk font-bold w-[80px]">#{String(episode.order).padStart(2, '0')}</p>
 
-      <p className="text-white">status: {status}</p>
-      <p className="text-white">progress: {progress}</p>
-      <p className="text-white">order: {order}</p>
-      <p className="text-white">newUpload: {String(newUpload)}</p>
+      <div className="flex items-center gap-[8px]">
+        {status === 'pending' && <>
+          <MaterialSymbol icon="pace" size={20} className="text-orange" />
+
+          <p className="text-grey-new font-manrope">В черзі на завантаження:</p>
+          <p className="text-grey-new text-[14px] font-manrope">{File?.name}</p>
+          <p className="text-grey-new text-[14px] font-manrope">{`>${stackOrder}`}</p>
+        </>}
+
+        {status === 'uploading' && <>
+          <MaterialSymbol icon="clock_loader_20" size={20} className="text-green" />
+
+          <p className="text-grey-new font-manrope">Завантажується:</p>
+          <p className="text-grey-new text-[14px] font-space-grotesk">{progress.toFixed(2)}%</p>
+        </>}
+
+        {status === 'uploaded' && <Link className="flex items-center gap-[8px]" href={episode.qualities.q1080} target="_blank">
+          <MaterialSymbol icon="play_arrow" size={20} className="text-primary" fill />
+
+          <p className="text-white font-manrope">Переглянути</p>
+
+          {newUpload && <p className="text-grey-new text-[14px] font-manrope">Завантажено!</p>}
+        </Link>}
+      </div>
     </div>
 
-    <button className="p-[4px]">
+    {status !== 'uploading' && <button className="p-[4px]" onClick={() => deleteEpisode(id)}>
       <MaterialSymbol icon="delete" size={20} className="text-grey-new" />
-    </button>
+    </button>}
   </div>
 }
 
@@ -869,7 +930,7 @@ export function AnimeEpisodeToPatcherEpisode(episode: AnimeEpisode): PatcherEpis
     episode,
     newUpload: false,
     File: null,
-    order: -1,
+    stackOrder: -1,
     progress: -1,
     status: 'uploaded'
   }
