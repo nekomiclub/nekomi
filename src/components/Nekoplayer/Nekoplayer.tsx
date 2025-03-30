@@ -5,6 +5,7 @@ import '~/styles/components/Nekoplayer.scss';
 import { useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
 import { NextPage } from 'next';
+import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
 
 import Anime from '~/interfaces/AnimeIntf';
@@ -104,12 +105,12 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  // useIdleTimer({
-  //   timeout: 3000,
-  //   throttle: 500,
-  //   onIdle: () => setIsIdle(true),
-  //   onAction: () => setIsIdle(false)
-  // })
+  useIdleTimer({
+    timeout: 3000,
+    throttle: 500,
+    onIdle: () => setIsIdle(true),
+    onAction: () => setIsIdle(false)
+  })
 
 
 
@@ -791,8 +792,14 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     moment = moment || 0;
 
     const video = videoRef.current;
-
     if (!video) return;
+
+    // TODO: blob it
+    // const videoRes = await fetch(src);
+    // const blob = await videoRes.blob();
+
+    // URL.revokeObjectURL(video.src);
+    // video.setAttribute('src', URL.createObjectURL(blob));
 
     video.setAttribute('src', src);
 

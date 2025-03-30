@@ -135,9 +135,9 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
   const [nameEng, setNameEng] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.eng })
   const [nameAlt, setNameAlt] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.alt.join(', ') })
   const [malId, setMalId] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.malId) })
-  const [scoreImdb, setScoreImdb] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.imdb) })
-  const [scoreMal, setScoreMal] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.mal) })
-  const [scoredByMal, setScoredByMal] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.malScoredBy) })
+  const [scoreIMDB, setScoreIMDB] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.imdb) })
+  const [scoreMAL, setScoreMAL] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.mal) })
+  const [malScoredBy, setMalScoredBy] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.malScoredBy) })
   const [episodesCount, setEpisodesCount] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.episodesCount) })
   const [year, setYear] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.year) })
   const [studios, setStudios] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.studios.map(el => el.name).join(', ') })
@@ -145,31 +145,55 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
   const [description, setDescription] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.description) })
   const [details, setDetails] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.details) })
 
-  const fieldsData = [nameUkr, nameEng, nameAlt, malId, scoreImdb, scoreMal, scoredByMal, episodesCount, year, studios, genres, description, details]
-  const fieldsSetters = [setNameUkr, setNameEng, setNameAlt, setMalId, setScoreImdb, setScoreMal, setScoredByMal, setEpisodesCount, setYear, setStudios, setGenres, setDescription, setDetails]
+  const fieldsData = [nameUkr, nameEng, nameAlt, malId, scoreIMDB, scoreMAL, malScoredBy, episodesCount, year, studios, genres, description, details]
+  const fieldsSetters = [setNameUkr, setNameEng, setNameAlt, setMalId, setScoreIMDB, setScoreMAL, setMalScoredBy, setEpisodesCount, setYear, setStudios, setGenres, setDescription, setDetails]
 
   // Selects
   const [status, setStatus] = useState<AnimeStatusType>(hydratedAnime.anime.status)
   const [season, setSeason] = useState<AnimeSeasonType>(hydratedAnime.anime.season)
   const [mediaType, setMediaType] = useState<AnimeMediaType>(hydratedAnime.anime.media)
   const [rate, setRate] = useState<AnimeRateType>(hydratedAnime.anime.rate)
+  const [posterAdaptedId, setPosterAdaptedId] = useState<string>(hydratedAnime.anime.posterAdapt ?? '')
 
   // Checkboxes
-  const [malSync, setMalSync] = useState<boolean>(hydratedAnime.anime.malId ? !Boolean(hydratedAnime.anime.stopSync.mal) : false)
-  const [shikimoriSync, setShikimoriSync] = useState<boolean>(hydratedAnime.anime.malId ? !Boolean(hydratedAnime.anime.stopSync.mal) : false)
+  const [malSync, setMalSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.mal : false)
+  const [shikimoriSync, setShikimoriSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.shikimori : false)
 
 
 
   async function save() {
     try {
-      if (!fieldsData.some(el => el.status === 'changes_pending')) return setSaveStatus('noChanges')
+      // if (!fieldsData.some(el => el.status === 'changes_pending')) return setSaveStatus('noChanges')
+
+
 
       setSaveStatus('saving')
 
-      // TODO: Send patch request
-      await new Promise(res => setTimeout(() => {
-        res(1)
-      }, 3000))
+      await API.patchAnime({
+        uuid: hydratedAnime.anime.uuid,
+        nameUkr: m(nameUkr),
+        nameEng: m(nameEng),
+        description: m(description),
+        details: m(details),
+
+        scoreIMDB: mn(scoreIMDB),
+        malId: mn(malId),
+        scoreMAL: mn(scoreMAL),
+        episodesCount: mn(episodesCount),
+        malScoredBy: mn(malScoredBy),
+        year: mn(year),
+
+        nameAlt: ma(nameAlt),
+        studios: ma(studios),
+        genres: ma(genres),
+
+        status: ms(status, hydratedAnime.anime.status),
+        season: ms(season, hydratedAnime.anime.season),
+        media: ms(mediaType, hydratedAnime.anime.media),
+        rate: ms(rate, hydratedAnime.anime.rate),
+
+        posterAdapt: ms(posterAdaptedId, hydratedAnime.anime.posterAdapt ?? ''),
+      })
 
       fieldsData.forEach((field, i) => {
         if (field.status !== 'changes_pending') return;
@@ -246,9 +270,9 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         <PatcherField state={nameEng} stateSetter={setNameEng} title="Назва Англійською" disabled={!capabilities.canEdit} symbolsLimited={256} />
         {capabilities.canEdit && <PatcherField state={nameAlt} stateSetter={setNameAlt} fieldType="textarea" title="Альтернативні назви" note="(Японська..., через кому)" disabled={!capabilities.canEdit} symbolsLimited={256} />}
         <PatcherField state={malId} stateSetter={setMalId} title="MyAnimeList ID" disabled={!capabilities.canEdit} type="number" />
-        <PatcherField state={scoreImdb} stateSetter={setScoreImdb} title="Рейтинг IMDB" note="(0 - 10)" disabled={!capabilities.canEdit} type="number" />
-        <PatcherField state={scoreMal} stateSetter={setScoreMal} title="Рейтинг MyAnimeList" note="(0 - 10)" autosync={malSync} disabled={!capabilities.canEdit} type="number" />
-        <PatcherField state={scoredByMal} stateSetter={setScoredByMal} title="Кількість рецензій MyAnimeList" autosync={malSync} disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={scoreIMDB} stateSetter={setScoreIMDB} title="Рейтинг IMDB" note="(0 - 10)" disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={scoreMAL} stateSetter={setScoreMAL} title="Рейтинг MyAnimeList" note="(0 - 10)" autosync={malSync} disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={malScoredBy} stateSetter={setMalScoredBy} title="Кількість рецензій MyAnimeList" autosync={malSync} disabled={!capabilities.canEdit} type="number" />
         <PatcherField state={episodesCount} stateSetter={setEpisodesCount} title="Кількість епізодів" note="(1 - 9999)" autosync={malSync} disabled={!capabilities.canEdit} type="number" />
         <PatcherField state={year} stateSetter={setYear} title="Рік виробництва" note={`(2007 - ${getUTC().year + 1})`} autosync={malSync} disabled={!capabilities.canEdit} type="number" />
         <PatcherField state={studios} stateSetter={setStudios} title="Студії" note="(Через кому)" autosync={malSync} disabled={!capabilities.canEdit} />
@@ -952,16 +976,36 @@ const PatcherDubbedEpisode: NextPage<PatcherEpisode> = ({ File, episode, id, new
 
 
 
-/** Parse input into string */
-function x(input: string | number | null | undefined): string {
-  if (input === null || input === undefined) return '';
-  if (typeof input === 'number') return String(input);
-  if (typeof input === 'string') return input;
+/** Parse value into string */
+function x(value: string | number | null | undefined): string {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'number') return String(value);
+  if (typeof value === 'string') return value;
 
   return '';
 }
 
-export function AnimeEpisodeToPatcherEpisode(episode: AnimeEpisode): PatcherEpisode {
+/** Check if state has been mutated. Return string or undefined */
+function m(state: UIFieldState): string | undefined {
+  return state.mutated ? state.value : undefined
+}
+
+/** Check if state has been mutated. Return number or undefined */
+function mn(state: UIFieldState): number | undefined {
+  return state.mutated ? Number(state.value) : undefined
+}
+
+/** Check if state has been mutated. Split value by commas or undefined */
+function ma(state: UIFieldState): string[] | undefined {
+  return state.mutated ? state.value?.split(',') : undefined
+}
+
+/** Check if value has been mutated. Return new value or undefined */
+function ms(curr: string, prev: string): string | undefined {
+  return curr !== prev ? curr : undefined
+}
+
+function AnimeEpisodeToPatcherEpisode(episode: AnimeEpisode): PatcherEpisode {
   return {
     id: createStringID(6),
     episode,

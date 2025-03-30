@@ -249,3 +249,7 @@ export interface AnimeDeleteByUUIDProps {
   uuid: string
   token: string
 }
+
+
+
+export * from './NekomiAnimeIntf'; 

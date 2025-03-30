@@ -1,4 +1,6 @@
 import Anime from '~/interfaces/AnimeIntf';
+import { TEpisodeQuality } from '~/interfaces/Interfaces';
+import API from '~/services/ApiService';
 
 import { PatcherEpisode, PatcherEpisodeStatusType } from './PatcherTypes';
 
@@ -113,63 +115,63 @@ export default class PatcherStack {
 
     try {
       //* TESTING
-      await new Promise((res) => {
-        setTimeout(() => {
-          this.patch({
-            id: episode.id,
-            progress: 20
-          })
-        }, 500);
+      // await new Promise((res) => {
+      //   setTimeout(() => {
+      //     this.patch({
+      //       id: episode.id,
+      //       progress: 20
+      //     })
+      //   }, 500);
 
-        setTimeout(() => {
-          this.patch({
-            id: episode.id,
-            progress: 48
-          })
-        }, 1500);
+      //   setTimeout(() => {
+      //     this.patch({
+      //       id: episode.id,
+      //       progress: 48
+      //     })
+      //   }, 1500);
 
-        setTimeout(() => {
-          this.patch({
-            id: episode.id,
-            progress: 95
-          })
-        }, 3200);
+      //   setTimeout(() => {
+      //     this.patch({
+      //       id: episode.id,
+      //       progress: 95
+      //     })
+      //   }, 3200);
 
-        setTimeout(() => {
-          this.patch({
-            id: episode.id,
-            progress: 100
-          })
+      //   setTimeout(() => {
+      //     this.patch({
+      //       id: episode.id,
+      //       progress: 100
+      //     })
 
-          res(1)
-        }, 4000);
-      })
-
-      // const qualities: TEpisodeQuality[] = [1080, 480];
-      // if (episode.q2160) qualities.push(2160);
-
-      // // Patch progress
-      // interval = setInterval(() => {
-      //   this.patch({ id: episode.id, progress })
-      // }, 500);
-
-      // const { episode: upload } = await API.postAnimeEpisode({
-      //   dubberId: episode.episode.dubberID,
-      //   file: episode.File!,
-      //   order: episode.episode.order,
-      //   qualities,
-      //   uuid: this.anime.uuid
-      // }, {
-      //   session: this.session,
-      //   onUploadProgress: (e) => {
-      //     const perc = e.progress ?? 0;
-
-      //     progress = +(perc * 100).toFixed(2);
-      //   }
+      //     res(1)
+      //   }, 4000);
       // })
 
-      // clearInterval(interval);
-      // sourceURL = upload.qualities.q1080;
+      const qualities: TEpisodeQuality[] = [1080, 480];
+      if (episode.q2160) qualities.push(2160);
+
+      // Patch progress
+      interval = setInterval(() => {
+        this.patch({ id: episode.id, progress })
+      }, 500);
+
+      const { episode: upload } = await API.postAnimeEpisode({
+        dubberId: episode.episode.dubberID,
+        file: episode.File!,
+        order: episode.episode.order,
+        qualities,
+        uuid: this.anime.uuid
+      }, {
+        session: this.session,
+        onUploadProgress: (e) => {
+          const perc = e.progress ?? 0;
+
+          progress = +(perc * 100).toFixed(2);
+        }
+      })
+
+      clearInterval(interval);
+      sourceURL = upload.qualities.q1080;
 
       this.patch({
         id: episode.id,
