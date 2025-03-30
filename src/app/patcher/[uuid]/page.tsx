@@ -57,19 +57,21 @@ export default async function RSC(props: IRSCProps<PatcherPageParams>) {
     const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status }
 
     const isRoot = capabilities.includes('root');
-    const canAdd = isRoot || capabilities.includes('titleAdd');
-    const canEdit = isRoot || capabilities.includes('titleEdit');
-    const canDelete = isRoot || capabilities.includes('titleDelete');
-    const canSeriesUpload = isRoot || capabilities.includes('seriesAdd');
-    const canSeriesDelete = isRoot || capabilities.includes('seriesDelete');
-    const canUploadQ2160 = isRoot || capabilities.includes('admin');
+    const isAdmin = isRoot || capabilities.includes('admin');
+    const canAdd = isAdmin || capabilities.includes('titleAdd');
+    const canEdit = isAdmin || capabilities.includes('titleEdit');
+    const canDelete = isAdmin || capabilities.includes('titleDelete');
+    const canSeriesUpload = isAdmin || capabilities.includes('seriesAdd');
+    const canSeriesDelete = isAdmin || capabilities.includes('seriesDelete');
+    const canUploadQ2160 = isAdmin || capabilities.includes('admin');
 
     const caps: PatcherCapabilities = {
       canDelete,
       canEdit,
       canSeriesDelete,
       canSeriesUpload,
-      canUploadQ2160
+      canUploadQ2160,
+      admin: isAdmin,
     }
 
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import * as Loader from '@uiball/loaders'
 import { NextPage } from 'next';
@@ -18,6 +18,7 @@ import { NotifyError, NotifySuccess } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';
 import UICheckbox from '~/components/UI/UICheckbox';
 import { config } from '~/config';
+import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeEpisode, AnimeMediaType, AnimeRateType, AnimeRecordType, AnimeSeasonType, AnimeStatusType, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes, routes } from '~/routes';
@@ -41,6 +42,7 @@ interface PatcherEpisodesProps extends PatcherGenerciProps {
 }
 
 export interface PatcherCapabilities {
+  admin: boolean
   canDelete: boolean
   canEdit: boolean
   canSeriesUpload: boolean
@@ -79,6 +81,8 @@ interface PatcherSelectDubberProps {
 
   title: string
   disabled?: boolean
+
+  capabilities: PatcherCapabilities
 }
 
 interface PatcherCheckboxProps {
@@ -106,14 +110,19 @@ interface EpisodesDubbing {
 
 interface PatcherEpisodesDubbingProps extends PatcherGenerciProps, EpisodesDubbing {
   selectedDubberId: string
-  deleteEpisode(id: string): Promise<void>
 }
 
-interface PatcherDubbedEpisodeProps extends PatcherEpisode {
+interface PatcherEpisodesContextProps {
   deleteEpisode(id: string): Promise<void>
+  capabilities: PatcherCapabilities
 }
 
 type SaveMetaStatusType = 'default' | 'error' | 'saving' | 'saved' | 'noChanges';
+
+
+
+// @ts-ignore
+const PatcherEpisodesContext = createContext<PatcherEpisodesContextProps>({})
 
 
 
@@ -236,7 +245,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         {/* Fields */}
         <PatcherField state={nameUkr} stateSetter={setNameUkr} title="Назва Українською" disabled={!capabilities.canEdit} symbolsLimited={256} />
         <PatcherField state={nameEng} stateSetter={setNameEng} title="Назва Англійською" disabled={!capabilities.canEdit} symbolsLimited={256} />
-        <PatcherField state={nameAlt} stateSetter={setNameAlt} fieldType="textarea" title="Альтернативні назви" note="(Японська..., через кому)" disabled={!capabilities.canEdit} symbolsLimited={256} />
+        {capabilities.canEdit && <PatcherField state={nameAlt} stateSetter={setNameAlt} fieldType="textarea" title="Альтернативні назви" note="(Японська..., через кому)" disabled={!capabilities.canEdit} symbolsLimited={256} />}
         <PatcherField state={malId} stateSetter={setMalId} title="MyAnimeList ID" disabled={!capabilities.canEdit} type="number" />
         <PatcherField state={scoreImdb} stateSetter={setScoreImdb} title="Рейтинг IMDB" note="(0 - 10)" disabled={!capabilities.canEdit} type="number" />
         <PatcherField state={scoreMal} stateSetter={setScoreMal} title="Рейтинг MyAnimeList" note="(0 - 10)" autosync={malSync} disabled={!capabilities.canEdit} type="number" />
@@ -252,11 +261,11 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         <PatcherSelect title="Тип" options={ANIME_MEDIA_TYPES} slug={mediaType} setSlug={setMediaType} autosync={malSync} disabled={!capabilities.canEdit} />
         <PatcherSelect title="Віковий рейтинг" options={ANIME_RATES} slug={rate} setSlug={setRate} autosync={malSync} disabled={!capabilities.canEdit} />
 
-        {/* Broadcast */}
-        <div className="flex items-center gap-[8px] w-full">
+        {/* // TODO: Broadcast */}
+        {/* <div className="flex items-center gap-[8px] w-full">
           <PatcherSelect title="День трансляції" options={ANIME_RATES} slug={rate} setSlug={setRate} autosync={malSync} disabled={!capabilities.canEdit} />
           <PatcherField state={description} stateSetter={setDescription} title="Час трансляції" note="(HH:MM)" autosync={malSync} disabled={!capabilities.canEdit} className="w-full" />
-        </div>
+        </div> */}
 
         <PatcherField state={description} stateSetter={setDescription} fieldType="textarea" title="Опис" symbolsLimited={2200} disabled={!capabilities.canEdit} className="w-full" />
         <PatcherField state={details} stateSetter={setDetails} fieldType="textarea" title="Деталі" symbolsLimited={500} disabled={!capabilities.canEdit} className="w-full" />
@@ -264,7 +273,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         {/* Checkboxes */}
         <div className="flex items-center justify-center w-full gap-[16px] max-lg:flex-col">
           <PatcherCheckbox label="Синхронізація інформації про аніме з MyAnimeList" checked={malSync} setChecked={setMalSync} disabled={!capabilities.canEdit || !hydratedAnime.anime.malId} />
-          <PatcherCheckbox label="Синхронізація зображень з Shikimori" checked={shikimoriSync} setChecked={setShikimoriSync} disabled={!capabilities.canEdit || !hydratedAnime.anime.malId} />
+          {/* <PatcherCheckbox label="Синхронізація зображень з Shikimori" checked={shikimoriSync} setChecked={setShikimoriSync} disabled={!capabilities.canEdit || !hydratedAnime.anime.malId} /> */}
         </div>
       </section>
     </section>
@@ -272,10 +281,10 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
     <section className="w-full flex justify-center items-center gap-[16px] flex-wrap" style={{ rowGap: 8 }}>
       <p className="text-grey-new font-space-grotesk cursor-pointer" onClick={() => copyText(hydratedAnime.anime.uuid)} title="Скопіювати UUID">UUID: {hydratedAnime.anime.uuid}</p>
       <p className="text-grey-new font-space-grotesk cursor-pointer" onClick={() => copyText(hydratedAnime.anime.slug)} title="Скопіювати SLUG">SLUG: {hydratedAnime.anime.slug}</p>
-      <p className="text-grey-new font-space-grotesk">Created At: {hydratedAnime.anime.malSyncedAt ? new Date(hydratedAnime.anime.malSyncedAt ?? 0).toUTCString() : null}</p>
+      {/* <p className="text-grey-new font-space-grotesk">Created At: {hydratedAnime.anime.malSyncedAt ? new Date(hydratedAnime.anime.malSyncedAt ?? 0).toUTCString() : null}</p> */}
       <p className="text-grey-new font-space-grotesk">Updated At: {new Date(hydratedAnime.anime.updatedAt ?? 0).toUTCString()}</p>
-      <p className="text-grey-new font-space-grotesk">MAL Synced At: {hydratedAnime.anime.malSyncedAt ? new Date(hydratedAnime.anime.malSyncedAt ?? 0).toUTCString() : null}</p>
-      <p className="text-grey-new font-space-grotesk">Shikimori Synced At: null</p>
+      {hydratedAnime.anime.malSyncedAt && <p className="text-grey-new font-space-grotesk">MAL Synced At: {new Date(hydratedAnime.anime.malSyncedAt ?? 0).toUTCString()}</p>}
+      {/* <p className="text-grey-new font-space-grotesk">Shikimori Synced At: null</p> */}
     </section>
   </>
 }
@@ -374,6 +383,7 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
       stackOrder: -1,
       progress: -1,
       status: 'pending',
+      q2160: processQ2160,
       episode: {
         dubberID: selectedDubberId,
         frames: [],
@@ -394,12 +404,13 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
     Stack.append(episode)
   }
 
-  function throwStackError(e: any) {
-    HandleClientError(e);
+  function throwStackError(e: any, id?: string) {
+    HandleClientError(e)
+    setEpisodes(prev => prev.filter(el => el.id !== id))
   }
 
   function patchEpisodeState(episode: PatcherEpisode) {
-    setEpisodes([...episodes.filter(el => el.id !== episode.id), episode])
+    setEpisodes(prev => [...prev.filter(el => el.id !== episode.id), episode])
   }
 
   async function deleteEpisode(id: string) {
@@ -407,18 +418,15 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
     if (!episode) return NotifyError({ title: 'Не знайдено', message: 'Ми не знайшли епізод який ти хочеш видалити' })
 
     try {
-      setEpisodes(episodes.filter(el => el.id !== id));
-      Stack.remove(id);
-
       await API.deleteAnimeEpisode({ dubberId: episode.episode.dubberID, order: episode.episode.order, uuid: hydratedAnime.anime.uuid })
+
+      Stack.remove(id);
+      setEpisodes(prev => prev.filter(el => el.id !== id));
       NotifySuccess({ title: 'Видалено!', message: 'Ми видалили цей епізод' })
     } catch (e) {
       HandleClientError(e)
     }
   }
-
-
-  useEffect(() => console.log(episodes), [episodes])
 
 
 
@@ -434,7 +442,7 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
 
         {/* Dub select */}
         <div className="w-[300px] flex-shrink-0 max-xl:w-full max-xl:flex-shrink">
-          <PatcherSelectDubber title="Команда Озвучення" selectedId={selectedDubberId} setSelectedId={setSelectedDubberId} dubbers={dubbers} setDubbers={setDubbers} disabled={!canSeriesUpload} />
+          <PatcherSelectDubber title="Команда Озвучення" selectedId={selectedDubberId} setSelectedId={setSelectedDubberId} capabilities={capabilities} dubbers={dubbers} setDubbers={setDubbers} disabled={!canSeriesUpload} />
         </div>
 
         <PatcherEpisodesUploadButton processQ2160={processQ2160} setProcessQ2160={setProcessQ2160} className="xl:hidden" canUpload={canSeriesUpload ? canUpload : false} upload={upload} capabilities={capabilities} />
@@ -447,24 +455,29 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
         <input type="file" accept=".mp4,.webm,.mov,.mkv,.m4v" style={{ display: 'none' }} onChange={handleFilename} ref={fileInputRef} />
 
         <button className={cn(`ui-button patcher-button w-full flex !justify-start`, !canSeriesUpload && 'cursor-not-allowed')} disabled={!canSeriesUpload} onClick={selectFile}>
-          <p className={cn(`text-white font-manrope line-clamp-1`, !canSeriesUpload && '!text-grey-new')}>{filename || 'ВИБЕРІТЬ ФАЙЛ'}</p>
+          <p className={cn(`text-white font-manrope line-clamp-1`, !canSeriesUpload && '!text-grey-new')}>{filename || '-- файл не вибрано --'}</p>
         </button>
       </div>
 
       <PatcherEpisodesUploadButton processQ2160={processQ2160} setProcessQ2160={setProcessQ2160} className="max-xl:hidden" canUpload={canSeriesUpload ? canUpload : false} upload={upload} capabilities={capabilities} />
     </section>
 
-    <section className="flex flex-col gap-[32px]">
-      {/* Render selected dub */}
-      {[episodesDubbing.find(el => el.dubber.id === selectedDubberId)].map((dub) => {
-        return dub && <PatcherEpisodesDubbing deleteEpisode={deleteEpisode} dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
-      })}
+    <PatcherEpisodesContext.Provider value={{
+      capabilities,
+      deleteEpisode
+    }}>
+      <section className="flex flex-col gap-[32px]">
+        {/* Render selected dub */}
+        {[episodesDubbing.find(el => el.dubber.id === selectedDubberId)].map((dub) => {
+          return dub && <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
+        })}
 
-      {/* Render other dubs */}
-      {episodesDubbing.filter(el => el.dubber.id !== selectedDubberId).toSorted((a, b) => alphabeticSort(a.dubber.nameUkr, b.dubber.nameUkr)).map((dub) => {
-        return <PatcherEpisodesDubbing deleteEpisode={deleteEpisode} dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
-      })}
-    </section>
+        {/* Render other dubs */}
+        {episodesDubbing.filter(el => el.dubber.id !== selectedDubberId).toSorted((a, b) => alphabeticSort(a.dubber.nameUkr, b.dubber.nameUkr)).map((dub) => {
+          return <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
+        })}
+      </section>
+    </PatcherEpisodesContext.Provider>
   </section>
 }
 
@@ -708,8 +721,12 @@ const PatcherSelect: NextPage<PatcherSelectProps> = ({ options, title, autosync,
   </div>
 }
 
-const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabled, dubbers, selectedId, setDubbers, setSelectedId }) => {
+const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabled, dubbers, selectedId, setDubbers, setSelectedId, capabilities }) => {
   const id = useId().replaceAll(':', '');
+  const currentUser = useAppSelector(state => state.user);
+
+  const canSeriesUpload = currentUser.dubberTeamMember ? capabilities.admin : capabilities.canSeriesUpload;
+  disabled = !canSeriesUpload;
 
   const [isOpen, setIsOpen] = useState(false)
   const [selectedDubber, setSelectedDubber] = useState<DubberCompact | null>(null)
@@ -720,6 +737,24 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
 
 
 
+
+  // Fetch user dubber team
+  useEffect(() => {
+    (async function () {
+      try {
+        if (!currentUser.dubberTeamMember) return;
+
+        const { dubber } = await API.getDubberByQuery({ query: currentUser.dubberTeamMember })
+        const dubberCompact = DubberCompactMapper(dubber);
+
+        setDubbers([...dubbers, dubberCompact]);
+        setSelectedId(dubberCompact.id);
+        setSearchResults([...dubbers, dubberCompact])
+      } catch (e) {
+        HandleClientError(e)
+      }
+    })()
+  }, [])
 
   useEffect(() => {
     setIsOpen(false)
@@ -834,7 +869,7 @@ const PatcherEpisodesUploadButton: NextPage<PatcherEpisodesUploadButtonProps> = 
   </div>
 }
 
-const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber, episodes, hydratedAnime, selectedDubberId, deleteEpisode }) => {
+const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber, episodes, hydratedAnime, selectedDubberId }) => {
   const [maximumEpisode, setMaximumEpisode] = useState(0);
   const [collapsed, setCollapsed] = useState(true);
 
@@ -870,13 +905,20 @@ const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber,
 
     <div className={cn(`flex flex-col gap-[4px] overflow-y-auto duration-200`, collapsed ? 'max-h-0' : 'max-h-[600px]')}>
       {episodes.toSorted((a, b) => b.episode.order - a.episode.order).map(ep => {
-        return <PatcherDubbedEpisode {...ep} deleteEpisode={deleteEpisode} key={`patcherepisode-${ep.id}`} />
+        return <PatcherDubbedEpisode {...ep} key={`patcherepisode-${ep.id}`} />
       })}
     </div>
   </div>
 }
 
-const PatcherDubbedEpisode: NextPage<PatcherDubbedEpisodeProps> = ({ File, episode, id, newUpload, stackOrder, progress, status, deleteEpisode }) => {
+const PatcherDubbedEpisode: NextPage<PatcherEpisode> = ({ File, episode, id, newUpload, stackOrder, progress, status }) => {
+  const { capabilities, deleteEpisode } = useContext(PatcherEpisodesContext) as PatcherEpisodesContextProps;
+  const currentUser = useAppSelector(state => state.user);
+
+  const canSeriesDelete = currentUser.dubberTeamMember ? capabilities.admin || episode.dubberID === currentUser.dubberTeamMember : capabilities.canSeriesDelete;
+
+
+
   return <div className="w-full px-[16px] py-[12px] rounded-[4px] border border-dark-light flex items-center justify-between gap-[24px]">
     <div className="flex items-center gap-[8px]">
       <p className="text-white text-[20px] font-space-grotesk font-bold w-[80px]">#{String(episode.order).padStart(2, '0')}</p>
@@ -907,7 +949,7 @@ const PatcherDubbedEpisode: NextPage<PatcherDubbedEpisodeProps> = ({ File, episo
       </div>
     </div>
 
-    {status !== 'uploading' && <button className="p-[4px]" onClick={() => deleteEpisode(id)}>
+    {status !== 'uploading' && canSeriesDelete && <button className="w-[28px] h-[28px] flex justify-center items-center" onClick={() => deleteEpisode(id)}>
       <MaterialSymbol icon="delete" size={20} className="text-grey-new" />
     </button>}
   </div>
@@ -930,8 +972,8 @@ export function AnimeEpisodeToPatcherEpisode(episode: AnimeEpisode): PatcherEpis
     episode,
     newUpload: false,
     File: null,
-    stackOrder: -1,
-    progress: -1,
+    stackOrder: 0,
+    progress: 0,
     status: 'uploaded'
   }
 }
