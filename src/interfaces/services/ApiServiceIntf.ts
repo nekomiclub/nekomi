@@ -1,6 +1,6 @@
 import { AxiosProgressEvent } from 'axios'
 
-import { AnimeEpisode, HydratedAnime } from '../AnimeIntf'
+import Anime, { AnimeEpisode, HydratedAnime } from '../AnimeIntf'
 import { DubberCompact } from '../DubberIntf'
 import { IDubber, TDubberMemberRole } from '../IDubber'
 import { TEpisodeQuality } from '../Interfaces'
@@ -239,4 +239,13 @@ export interface AnimePostEpisode {
 export interface AnimePostEpisodeParams {
   session?: string
   onUploadProgress?(e: AxiosProgressEvent): void
+}
+
+export interface AnimePost {
+  anime: Anime
+}
+
+export interface AnimeDeleteByUUIDProps {
+  uuid: string
+  token: string
 }

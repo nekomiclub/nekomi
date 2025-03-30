@@ -127,6 +127,7 @@ const PatcherEpisodesContext = createContext<PatcherEpisodesContextProps>({})
 
 
 export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities }) => {
+  const router = useRouter();
   const [saveStatus, setSaveStatus] = useState<SaveMetaStatusType>('default')
 
   // Fields
@@ -200,13 +201,11 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
   async function remove() {
     try {
-      // TODO: Issue key
+      const token = prompt(`Enter token:`) ?? ''
 
-      const key = prompt(`The key has been issued:`)
-      if (!key) return NotifyError({ title: 'Не авторизовано', message: 'Запит на видалення відхилено' })
+      await API.deleteAnime({ token, uuid: hydratedAnime.anime.uuid });
 
-      // TODO: Delete
-      // TODO: Redirect home
+      router.replace(`${config.URL.baseURL}`);
     } catch (e) {
       HandleClientError(e)
     }
@@ -281,7 +280,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
     <section className="w-full flex justify-center items-center gap-[16px] flex-wrap" style={{ rowGap: 8 }}>
       <p className="text-grey-new font-space-grotesk cursor-pointer" onClick={() => copyText(hydratedAnime.anime.uuid)} title="Скопіювати UUID">UUID: {hydratedAnime.anime.uuid}</p>
       <p className="text-grey-new font-space-grotesk cursor-pointer" onClick={() => copyText(hydratedAnime.anime.slug)} title="Скопіювати SLUG">SLUG: {hydratedAnime.anime.slug}</p>
-      {/* <p className="text-grey-new font-space-grotesk">Created At: {hydratedAnime.anime.malSyncedAt ? new Date(hydratedAnime.anime.malSyncedAt ?? 0).toUTCString() : null}</p> */}
+      <p className="text-grey-new font-space-grotesk">Created At: {new Date(hydratedAnime.anime.createdAt).toUTCString()}</p>
       <p className="text-grey-new font-space-grotesk">Updated At: {new Date(hydratedAnime.anime.updatedAt ?? 0).toUTCString()}</p>
       {hydratedAnime.anime.malSyncedAt && <p className="text-grey-new font-space-grotesk">MAL Synced At: {new Date(hydratedAnime.anime.malSyncedAt ?? 0).toUTCString()}</p>}
       {/* <p className="text-grey-new font-space-grotesk">Shikimori Synced At: null</p> */}
@@ -494,15 +493,11 @@ export const PatcherCreateNewAnime: NextPage = () => {
     try {
       setIsCreating(true)
 
-      // TODO: Create new anime
-      await new Promise(res => setTimeout(() => {
-        res(1)
-      }, 3000))
+      const { anime } = await API.postAnime()
 
       NotifySuccess({ title: 'Створено!', message: 'Нове аніме створено, заміняємо сторінку...' })
 
-      // TODO: Push new anime ID
-      // router.push(``)
+      router.replace(`${config.URL.baseURL}${routes.patcher_title.path}/${anime.uuid}`);
     } catch (e) {
       HandleClientError(e)
       setIsCreating(false)

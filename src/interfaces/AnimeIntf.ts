@@ -21,8 +21,10 @@ export interface Anime {
   studios: AnimeStudio[]
   malId: number | null
 
-  /** UTC-0 timestamp @private */
+  /** UTC timestamp @private */
   updatedAt: number
+  /** UTC timestamp @since 2.1.0 @private */
+  createdAt: number
   /** @private */
   episodes: AnimeEpisode[]
   /** @private */
