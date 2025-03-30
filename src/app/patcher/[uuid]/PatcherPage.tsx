@@ -83,6 +83,9 @@ interface PatcherSelectDubberProps {
   disabled?: boolean
 
   capabilities: PatcherCapabilities
+
+  /** Initial fetch dubber id. Null value will disable initial fetch */
+  initialDubberFetch?: string | null
 }
 
 interface PatcherCheckboxProps {
@@ -158,6 +161,8 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
   // Checkboxes
   const [malSync, setMalSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.mal : false)
   const [shikimoriSync, setShikimoriSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.shikimori : false)
+
+  const [posterAdaptDubbers, setPosterAdaptDubbers] = useState<DubberCompact[]>([])
 
 
 
@@ -279,6 +284,8 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         <PatcherField state={genres} stateSetter={setGenres} title="Жанри" note="(Через кому)" autosync={malSync} disabled={!capabilities.canEdit} />
 
         {/* Selects */}
+        <PatcherSelectDubber title="Адаптація постеру" dubbers={posterAdaptDubbers} setDubbers={setPosterAdaptDubbers} selectedId={posterAdaptedId} setSelectedId={setPosterAdaptedId} initialDubberFetch={hydratedAnime.anime.posterAdapt ?? null} capabilities={capabilities} disabled={!capabilities.canEdit} />
+
         <PatcherSelect title="Статус" options={ANIME_STATUSES} slug={status} setSlug={setStatus} autosync={malSync} disabled={!capabilities.canEdit} />
         <PatcherSelect title="Сезон" options={ANIME_SEASONS} slug={season} setSlug={setSeason} autosync={malSync} disabled={!capabilities.canEdit} />
         <PatcherSelect title="Тип" options={ANIME_MEDIA_TYPES} slug={mediaType} setSlug={setMediaType} autosync={malSync} disabled={!capabilities.canEdit} />
@@ -740,7 +747,7 @@ const PatcherSelect: NextPage<PatcherSelectProps> = ({ options, title, autosync,
   </div>
 }
 
-const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabled, dubbers, selectedId, setDubbers, setSelectedId, capabilities }) => {
+const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabled, dubbers, selectedId, setDubbers, setSelectedId, capabilities, initialDubberFetch }) => {
   const id = useId().replaceAll(':', '');
   const currentUser = useAppSelector(state => state.user);
 
@@ -759,11 +766,14 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
 
   // Fetch user dubber team
   useEffect(() => {
+    if (initialDubberFetch === null) return;
+    const dubberFetch = initialDubberFetch ?? currentUser.dubberTeamMember;
+
     (async function () {
       try {
-        if (!currentUser.dubberTeamMember) return;
+        if (!dubberFetch) return;
 
-        const { dubber } = await API.getDubberByQuery({ query: currentUser.dubberTeamMember })
+        const { dubber } = await API.getDubberByQuery({ query: dubberFetch })
         const dubberCompact = DubberCompactMapper(dubber);
 
         setDubbers([...dubbers, dubberCompact]);
@@ -772,7 +782,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
       } catch (e) {
         HandleClientError(e)
       }
-    })()
+    })();
   }, [])
 
   useEffect(() => {
@@ -831,9 +841,11 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
 
     <Menu className="w-full" id={id} state={isOpen} stateSetter={setIsOpen} settings={{ align: 'start', animation: 'slide' }} disabled={disabled}>
       <MenuTrigger className={cn(`patcher-button bg-dark-medium border border-dark-light rounded-[4px] w-full !justify-between duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, disabled && 'cursor-not-allowed')} anchor>
-        {selectedDubber && <StyledImage width="20px" height="20px" src={selectedDubber.avatarURL} imageClassName="rounded-[2px]" />}
+        <div className="flex items-center gap-[16px]">
+          {selectedDubber && <StyledImage width="20px" height="20px" src={selectedDubber.avatarURL} imageClassName="rounded-[2px]" />}
 
-        <p className={cn(`text-white font-manrope line-clamp-1`, disabled && '!text-grey-new')}>{selectedDubber?.nameUkr ?? '-- команда не вибрана --'}</p>
+          <p className={cn(`text-white font-manrope line-clamp-1`, disabled && '!text-grey-new')}>{selectedDubber?.nameUkr ?? '-- команда не вибрана --'}</p>
+        </div>
 
         {!disabled ? <MaterialSymbol className="text-grey-new" icon="expand_all" size={16} /> : <div></div>}
       </MenuTrigger>
