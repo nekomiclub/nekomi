@@ -44,7 +44,7 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
-  const [useDefaultImage] = useState(Boolean(useImg) || !src.includes(config.URL.media))
+  const [useNativeImage] = useState(Boolean(useImg) || !src.includes(config.URL.media))
   const [imageDims, setImageDims] = useState<number[]>([])
 
   const imageRef = useRef<HTMLImageElement>(null)
@@ -58,34 +58,20 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
     setImageDims([image.offsetWidth, image.offsetHeight])
 
     const img = new Image();
-    const timeout = setTimeout(handleTimeout, 10000);
 
     img.onload = () => {
       setIsLoaded(true);
-
-      clearTimeout(timeout);
     }
 
-    img.onerror = () => {
-      console.error(`Image ${src} cannot be loaded due to error`)
+    img.onerror = e => {
+      console.error(`Image ${src} cannot be loaded due to error`, e)
 
       setIsErrored(true);
       setIsLoaded(false);
-
-      clearTimeout(timeout);
     }
-
-
 
     img.src = src;
   }, [])
-
-
-
-  function handleTimeout() {
-    setIsErrored(true);
-    console.warn(`Image ${src} loading timed out`)
-  }
 
 
 
@@ -97,16 +83,16 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
       </div>
 
       {/* Preserved / default image */}
-      {useDefaultImage && <>
+      {useNativeImage && <>
         <img src={src} alt={alt} loading={loading} className={cn('w-full h-full duration-200', !isLoaded && 'opacity-0', imageClassName)} ref={imageRef} />
       </>}
 
-      {!useDefaultImage && <>
+      {!useNativeImage && <>
         <ImageNext src={src} alt={alt} fill loading={loading} priority={priority} sizes="100vw" className={cn('w-full h-full duration-200', !isLoaded && 'opacity-0', imageClassName)} ref={imageRef} />
       </>}
 
       {/* Loading state */}
-      {loading === 'lazy' && <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, isLoaded && 'opacity-0')} />}
+      {loading === 'lazy' && !isLoaded && !isErrored && <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, isLoaded && 'opacity-0')} />}
     </div>
   )
 }
