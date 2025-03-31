@@ -1,15 +1,14 @@
-import { useContext } from 'react';
-import { NextPage } from 'next';
+import { FC, useContext } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { cn } from '../Components';
 import { HandleClientError } from '../Errors';
 
-import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
+import { NekoplayerContext, NekoplayerContextProps } from './types';
 
 
 
-export const NPFullscreen: NextPage = () => {
+const NPFullscreen: FC = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { playerRef, isFullscreen } = ctx;
 
@@ -41,3 +40,6 @@ export const NPFullscreen: NextPage = () => {
     <MaterialSymbol className={cn(`kekwplayer-fullscreen text-white`, !isFullscreen && 'opacity-0')} icon="fullscreen_exit" size={32} />
   </button>
 }
+
+
+export default NPFullscreen;

@@ -1,11 +1,10 @@
-import { RefObject, useContext } from 'react';
-import { NextPage } from 'next';
+import { FC, RefObject, useContext } from 'react';
 import { Range } from 'react-range';
 
 import { IcoServerUnavailable } from '~/assets/Icons';
 import prettySeconds from '~/utils/pretty-seconds';
 
-import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs } from './NekoplayerTypes';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs } from './types';
 
 
 
@@ -18,7 +17,7 @@ interface NPTimelineProps {
 
 
 
-export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, progressRef, hoveredMoment }) => {
+const NPTimeline: FC<NPTimelineProps> = ({ loadedRef, previewRef, progressRef, hoveredMoment }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { videoRef, duration, changeMoment, isPreviewOld, isVideoProcessed, moment } = ctx;
 
@@ -92,3 +91,7 @@ export const NPTimeline: NextPage<NPTimelineProps> = ({ loadedRef, previewRef, p
     </div>
   </div>
 }
+
+
+
+export default NPTimeline

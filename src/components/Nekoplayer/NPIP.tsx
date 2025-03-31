@@ -1,15 +1,14 @@
-import { useContext } from 'react';
-import { NextPage } from 'next';
+import { FC, useContext } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { cn } from '../Components';
 import { HandleClientError } from '../Errors';
 
-import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
+import { NekoplayerContext, NekoplayerContextProps } from './types';
 
 
 
-export const NPIP: NextPage = () => {
+const NPIP: FC = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { videoRef, isPiP } = ctx;
 
@@ -41,3 +40,7 @@ export const NPIP: NextPage = () => {
     <MaterialSymbol className={cn(`kekwplayer-pip text-white`, !isPiP && 'opacity-0')} icon="pip_exit" size={32} />
   </button>
 }
+
+
+
+export default NPIP

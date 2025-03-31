@@ -57,11 +57,7 @@ const Footer: NextPage = () => {
         </div>
 
         {/* Right */}
-        <div className="flex justify-center max-[760px]:w-full">
-          {/* <FooterOnline /> */}
-
-          {/* <p className="text-white">Онлайн: <span className="text-lightGrey text-[12px]">Коти перегризли провода, вже фіксим</span></p> */}
-        </div>
+        <div className="flex justify-center max-[760px]:w-full"></div>
       </div>
     </footer>
   );

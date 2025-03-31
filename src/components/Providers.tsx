@@ -6,8 +6,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
-import { IUserState } from '../store/reducers/userSlice';
-import { setupStore } from '../store/store'
+import { IUserState } from '~/store/reducers/userSlice';
+import { setupStore } from '~/store/store'
 
 import { HandleClientError } from './Errors';
 import { randomNumber } from './handlers';

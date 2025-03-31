@@ -8,28 +8,28 @@ import { NextPage } from 'next';
 import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
 
+import { useAppSelector } from '~/hooks/redux';
 import Anime from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { EpisodeQualityType } from '~/interfaces/Interfaces';
 import { LocalStorageKeys } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import prettySeconds from '~/utils/pretty-seconds';
-import { useAppSelector } from '../../hooks/redux';
+import { cn } from '~/utils/utils';
 import { ITitleEpisode } from '../../interfaces/ITitle';
-import { cn } from '../Components';
 import { HandleClientError } from '../Errors';
 import { $api } from '../http';
 
-import { NPControls } from './Controls';
-import { NPFullscreen } from './Fullscreen';
-import { NPMenu } from './Menu';
-import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NekoplayerTypes';
-import { NPIP } from './PiP';
-import { NPlay } from './Play';
-import { NPScreensContainer } from './Screens';
-import { NPSettings } from './Settings';
-import { NPTimeline } from './Timeline';
-import { NPVolume } from './Volume';
+import NPControls from './NPControls';
+import NPFullscreen from './NPFullscreen';
+import NPIP from './NPIP';
+import NPlay from './NPlay';
+import NPMenu from './NPMenu';
+import NPScreensContainer from './NPScreens';
+import NPSettings from './NPSettings';
+import NPTimeline from './NPTimeline';
+import NPVolume from './NPVolume';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './types';
 
 
 

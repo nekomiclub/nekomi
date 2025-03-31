@@ -1,13 +1,12 @@
-import { useContext, useEffect, useRef } from 'react';
-import { NextPage } from 'next';
+import { FC, useContext, useEffect, useRef } from 'react';
 
 import { HandleClientError } from '../Errors';
 
-import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
+import { NekoplayerContext, NekoplayerContextProps } from './types';
 
 
 
-export const NPControls: NextPage = () => {
+const NPControls: FC = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { changeMoment, videoRef, isMobile, playerRef } = ctx;
 
@@ -107,3 +106,6 @@ export const NPControls: NextPage = () => {
     <div className="w-full flex-1 h-full shrink-0" ref={nextRef}></div>
   </div>
 }
+
+
+export default NPControls

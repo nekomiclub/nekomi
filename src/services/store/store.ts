@@ -1,7 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 
-import internalsSlice, { IInternalsState } from './reducers/internalsSlice';
 import userSlice, { IUserState } from './reducers/userSlice';
 
 export interface IReduxAction<T> {
@@ -11,13 +10,11 @@ export interface IReduxAction<T> {
 
 const rootReducer = combineReducers({
   user: userSlice.reducer,
-  storage: internalsSlice.reducer
 });
 
 export const setupStore = (props?: {
   preloadedState?: {
     user?: IUserState,
-    storage?: IInternalsState
   }
 }) => {
   const preloadedState = props?.preloadedState;

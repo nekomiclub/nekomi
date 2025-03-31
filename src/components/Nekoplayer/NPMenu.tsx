@@ -1,13 +1,12 @@
-import { useContext, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import * as DropMenu from '@fullkekw/fkw-menu';
-import { NextPage } from 'next';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { cn } from '../Components'
 import StyledImage from '../StyledImage';
 
-import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
+import { NekoplayerContext, NekoplayerContextProps } from './types';
 
 
 
@@ -24,7 +23,7 @@ interface MenuProps {
 
 
 
-export const NPMenu: NextPage<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalEpisodesCount }) => {
+const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalEpisodesCount }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { anime, dubbers, episode, changeEpisode, moment } = ctx;
 
@@ -140,3 +139,6 @@ export const NPMenu: NextPage<MenuProps> = ({ order, isLastEpisode, isIdle, clas
     </DropMenu.Menu>
   </div>
 }
+
+
+export default NPMenu

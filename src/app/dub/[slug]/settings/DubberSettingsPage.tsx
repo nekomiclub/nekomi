@@ -17,7 +17,6 @@ import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
-import { parseDubberRole } from '~/helpers/DubberHelpers';
 import { useAppSelector } from '~/hooks/redux';
 import { IDubber, IDubberMember, TDubberMemberRole } from '~/interfaces/IDubber';
 import { IUser } from '~/interfaces/IUser';
@@ -25,6 +24,7 @@ import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
+import { DubberParseRoleName } from '~/utils/data-mappers';
 
 
 
@@ -690,7 +690,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
       })
 
       setMemberRole(to);
-      NotifySuccess({ title: 'Роль змінена', message: `Роль @${user.username} змінена з ${parseDubberRole(member.role)} > ${parseDubberRole(to)}` })
+      NotifySuccess({ title: 'Роль змінена', message: `Роль @${user.username} змінена з ${DubberParseRoleName(member.role)} > ${DubberParseRoleName(to)}` })
     } catch (e) {
       HandleClientError(e)
     }
@@ -721,7 +721,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
           {memberRole === 'editor' && <MaterialSymbol icon="edit" size={16} color="#fff" />}
           {memberRole === 'member' && <MaterialSymbol icon="group" size={16} color="#fff" />}
 
-          <p className="text-white font-manrope">{parseDubberRole(memberRole)}</p>
+          <p className="text-white font-manrope">{DubberParseRoleName(memberRole)}</p>
         </div>
 
         {canRedactRole && <MaterialSymbol icon="arrow_drop_down" size={16} color="#fff" className={cn(`duration-200`, isMenuOpen && 'rotate-180')} />}

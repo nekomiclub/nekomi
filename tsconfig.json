@@ -34,6 +34,12 @@
       "~/interfaces/*": [
         "./src/interfaces/*"
       ],
+      "~/store/*": [
+        "./src/services/store/*"
+      ],
+      "~/hooks/*": [
+        "./src/services/hooks/*"
+      ],
       "~/*": [
         "./src/*"
       ],

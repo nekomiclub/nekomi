@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { NextPage } from 'next';
 
 import { AnimeEpisodeMeta } from '~/interfaces/AnimeIntf';
@@ -11,14 +11,14 @@ import { cn } from '../Components';
 import { wordDeclination } from '../handlers';
 import StyledImage from '../StyledImage';
 
-import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
+import { NekoplayerContext, NekoplayerContextProps } from './types';
 
 
 
 /** Player screens wrapper
  * @requires KekwPlayerContext
  */
-export const NPScreensContainer: NextPage = ({ }) => {
+const NPScreens: FC = ({ }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
@@ -42,7 +42,7 @@ export const NPScreensContainer: NextPage = ({ }) => {
 
 
 
-const ProgressContinue: NextPage = ({ }) => {
+const ProgressContinue: FC = ({ }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { currentScreen, anime, dubbers, watchProgress, passProgress, loadProgress } = ctx;
 
@@ -106,7 +106,7 @@ const ProgressContinue: NextPage = ({ }) => {
   </div>
 }
 
-const LastDubbedEpisode: NextPage = ({ }) => {
+const LastDubbedEpisode: FC = ({ }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
@@ -125,7 +125,7 @@ const LastDubbedEpisode: NextPage = ({ }) => {
   </div>
 }
 
-const ContinueWatch: NextPage = ({ }) => {
+const ContinueWatch: FC = ({ }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { currentScreen, anime, episode, videoRef, changeEpisode } = ctx;
 
@@ -227,3 +227,7 @@ const AnimeEnd: NextPage = ({ }) => {
     <p className="text-grey-new text-[16px] font-manrope">Дякуємо за вибір nekomi!</p>
   </div>
 }
+
+
+
+export default NPScreens

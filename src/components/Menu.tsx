@@ -12,15 +12,15 @@ import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
+import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import API from '~/services/ApiService';
+import userSlice, { IUserState, userStateDefault } from '~/store/reducers/userSlice';
 import { IcoNekomiLogo } from '../assets/Icons';
 import { config } from '../config';
-import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { IDubber } from '../interfaces/IDubber';
 import { IUser } from '../interfaces/IUser';
 import { Routes, routes } from '../routes';
-import userSlice, { IUserState, userStateDefault } from '../store/reducers/userSlice';
 
 import { cn } from './Components';
 import { HandleClientError } from './Errors';

@@ -1,24 +1,16 @@
 'use client'
 
-import { RefObject, useContext, useEffect, useRef } from 'react';
-import { NextPage } from 'next';
+import { FC, useContext, useEffect, useRef } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 import { Range } from 'react-range';
-import { IRenderTrackParams } from 'react-range/lib/types';
 
 import { cn } from '../Components';
 
-import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
+import { NekoplayerContext, NekoplayerContextProps } from './types';
 
 
 
-interface IRenderTrackParamsExtended extends IRenderTrackParams {
-  volumeRef: RefObject<HTMLDivElement>
-}
-
-
-
-export const NPVolume: NextPage = () => {
+const NPVolume: FC = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { videoRef, volume, isMuted } = ctx;
 
@@ -132,3 +124,6 @@ export const NPVolume: NextPage = () => {
     </div>
   </div>
 }
+
+
+export default NPVolume

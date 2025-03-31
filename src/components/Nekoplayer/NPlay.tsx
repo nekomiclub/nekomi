@@ -1,14 +1,13 @@
-import { useContext } from 'react';
-import { NextPage } from 'next';
+import { FC, useContext } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { cn } from '../Components';
 
-import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
+import { NekoplayerContext, NekoplayerContextProps } from './types';
 
 
 
-export const NPlay: NextPage = () => {
+const NPlay: FC = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { videoRef, isPlaying } = ctx;
 
@@ -36,3 +35,7 @@ export const NPlay: NextPage = () => {
     <MaterialSymbol className={cn(`kekwplayer-play text-white`, !isPlaying && 'opacity-0')} icon="pause" fill size={40} />
   </button>
 }
+
+
+
+export default NPlay

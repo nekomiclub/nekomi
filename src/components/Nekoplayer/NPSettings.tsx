@@ -1,7 +1,6 @@
-import { useContext, useEffect, useId, useMemo, useState } from 'react';
+import { FC, useContext, useEffect, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import axios from 'axios';
-import { NextPage } from 'next';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { EpisodeQualityType } from '~/interfaces/Interfaces';
@@ -9,7 +8,7 @@ import { cn } from '../Components';
 import { parseVideoQuality } from '../handlers';
 import Tooltip from '../UI/Tooltip';
 
-import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
+import { NekoplayerContext, NekoplayerContextProps } from './types';
 
 
 
@@ -66,7 +65,7 @@ interface SettingsQualitySelectProps {
 
 
 
-export const NPSettings: NextPage<SettingsProps> = ({ quality, setQuality, speed, stretch, setStretch, isIdle }) => {
+const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, setStretch, isIdle }) => {
   const { videoRef, episode } = useContext(NekoplayerContext) as NekoplayerContextProps
   const menuId = useId().replaceAll(':', '');
 
@@ -167,7 +166,7 @@ export const NPSettings: NextPage<SettingsProps> = ({ quality, setQuality, speed
 
 
 
-const SettingsButton: NextPage<SettingsButtonProps> = ({ icon, menu, setMenu, title, onclick, value }) => {
+const SettingsButton: FC<SettingsButtonProps> = ({ icon, menu, setMenu, title, onclick, value }) => {
   function onClick() {
     setMenu(menu)
 
@@ -184,13 +183,13 @@ const SettingsButton: NextPage<SettingsButtonProps> = ({ icon, menu, setMenu, ti
   </button>
 }
 
-const SettingsMenu: NextPage<SettingsMenuProps> = ({ children, menu, className }) => {
+const SettingsMenu: FC<SettingsMenuProps> = ({ children, menu, className }) => {
   return <div className={cn(`nekoplayer-settings-menu w-full absolute bottom-0 left-0 duration-[350ms]`, `nekoplayer-settings-menu_${menu}`, className)}>
     {children}
   </div>
 }
 
-const SettingsBack: NextPage<SettingsBackProps> = ({ icon, title, setMenu }) => {
+const SettingsBack: FC<SettingsBackProps> = ({ icon, title, setMenu }) => {
   return <button className="w-full flex justify-center items-center gap-[12px] px-[12px] py-[8px] duration-100 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => setMenu('general')}>
     <MaterialSymbol icon="arrow_back_ios_new" size={16} className="text-grey-new absolute left-[12px]" />
 
@@ -199,7 +198,7 @@ const SettingsBack: NextPage<SettingsBackProps> = ({ icon, title, setMenu }) => 
   </button>
 }
 
-const SettingsSpeedSelect: NextPage<SettingsSpeedSelectProps> = ({ amplifier, currentSpeed, setSpeed }) => {
+const SettingsSpeedSelect: FC<SettingsSpeedSelectProps> = ({ amplifier, currentSpeed, setSpeed }) => {
   return <button className={cn(`px-[12px] py-[8px] flex justify-center bg-dark-medium duration-100 hover:bg-dark-light focus-visible:bg-dark-light w-full`, currentSpeed === amplifier && 'bg-primary')} onClick={() => setSpeed(amplifier)}>
     <p className="text-white font-manrope">
       {amplifier === 1 && '1x (Нормальна)'}
@@ -208,7 +207,7 @@ const SettingsSpeedSelect: NextPage<SettingsSpeedSelectProps> = ({ amplifier, cu
   </button>
 }
 
-const SettingsQualitySelect: NextPage<SettingsQualitySelectProps> = ({ currentQuality, quality, setQuality }) => {
+const SettingsQualitySelect: FC<SettingsQualitySelectProps> = ({ currentQuality, quality, setQuality }) => {
   const { episode } = useContext(NekoplayerContext) as NekoplayerContextProps
   const isQ2160 = quality === 'q4k'
 
@@ -224,7 +223,7 @@ const SettingsQualitySelect: NextPage<SettingsQualitySelectProps> = ({ currentQu
         const url = episode.qualities[quality];
         if (!url) return
 
-        await axios.get(url)
+        await axios.head(url)
         setIsQualityAvailable(true);
       } catch (e) {
         setIsQualityAvailable(false)
@@ -247,3 +246,7 @@ const SettingsQualitySelect: NextPage<SettingsQualitySelectProps> = ({ currentQu
     <p className={cn(`text-white font-space-grotesk`, isQ2160 && 'font-bold !text-primary', currentQuality === 'q4k' && '!text-white')}>{parseVideoQuality(quality)}</p>
   </button>
 }
+
+
+
+export default NPSettings
