@@ -20,14 +20,14 @@ import { cn } from '../Components';
 import { HandleClientError } from '../Errors';
 import { $api } from '../http';
 
-import { KekwPlayerControls } from './Controls';
-import { KekwPlayerFullscreen } from './Fullscreen';
-import { KekwPlayerMenu } from './Menu';
+import { NPControls } from './Controls';
+import { NPFullscreen } from './Fullscreen';
+import { NPMenu } from './Menu';
 import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NekoplayerTypes';
-import { KekwPlayerPiP } from './PiP';
+import { NPIP } from './PiP';
 import { NPlay } from './Play';
 import { NPScreensContainer } from './Screens';
-import { KekwPlayerSettings } from './Settings';
+import { NPSettings } from './Settings';
 import { NPTimeline } from './Timeline';
 import { NPVolume } from './Volume';
 
@@ -296,7 +296,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     const video = videoRef.current;
     const player = playerRef.current;
 
-    if (!video || !player) return;
+    if (!video || !player) return console.error(`[nekoplayer]: Video or Player are not found`);
 
     let viewtimeInterval: NodeJS.Timeout
 
@@ -617,7 +617,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   useEffect(() => {
     if (stage !== 'operational' || !episode) return;
 
-    changeVideoSrc(episode.qualities[quality] ?? '', moment)
+    changeVideoSrc(episode.qualities[quality] ?? episode.qualities.q1080, moment)
   }, [stage, quality])
 
   // Handle video buffering & screens
@@ -761,7 +761,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
     await Promise.all([
       await definePreviewFormat(episode.frames[0]),
-      await changeVideoSrc(episode.qualities[quality] ?? '', moment, stopPlayback),
+      await changeVideoSrc(episode.qualities[quality] ?? episode.qualities.q1080, moment, stopPlayback),
     ])
 
     // Set out states
@@ -931,7 +931,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
       {!disableScreens && <NPScreensContainer />}
 
       {/* Menu */}
-      <KekwPlayerMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} isLastEpisode={isLastEpisode} totalEpisodesCount={anime.episodesCount ?? titleMaxEpisode.current} isIdle={isIdle} />
+      <NPMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} isLastEpisode={isLastEpisode} totalEpisodesCount={anime.episodesCount ?? titleMaxEpisode.current} isIdle={isIdle} />
 
       {/* Bottom */}
       <div className={cn(`nekoplayer-bottom flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[12px] backdrop-blur-[4px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .6))' }} ref={bottomRef}>
@@ -943,14 +943,14 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
         <NPTimeline hoveredMoment={hoveredMoment} loadedRef={loadedRef} previewRef={previewRef} progressRef={progressRef} />
 
         <div className="flex items-center gap-[12px]">
-          <KekwPlayerPiP />
-          <KekwPlayerSettings quality={quality} setQuality={setQuality} speed={speed} epData={episode} isVideoProcessed={isVideoProcessed} videoRef={videoRef} stretch={stretch} setStretch={setStretch} isIdle={isIdle} />
-          <KekwPlayerFullscreen />
+          <NPIP />
+          <NPSettings quality={quality} setQuality={setQuality} speed={speed} stretch={stretch} setStretch={setStretch} isIdle={isIdle} />
+          <NPFullscreen />
         </div>
       </div>
 
       {/* Skip wrapper & play/pause */}
-      <KekwPlayerControls />
+      <NPControls />
 
       {/* Video */}
       <div className="w-full h-full absolute top-0 left-0 z-[1]">

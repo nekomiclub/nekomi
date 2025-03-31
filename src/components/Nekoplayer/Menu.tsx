@@ -1,5 +1,6 @@
-import { memo, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import * as DropMenu from '@fullkekw/fkw-menu';
+import { NextPage } from 'next';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { DubberCompact } from '~/interfaces/DubberIntf';
@@ -10,7 +11,7 @@ import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
 
-interface Props {
+interface MenuProps {
   /** Episode order */
   order: number
 
@@ -23,7 +24,7 @@ interface Props {
 
 
 
-export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, isLastEpisode, isIdle, className, totalEpisodesCount }) {
+export const NPMenu: NextPage<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalEpisodesCount }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { anime, dubbers, episode, changeEpisode, moment } = ctx;
 
@@ -81,8 +82,13 @@ export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, isLas
       <DropMenu.MenuWrapper className={'!w-fit min-w-full bg-dark-primary border border-dark-light flex rounded-[4px]'}>
         <div className="flex flex-col max-h-[300px] h-full overflow-y-auto">
           {dubbers.map(dubber => {
+            const dubbedEpisodes = anime.episodes.filter(el => el.dubberID === dubber?.id);
+            const hasQ2160Eps = dubbedEpisodes.some(el => el.qualities.q4k !== null);
+
             const isSelected = Boolean(selectedDubber.id === dubber.id);
-            const dubberMaxEp = Math.max(...[0, ...anime.episodes.filter(el => el.dubberID === dubber.id)!.map(el => el.order)])
+            const dubberMaxEp = Math.max(...[0, ...dubbedEpisodes.map(el => el.order)])
+
+
 
             return <button className={cn(`flex justify-between items-center gap-[16px] p-[6px] h-[44px] shrink-0 duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, isSelected && 'bg-primary')} onClick={() => setDubber(dubber.id)} tabIndex={0} key={`np-menudubber-${dubber.id}`}>
               <div className="flex items-center gap-[8px]">
@@ -91,10 +97,16 @@ export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, isLas
               </div>
 
               <div className="flex items-center gap-[4px]">
+                {/* Dubbed episodes */}
                 <div className={cn(`flex items-center gap-[8px] px-[8px] py-[4px] border border-dark-light rounded-[2px]`, isSelected && 'border-white')}>
                   <MaterialSymbol className="text-white" icon="acute" size={16} />
                   <p className="text-white font-space-grotesk whitespace-nowrap">{String(dubberMaxEp).padStart(2, '0')} / {String(totalEpisodesCount).padStart(2, '0')}</p>
                 </div>
+
+                {/* Q2160 */}
+                {hasQ2160Eps && <div className={cn(`flex items-center gap-[8px] px-[8px] py-[4px] border border-transparent rounded-[2px] bg-primary`, isSelected && '!border-white')}>
+                  <p className="text-white font-space-grotesk font-bold whitespace-nowrap">4K</p>
+                </div>}
               </div>
             </button>
           })}
@@ -127,4 +139,4 @@ export const KekwPlayerMenu = memo<Props>(function KekwPlayerMenu({ order, isLas
       </button>
     </DropMenu.Menu>
   </div>
-})
+}

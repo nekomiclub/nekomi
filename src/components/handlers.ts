@@ -184,7 +184,7 @@ export function decodeToken<T = any>(token: string): ITokenPayload<T> {
 
 export function parseVideoQuality(quality: EpisodeQualityType) {
   switch (quality) {
-    case 'q4k': return '4K';
+    case 'q4k': return '2160p';
     case 'q1080': return '1080p';
     case 'q720': return '720p';
     case 'q480': return '480p';

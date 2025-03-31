@@ -1,217 +1,249 @@
-import { memo, RefObject, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
-import gsap from 'gsap';
-import { MaterialSymbol } from 'react-material-symbols';
+import axios from 'axios';
+import { NextPage } from 'next';
+import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
-import { IcoArrow, IcoSpeed } from '~/assets/Icons';
-import { IcoPlayerCenter, IcoPlayerQuality, IcoPlayerStretch } from '~/assets/Player';
 import { EpisodeQualityType } from '~/interfaces/Interfaces';
-import { ITitleEpisode } from '~/interfaces/ITitle';
 import { cn } from '../Components';
 import { parseVideoQuality } from '../handlers';
+import Tooltip from '../UI/Tooltip';
+
+import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
-type TSettingPage = 'general' | 'quality' | 'speed';
 
-interface IProps {
+type SettingsMenuType = 'general' | 'quality' | 'speed';
+
+interface SettingsProps {
   quality: EpisodeQualityType,
   setQuality: (state: EpisodeQualityType) => void,
+
   speed: number,
-  epData?: ITitleEpisode,
-  isVideoProcessed: boolean,
-  videoRef: RefObject<HTMLVideoElement>
+  isIdle: boolean
+
   stretch: boolean,
   setStretch: (state: boolean) => void,
-  isIdle: boolean
 }
 
-interface ISettingsPageProps {
-  page: TSettingPage
-  visible: boolean
-  changePage: (page: TSettingPage) => void
+interface SettingsButtonProps {
+  menu: SettingsMenuType
+  setMenu(val: SettingsMenuType): void
+  title: string
+  icon: SymbolCodepoints
+
+  value?: string
+  onclick?(): void
 }
 
-interface IGeneralSettingsProps extends ISettingsPageProps {
-  stretch: boolean
-  setStretch: (val: boolean) => void
-  speed: number
+interface SettingsMenuProps {
+  children: React.ReactNode | React.ReactNode[]
+  menu: SettingsMenuType
+
+  className?: string
+}
+
+interface SettingsBackProps {
+  title: string
+  icon: SymbolCodepoints
+
+  setMenu(val: SettingsMenuType): void
+}
+
+interface SettingsSpeedSelectProps {
+  amplifier: number
+
+  setSpeed(val: number): void
+  currentSpeed: number
+}
+
+interface SettingsQualitySelectProps {
   quality: EpisodeQualityType
-}
+  setQuality(val: EpisodeQualityType): void
 
-interface IQualitySettingsProps extends ISettingsPageProps {
-  isVideoProcessed: boolean
-  episode?: ITitleEpisode
-  quality: EpisodeQualityType,
-  setQuality: (state: EpisodeQualityType) => void,
-}
-
-interface ISpeedSettingsProps extends ISettingsPageProps {
-  videoRef: RefObject<HTMLVideoElement>
-  speed: number
-}
-
-interface IReturnButtonProps {
-  label: string
-  page: TSettingPage
-  changePage: (page: TSettingPage) => void
+  currentQuality: EpisodeQualityType
 }
 
 
 
-export const KekwPlayerSettings = memo<IProps>(function KekwPlayerSettings({ quality, setQuality, speed, epData, isVideoProcessed, videoRef, stretch, setStretch, isIdle }) {
+export const NPSettings: NextPage<SettingsProps> = ({ quality, setQuality, speed, stretch, setStretch, isIdle }) => {
+  const { videoRef, episode } = useContext(NekoplayerContext) as NekoplayerContextProps
+  const menuId = useId().replaceAll(':', '');
+
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [settingsPage, setSettingsPage] = useState<TSettingPage>('general')
-
-  const settingsRef = useRef<HTMLDivElement>(null)
-  const settingsPlaceholderRef = useRef<HTMLDivElement>(null)
+  const [menu, setMenu] = useState<SettingsMenuType>('general')
 
 
+
+  // Close menu on user idle
+  useEffect(() => {
+    if (isIdle) setIsMenuOpen(false)
+  }, [isIdle])
+
+  // Reset menu on close
+  useEffect(() => {
+    if (isMenuOpen) return
+
+    setTimeout(() => {
+      setMenu('general')
+    }, 500);
+  }, [isMenuOpen])
 
   useEffect(() => {
-    changePage('general')
-  }, [])
+    calcMenusPosition()
+  }, [menu])
 
 
 
-  function changePage(page: TSettingPage) {
-    const wrapper = settingsRef.current;
-    if (!wrapper) return console.debug(`settingsRef is undefined`);
+  function calcMenusPosition() {
+    const wrapper = document.querySelector('.nekoplayer-settings-menu_wrapper') as HTMLDivElement | undefined;
+    if (!wrapper) return
 
-    const placeholder = settingsPlaceholderRef.current;
-    if (!placeholder) return console.debug(`settingsPlaceholderRef is undefined`);
+    const menus = wrapper.querySelectorAll(`.nekoplayer-settings-menu`) as NodeListOf<HTMLDivElement> | undefined;
+    const activeMenu = wrapper.querySelector(`.nekoplayer-settings-menu_${menu}`) as HTMLDivElement | undefined;
+    if (!activeMenu || !menus) return
 
-    const pageEl = wrapper.querySelector(`#kekwplayer-settings-page--${page}`) as HTMLDivElement | undefined;
-    if (!pageEl) return console.error(`#kekwplayer-settings-page--${page} is not found as page el`);
-
-    gsap.to(placeholder, {
-      height: `${pageEl.offsetHeight}px`,
-      duration: .2
+    menus.forEach(menu => {
+      menu.style.translate = '105%'
+      menu.style.opacity = '0'
     })
 
-    setSettingsPage(page)
+    wrapper.style.height = `${activeMenu.offsetHeight}px`;
+
+    activeMenu.style.translate = '0';
+    activeMenu.style.opacity = '1';
+  }
+
+  function setSpeed(amplifier: number) {
+    const video = videoRef.current;
+    if (!video) return
+
+    video.playbackRate = amplifier;
   }
 
 
 
-  return <div className="relative max-[460px]:opacity-0 max-[460px]:invisible max-[460px]:absolute" ref={settingsRef}>
-    <Menu className="h-[32px]" settings={{ direction: 'top', align: 'end', animation: 'fade' }} gap={24} state={isMenuOpen} stateSetter={setIsMenuOpen} id="kekwplayer-settings_menu">
+  return <div className="relative max-[460px]:opacity-0 max-[460px]:invisible max-[460px]:absolute">
+    <Menu className="h-[32px]" settings={{ direction: 'top', align: 'end', animation: 'slide' }} gap={24} state={isMenuOpen} stateSetter={setIsMenuOpen} id={menuId}>
       <MenuTrigger anchor className={'kekwplayer-settings_button relative w-[32px] h-[32px]'} aria-label={'Налаштування'}>
         <MaterialSymbol className={cn(`kekwplayer-settings text-white`)} icon="settings" size={32} />
       </MenuTrigger>
 
-      <MenuWrapper className={`!w-[260px] rounded-[2px] bg-dark flex flex-col translate-x-[15%] overflow-hidden`}>
-        <div className="w-full h-0" ref={settingsPlaceholderRef}></div>
+      <MenuWrapper className={`nekoplayer-settings-menu_wrapper !w-[300px] rounded-[2px] bg-dark-primary flex flex-col border border-dark-light overflow-x-hidden overflow-y-auto max-h-[500px] !translate-x-[30px] duration-[350ms]`}>
+        <SettingsMenu menu="general">
+          <SettingsButton title="Якість" icon="hd" menu="quality" setMenu={setMenu} value={parseVideoQuality(quality)} />
+          <SettingsButton title="Швидкість" icon="speed" menu="speed" setMenu={setMenu} value={`${speed}x`} />
+          <Tooltip content={stretch ? 'Розташувати відео по центру' : 'Розтягнути відео на весь екран'}>
+            <SettingsButton title={stretch ? 'Центрувати відео' : 'Розтягнути відео'} icon={stretch ? 'collapse_content' : 'expand_content'} menu="general" setMenu={setMenu} onclick={() => setStretch(!stretch)} />
+          </Tooltip>
+        </SettingsMenu>
 
-        <GeneralSettings visible={settingsPage === 'general' && isMenuOpen} page="general" changePage={changePage} stretch={stretch} setStretch={setStretch} speed={speed} quality={quality} />
-        <QualitySettings visible={settingsPage === 'quality' && isMenuOpen} page="quality" changePage={changePage} isVideoProcessed={isVideoProcessed} episode={epData} quality={quality} setQuality={setQuality} />
-        <SpeedSettings visible={settingsPage === 'speed' && isMenuOpen} page="speed" changePage={changePage} videoRef={videoRef} speed={speed} />
+        <SettingsMenu menu="quality">
+          <SettingsBack icon="hd" title="Якість" setMenu={setMenu} />
+
+          {episode.qualities.q4k && <SettingsQualitySelect quality="q4k" currentQuality={quality} setQuality={setQuality} />}
+          <SettingsQualitySelect quality="q1080" currentQuality={quality} setQuality={setQuality} />
+          {episode.qualities.q720 && <SettingsQualitySelect quality="q720" currentQuality={quality} setQuality={setQuality} />}
+          {episode.qualities.q480 && <SettingsQualitySelect quality="q480" currentQuality={quality} setQuality={setQuality} />}
+          {episode.qualities.q240 && <SettingsQualitySelect quality="q240" currentQuality={quality} setQuality={setQuality} />}
+        </SettingsMenu>
+
+        <SettingsMenu menu="speed">
+          <SettingsBack icon="speed" title="Швидкість" setMenu={setMenu} />
+
+          <SettingsSpeedSelect amplifier={0.25} currentSpeed={speed} setSpeed={setSpeed} />
+          <SettingsSpeedSelect amplifier={0.5} currentSpeed={speed} setSpeed={setSpeed} />
+          <SettingsSpeedSelect amplifier={0.75} currentSpeed={speed} setSpeed={setSpeed} />
+          <SettingsSpeedSelect amplifier={1} currentSpeed={speed} setSpeed={setSpeed} />
+          <SettingsSpeedSelect amplifier={1.25} currentSpeed={speed} setSpeed={setSpeed} />
+          <SettingsSpeedSelect amplifier={1.5} currentSpeed={speed} setSpeed={setSpeed} />
+          <SettingsSpeedSelect amplifier={1.75} currentSpeed={speed} setSpeed={setSpeed} />
+          <SettingsSpeedSelect amplifier={2} currentSpeed={speed} setSpeed={setSpeed} />
+        </SettingsMenu>
       </MenuWrapper>
     </Menu>
   </div>
-})
+}
 
 
 
-//* -------------- COMPONENTS
+const SettingsButton: NextPage<SettingsButtonProps> = ({ icon, menu, setMenu, title, onclick, value }) => {
+  function onClick() {
+    setMenu(menu)
 
+    onclick && onclick();
+  }
 
-
-const ReturnButton = ({ label, page, changePage }: IReturnButtonProps) => {
-  return <button className={`flex items-center gap-[8px] w-full`} onClick={() => changePage('general')}>
-    <IcoArrow width={24} height={24} className="rotate-[90deg] shrink-0" />
-
-    <div className="w-full flex items-center justify-center gap-[8px]">
-      {page === 'quality' && <IcoPlayerQuality width={16} height={16} className="shrink-0" />}
-      {page === 'speed' && <IcoSpeed width={16} height={16} className="shrink-0" />}
-
-      <p className="text-white">{label}</p>
+  return <button className="px-[12px] py-[8px] flex justify-between items-center gap-[12px] relative z-[2] w-full duration-100 hover:bg-dark-light focus-visible:bg-dark-light" onClick={onClick}>
+    <div className="flex items-center gap-[12px]">
+      <MaterialSymbol icon={icon} className="text-white" size={24} />
+      <p className="text-white font-manrope">{title}</p>
     </div>
+
+    {value && <p className={cn(`text-white font-space-grotesk font-bold`, value === '2160p' && 'font-bold !text-primary')}>{value}</p>}
   </button>
 }
 
-const GeneralSettings = memo<IGeneralSettingsProps>(function GeneralSettings({ visible, page, changePage, setStretch, stretch, speed, quality }) {
-  return <div className={cn('kekwplayer-settings-page ', visible && 'kekwplayer-settings-page--active')} id={`kekwplayer-settings-page--${page}`}>
-    <div className="flex flex-col">
-      <button className={`flex items-center justify-between kekwplayer-menu_item`} onClick={() => changePage('quality')}>
-        <div className="flex items-center gap-[16px]">
-          <IcoPlayerQuality width={24} height={24} />
-          <p className="text-white">Якість</p>
-        </div>
-
-        <div>
-          <p className="text-white">{parseVideoQuality(quality)}</p>
-        </div>
-      </button>
-
-      <button className={`flex items-center gap-[16px] w-full bg-darkGrey kekwplayer-menu_item px-[8px] py-[4px] rounded-[2px]`} onClick={() => setStretch(!stretch)}>
-        <div className="relative w-[24px] h-[24px]">
-          <IcoPlayerStretch width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-0 invisible' : 'opacity-100 visible'}`} />
-          <IcoPlayerCenter width={24} height={24} className={`absolute top-0 left-0 duration-200 ${stretch ? 'opacity-100 visible' : 'opacity-0 invisible'}`} />
-        </div>
-
-        <p className="text-white">{stretch ? 'Центрувати' : 'Розтягнути'} відео</p>
-      </button>
-
-      <button className={`flex items-center justify-between w-full bg-darkGrey duration-200 kekwplayer-menu_item px-[8px] py-[4px] rounded-[2px]`} onClick={() => changePage('speed')}>
-        <div className="flex items-center gap-[16px]">
-          <IcoSpeed width={24} height={24} />
-          <p className="text-white">Швидкість</p>
-        </div>
-
-        <div>
-          <p className="text-white">{speed}х</p>
-        </div>
-      </button>
-    </div>
+const SettingsMenu: NextPage<SettingsMenuProps> = ({ children, menu, className }) => {
+  return <div className={cn(`nekoplayer-settings-menu w-full absolute bottom-0 left-0 duration-[350ms]`, `nekoplayer-settings-menu_${menu}`, className)}>
+    {children}
   </div>
-})
+}
 
-const QualitySettings = memo<IQualitySettingsProps>(function QualitySettings({ visible, page, changePage, episode, isVideoProcessed, quality, setQuality }) {
-  return <div className={cn('kekwplayer-settings-page', visible && 'kekwplayer-settings-page--active')} id={`kekwplayer-settings-page--${page}`}>
-    <ReturnButton label="Якість" page={page} changePage={changePage} />
+const SettingsBack: NextPage<SettingsBackProps> = ({ icon, title, setMenu }) => {
+  return <button className="w-full flex justify-center items-center gap-[12px] px-[12px] py-[8px] duration-100 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => setMenu('general')}>
+    <MaterialSymbol icon="arrow_back_ios_new" size={16} className="text-grey-new absolute left-[12px]" />
 
-    <div className="flex flex-col">
-      {episode?.qualities.q4k && <SelectQuality to="q4k" />}
-      {episode?.qualities.q1080 && <SelectQuality to="q1080" />}
-      {episode?.qualities.q720 && <SelectQuality to="q720" />}
-      {episode?.qualities.q480 && <SelectQuality to="q480" />}
-      {episode?.qualities.q240 && <SelectQuality to="q240" />}
-    </div>
-  </div>
+    <MaterialSymbol icon={icon} className="text-white" size={24} />
+    <p className="text-white font-manrope">{title}</p>
+  </button>
+}
 
-  function SelectQuality({ to }: { to: EpisodeQualityType }) {
-    return <button className={cn((isVideoProcessed || to === 'q1080') && 'kekwplayer-menu_item', quality === to && 'kekwplayer-menu_item--active')} onClick={() => setQuality(to)} disabled={!isVideoProcessed}>
-      <p className={`${isVideoProcessed ? 'text-white' : 'text-lightGrey'}`}>{parseVideoQuality(to)}</p>
-    </button>
-  }
-})
+const SettingsSpeedSelect: NextPage<SettingsSpeedSelectProps> = ({ amplifier, currentSpeed, setSpeed }) => {
+  return <button className={cn(`px-[12px] py-[8px] flex justify-center bg-dark-medium duration-100 hover:bg-dark-light focus-visible:bg-dark-light w-full`, currentSpeed === amplifier && 'bg-primary')} onClick={() => setSpeed(amplifier)}>
+    <p className="text-white font-manrope">
+      {amplifier === 1 && '1x (Нормальна)'}
+      {amplifier !== 1 && `${amplifier}x`}
+    </p>
+  </button>
+}
 
-const SpeedSettings = memo<ISpeedSettingsProps>(function SpeedSettings({ visible, page, changePage, videoRef, speed }) {
-  function setSpeed(to: number) {
-    const video = videoRef.current;
-    if (!video) return console.debug(`Video ref is not found at speed settings`);
+const SettingsQualitySelect: NextPage<SettingsQualitySelectProps> = ({ currentQuality, quality, setQuality }) => {
+  const { episode } = useContext(NekoplayerContext) as NekoplayerContextProps
+  const isQ2160 = quality === 'q4k'
 
-    video.playbackRate = to;
-  }
+  const [isQualityAvailable, setIsQualityAvailable] = useState(false);
+  const [isQualitySelected, setIsQualitySelected] = useState(false)
 
-  return <div className={cn('kekwplayer-settings-page', visible && 'kekwplayer-settings-page--active')} id={`kekwplayer-settings-page--${page}`}>
-    <ReturnButton label="Швидкісь" page={page} changePage={changePage} />
 
-    <div className="flex flex-col">
-      <SelectSpeed to={0.25} />
-      <SelectSpeed to={0.5} />
-      <SelectSpeed to={0.75} />
-      <SelectSpeed to={1} />
-      <SelectSpeed to={1.25} />
-      <SelectSpeed to={1.5} />
-      <SelectSpeed to={1.75} />
-      <SelectSpeed to={2} />
-    </div>
-  </div>
 
-  function SelectSpeed({ to }: { to: number }) {
-    return <button className={cn(`kekwplayer-menu_item`, speed === to && 'kekwplayer-menu_item--active')} onClick={() => setSpeed(to)}>
-      <p className="text-white">{to === 1 ? `Нормальна (${to})` : `${to}x`}</p>
-    </button>
-  }
-})
+  // Check if quality available
+  useMemo(() => {
+    (async function () {
+      try {
+        const url = episode.qualities[quality];
+        if (!url) return
+
+        await axios.get(url)
+        setIsQualityAvailable(true);
+      } catch (e) {
+        setIsQualityAvailable(false)
+      }
+    })()
+  }, [episode])
+
+  // Handle isSelected
+  useEffect(() => {
+    setIsQualitySelected(currentQuality === quality)
+  }, [currentQuality])
+
+
+
+  return <button className={cn(`px-[12px] py-[8px] flex justify-center bg-dark-medium duration-100 relative hover:bg-dark-light focus-visible:bg-dark-light w-full`, isQualitySelected && 'bg-primary', !isQualityAvailable && 'cursor-not-allowed')} onClick={() => setQuality(quality)} disabled={!isQualityAvailable}>
+    {!isQualityAvailable && <Tooltip content="Ця якість тимчасово недоступна" className="!absolute w-[20px] h-[20px] left-[12px] top-[50%] translate-y-[-50%]">
+      <MaterialSymbol className={cn(`text-grey-new`, isQualitySelected && '!text-white')} icon="signal_disconnected" size={20} />
+    </Tooltip>}
+
+    <p className={cn(`text-white font-space-grotesk`, isQ2160 && 'font-bold !text-primary', currentQuality === 'q4k' && '!text-white')}>{parseVideoQuality(quality)}</p>
+  </button>
+}

@@ -414,26 +414,28 @@ const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
 
         {/* Search content */}
         <div className="flex flex-col gap-[4px] px-[12px] max-h-[70svh] overflow-y-scroll overflow-x-hidden max-sm:max-h-[80svh]" ref={contentRef}>
-          {/* Start typing */}
-          {showStartTyping && <div className="flex items-center gap-[16px] px-[12px]">
-            <MaterialSymbol className="text-grey-new" icon="star" size={16} />
+          <div className={cn('flex flex-col gap-[4px]', searchResults.length && (showStartTyping || showNotFound || usePatcherRouting) && 'pb-[16px]')}>
+            {/* Start typing */}
+            {showStartTyping && !usePatcherRouting && <div className="flex items-center gap-[16px] px-[12px]">
+              <MaterialSymbol className="text-grey-new" icon="star" size={16} />
 
-            <p className="text-grey-new font-manrope">Наприклад: {startTypingText}</p>
-          </div>}
+              <p className="text-grey-new font-manrope">Наприклад: {startTypingText}</p>
+            </div>}
 
-          {/* Not found */}
-          {showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
-            <MaterialSymbol className="text-grey-new" icon="live_help" size={16} />
+            {/* Not found */}
+            {showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
+              <MaterialSymbol className="text-grey-new" icon="live_help" size={16} />
 
-            <p className="text-grey-new font-manrope">Здається, в нас такого нема...</p>
-          </div>}
+              <p className="text-grey-new font-manrope">Здається, в нас такого нема...</p>
+            </div>}
 
-          {/* Patcher hint */}
-          {usePatcherRouting && searchType === 'anime' && <div className="flex items-center gap-[16px] px-[12px]">
-            <MaterialSymbol className="text-grey-new" icon="edit" size={16} />
+            {/* Patcher hint */}
+            {usePatcherRouting && searchType === 'anime' && !showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
+              <MaterialSymbol className="text-grey-new" icon="edit" size={16} />
 
-            <p className="text-grey-new font-manrope">Нове аніме буде відкрито в патчері</p>
-          </div>}
+              <p className="text-grey-new font-manrope">Нове аніме буде відкрито в редакторі</p>
+            </div>}
+          </div>
 
           {searchResults.map((result, i) => {
             return <MenuSearchResult item={result} type={searchType} usePatcherRouting={usePatcherRouting} key={`menusearch-result--${i}`} />

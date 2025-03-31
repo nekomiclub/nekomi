@@ -7,7 +7,7 @@ import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
 
-export const KekwPlayerControls: NextPage = () => {
+export const NPControls: NextPage = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { changeMoment, videoRef, isMobile, playerRef } = ctx;
 

@@ -9,7 +9,7 @@ import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
 
-export const KekwPlayerFullscreen: NextPage = () => {
+export const NPFullscreen: NextPage = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { playerRef, isFullscreen } = ctx;
 

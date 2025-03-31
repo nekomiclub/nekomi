@@ -383,7 +383,7 @@ export const WatchPlayer: NextPage<WatchPlayerProps> = ({ hydratedAnime, dubbers
   return <div className="flex flex-col gap-[16px]">
     <div className="w-screen h-[90svh] bg-black">
       {haveEpisodes && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
-      {!haveEpisodes && <div className="w-full h-full bg-dark-primary flex gap-[32px] items-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
+      {!haveEpisodes && <div className="w-full h-full bg-dark-bright flex gap-[32px] items-center justify-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
         <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />
 
         <div className="flex flex-col gap-[8px] items-center w-full">

@@ -42,7 +42,7 @@ export async function generateMetadata(
       description: metadata?.description,
       keywords: metadata?.keywords,
       openGraph: {
-        title: `${metadata?.title.replace('Аніме ', '')} — nekomi`,
+        title: metadata?.title,
         description: metadata?.description,
         type: 'video.tv_show',
         images: metadata?.photo,

@@ -9,7 +9,7 @@ import { NekoplayerContext, NekoplayerContextProps } from './NekoplayerTypes';
 
 
 
-export const KekwPlayerPiP: NextPage = () => {
+export const NPIP: NextPage = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { videoRef, isPiP } = ctx;
 
