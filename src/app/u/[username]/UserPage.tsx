@@ -18,7 +18,7 @@ import { useAppSelector } from '~/hooks/redux';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
-import { IcoExternalLink, IcoInfo, IcoStar, IcoUpdate } from '../../../assets/Icons';
+import { IcoExternalLink, IcoStar, IcoUpdate } from '../../../assets/Icons';
 import { IcoSocialTelegram } from '../../../assets/Social';
 import { cn, copyToClipboard } from '../../../components/Components';
 import { $api } from '../../../components/http';
@@ -216,7 +216,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
             </div>
 
             <div className={`flex gap-[8px] items-center`}>
-              <IcoInfo width={16} height={16} fill="#747474" />
+              <MaterialSymbol icon="info" size={16} className="text-lightGrey" />
               <p className="text-[12px] text-lightGrey">Ти будеш отримувати сповіщення в телеграм</p>
             </div>
           </div> :

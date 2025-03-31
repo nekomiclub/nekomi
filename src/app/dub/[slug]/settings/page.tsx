@@ -3,11 +3,11 @@ import { redirect } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
 import { config, metaObject } from '~/config';
-import { CheckUserAccess } from '~/helpers/Authorization';
 import { IDubber } from '~/interfaces/IDubber';
 import { IRSCProps } from '~/interfaces/IRSC';
 import { IUser } from '~/interfaces/IUser';
 import API from '~/services/ApiService';
+import CheckUserAccess from '~/utils/check-user-access';
 
 import { DubberSettingsBanner, DubberSettingsContent, DubberSettingsHeader } from './DubberSettingsPage';
 

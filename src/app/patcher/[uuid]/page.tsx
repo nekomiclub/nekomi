@@ -6,9 +6,9 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
-import { CheckUserAccess } from '~/helpers/Authorization';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import API from '~/services/ApiService';
+import CheckUserAccess from '~/utils/check-user-access';
 import { config, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 

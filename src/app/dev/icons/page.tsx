@@ -2,7 +2,6 @@ import { NextPage } from 'next';
 
 import * as IcoClock from '../../../assets/Clock'
 import * as Icons from '../../../assets/Icons'
-import * as IcoPlayer from '../../../assets/Player'
 import * as IcoSocial from '../../../assets/Social'
 import * as IcoSupport from '../../../assets/Support'
 
@@ -15,8 +14,6 @@ const page: NextPage = (props) => {
         <Group title="Plain" Icons={Icons} />
 
         <Group title="Clock" Icons={IcoClock} />
-
-        <Group title="Player" Icons={IcoPlayer} />
 
         <Group title="Support" Icons={IcoSupport} />
         <Group title="Social" Icons={IcoSocial} />

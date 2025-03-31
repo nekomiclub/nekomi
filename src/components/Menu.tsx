@@ -26,7 +26,6 @@ import { cn } from './Components';
 import { HandleClientError } from './Errors';
 import { randomNumber } from './handlers';
 import { $api } from './http';
-import { getRoute } from './ServerComponents';
 import StyledImage from './StyledImage';
 import { NotifySuccess } from './UI/NotifyToast';
 import { UIText } from './UI/Text.ui';
@@ -297,9 +296,7 @@ const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
 
   //* Handle patcher routing & hide dialog on route change
   useEffect(() => {
-    const route = getRoute(pathname)?.path.replace('/*', '');
-
-    setUserPatcherRouting(route === routes.patcher_title.path)
+    setUserPatcherRouting(pathname.includes('/patcher'))
     setIsSearchOpen(false);
   }, [pathname])
 

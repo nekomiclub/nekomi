@@ -18,7 +18,7 @@ interface ICheckUserAccessProps {
 
 
 /** Fetch user & check it's access, if user pass it's object will return */
-export async function CheckUserAccess({ capabilities, checkMode, session }: ICheckUserAccessProps): Promise<{ user?: IUser, capabilities?: TRoleCapability[] }> {
+export default async function CheckUserAccess({ capabilities, checkMode, session }: ICheckUserAccessProps): Promise<{ user?: IUser, capabilities?: TRoleCapability[] }> {
   if (!session) return {};
 
   capabilities = capabilities ?? [];

@@ -10,8 +10,6 @@ import { IcoClockOutlined } from '~/assets/Clock';
 import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { $api, $upload } from '~/components/http';
-import ErrorWrapper from '~/components/UI/ErrorWrapper';
-import GroupLabel from '~/components/UI/GroupLabel';
 import Input from '~/components/UI/Input';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
@@ -60,7 +58,6 @@ const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
 export const MediaClient: NextPage = () => {
   const user = useAppSelector(state => state.user)
 
-  const [uploadErrors, setUploadErros] = useState<string[]>([])
   const [file, setFile] = useState<File | undefined>(undefined)
   const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false)
   const [uploadLink, setUploadLink] = useState('');
@@ -102,7 +99,6 @@ export const MediaClient: NextPage = () => {
     try {
       if (!file) return console.warn(`Prevented submitting due to no file selected`);
 
-      setUploadErros([]);
       setUploadLink('')
       setUploadStatus('pending')
 
@@ -124,12 +120,6 @@ export const MediaClient: NextPage = () => {
     } catch (e) {
       HandleClientError(e);
       setUploadStatus('error')
-
-      if (e instanceof AxiosError) {
-        setUploadErros([`Сталась HTTP помилка ${e.status} - ${e.response?.data.message || e.response?.data.msg || e.response?.data}`])
-      } else {
-        setUploadErros([`Щось пішло не так... Відправ лог консолі в тікети діскорд сервера (детальніше про тікети можна прочитати на сторінці FAQ)`])
-      }
     } finally {
       setTimeout(() => {
         setUploadStatus('default')
@@ -185,8 +175,6 @@ export const MediaClient: NextPage = () => {
       {/* Upload */}
       <div className="flex flex-col gap-[24px] w-full">
         <GroupLabel label="Завантажити" />
-
-        {uploadErrors.length ? <ErrorWrapper id="patcher-media-upload" errors={uploadErrors} /> : <></>}
 
         <div className="flex items-end gap-[8px]">
           <div className="flex flex-col gap-[8px] shrink-0 w-full max-w-[250px]">
@@ -250,8 +238,6 @@ export const MediaClient: NextPage = () => {
       <div className="flex flex-col gap-[24px]">
         <GroupLabel label="Видалити" />
 
-        {deleteUploadErrors.length ? <ErrorWrapper id="patcher-media-delete" errors={deleteUploadErrors} /> : <></>}
-
         <div className="flex flex-col gap-[8px]">
           <div className="flex items-center gap-[8px]">
             <p className="text-white">ID</p>
@@ -279,6 +265,26 @@ export const MediaClient: NextPage = () => {
           {deleteStatus === 'success' && <p className="text-red">Аплоад видалено</p>}
         </div>
       </div>
+    </div>
+  );
+}
+
+interface IGroupLabel extends React.HTMLAttributes<HTMLDivElement> {
+  label: string
+
+  /** @default grey */
+  dividerColor?: string
+  headingClassName?: string
+}
+
+
+
+const GroupLabel: NextPage<IGroupLabel> = ({ label, className, headingClassName, dividerColor, ...props }) => {
+  return (
+    <div className={cn(`flex items-center gap-[32px]`, className)} {...props}>
+      <h3 className={cn(`text-white font-bold shrink-0 text-[24px]`, headingClassName)}>{label}</h3>
+
+      <span className={cn('w-full h-[1px]', dividerColor ? `bg-[#${dividerColor}]` : `bg-grey`)}></span>
     </div>
   );
 }
