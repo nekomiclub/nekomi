@@ -6,6 +6,8 @@ import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import { config } from '~/config';
+
 import { cn } from './Components';
 import { UIText } from './UI/Text.ui';
 
@@ -49,12 +51,6 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
 
 
-  // Check if image hosted on nekomi
-  useMemo(() => {
-    // setUseDefaultImage(!src.includes(config.domain))
-    setUseDefaultImage(true)
-  }, [])
-
   useEffect(() => {
     const image = imageRef.current;
     if (!image) return;
@@ -93,8 +89,9 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
 
       {!useNativeImage && <>
         <ImageNext src={src} alt={alt} fill loading={loading} priority={priority} sizes="100vw" className={cn('w-full h-full duration-200', !isLoaded && 'opacity-0', imageClassName)} ref={imageRef} />
+      </>}
 
-      {!useDefaultImage && <>
+      {!useNativeImage && <>
         <ImageNext src={src} alt={alt} fill loading={loading} className={cn('w-full h-full duration-200', !isLoaded && 'opacity-0', imageClassName)} ref={imageRef} />
       </>}
 
