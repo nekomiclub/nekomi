@@ -15,7 +15,6 @@ Classes
   &-hover // Fills background on hover and focus-visible
 ```
 
-Each request has ```x-url``` header, that contains current url.
 Server unavailable screen logic placed in ```./layout.tsx```
 404 route fallback to define if route simple not added placed in ```./not-found.tsx```
 Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```

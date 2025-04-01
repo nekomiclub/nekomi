@@ -11,17 +11,16 @@ import '../styles/globals.css';
 
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
+import { preconnect } from 'next/dist/server/app-render/entry-base';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google'
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
 import { ErrorNoConnection } from '~/components/Errors';
-import { $api } from '~/components/http';
 import { StateProvider } from '~/components/Providers';
-import { TRoleCapability } from '~/interfaces/IRoles';
-import { IUser } from '~/interfaces/IUser';
+import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import Footer from '../components/Footer';
 import Header from '../components/Menu';
@@ -57,30 +56,19 @@ const spaceGrotesk = Space_Grotesk({
 
 
 export default async function Layout({ children, params }: ILayoutProps) {
-  const url = (await headers()).get('x-url')!;
-  const cookie = await cookies();
-  const sessionCookie = cookie.get(config.vars.SessionCookie)?.value;
+  const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
 
   /** Check is server online */
   let isServerOnline = false;
   let user: IUserState | undefined = undefined
 
-  try {
-    await axios.options(config.URL.apiHTTP)
-    isServerOnline = true;
-  } catch (e) { }
+
 
   // Get user by cookie
-  if (sessionCookie && isServerOnline) {
+  if (sessionToken) {
     try {
-      const { data } = await $api.get<{ user: IUser, parsedRoles: TRoleCapability[] }>(`/user/*`, {
-        params: {
-          detailed: true,
-          parseRoles: true
-        },
-        headers: {
-          Cookie: cookie.toString()
-        }
+      const data = await API.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
+        session: sessionToken
       })
 
       user = {
@@ -90,44 +78,51 @@ export default async function Layout({ children, params }: ILayoutProps) {
         roles: data.user.roles,
         username: data.user.username,
         watchProgress: data.user.watchProgress,
-        capabilities: data.parsedRoles,
+        capabilities: data.capabilities!,
         libs: data.user.libs,
         dubberTeamMember: data.user.statistics.dubber_team_member,
         togetherRooms: data.user.togetherRooms
       }
-    } catch (e) {
-      if (e instanceof AxiosError && e.status && e.status > 500) {
-        console.error(`[HTTP]: Error occured at root layout while fetching user data`, e);
-      }
 
-      console.error(`[Unknown]: Error occured at root layout while fetching user data`, e);
+      isServerOnline = true;
+    } catch (e) {
+      console.error(`User fetched with error at RootLayout`, e)
+
+      // Ping API
+      try {
+        await axios.get(`${config.URL.apiHTTP}/ping`)
+        isServerOnline = true;
+      } catch (e) { }
     }
+  } else {
+    // Ping API
+    try {
+      await axios.get(`${config.URL.apiHTTP}/ping`)
+      isServerOnline = true;
+    } catch (e) { }
   }
 
 
+  preconnect(config.URL.apiHTTP);
+  preconnect(config.URL.media);
 
-  return (
-    <html lang="uk">
-      <body id="root" className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
-        <Analytics />
-        <SpeedInsights />
+  return <html lang="uk">
+    <body id="root" className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
+      <Analytics />
+      <SpeedInsights />
 
-        {/* Return server unavailable screen if server do not respond */}
-        {!isServerOnline && <ErrorNoConnection />}
+      {/* Return layout if server respond */}
+      {isServerOnline ? <StateProvider user={user}>
+        <SkeletonTheme baseColor="#181818" highlightColor="#222">
+          <Header />
 
-        {/* Return layout if server respond */}
-        {isServerOnline && <StateProvider user={user}>
-          <SkeletonTheme baseColor="#181818" highlightColor="#222">
-            <Header />
+          {children}
 
-            {children}
+          <Footer />
 
-            <Footer />
-
-            <ToastContainer />
-          </SkeletonTheme>
-        </StateProvider>}
-      </body>
-    </html>
-  )
+          <ToastContainer />
+        </SkeletonTheme>
+      </StateProvider> : <ErrorNoConnection />}
+    </body>
+  </html>
 }

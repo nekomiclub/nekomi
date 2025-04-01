@@ -34,6 +34,12 @@
       "~/interfaces/*": [
         "./src/interfaces/*"
       ],
+      "~/store/*": [
+        "./src/services/store/*"
+      ],
+      "~/hooks/*": [
+        "./src/services/hooks/*"
+      ],
       "~/*": [
         "./src/*"
       ],
@@ -43,7 +49,9 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/app/patcher/.old/Patcher.tsx",
+    "src/app/patcher/.old/PatcherStack.ts"
   ],
   "exclude": [
     "node_modules"

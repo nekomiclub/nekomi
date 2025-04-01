@@ -12,23 +12,25 @@ interface IInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   stateSetter: (prop: any) => void
 }
 
-export interface IUIFieldState {
-  /** @readonly */
-  initialValue: string | null
+export interface UIFieldState {
+  readonly initialValue: string | null
 
   value?: string
   status?: 'waiting' | 'changes_pending' | 'success' | 'error'
 
-  /** @readonly Indicates if value has been changed */
-  mutated?: boolean
-  /** @readonly Contain value if it is different from initial or undefined if not  */
-  newValue?: string
+  /** Indicates if value has been changed */
+  readonly mutated?: boolean
+  /** Contain value if it is different from initial or undefined if not  */
+  readonly newValue?: string
 }
 
-interface IUIFieldProps extends React.InputHTMLAttributes<HTMLElement> {
-  state: IUIFieldState
-  stateSetter: (prop: IUIFieldState) => void
-  fieldType: 'input' | 'textarea'
+/** @deprecated use UIFieldState instead */
+export type IUIFieldState = UIFieldState;
+
+export interface UIFieldProps extends React.InputHTMLAttributes<HTMLElement> {
+  state: UIFieldState
+  stateSetter(prop: UIFieldState): void
+  fieldType?: 'input' | 'textarea'
 
   /** Disable pending status when field value has been changed */
   disablePending?: boolean
@@ -44,10 +46,12 @@ const Input: NextPage<IInputProps> = ({ state, stateSetter, className, placehold
   return <input {...props} className={cn('px-[12px] py-[8px] bg-grey text-white text-[16px] placeholder:text-lightGrey placeholder:text-[16px]', className)} value={state} onChange={e => stateSetter(e.target.value)} placeholder={placeholder ?? '...'} />
 }
 
-export const UIField: NextPage<IUIFieldProps> = ({ state, stateSetter, className, placeholder, disablePending, symbolsLimited, fieldType, parentClassName, ...props }) => {
-  const [initialValue, setInitialValue] = useState<string>(state.initialValue ?? '');
+export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className, placeholder, disablePending, symbolsLimited, fieldType, parentClassName, disabled, ...props }) => {
+  fieldType = fieldType ?? 'input';
+
+  const [initialValue, setInitialValue] = useState<string>(state.value ?? state.initialValue ?? '');
   const [value, setValue] = useState<string>(initialValue);
-  const [status, setStatus] = useState<IUIFieldState['status']>(state.status)
+  const [status, setStatus] = useState<UIFieldState['status']>(state.status)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const symbolsLimitedRef = useRef<HTMLParagraphElement>(null)
@@ -84,7 +88,7 @@ export const UIField: NextPage<IUIFieldProps> = ({ state, stateSetter, className
     setStatus(state.status)
 
     if (state.status === 'success') {
-      setInitialValue(state.value!)
+      setInitialValue(state.value ?? '')
     }
   }, [state])
 
@@ -137,17 +141,63 @@ export const UIField: NextPage<IUIFieldProps> = ({ state, stateSetter, className
     }
   }
 
+  function handleMousewheel(e: React.WheelEvent) {
+    // Prevent the input value change
+    // @ts-ignore
+    e.target.blur()
+
+    // Prevent the page/container scrolling
+    e.stopPropagation()
+
+    // Refocus immediately, on the next tick (after the current function is done)
+    setTimeout(() => {
+      // @ts-ignore
+      e.target.focus()
+    }, 0)
+  }
+
 
 
   return <>
     {fieldType === 'input' && <Tooltip content={status === 'changes_pending' ? `Значення змінено з: ${initialValue}` : ''} className="w-full">
-      <input className={cn('ui-input', status === 'changes_pending' && 'ui-input--pending', status === 'success' && 'ui-input--success', status === 'error' && 'ui-input--error', className)} value={value} onChange={handleTyping} placeholder={placeholder ?? '...'} ref={inputRef} {...props} />
+      <input
+        className={cn(
+          'ui-input',
+          status === 'changes_pending' && 'ui-input--pending',
+          status === 'success' && 'ui-input--success',
+          status === 'error' && 'ui-input--error',
+          disabled && 'ui-input--disabled',
+          className
+        )}
+        value={value}
+        onChange={handleTyping}
+        onWheel={handleMousewheel}
+        placeholder={placeholder ?? '...'}
+        disabled={disabled}
+        ref={inputRef}
+        {...props}
+      />
 
       {symbolsLimited !== undefined && <p className={cn('duration-200 absolute right-[8px] top-[50%] translate-y-[-50%] font-space-grotesk text-[12px]', value?.length > symbolsLimited ? 'text-info-error' : 'text-grey-new')} ref={symbolsLimitedRef}>{value?.length} / {symbolsLimited}</p>}
     </Tooltip>}
 
     {fieldType === 'textarea' && <Tooltip content={status === 'changes_pending' ? `Значення змінено з: ${initialValue}` : ''} className={cn('flex flex-col gap-[4px] items-end', parentClassName)}>
-      <textarea className={cn('ui-input', status === 'changes_pending' && 'ui-input--pending', status === 'success' && 'ui-input--success', status === 'error' && 'ui-input--error', className)} value={value} onChange={handleTyping} placeholder={placeholder ?? '...'} ref={textareaRef} {...props} />
+      <textarea
+        className={cn(
+          'ui-input',
+          status === 'changes_pending' && 'ui-input--pending',
+          status === 'success' && 'ui-input--success',
+          status === 'error' && 'ui-input--error',
+          disabled && 'ui-input--disabled',
+          className
+        )}
+        value={value}
+        onChange={handleTyping}
+        placeholder={placeholder ?? '...'}
+        disabled={disabled}
+        ref={textareaRef}
+        {...props}
+      />
       {symbolsLimited !== undefined && <p className={cn('duration-200 font-space-grotesk text-[12px]', value?.length > symbolsLimited ? 'text-info-error' : 'text-grey-new')}>{value?.length} / {symbolsLimited}</p>}
     </Tooltip>}
   </>

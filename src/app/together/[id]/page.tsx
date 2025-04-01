@@ -1,57 +1,66 @@
-import { cookies } from 'next/headers';
 
-import { HappenedWrongScreen, NotFoundScreen } from '~/components/Components';
-import { HandleServerError } from '~/components/Errors';
-import { $api } from '~/components/http';
-import { config, metaObject } from '~/config';
-import { IDubber } from '~/interfaces/IDubber';
-import { IRSCProps } from '~/interfaces/IRSC';
-import { ITitle } from '~/interfaces/ITitle';
-import { IUser, IUserTogetherRoom } from '~/interfaces/IUser';
+import { MaterialSymbol } from 'react-material-symbols';
 
-import { TogetherRoomSecurityLayer } from './Room';
+import { metaObject } from '~/config';
+
 
 export const metadata = metaObject({ title: 'Спільний перегляд' })
 
-export default async function RSC({ params }: IRSCProps) {
-  const { id } = await params as { id: string };
+// export default async function RSC({ params }: IRSCProps) {
+//   const { id } = await params as { id: string };
 
-  const userId = id.split('__')[0];
-  const roomId = id.split('__')[1];
-  const userSessionToken = cookies().get(config.vars.SessionCookie)?.value;
+//   const userId = id.split('__')[0];
+//   const roomId = id.split('__')[1];
+//   const userSessionToken = cookies().get(config.vars.SessionCookie)?.value;
 
-  if (!userId || !roomId) return <HappenedWrongScreen cause="Неправильний ID кімнати" />
+//   if (!userId || !roomId) return notFound()
 
-  let user: IUser | undefined = undefined;
-  let room: IUserTogetherRoom | undefined = undefined;
-  let title: ITitle | undefined = undefined;
-  let dubbers: IDubber[] = [];
+//   let user: IUser | undefined = undefined;
+//   let room: IUserTogetherRoom | undefined = undefined;
+//   let title: ITitle | undefined = undefined;
+//   let dubbers: IDubber[] = [];
 
-  try {
-    const { data } = await $api.get<{ user: IUser }>(`/user/${userId}`, {
-      params: {
-        detailed: true,
-        togetherRoomId: roomId,
-      }
-    });
+//   try {
+//     const { data } = await $api.get<{ user: IUser }>(`/user/${userId}`, {
+//       params: {
+//         detailed: true,
+//         togetherRoomId: roomId,
+//       }
+//     });
 
-    user = data.user;
-    room = user.togetherRooms.find(el => el.id === roomId)!;
+//     user = data.user;
+//     room = user.togetherRooms.find(el => el.id === roomId)!;
 
-    const { data: titleData } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] | null }>(`/title/${room.titleId}`, {
-      params: {
-        detailed: true,
-        parseDubbers: true
-      }
-    });
+//     const { data: titleData } = await $api.get<{ title: ITitle, parsedDubbers: IDubber[] | null }>(`/title/${room.titleId}`, {
+//       params: {
+//         detailed: true,
+//         parseDubbers: true
+//       }
+//     });
 
-    title = titleData.title;
-    dubbers = titleData.parsedDubbers || [];
-  } catch (e) {
-    return HandleServerError(e)
-  }
+//     title = titleData.title;
+//     dubbers = titleData.parsedDubbers || [];
+//   } catch (e) {
+//     return HandleServerError(e)
+//   }
 
-  if (!user || !room || !title) return <NotFoundScreen />
+//   if (!user || !room || !title) notFound();
 
-  return <TogetherRoomSecurityLayer user={user} dubbers={dubbers} room={room} title={title} userSessionToken={userSessionToken || '_NULL'} />
+//   return <TogetherRoomSecurityLayer user={user} dubbers={dubbers} room={room} title={title} userSessionToken={userSessionToken || '_NULL'} />
+// }
+
+export default async function RSC() {
+  return <div className="w-screen h-screen bg-dark-primary flex justify-center items-center">
+    <div className="wrapper !flex-row items-center justify-center h-full">
+      <div className="flex gap-[40px]">
+        <MaterialSymbol icon="power_off" className="text-white" size={55} />
+
+        <div className="flex flex-col gap-[8px] max-w-[666px]">
+          <h1 className="text-white text-[40px] font-manrope font-bold w-fit">СПІЛЬНИЙ ПЕРЕГЛЯД ВИМКНЕНО</h1>
+
+          <p className="text-grey-new font-manrope w-full">Перша версія спільного перегляду була не в найкращому вигляді, з великою кількістю багів та обмежень. Ми вирішили вимкнути спільний перегляд для економії ресурсів та його переробки, щоб випустити стабільну версію з повним функціоналом. Перепрошуємо за незручності</p>
+        </div>
+      </div>
+    </div>
+  </div>
 }

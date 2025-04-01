@@ -1,11 +1,3 @@
-'use client'
-
-
-
-
-
-
-
 import '../styles/components/Footer.scss'
 
 import { NextPage } from 'next';
@@ -14,13 +6,12 @@ import Link from 'next/link';
 import { IcoNekomiLogo } from '../assets/Icons';
 import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
 import { CONSTS } from '../config';
-import { useAppSelector } from '../hooks/redux';
 import { Routes, routes } from '../routes';
 
 
-const Footer: NextPage = (props) => {
-  const storageState = useAppSelector(state => state.storage)
 
+
+const Footer: NextPage = () => {
   return (
     <footer className="relative w-full bg-dark">
       <div className="wrapper min-[1260px]:!flex-row justify-between items-start !px-[32px] !py-[40px] max-[1260px]:gap-[40px] max-[1260px]:items-center max-[760px]:items-start gap-[24px]">
@@ -66,21 +57,18 @@ const Footer: NextPage = (props) => {
         </div>
 
         {/* Right */}
-        <div className="flex justify-center max-[760px]:w-full">
-          <p className="text-white">Онлайн: <b className="font-bold gradient--primary-text">{storageState.online || -1}</b></p>
-          {/* <p className='text-white'>Онлайн: <span className='text-lightGrey text-[12px]'>Коти перегризли провода, вже фіксим</span></p> */}
-        </div>
+        <div className="flex justify-center max-[760px]:w-full"></div>
       </div>
     </footer>
   );
+}
 
-  function FooterLink({ href, text, disabled }: { href: string, text: string, disabled?: boolean }) {
-    return <li>
-      <Link href={href} aria-disabled={disabled} className={`outline-none ${disabled ? 'text-lightGrey' : 'text-white duration-100 hover:text-gradientPrimaryFallback focus-visible:text-gradientPrimaryFallback'}`}>
-        {text}
-      </Link>
-    </li>
-  }
+function FooterLink({ href, text, disabled }: { href: string, text: string, disabled?: boolean }) {
+  return <li>
+    <Link href={href} aria-disabled={disabled} className={`outline-none ${disabled ? 'text-lightGrey' : 'text-white duration-100 hover:text-gradientPrimaryFallback focus-visible:text-gradientPrimaryFallback'}`}>
+      {text}
+    </Link>
+  </li>
 }
 
 export default Footer;

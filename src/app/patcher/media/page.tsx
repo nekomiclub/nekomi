@@ -3,8 +3,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { config } from '~/config';
-import { CheckUserAccess } from '~/helpers/Authorization';
 import { Routes } from '~/routes';
+import CheckUserAccess from '~/utils/check-user-access';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
 import { MediaClient } from './Client';

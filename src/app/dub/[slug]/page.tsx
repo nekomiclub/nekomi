@@ -1,25 +1,27 @@
 import './styles.scss';
 
 import { Metadata } from 'next';
+import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
 import { timestampToDayMonth } from '~/components/handlers';
 import { metaObject } from '~/config';
-import { IDubber } from '~/interfaces/IDubber';
 import { IRSCProps } from '~/interfaces/IRSC';
-import { ITitle } from '~/interfaces/ITitle';
-import { IUser } from '~/interfaces/IUser';
 import API from '~/services/ApiService';
 
-import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberBanner, DubberHeader, DubberTeam } from './Dubber';
+import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberBanner, DubberHeader, DubberTeam } from './DubberPage';
 
 
+
+export interface DubberPageParams extends Params {
+  slug: string
+}
 
 export async function generateMetadata(
-  props: IRSCProps,
+  props: IRSCProps<DubberPageParams>,
 ): Promise<Metadata> {
-  const { slug } = await props.params as { slug: string };
+  const { slug } = await props.params;
 
   try {
     const { metadata } = await API.getDubberByQuery({
@@ -45,47 +47,37 @@ export async function generateMetadata(
 
 
 
-export default async function RSC({ params, searchParams }: IRSCProps) {
-  const { slug } = await params as { slug: string };
+export default async function RSC({ params, searchParams }: IRSCProps<DubberPageParams>) {
+  const { slug } = await params;
   const { invite } = await searchParams as { invite?: 'accept' | 'decline' };
-
-  let dubber: IDubber | null = null;
-  let dubbedAnime: ITitle[] | null = null
-  let parsedMembers: IUser[] | null = null
 
 
 
   try {
-    const data = await API.getDubberByQuery({
+    const { dubber, dubbedHydratedAnimes, parsedMembers } = await API.getDubberByQuery({
       query: slug,
       detailed: true,
       fetchDubbedAnime: true,
       parseMembers: true
     })
 
-    dubber = data.dubber!;
-    dubbedAnime = data.dubbedAnime as ITitle[];
-    parsedMembers = data.parsedMembers as IUser[];
+    return <section className="wrapper gap-[16px] pt-[16px] sm:pt-[var(--header-height)]">
+      <DubberBanner dubber={dubber} />
+
+      <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">
+        <DubberAnswerInvite dubber={dubber} invite={invite} />
+        <DubberHeader dubber={dubber} />
+        <DubberAbout dubber={dubber} />
+        {dubbedHydratedAnimes?.length ? <DubberAnimeDubbed dubber={dubber} hydratedAnimes={dubbedHydratedAnimes} /> : undefined}
+        {parsedMembers?.length ? <DubberTeam dubber={dubber} members={parsedMembers} /> : undefined}
+
+        <div className="flex items-center gap-[8px]">
+          <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
+          <p className="text-grey-new text-[12px] font-manrope">На nekomi з: {timestampToDayMonth(dubber.statistics.createdAt)}</p>
+        </div>
+      </div>
+    </section>
   } catch (e) {
     return HandleServerError(e)
   }
-
-
-
-  return <section className="wrapper gap-[16px] pt-[16px] sm:pt-[var(--header-height)]">
-    <DubberBanner dubber={dubber} />
-
-    <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">
-      <DubberAnswerInvite dubber={dubber} invite={invite} />
-      <DubberHeader dubber={dubber} />
-      <DubberAbout dubber={dubber} />
-      {dubbedAnime?.length ? <DubberAnimeDubbed dubber={dubber} dubbedAnime={dubbedAnime} /> : undefined}
-      {parsedMembers?.length ? <DubberTeam dubber={dubber} members={parsedMembers} /> : undefined}
-
-      <div className="flex items-center gap-[8px]">
-        <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
-        <p className="text-grey-new text-[12px] font-manrope">На nekomi з: {timestampToDayMonth(dubber.statistics.createdAt)}</p>
-      </div>
-    </div>
-  </section>
 }

@@ -1,113 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import { TVideoQuality } from '~/interfaces/Interfaces';
-import { TAnimeSeason } from '../interfaces/ITitle';
-
-
-
-/** Parse country.
- * @example
- * parseTitleCountry('japan') => 'Японія'
- * parseTitleCountry('null') => 'Країна ще неоновлена / невідома'
- * parseTitleCountry('ukraine') => 'Країна ще не перекладена - ukraine'
- */
-export function parseTitleCountry(country: string): string {
-  switch (country) {
-    case 'Japan': {
-      return 'Японія'
-    }
-
-    case 'China': {
-      return 'Китай'
-    }
-
-    case 'South Corea': {
-      return 'Південна Корея'
-    }
-
-    case 'Other': {
-      return '—'
-    }
-  }
-
-  return country
-}
-
-/** Parse type
- * @example
- * parseTitleType('serial') => 'Серіал'
- */
-export function parseTitleType(type: 'serial' | 'ONA' | 'OVA' | 'film' | 'special'): string {
-  switch (type) {
-    case ('serial'): {
-      return 'Серіал'
-    }
-
-    case ('ONA'): {
-      return 'ОНА'
-    }
-
-    case ('OVA'): {
-      return 'ОВА'
-    }
-
-    case ('film'): {
-      return 'Фільм'
-    }
-
-    case ('special'): {
-      return 'Спешл'
-    }
-  }
-}
-
-/** Parse title status
- * @example
- * parseTitleStatus('out') => 'Вийшов'
- */
-export function parseTitleStatus(status: 'announcement' | 'ongoing' | 'out' | 'delayed'): string {
-  switch (status) {
-    case ('announcement'): {
-      return 'Анонс'
-    }
-
-    case ('delayed'): {
-      return 'Відкладений'
-    }
-
-    case ('ongoing'): {
-      return 'Онґоїнг'
-    }
-
-    case ('out'): {
-      return 'Вийшов'
-    }
-  }
-}
-
-/** Parse title season
- * @example
- * parseTitleSeason('summer') => 'Літо'
- */
-export function parseTitleSeason(season: TAnimeSeason): string {
-  switch (season) {
-    case ('autumn'): {
-      return 'Осінь'
-    }
-
-    case ('spring'): {
-      return 'Весна'
-    }
-
-    case ('summer'): {
-      return 'Літо'
-    }
-
-    case ('winter'): {
-      return 'Зима'
-    }
-  }
-}
+import { EpisodeQualityType } from '~/interfaces/Interfaces';
 
 
 
@@ -289,9 +182,9 @@ export function decodeToken<T = any>(token: string): ITokenPayload<T> {
   }
 }
 
-export function parseVideoQuality(quality: TVideoQuality) {
+export function parseVideoQuality(quality: EpisodeQualityType) {
   switch (quality) {
-    case 'q4k': return '4K';
+    case 'q4k': return '2160p';
     case 'q1080': return '1080p';
     case 'q720': return '720p';
     case 'q480': return '480p';
