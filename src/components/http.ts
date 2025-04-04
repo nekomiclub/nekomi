@@ -31,7 +31,7 @@ $api.interceptors.response.use(undefined, e => {
 /** Same as $api, but with longer timeout */
 export const $upload = axios.create({
   withCredentials: true,
-  baseURL: config.URL.apiHTTP,
+  baseURL: config.URL.apiProxy,
   timeout: 420000,
 })
 
