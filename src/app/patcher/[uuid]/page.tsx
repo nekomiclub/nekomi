@@ -102,7 +102,7 @@ export default async function RSC(props: IRSCProps<PatcherPageParams>) {
           <PatcherMeta hydratedAnime={hydratedAnime} capabilities={caps} />
         </section>
 
-        <PatcherEpisodes hydratedAnime={hydratedAnime} capabilities={caps} dubbers={dubbers ?? []} />
+        <PatcherEpisodes hydratedAnime={hydratedAnime} capabilities={caps} dubbers={dubbers ?? []} session={session} />
       </main>
     </>
   } catch (e) {

@@ -4,12 +4,23 @@ import { KJUR } from 'jsrsasign'
 import XNcZbkZyomwTPdcY from '../../someBoringData/XNcZbkZyomwTPdcY'
 import { config } from '../config';
 
+
+
 /** Axios HTTP instance with csrf token specified & creds */
 export const $api = axios.create({
   withCredentials: true,
   baseURL: config.URL.apiHTTP,
   timeout: 10000,
 })
+
+/** Same as $api, but with longer timeout */
+export const $upload = axios.create({
+  withCredentials: true,
+  baseURL: config.URL.apiProxy,
+  timeout: 420000,
+})
+
+
 
 $api.interceptors.request.use(cfg => {
   cfg.headers['X-CSRF-Token'] = signCSRF();
@@ -28,18 +39,13 @@ $api.interceptors.response.use(undefined, e => {
   throw e;
 })
 
-/** Same as $api, but with longer timeout */
-export const $upload = axios.create({
-  withCredentials: true,
-  baseURL: config.URL.apiProxy,
-  timeout: 420000,
-})
-
 $upload.interceptors.request.use(async cfg => {
   cfg.headers['X-CSRF-Token'] = signCSRF();
 
   return cfg;
 })
+
+
 
 /** Sign CSRF token */
 export function signCSRF(): string {
