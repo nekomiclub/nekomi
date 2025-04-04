@@ -39,6 +39,7 @@ interface PatcherGenerciProps {
 
 interface PatcherEpisodesProps extends PatcherGenerciProps {
   dubbers: DubberCompact[]
+  session: string
 }
 
 export interface PatcherCapabilities {
@@ -319,7 +320,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
   </>
 }
 
-export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, hydratedAnime, dubbers: parsedDubbers }) => {
+export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, hydratedAnime, dubbers: parsedDubbers, session }) => {
   const canSeriesUpload = capabilities.canSeriesUpload;
 
   const [order, setOrder] = useState<UIFieldState>({ initialValue: '' })
@@ -335,7 +336,7 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
   const [Stack] = useState(new PatcherStack({
     anime: hydratedAnime.anime,
     episodes,
-    session: '',
+    session,
     patchEpisode: patchEpisodeState,
     throwError: throwStackError
   }))
