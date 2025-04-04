@@ -226,7 +226,7 @@ class ApiService {
     const { data } = await $upload.post<AnimePostEpisode>(`/anime/episode`, formData, {
       onUploadProgress: params?.onUploadProgress,
       headers: params?.session ? {
-        'Cookie': `${config.vars.SessionCookie}=${params?.session}`
+        Authorization: params?.session
       } : undefined
     })
 
