@@ -40,7 +40,7 @@ interface IProps {
 
 export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, className, loading, priority, useImg, imageClassName }) => {
   alt = alt ?? '...';
-  loading = loading ?? 'lazy';
+  loading = !priority ? loading ?? 'lazy' : 'eager'; // Priority and lazy load cannot be both specified
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
@@ -63,8 +63,8 @@ export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, classNa
       setIsLoaded(true);
     }
 
-    img.onerror = e => {
-      console.error(`Image ${src} cannot be loaded due to error`, e)
+    img.onerror = () => {
+      console.error(`Image ${src} cannot be loaded`)
 
       setIsErrored(true);
       setIsLoaded(false);
