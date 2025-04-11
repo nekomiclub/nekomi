@@ -28,8 +28,8 @@ import NPMenu from './NPMenu';
 import NPScreensContainer from './NPScreens';
 import NPSettings from './NPSettings';
 import NPTimeline from './NPTimeline';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NPTypes';
 import NPVolume from './NPVolume';
-import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './types';
 
 
 
@@ -99,8 +99,6 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   const loadedRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
   const viewtimeRef = useRef(0)
-
-  const onPausePatchTimeoutRef = useRef<NodeJS.Timeout>()
 
   const titleMaxEpisode = useRef(0)
 
@@ -206,6 +204,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
       setCurrentScreen('progress_continue');
 
+      loadProgress({ preload: true })
       setOutDubber ? setOutDubber(dubbers.find(el => el.id === progress.dub)!) : null;
       setOutEp ? setOutEp(progress.ep) : null;
 
@@ -220,16 +219,16 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
 
   /** Load user progress */
-  async function loadProgress() {
+  async function loadProgress(props?: { preload?: boolean }) {
     const record = getCurrentProgressRecord();
     if (!record) return loadDefault();
 
     const episode = anime.episodes.find(el => el.dubberID === record.dub && el.order === record.ep);
     if (!episode) return loadDefault();
 
-    setCurrentScreen('none')
-    await changeEpisode(episode, record.moment);
-    setStage('operational')
+    !props?.preload && setCurrentScreen('none')
+    await changeEpisode(episode, record.moment, props?.preload);
+    !props?.preload && setStage('operational')
 
     console.debug(`[nekoplayer]: User watch progress loaded. [dubber: ${record.dub}; episode: ${record.ep} (${prettySeconds(record.moment).pretty})]`)
   }
@@ -299,6 +298,9 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     if (!video || !player) return console.error(`[nekoplayer]: Video or Player are not found`);
 
     let viewtimeInterval: NodeJS.Timeout
+    let onPausePatchTimeout: NodeJS.Timeout
+
+
 
     //* Handle events
     // Hide context menu
@@ -315,6 +317,13 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     video.addEventListener('playing', () => {
       setIsVideoLoading(false)
       setIsPlaying(true)
+
+      clearInterval(viewtimeInterval);
+      clearTimeout(onPausePatchTimeout);
+
+      viewtimeInterval = setInterval(() => {
+        viewtimeRef.current += 1;
+      }, 1000)
     })
 
     // Handle playback rate
@@ -346,23 +355,17 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
     // Handle isPlaying state
     video.addEventListener('play', () => {
-      viewtimeInterval = setInterval(() => {
-        viewtimeRef.current += 1;
-      }, 1000)
-
       setIsPlaying(true)
-
-      window.clearTimeout(onPausePatchTimeoutRef.current);
     })
 
     video.addEventListener('pause', () => {
-      clearInterval(viewtimeInterval);
-
       setIsPlaying(false)
 
-      window.clearTimeout(onPausePatchTimeoutRef.current);
-      onPausePatchTimeoutRef.current = setTimeout(() => {
-        // Patch progress if user not active at least two minutes
+      clearInterval(viewtimeInterval);
+      clearTimeout(onPausePatchTimeout);
+
+      // Patch progress if user not active at least two minutes
+      onPausePatchTimeout = setTimeout(() => {
         patchWatchProgress()
       }, 120000);
     })
@@ -617,7 +620,12 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   useEffect(() => {
     if (stage !== 'operational' || !episode) return;
 
-    changeVideoSrc(episode.qualities[quality] ?? episode.qualities.q1080, moment)
+    const video = videoRef.current
+    if (!video) return
+
+    const videoUrl = episode.qualities[quality] ?? episode.qualities.q1080;
+
+    if (video.src !== videoUrl) changeVideoSrc(videoUrl, moment);
   }, [stage, quality])
 
   // Handle video buffering & screens
@@ -669,7 +677,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
         }
       } else {
         // Reset screen
-        setCurrentScreen('none');
+        setCurrentScreen(prev => prev !== 'progress_continue' ? 'none' : 'progress_continue');
       }
     }
 
@@ -693,8 +701,20 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   }, [outEpisode])
 
 
+
+  //* -------------- LISTENERS --------------
+  // Listen currentScreen 
+  useEffect(() => console.debug(`[nekoplayer]: Set screen: ${currentScreen}`), [currentScreen])
+  // Listen stage 
+  useEffect(() => console.debug(`[nekoplayer]: Set stage: ${stage}`), [stage])
+
+
+
+
   //* -------------- HANDLERS --------------
-  /** Get user progress */
+  /** Get user progress
+   * @param localOnly will return progress from local storage only
+   */
   function getCurrentProgressRecord(props?: { localOnly?: boolean }): NekoplayerLocalstorageRecord | null {
     // Get progress from user watch progress
     if (user.id && !props?.localOnly) {
@@ -794,13 +814,6 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     const video = videoRef.current;
     if (!video) return;
 
-    // TODO: blob it
-    // const videoRes = await fetch(src);
-    // const blob = await videoRes.blob();
-
-    // URL.revokeObjectURL(video.src);
-    // video.setAttribute('src', URL.createObjectURL(blob));
-
     video.setAttribute('src', src);
 
     await new Promise((res, rej) => {
@@ -812,10 +825,10 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
     changeMoment(moment);
 
-    if (!stopPlayback) {
-      try {
-        await video.play()
-      } catch (e) { }
+    if (stopPlayback) {
+      video.pause();
+    } else {
+      video.play().catch(e => { })
     }
   }
 

@@ -3,7 +3,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { cn } from '../Components';
 
-import { NekoplayerContext, NekoplayerContextProps } from './types';
+import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 
 

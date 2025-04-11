@@ -4,7 +4,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { cn } from '../Components';
 import { HandleClientError } from '../Errors';
 
-import { NekoplayerContext, NekoplayerContextProps } from './types';
+import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 
 

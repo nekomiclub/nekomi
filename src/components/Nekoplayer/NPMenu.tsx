@@ -6,7 +6,7 @@ import { DubberCompact } from '~/interfaces/DubberIntf';
 import { cn } from '../Components'
 import StyledImage from '../StyledImage';
 
-import { NekoplayerContext, NekoplayerContextProps } from './types';
+import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 
 
@@ -72,7 +72,7 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
 
 
 
-  return selectedDubber && <div className={cn(`relative z-[10] px-[24px] py-[16px] duration-200`, isIdle && '-translate-y-[100%]', className)}>
+  return selectedDubber ? <div className={cn(`relative z-[10] px-[24px] py-[16px] duration-200`, isIdle && '-translate-y-[100%]', className)}>
     <DropMenu.Menu className="w-fit flex gap-[4px]" settings={{ align: 'start', animation: 'slide' }} gap={16} state={isMenuOpen} stateSetter={setIsMenuOpen} id="kekwplayer-menu-selectDubbers">
       <DropMenu.MenuTrigger className="ui-button rounded-[2px] w-[40px] h-[40px] flex justify-center items-center" anchor>
         <MaterialSymbol className={cn(`text-white`)} icon="list" size={32} />
@@ -137,7 +137,7 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
         <MaterialSymbol className={cn(`text-white duration-100`, isLastEpisode && '!text-grey-new')} icon="skip_next" size={32} />
       </button>
     </DropMenu.Menu>
-  </div>
+  </div> : <div></div>
 }
 
 

@@ -11,7 +11,7 @@ import { cn } from '../Components';
 import { wordDeclination } from '../handlers';
 import StyledImage from '../StyledImage';
 
-import { NekoplayerContext, NekoplayerContextProps } from './types';
+import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 
 
@@ -192,8 +192,8 @@ const ContinueWatch: FC = ({ }) => {
   return <div className={cn(`w-full bg-dark-primary p-[32px] flex flex-col items-center gap-[32px] duration-200 max-sm:p-[16px]`, !isVisible && 'opacity-0 invisible absolute touch-none pointer-events-none')}>
     <h4 className="text-white text-[32px] text-center font-manrope font-bold max-sm:text-[24px]">Можливо, ще один епізод?</h4>
 
-    <div className="flex flex-col gap-[8px] items-center">
-      <button className="ui-button flex justify-between items-center gap-[8px] px-[16px] py-[12px] max-w-[700px] w-full max-sm:flex-col-reverse max-sm:items-start max-sm:gap-[16px]" onClick={() => skipEpisode(nextEpisodeOrder)}>
+    <div className="flex flex-col gap-[8px] items-center w-full">
+      <button className="ui-button flex justify-between items-center gap-[8px] px-[16px] py-[12px] grow max-w-[700px] w-full max-sm:flex-col-reverse max-sm:items-start max-sm:gap-[16px]" onClick={() => skipEpisode(nextEpisodeOrder)}>
         <div className="flex gap-[24px] items-center">
           <p className="text-white text-[32px] font-space-grotesk font-bold max-sm:text-[24px]">#{String(nextEpisodeOrder).padStart(2, '0')}</p>
 
