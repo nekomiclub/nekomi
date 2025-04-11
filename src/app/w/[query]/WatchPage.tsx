@@ -280,7 +280,7 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
 
       <div className="flex items-center gap-[8px] flex-wrap">
         <p className="text-grey-new font-manrope max-sm:text-[14px] whitespace-nowrap">Наступна серія вийде:</p>
-        <p className="text-white font-space-grotesk max-sm:text-[14px]">
+        <p className="text-white font-manrope max-sm:text-[14px]">
           {`
           ${timestampToDayMonth(timestamp)},
           ${String(getUTC(timestamp).hrs).padStart(2, '0')}:${String(getUTC(timestamp).mins).padStart(2, '0')}
