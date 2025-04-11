@@ -57,14 +57,15 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
     const signinToken = searchParams.get('signinPayload');
     if (!signinToken) return;
 
+    router.replace(pathname);
+
     (async function () {
       try {
         await $api.post(`/user/signin`, {
           session: signinToken
         })
 
-        router.replace(pathname);
-        router.refresh();
+        location.reload();
       } catch (e) {
         HandleClientError(e);
       }
