@@ -100,8 +100,6 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   const previewRef = useRef<HTMLDivElement>(null)
   const viewtimeRef = useRef(0)
 
-  const onPausePatchTimeoutRef = useRef<NodeJS.Timeout>()
-
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
@@ -300,6 +298,9 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     if (!video || !player) return console.error(`[nekoplayer]: Video or Player are not found`);
 
     let viewtimeInterval: NodeJS.Timeout
+    let onPausePatchTimeout: NodeJS.Timeout
+
+
 
     //* Handle events
     // Hide context menu
@@ -316,6 +317,13 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     video.addEventListener('playing', () => {
       setIsVideoLoading(false)
       setIsPlaying(true)
+
+      clearInterval(viewtimeInterval);
+      clearTimeout(onPausePatchTimeout);
+
+      viewtimeInterval = setInterval(() => {
+        viewtimeRef.current += 1;
+      }, 1000)
     })
 
     // Handle playback rate
@@ -347,23 +355,17 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
     // Handle isPlaying state
     video.addEventListener('play', () => {
-      viewtimeInterval = setInterval(() => {
-        viewtimeRef.current += 1;
-      }, 1000)
-
       setIsPlaying(true)
-
-      window.clearTimeout(onPausePatchTimeoutRef.current);
     })
 
     video.addEventListener('pause', () => {
-      clearInterval(viewtimeInterval);
-
       setIsPlaying(false)
 
-      window.clearTimeout(onPausePatchTimeoutRef.current);
-      onPausePatchTimeoutRef.current = setTimeout(() => {
-        // Patch progress if user not active at least two minutes
+      clearInterval(viewtimeInterval);
+      clearTimeout(onPausePatchTimeout);
+
+      // Patch progress if user not active at least two minutes
+      onPausePatchTimeout = setTimeout(() => {
         patchWatchProgress()
       }, 120000);
     })
@@ -710,7 +712,9 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
 
   //* -------------- HANDLERS --------------
-  /** Get user progress */
+  /** Get user progress
+   * @param localOnly will return progress from local storage only
+   */
   function getCurrentProgressRecord(props?: { localOnly?: boolean }): NekoplayerLocalstorageRecord | null {
     // Get progress from user watch progress
     if (user.id && !props?.localOnly) {
