@@ -6,7 +6,7 @@ import { Range } from 'react-range';
 
 import { cn } from '../Components';
 
-import { NekoplayerContext, NekoplayerContextProps } from './types';
+import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 
 

@@ -28,8 +28,8 @@ import NPMenu from './NPMenu';
 import NPScreensContainer from './NPScreens';
 import NPSettings from './NPSettings';
 import NPTimeline from './NPTimeline';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NPTypes';
 import NPVolume from './NPVolume';
-import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './types';
 
 
 
@@ -206,6 +206,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
       setCurrentScreen('progress_continue');
 
+      loadProgress({ preload: true })
       setOutDubber ? setOutDubber(dubbers.find(el => el.id === progress.dub)!) : null;
       setOutEp ? setOutEp(progress.ep) : null;
 
@@ -220,16 +221,16 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
 
   /** Load user progress */
-  async function loadProgress() {
+  async function loadProgress(props?: { preload?: boolean }) {
     const record = getCurrentProgressRecord();
     if (!record) return loadDefault();
 
     const episode = anime.episodes.find(el => el.dubberID === record.dub && el.order === record.ep);
     if (!episode) return loadDefault();
 
-    setCurrentScreen('none')
-    await changeEpisode(episode, record.moment);
-    setStage('operational')
+    !props?.preload && setCurrentScreen('none')
+    await changeEpisode(episode, record.moment, props?.preload);
+    !props?.preload && setStage('operational')
 
     console.debug(`[nekoplayer]: User watch progress loaded. [dubber: ${record.dub}; episode: ${record.ep} (${prettySeconds(record.moment).pretty})]`)
   }
@@ -617,7 +618,12 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   useEffect(() => {
     if (stage !== 'operational' || !episode) return;
 
-    changeVideoSrc(episode.qualities[quality] ?? episode.qualities.q1080, moment)
+    const video = videoRef.current
+    if (!video) return
+
+    const videoUrl = episode.qualities[quality] ?? episode.qualities.q1080;
+
+    if (video.src !== videoUrl) changeVideoSrc(videoUrl, moment);
   }, [stage, quality])
 
   // Handle video buffering & screens
@@ -669,7 +675,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
         }
       } else {
         // Reset screen
-        setCurrentScreen('none');
+        setCurrentScreen(prev => prev !== 'progress_continue' ? 'none' : 'progress_continue');
       }
     }
 
@@ -691,6 +697,16 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
     changeEpisode(outEpisode, 0, false);
   }, [outEpisode])
+
+
+
+  //* -------------- LISTENERS --------------
+  // Listen currentScreen 
+  useEffect(() => console.debug(`[nekoplayer]: Set screen: ${currentScreen}`), [currentScreen])
+  // Listen stage 
+  useEffect(() => console.debug(`[nekoplayer]: Set stage: ${stage}`), [stage])
+
+
 
 
   //* -------------- HANDLERS --------------
@@ -794,13 +810,6 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     const video = videoRef.current;
     if (!video) return;
 
-    // TODO: blob it
-    // const videoRes = await fetch(src);
-    // const blob = await videoRes.blob();
-
-    // URL.revokeObjectURL(video.src);
-    // video.setAttribute('src', URL.createObjectURL(blob));
-
     video.setAttribute('src', src);
 
     await new Promise((res, rej) => {
@@ -812,10 +821,10 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
     changeMoment(moment);
 
-    if (!stopPlayback) {
-      try {
-        await video.play()
-      } catch (e) { }
+    if (stopPlayback) {
+      video.pause();
+    } else {
+      video.play().catch(e => { })
     }
   }
 
