@@ -12,7 +12,7 @@ import CheckUserAccess from '~/utils/check-user-access';
 import { config, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
-import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './PatcherPage';
+import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './(components)/PatcherPage';
 
 
 
