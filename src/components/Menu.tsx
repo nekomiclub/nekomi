@@ -479,7 +479,7 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
 
 
   return item === null ? <>
-    {/* Result placeholder */}
+    {/* === Result placeholder */}
 
     {/* Anime type */}
     {type === 'anime' && <div className="menu-search-result">
@@ -502,10 +502,17 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
       </div>
     </div>}
   </> : <>
-    {/* Result ready */}
+    {/* === Result ready */}
 
     {/* Anime type */}
-    {type === 'anime' && animeResult && <Link href={`${config.URL.baseURL}${usePatcherRouting ? Routes.patcher_title.path : Routes.watch_title.path}/${animeResult.anime.slug}`} className="menu-search-result">
+    {type === 'anime' && animeResult && <Link href={
+      `${config.URL.baseURL}${usePatcherRouting
+        ? Routes.patcher_title.path
+        : Routes.watch_title.path}/${usePatcherRouting
+          ? animeResult.anime.uuid
+          : animeResult.anime.slug
+      }`
+    } className="menu-search-result">
       <StyledImage src={animeResult.anime.poster} width="120px" height="160px" />
 
       <div className="menu-search-result_content">

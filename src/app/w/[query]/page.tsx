@@ -111,7 +111,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
 
           {/* Meta */}
           <div className="flex flex-col gap-[6px]">
-            <WatchDetail name="Eпізоди:" value={`${maximumEpisode ?? '—'} / ${anime.episodesCount ?? '—'}`} />
+            <WatchDetail name="епізоди" value={`${maximumEpisode !== 0 ? maximumEpisode : '—'} / ${anime.episodesCount ?? '—'}`} />
             <WatchDetail name="Cтатус:" status={status} />
             <WatchDetail name="Рейтинг:" rate={rate} />
             <WatchDetail name="Cезон:" season={season} year={anime.year} />
@@ -198,7 +198,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
             {/* Details */}
             <div className="flex flex-col gap-[8px]">
               <div className="flex flex-wrap gap-[8px] max-2xl:grid-cols-3">
-                <WatchDetail name="епізоди" value={`${maximumEpisode ?? '—'} / ${anime.episodesCount ?? '—'}`} />
+                <WatchDetail name="епізоди" value={`${maximumEpisode !== 0 ? maximumEpisode : '—'} / ${anime.episodesCount ?? '—'}`} />
                 <WatchDetail name="статус" status={status} />
                 <WatchDetail name="рейтинг" rate={rate} />
                 <WatchDetail name="сезон" season={season} year={anime.year} />

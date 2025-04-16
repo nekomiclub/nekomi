@@ -257,7 +257,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         <div className="flex flex-col gap-[4px]">
           {capabilities.canEdit && <MetaSaveButton save={save} saveStatus={saveStatus} />}
 
-          <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${hydratedAnime.anime.slug}`} className="ui-button patcher-button">
+          <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${hydratedAnime.anime.uuid}`} className="ui-button patcher-button">
             <MaterialSymbol className="text-white" icon="slideshow" size={20} />
             <p className="text-white font-manrope uppercase">НА СТОРІНКУ ПЕРЕГЛЯДУ</p>
           </Link>
