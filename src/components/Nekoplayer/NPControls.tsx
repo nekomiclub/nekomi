@@ -2,7 +2,7 @@ import { FC, useContext, useEffect, useRef } from 'react';
 
 import { HandleClientError } from '../Errors';
 
-import { NekoplayerContext, NekoplayerContextProps } from './types';
+import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 
 

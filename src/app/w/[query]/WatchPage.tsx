@@ -10,7 +10,7 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
-import { getUTC } from '~/components/handlers';
+import { getUTC, timestampToDayMonth } from '~/components/handlers';
 import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
@@ -108,29 +108,29 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) =>
     currentUser.libs.filter(el => el.titles.includes(hydratedAnime.anime.uuid)).forEach(lib => {
       if (lib.type === 'favorite') {
         setIsFavorite(true)
-        setTitle('УЛЮБЛЕНЕ')
+        setTitle('УЛЮБЛЕНІ')
         setIcon('favorite')
       }
 
       if (isChanged) return;
 
       if (lib.type === 'delayed') {
-        setTitle('ВІДКЛАДЕНЕ')
+        setTitle('ВІДКЛАДЕНІ')
         setIcon('auto_delete')
       }
 
       if (lib.type === 'plans') {
-        setTitle('ЗАПЛАНОВАНЕ')
+        setTitle('ЗАПЛАНОВАНІ')
         setIcon('stack')
       }
 
       if (lib.type === 'watched') {
-        setTitle('ПЕРЕГЛЯНУТЕ')
+        setTitle('ПЕРЕГЛЯНУТІ')
         setIcon('bookmark_added')
       }
 
       if (lib.type === 'watching') {
-        setTitle('ПЕРЕГЛЯДАЄМЕ')
+        setTitle('ПЕРЕГЛЯДАЮ')
         setIcon('visibility')
       }
 
@@ -274,62 +274,18 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
 }
 
 export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp }) => {
-  const [date, setDate] = useState('')
-  const [within, setWithin] = useState('')
-
-
-
-  // TODO: handle local timezone
-  useMemo(() => {
-    const utc = getUTC(timestamp);
-    const now = getUTC();
-
-
-    if (utc.date === now.date) {
-      // now
-      setDate('сьогодні')
-      setTodayWithin();
-
-      setInterval(() => setTodayWithin(), 1000);
-    } else if (utc.date - 1 === now.date) {
-      // tomorrow
-      setDate('завтра')
-      // setWithin(`(в ${utc.hrs}:${utc.mins})`)
-    } else {
-      // in future
-      const offset = utc.date - now.date
-
-      setDate(`${String(utc.date).padStart(2, '0')}.${String(utc.month).padStart(2, '0')}`)
-      // setWithin(`(через ${offset} ${wordDeclination(offset, ['день', 'дні', 'днів'])})`)
-    }
-  }, [])
-
-
-
-  /** @todo fix */
-  function setTodayWithin() {
-    // if (getUTC().timestamp > getUTC(timestamp).timestamp) return setWithin(`(вже вийшла)`)
-
-    // const diffMs = Math.abs(getUTC(timestamp).timestamp - getUTC().timestamp);
-
-    // const hrs = Math.floor(diffMs / (1000 * 60 * 60));
-    // const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    // const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
-
-    // setWithin(`(через ${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')})`)
-  }
-
-
-
   return <Tooltip className="w-full" content="Вказано час та дату виходу епізоду в Японії. Переклад та озвучення вийдуть пізніше.">
     <div className="watch-meta-detail_outlined">
       <MaterialSymbol icon="hourglass_bottom" size={24} className="text-grey-new max-sm:text-[20px]" />
 
       <div className="flex items-center gap-[8px] flex-wrap">
         <p className="text-grey-new font-manrope max-sm:text-[14px] whitespace-nowrap">Наступна серія вийде:</p>
-        <p className="text-white font-space-grotesk max-sm:text-[14px]">{date}</p>
-        {/* // TODO: fix */}
-        {/* <p className="text-grey-new font-manrope max-sm:text-[14px]">{within}</p> */}
+        <p className="text-white font-manrope max-sm:text-[14px]">
+          {`
+          ${timestampToDayMonth(timestamp)},
+          ${String(getUTC(timestamp).hrs).padStart(2, '0')}:${String(getUTC(timestamp).mins).padStart(2, '0')}
+          `}
+        </p>
       </div>
     </div>
   </Tooltip>
@@ -344,13 +300,13 @@ export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, ico
 }
 
 export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt }) => {
-  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow basis-[205px] items-center gap-[16px] min-w-[180px] max-w-[280px] max-sm:min-w-0 max-sm:p-[4px] max-sm:pr-[8px] max-sm:basis-[160px]" href={`${config.URL.baseURL}${Routes.dubber_profile.path}/${dubber.slug}`}>
+  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow items-center gap-[16px] max-sm:min-w-0 max-sm:p-[4px] max-sm:pr-[8px] max-sm:basis-[160px]" href={`${config.URL.baseURL}${Routes.dubber_profile.path}/${dubber.slug}`}>
     <StyledImage src={dubber.avatarURL} width="48px" height="48px" className="rounded-[2px] overflow-hidden max-sm:w-[40px] max-sm:h-[40px]" />
 
     <div className="flex flex-col gap-[4px]">
-      <p className="text-white font-manrope font-bold max-sm:text-[14px]">{dubber.nameUkr}</p>
+      <p className={cn(`text-white font-manrope font-bold max-sm:text-[14px]`, posterAdapt ? 'line-clamp-1' : 'line-clamp-2')}>{dubber.nameUkr}</p>
 
-      {posterAdapt && <p className="text-grey-new font-manrope max-sm:text-[12px]">Адаптація постеру</p>}
+      {posterAdapt && <p className="text-grey-new font-manrope max-sm:text-[12px] whitespace-nowrap">Адаптація постеру</p>}
     </div>
   </Link>
 }

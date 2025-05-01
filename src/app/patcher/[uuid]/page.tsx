@@ -12,7 +12,7 @@ import CheckUserAccess from '~/utils/check-user-access';
 import { config, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 
-import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './PatcherPage';
+import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './(components)/PatcherPage';
 
 
 
@@ -102,7 +102,7 @@ export default async function RSC(props: IRSCProps<PatcherPageParams>) {
           <PatcherMeta hydratedAnime={hydratedAnime} capabilities={caps} />
         </section>
 
-        <PatcherEpisodes hydratedAnime={hydratedAnime} capabilities={caps} dubbers={dubbers ?? []} />
+        <PatcherEpisodes hydratedAnime={hydratedAnime} capabilities={caps} dubbers={dubbers ?? []} session={session} />
       </main>
     </>
   } catch (e) {

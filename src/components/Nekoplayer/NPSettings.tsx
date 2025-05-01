@@ -8,7 +8,7 @@ import { cn } from '../Components';
 import { parseVideoQuality } from '../handlers';
 import Tooltip from '../UI/Tooltip';
 
-import { NekoplayerContext, NekoplayerContextProps } from './types';
+import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 
 

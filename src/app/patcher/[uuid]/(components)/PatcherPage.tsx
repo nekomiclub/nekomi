@@ -39,6 +39,7 @@ interface PatcherGenerciProps {
 
 interface PatcherEpisodesProps extends PatcherGenerciProps {
   dubbers: DubberCompact[]
+  session: string
 }
 
 export interface PatcherCapabilities {
@@ -256,7 +257,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         <div className="flex flex-col gap-[4px]">
           {capabilities.canEdit && <MetaSaveButton save={save} saveStatus={saveStatus} />}
 
-          <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${hydratedAnime.anime.slug}`} className="ui-button patcher-button">
+          <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${hydratedAnime.anime.uuid}`} className="ui-button patcher-button">
             <MaterialSymbol className="text-white" icon="slideshow" size={20} />
             <p className="text-white font-manrope uppercase">НА СТОРІНКУ ПЕРЕГЛЯДУ</p>
           </Link>
@@ -319,7 +320,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
   </>
 }
 
-export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, hydratedAnime, dubbers: parsedDubbers }) => {
+export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, hydratedAnime, dubbers: parsedDubbers, session }) => {
   const canSeriesUpload = capabilities.canSeriesUpload;
 
   const [order, setOrder] = useState<UIFieldState>({ initialValue: '' })
@@ -335,7 +336,7 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
   const [Stack] = useState(new PatcherStack({
     anime: hydratedAnime.anime,
     episodes,
-    session: '',
+    session,
     patchEpisode: patchEpisodeState,
     throwError: throwStackError
   }))

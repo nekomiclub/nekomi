@@ -4,7 +4,7 @@ import { Range } from 'react-range';
 import { IcoServerUnavailable } from '~/assets/Icons';
 import prettySeconds from '~/utils/pretty-seconds';
 
-import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs } from './types';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs } from './NPTypes';
 
 
 

@@ -425,8 +425,8 @@ function UserComponent({ user }: { user: IUser }) {
 
     <Tooltip content="На nekomi з:">
       <div className="flex items-center gap-[8px]">
-        <MaterialSymbol className="text-grey-new" icon="calendar_add_on" size={24} />
-        <p className="text-grey-new font-manrope">{getUTC(user.statistics.accountCreated).fulldate}</p>
+        <MaterialSymbol className="text-white opacity-70" icon="calendar_add_on" size={24} />
+        <p className="text-white font-manrope opacity-70">{getUTC(user.statistics.accountCreated).fulldate}</p>
       </div>
     </Tooltip>
   </div>
