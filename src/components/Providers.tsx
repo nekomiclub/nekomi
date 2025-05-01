@@ -12,6 +12,7 @@ import { setupStore } from '~/store/store'
 import { HandleClientError } from './Errors';
 import { randomNumber } from './handlers';
 import { $api } from './http';
+import { NotifySuccess } from './UI/NotifyToast';
 import { UIReportModal } from './UI/Report';
 
 
@@ -55,21 +56,22 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
 
 
     const signinToken = searchParams.get('signinPayload');
-    if (!signinToken) return;
 
-    router.replace(pathname);
+    if (signinToken) {
+      router.replace(pathname);
 
-    (async function () {
-      try {
-        await $api.post(`/user/signin`, {
-          session: signinToken
-        })
+      (async function () {
+        try {
+          await $api.post(`/user/signin`, {
+            session: signinToken
+          })
 
-        location.reload();
-      } catch (e) {
-        HandleClientError(e);
-      }
-    })()
+          NotifySuccess({ title: 'Ви увійшли в акаунт!', message: 'Перезавантажте сторінку для оновлення інформації' })
+        } catch (e) {
+          HandleClientError(e);
+        }
+      })()
+    }
   }, [])
 
 
