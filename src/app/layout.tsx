@@ -90,14 +90,14 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
       // Ping API
       try {
-        await axios.get(`${config.URL.apiHTTP}/ping`)
+        await axios.options(`${config.URL.apiHTTP}/ping`)
         isServerOnline = true;
       } catch (e) { }
     }
   } else {
     // Ping API
     try {
-      await axios.get(`${config.URL.apiHTTP}/ping`)
+      await axios.options(`${config.URL.apiHTTP}/ping`)
       isServerOnline = true;
     } catch (e) { }
   }
