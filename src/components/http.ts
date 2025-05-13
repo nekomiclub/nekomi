@@ -29,8 +29,8 @@ $api.interceptors.request.use(cfg => {
 })
 
 $api.interceptors.response.use(undefined, e => {
-  // Retry ECONNRESET
-  if (e.code === 'ECONNRESET' && !e.config.__isRetryRequest) {
+  // Retry ECONNRESET & ECONNABORTED
+  if ((e.code === 'ECONNRESET' || e.code === 'ECONNABORTED') && !e.config.__isRetryRequest) {
     e.config.__isRetryRequest = true;
 
     return axios(e.config);
@@ -43,6 +43,17 @@ $upload.interceptors.request.use(async cfg => {
   cfg.headers['X-CSRF-Token'] = signCSRF();
 
   return cfg;
+})
+
+$upload.interceptors.response.use(undefined, e => {
+  // Retry ECONNRESET & ECONNABORTED
+  if ((e.code === 'ECONNRESET' || e.code === 'ECONNABORTED') && !e.config.__isRetryRequest) {
+    e.config.__isRetryRequest = true;
+
+    return axios(e.config);
+  }
+
+  throw e;
 })
 
 
