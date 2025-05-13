@@ -19,12 +19,12 @@ import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
 import { ErrorNoConnection } from '~/components/Errors';
-import { StateProvider } from '~/components/Providers';
+import NavMenu from '~/components/NavMenu/NavMenu';
+import { StateProvider } from '~/components/StateProvider';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import Footer from '../components/Footer';
-import Header from '../components/Menu';
-import { config, metaObject } from '../config';
+import { config, devMode, metaObject } from '../config';
 import { ILayoutProps } from '../interfaces/IRSC';
 
 
@@ -86,16 +86,12 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
       isServerOnline = true;
     } catch (e) {
-      console.error(`User fetched with error at RootLayout`, e)
-
-      // Ping API
-      try {
-        await axios.options(`${config.URL.apiHTTP}/ping`)
-        isServerOnline = true;
-      } catch (e) { }
+      if (devMode) console.error(e)
     }
-  } else {
-    // Ping API
+  }
+
+  // Ping API
+  if (!isServerOnline) {
     try {
       await axios.options(`${config.URL.apiHTTP}/ping`)
       isServerOnline = true;
@@ -107,20 +103,22 @@ export default async function Layout({ children, params }: ILayoutProps) {
   preconnect(config.URL.media);
 
   return <html lang="uk">
-    <body id="root" className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
-      <Analytics />
-      <SpeedInsights />
-
+    <body className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
       {/* Return layout if server respond */}
       {isServerOnline ? <StateProvider user={user}>
         <SkeletonTheme baseColor="#181818" highlightColor="#222">
-          <Header />
+          <NavMenu />
 
           {children}
 
           <Footer />
 
+
+
           <ToastContainer />
+
+          <Analytics />
+          <SpeedInsights />
         </SkeletonTheme>
       </StateProvider> : <ErrorNoConnection />}
     </body>

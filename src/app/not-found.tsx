@@ -1,7 +1,7 @@
-
-
 import { ErrorNotFound } from '~/components/Errors';
 import { metaObject } from '../config';
+
+
 
 export const metadata = metaObject({
   title: '404',
@@ -11,6 +11,6 @@ export const metadata = metaObject({
 
 
 
-export default async function NotFound() {
+export default async function RSC() {
   return <ErrorNotFound />
 }

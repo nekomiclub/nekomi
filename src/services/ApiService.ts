@@ -160,6 +160,16 @@ class ApiService {
     })
   }
 
+  async userLogout() {
+    await $api.get('/user/logout');
+  }
+
+  async userSignin({ token }: { token: string }) {
+    await $api.post(`/user/signin`, {
+      session: token
+    })
+  }
+
 
 
   //* =============== ANIME ROUTER

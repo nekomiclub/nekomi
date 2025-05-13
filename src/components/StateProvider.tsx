@@ -6,12 +6,12 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
+import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import { setupStore } from '~/store/store'
 
 import { HandleClientError } from './Errors';
 import { randomNumber } from './handlers';
-import { $api } from './http';
 import { NotifySuccess } from './UI/NotifyToast';
 import { UIReportModal } from './UI/Report';
 
@@ -32,9 +32,7 @@ const ConsoleMessages = [
   `🐈 nekomi.club`,
   `nekomi nekoma nekome neko mimi ne bebebebebeb`,
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ⌚`,
-  `Will I be known and loved?\nIs there one that I trust?\nStarting to sober up\nHas it been long enough?`,
-  `imma fullstack overflow developer 🤓`,
-  `This site is written on NextJS`,
+  `This site is written on NextJS!`,
   `NPM - Newton's Pickle Machine`
 ]
 
@@ -54,7 +52,7 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
     const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
     console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
 
-
+    // Authorize
     const signinToken = searchParams.get('signinPayload');
 
     if (signinToken) {
@@ -62,11 +60,13 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
 
       (async function () {
         try {
-          await $api.post(`/user/signin`, {
-            session: signinToken
-          })
+          await API.userSignin({ token: signinToken });
 
-          NotifySuccess({ title: 'Ви увійшли в акаунт!', message: 'Перезавантажте сторінку для оновлення інформації' })
+          NotifySuccess({ title: 'Ти увійшов в акаунт', message: 'hola!' })
+
+          setTimeout(() => {
+            router.refresh();
+          }, 500);
         } catch (e) {
           HandleClientError(e);
         }
@@ -89,13 +89,12 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
     />
 
     <UIReportModal />
-    <SetupIntertnals />
 
     {children}
   </Provider>
 }
 
-/** Setup redux internals state */
+/** Setup redux internals state @deprecated */
 const SetupIntertnals: NextPage = () => {
   // const dispatch = useAppDispatch();
 

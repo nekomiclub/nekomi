@@ -2,56 +2,31 @@
 
 import '~/styles/components/Menu.scss';
 
-import { useEffect, useId, useRef, useState } from 'react'
-import * as DropMenu from '@fullkekw/fkw-menu';
-import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
+import { useEffect, useId, useRef, useState } from 'react';
+import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
+import { PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
 import { NextPage } from 'next';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
-import { useAppDispatch, useAppSelector } from '~/hooks/redux';
+import { config } from '~/config';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { IDubber } from '~/interfaces/IDubber';
+import { IUser } from '~/interfaces/IUser';
+import { Routes } from '~/routes';
 import API from '~/services/ApiService';
-import userSlice, { IUserState, userStateDefault } from '~/store/reducers/userSlice';
-import { IcoNekomiLogo } from '../assets/Icons';
-import { config } from '../config';
-import { IDubber } from '../interfaces/IDubber';
-import { IUser } from '../interfaces/IUser';
-import { Routes, routes } from '../routes';
-
-import { cn } from './Components';
-import { HandleClientError } from './Errors';
-import { randomNumber } from './handlers';
-import { $api } from './http';
-import StyledImage from './StyledImage';
-import { NotifySuccess } from './UI/NotifyToast';
-import { UIText } from './UI/Text.ui';
+import { cn } from '~/utils/utils';
+import { HandleClientError } from '../Errors';
+import { randomNumber } from '../handlers';
+import StyledImage from '../StyledImage';
 
 
 
-/** Global search engines */
-type TSearchEngine = 'dubber' | 'user' | 'title';
-
-/** Extended gloabl search result object with it's type */
-export interface ISearchExtended<T = any> {
-  type: TSearchEngine
-  item: T
-}
-
-interface MenuSearchProps {
+interface Props {
   dialogId: string
-}
-
-interface MenuDropProps {
-  isUserAuthorized: boolean
-  user: IUserState
-  logout: () => void
-  pathname: string
-
-  className?: string
 }
 
 type MenuSearchType = 'user' | 'dubber' | 'anime'
@@ -91,169 +66,7 @@ const SearchStartTypingDictionary = [
 
 
 
-const Menu: NextPage = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const dispatch = useAppDispatch();
-  const searchPopupId = useId().replaceAll(':', '')
-  const userDesktopMenuId = useId().replaceAll(':', '')
-  const userMobileMenuId = useId().replaceAll(':', '')
-
-  const user = useAppSelector(state => state.user)
-
-  const [isUserAuthorized] = useState(Boolean(user.id));
-  const [userDetailsOpened, setUserDetailsOpened] = useState(false)
-
-
-
-  /** Exit from account */
-  async function logout() {
-    try {
-      await $api.get('/user/logout');
-
-      NotifySuccess({ title: 'Ви вийшли з акаунту', message: 'Ви ж повернетесь ще, так?' })
-      dispatch(userSlice.actions.reducer(userStateDefault))
-      setUserDetailsOpened(false)
-      router.refresh();
-    } catch (e) {
-      HandleClientError(e);
-    }
-  }
-
-  function focusSearch() {
-    const search = document.querySelector('#search-searchBar') as HTMLInputElement;
-
-    if (!search) return console.error(`Search #search-searchBar is not found`);
-    let i = 0;
-
-    setInterval(() => {
-      if (i !== 5) {
-        i += 1;
-        search.focus();
-      }
-    }, 50);
-  }
-
-
-
-  return (
-    <>
-      <MenuSearch dialogId={searchPopupId} />
-
-      {/* Header menu */}
-      <header className={`fixed top-0 left-0 w-full py-[16px] backdrop-blur-[12px] z-[110] duration-200 max-sm:hidden h-[var(--header-height)]`}>
-        <div className="wrapper !flex-row items-center justify-between w-full">
-          <div className="flex items-center gap-[40px]">
-            <Link href={routes.home.path} className="duration-200 hover:rotate-[5deg] focus-visible:rotate-[5deg] outline-none">
-              <IcoNekomiLogo width={60} height={60} fill="#fff" />
-            </Link>
-
-            <div className="flex items-center gap-[0px]">
-              <Link href={routes.home.path} className={`p-[8px] [&>span]:hover:text-primary h-[56px]`} title="На головну">
-                <MaterialSymbol icon="home" size={40} className={cn('duration-200', pathname === routes.home.path ? 'text-primary' : 'text-white')} />
-              </Link>
-
-              <PopupButton className="p-[8px] [&>span]:hover:text-primary h-[48px]" togglePopupId={searchPopupId} onClick={focusSearch}>
-                <MaterialSymbol icon="search" size={32} className={cn('text-white duration-200')} />
-              </PopupButton>
-            </div>
-          </div>
-
-          <DropMenu.Menu gap={16} settings={{ align: 'end' }} className="ui-dropdownMenu--scaleAnimation" state={userDetailsOpened} stateSetter={setUserDetailsOpened} id={userDesktopMenuId}>
-            <DropMenu.MenuTrigger className="flex items-center gap-[8px] duration-200 relative" anchor>
-              {isUserAuthorized && <>
-                {/* User authorized */}
-                <StyledImage src={user.avatar} width={`64px`} height={`64px`} loading="eager" priority className="rounded-[4px] overflow-hidden" alt="avatar" />
-              </>}
-
-              {!isUserAuthorized && <>
-                {/* User is not authorized */}
-                <div className="w-[64px] h-[64px] rounded-[4px] bg-dark-medium flex items-center justify-center">
-                  <MaterialSymbol icon="no_accounts" size={40} className="text-white" />
-                </div>
-              </>}
-
-              <MaterialSymbol icon="arrow_drop_down" size={24} className={cn(`text-white duration-200 p-[8px]`, userDetailsOpened && 'rotate-180')} />
-            </DropMenu.MenuTrigger>
-
-            <MenuDrop isUserAuthorized={isUserAuthorized} user={user} logout={logout} pathname={pathname} />
-          </DropMenu.Menu>
-        </div >
-      </header>
-
-      {/* Mobile menu */}
-      <div className={`fixed bottom-0 left-0 w-full z-[110] bg-dark duration-200 hidden justify-between items-center max-sm:flex`}>
-        <Link href={Routes.home.path} className="ui-menu-mobile_navItem">
-          <MaterialSymbol icon="home" className="text-white" size={24} />
-          <UIText text="Головна" className="font-bold" type="mini" />
-        </Link>
-
-        <PopupButton className="ui-menu-mobile_navItem" togglePopupId={searchPopupId} onClick={focusSearch}>
-          <MaterialSymbol icon="search" className="text-white" size={24} />
-          <UIText text="Пошук" className="font-bold" type="mini" />
-        </PopupButton>
-
-        {isUserAuthorized && <Link href={`/u/${user.username}#user-libs`} className="ui-menu-mobile_navItem">
-          <MaterialSymbol icon="folder_copy" className="text-white" size={24} />
-          <UIText text="Теки" className="font-bold" type="mini" />
-        </Link>}
-
-        <DropMenu.Menu gap={16} settings={{ align: 'end', direction: 'top' }} className="ui-dropdownMenu--scaleAnimation w-full" state={userDetailsOpened} stateSetter={setUserDetailsOpened} id={userMobileMenuId}>
-          <DropMenu.MenuTrigger className="ui-menu-mobile_navItem" anchor>
-            <div className="w-[24px] h-[24px] relative">
-              <MaterialSymbol icon="menu" className={cn('text-white duration-200 absolute top-0 left-0', userDetailsOpened && 'opacity-0')} size={24} />
-              <MaterialSymbol icon="close" className={cn('text-white duration-200 absolute top-0 left-0', !userDetailsOpened && 'opacity-0')} size={24} />
-            </div>
-
-            <UIText text="Меню" className="font-bold" type="mini" />
-          </DropMenu.MenuTrigger>
-
-          <MenuDrop isUserAuthorized={isUserAuthorized} user={user} logout={logout} pathname={pathname} className="!right-[8px]" />
-        </DropMenu.Menu>
-      </div>
-    </>
-  );
-}
-
-
-
-const MenuDrop: NextPage<MenuDropProps> = ({ isUserAuthorized, user, logout, pathname, className }) => {
-  return <DropMenu.MenuWrapper className={cn(`bg-dark-primary border border-dark-light rounded-[4px] w-[200px] flex flex-col`, className)}>
-    {isUserAuthorized && <>
-      <Link href={`/u/${user.username}`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-        <StyledImage src={user.avatar} width={`24px`} height={`24px`} priority className="rounded-[2px] overflow-hidden" alt="avatar" />
-        <p className="text-white w-full font-manrope">Профіль</p>
-      </Link>
-
-      <Link href={`/u/${user.username}#user-libs`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-        <MaterialSymbol icon="folder_copy" size={24} className="text-white" />
-        <p className="text-white w-full font-manrope">Теки</p>
-      </Link>
-
-      <Link href={`/u/${user.username}?openSettings`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-        <MaterialSymbol icon="settings" size={24} className="text-white" />
-        <p className="text-white w-full font-manrope">Налаштування</p>
-      </Link>
-
-      {/* Divider */}
-      <span className="w-full h-[1px] block bg-grey"></span>
-
-      <button className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={logout}>
-        <MaterialSymbol icon="logout" size={24} className="text-primary" />
-        <p className="text-white text-center w-full font-bold font-manrope">Вийти</p>
-      </button>
-    </>}
-
-    {!isUserAuthorized && <>
-      <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-        <MaterialSymbol icon="login" size={24} className="text-primary" />
-        <p className="text-white text-center w-full font-bold font-manrope">Увійти</p>
-      </Link>
-    </>}
-  </DropMenu.MenuWrapper>
-}
-
-const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
+const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
   const pathname = usePathname();
   const selectSearchTypeMenuId = useId().replaceAll(':', '');
 
@@ -274,12 +87,12 @@ const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
 
 
 
-  //* Init
+  // Init
   useEffect(() => {
     setStartTypingText(SearchStartTypingDictionary[randomNumber(0, SearchStartTypingDictionary.length - 1)])
   }, [])
 
-  //* Handle typing search effect
+  // Handle typing search effect
   useEffect(() => {
     setShowStartTyping(false);
     setShowNotFound(false)
@@ -294,13 +107,13 @@ const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
     setSearchResults([null, null, null, null, null])
   }, [searchText])
 
-  //* Handle patcher routing & hide dialog on route change
+  // Handle patcher routing & hide dialog on route change
   useEffect(() => {
     setUserPatcherRouting(pathname.includes('/patcher'))
     setIsSearchOpen(false);
   }, [pathname])
 
-  //* Handle search via debounce query
+  // Handle search via debounce query
   useEffect(() => {
     setShowStartTyping(false);
     setShowNotFound(false)
@@ -315,14 +128,14 @@ const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
     search();
   }, [searchTextDebounce])
 
-  //* Handle search results
+  // Handle search results
   useEffect(() => {
     if (searchResults.length === 0 && !showStartTyping) return setShowNotFound(true);
 
     contentRef.current?.scrollTo({ top: 0, behavior: 'instant' })
   }, [searchResults])
 
-  //* Close select search type on select 
+  // Close select search type on select 
   useEffect(() => {
     setIsSelectSearchTypeOpen(false);
     setSearchResults([]);
@@ -386,19 +199,19 @@ const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
       <div className="w-full bg-dark-primary flex flex-col gap-[16px] pb-[12px] rounded-[4px]">
         {/* Search box */}
         <div className="w-full flex justify-between items-center border-b border-b-dark-light">
-          <DropMenu.Menu id={selectSearchTypeMenuId} gap={0} settings={{ align: 'start', animation: 'slide' }} state={isSelectSearchTypeOpen} stateSetter={setIsSelectSearchTypeOpen}>
-            <DropMenu.MenuTrigger className="flex gap-[12px] items-center p-[12px] border-r border-dark-medium" anchor>
+          <Menu id={selectSearchTypeMenuId} gap={0} settings={{ align: 'start', animation: 'slide' }} state={isSelectSearchTypeOpen} stateSetter={setIsSelectSearchTypeOpen}>
+            <MenuTrigger className="flex gap-[12px] items-center p-[12px] border-r border-dark-medium" anchor>
               <MenuSearchSelectTypeButton type={searchType} />
 
               <MaterialSymbol className="text-grey-new" icon="expand_all" size={12} />
-            </DropMenu.MenuTrigger>
+            </MenuTrigger>
 
-            <DropMenu.MenuWrapper className="bg-dark-primary border rounded-t-none border-dark-light flex flex-col rounded-[4px] overflow-hidden min-w-fit w-full">
+            <MenuWrapper className="bg-dark-primary border rounded-t-none border-dark-light flex flex-col rounded-[4px] overflow-hidden min-w-fit w-full">
               <MenuSearchSelectTypeButton className="menu-search_selectType" type={'anime'} setType={setSearchType} />
               <MenuSearchSelectTypeButton className="menu-search_selectType" type={'dubber'} setType={setSearchType} />
               <MenuSearchSelectTypeButton className="menu-search_selectType" type={'user'} setType={setSearchType} />
-            </DropMenu.MenuWrapper>
-          </DropMenu.Menu>
+            </MenuWrapper>
+          </Menu>
 
           <form onSubmit={search} className="w-full flex justify-between items-center">
             <input className="p-[12px] bg-transparent w-full font-manrope text-white placeholder:font-manrope placeholder:text-grey-new" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} placeholder="Що шукаємо?" autoComplete="off" id="search-searchBar" />
@@ -443,6 +256,8 @@ const MenuSearch: NextPage<MenuSearchProps> = ({ dialogId }) => {
   </PopupLayer>
 }
 
+
+
 const MenuSearchSelectTypeButton: NextPage<MenuSearchSelectTypeButtonProps> = ({ type, className, setType }) => {
   return <div role="button" className={cn(`flex items-center gap-[8px]`, className)} onClick={() => setType && setType(type)}>
     <MaterialSymbol className="text-white" icon={
@@ -459,6 +274,8 @@ const MenuSearchSelectTypeButton: NextPage<MenuSearchSelectTypeButtonProps> = ({
     </p>
   </div>
 }
+
+
 
 const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatcherRouting }) => {
   const [firstLineWidth] = useState(randomNumber(80, 320))
@@ -561,6 +378,4 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
   </>
 }
 
-
-
-export default Menu;
+export default NavMenuSearch;
