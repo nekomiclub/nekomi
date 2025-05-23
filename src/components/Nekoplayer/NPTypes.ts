@@ -23,7 +23,6 @@ export interface NekoplayerContextProps {
   anime: Anime
   dubbers: DubberCompact[]
   duration: number
-  isMobile: boolean
 
   //* POSSIBLE UNDEFINED CONSTS
   watchProgress?: NekoplayerLocalstorageRecord
