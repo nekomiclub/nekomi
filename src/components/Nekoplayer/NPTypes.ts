@@ -11,11 +11,22 @@ export type NekoplayerScreenType = 'none'
   | 'last_dubbed_episode'
   | 'anime_end'
 
+/** 
+ * @localstorage LocalStorageKeys.NekoplayerData
+ */
 export interface NekoplayerLocalstorageRecord {
   id: string,
   dub: string,
   ep: number,
   moment: number
+}
+
+/** 
+ * @localstorage LocalStorageKeys.NekoplayerPreferences
+ */
+export interface NekoplayerLocalStoragePreferences {
+  uuid: string
+  saveProgress?: boolean
 }
 
 export interface NekoplayerContextProps {
@@ -42,6 +53,7 @@ export interface NekoplayerContextProps {
   //* HANDLERS
   loadProgress: () => void
   passProgress: () => void
+  DeleteWatchProgress(notify?: boolean): Promise<void>
 
   //* STATES
   currentScreen: NekoplayerScreenType

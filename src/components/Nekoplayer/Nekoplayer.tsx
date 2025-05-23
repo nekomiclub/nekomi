@@ -18,16 +18,16 @@ import { cn } from '~/utils/utils';
 import { ITitleEpisode } from '../../interfaces/ITitle';
 import { HandleClientError } from '../Errors';
 import { $api } from '../http';
+import { NotifySuccess } from '../UI/NotifyToast';
 
 import NPControls from './NPControls';
 import NPFullscreen from './NPFullscreen';
 import NPIP from './NPIP';
 import NPlay from './NPlay';
 import NPMenu from './NPMenu';
-import NPScreensContainer from './NPScreens';
 import NPSettings from './NPSettings';
 import NPTimeline from './NPTimeline';
-import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NPTypes';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalStoragePreferences, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NPTypes';
 import NPVolume from './NPVolume';
 
 
@@ -122,6 +122,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
     loadProgress,
     passProgress,
+    DeleteWatchProgress,
 
     currentScreen,
     setCurrentScreen,
@@ -609,6 +610,12 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   async function SyncWatchProgress() {
     if (!user.id) return;
 
+    const prefArray = GetNekoplayerPreferences();
+    const pref = prefArray.find(el => el.uuid === anime.uuid)
+
+    // Abort sync out watch progress if user prefer not to do that
+    if (pref?.saveProgress === false) return console.debug(`[nekoplayer]: Watch progress sync aborted due to user's preferences`)
+
     const record = getCurrentProgressRecord({ localOnly: true });
     if (!record) return
 
@@ -672,7 +679,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   }
 
   /** Delete user progress record */
-  async function DeleteWatchProgress() {
+  async function DeleteWatchProgress(notify?: boolean) {
     const records = GetNekoplayerData();
     const record = getCurrentProgressRecord()
 
@@ -681,6 +688,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     } catch (e) {
       HandleClientError(e)
     }
+
+    notify && NotifySuccess({ title: 'Прогрес перегляду видалено', message: '' })
 
     console.debug(`[nekoplayer]: User watch progress deleted. [dubber: ${record?.dub}]`)
     localStorage.setItem(LocalStorageKeys.NekoplayerData, JSON.stringify(records.filter(record => record.id !== anime.uuid)))
@@ -856,7 +865,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
       </div>
 
       {/* Screens */}
-      {!disableScreens && <NPScreensContainer />}
+      {/* //! TEMP ======= */}
+      {/* {!disableScreens && <NPScreensContainer />} */}
 
       {/* Menu */}
       <NPMenu className={cn(!isControlsHiddenUnderScreen && 'z-[20]')} order={episode.order} isLastEpisode={isLastEpisode} totalEpisodesCount={anime.episodesCount ?? titleMaxEpisode.current} isIdle={isIdle} />
@@ -890,6 +900,22 @@ export function GetNekoplayerData(): NekoplayerLocalstorageRecord[] {
   if (typeof window === 'undefined') return []
 
   return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerData) ?? '[]')
+}
+
+/** Get local nekoplayer preferences data */
+export function GetNekoplayerPreferences(): NekoplayerLocalStoragePreferences[] {
+  if (typeof window === 'undefined') return []
+
+  return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerPreferences) ?? '[]') as NekoplayerLocalStoragePreferences[];
+}
+
+/** Set nekoplayer preferences */
+export function SetNekoplayerPreferences(pref: NekoplayerLocalStoragePreferences) {
+  if (typeof window === 'undefined') return;
+
+  const prefArray = GetNekoplayerPreferences();
+
+  localStorage.setItem(LocalStorageKeys.NekoplayerPreferences, JSON.stringify([...prefArray.filter(el => el.uuid !== pref.uuid), pref]))
 }
 
 export default Nekoplayer;

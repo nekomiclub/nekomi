@@ -79,7 +79,7 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
       </DropMenu.MenuTrigger>
 
       <DropMenu.MenuWrapper className={'!w-fit min-w-full bg-dark-primary border border-dark-light flex rounded-[4px]'}>
-        <div className="flex flex-col max-h-[300px] h-full overflow-y-auto">
+        <div className="flex flex-col max-h-[300px] h-full overflow-y-auto w-full">
           {dubbers.map(dubber => {
             const dubbedEpisodes = anime.episodes.filter(el => el.dubberID === dubber?.id);
             const hasQ2160Eps = dubbedEpisodes.some(el => el.qualities.q4k !== null);
