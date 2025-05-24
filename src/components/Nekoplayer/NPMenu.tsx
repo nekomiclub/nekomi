@@ -5,6 +5,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { cn } from '../Components'
 import StyledImage from '../StyledImage';
+import Tooltip from '../UI/Tooltip';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
@@ -133,9 +134,11 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
         </div>
       </div>
 
-      <button className={cn(`ui-button rounded-[2px] flex justify-center items-center w-[40px] h-[40px]`, isLastEpisode && 'cursor-not-allowed hover:bg-dark-medium focus-visible:bg-dark-medium')} onClick={skipEpisode} disabled={isLastEpisode} tabIndex={0}>
-        <MaterialSymbol className={cn(`text-white duration-100`, isLastEpisode && '!text-grey-new')} icon="skip_next" size={32} />
-      </button>
+      <Tooltip content={!isLastEpisode ? 'Наступний епізод' : 'Наступний епізод відсутній'}>
+        <button className={cn(`ui-button rounded-[2px] flex justify-center items-center w-[40px] h-[40px]`, isLastEpisode && 'cursor-not-allowed hover:bg-dark-medium focus-visible:bg-dark-medium')} onClick={skipEpisode} disabled={isLastEpisode} tabIndex={0}>
+          <MaterialSymbol className={cn(`text-white duration-100`, isLastEpisode && '!text-grey-new')} icon="skip_next" size={32} />
+        </button>
+      </Tooltip>
     </DropMenu.Menu>
   </div> : <div></div>
 }

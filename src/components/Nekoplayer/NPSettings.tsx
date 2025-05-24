@@ -158,7 +158,7 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
         <MaterialSymbol className={cn(`kekwplayer-settings text-white`)} icon="settings" size={32} />
       </MenuTrigger>
 
-      <MenuWrapper className={`nekoplayer-settings-menu_wrapper !w-[300px] rounded-[2px] bg-dark-primary flex flex-col border border-dark-light overflow-x-hidden overflow-y-auto max-h-[500px] !translate-x-[30px] duration-200`}>
+      <MenuWrapper className={`nekoplayer-settings-menu_wrapper !w-[300px] rounded-[2px] bg-dark-primary flex flex-col border border-dark-light overflow-x-hidden overflow-y-auto max-h-[500px] !translate-x-[30px] duration-200 max-md:max-h-[300px]`}>
         {/* General */}
         <SettingsMenu menu="general">
           <SettingsButton title="Якість" icon="hd" menu="quality" setMenu={setMenu} value={parseVideoQuality(quality)} />
@@ -178,7 +178,7 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
         </SettingsMenu>
 
         {/* Speed */}
-        <SettingsMenu menu="speed">
+        <SettingsMenu menu="speed" className="h-[300px]">
           <SettingsBack icon="speed" title="Швидкість" setMenu={setMenu} />
 
           <SettingsSpeedSelect amplifier={0.25} currentSpeed={speed} setSpeed={setSpeed} />
@@ -233,7 +233,7 @@ const SettingsButton: FC<SettingsButtonProps> = ({ icon, menu, setMenu, title, o
 }
 
 const SettingsMenu: FC<SettingsMenuProps> = ({ children, menu, className }) => {
-  return <div className={cn(`nekoplayer-settings-menu w-full absolute bottom-0 left-0 duration-[350ms]`, `nekoplayer-settings-menu_${menu}`, className)}>
+  return <div className={cn(`nekoplayer-settings-menu w-full overflow-y-auto absolute bottom-0 left-0 duration-[350ms]`, `nekoplayer-settings-menu_${menu}`, className)}>
     {children}
   </div>
 }
