@@ -112,14 +112,14 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
 
     const menus = wrapper.querySelectorAll(`.nekoplayer-settings-menu`) as NodeListOf<HTMLDivElement> | undefined;
     const activeMenu = wrapper.querySelector(`.nekoplayer-settings-menu_${menu}`) as HTMLDivElement | undefined;
-    if (!activeMenu || !menus) return
+    if (!activeMenu || !menus?.length) return
+
+    wrapper.style.height = `${activeMenu.offsetHeight}px`;
 
     menus.forEach(menu => {
       menu.style.translate = '105%'
       menu.style.opacity = '0'
     })
-
-    wrapper.style.height = `${activeMenu.offsetHeight}px`;
 
     activeMenu.style.translate = '0';
     activeMenu.style.opacity = '1';
@@ -195,7 +195,7 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
         <SettingsMenu menu="settings">
           <SettingsBack icon="settings" title="Налаштування" setMenu={setMenu} />
 
-          <SettingsButton title={stretch ? 'Центрувати відео' : 'Розтягнути на весь екран'} icon={stretch ? 'collapse_content' : 'expand_content'} menu="settings" setMenu={setMenu} onclick={() => setStretch(!stretch)} />
+          <SettingsButton title={stretch ? 'Центрувати відео' : 'Розтягнути відео'} icon={stretch ? 'collapse_content' : 'expand_content'} menu="settings" setMenu={setMenu} onclick={() => setStretch(!stretch)} />
           <SettingsButton title={'Видалити прогрес перегляду'} icon={'delete_sweep'} menu="settings" setMenu={setMenu} onclick={() => DeleteWatchProgress(true)} />
 
           <Tooltip content={saveProgress ? 'Вимикаючи це, у тебе також не буде нараховуватися загальний час перегляду' : ''} fitWrapper>

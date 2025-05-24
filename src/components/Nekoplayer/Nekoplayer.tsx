@@ -5,6 +5,7 @@ import '~/styles/components/Nekoplayer.scss';
 import { useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
 import { NextPage } from 'next';
+import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
 
 import { useAppSelector } from '~/hooks/redux';
@@ -25,6 +26,7 @@ import NPFullscreen from './NPFullscreen';
 import NPIP from './NPIP';
 import NPlay from './NPlay';
 import NPMenu from './NPMenu';
+import NPScreens from './NPScreens';
 import NPSettings from './NPSettings';
 import NPTimeline from './NPTimeline';
 import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalStoragePreferences, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NPTypes';
@@ -93,13 +95,12 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   const titleMaxEpisode = useRef(0)
 
   // Idle timer
-  // ! TEMP =============================================
-  // useIdleTimer({
-  //   timeout: 3000,
-  //   throttle: 500,
-  //   onIdle: () => setIsIdle(true),
-  //   onAction: () => setIsIdle(false)
-  // })
+  useIdleTimer({
+    timeout: 3000,
+    throttle: 500,
+    onIdle: () => setIsIdle(true),
+    onAction: () => setIsIdle(false)
+  })
 
 
 
@@ -221,8 +222,10 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     player.addEventListener('keydown', e => {
       const video = videoRef.current;
       const player = playerRef.current;
-
       if (!video || !player) return;
+
+      const moment = video.currentTime
+      const duration = video.duration
 
       const key = e.code;
 
@@ -252,8 +255,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
         // Skip prev 10s
         case 'KeyJ': {
-          if (video.currentTime - 10 >= 0) {
-            changeMoment(video.currentTime - 10)
+          if (moment - 10 >= 0) {
+            changeMoment(moment - 10)
           } else {
             changeMoment(0)
           }
@@ -263,8 +266,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
         // Skip prev 5s
         case 'ArrowLeft': {
-          if (video.currentTime - 5 >= 0) {
-            changeMoment(video.currentTime - 5)
+          if (moment - 5 >= 0) {
+            changeMoment(moment - 5)
           } else {
             changeMoment(0)
           }
@@ -274,10 +277,10 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
         // Skip next 10s
         case 'KeyL': {
-          if (video.currentTime + 10 >= duration) {
-            changeMoment(video.duration)
+          if (moment + 10 >= duration) {
+            changeMoment(duration)
           } else {
-            changeMoment(video.currentTime + 10)
+            changeMoment(moment + 10)
           }
 
           break;
@@ -285,10 +288,10 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
         // Skip next 5s
         case 'ArrowRight': {
-          if (video.currentTime + 5 >= video.duration) {
-            changeMoment(video.duration)
+          if (moment + 5 >= duration) {
+            changeMoment(duration)
           } else {
-            changeMoment(video.currentTime + 5)
+            changeMoment(moment + 5)
           }
 
           break;
@@ -416,7 +419,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     })
   }, [])
 
-  // Handle preview visibility on touch & position on hover
+  // Handle preview visibility on touch
   useEffect(() => {
     const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
     const preview = document.querySelector(`#${NekoplayerIDs.Preview}`) as HTMLDivElement
@@ -473,14 +476,27 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
       preview.style.touchAction = 'none';
       preview.style.pointerEvents = 'none';
     }
-
-
-
-    // Handle preview position
-    timeline.addEventListener('pointermove', e => {
-      movePreview(e.offsetX)
-    });
   }, [])
+
+  // Handle preview move on timeline hover
+  useEffect(() => {
+    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
+    if (!timeline) return
+
+    timeline.addEventListener('pointermove', handlePointermove);
+
+
+
+    function handlePointermove(e: PointerEvent) {
+      movePreview(e.offsetX)
+    }
+
+
+
+    return () => {
+      return timeline.removeEventListener('pointermove', handlePointermove)
+    }
+  }, [episode, isVideoProcessed])
 
   // Handle update local progress on timeupdate & screens
   useEffect(() => {
@@ -499,6 +515,12 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
       const moment = video.currentTime;
 
       if (moment > 5) {
+        const prefArray = GetNekoplayerPreferences();
+        const pref = prefArray.find(el => el.uuid === anime.uuid)
+
+        // Abort sync out watch progress if user prefer not to do that
+        if (pref?.saveProgress === false) return
+
         updatePlayerProgress({
           dub: episode.dubberID,
           ep: episode.order,
@@ -819,6 +841,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
     // Set preview frame
     if (!episode || !isVideoProcessed) return
+
     const img = preview.querySelector('img') as HTMLImageElement;
 
     let previewIndex = Math.floor(hoveredMoment / 5);
@@ -865,14 +888,13 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
       </div>
 
       {/* Screens */}
-      {/* //! TEMP ======= */}
-      {/* {!disableScreens && <NPScreensContainer />} */}
+      {!disableScreens && <NPScreens />}
 
       {/* Menu */}
       <NPMenu className={cn(!isControlsHiddenUnderScreen && 'z-[20]')} order={episode.order} isLastEpisode={isLastEpisode} totalEpisodesCount={anime.episodesCount ?? titleMaxEpisode.current} isIdle={isIdle} />
 
       {/* Bottom */}
-      <div className={cn(`nekoplayer-bottom flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[12px] backdrop-blur-[4px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .6))' }} ref={bottomRef}>
+      <div className={cn(`nekoplayer-bottom flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[12px] backdrop-blur-[4px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]', duration === 1 && 'invisible')} style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .6))' }} ref={bottomRef}>
         <div className="flex items-center gap-[16px]">
           <NPlay />
           <NPVolume />
