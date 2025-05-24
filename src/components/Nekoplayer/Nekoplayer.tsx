@@ -19,29 +19,24 @@ import { cn } from '~/utils/utils';
 import { ITitleEpisode } from '../../interfaces/ITitle';
 import { HandleClientError } from '../Errors';
 import { $api } from '../http';
+import { NotifySuccess } from '../UI/NotifyToast';
 
 import NPControls from './NPControls';
 import NPFullscreen from './NPFullscreen';
 import NPIP from './NPIP';
 import NPlay from './NPlay';
 import NPMenu from './NPMenu';
-import NPScreensContainer from './NPScreens';
+import NPScreens from './NPScreens';
 import NPSettings from './NPSettings';
 import NPTimeline from './NPTimeline';
-import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NPTypes';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalStoragePreferences, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NPTypes';
 import NPVolume from './NPVolume';
 
 
 
-type PlayerStageType = 'setup' | 'operational'
-
 interface NekoplayerProps {
   anime: Anime
   dubbers: DubberCompact[]
-
-  outEpisode?: ITitleEpisode
-  setOutDubber?: (state: DubberCompact) => void
-  setOutEp?: (state: number) => void
 
   disableScreens?: boolean
 }
@@ -57,10 +52,8 @@ interface NekoplayerProps {
 
 
 //! SET PROPS DIRECTRLY TO VIDEO, STATES USED ONLY TO OBSERVE 
-const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, setOutEp, outEpisode, disableScreens }) => {
+const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens }) => {
   const user = useAppSelector(state => state.user);
-
-  const [stage, setStage] = useState<PlayerStageType>('setup')
 
 
 
@@ -72,7 +65,6 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   const [hoveredMoment, setHoveredMoment] = useState<number>(0);
   const [currentScreen, setCurrentScreen] = useState<NekoplayerScreenType>('none')
   const [localData, setLocalData] = useState<NekoplayerLocalstorageRecord>()
-  const [isMobile, setIsMobile] = useState(true);
   const [isControlsHiddenUnderScreen, setIsControlsHiddenUnderScreen] = useState<boolean>(true) // Define if player timeline and menu will be hidden under screeen
 
   // Settings states
@@ -116,7 +108,6 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     anime,
     dubbers,
     duration,
-    isMobile,
 
     watchProgress: localData,
 
@@ -132,6 +123,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
     loadProgress,
     passProgress,
+    DeleteWatchProgress,
 
     currentScreen,
     setCurrentScreen,
@@ -150,9 +142,9 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
 
 
-  //! -------------- DEFAULT EFFECTS --------------
-  // Player vitals, video loading handling
+  // Handle titleMaxEpisode & isVideoLoading
   useEffect(() => {
+    // Handle titleMaxEpisode
     anime.episodes.forEach(ep => {
       if (ep.order > titleMaxEpisode.current) titleMaxEpisode.current = ep.order
     })
@@ -170,356 +162,70 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     };
   }, [])
 
-  // Patch user watch progress on beforeunload & visibilitychange
+  // Patch user watch progress on user exist
   useEffect(() => {
     // Patch watch progress
-    window.addEventListener('beforeunload', patchWatchProgress)
-    document.addEventListener('visibilitychange', patchWatchProgress)
+    window.addEventListener('beforeunload', SyncWatchProgress)
+    document.addEventListener('visibilitychange', SyncWatchProgress)
 
     return () => {
-      patchWatchProgress()
+      SyncWatchProgress()
     }
   }, [])
 
-
-
-  //! -------------- SETUP STAGE --------------
-  // Setup with user progress or default
+  // Fetch user progress
   useEffect(() => {
-    if (stage !== 'setup') return;
-
     const video = videoRef.current;
-    if (window === undefined || !video) return;
+    if (typeof window === 'undefined' || !video) return;
 
-    // Load defaults if screens are disabled
+    // Load default progress if screens are disabled
     if (disableScreens) {
-      loadDefault();
+      LoadDefaultPlayback();
       return
     }
 
     const progress = getCurrentProgressRecord()
 
     if (progress && progress.moment > 10) {
-      // Progress is present, purpose it to init with
+      // Progress is present, purpose it to continue with
 
       setCurrentScreen('progress_continue');
 
       loadProgress({ preload: true })
-      setOutDubber ? setOutDubber(dubbers.find(el => el.id === progress.dub)!) : null;
-      setOutEp ? setOutEp(progress.ep) : null;
-
       setLocalData(progress);
     } else {
-      // Progress is missing, set default data
+      // Progress is missing, load default playback
 
-      loadDefault();
+      LoadDefaultPlayback();
     }
-  }, [stage, user])
+  }, [user])
 
 
 
-  /** Load user progress */
-  async function loadProgress(props?: { preload?: boolean }) {
-    const record = getCurrentProgressRecord();
-    if (!record) return loadDefault();
-
-    const episode = anime.episodes.find(el => el.dubberID === record.dub && el.order === record.ep);
-    if (!episode) return loadDefault();
-
-    !props?.preload && setCurrentScreen('none')
-    await changeEpisode(episode, record.moment, props?.preload);
-    !props?.preload && setStage('operational')
-
-    console.debug(`[nekoplayer]: User watch progress loaded. [dubber: ${record.dub}; episode: ${record.ep} (${prettySeconds(record.moment).pretty})]`)
-  }
-
-  /** Delete title from user progress & proceed */
-  async function passProgress() {
-    setCurrentScreen('none')
-
-    console.debug(`[nekoplayer]: User delete watch progress`)
-
-    await Promise.all([
-      await deletePlayerProgress(),
-      await loadDefault(),
-    ])
-  }
-
-  /** Setup with default player states */
-  async function loadDefault() {
-    const episode = anime.episodes[0];
-
-    setCurrentScreen('none')
-    await changeEpisode(episode, 0, true);
-    setStage('operational');
-
-    console.debug(`[nekoplayer]: Default watch progress loaded`)
-  }
-
-  /** Update user watch progress */
-  async function patchWatchProgress() {
-    if (!user.id) return;
-
-    const record = getCurrentProgressRecord({ localOnly: true });
-    if (!record) return
-
-    const viewtime = viewtimeRef.current;
-    // Ignore patching less than 5 seconds of viewtime
-    if (viewtime < 5) return;
-
-    try {
-      await $api.patch('/user', {
-        method: 'patchWatchProgress',
-        titleId: anime.uuid,
-        dubberID: record.dub,
-        episodeOrder: record.ep,
-        progress: record.moment,
-        viewtime,
-      })
-
-      viewtimeRef.current = 0;
-    } catch (e) {
-      HandleClientError(e)
-    }
-
-    console.debug(`[nekoplayer]: Watch progress have been updated. [dubber: ${record.dub}; episode: ${record.ep} (${prettySeconds(record.moment).pretty})]`)
-  }
-
-
-
-  //! -------------- OPERATIONAL STAGE --------------
-  // Handle video events
+  // Handle general video & keyboard events & buffering
   useEffect(() => {
-    if (stage !== 'operational') return;
-
     const video = videoRef.current;
     const player = playerRef.current;
-
-    if (!video || !player) return console.error(`[nekoplayer]: Video or Player are not found`);
+    if (!video || !player) return
 
     let viewtimeInterval: NodeJS.Timeout
     let onPausePatchTimeout: NodeJS.Timeout
 
 
 
-    //* Handle events
     // Hide context menu
     player.addEventListener('contextmenu', e => {
       e.preventDefault();
     })
 
-    //* Handle states
-    // Handle loading & isPlaying
-    video.addEventListener('waiting', () => {
-      setIsVideoLoading(true)
-    })
-
-    video.addEventListener('playing', () => {
-      setIsVideoLoading(false)
-      setIsPlaying(true)
-
-      clearInterval(viewtimeInterval);
-      clearTimeout(onPausePatchTimeout);
-
-      viewtimeInterval = setInterval(() => {
-        viewtimeRef.current += 1;
-      }, 1000)
-    })
-
-    // Handle playback rate
-    video.addEventListener('ratechange', () => {
-      setSpeed(video.playbackRate)
-    })
-
-    // Handle playback progress & buffering
-    video.addEventListener('timeupdate', () => {
-      changeMoment(video.currentTime, true)
-
-      //* Buffering
-      const loaded = loadedRef.current;
-      const buffered = video.buffered;
-
-      if (buffered.length !== 0 && loaded) {
-        for (let i = 0; i < buffered.length; i++) {
-          const start = buffered.start(i);
-          const end = buffered.end(i);
-
-          if (moment >= start && moment <= end) {
-            const offset = (end / duration) * 100
-
-            loaded.style.width = `${offset}%`
-          }
-        }
-      };
-    })
-
-    // Handle isPlaying state
-    video.addEventListener('play', () => {
-      setIsPlaying(true)
-    })
-
-    video.addEventListener('pause', () => {
-      setIsPlaying(false)
-
-      clearInterval(viewtimeInterval);
-      clearTimeout(onPausePatchTimeout);
-
-      // Patch progress if user not active at least two minutes
-      onPausePatchTimeout = setTimeout(() => {
-        patchWatchProgress()
-      }, 120000);
-    })
-
-    // Handle volume. Mute if volume equal 0, unmute either
-    video.addEventListener('volumechange', () => {
-      if (video.volume === 0 || video.muted) {
-        setIsMuted(true);
-      } else {
-        setIsMuted(false);
-      }
-
-      setVolume(Math.floor(video.volume * 100));
-    });
-
-    // Handle fullscreen
-    player.addEventListener('fullscreenchange', () => {
-      setIsFullscreen(document.fullscreenElement ? true : false)
-    })
-
-    // Handle PiP
-    video.addEventListener('leavepictureinpicture', () => {
-      setIsPip(false)
-    })
-
-    video.addEventListener('enterpictureinpicture', () => {
-      setIsPip(true)
-    })
-
-    // Handle progressbar actions
-    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
-    const preview = document.querySelector(`#${NekoplayerIDs.Preview}`) as HTMLDivElement
-
-    if (timeline && preview) {
-      let isDragging = false
-      let touchTimeout: NodeJS.Timeout;
-
-      timeline.addEventListener('touchstart', () => {
-        clearTimeout(touchTimeout)
-        timelineTouchStartHandler()
-
-        touchTimeout = setTimeout(() => {
-          timelineTouchEndHandler();
-        }, 1000);
-      })
-
-      timeline.addEventListener('touchmove', () => {
-        clearTimeout(touchTimeout)
-        timelineTouchStartHandler()
-
-        touchTimeout = setTimeout(() => {
-          timelineTouchEndHandler();
-        }, 1000);
-      })
-
-      timeline.addEventListener('pointerenter', () => timelineTouchStartHandler())
-      timeline.addEventListener('pointerdown', () => {
-        isDragging = true;
-        timelineTouchStartHandler()
-      })
-
-      document.addEventListener('pointerup', () => {
-        isDragging = false;
-        timelineTouchEndHandler()
-      })
-      timeline.addEventListener('pointerleave', () => {
-        if (isDragging) return
-        timelineTouchEndHandler();
-      })
-    };
-
-
-
-    function timelineTouchStartHandler() {
-      preview.style.opacity = '1';
-      preview.style.visibility = 'visible';
-      preview.style.touchAction = 'all';
-      preview.style.pointerEvents = 'all';
-    }
-
-    function timelineTouchEndHandler() {
-      preview.style.opacity = '0';
-      preview.style.visibility = 'invisible';
-      preview.style.touchAction = 'none';
-      preview.style.pointerEvents = 'none';
-    }
-  }, [stage])
-
-  // Handle video events & save progress
-  useEffect(() => {
-    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
-    const preview = document.querySelector(`#${NekoplayerIDs.Preview}`) as HTMLDivElement
-
-    const player = playerRef.current;
-    const video = videoRef.current;
-
-    if (!timeline || !preview || !video || !player) return;
-
-    // Move preview box
-    timeline.addEventListener('pointermove', handlePointerMove);
-    video.addEventListener('timeupdate', handleTimeupdate)
-
-    function handlePointerMove(e: MouseEvent) {
-      movePreview(e.offsetX)
-    }
-
-    // Save progress
-    function handleTimeupdate(e: Event) {
-      const moment = (e.target as HTMLVideoElement).currentTime;
-
-      if (moment > 5) {
-        updatePlayerProgress({
-          dub: episode.dubberID,
-          ep: episode.order,
-          id: anime.uuid,
-          moment
-        })
-      }
-    }
-
-
-
-    return () => {
-      timeline.removeEventListener('pointermove', handlePointerMove)
-      video.removeEventListener('timeupdate', handleTimeupdate)
-    }
-  }, [stage, episode])
-
-  // Handle cursor visibility in idle/active modes
-  useEffect(() => {
-    if (stage !== 'operational') return;
-
-    // Hide cursor in fullscreen mode
-    if (isIdle && isFullscreen) {
-      document.body.style.cursor = 'none';
-    } else {
-      document.body.style.cursor = 'auto';
-    }
-  }, [stage, isIdle])
-
-  // Handle keyboard
-  useEffect(() => {
-    if (stage !== 'operational') return;
-
-    const player = playerRef.current;
-    if (!player) return;
-
-    player.addEventListener('keydown', handleKeyboard)
-
-    function handleKeyboard(e: KeyboardEvent) {
+    // Handle keyboard
+    player.addEventListener('keydown', e => {
       const video = videoRef.current;
       const player = playerRef.current;
-
       if (!video || !player) return;
+
+      const moment = video.currentTime
+      const duration = video.duration
 
       const key = e.code;
 
@@ -549,8 +255,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
         // Skip prev 10s
         case 'KeyJ': {
-          if (video.currentTime - 10 >= 0) {
-            changeMoment(video.currentTime - 10)
+          if (moment - 10 >= 0) {
+            changeMoment(moment - 10)
           } else {
             changeMoment(0)
           }
@@ -560,8 +266,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
         // Skip prev 5s
         case 'ArrowLeft': {
-          if (video.currentTime - 5 >= 0) {
-            changeMoment(video.currentTime - 5)
+          if (moment - 5 >= 0) {
+            changeMoment(moment - 5)
           } else {
             changeMoment(0)
           }
@@ -571,10 +277,10 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
         // Skip next 10s
         case 'KeyL': {
-          if (video.currentTime + 10 >= duration) {
-            changeMoment(video.duration)
+          if (moment + 10 >= duration) {
+            changeMoment(duration)
           } else {
-            changeMoment(video.currentTime + 10)
+            changeMoment(moment + 10)
           }
 
           break;
@@ -582,10 +288,10 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
         // Skip next 5s
         case 'ArrowRight': {
-          if (video.currentTime + 5 >= video.duration) {
-            changeMoment(video.duration)
+          if (moment + 5 >= duration) {
+            changeMoment(duration)
           } else {
-            changeMoment(video.currentTime + 5)
+            changeMoment(moment + 5)
           }
 
           break;
@@ -594,9 +300,20 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
         // Fullscreen
         case 'KeyF': {
           if (document.fullscreenElement) {
-            document.exitFullscreen().catch(e => HandleClientError(e))
+            document.exitFullscreen().catch(e => null)
           } else {
-            player.requestFullscreen().catch(e => HandleClientError(e))
+            player.requestFullscreen().catch(e => null)
+          }
+
+          break;
+        }
+
+        // PiP
+        case 'KeyP': {
+          if (document.fullscreenElement) {
+            video.requestPictureInPicture().catch(e => null)
+          } else {
+            document.exitPictureInPicture().catch(e => null)
           }
 
           break;
@@ -609,44 +326,51 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
           break;
         }
       }
-    }
+    })
 
-    return () => {
-      player.removeEventListener('keydown', handleKeyboard)
-    }
-  }, [stage, isFullscreen])
+    // Handle fullscreen
+    player.addEventListener('fullscreenchange', () => {
+      setIsFullscreen(document.fullscreenElement ? true : false)
+    })
 
-  // Handle quality changing
-  useEffect(() => {
-    if (stage !== 'operational' || !episode) return;
+    // Handle loading
+    video.addEventListener('waiting', () => {
+      setIsVideoLoading(true)
+    })
 
-    const video = videoRef.current
-    if (!video) return
+    // Handle playing
+    video.addEventListener('playing', () => {
+      setIsVideoLoading(false)
+      setIsPlaying(true)
 
-    const videoUrl = episode.qualities[quality] ?? episode.qualities.q1080;
+      clearInterval(viewtimeInterval);
+      clearTimeout(onPausePatchTimeout);
 
-    if (video.src !== videoUrl) changeVideoSrc(videoUrl, moment);
-  }, [stage, quality])
+      viewtimeInterval = setInterval(() => {
+        viewtimeRef.current += 1;
+      }, 1000)
+    })
 
-  // Handle video buffering & screens
-  useEffect(() => {
-    const video = videoRef.current;
+    // Handle playback rate
+    video.addEventListener('ratechange', () => {
+      setSpeed(video.playbackRate)
+    })
 
-    if (!duration || !moment || !video) return;
+    // Handle current time
+    video.addEventListener('timeupdate', () => {
+      const moment = video.currentTime;
 
-    //* Handle buffering
-    video.addEventListener('timeupdate', timeupdateHandler)
+      changeMoment(moment, true)
+    })
 
-    function timeupdateHandler() {
-      const video = videoRef.current;
-
-      if (!video) return;
-
-      //* Buffering
+    // Handle buffering
+    video.addEventListener('progress', () => {
       const loaded = loadedRef.current;
       const buffered = video.buffered;
+      if (!buffered.length || !loaded) return;
 
-      if (buffered.length === 0 || !loaded) return;
+      const moment = video.currentTime;
+      const duration = video.duration
 
       for (let i = 0; i < buffered.length; i++) {
         const start = buffered.start(i);
@@ -658,61 +382,290 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
           loaded.style.width = `${offset}%`
         }
       }
+    })
+
+    // Handle playing
+    video.addEventListener('play', () => {
+      setIsPlaying(true)
+    })
+
+    // Handle pause & onPause patch timeout
+    video.addEventListener('pause', () => {
+      setIsPlaying(false)
+
+      clearInterval(viewtimeInterval);
+      clearTimeout(onPausePatchTimeout);
+
+      // Patch progress if user not active at least two minutes
+      onPausePatchTimeout = setTimeout(() => {
+        SyncWatchProgress()
+      }, 120000);
+    })
+
+    // Handle volume & muted
+    video.addEventListener('volumechange', () => {
+      setIsMuted(video.muted)
+      setVolume(Math.floor(video.volume * 100));
+    });
+
+    // Handle PiP leave
+    video.addEventListener('leavepictureinpicture', () => {
+      setIsPip(false)
+    })
+
+    // Handle PiP enter
+    video.addEventListener('enterpictureinpicture', () => {
+      setIsPip(true)
+    })
+  }, [])
+
+  // Handle preview visibility on touch
+  useEffect(() => {
+    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
+    const preview = document.querySelector(`#${NekoplayerIDs.Preview}`) as HTMLDivElement
+    if (!timeline || !preview) return
+
+    let isDragging = false
+    let touchTimeout: NodeJS.Timeout;
+
+    timeline.addEventListener('touchstart', () => {
+      clearTimeout(touchTimeout)
+      timelineTouchStartHandler()
+
+      touchTimeout = setTimeout(() => {
+        timelineTouchEndHandler();
+      }, 1000);
+    }, { passive: false })
+
+    timeline.addEventListener('touchmove', () => {
+      clearTimeout(touchTimeout)
+      timelineTouchStartHandler()
+
+      touchTimeout = setTimeout(() => {
+        timelineTouchEndHandler();
+      }, 1000);
+    }, { passive: false })
+
+    timeline.addEventListener('pointerenter', () => timelineTouchStartHandler())
+    timeline.addEventListener('pointerdown', () => {
+      isDragging = true;
+      timelineTouchStartHandler()
+    })
+
+    document.addEventListener('pointerup', () => {
+      isDragging = false;
+      timelineTouchEndHandler()
+    })
+    timeline.addEventListener('pointerleave', () => {
+      if (isDragging) return
+      timelineTouchEndHandler();
+    })
+
+
+
+    function timelineTouchStartHandler() {
+      preview.style.opacity = '1';
+      preview.style.visibility = 'visible';
+      preview.style.touchAction = 'all';
+      preview.style.pointerEvents = 'all';
     }
 
-    //* Handle end screens
-    if (duration > 10 && moment && episode) {
-      // title_end, episode_end, episode_last
-      if (moment >= duration - 5) {
-        const isNextEpisodeExist = anime.episodes.some(el => el.dubberID === episode.dubberID && el.order === episode.order + 1);
-        const isLastDubbedEpisode = !isNextEpisodeExist && Number(anime.episodesCount) > episode.order
-        const isAnimeEnded = !isNextEpisodeExist && Number(anime.episodesCount) <= episode.order;
+    function timelineTouchEndHandler() {
+      preview.style.opacity = '0';
+      preview.style.visibility = 'invisible';
+      preview.style.touchAction = 'none';
+      preview.style.pointerEvents = 'none';
+    }
+  }, [])
 
-        if (isNextEpisodeExist) {
-          setCurrentScreen('continue_watch')
-        } else if (isAnimeEnded) {
-          setCurrentScreen('anime_end')
-        } else if (isLastDubbedEpisode) {
-          setCurrentScreen('last_dubbed_episode')
+  // Handle preview move on timeline hover
+  useEffect(() => {
+    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
+    if (!timeline) return
+
+    timeline.addEventListener('pointermove', handlePointermove);
+
+
+
+    function handlePointermove(e: PointerEvent) {
+      movePreview(e.offsetX)
+    }
+
+
+
+    return () => {
+      return timeline.removeEventListener('pointermove', handlePointermove)
+    }
+  }, [episode, isVideoProcessed])
+
+  // Handle update local progress on timeupdate & screens
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.addEventListener('timeupdate', handleTimeupdate)
+
+
+
+    // Save progress & handle screens
+    function handleTimeupdate() {
+      if (!video) return;
+
+      // Save progress
+      const moment = video.currentTime;
+
+      if (moment > 5) {
+        const prefArray = GetNekoplayerPreferences();
+        const pref = prefArray.find(el => el.uuid === anime.uuid)
+
+        // Abort sync out watch progress if user prefer not to do that
+        if (pref?.saveProgress === false) return
+
+        updatePlayerProgress({
+          dub: episode.dubberID,
+          ep: episode.order,
+          id: anime.uuid,
+          moment
+        })
+      }
+
+      // Handle screens
+      const duration = video.duration;
+
+      if (duration > 10 && moment && episode) {
+        // title_end, episode_end, episode_last
+        if (moment >= duration - 5) {
+          const isNextEpisodeExist = anime.episodes.some(el => el.dubberID === episode.dubberID && el.order === episode.order + 1);
+          const isLastDubbedEpisode = !isNextEpisodeExist && Number(anime.episodesCount) > episode.order
+          const isAnimeEnded = !isNextEpisodeExist && Number(anime.episodesCount) <= episode.order;
+
+          if (isNextEpisodeExist) {
+            setCurrentScreen('continue_watch')
+          } else if (isAnimeEnded) {
+            setCurrentScreen('anime_end')
+          } else if (isLastDubbedEpisode) {
+            setCurrentScreen('last_dubbed_episode')
+          }
+        } else {
+          // Reset screen
+          setCurrentScreen(prev => prev !== 'progress_continue' ? 'none' : 'progress_continue');
         }
-      } else {
-        // Reset screen
-        setCurrentScreen(prev => prev !== 'progress_continue' ? 'none' : 'progress_continue');
       }
     }
 
-    return () => {
-      video.removeEventListener('timeupdate', timeupdateHandler)
-    }
-  }, [duration, moment])
 
-  // Handle screen change
+
+    return () => {
+      video.removeEventListener('timeupdate', handleTimeupdate)
+    }
+  }, [episode])
+
+  // Handle cursor visibility in fullscreen mode
+  useEffect(() => {
+    // Hide cursor in fullscreen mode
+    if (isIdle && isFullscreen) {
+      document.body.style.cursor = 'none';
+    } else {
+      document.body.style.cursor = 'auto';
+    }
+  }, [isIdle, isFullscreen])
+
+  // Handle quality change
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !episode) return
+
+    const videoUrl = episode.qualities[quality] ?? episode.qualities.q1080;
+
+    if (video.src !== videoUrl) changeVideoSrc(videoUrl, moment);
+  }, [quality])
+
+  // Handle isControlsHiddenUnderScreen
   useEffect(() => {
     // Hide controls under progress_continue screen, otherwise show them
 
     setIsControlsHiddenUnderScreen(currentScreen === 'progress_continue');
   }, [currentScreen])
 
-  // Sync episode
-  useEffect(() => {
-    if (!outEpisode) return;
-
-    changeEpisode(outEpisode, 0, false);
-  }, [outEpisode])
 
 
-
-  //* -------------- LISTENERS --------------
   // Listen currentScreen 
   useEffect(() => console.debug(`[nekoplayer]: Set screen: ${currentScreen}`), [currentScreen])
-  // Listen stage 
-  useEffect(() => console.debug(`[nekoplayer]: Set stage: ${stage}`), [stage])
 
 
 
+  /** Load user progress */
+  async function loadProgress(props?: { preload?: boolean }) {
+    const record = getCurrentProgressRecord();
+    if (!record) return LoadDefaultPlayback();
 
-  //* -------------- HANDLERS --------------
-  /** Get user progress
+    const episode = anime.episodes.find(el => el.dubberID === record.dub && el.order === record.ep);
+    if (!episode) return LoadDefaultPlayback();
+
+    !props?.preload && setCurrentScreen('none')
+    await changeEpisode(episode, record.moment, props?.preload);
+
+    console.debug(`[nekoplayer]: User watch progress loaded. [dubber: ${record.dub}; episode: ${record.ep} (${prettySeconds(record.moment).pretty})]`)
+  }
+
+  /** Remove watch progress & load default */
+  async function passProgress() {
+    setCurrentScreen('none')
+
+    console.debug(`[nekoplayer]: Watch progress been purged`)
+
+    await LoadDefaultPlayback()
+    await DeleteWatchProgress()
+  }
+
+  /** Setup with default player states */
+  async function LoadDefaultPlayback() {
+    const episode = anime.episodes[0];
+
+    setCurrentScreen('none')
+    await changeEpisode(episode, 0, true);
+
+    console.debug(`[nekoplayer]: Default watch progress loaded`)
+  }
+
+  /** Sync current local watch progress with user */
+  async function SyncWatchProgress() {
+    if (!user.id) return;
+
+    const prefArray = GetNekoplayerPreferences();
+    const pref = prefArray.find(el => el.uuid === anime.uuid)
+
+    // Abort sync out watch progress if user prefer not to do that
+    if (pref?.saveProgress === false) return console.debug(`[nekoplayer]: Watch progress sync aborted due to user's preferences`)
+
+    const record = getCurrentProgressRecord({ localOnly: true });
+    if (!record) return
+
+    const viewtime = viewtimeRef.current;
+    // Ignore patching less than 5 seconds of viewtime
+    if (viewtime < 5) return;
+
+    try {
+      await $api.patch('/user', {
+        method: 'patchWatchProgress',
+        titleId: anime.uuid,
+        dubberID: record.dub,
+        episodeOrder: record.ep,
+        progress: record.moment,
+        viewtime,
+      })
+
+      viewtimeRef.current = 0;
+    } catch (e) {
+      HandleClientError(e)
+    }
+
+    console.debug(`[nekoplayer]: Watch progress have been updated. [dubber: ${record.dub}; episode: ${record.ep} (${prettySeconds(record.moment).pretty})]`)
+  }
+
+  /** 
+   * Get user watch progress
+   * 
    * @param localOnly will return progress from local storage only
    */
   function getCurrentProgressRecord(props?: { localOnly?: boolean }): NekoplayerLocalstorageRecord | null {
@@ -748,7 +701,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   }
 
   /** Delete user progress record */
-  async function deletePlayerProgress() {
+  async function DeleteWatchProgress(notify?: boolean) {
     const records = GetNekoplayerData();
     const record = getCurrentProgressRecord()
 
@@ -757,6 +710,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     } catch (e) {
       HandleClientError(e)
     }
+
+    notify && NotifySuccess({ title: 'Прогрес перегляду видалено', message: '' })
 
     console.debug(`[nekoplayer]: User watch progress deleted. [dubber: ${record?.dub}]`)
     localStorage.setItem(LocalStorageKeys.NekoplayerData, JSON.stringify(records.filter(record => record.id !== anime.uuid)))
@@ -770,7 +725,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
    */
   async function changeEpisode(episode: ITitleEpisode, moment?: number, stopPlayback?: boolean) {
     // Set optional vars
-    moment = moment || 0;
+    moment = moment ?? 0;
 
     // Set first dub in array if id not found
     if (!anime.episodes.find(el => el.dubberID === episode.dubberID && el.order === episode.order)) {
@@ -784,18 +739,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
       await changeVideoSrc(episode.qualities[quality] ?? episode.qualities.q1080, moment, stopPlayback),
     ])
 
-    // Set out states
-    if (setOutDubber) setOutDubber(dubbers.find(el => el.id === episode.dubberID)!);
-    if (setOutEp) setOutEp(episode.order);
-
     // Check if episode is last
-    const nextEpisodeOrder = episode.order + 1;
-
-    if (anime.episodes.some(el => el.dubberID === episode.dubberID && el.order === nextEpisodeOrder)) {
-      setIsLastEpisode(false)
-    } else {
-      setIsLastEpisode(true)
-    }
+    setIsLastEpisode(!anime.episodes.some(el => el.dubberID === episode.dubberID && el.order === episode.order + 1))
 
     // Reset progress moment
     updatePlayerProgress({
@@ -809,7 +754,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
   /** Change video src & moment */
   async function changeVideoSrc(src: string, moment?: number, stopPlayback?: boolean) {
     // Set optional vars
-    moment = moment || 0;
+    moment = moment ?? 0;
 
     const video = videoRef.current;
     if (!video) return;
@@ -839,17 +784,14 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
    */
   function changeMoment(moment: number, synthetic?: boolean) {
     const video = videoRef.current;
-    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
     const progress = progressRef.current;
-
-
+    const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
     if (!video || !progress || !timeline) return;
+
     const duration = video.duration;
 
-    // Validate moment
-    if (moment > duration) {
-      moment = duration;
-    }
+    // Check if moment less than duration
+    if (moment > duration) moment = duration;
 
     if (!synthetic) {
       video.currentTime = moment;
@@ -857,15 +799,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
     }
 
     setMoment(moment);
-    moveProgress(moment, duration);
-  }
 
-  /** Move video progress (controlled by changeMoment) */
-  function moveProgress(moment: number, duration: number) {
-    const progress = progressRef.current;
-
-    if (!progress) return;
-
+    // Move progress
     const offset = moment / duration * 100;
 
     progress.style.width = `${offset}%`;
@@ -873,11 +808,12 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
   /** Move & set video preview */
   function movePreview(x: number) {
+    const video = videoRef.current;
     const preview = previewRef.current;
     const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
+    if (!video || !preview || !timeline) return;
 
-    if (!preview || !timeline) return;
-
+    const duration = video.duration;
     const timelineWidth = timeline.offsetWidth;
     const previewWidth = preview.offsetWidth;
     const halfPreviewWidth = previewWidth / 2;
@@ -905,6 +841,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
     // Set preview frame
     if (!episode || !isVideoProcessed) return
+
     const img = preview.querySelector('img') as HTMLImageElement;
 
     let previewIndex = Math.floor(hoveredMoment / 5);
@@ -940,14 +877,24 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
   return <NekoplayerContext.Provider value={KekwPlayerContextPayload}>
     <div className="w-full h-full relative overflow-hidden flex flex-col justify-between bg-black outline-none" id="player" tabIndex={0} ref={playerRef}>
+      {/* Video */}
+      <div className="w-full h-full absolute top-0 left-0 z-[1]">
+        {/* Loader */}
+        <div className={cn(`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 touch-none pointer-events-none`, !isVideoLoading && 'opacity-0')}>
+          <loader.DotPulse color="#fff" size={80} />
+        </div>
+
+        <video src={''} preload="auto" controlsList="nodownload" className={cn(`w-full h-full`, stretch && 'object-cover')} id="kekwplayer-video" controls={false} ref={videoRef}></video>
+      </div>
+
       {/* Screens */}
-      {!disableScreens && <NPScreensContainer />}
+      {!disableScreens && <NPScreens />}
 
       {/* Menu */}
-      <NPMenu className={!isControlsHiddenUnderScreen ? 'z-[20]' : undefined} order={episode.order} isLastEpisode={isLastEpisode} totalEpisodesCount={anime.episodesCount ?? titleMaxEpisode.current} isIdle={isIdle} />
+      <NPMenu className={cn(!isControlsHiddenUnderScreen && 'z-[20]')} order={episode.order} isLastEpisode={isLastEpisode} totalEpisodesCount={anime.episodesCount ?? titleMaxEpisode.current} isIdle={isIdle} />
 
       {/* Bottom */}
-      <div className={cn(`nekoplayer-bottom flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[12px] backdrop-blur-[4px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]')} style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .6))' }} ref={bottomRef}>
+      <div className={cn(`nekoplayer-bottom flex gap-[32px] items-center justify-between z-[10] relative duration-200 px-[24px] py-[12px] backdrop-blur-[4px]`, isIdle && 'translate-y-[100%]', !isControlsHiddenUnderScreen && 'z-[20]', duration === 1 && 'invisible')} style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .6))' }} ref={bottomRef}>
         <div className="flex items-center gap-[16px]">
           <NPlay />
           <NPVolume />
@@ -964,24 +911,33 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, setOutDubber, s
 
       {/* Skip wrapper & play/pause */}
       <NPControls />
-
-      {/* Video */}
-      <div className="w-full h-full absolute top-0 left-0 z-[1]">
-        {/* Loader */}
-        <div className={cn(`w-full h-full absolute top-0 left-0 flex justify-center items-center duration-200 touch-none pointer-events-none`, !isVideoLoading && 'opacity-0')}>
-          <loader.DotPulse color="#fff" size={80} />
-        </div>
-
-        <video src={''} preload="auto" controlsList="nodownload" className={cn(`w-full h-full`, stretch && 'object-cover')} id="kekwplayer-video" controls={false} ref={videoRef}></video>
-      </div>
     </div>
   </NekoplayerContext.Provider>
 }
 
+
+
+/** Get local nekoplayer watch progress data */
 export function GetNekoplayerData(): NekoplayerLocalstorageRecord[] {
   if (typeof window === 'undefined') return []
 
   return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerData) ?? '[]')
+}
+
+/** Get local nekoplayer preferences data */
+export function GetNekoplayerPreferences(): NekoplayerLocalStoragePreferences[] {
+  if (typeof window === 'undefined') return []
+
+  return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerPreferences) ?? '[]') as NekoplayerLocalStoragePreferences[];
+}
+
+/** Set nekoplayer preferences */
+export function SetNekoplayerPreferences(pref: NekoplayerLocalStoragePreferences) {
+  if (typeof window === 'undefined') return;
+
+  const prefArray = GetNekoplayerPreferences();
+
+  localStorage.setItem(LocalStorageKeys.NekoplayerPreferences, JSON.stringify([...prefArray.filter(el => el.uuid !== pref.uuid), pref]))
 }
 
 export default Nekoplayer;

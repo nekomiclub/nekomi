@@ -8,7 +8,7 @@ import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 const NPControls: FC = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
-  const { changeMoment, videoRef, isMobile, playerRef } = ctx;
+  const { changeMoment, videoRef, playerRef } = ctx;
 
 
 

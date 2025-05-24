@@ -1,7 +1,8 @@
 import Anime, { HydratedAnime } from './AnimeIntf';
 
 export enum LocalStorageKeys {
-  NekoplayerData = 'np-data'
+  NekoplayerData = 'np-data',
+  NekoplayerPreferences = 'np-preferences',
 }
 
 

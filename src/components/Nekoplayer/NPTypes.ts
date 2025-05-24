@@ -11,6 +11,9 @@ export type NekoplayerScreenType = 'none'
   | 'last_dubbed_episode'
   | 'anime_end'
 
+/** 
+ * @localstorage LocalStorageKeys.NekoplayerData
+ */
 export interface NekoplayerLocalstorageRecord {
   id: string,
   dub: string,
@@ -18,12 +21,19 @@ export interface NekoplayerLocalstorageRecord {
   moment: number
 }
 
+/** 
+ * @localstorage LocalStorageKeys.NekoplayerPreferences
+ */
+export interface NekoplayerLocalStoragePreferences {
+  uuid: string
+  saveProgress?: boolean
+}
+
 export interface NekoplayerContextProps {
   //* CONSTS
   anime: Anime
   dubbers: DubberCompact[]
   duration: number
-  isMobile: boolean
 
   //* POSSIBLE UNDEFINED CONSTS
   watchProgress?: NekoplayerLocalstorageRecord
@@ -43,6 +53,7 @@ export interface NekoplayerContextProps {
   //* HANDLERS
   loadProgress: () => void
   passProgress: () => void
+  DeleteWatchProgress(notify?: boolean): Promise<void>
 
   //* STATES
   currentScreen: NekoplayerScreenType
