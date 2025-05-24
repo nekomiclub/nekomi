@@ -6,13 +6,15 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 import { EpisodeQualityType } from '~/interfaces/Interfaces';
 import { cn } from '../Components';
 import { parseVideoQuality } from '../handlers';
+import { NotifySuccess } from '../UI/NotifyToast';
 import Tooltip from '../UI/Tooltip';
 
+import { GetNekoplayerPreferences, SetNekoplayerPreferences } from './Nekoplayer';
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 
 
-type SettingsMenuType = 'general' | 'quality' | 'speed';
+type SettingsMenuType = 'general' | 'quality' | 'speed' | 'settings';
 
 interface SettingsProps {
   quality: EpisodeQualityType,
@@ -66,11 +68,12 @@ interface SettingsQualitySelectProps {
 
 
 const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, setStretch, isIdle }) => {
-  const { videoRef, episode } = useContext(NekoplayerContext) as NekoplayerContextProps
+  const { videoRef, episode, DeleteWatchProgress, anime } = useContext(NekoplayerContext) as NekoplayerContextProps
   const menuId = useId().replaceAll(':', '');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [menu, setMenu] = useState<SettingsMenuType>('general')
+  const [saveProgress, setSaveProgress] = useState(true);
 
 
 
@@ -92,6 +95,15 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
     calcMenusPosition()
   }, [menu])
 
+  // Fetch prefereces
+  useEffect(() => {
+    const prefArray = GetNekoplayerPreferences()
+    const preferences = prefArray.find(el => el.uuid === anime.uuid);
+    if (!preferences) return
+
+    setSaveProgress(Boolean(preferences.saveProgress))
+  }, [])
+
 
 
   function calcMenusPosition() {
@@ -100,14 +112,14 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
 
     const menus = wrapper.querySelectorAll(`.nekoplayer-settings-menu`) as NodeListOf<HTMLDivElement> | undefined;
     const activeMenu = wrapper.querySelector(`.nekoplayer-settings-menu_${menu}`) as HTMLDivElement | undefined;
-    if (!activeMenu || !menus) return
+    if (!activeMenu || !menus?.length) return
+
+    wrapper.style.height = `${activeMenu.offsetHeight}px`;
 
     menus.forEach(menu => {
       menu.style.translate = '105%'
       menu.style.opacity = '0'
     })
-
-    wrapper.style.height = `${activeMenu.offsetHeight}px`;
 
     activeMenu.style.translate = '0';
     activeMenu.style.opacity = '1';
@@ -120,6 +132,24 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
     video.playbackRate = amplifier;
   }
 
+  function toggleSaveProgress() {
+    const to = !saveProgress;
+
+    const prefArray = GetNekoplayerPreferences()
+    const preferences = prefArray.find(el => el.uuid === anime.uuid) ?? {
+      uuid: anime.uuid,
+      saveProgress: true
+    };
+
+    preferences.saveProgress = to
+
+    setSaveProgress(to)
+    SetNekoplayerPreferences(preferences);
+
+    NotifySuccess({ title: 'Налаштування оновлені', message: to ? 'Ми почнемо зберігати твій прогрес перегляду!' : 'Ми перестанемо збирати твій прогрес перегляду :(' })
+    console.debug(`[nekoplayer]: Set settings:saveProgress to ${to}`)
+  }
+
 
 
   return <div className="relative max-[460px]:opacity-0 max-[460px]:invisible max-[460px]:absolute">
@@ -128,15 +158,15 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
         <MaterialSymbol className={cn(`kekwplayer-settings text-white`)} icon="settings" size={32} />
       </MenuTrigger>
 
-      <MenuWrapper className={`nekoplayer-settings-menu_wrapper !w-[300px] rounded-[2px] bg-dark-primary flex flex-col border border-dark-light overflow-x-hidden overflow-y-auto max-h-[500px] !translate-x-[30px] duration-[350ms]`}>
+      <MenuWrapper className={`nekoplayer-settings-menu_wrapper !w-[300px] rounded-[2px] bg-dark-primary flex flex-col border border-dark-light overflow-x-hidden overflow-y-auto max-h-[500px] !translate-x-[30px] duration-200 max-md:max-h-[300px]`}>
+        {/* General */}
         <SettingsMenu menu="general">
           <SettingsButton title="Якість" icon="hd" menu="quality" setMenu={setMenu} value={parseVideoQuality(quality)} />
           <SettingsButton title="Швидкість" icon="speed" menu="speed" setMenu={setMenu} value={`${speed}x`} />
-          <Tooltip content={stretch ? 'Розташувати відео по центру' : 'Розтягнути відео на весь екран'}>
-            <SettingsButton title={stretch ? 'Центрувати відео' : 'Розтягнути відео'} icon={stretch ? 'collapse_content' : 'expand_content'} menu="general" setMenu={setMenu} onclick={() => setStretch(!stretch)} />
-          </Tooltip>
+          <SettingsButton title="Налаштування" icon="settings" menu="settings" setMenu={setMenu} />
         </SettingsMenu>
 
+        {/* Quality */}
         <SettingsMenu menu="quality">
           <SettingsBack icon="hd" title="Якість" setMenu={setMenu} />
 
@@ -147,7 +177,8 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
           {episode.qualities.q240 && <SettingsQualitySelect quality="q240" currentQuality={quality} setQuality={setQuality} />}
         </SettingsMenu>
 
-        <SettingsMenu menu="speed">
+        {/* Speed */}
+        <SettingsMenu menu="speed" className="h-[300px]">
           <SettingsBack icon="speed" title="Швидкість" setMenu={setMenu} />
 
           <SettingsSpeedSelect amplifier={0.25} currentSpeed={speed} setSpeed={setSpeed} />
@@ -158,6 +189,24 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
           <SettingsSpeedSelect amplifier={1.5} currentSpeed={speed} setSpeed={setSpeed} />
           <SettingsSpeedSelect amplifier={1.75} currentSpeed={speed} setSpeed={setSpeed} />
           <SettingsSpeedSelect amplifier={2} currentSpeed={speed} setSpeed={setSpeed} />
+        </SettingsMenu>
+
+        {/* Settings */}
+        <SettingsMenu menu="settings">
+          <SettingsBack icon="settings" title="Налаштування" setMenu={setMenu} />
+
+          <SettingsButton title={stretch ? 'Центрувати відео' : 'Розтягнути відео'} icon={stretch ? 'collapse_content' : 'expand_content'} menu="settings" setMenu={setMenu} onclick={() => setStretch(!stretch)} />
+          <SettingsButton title={'Видалити прогрес перегляду'} icon={'delete_sweep'} menu="settings" setMenu={setMenu} onclick={() => DeleteWatchProgress(true)} />
+
+          <Tooltip content={saveProgress ? 'Вимикаючи це, у тебе також не буде нараховуватися загальний час перегляду' : ''} fitWrapper>
+            <button className={cn(`px-[12px] py-[8px] flex justify-between items-center gap-[12px] relative z-[2] w-full duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, saveProgress && 'bg-primary')} onClick={toggleSaveProgress}>
+              <div className="flex items-center gap-[12px]">
+                <MaterialSymbol icon={'cookie'} className="text-white" size={24} />
+                <p className="text-white font-manrope">Зберігати прогрес перегляду</p>
+              </div>
+            </button>
+          </Tooltip>
+
         </SettingsMenu>
       </MenuWrapper>
     </Menu>
@@ -184,7 +233,7 @@ const SettingsButton: FC<SettingsButtonProps> = ({ icon, menu, setMenu, title, o
 }
 
 const SettingsMenu: FC<SettingsMenuProps> = ({ children, menu, className }) => {
-  return <div className={cn(`nekoplayer-settings-menu w-full absolute bottom-0 left-0 duration-[350ms]`, `nekoplayer-settings-menu_${menu}`, className)}>
+  return <div className={cn(`nekoplayer-settings-menu w-full overflow-y-auto absolute bottom-0 left-0 duration-[350ms]`, `nekoplayer-settings-menu_${menu}`, className)}>
     {children}
   </div>
 }

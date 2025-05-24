@@ -51,7 +51,7 @@ function Toast({ closeToast, data }: ToastContentProps) {
     } catch (e) {
       // ignore
     }
-  }, duration - 100);
+  }, duration - 200);
 
   return <div className="w-full bg-dark-bright border border-dark-light flex flex-col gap-[8px] px-[16px] py-[8px] relative">
     <div className={`ui-notifyToast_progressBar w-[2px] h-full absolute bottom-0 left-0 z-[2] ui-notifyToast_progressBar--${type}`} id={id}></div>

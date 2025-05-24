@@ -1,0 +1,71 @@
+@import "./vars";
+
+$sizes: 10, 12, 14, 16, 20, 24, 32, 40, 48, 56, 64;
+
+@function rem($px) {
+  @return ($px / 16) + rem;
+}
+
+.ui-typo {
+  font-family: var(--font-manrope);
+  font-size: 16px;
+  color: #fff;
+
+  &--bold {
+    font-weight: 700;
+  }
+
+  &--italic {
+    font-style: italic;
+  }
+
+  &--center {
+    text-align: center;
+  }
+}
+
+@each $size in $sizes {
+  .ui-typo--#{$size} {
+    font-size: rem($size);
+  }
+}
+
+@media only screen and (max-width: $break-lg) {
+  .ui-typo--64,
+  .ui-typo--56,
+  .ui-typo--48 {
+    font-size: rem(40);
+  }
+}
+
+@media only screen and (max-width: $break-md) {
+  .ui-typo--64,
+  .ui-typo--56,
+  .ui-typo--48 {
+    font-size: rem(36);
+  }
+
+  .ui-typo--40 {
+    font-size: rem(32);
+  }
+}
+
+@media only screen and (max-width: $break-sm) {
+  .ui-typo--64,
+  .ui-typo--56,
+  .ui-typo--48 {
+    font-size: rem(28);
+  }
+
+  .ui-typo--40 {
+    font-size: rem(26);
+  }
+
+  .ui-typo--32 {
+    font-size: rem(24);
+  }
+
+  .ui-typo--24 {
+    font-size: rem(20);
+  }
+}
