@@ -6,7 +6,6 @@ export enum LocalStorageKeys {
 }
 
 
-
 export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
 export interface Metadata {

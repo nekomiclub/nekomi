@@ -31,6 +31,10 @@ export const CONSTS = {
   }
 }
 
+const env = {
+  CSRF_PRIVATE_KEY: process.env['CSRF_PRIVATE_KEY'] as string
+}
+
 /** Site config */
 export const config = {
   domain: CONSTS.Domains.nekomi,
@@ -68,7 +72,9 @@ export const config = {
 
     /** CSRF token expiration */
     CSRF_EXPIRE: 180000,
-  }
+  },
+
+  env,
 }
 
 /** Site metadata @deprecated use siteMetadata instead */
