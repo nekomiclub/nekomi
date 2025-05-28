@@ -14,6 +14,7 @@ import { DubberCompact } from '~/interfaces/DubberIntf';
 import { EpisodeQualityType } from '~/interfaces/Interfaces';
 import { LocalStorageKeys } from '~/interfaces/types';
 import API from '~/services/ApiService';
+import { GetNekoplayerData, GetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
 import prettySeconds from '~/utils/pretty-seconds';
 import { cn } from '~/utils/utils';
 import { ITitleEpisode } from '../../interfaces/ITitle';
@@ -29,7 +30,7 @@ import NPMenu from './NPMenu';
 import NPScreens from './NPScreens';
 import NPSettings from './NPSettings';
 import NPTimeline from './NPTimeline';
-import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalStoragePreferences, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NPTypes';
+import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs, NekoplayerLocalstorageRecord, NekoplayerScreenType } from './NPTypes';
 import NPVolume from './NPVolume';
 
 
@@ -913,31 +914,6 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
       <NPControls />
     </div>
   </NekoplayerContext.Provider>
-}
-
-
-
-/** Get local nekoplayer watch progress data */
-export function GetNekoplayerData(): NekoplayerLocalstorageRecord[] {
-  if (typeof window === 'undefined') return []
-
-  return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerData) ?? '[]')
-}
-
-/** Get local nekoplayer preferences data */
-export function GetNekoplayerPreferences(): NekoplayerLocalStoragePreferences[] {
-  if (typeof window === 'undefined') return []
-
-  return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerPreferences) ?? '[]') as NekoplayerLocalStoragePreferences[];
-}
-
-/** Set nekoplayer preferences */
-export function SetNekoplayerPreferences(pref: NekoplayerLocalStoragePreferences) {
-  if (typeof window === 'undefined') return;
-
-  const prefArray = GetNekoplayerPreferences();
-
-  localStorage.setItem(LocalStorageKeys.NekoplayerPreferences, JSON.stringify([...prefArray.filter(el => el.uuid !== pref.uuid), pref]))
 }
 
 export default Nekoplayer;

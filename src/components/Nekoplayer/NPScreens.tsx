@@ -7,7 +7,7 @@ import { AnimeEpisodeMeta } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { ITitleEpisodeMeta } from '~/interfaces/ITitle';
 import prettySeconds from '~/utils/pretty-seconds';
-import { cn } from '../Components';
+import { cn } from '~/utils/utils';
 import { wordDeclination } from '../handlers';
 import StyledImage from '../StyledImage';
 

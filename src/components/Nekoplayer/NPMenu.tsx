@@ -3,7 +3,7 @@ import * as DropMenu from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { DubberCompact } from '~/interfaces/DubberIntf';
-import { cn } from '../Components'
+import { cn } from '~/utils/utils'
 import StyledImage from '../StyledImage';
 import Tooltip from '../UI/Tooltip';
 

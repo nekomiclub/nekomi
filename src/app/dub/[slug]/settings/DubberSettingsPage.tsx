@@ -9,7 +9,6 @@ import { useDebounce } from 'use-debounce';
 
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '~/assets/Social';
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/assets/Support';
-import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { timestampToDayMonth, wordDeclination } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
@@ -25,6 +24,7 @@ import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import { DubberParseRoleName } from '~/utils/data-mappers';
+import { cn } from '~/utils/utils';
 
 
 

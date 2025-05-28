@@ -7,8 +7,8 @@ import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { config } from '~/config';
+import { cn } from '~/utils/utils';
 
-import { cn } from './Components';
 import { UIText } from './UI/Text.ui';
 
 

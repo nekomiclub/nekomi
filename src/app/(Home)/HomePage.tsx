@@ -9,13 +9,14 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import AnimeItem from '~/components/AnimeItem';
-import { GetNekoplayerData } from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { AnimeWithMedia } from '~/interfaces/types';
+import { GetNekoplayerData } from '~/utils/nekoplayer-utils';
 import prettySeconds from '~/utils/pretty-seconds';
-import { cn, PrettySwiper } from '../../components/Components';
+import { cn } from '~/utils/utils';
+import { PrettySwiper } from '../../components/Components';
 import { config } from '../../config';
 import { routes } from '../../routes';
 

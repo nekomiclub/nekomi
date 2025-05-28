@@ -4,7 +4,7 @@ import { useId } from 'react';
 import { NextPage } from 'next';
 import { Tooltip as RT } from 'react-tooltip'
 
-import { cn } from '../Components';
+import { cn } from '~/utils/utils';
 
 
 

@@ -4,12 +4,12 @@ import axios from 'axios';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { EpisodeQualityType } from '~/interfaces/Interfaces';
-import { cn } from '../Components';
+import { GetNekoplayerPreferences, SetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
+import { cn } from '~/utils/utils';
 import { parseVideoQuality } from '../handlers';
 import { NotifySuccess } from '../UI/NotifyToast';
 import Tooltip from '../UI/Tooltip';
 
-import { GetNekoplayerPreferences, SetNekoplayerPreferences } from './Nekoplayer';
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 

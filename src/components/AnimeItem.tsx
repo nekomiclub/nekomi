@@ -14,8 +14,8 @@ import API from '~/services/ApiService';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
 import prettySeconds from '~/utils/pretty-seconds';
+import { cn } from '~/utils/utils';
 
-import { cn } from './Components';
 import { HandleClientError } from './Errors';
 import StyledImage from './StyledImage';
 import { NotifyWarn } from './UI/NotifyToast';

@@ -7,12 +7,12 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 
 import { IcoClockOutlined } from '~/assets/Clock';
-import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { $api, $upload } from '~/components/http';
 import Input from '~/components/UI/Input';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
+import { cn } from '~/utils/utils';
 import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoStar, IcoUpdate, IcoUser } from '../../../assets/Icons';
 
 

@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { NextPage } from 'next'
 
-import { cn } from '../Components'
+import { cn } from '~/utils/utils'
 
 import Tooltip from './Tooltip'
 

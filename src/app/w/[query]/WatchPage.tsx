@@ -8,7 +8,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
-import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { getUTC, timestampToDayMonth } from '~/components/handlers';
 import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
@@ -21,6 +20,7 @@ import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPE, AnimeGenre, AnimeMedia, AnimeRate, AnimeSeason, AnimeStatus, AnimeStudio, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes } from '~/routes';
+import { cn } from '~/utils/utils';
 
 
 

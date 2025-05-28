@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
-import { cn, copyToClipboard } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
 import { getUTC } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
@@ -26,6 +25,7 @@ import API from '~/services/ApiService';
 import { alphabeticSort } from '~/utils/alphabetic-sort';
 import { createStringID } from '~/utils/create-string-id';
 import { DubberCompactMapper } from '~/utils/data-mappers';
+import { cn, copyToClipboard } from '~/utils/utils';
 
 import PatcherStack from './PatcherStack';
 import { PatcherEpisode } from './PatcherTypes';
@@ -386,7 +386,7 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
 
   function handleFilename() {
     const fileInput = fileInputRef.current
-    if (!fileInput || !fileInput.files) return
+    if (!fileInput || !fileInput.files?.length) return
 
     const file = fileInput.files[0];
 
@@ -732,7 +732,7 @@ const PatcherSelect: NextPage<PatcherSelectProps> = ({ options, title, autosync,
 
     <Menu className="w-full" id={id} state={isOpen} stateSetter={setIsOpen} settings={{ align: 'start', animation: 'slide' }} disabled={disabled}>
       <MenuTrigger className={cn(`patcher-button bg-dark-medium border border-dark-light rounded-[4px] w-full !justify-between duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, disabled && 'cursor-not-allowed')} anchor>
-        <p className={cn(`text-white font-manrope`, disabled && '!text-grey-new')}>{options[slug].name}</p>
+        <p className={cn(`text-white font-manrope`, disabled && '!text-grey-new')}>{options[slug]?.name}</p>
 
         {!disabled && <MaterialSymbol className="text-grey-new" icon="expand_all" size={16} />}
       </MenuTrigger>

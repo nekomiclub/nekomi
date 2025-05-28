@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { cn } from '../Components';
+import { cn } from '~/utils/utils';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 

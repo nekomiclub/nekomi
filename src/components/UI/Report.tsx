@@ -7,7 +7,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialDiscord } from '~/assets/Social';
 import { CONSTS } from '~/config';
-import { cn } from '../Components';
+import { cn } from '~/utils/utils';
 
 import Tooltip from './Tooltip';
 
