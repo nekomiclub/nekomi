@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
-import { IcoEyeHidden, IcoEyeVisible } from '~/assets/Eye';
 import { HandleClientError } from '~/components/Errors';
 import { getUTC, wordDeclination } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
@@ -19,7 +18,6 @@ import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
 import { cn, copyToClipboard } from '~/utils/utils';
-import { IcoExternalLink, IcoStar, IcoUpdate } from '../../../assets/Icons';
 import { IcoSocialTelegram } from '../../../assets/Social';
 import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
@@ -191,7 +189,6 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
       <PopupDialog id={settingsPopupID} className="px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] max-h-full w-full max-w-[1170px] overflow-y-auto overflow-x-hidden" state={isSettingsOpen} stateSetter={setIsSettingsOpen}>
         <Label label="Налаштування акаунту" />
         <Link href={`${config.URL.fkAccount}/me`} className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple">
-          <IcoExternalLink width={24} height={24} />
           <p className="text-white text-center">Редагувати акаунт Fullkekw</p>
         </Link>
 
@@ -199,7 +196,6 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
 
         <div className="w-full max-h-[400px] aspect-[16/7] relative shrink-0" ref={bannerWrapperRef}>
           <button className="w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible" onClick={selectBannerFile} ref={bannerButtonRef}>
-            <IcoUpdate width={80} height={80} className="max-[640px]:w-[64px] max-[640px]:h-[64px]" />
             <p className="uppercase text-[40px] font-bold text-white max-[640px]:text-[24px]">завантажити</p>
           </button>
 
@@ -211,7 +207,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
         {settingsLinkTelegramStatus === 'connected' ?
           <div className="flex flex-col gap-[8px]">
             <div className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey">
-              <IcoStar width={24} height={24} fill="#FF464E" />
+              <MaterialSymbol icon="star" size={24} fill className="text-[#FF464E]" />
               <p className="text-white text-center">Акаунт Telegram прив’язано! </p>
             </div>
 
@@ -389,7 +385,8 @@ export const UserDivider: NextPage<UserDividerProps> = ({ label, user, hidden })
     <p className="text-white font-manrope text-[32px] font-bold flex-shrink-0 max-sm:text-[24px]">{label}</p>
 
     {isOwner && <div className="flex-shrink-0">
-      {hidden ? <IcoEyeHidden width={24} height={24} className="max-sm:w-[16px] max-sm:h-[16px]" /> : <IcoEyeVisible width={24} height={24} />}
+      {!hidden && <MaterialSymbol icon="visibility" size={24} className="text-white max-sm:!text-[16px]" />}
+      {hidden && <MaterialSymbol icon="visibility_off" size={24} className="text-white max-sm:!text-[16px]" />}
     </div>}
 
     <div className="block w-full h-[3px] bg-dark-light"></div>

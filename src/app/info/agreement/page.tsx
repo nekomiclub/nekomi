@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { IcoTranslations } from '../../../assets/Icons';
 import { CONSTS } from '../../../config';
+import { InfoHeader } from '../InfoComponents';
 
 
 
@@ -24,14 +24,7 @@ const Agreement: NextPage = () => {
     <div className="w-full min-h-screen items-center" style={{ paddingTop: `132px` }}>
       <div className="wrapper gap-[80px] max-w-[1170px] w-full">
         {lang === 'ukr' && <>
-          <div className="flex items-center gap-[32px] justify-center w-full max-[880px]:flex-col">
-            <h1 className="text-white text-[40px] text-center font-bold max-[1170px]:text-[24px]">Угода користувача</h1>
-
-            <button className="flex items-center gap-[16px] py-[8px] px-[16px] bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple" onClick={() => setLang('eng')}>
-              <IcoTranslations />
-              <p className="text-white font-extralight text-[24px]">English</p>
-            </button>
-          </div>
+          <InfoHeader heading="Угода користувача" lang="eng" setLang={setLang} />
 
           <div className="px-[24px] py-[40px] rounded-[2px] bg-darkGrey flex flex-col gap-[16px]">
             <h2 className="text-white text-[24px] font-bold text-center">Загальні відомості</h2>
@@ -200,14 +193,7 @@ const Agreement: NextPage = () => {
         </>}
 
         {lang === 'eng' && <>
-          <div className="flex items-center gap-[32px] justify-center w-full max-[880px]:flex-col">
-            <h1 className="text-white text-[40px] text-center font-bold max-[1170px]:text-[24px]">Agreement</h1>
-
-            <button className="flex items-center gap-[16px] py-[8px] px-[16px] bg-darkGrey rounded-[2px] duration-200 hover:bg-purple focus-visible:bg-purple" onClick={() => setLang('ukr')}>
-              <IcoTranslations />
-              <p className="text-white font-extralight text-[24px]">Українською</p>
-            </button>
-          </div>
+          <InfoHeader heading="Agreement" lang="ukr" setLang={setLang} />
 
           <div className="px-[24px] py-[40px] rounded-[2px] bg-darkGrey flex flex-col gap-[16px]">
             <h2 className="text-white text-[24px] font-bold text-center">General statements</h2>

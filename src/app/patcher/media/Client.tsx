@@ -6,14 +6,12 @@ import { AxiosError } from 'axios';
 import { NextPage } from 'next';
 import Link from 'next/link';
 
-import { IcoClockOutlined } from '~/assets/Clock';
 import { HandleClientError } from '~/components/Errors';
 import { $api, $upload } from '~/components/http';
 import Input from '~/components/UI/Input';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { cn } from '~/utils/utils';
-import { IcoArrow, IcoCan, IcoCheckmark, IcoCross, IcoExternalLink, IcoStar, IcoUpdate, IcoUser } from '../../../assets/Icons';
 
 
 
@@ -161,13 +159,10 @@ export const MediaClient: NextPage = () => {
     <div className={`wrapper min-h-screen gap-[40px] pt-[16px] sm:pt-[var(--header-height)]`}>
       <div className="flex flex-col gap-[8px]">
         <div className="w-full h-[200px] flex items-center justify-center gap-[32px] bg-darkGrey p-[32px]">
-          <IcoStar fill="#FF464E" width={64} height={64} />
-
           <h2 className="text-white text-[32px] font-bold uppercase">керування медіа-контентом</h2>
         </div>
 
         <div className="flex items-center gap-[8px]">
-          <IcoUser width={24} height={24} />
           <p className="text-white">Ти увійшов як: <b>@{user.username}</b></p>
         </div>
       </div>
@@ -185,8 +180,6 @@ export const MediaClient: NextPage = () => {
             <Menu className="w-full max-w-[330px]" gap={16} settings={{ align: 'start' }} stateSetter={setIsTypeSelectOpen} id="media-menu-selectType">
               <MenuTrigger className={cn(`patcher-select px-[16px] py-[8px] bg-grey rounded-[2px] flex items-center gap-[16px] justify-between w-full`)} anchor>
                 <p className={cn(`select-none text-white line-clamp-1 text-ellipsis`)}>{uploadTypesOptions.find(el => el.code === uploadType)?.label}</p>
-
-                <IcoArrow className={cn(`duration-200`, isTypeSelectOpen && 'rotate-[180deg]')} fill={'#fff'} />
               </MenuTrigger>
 
               <MenuWrapper className="flex flex-col bg-grey max-h-[50vh] !w-fit overflow-x-hidden overflow-y-auto">
@@ -207,7 +200,6 @@ export const MediaClient: NextPage = () => {
               <input type="file" className="hidden" ref={fileRef} onChange={selectFile} />
 
               <button className="patcher-field flex justify-center items-center gap-[16px] bg-grey w-full duration-200 hover:bg-purple focus-visible:bg-purple px-[16px] py-[8px]" onClick={chooseFile}>
-                <IcoUpdate width={32} height={32} />
                 <p className={`text-white break-words line-clamp-1 text-ellipsis ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'вибери файл'}</p>
               </button>
             </div>
@@ -220,16 +212,10 @@ export const MediaClient: NextPage = () => {
               {uploadStatus === 'pending' && 'завантажуємо...'}
               {uploadStatus === 'success' && 'завантажено!'}
             </p>
-
-            {uploadStatus === 'default' && <IcoArrow width={32} height={32} className="-rotate-[90deg]" />}
-            {uploadStatus === 'pending' && <IcoClockOutlined width={32} height={32} />}
-            {uploadStatus === 'success' && <IcoCheckmark width={32} height={32} />}
-            {uploadStatus === 'error' && <IcoCross width={32} height={32} />}
           </button>
         </div>
 
         {uploadLink && <Link href={uploadLink} target="_blank" className="flex items-center gap-[8px]">
-          <IcoExternalLink width={24} height={24} fill="#6C5CE7" />
           <p className="text-purple">Переглянути завантаження</p>
         </Link>}
       </div>
@@ -254,11 +240,6 @@ export const MediaClient: NextPage = () => {
                 {deleteStatus === 'success' && 'видалено!'}
                 {deleteStatus === 'pending' && 'видаляємо...'}
               </p>
-
-              {deleteStatus === 'default' && <IcoCan width={24} height={24} />}
-              {deleteStatus === 'pending' && <IcoClockOutlined width={24} height={24} />}
-              {deleteStatus === 'success' && <IcoCheckmark width={24} height={24} />}
-              {deleteStatus === 'error' && <IcoCross width={24} height={24} />}
             </button>
           </form>
 

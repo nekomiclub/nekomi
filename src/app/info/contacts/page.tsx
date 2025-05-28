@@ -9,7 +9,7 @@ import { metaObject } from '../../../config';
 
 
 export const metadata = metaObject({
-  title: `Devs?`
+  title: `Devs`
 })
 
 

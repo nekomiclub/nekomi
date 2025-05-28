@@ -148,7 +148,7 @@ const HomeAnimesSwiper: NextPage<HomeAnimeSwiperProps> = ({ hydratedAnimes }) =>
 const HomeDivider: NextPage<HomeDividerProps> = ({ icon, label }) => {
   return <div className="flex items-center gap-[16px]">
     <div className="flex items-center gap-[16px] shrink-0">
-      <div className="w-[32px] h-[32px] max-md:w-[24px] max-md:h-[24px]">
+      <div className="w-[32px] h-[32px] flex justify-center items-center max-md:w-[24px] max-md:h-[24px]">
         {icon}
       </div>
       <h3 className="text-white text-[32px] font-bold max-md:text-[24px] font-manrope">{label}</h3>
