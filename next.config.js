@@ -1,8 +1,3 @@
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: true,
-  openAnalyzer: false
-})
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
