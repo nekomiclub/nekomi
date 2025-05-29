@@ -36,3 +36,5 @@ next-env.d.ts
 
 docs/secrets.md
 src/app/patcher/.old
+
+.env

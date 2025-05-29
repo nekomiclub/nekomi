@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { KJUR } from 'jsrsasign'
 
-import XNcZbkZyomwTPdcY from '../../someBoringData/XNcZbkZyomwTPdcY'
 import { config } from '../config';
+
+import SignCSRFToken from './SignCSRF';
 
 
 
@@ -22,8 +22,8 @@ export const $upload = axios.create({
 
 
 
-$api.interceptors.request.use(cfg => {
-  cfg.headers['X-CSRF-Token'] = signCSRF();
+$api.interceptors.request.use(async cfg => {
+  cfg.headers['X-CSRF-Token'] = await SignCSRFToken();
 
   return cfg;
 })
@@ -40,7 +40,7 @@ $api.interceptors.response.use(undefined, e => {
 })
 
 $upload.interceptors.request.use(async cfg => {
-  cfg.headers['X-CSRF-Token'] = signCSRF();
+  cfg.headers['X-CSRF-Token'] = await SignCSRFToken();
 
   return cfg;
 })
@@ -55,17 +55,3 @@ $upload.interceptors.response.use(undefined, e => {
 
   throw e;
 })
-
-
-
-/** Sign CSRF token */
-export function signCSRF(): string {
-  const alg = 'RS256'
-
-  const KEY = `-----BEGIN PRIVATE KEY-----\n` + XNcZbkZyomwTPdcY + `-----END PRIVATE KEY-----\n`;
-
-  return KJUR.jws.JWS.sign(alg, { alg }, {
-    origin: config.domain,
-    expire: new Date().getTime() + config.vars.CSRF_EXPIRE
-  }, KEY)
-}
