@@ -17,17 +17,17 @@ import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
-import { copyToClipboard,getUTC , wordDeclination  } from '~/utils/utils';
+import { copyToClipboard, getUTC, wordDeclination } from '~/utils/utils';
 import { IcoSocialTelegram } from '../../../assets/Social';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
-import { IUser, IUserLib, IUserTogetherRoom } from '../../../interfaces/IUser';
+import { User, UserLib, UserTogetherRoom } from '../../../interfaces/UserIntf';
 import { $api } from '../../../utils/http';
 
 
 
 interface UserSectionProps {
-  user: IUser
+  user: User
 }
 
 interface UserHeaderProps extends UserSectionProps {
@@ -36,13 +36,13 @@ interface UserHeaderProps extends UserSectionProps {
 }
 
 interface UserLibItemProps extends UserSectionProps {
-  lib: IUserLib
+  lib: UserLib
 }
 
 interface UserDividerProps {
   label: string
 
-  user?: IUser
+  user?: User
   hidden?: boolean
 }
 
@@ -393,7 +393,7 @@ export const UserDivider: NextPage<UserDividerProps> = ({ label, user, hidden })
   </Tooltip>
 }
 
-function UserWTRoom({ room, user }: { room: IUserTogetherRoom, user: IUser }) {
+function UserWTRoom({ room, user }: { room: UserTogetherRoom, user: User }) {
   return <Link href={`${config.URL.baseURL}${Routes.watch_together.path}/${user.id}__${room.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full duration-200 max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
     <MaterialSymbol className="text-white max-sm:!text-[80px]" icon="groups" size={128} />
 
@@ -408,13 +408,13 @@ function Label({ label }: { label: string }) {
   </div>
 }
 
-function AvatarComponent({ user }: { user: IUser }) {
+function AvatarComponent({ user }: { user: User }) {
   return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px] flex-shrink-0">
     <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square max-[820px]:!w-[160px] max-[820px]:!h-[160px]" priority alt="avatar" />
   </div>
 }
 
-function UserComponent({ user }: { user: IUser }) {
+function UserComponent({ user }: { user: User }) {
   return <div className="flex flex-col gap-[8px]">
     <div className="flex items-center gap-[16px]">
       <UIText text={`@${user.username}`} type="h1" className="break-all font-space-grotesk" />
@@ -429,7 +429,7 @@ function UserComponent({ user }: { user: IUser }) {
   </div>
 }
 
-function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { user: IUser, isOwner: boolean, settingsPopupID: string, primaryPage: boolean }) {
+function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { user: User, isOwner: boolean, settingsPopupID: string, primaryPage: boolean }) {
   const [urlCopied, setUrlCopied] = useState(false)
 
 

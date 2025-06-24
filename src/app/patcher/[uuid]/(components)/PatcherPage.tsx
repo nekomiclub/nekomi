@@ -23,7 +23,7 @@ import { Routes, routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
 import { DubberCompactMapper } from '~/utils/data-mappers';
-import { alphabeticSort , copyToClipboard,createStringID , getUTC  } from '~/utils/utils';
+import { alphabeticSort, copyToClipboard, createStringID, getUTC } from '~/utils/utils';
 
 import PatcherStack from './PatcherStack';
 import { PatcherEpisode } from './PatcherTypes';

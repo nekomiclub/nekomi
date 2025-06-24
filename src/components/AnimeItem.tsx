@@ -8,7 +8,7 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { TUserLibType } from '~/interfaces/IUser';
+import { UserLibType } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
@@ -36,7 +36,7 @@ interface AnimeItemEditMenuProps {
 
 interface AnimeItemEditMenuLibProps {
   hydratedAnime: HydratedAnime
-  type: TUserLibType
+  type: UserLibType
 }
 
 

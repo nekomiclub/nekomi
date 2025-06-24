@@ -3,7 +3,7 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import axios from 'axios';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
-import { EpisodeQualityType } from '~/interfaces/Interfaces';
+import { EpisodeQualityType } from '~/interfaces/types';
 import { cn } from '~/utils/classnames';
 import { GetNekoplayerPreferences, SetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
 import { NotifySuccess } from '../UI/NotifyToast';

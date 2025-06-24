@@ -1,4 +1,4 @@
-import { TRoleCapability } from './interfaces/IRoles'
+import { RoleCapability } from './interfaces/RoleIntf'
 
 export type TRouteStatus = 'clear' | 'indev'
 
@@ -22,7 +22,7 @@ export interface IRoute {
    * 
    * @deprecated use CheckUserAccess instead
    */
-  capabilitiesRequired?: TRoleCapability[]
+  capabilitiesRequired?: RoleCapability[]
 
   /** Validate capabilities mode
    * @param AND each of required capability must be present

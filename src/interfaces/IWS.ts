@@ -1,102 +1,102 @@
-export const WS_REQUEST_TYPES = [
-  'ping',
-  'online_poll',
+// export const WS_REQUEST_TYPES = [
+//   'ping',
+//   'online_poll',
 
-  'site_connected',
-  'site_disconnected',
+//   'site_connected',
+//   'site_disconnected',
 
-  'wt_connect',
-  'wt_disconnect',
-  'wt_message',
-  'wt_sync',
-] as const;
+//   'wt_connect',
+//   'wt_disconnect',
+//   'wt_message',
+//   'wt_sync',
+// ] as const;
 
-export const WS_RESPONSE_TYPES = [
-  'pong',
-  'ok',
-  'error',
-  'online_changed',
-  'wt_message',
-  'wt_sync',
-] as const;
+// export const WS_RESPONSE_TYPES = [
+//   'pong',
+//   'ok',
+//   'error',
+//   'online_changed',
+//   'wt_message',
+//   'wt_sync',
+// ] as const;
 
-export const WS_GROUP = [
-  'online_poll',
-  'watch_together',
-] as const;
+// export const WS_GROUP = [
+//   'online_poll',
+//   'watch_together',
+// ] as const;
 
-export const WS_TYPES = [...WS_REQUEST_TYPES, ...WS_RESPONSE_TYPES] as const;
+// export const WS_TYPES = [...WS_REQUEST_TYPES, ...WS_RESPONSE_TYPES] as const;
 
-export type TWS_Type = typeof WS_TYPES[number];
-export type TWS_Request = typeof WS_REQUEST_TYPES[number];
-export type TWS_Response = typeof WS_RESPONSE_TYPES[number];
-export type TWS_Group = typeof WS_GROUP[number];
+// export type TWS_Type = typeof WS_TYPES[number];
+// export type TWS_Request = typeof WS_REQUEST_TYPES[number];
+// export type TWS_Response = typeof WS_RESPONSE_TYPES[number];
+// export type TWS_Group = typeof WS_GROUP[number];
 
-/** Websocket default message */
-export interface Message<T = TWS_Type, P = object> {
-  type: T
-  payload: P
-  CSRF?: string
-  Authorization?: string
-}
+// /** Websocket default message */
+// export interface Message<T = TWS_Type, P = object> {
+//   type: T
+//   payload: P
+//   CSRF?: string
+//   Authorization?: string
+// }
 
-export type Request<P = { message: string }> = Message<TWS_Request, P>
-export type Response<P = { message: string }> = Message<TWS_Response, P>
-
-
-
-export interface IWS_Route {
-  ws: WebSocket
-  message: Message
-}
+// export type Request<P = { message: string }> = Message<TWS_Request, P>
+// export type Response<P = { message: string }> = Message<TWS_Response, P>
 
 
-/** 
- * Site connect/disconnect
- * Implements site_connected & site_disconnected methods
-*/
-export interface IWS_SiteConnection {
-  /** Client session ID */
-  SID: string
-}
 
-/** 
- * Site online changed
- * Implement online_changed method
- */
-export interface IWS_OnlineChanged {
-  online: number
-}
+// export interface IWS_Route {
+//   ws: WebSocket
+//   message: Message
+// }
 
-/** 
- * Watch together dis/connect
- */
-export interface IWS_WTConnect {
-  username: string
-  roomId: string
-}
 
-/** 
- * Watch together message
- */
-export interface IWS_WTMessage {
-  roomId: string
-  username: string
-  avatar: string
-  text: string
-  date: number
-  type: 'income' | 'system'
-}
+// /**
+//  * Site connect/disconnect
+//  * Implements site_connected & site_disconnected methods
+// */
+// export interface IWS_SiteConnection {
+//   /** Client session ID */
+//   SID: string
+// }
 
-/** 
- * Watch together sync
- */
-export interface IWS_WTSync {
-  roomId: string
-  dubberId: string
-  order: number
-  moment: number
-  isPlaying: boolean
-  isBuffering: boolean
-  syncedWithId: string
-}
+// /**
+//  * Site online changed
+//  * Implement online_changed method
+//  */
+// export interface IWS_OnlineChanged {
+//   online: number
+// }
+
+// /**
+//  * Watch together dis/connect
+//  */
+// export interface IWS_WTConnect {
+//   username: string
+//   roomId: string
+// }
+
+// /**
+//  * Watch together message
+//  */
+// export interface IWS_WTMessage {
+//   roomId: string
+//   username: string
+//   avatar: string
+//   text: string
+//   date: number
+//   type: 'income' | 'system'
+// }
+
+// /**
+//  * Watch together sync
+//  */
+// export interface IWS_WTSync {
+//   roomId: string
+//   dubberId: string
+//   order: number
+//   moment: number
+//   isPlaying: boolean
+//   isBuffering: boolean
+//   syncedWithId: string
+// }

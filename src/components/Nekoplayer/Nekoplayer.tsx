@@ -9,15 +9,13 @@ import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
 
 import { useAppSelector } from '~/hooks/redux';
-import Anime from '~/interfaces/AnimeIntf';
+import Anime, { AnimeEpisode } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
-import { EpisodeQualityType } from '~/interfaces/Interfaces';
-import { LocalStorageKeys } from '~/interfaces/types';
+import { EpisodeQualityType , LocalStorageKeys } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
 import { GetNekoplayerData, GetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
 import { prettySeconds } from '~/utils/utils';
-import { ITitleEpisode } from '../../interfaces/ITitle';
 import { $api } from '../../utils/http';
 import { HandleClientError } from '../Errors';
 import { NotifySuccess } from '../UI/NotifyToast';
@@ -60,7 +58,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
   // Player data
   const [volume, setVolume] = useState<number>(100) // 0 - 100
-  const [episode, setEpisode] = useState<ITitleEpisode>(anime.episodes[0])
+  const [episode, setEpisode] = useState<AnimeEpisode>(anime.episodes[0])
   const [duration, setDuration] = useState<number>(1)
   const [moment, setMoment] = useState<number>(0);
   const [hoveredMoment, setHoveredMoment] = useState<number>(0);
@@ -724,7 +722,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
    * 
    * @default moment 0
    */
-  async function changeEpisode(episode: ITitleEpisode, moment?: number, stopPlayback?: boolean) {
+  async function changeEpisode(episode: AnimeEpisode, moment?: number, stopPlayback?: boolean) {
     // Set optional vars
     moment = moment ?? 0;
 

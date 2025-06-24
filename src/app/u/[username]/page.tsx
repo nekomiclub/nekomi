@@ -4,9 +4,9 @@ import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
 import { HandleServerError } from '~/components/Errors';
 import { config, CONSTS, devMode, metaObject } from '~/config';
+import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
-import { IRSCProps } from '../../../interfaces/IRSC';
 
 import { UserHeader, UserSectionLibs, UserStatItem } from './UserPage';
 
@@ -18,7 +18,7 @@ export interface UserPageProps extends Params {
 }
 
 export async function generateMetadata(
-  props: IRSCProps<UserPageProps>,
+  props: RSCProps<UserPageProps>,
 ): Promise<Metadata> {
   const params = await props.params;
   const { username } = params;
@@ -51,7 +51,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<UserPageProps>) {
+export default async function RSC(props: RSCProps<UserPageProps>) {
   const params = await props.params;
   const { username } = params;
 

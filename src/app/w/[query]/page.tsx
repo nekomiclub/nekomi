@@ -9,10 +9,10 @@ import { PrettySwiper } from '~/components/Components';
 import { HandleServerError } from '~/components/Errors';
 import StyledImage from '~/components/StyledImage';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { isUserAgentMobile } from '~/utils/utils';
 import { config, CONSTS, metaObject } from '../../../config';
-import { IRSCProps } from '../../../interfaces/IRSC';
 import { routes } from '../../../routes';
 
 import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage'
@@ -29,7 +29,7 @@ export interface WatchPageSearchParams extends Params {
 
 
 export async function generateMetadata(
-  props: IRSCProps<WatchPageParams>,
+  props: RSCProps<WatchPageParams>,
 ): Promise<Metadata> {
   const params = await props.params;
   const { query } = params;
@@ -58,7 +58,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSearchParams>) {
+export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSearchParams>) {
   const { query } = await props.params;
   const { mobile } = await props.searchParams;
 

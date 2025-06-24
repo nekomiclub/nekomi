@@ -20,7 +20,7 @@ import { ANIME_MEDIA_TYPE, AnimeGenre, AnimeMedia, AnimeRate, AnimeSeason, Anime
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes } from '~/routes';
 import { cn } from '~/utils/classnames';
-import { getUTC , timestampToDayMonth } from '~/utils/utils';
+import { getUTC, timestampToDayMonth } from '~/utils/utils';
 
 
 

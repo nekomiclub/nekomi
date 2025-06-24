@@ -1,5 +1,5 @@
 import Anime from '~/interfaces/AnimeIntf';
-import { TEpisodeQuality } from '~/interfaces/Interfaces';
+import { NumEpisodeQualityType } from '~/interfaces/types';
 import API from '~/services/ApiService';
 
 import { PatcherEpisode, PatcherEpisodeStatusType } from './PatcherTypes';
@@ -147,7 +147,7 @@ export default class PatcherStack {
       //   }, 4000);
       // })
 
-      const qualities: TEpisodeQuality[] = [1080, 480];
+      const qualities: NumEpisodeQualityType[] = [1080, 480];
       if (episode.q2160) qualities.push(2160);
 
       // Patch progress

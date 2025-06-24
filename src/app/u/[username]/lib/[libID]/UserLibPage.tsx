@@ -13,18 +13,18 @@ import { copyToClipboard } from '~/utils/utils';
 import { LoadingContent } from '../../../../../components/Components';
 import Tooltip from '../../../../../components/UI/Tooltip';
 import { config } from '../../../../../config';
-import { IUser, IUserLib } from '../../../../../interfaces/IUser';
+import { User, UserLib } from '../../../../../interfaces/UserIntf';
 import { UserPageProps } from '../../page';
 import { UserDivider, UserLibItem } from '../../UserPage';
 
 
 
 interface UserSectionProps {
-  user: IUser
+  user: User
 }
 
 interface UserLibProps extends UserSectionProps {
-  lib: IUserLib | undefined
+  lib: UserLib | undefined
   hydratedAnimes: HydratedAnime[]
 }
 

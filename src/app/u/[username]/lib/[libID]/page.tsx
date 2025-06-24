@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 
 import { HandleServerError } from '~/components/Errors';
+import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { metaObject } from '../../../../../config';
-import { IRSCProps } from '../../../../../interfaces/IRSC';
 import { UserPageProps } from '../../page';
 import { UserHeader } from '../../UserPage';
 
@@ -13,7 +13,7 @@ import { UserLibOthers, UserLibSection } from './UserLibPage';
 
 
 export async function generateMetadata(
-  props: IRSCProps<{ username: string, libID: string }>,
+  props: RSCProps<{ username: string, libID: string }>,
 ): Promise<Metadata> {
   const { username } = await props.params;
 
@@ -25,7 +25,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<UserPageProps>) {
+export default async function RSC(props: RSCProps<UserPageProps>) {
   const params = await props.params;
   const { username, libID } = params;
 

@@ -7,10 +7,10 @@ import { notFound } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
 import { config, metaObject } from '../../../config';
-import { IRSCProps } from '../../../interfaces/IRSC';
 
 import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './(components)/PatcherPage';
 
@@ -23,7 +23,7 @@ export interface PatcherPageParams extends Params {
 
 
 export async function generateMetadata(
-  props: IRSCProps<PatcherPageParams>,
+  props: RSCProps<PatcherPageParams>,
 ): Promise<Metadata> {
   const { uuid } = await props.params;
 
@@ -40,7 +40,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<PatcherPageParams>) {
+export default async function RSC(props: RSCProps<PatcherPageParams>) {
   const { uuid } = await props.params;
 
   const session = cookies().get(config.vars.SessionCookie)?.value ?? '';

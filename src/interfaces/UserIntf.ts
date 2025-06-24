@@ -1,18 +1,9 @@
-/** Public user object that dto return */
-export interface IUser_Public {
-  id: string
-  username: string
-  avatar: string
-  banner: string
-  togetherRooms: IUserTogetherRoom[]
-}
-
-export interface IUser extends IUser_Public {
-  statistics: IUserStatistics
-  libs: IUserLib[]
+export interface User {
+  statistics: UserStatistics
+  libs: UserLib[]
   roles: string[]
-  watchProgress: IUserWatchProgress[]
-  telegramData: IUserTelegramData | null
+  watchProgress: UserWatchProgress[]
+  telegramData: UserTelegramData | null
 
   telegramLinkToken: string | null
 
@@ -20,10 +11,16 @@ export interface IUser extends IUser_Public {
    * @see docs/features.md#user-subscribes
    */
   subscribes: string[]
+
+  id: string
+  username: string
+  avatar: string
+  banner: string
+  togetherRooms: UserTogetherRoom[]
 }
 
 /** User nekomi statistics */
-export interface IUserStatistics {
+export interface UserStatistics {
   isTelegramLinked: boolean
 
   /** Dubber team ID in which user is member */
@@ -37,7 +34,7 @@ export interface IUserStatistics {
 }
 
 /** User watch progress item */
-export interface IUserWatchProgress {
+export interface UserWatchProgress {
   titleID: string
   dubberID: string
   episodeOrder: number
@@ -49,15 +46,15 @@ export interface IUserWatchProgress {
   updatedAt: number
 }
 
-export interface IUserTelegramData {
+export interface UserTelegramData {
   id: number
 }
 
-export type TUserLibType = 'favorite' | 'watching' | 'watched' | 'delayed' | 'plans' | 'custom'
+export type UserLibType = 'favorite' | 'watching' | 'watched' | 'delayed' | 'plans' | 'custom'
 
-export interface IUserLib {
+export interface UserLib {
   id: string
-  type: TUserLibType
+  type: UserLibType
 
   /** UTC0 creation timestamp */
   createdAt: number
@@ -76,7 +73,7 @@ export interface IUserLib {
   }
 }
 
-export interface IUserTogetherRoom {
+export interface UserTogetherRoom {
   id: string
   titleId: string
   settings: {

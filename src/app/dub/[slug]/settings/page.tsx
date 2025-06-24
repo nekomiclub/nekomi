@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
 import { config, metaObject } from '~/config';
-import { IDubber } from '~/interfaces/IDubber';
-import { IRSCProps } from '~/interfaces/IRSC';
-import { IUser } from '~/interfaces/IUser';
+import { Dubber } from '~/interfaces/DubberIntf';
+import { RSCProps } from '~/interfaces/types';
+import { User } from '~/interfaces/UserIntf';
 import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
 
@@ -17,14 +17,14 @@ export const metadata = metaObject({ title: 'Налаштування коман
 
 
 
-export default async function RSC({ params }: IRSCProps) {
+export default async function RSC({ params }: RSCProps) {
   const { slug } = await params as { slug: string };
 
   const { user, capabilities } = await CheckUserAccess({ session: cookies().get(config.vars.SessionCookie)?.value, capabilities: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
   if (!user) return redirect(config.URL.baseURL);
 
-  let dubber: IDubber | undefined = undefined;
-  let members: IUser[] | undefined = undefined
+  let dubber: Dubber | undefined = undefined;
+  let members: User[] | undefined = undefined
 
 
 

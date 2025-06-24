@@ -1,9 +1,9 @@
+import { LayoutProps } from '~/interfaces/types';
 import { metaObject } from '../../config';
-import { ILayoutProps } from '../../interfaces/IRSC';
 
 export const metadata = metaObject({ robots: ['nofollow', 'noindex'] })
 
 // Layout
-export default async function Layout({ children }: ILayoutProps) {
+export default async function Layout({ children }: LayoutProps) {
   return children;
 }

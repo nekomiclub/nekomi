@@ -1,9 +1,9 @@
 import { SymbolCodepoints } from 'react-material-symbols';
 
-import { TUserLibType } from '~/interfaces/IUser';
+import { UserLibType } from '~/interfaces/UserIntf';
 
 interface ParseUserLibUIProps {
-  type: TUserLibType
+  type: UserLibType
 
   setTitle(val: string): void
   setIcon(icon: SymbolCodepoints): void

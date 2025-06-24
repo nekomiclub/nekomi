@@ -6,7 +6,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
 import { metaObject } from '~/config';
-import { IRSCProps } from '~/interfaces/IRSC';
+import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { timestampToDayMonth } from '~/utils/utils';
 
@@ -19,7 +19,7 @@ export interface DubberPageParams extends Params {
 }
 
 export async function generateMetadata(
-  props: IRSCProps<DubberPageParams>,
+  props: RSCProps<DubberPageParams>,
 ): Promise<Metadata> {
   const { slug } = await props.params;
 
@@ -47,7 +47,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC({ params, searchParams }: IRSCProps<DubberPageParams>) {
+export default async function RSC({ params, searchParams }: RSCProps<DubberPageParams>) {
   const { slug } = await params;
   const { invite } = await searchParams as { invite?: 'accept' | 'decline' };
 

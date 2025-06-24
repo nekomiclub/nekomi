@@ -1,13 +1,10 @@
 import { AxiosProgressEvent } from 'axios'
 
 import Anime, { AnimeEpisode, HydratedAnime } from '../AnimeIntf'
-import { DubberCompact } from '../DubberIntf'
-import { IDubber, TDubberMemberRole } from '../IDubber'
-import { TEpisodeQuality } from '../Interfaces'
-import { TRoleCapability } from '../IRoles'
-import { ITitle } from '../ITitle'
-import { IUser, IUserTogetherRoom } from '../IUser'
-import { Metadata } from '../types'
+import { Dubber, DubberCompact, DubberMemberRole } from '../DubberIntf'
+import { RoleCapability } from '../RoleIntf'
+import { Metadata,NumEpisodeQualityType  } from '../types'
+import { User, UserTogetherRoom } from '../UserIntf'
 
 export interface DubberGetOneByQueryProps {
   query: string
@@ -25,11 +22,11 @@ export interface DubberGetOneByQueryProps {
 }
 
 export interface DubberGetOneByQuery {
-  dubber: IDubber
+  dubber: Dubber
 
   dubbedHydratedAnimes?: HydratedAnime[]
   metadata?: Metadata
-  parsedMembers?: IUser[]
+  parsedMembers?: User[]
 }
 
 export interface IDubberGetOneByQueryResponse {
@@ -37,10 +34,10 @@ export interface IDubberGetOneByQueryResponse {
   message: string
 
   /** Will be null only if metadataOnly is true */
-  dubber: IDubber | null
+  dubber: Dubber | null
 
-  dubbedAnime: ITitle[] | undefined
-  parsedMembers: IUser[] | undefined
+  dubbedAnime: Anime[] | undefined
+  parsedMembers: User[] | undefined
   metadata: {
     title: string
     description: string
@@ -65,7 +62,7 @@ export interface DubberGetSearchProps {
 }
 
 export interface DubberGetSearch {
-  results: IDubber[]
+  results: Dubber[]
 }
 
 export interface IDubberPatchSettingsProps {
@@ -73,8 +70,8 @@ export interface IDubberPatchSettingsProps {
   nameUkr?: string
   nameEng?: string
   description?: string
-  supportLinks?: Partial<IDubber['support']>
-  socialLinks?: Partial<IDubber['socials']>
+  supportLinks?: Partial<Dubber['support']>
+  socialLinks?: Partial<Dubber['socials']>
 }
 
 export interface IUserGetSearch {
@@ -86,7 +83,7 @@ export interface IUserGetSearch {
 }
 
 export interface IUserGetSearchResult {
-  user: IUser
+  user: User
 
   /** @requires parseInvitationStatusFor */
   invitationStatus?: 'can_be_invited' | 'telegram_not_linked' | 'invite_pending' | 'others_member_already'
@@ -100,7 +97,7 @@ export interface IDubberPostInviteSADProps {
 export interface IDubberPatchMemberByIdProps {
   dubberId: string
   userId: string
-  role?: TDubberMemberRole
+  role?: DubberMemberRole
 }
 
 export interface IDubberDeleteMemberByIdProps {
@@ -167,9 +164,9 @@ export interface UserGetByQueryProps {
 
 export interface UserGetByQuery {
   /** Will be undefined with metadataOnly specified */
-  user: IUser
+  user: User
 
-  capabilities?: TRoleCapability[]
+  capabilities?: RoleCapability[]
   metadata?: Metadata
   parsedLib?: HydratedAnime[]
   parsedTogetherRoom?: {
@@ -193,7 +190,7 @@ export interface UserGetTogetherRoomProps {
 }
 
 export interface UserGetTogetherRoom {
-  room: IUserTogetherRoom
+  room: UserTogetherRoom
   anime: HydratedAnime
 }
 
@@ -229,7 +226,7 @@ export interface AnimePostEpisodeProps {
   file: File
   order: number
   dubberId: string
-  qualities: TEpisodeQuality[]
+  qualities: NumEpisodeQualityType[]
 }
 
 export interface AnimePostEpisode {

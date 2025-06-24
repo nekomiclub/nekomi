@@ -16,15 +16,15 @@ import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
 import { useAppSelector } from '~/hooks/redux';
-import { IDubber, IDubberMember, TDubberMemberRole } from '~/interfaces/IDubber';
-import { IUser } from '~/interfaces/IUser';
+import { Dubber, DubberMember as DubberMemberIntf, DubberMemberRole } from '~/interfaces/DubberIntf';
 import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
+import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import { DubberParseRoleName } from '~/utils/data-mappers';
-import { timestampToDayMonth,wordDeclination  } from '~/utils/utils';
+import { timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
 
 
@@ -38,7 +38,7 @@ interface ISettingsGroupProps {
 interface ILinkItemProps {
   state: IUIFieldState
   setState: (val: IUIFieldState) => void
-  type: keyof IDubber['socials'] | keyof IDubber['support']
+  type: keyof Dubber['socials'] | keyof Dubber['support']
 }
 
 interface IControlsProps {
@@ -49,21 +49,21 @@ interface IControlsProps {
 }
 
 interface IDubberMemberProps {
-  user: IUser
-  member: IDubberMember
+  user: User
+  member: DubberMemberIntf
   currentUser: IUserState
-  dubber: IDubber
+  dubber: Dubber
 
   kickMember: (id: string, username: string) => void
 }
 
 interface IMemberInviteResultProps extends IUserGetSearchResult {
-  dubber: IDubber
+  dubber: Dubber
 }
 
 
 
-export const DubberSettingsBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberSettingsBanner: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const [bannerURL, setBannerURL] = useState(dubber.banner);
   const [isActive, setIsActive] = useState(false);
 
@@ -144,7 +144,7 @@ export const DubberSettingsBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) 
   </div>
 }
 
-export const DubberSettingsHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberSettingsHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
     {/* Avatar placeholder */}
     <div className="relative w-[256px] h-[128px] shrink-0 max-md:w-[128px] max-md:h-[64px]">
@@ -168,7 +168,7 @@ export const DubberSettingsHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) 
   </div>
 }
 
-export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ dubber, members }) => {
+export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubber, members }) => {
   const currentUser = useAppSelector(state => state.user);
 
   const [nameUkr, setNameUkr] = useState<IUIFieldState>({ initialValue: dubber.nameUkr });
@@ -185,7 +185,7 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
   const [monobankLink, setMonobankLink] = useState<IUIFieldState>({ initialValue: dubber.support.monobank });
   const [diakaLink, setDiakaLink] = useState<IUIFieldState>({ initialValue: dubber.support.diaka });
 
-  const [dubberMembers, setDubberMembers] = useState<IDubberMember[]>(dubber.members);
+  const [dubberMembers, setDubberMembers] = useState<DubberMemberIntf[]>(dubber.members);
   const [isSomethingChanged, setIsSomethingChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -387,7 +387,7 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
   </div>
 }
 
-const InviteMembers: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+const InviteMembers: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const [searchQuery, setSearchQuery] = useState<IUIFieldState>({ status: 'waiting', initialValue: '' });
   const [debouncedSearchQuery] = useDebounce(searchQuery.value ?? '', 500)
   const [searchResults, setSearchResults] = useState<IUserGetSearchResult[]>([])
@@ -473,7 +473,7 @@ const InviteMembers: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   </div>
 }
 
-const DubberSettingsAvatar: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+const DubberSettingsAvatar: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const [isActive, setIsActive] = useState(false);
   const [avatarURL, setAvatarURL] = useState(dubber.avatar);
 
@@ -682,7 +682,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
 
 
 
-  async function changeRole(to: TDubberMemberRole) {
+  async function changeRole(to: DubberMemberRole) {
     try {
       await API.dubberEditMember({
         dubberId: dubber.id,

@@ -20,11 +20,11 @@ import { ToastContainer } from 'react-toastify';
 import { ErrorNoConnection } from '~/components/Errors';
 import NavMenu from '~/components/NavMenu/NavMenu';
 import { StateProvider } from '~/components/StateProvider';
+import { LayoutProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import Footer from '../components/Footer';
 import { config, devMode, metaObject } from '../config';
-import { ILayoutProps } from '../interfaces/IRSC';
 
 
 
@@ -54,7 +54,7 @@ const spaceGrotesk = Space_Grotesk({
 
 
 
-export default async function Layout({ children, params }: ILayoutProps) {
+export default async function Layout({ children, params }: LayoutProps) {
   const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
 
   let isServerOnline = false;

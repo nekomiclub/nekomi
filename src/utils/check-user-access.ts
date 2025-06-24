@@ -1,6 +1,6 @@
 import { devMode } from '~/config';
-import { TRoleCapability } from '~/interfaces/IRoles';
-import { IUser } from '~/interfaces/IUser';
+import { RoleCapability } from '~/interfaces/RoleIntf';
+import { User } from '~/interfaces/UserIntf';
 import API from '~/services/ApiService';
 
 
@@ -9,7 +9,7 @@ interface CheckUserAccessProps {
   session?: string
 
   /** @default [] */
-  capabilities?: TRoleCapability[]
+  capabilities?: RoleCapability[]
 
   /** @default "AND" */
   checkMode?: 'AND' | 'OR'
@@ -18,7 +18,7 @@ interface CheckUserAccessProps {
 
 
 /** Fetch user & check it's access, if user pass it's object will return */
-export default async function CheckUserAccess({ capabilities, checkMode, session }: CheckUserAccessProps): Promise<{ user?: IUser, capabilities?: TRoleCapability[] }> {
+export default async function CheckUserAccess({ capabilities, checkMode, session }: CheckUserAccessProps): Promise<{ user?: User, capabilities?: RoleCapability[] }> {
   if (!session) return {};
 
   capabilities = capabilities ?? [];
@@ -34,7 +34,7 @@ export default async function CheckUserAccess({ capabilities, checkMode, session
     // Pass if no capabilities required
     if (!capabilities?.length) return { user, capabilities };
 
-    const passCaps: TRoleCapability[] = []
+    const passCaps: RoleCapability[] = []
 
     capabilities.forEach(cap => {
       if (capabilities?.includes(cap)) passCaps.push(cap);

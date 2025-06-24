@@ -18,12 +18,12 @@ import Tooltip from '~/components/UI/Tooltip';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { IDubber, IDubberMember } from '~/interfaces/IDubber';
-import { IUser } from '~/interfaces/IUser';
+import { Dubber, DubberMember } from '~/interfaces/DubberIntf';
+import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
-import { copyToClipboard,wordDeclination  } from '~/utils/utils';
+import { copyToClipboard, wordDeclination } from '~/utils/utils';
 
 
 
@@ -35,7 +35,7 @@ interface IDubberAboutLinkProps {
 
 
 
-export const DubberAnswerInvite: NextPage<{ dubber: IDubber, invite?: 'accept' | 'decline' }> = ({ dubber, invite }) => {
+export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 'decline' }> = ({ dubber, invite }) => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -108,7 +108,7 @@ export const DubberAnswerInvite: NextPage<{ dubber: IDubber, invite?: 'accept' |
   </PopupLayer>
 }
 
-export const DubberBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberBanner: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]">
     <StyledImage src={dubber.banner} width="100%" height="100%" alt={`Team banner`} />
 
@@ -116,7 +116,7 @@ export const DubberBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   </div>
 }
 
-export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const user = useAppSelector(state => state.user);
   const canEdit = user.capabilities.includes('admin') || user.capabilities.includes('root') || dubber.members.find(el => el.id === user.id)?.role === 'leader';
 
@@ -140,7 +140,7 @@ export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   </div>
 }
 
-export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberAbout: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   return <div className="flex flex-col gap-[24px]">
     <ul className="w-full flex items-center justify-center flex-wrap gap-[8px]">
       {dubber.socials.telegram && <DubberAboutLink link={dubber.socials.telegram ?? '#'} label="telegram" />}
@@ -160,7 +160,7 @@ export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   </div>
 }
 
-export const DubberAnimeDubbed: NextPage<{ dubber: IDubber, hydratedAnimes: HydratedAnime[] }> = ({ hydratedAnimes, dubber }) => {
+export const DubberAnimeDubbed: NextPage<{ dubber: Dubber, hydratedAnimes: HydratedAnime[] }> = ({ hydratedAnimes, dubber }) => {
   return <div className="flex flex-col gap-[16px]">
     <div className="flex items-center gap-[24px] justify-between">
       <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">З озвученням {dubber.nameUkr}</h3>
@@ -174,7 +174,7 @@ export const DubberAnimeDubbed: NextPage<{ dubber: IDubber, hydratedAnimes: Hydr
   </div>
 }
 
-export const DubberTeam: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ dubber, members }) => {
+export const DubberTeam: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubber, members }) => {
   return <div className="flex flex-col gap-[16px]">
     <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
 
@@ -241,7 +241,7 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
   </li>
 }
 
-function DubberTeamMember({ user, member }: { user: IUser, member: IDubberMember }) {
+function DubberTeamMember({ user, member }: { user: User, member: DubberMember }) {
   return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
     <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 

@@ -14,8 +14,8 @@ import { useDebounce } from 'use-debounce';
 
 import { config } from '~/config';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { IDubber } from '~/interfaces/IDubber';
-import { IUser } from '~/interfaces/IUser';
+import { Dubber } from '~/interfaces/DubberIntf';
+import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
@@ -42,7 +42,7 @@ interface SearchAnime extends HydratedAnime {
   dubbedEpisodes: number | null
 }
 
-type MenuSearchResultType = IDubber | SearchAnime | IUser | null
+type MenuSearchResultType = Dubber | SearchAnime | User | null
 
 interface MenuSearchResultProps {
   item: MenuSearchResultType
@@ -282,15 +282,15 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
   const [secondLineWidth] = useState(randomNumber(40, 250))
 
   const [animeResult, setAnimeResult] = useState<SearchAnime | null>(null)
-  const [userResult, setUserResult] = useState<IUser | null>(null)
-  const [dubberResult, setDubberResult] = useState<IDubber | null>(null)
+  const [userResult, setUserResult] = useState<User | null>(null)
+  const [dubberResult, setDubberResult] = useState<Dubber | null>(null)
 
 
 
   useEffect(() => {
     setAnimeResult(type === 'anime' ? item as SearchAnime : null)
-    setUserResult(type === 'user' ? item as IUser : null)
-    setDubberResult(type === 'dubber' ? item as IDubber : null)
+    setUserResult(type === 'user' ? item as User : null)
+    setDubberResult(type === 'dubber' ? item as Dubber : null)
   }, [item])
 
 

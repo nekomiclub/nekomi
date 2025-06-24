@@ -1,8 +1,8 @@
 
 import { notFound } from 'next/navigation'
 
+import { LayoutProps } from '~/interfaces/types'
 import { devMode, metaObject } from '../../config'
-import { ILayoutProps } from '../../interfaces/IRSC'
 
 
 
@@ -11,7 +11,7 @@ export const metadata = metaObject({ robots: ['nofollow', 'noindex'] })
 
 
 // Layout
-export default async function Layout({ children }: ILayoutProps) {
+export default async function Layout({ children }: LayoutProps) {
   if (!devMode) return notFound()
 
   return children;

@@ -3,13 +3,13 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { config } from '~/config';
+import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import CheckUserAccess from '~/utils/check-user-access';
-import { IRSCProps } from '../../../interfaces/IRSC';
 
 import { MediaClient } from './Client';
 
-const RSC: NextPage<IRSCProps> = async () => {
+const RSC: NextPage<RSCProps> = async () => {
   let session = cookies().get(config.vars.SessionCookie)?.value ?? '';
 
   const { user } = await CheckUserAccess({ capabilities: ['root'], checkMode: 'AND', session })
