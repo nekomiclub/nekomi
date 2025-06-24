@@ -9,7 +9,6 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
-import { getUTC, timestampToDayMonth } from '~/components/handlers';
 import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
@@ -20,6 +19,7 @@ import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPE, AnimeGenre, AnimeMedia, AnimeRate, AnimeSeason, AnimeStatus, AnimeStudio, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes } from '~/routes';
+import { getUTC, timestampToDayMonth } from '~/utils/handlers';
 import { cn } from '~/utils/utils';
 
 

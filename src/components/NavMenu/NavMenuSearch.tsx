@@ -19,8 +19,8 @@ import { IUser } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/utils';
+import { randomNumber } from '../../utils/handlers';
 import { HandleClientError } from '../Errors';
-import { randomNumber } from '../handlers';
 import StyledImage from '../StyledImage';
 
 

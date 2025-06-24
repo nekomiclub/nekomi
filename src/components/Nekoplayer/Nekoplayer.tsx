@@ -18,8 +18,8 @@ import { GetNekoplayerData, GetNekoplayerPreferences } from '~/utils/nekoplayer-
 import prettySeconds from '~/utils/pretty-seconds';
 import { cn } from '~/utils/utils';
 import { ITitleEpisode } from '../../interfaces/ITitle';
+import { $api } from '../../utils/http';
 import { HandleClientError } from '../Errors';
-import { $api } from '../http';
 import { NotifySuccess } from '../UI/NotifyToast';
 
 import NPControls from './NPControls';

@@ -5,10 +5,10 @@ import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
-import { timestampToDayMonth } from '~/components/handlers';
 import { metaObject } from '~/config';
 import { IRSCProps } from '~/interfaces/IRSC';
 import API from '~/services/ApiService';
+import { timestampToDayMonth } from '~/utils/handlers';
 
 import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberBanner, DubberHeader, DubberTeam } from './DubberPage';
 

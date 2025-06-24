@@ -1,7 +1,7 @@
-import { $api, $upload } from '~/components/http';
 import { config } from '~/config';
 import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
+import { $api, $upload } from '~/utils/http';
 
 
 

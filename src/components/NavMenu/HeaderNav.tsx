@@ -51,7 +51,7 @@ const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, i
 
 
   return <header className="fixed w-full h-[var(--header-height)] bg-dark-primary top-0 left-0 z-[110] max-sm:hidden">
-    <div className="wrapper w-full h-full !flex-row justify-between items-center gap-[24px]">
+    <div className="wrapper w-full h-full !flex-row justify-between items-center gap-[40px]">
       <Tooltip content="Головна">
         <Link href={routes.home.path} className="outline-none">
           <IcoNekomiLogo width={40} height={40} fill="#fff" />
@@ -78,7 +78,7 @@ const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, i
 
       {/* Unauthorized */}
       {!user.id && <div className="relative h-full">
-        <div className="flex gap-[4px] absolute top-[50%] right-0 translate-y-[-50%]">
+        <div className="flex gap-[4px] absolute top-[50%] right-0 translate-y-[-50%] max-lg:relative">
           <Link href={`${config.URL.fkAccount}/sso?ref=${config.URL.baseURL}${pathname}`} className="ui-button px-[12px] py-[8px] bg-dark-primary border-none">
             <p className="text-white font-manrope font-bold">Увійти</p>
           </Link>

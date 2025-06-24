@@ -8,8 +8,8 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { devMode } from '~/config';
 import { Routes } from '~/routes';
+import { getUTC } from '../utils/handlers';
 
-import { getUTC } from './handlers';
 import { NotifyError } from './UI/NotifyToast';
 import { UIReportButton } from './UI/Report';
 import { UIText } from './UI/Text.ui';

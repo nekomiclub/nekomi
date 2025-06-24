@@ -3,9 +3,10 @@
   "version": "2.1.1",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3001",
-    "build": "npx eslint . --fix && next build",
-    "start": "next start"
+    "dev": "npx next dev --port 3001",
+    "build": "npx eslint . --fix && npx next build",
+    "start": "npx next start",
+    "husky": "npx eslint . --fix && git add . && npx next build"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.6",

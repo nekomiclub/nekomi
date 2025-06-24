@@ -8,7 +8,7 @@ import { DubberCompact } from '~/interfaces/DubberIntf';
 import { ITitleEpisodeMeta } from '~/interfaces/ITitle';
 import prettySeconds from '~/utils/pretty-seconds';
 import { cn } from '~/utils/utils';
-import { wordDeclination } from '../handlers';
+import { wordDeclination } from '../../utils/handlers';
 import StyledImage from '../StyledImage';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';

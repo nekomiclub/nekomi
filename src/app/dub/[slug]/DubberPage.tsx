@@ -10,7 +10,6 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { IcoSocialTelegram } from '~/assets/Social';
 import AnimeItem from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
-import { wordDeclination } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
@@ -23,6 +22,7 @@ import { IDubber, IDubberMember } from '~/interfaces/IDubber';
 import { IUser } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
+import { wordDeclination } from '~/utils/handlers';
 import { cn, copyToClipboard } from '~/utils/utils';
 
 

@@ -6,7 +6,7 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 import { EpisodeQualityType } from '~/interfaces/Interfaces';
 import { GetNekoplayerPreferences, SetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
 import { cn } from '~/utils/utils';
-import { parseVideoQuality } from '../handlers';
+import { parseVideoQuality } from '../../utils/handlers';
 import { NotifySuccess } from '../UI/NotifyToast';
 import Tooltip from '../UI/Tooltip';
 

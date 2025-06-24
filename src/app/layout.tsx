@@ -12,7 +12,6 @@ import '../styles/globals.css';
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import axios from 'axios';
-import { preconnect } from 'next/dist/server/app-render/entry-base';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google'
 import { cookies } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
@@ -58,9 +57,8 @@ const spaceGrotesk = Space_Grotesk({
 export default async function Layout({ children, params }: ILayoutProps) {
   const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
 
-  /** Check is server online */
   let isServerOnline = false;
-  let user: IUserState | undefined = undefined
+  let user: IUserState | undefined;
 
 
 
@@ -99,12 +97,9 @@ export default async function Layout({ children, params }: ILayoutProps) {
   }
 
 
-  preconnect(config.URL.apiHTTP);
-  preconnect(config.URL.media);
 
   return <html lang="uk">
     <body className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
-      {/* Return layout if server respond */}
       {isServerOnline ? <StateProvider user={user}>
         <SkeletonTheme baseColor="#181818" highlightColor="#222">
           <NavMenu />
@@ -116,11 +111,11 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
 
           <ToastContainer />
-
-          <Analytics />
-          <SpeedInsights />
         </SkeletonTheme>
       </StateProvider> : <ErrorNoConnection />}
+
+      <Analytics />
+      <SpeedInsights />
     </body>
   </html>
 }

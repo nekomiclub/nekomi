@@ -5,8 +5,8 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import { HandleServerError } from '~/components/Errors';
-import { randomNumber } from '~/components/handlers';
 import API from '~/services/ApiService';
+import { randomNumber } from '~/utils/handlers';
 import { CONSTS, metaObject } from '../../config';
 
 import { HomeCategory, HomeHeadliner } from './HomePage';

@@ -7,10 +7,10 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 
 import { HandleClientError } from '~/components/Errors';
-import { $api, $upload } from '~/components/http';
 import Input from '~/components/UI/Input';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
+import { $api, $upload } from '~/utils/http';
 import { cn } from '~/utils/utils';
 
 

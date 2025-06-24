@@ -9,9 +9,9 @@ import { Provider } from 'react-redux';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import { setupStore } from '~/store/store'
+import { randomNumber } from '../utils/handlers';
 
 import { HandleClientError } from './Errors';
-import { randomNumber } from './handlers';
 import { NotifySuccess } from './UI/NotifyToast';
 import { UIReportModal } from './UI/Report';
 
@@ -62,7 +62,7 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
         try {
           await API.userSignin({ token: signinToken });
 
-          NotifySuccess({ title: 'Ти увійшов в акаунт', message: 'hola!' })
+          NotifySuccess({ title: 'Ви увійшли в акаунт', message: 'welcome home!' })
 
           setTimeout(() => {
             router.refresh();
@@ -76,11 +76,7 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
 
 
 
-  return <Provider store={setupStore({
-    preloadedState: {
-      user
-    }
-  })}>
+  return <Provider store={setupStore({ preloadedState: { user } })}>
     <AppProgressBar
       height="2px"
       color="linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%)"

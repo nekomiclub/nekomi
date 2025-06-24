@@ -9,20 +9,20 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { HandleClientError } from '~/components/Errors';
-import { getUTC, wordDeclination } from '~/components/handlers';
 import StyledImage from '~/components/StyledImage';
 import { UIReportButton } from '~/components/UI/Report';
 import { UIText } from '~/components/UI/Text.ui';
 import { useAppSelector } from '~/hooks/redux';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
+import { getUTC, wordDeclination } from '~/utils/handlers';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
 import { cn, copyToClipboard } from '~/utils/utils';
 import { IcoSocialTelegram } from '../../../assets/Social';
-import { $api } from '../../../components/http';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
 import { IUser, IUserLib, IUserTogetherRoom } from '../../../interfaces/IUser';
+import { $api } from '../../../utils/http';
 
 
 
