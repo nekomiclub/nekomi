@@ -5,7 +5,7 @@ import * as Loader from '@uiball/loaders';
 import { NextPage } from 'next';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { cn } from '~/utils/utils';
+import { cn } from '~/utils/classnames';
 
 
 

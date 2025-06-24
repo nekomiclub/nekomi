@@ -13,7 +13,7 @@ import { config } from '~/config';
 import { useAppDispatch } from '~/hooks/redux';
 import { routes } from '~/routes';
 import userSlice, { IUserState, userStateDefault } from '~/store/reducers/userSlice';
-import { cn } from '~/utils/utils';
+import { cn } from '~/utils/classnames';
 import StyledImage from '../StyledImage';
 import Tooltip from '../UI/Tooltip';
 

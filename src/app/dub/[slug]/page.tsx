@@ -8,7 +8,7 @@ import { HandleServerError } from '~/components/Errors';
 import { metaObject } from '~/config';
 import { IRSCProps } from '~/interfaces/IRSC';
 import API from '~/services/ApiService';
-import { timestampToDayMonth } from '~/utils/handlers';
+import { timestampToDayMonth } from '~/utils/utils';
 
 import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberBanner, DubberHeader, DubberTeam } from './DubberPage';
 

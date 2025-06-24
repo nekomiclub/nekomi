@@ -18,8 +18,8 @@ import { IDubber } from '~/interfaces/IDubber';
 import { IUser } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
-import { cn } from '~/utils/utils';
-import { randomNumber } from '../../utils/handlers';
+import { cn } from '~/utils/classnames';
+import { randomNumber } from '~/utils/utils';
 import { HandleClientError } from '../Errors';
 import StyledImage from '../StyledImage';
 

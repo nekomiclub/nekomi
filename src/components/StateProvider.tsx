@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import { setupStore } from '~/store/store'
-import { randomNumber } from '../utils/handlers';
+import { randomNumber } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
 import { NotifySuccess } from './UI/NotifyToast';

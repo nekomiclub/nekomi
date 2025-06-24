@@ -3,7 +3,7 @@
 import { NextPage } from 'next';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { cn } from '~/utils/utils';
+import { cn } from '~/utils/classnames';
 
 
 

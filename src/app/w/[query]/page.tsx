@@ -10,7 +10,7 @@ import { HandleServerError } from '~/components/Errors';
 import StyledImage from '~/components/StyledImage';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import API from '~/services/ApiService';
-import isUserAgentMobile from '~/utils/is-user-agent-mobile';
+import { isUserAgentMobile } from '~/utils/utils';
 import { config, CONSTS, metaObject } from '../../../config';
 import { IRSCProps } from '../../../interfaces/IRSC';
 import { routes } from '../../../routes';

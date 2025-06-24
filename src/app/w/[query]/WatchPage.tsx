@@ -19,8 +19,9 @@ import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPE, AnimeGenre, AnimeMedia, AnimeRate, AnimeSeason, AnimeStatus, AnimeStudio, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes } from '~/routes';
-import { getUTC, timestampToDayMonth } from '~/utils/handlers';
-import { cn } from '~/utils/utils';
+import { cn } from '~/utils/classnames';
+import { getUTC , timestampToDayMonth } from '~/utils/utils';
+
 
 
 

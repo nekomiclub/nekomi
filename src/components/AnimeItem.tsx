@@ -12,9 +12,9 @@ import { TUserLibType } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
+import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
-import prettySeconds from '~/utils/pretty-seconds';
-import { cn } from '~/utils/utils';
+import { prettySeconds } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
 import StyledImage from './StyledImage';

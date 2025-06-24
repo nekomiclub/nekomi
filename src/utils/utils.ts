@@ -1,13 +1,106 @@
-import jwt from 'jsonwebtoken';
+/**
+ * @fileoverview utils with zero-dependencies
+ */
 
-import { EpisodeQualityType } from '~/interfaces/Interfaces';
+
+
+
+export interface PrettySeconds {
+  hrs: number
+  mins: number
+  secs: number
+
+  /** Formatted string (H:MM:SS) */
+  pretty: string
+}
+
+
+
+export function prettySeconds(sec: number): PrettySeconds {
+  let mins = Math.floor(sec / 60);
+  const secs = Math.floor(sec - mins * 60);
+  let hrs = 0;
+
+  while (mins >= 60) {
+    hrs += 1;
+    mins -= 60;
+  }
+
+  const prettyMMSS = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+  const pretty = hrs ? `${hrs}:` + prettyMMSS : prettyMMSS;
+
+  return { hrs, mins, secs, pretty };
+}
+
+
+
+export function isUserAgentMobile(userAgent: string): boolean {
+  return /android.+mobile|ip(hone|[oa]d)/i.test(userAgent);
+}
+
+
+
+/** Get ID with specified length */
+export function createStringID(length: number) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const charactersLength = characters.length;
+
+  let result = '';
+  let counter = 0;
+
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+
+  return result;
+}
+
+
+
+export function alphabeticSort(a: string, b: string) {
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
+
+
+
+/** Copy given text to clipboard */
+export function copyToClipboard(textToCopy: string) {
+  if (typeof window === 'undefined') return;
+
+  // Navigator clipboard api needs a secure context (https)
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(textToCopy);
+  } else {
+    // Use the 'out of viewport hidden text area' trick
+    const textArea = document.createElement('textarea');
+    textArea.value = textToCopy;
+
+    // Move textarea out of the viewport so it's not visible
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-999999px';
+
+    document.body.prepend(textArea);
+    textArea.select();
+
+    try {
+      document.execCommand('copy');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      textArea.remove();
+    }
+  }
+}
 
 
 
 /** Timestamp to date
  * @returns localizedMonth is month on ukranian
  */
-export function timestampToDate(timestamp: number): { day: number, month: number, year: number, localizedMonth: string } {
+export function timestampToDate(timestamp: number): { day: number; month: number; year: number; localizedMonth: string; } {
   const month = new Date(timestamp).getMonth();
   const months: string[] = [
     'Січень',
@@ -23,17 +116,18 @@ export function timestampToDate(timestamp: number): { day: number, month: number
     'Листопад',
     'Грудень'
   ];
-  const localizedMonth = months[month]
+  const localizedMonth = months[month];
 
   return {
     day: new Date(timestamp).getDate(),
     localizedMonth,
     month,
     year: new Date(timestamp).getFullYear()
-  }
+  };
 }
 
-/** Transform timestamp to date 
+
+/** Transform timestamp to date
  * @returns DD Month YYYY (if not current)
 */
 export function timestampToDayMonth(timestamp: number) {
@@ -52,12 +146,14 @@ export function timestampToDayMonth(timestamp: number) {
     'листопада',
     'грудня'
   ];
-  const localizedMonth = months[month]
+  const localizedMonth = months[month];
   const day = String(new Date(timestamp).getDate()).padStart(2, '0');
   const year = new Date(timestamp).getFullYear();
 
-  return `${day} ${localizedMonth}${getUTC().year !== year ? ` ${year}` : ''}`
+  return `${day} ${localizedMonth}${getUTC().year !== year ? ` ${year}` : ''}`;
 }
+
+
 
 /** Get random number in range
  * @version re-1.0.0
@@ -65,6 +161,8 @@ export function timestampToDayMonth(timestamp: number) {
 export function randomNumber(min: number, max: number): number {
   return Math.floor(min + Math.random() * (max + 1 - min));
 }
+
+
 
 /** Word declination
  * @example
@@ -80,32 +178,34 @@ export function wordDeclination(number: number, words_arr: string[]) {
   return words_arr[1];
 }
 
+
+
 /** Get UTC date
  * @param timestamp Timestamp to start from. Default - now
  */
 export function getUTC(timestamp?: number | null): {
-  year: number
+  year: number;
   /** January is first month, december is 12 */
-  month: number
-  date: number
-  weekDay: number
-  hrs: number
-  mins: number
-  secs: number
-  ms: number
-  timestamp: number
+  month: number;
+  date: number;
+  weekDay: number;
+  hrs: number;
+  mins: number;
+  secs: number;
+  ms: number;
+  timestamp: number;
   /** Time
    * @returns 'hh:mm'
    */
-  time: string
+  time: string;
   /** Accurate time
    * @returns 'hh:mm:ss.mss'
    */
-  timeAccurate: string
+  timeAccurate: string;
   /** European fulldate
    * @returns 'dd.mm.yyyy'
    */
-  fulldate: string
+  fulldate: string;
 } {
   const now = timestamp ? new Date(timestamp) : new Date();
 
@@ -133,61 +233,4 @@ export function getUTC(timestamp?: number | null): {
     timeAccurate: `${hrs}:${mins}:${secs}.${ms}`,
   };
 }
-interface ITokenPayload<T> {
-  /** Can be null if method not provided */
-  verified: boolean | null
 
-  /** Token headers */
-  headers: jwt.JwtHeader | null
-
-  /** Token payload */
-  payload: T
-}
-
-const JWTHeaders = ['iss', 'sub', 'aud', 'exp', 'nbf', 'iat', 'jti'];
-
-/** Decode JWT token */
-export function decodeToken<T = any>(token: string): ITokenPayload<T> {
-  try {
-    const decoded = jwt.decode(token);
-    let payload: any = {};
-    let headers: any = {};
-    let verified: boolean | null = null;
-
-    if (typeof decoded === 'string') {
-      payload = decoded;
-    } else {
-      for (const key in decoded) {
-        if (!JWTHeaders.includes(key)) {
-          payload[key] = decoded[key];
-        } else {
-          headers[key] = decoded[key];
-        }
-      }
-    }
-
-    // if (method) {
-    //   verified = verifyToken(token, method);
-    // }
-
-    return {
-      headers,
-      payload,
-      verified
-    };
-  } catch (e) {
-    const emsg = `An error occured while decoding token: ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`;
-
-    throw new Error(emsg);
-  }
-}
-
-export function parseVideoQuality(quality: EpisodeQualityType) {
-  switch (quality) {
-    case 'q4k': return '2160p';
-    case 'q1080': return '1080p';
-    case 'q720': return '720p';
-    case 'q480': return '480p';
-    case 'q240': return '240p';
-  }
-}

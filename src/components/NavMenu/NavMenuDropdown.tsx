@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IUserState } from '~/store/reducers/userSlice';
-import { cn } from '~/utils/utils';
+import { cn } from '~/utils/classnames';
 import StyledImage from '../StyledImage';
 
 

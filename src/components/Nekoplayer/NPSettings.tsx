@@ -4,9 +4,8 @@ import axios from 'axios';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { EpisodeQualityType } from '~/interfaces/Interfaces';
+import { cn } from '~/utils/classnames';
 import { GetNekoplayerPreferences, SetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
-import { cn } from '~/utils/utils';
-import { parseVideoQuality } from '../../utils/handlers';
 import { NotifySuccess } from '../UI/NotifyToast';
 import Tooltip from '../UI/Tooltip';
 
@@ -299,3 +298,15 @@ const SettingsQualitySelect: FC<SettingsQualitySelectProps> = ({ currentQuality,
 
 
 export default NPSettings
+
+
+
+function parseVideoQuality(quality: EpisodeQualityType) {
+  switch (quality) {
+    case 'q4k': return '2160p';
+    case 'q1080': return '1080p';
+    case 'q720': return '720p';
+    case 'q480': return '480p';
+    case 'q240': return '240p';
+  }
+}

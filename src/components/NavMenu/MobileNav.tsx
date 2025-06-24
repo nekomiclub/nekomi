@@ -11,7 +11,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { config } from '~/config';
 import { Routes } from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
-import { cn } from '~/utils/utils';
+import { cn } from '~/utils/classnames';
 import { UIText } from '../UI/Text.ui';
 
 import NavMenuDropdown from './NavMenuDropdown';

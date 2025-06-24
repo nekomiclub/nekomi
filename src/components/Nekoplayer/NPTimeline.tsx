@@ -1,8 +1,8 @@
 import { FC, RefObject, useContext } from 'react';
 import { Range } from 'react-range';
 
-import prettySeconds from '~/utils/pretty-seconds';
-import { cn } from '~/utils/utils';
+import { cn } from '~/utils/classnames';
+import { prettySeconds } from '~/utils/utils';
 
 import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs } from './NPTypes';
 

@@ -22,8 +22,9 @@ import { IDubber, IDubberMember } from '~/interfaces/IDubber';
 import { IUser } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
-import { wordDeclination } from '~/utils/handlers';
-import { cn, copyToClipboard } from '~/utils/utils';
+import { cn } from '~/utils/classnames';
+import { copyToClipboard,wordDeclination  } from '~/utils/utils';
+
 
 
 

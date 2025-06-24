@@ -6,9 +6,8 @@ import { NextPage } from 'next';
 import { AnimeEpisodeMeta } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { ITitleEpisodeMeta } from '~/interfaces/ITitle';
-import prettySeconds from '~/utils/pretty-seconds';
-import { cn } from '~/utils/utils';
-import { wordDeclination } from '../../utils/handlers';
+import { cn } from '~/utils/classnames';
+import { prettySeconds , wordDeclination } from '~/utils/utils';
 import StyledImage from '../StyledImage';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';

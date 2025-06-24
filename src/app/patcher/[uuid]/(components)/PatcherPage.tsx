@@ -21,11 +21,9 @@ import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeEpi
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes, routes } from '~/routes';
 import API from '~/services/ApiService';
-import { alphabeticSort } from '~/utils/alphabetic-sort';
-import { createStringID } from '~/utils/create-string-id';
+import { cn } from '~/utils/classnames';
 import { DubberCompactMapper } from '~/utils/data-mappers';
-import { getUTC } from '~/utils/handlers';
-import { cn, copyToClipboard } from '~/utils/utils';
+import { alphabeticSort , copyToClipboard,createStringID , getUTC  } from '~/utils/utils';
 
 import PatcherStack from './PatcherStack';
 import { PatcherEpisode } from './PatcherTypes';
