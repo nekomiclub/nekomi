@@ -21,7 +21,7 @@ import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
 import { randomNumber } from '~/utils/utils';
 import { HandleClientError } from '../Errors';
-import StyledImage from '../StyledImage';
+import StyledImage from '../Styled/StyledImage';
 
 
 

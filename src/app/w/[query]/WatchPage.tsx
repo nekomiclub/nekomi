@@ -10,7 +10,7 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
 import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';

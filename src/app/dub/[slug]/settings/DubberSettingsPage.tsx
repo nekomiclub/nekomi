@@ -10,7 +10,7 @@ import { useDebounce } from 'use-debounce';
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '~/assets/Social';
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/assets/Support';
 import { HandleClientError } from '~/components/Errors';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';

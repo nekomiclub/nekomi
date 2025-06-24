@@ -9,7 +9,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { HandleClientError } from '~/components/Errors';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { UIReportButton } from '~/components/UI/Report';
 import { UIText } from '~/components/UI/Text.ui';
 import { useAppSelector } from '~/hooks/redux';

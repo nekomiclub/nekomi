@@ -14,7 +14,7 @@ import { useAppDispatch } from '~/hooks/redux';
 import { routes } from '~/routes';
 import userSlice, { IUserState, userStateDefault } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
-import StyledImage from '../StyledImage';
+import StyledImage from '../Styled/StyledImage';
 import Tooltip from '../UI/Tooltip';
 
 import NavMenuDropdown from './NavMenuDropdown';

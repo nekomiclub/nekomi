@@ -10,7 +10,7 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
 import { HandleClientError } from '~/components/Errors';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { UIField, UIFieldProps, UIFieldState } from '~/components/UI/Input';
 import { NotifyError, NotifySuccess } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';

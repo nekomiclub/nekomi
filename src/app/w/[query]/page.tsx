@@ -5,9 +5,9 @@ import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { headers } from 'next/headers';
 
 import AnimeItem from '~/components/AnimeItem';
-import { PrettySwiper } from '~/components/Components';
 import { HandleServerError } from '~/components/Errors';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
+import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
@@ -146,11 +146,11 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
           {related && related?.length > 0 && <div className="wrapper gap-[16px]">
             <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
 
-            <PrettySwiper>
+            <StyledSwiper>
               {related.map((hydrated, i) => {
                 return <AnimeItem hydrated={hydrated} className="!w-[170px]" key={`animerelated-${anime.uuid}--${i}`} />
               })}
-            </PrettySwiper>
+            </StyledSwiper>
           </div>}
 
           {/* Player */}
@@ -244,11 +244,11 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
         {related && related?.length > 0 && <div className="wrapper gap-[16px]">
           <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
 
-          <PrettySwiper>
+          <StyledSwiper>
             {related.map((hydrated, i) => {
               return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`animerelated-${anime.uuid}--${i}`} />
             })}
-          </PrettySwiper>
+          </StyledSwiper>
         </div>}
 
         {/* Player */}

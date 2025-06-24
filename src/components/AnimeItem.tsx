@@ -17,7 +17,7 @@ import parseUserLibUI from '~/utils/parse-user-lib-ui';
 import { prettySeconds } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
-import StyledImage from './StyledImage';
+import StyledImage from './Styled/StyledImage';
 import { NotifyWarn } from './UI/NotifyToast';
 import UICheckbox from './UI/UICheckbox';
 

@@ -6,11 +6,11 @@ import { useParams, usePathname } from 'next/navigation'
 import { MaterialSymbol } from 'react-material-symbols';
 
 import AnimeItem from '~/components/AnimeItem';
+import LoadingContent from '~/components/LoadingContent';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { cn } from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
-import { LoadingContent } from '../../../../../components/Components';
 import Tooltip from '../../../../../components/UI/Tooltip';
 import { config } from '../../../../../config';
 import { User, UserLib } from '../../../../../interfaces/UserIntf';

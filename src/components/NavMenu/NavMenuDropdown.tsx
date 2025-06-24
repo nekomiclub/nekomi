@@ -7,7 +7,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
-import StyledImage from '../StyledImage';
+import StyledImage from '../Styled/StyledImage';
 
 
 

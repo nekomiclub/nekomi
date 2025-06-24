@@ -8,12 +8,11 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { config } from '~/config';
 import { cn } from '~/utils/classnames';
-
-import { UIText } from './UI/Text.ui';
-
+import { UIText } from '../UI/Text.ui';
 
 
-interface IProps {
+
+export interface StyledImageProps {
   src: string
   width: string
   height: string
@@ -38,7 +37,7 @@ interface IProps {
 
 
 
-export const StyledImage: NextPage<IProps> = ({ height, src, width, alt, className, loading, priority, useImg, imageClassName }) => {
+export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, alt, className, loading, priority, useImg, imageClassName }) => {
   alt = alt ?? '...';
   loading = !priority ? loading ?? 'lazy' : 'eager'; // Priority and lazy load cannot be both specified
 

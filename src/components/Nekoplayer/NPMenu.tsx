@@ -4,7 +4,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { cn } from '~/utils/classnames';
-import StyledImage from '../StyledImage';
+import StyledImage from '../Styled/StyledImage';
 import Tooltip from '../UI/Tooltip';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';

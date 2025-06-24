@@ -7,7 +7,7 @@ import { AnimeEpisodeMeta } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { cn } from '~/utils/classnames';
 import { prettySeconds, wordDeclination } from '~/utils/utils';
-import StyledImage from '../StyledImage';
+import StyledImage from '../Styled/StyledImage';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 

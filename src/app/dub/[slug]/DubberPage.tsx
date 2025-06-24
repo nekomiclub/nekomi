@@ -10,7 +10,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { IcoSocialTelegram } from '~/assets/Social';
 import AnimeItem from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import { UIText } from '~/components/UI/Text.ui';

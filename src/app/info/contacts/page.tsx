@@ -2,7 +2,7 @@
 import Link from 'next/link';
 
 import { IcoSocialGithub, IcoSocialTelegram } from '~/assets/Social';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { metaObject } from '../../../config';
 
 

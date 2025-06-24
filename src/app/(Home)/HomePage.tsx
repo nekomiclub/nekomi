@@ -9,14 +9,14 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import AnimeItem from '~/components/AnimeItem';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
+import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { AnimeWithMedia } from '~/interfaces/types';
 import { cn } from '~/utils/classnames';
 import { GetNekoplayerData } from '~/utils/nekoplayer-utils';
 import { prettySeconds } from '~/utils/utils';
-import { PrettySwiper } from '../../components/Components';
 import { config } from '../../config';
 import { routes } from '../../routes';
 
@@ -138,11 +138,11 @@ export const HomeCategory: NextPage<HomeCategoryProps> = ({ label, icon, hydrate
 const HomeAnimesSwiper: NextPage<HomeAnimeSwiperProps> = ({ hydratedAnimes }) => {
   const id = useId().replaceAll(':', '');
 
-  return <PrettySwiper>
+  return <StyledSwiper>
     {hydratedAnimes.map((hydrated, i) => {
       return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`homecategory-${id}--${i}`} />
     })}
-  </PrettySwiper>
+  </StyledSwiper>
 }
 
 const HomeDivider: NextPage<HomeDividerProps> = ({ icon, label }) => {
