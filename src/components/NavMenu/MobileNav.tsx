@@ -2,7 +2,7 @@
 
 import { useId } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
-import { PopupButton } from '@fullkekw/fkw-popup';
+import { PopupButton } from '@fullkekw/popup';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -43,7 +43,7 @@ const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMen
       <UIText text="Головна" className="font-bold" type="mini" />
     </Link>
 
-    <PopupButton className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]" togglePopupId={searchPopupId} onClick={forceFocus}>
+    <PopupButton className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]" popupId={searchPopupId} onClick={forceFocus}>
       <MaterialSymbol icon="search" className="text-white" size={24} />
       <UIText text="Пошук" className="font-bold" type="mini" />
     </PopupButton>

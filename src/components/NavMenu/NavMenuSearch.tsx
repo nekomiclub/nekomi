@@ -4,7 +4,7 @@ import '~/styles/components/Menu.scss';
 
 import { useEffect, useId, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
-import { PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
+import { PopupWindow } from '@fullkekw/popup';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -194,66 +194,64 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
 
 
 
-  return <PopupLayer className="bg-dark/[.3] backdrop-blur-[4px] flex justify-center items-center max-md:items-start">
-    <PopupDialog className="w-full max-w-[800px] px-[24px] py-[32px] max-md:px-[8px]" id={dialogId} state={isSearchOpen} stateSetter={setIsSearchOpen}>
-      <div className="w-full bg-dark-primary flex flex-col gap-[16px] pb-[12px] rounded-[4px]">
-        {/* Search box */}
-        <div className="w-full flex justify-between items-center border-b border-b-dark-light">
-          <Menu id={selectSearchTypeMenuId} gap={0} settings={{ align: 'start', animation: 'slide' }} state={isSelectSearchTypeOpen} stateSetter={setIsSelectSearchTypeOpen}>
-            <MenuTrigger className="flex gap-[12px] items-center p-[12px] border-r border-dark-medium" anchor>
-              <MenuSearchSelectTypeButton type={searchType} />
+  return <PopupWindow className="w-full max-w-[800px] px-[24px] py-[32px] max-md:px-[8px]" layerClassName="bg-dark/[.3] backdrop-blur-[4px] flex justify-center items-center max-md:items-start" id={dialogId} isOpen={isSearchOpen} setIsOpen={setIsSearchOpen}>
+    <div className="w-full bg-dark-primary flex flex-col gap-[16px] pb-[12px] rounded-[4px]">
+      {/* Search box */}
+      <div className="w-full flex justify-between items-center border-b border-b-dark-light">
+        <Menu id={selectSearchTypeMenuId} gap={0} settings={{ align: 'start', animation: 'slide' }} state={isSelectSearchTypeOpen} stateSetter={setIsSelectSearchTypeOpen}>
+          <MenuTrigger className="flex gap-[12px] items-center p-[12px] border-r border-dark-medium" anchor>
+            <MenuSearchSelectTypeButton type={searchType} />
 
-              <MaterialSymbol className="text-grey-new" icon="expand_all" size={12} />
-            </MenuTrigger>
+            <MaterialSymbol className="text-grey-new" icon="expand_all" size={12} />
+          </MenuTrigger>
 
-            <MenuWrapper className="bg-dark-primary border rounded-t-none border-dark-light flex flex-col rounded-[4px] overflow-hidden min-w-fit w-full">
-              <MenuSearchSelectTypeButton className="menu-search_selectType" type={'anime'} setType={setSearchType} />
-              <MenuSearchSelectTypeButton className="menu-search_selectType" type={'dubber'} setType={setSearchType} />
-              <MenuSearchSelectTypeButton className="menu-search_selectType" type={'user'} setType={setSearchType} />
-            </MenuWrapper>
-          </Menu>
+          <MenuWrapper className="bg-dark-primary border rounded-t-none border-dark-light flex flex-col rounded-[4px] overflow-hidden min-w-fit w-full">
+            <MenuSearchSelectTypeButton className="menu-search_selectType" type={'anime'} setType={setSearchType} />
+            <MenuSearchSelectTypeButton className="menu-search_selectType" type={'dubber'} setType={setSearchType} />
+            <MenuSearchSelectTypeButton className="menu-search_selectType" type={'user'} setType={setSearchType} />
+          </MenuWrapper>
+        </Menu>
 
-          <form onSubmit={search} className="w-full flex justify-between items-center">
-            <input className="p-[12px] bg-transparent w-full font-manrope text-white placeholder:font-manrope placeholder:text-grey-new" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} placeholder="Що шукаємо?" autoComplete="off" id="search-searchBar" />
+        <form onSubmit={search} className="w-full flex justify-between items-center">
+          <input className="p-[12px] bg-transparent w-full font-manrope text-white placeholder:font-manrope placeholder:text-grey-new" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} placeholder="Що шукаємо?" autoComplete="off" id="search-searchBar" />
 
-            <button className="p-[12px] flex justify-center items-center" type="submit">
-              <MaterialSymbol className={cn(`duration-100`, searchText.length > 0 ? 'text-primary' : 'text-grey-new')} icon="search" size={24} />
-            </button>
-          </form>
-        </div>
-
-        {/* Search content */}
-        <div className="flex flex-col gap-[4px] px-[12px] max-h-[70svh] overflow-y-scroll overflow-x-hidden max-sm:max-h-[80svh]" ref={contentRef}>
-          <div className={cn('flex flex-col gap-[4px]', searchResults.length && (showStartTyping || showNotFound || usePatcherRouting) && 'pb-[16px]')}>
-            {/* Start typing */}
-            {showStartTyping && !usePatcherRouting && <div className="flex items-center gap-[16px] px-[12px]">
-              <MaterialSymbol className="text-grey-new" icon="star" size={16} />
-
-              <p className="text-grey-new font-manrope">Наприклад: {startTypingText}</p>
-            </div>}
-
-            {/* Not found */}
-            {showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
-              <MaterialSymbol className="text-grey-new" icon="live_help" size={16} />
-
-              <p className="text-grey-new font-manrope">Здається, в нас такого нема...</p>
-            </div>}
-
-            {/* Patcher hint */}
-            {usePatcherRouting && searchType === 'anime' && !showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
-              <MaterialSymbol className="text-grey-new" icon="edit" size={16} />
-
-              <p className="text-grey-new font-manrope">Нове аніме буде відкрито в редакторі</p>
-            </div>}
-          </div>
-
-          {searchResults.map((result, i) => {
-            return <MenuSearchResult item={result} type={searchType} usePatcherRouting={usePatcherRouting} key={`menusearch-result--${i}`} />
-          })}
-        </div>
+          <button className="p-[12px] flex justify-center items-center" type="submit">
+            <MaterialSymbol className={cn(`duration-100`, searchText.length > 0 ? 'text-primary' : 'text-grey-new')} icon="search" size={24} />
+          </button>
+        </form>
       </div>
-    </PopupDialog>
-  </PopupLayer>
+
+      {/* Search content */}
+      <div className="flex flex-col gap-[4px] px-[12px] max-h-[70svh] overflow-y-scroll overflow-x-hidden max-sm:max-h-[80svh]" ref={contentRef}>
+        <div className={cn('flex flex-col gap-[4px]', searchResults.length && (showStartTyping || showNotFound || usePatcherRouting) && 'pb-[16px]')}>
+          {/* Start typing */}
+          {showStartTyping && !usePatcherRouting && <div className="flex items-center gap-[16px] px-[12px]">
+            <MaterialSymbol className="text-grey-new" icon="star" size={16} />
+
+            <p className="text-grey-new font-manrope">Наприклад: {startTypingText}</p>
+          </div>}
+
+          {/* Not found */}
+          {showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
+            <MaterialSymbol className="text-grey-new" icon="live_help" size={16} />
+
+            <p className="text-grey-new font-manrope">Здається, в нас такого нема...</p>
+          </div>}
+
+          {/* Patcher hint */}
+          {usePatcherRouting && searchType === 'anime' && !showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
+            <MaterialSymbol className="text-grey-new" icon="edit" size={16} />
+
+            <p className="text-grey-new font-manrope">Нове аніме буде відкрито в редакторі</p>
+          </div>}
+        </div>
+
+        {searchResults.map((result, i) => {
+          return <MenuSearchResult item={result} type={searchType} usePatcherRouting={usePatcherRouting} key={`menusearch-result--${i}`} />
+        })}
+      </div>
+    </div>
+  </PopupWindow>
 }
 
 

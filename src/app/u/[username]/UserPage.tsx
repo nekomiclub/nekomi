@@ -2,7 +2,7 @@
 
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
+import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -185,51 +185,49 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
 
   return <>
     {/* Return dialog only if user is account owner */}
-    {isOwner && <PopupLayer className="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[16px] py-[40px]">
-      <PopupDialog id={settingsPopupID} className="px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] max-h-full w-full max-w-[1170px] overflow-y-auto overflow-x-hidden" state={isSettingsOpen} stateSetter={setIsSettingsOpen}>
-        <Label label="Налаштування акаунту" />
-        <Link href={`${config.URL.fkAccount}/me`} className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple">
-          <p className="text-white text-center">Редагувати акаунт Fullkekw</p>
-        </Link>
+    {isOwner && <PopupWindow id={settingsPopupID} className="px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] max-h-full w-full max-w-[1170px] overflow-y-auto overflow-x-hidden" layerClassName="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[16px] py-[40px]" isOpen={isSettingsOpen} setIsOpen={setIsSettingsOpen}>
+      <Label label="Налаштування акаунту" />
+      <Link href={`${config.URL.fkAccount}/me`} className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple">
+        <p className="text-white text-center">Редагувати акаунт Fullkekw</p>
+      </Link>
 
-        <Label label="Банер профілю" />
+      <Label label="Банер профілю" />
 
-        <div className="w-full max-h-[400px] aspect-[16/7] relative shrink-0" ref={bannerWrapperRef}>
-          <button className="w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible" onClick={selectBannerFile} ref={bannerButtonRef}>
-            <p className="uppercase text-[40px] font-bold text-white max-[640px]:text-[24px]">завантажити</p>
-          </button>
+      <div className="w-full max-h-[400px] aspect-[16/7] relative shrink-0" ref={bannerWrapperRef}>
+        <button className="w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible" onClick={selectBannerFile} ref={bannerButtonRef}>
+          <p className="uppercase text-[40px] font-bold text-white max-[640px]:text-[24px]">завантажити</p>
+        </button>
 
-          <input type="file" accept=".png,.jpg,.webp" ref={bannerSelectRef} className="hidden absolute -z-[1]" onChange={uploadBanner} />
-          <StyledImage src={bannerURL} width="100%" height="100%" priority />
-        </div>
+        <input type="file" accept=".png,.jpg,.webp" ref={bannerSelectRef} className="hidden absolute -z-[1]" onChange={uploadBanner} />
+        <StyledImage src={bannerURL} width="100%" height="100%" priority />
+      </div>
 
-        <Label label={`Під'єднання`} />
-        {settingsLinkTelegramStatus === 'connected' ?
-          <div className="flex flex-col gap-[8px]">
-            <div className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey">
-              <MaterialSymbol icon="star" size={24} fill className="text-[#FF464E]" />
-              <p className="text-white text-center">Акаунт Telegram прив’язано! </p>
-            </div>
-
-            <div className={`flex gap-[8px] items-center`}>
-              <MaterialSymbol icon="info" size={16} className="text-lightGrey" />
-              <p className="text-[12px] text-lightGrey">Ти будеш отримувати сповіщення в телеграм</p>
-            </div>
-          </div> :
-
-          <div className="flex flex-col gap-[8px]">
-            <button className={`flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] duration-200 ${settingsLinkTelegramStatus === 'pending' ? 'bg-orange' : settingsLinkTelegramStatus === 'error' ? 'bg-red' : 'bg-darkGrey hover:bg-purple focus-visible:bg-purple'}`} onClick={linkTelegram}>
-              <IcoSocialTelegram width={24} height={24} />
-              <p className="text-white">
-                {settingsLinkTelegramStatus === 'notConnected' && 'Прив’язати акаунт Telegram'}
-                {settingsLinkTelegramStatus === 'error' && 'Помилка!'}
-                {settingsLinkTelegramStatus === 'pending' && 'Генеруємо токен...'}
-              </p>
-            </button>
+      <Label label={`Під'єднання`} />
+      {settingsLinkTelegramStatus === 'connected' ?
+        <div className="flex flex-col gap-[8px]">
+          <div className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey">
+            <MaterialSymbol icon="star" size={24} fill className="text-[#FF464E]" />
+            <p className="text-white text-center">Акаунт Telegram прив’язано! </p>
           </div>
-        }
-      </PopupDialog>
-    </PopupLayer>}
+
+          <div className={`flex gap-[8px] items-center`}>
+            <MaterialSymbol icon="info" size={16} className="text-lightGrey" />
+            <p className="text-[12px] text-lightGrey">Ти будеш отримувати сповіщення в телеграм</p>
+          </div>
+        </div> :
+
+        <div className="flex flex-col gap-[8px]">
+          <button className={`flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] duration-200 ${settingsLinkTelegramStatus === 'pending' ? 'bg-orange' : settingsLinkTelegramStatus === 'error' ? 'bg-red' : 'bg-darkGrey hover:bg-purple focus-visible:bg-purple'}`} onClick={linkTelegram}>
+            <IcoSocialTelegram width={24} height={24} />
+            <p className="text-white">
+              {settingsLinkTelegramStatus === 'notConnected' && 'Прив’язати акаунт Telegram'}
+              {settingsLinkTelegramStatus === 'error' && 'Помилка!'}
+              {settingsLinkTelegramStatus === 'pending' && 'Генеруємо токен...'}
+            </p>
+          </button>
+        </div>
+      }
+    </PopupWindow>}
 
     <div className={`bg-dark relative pt-[16px] sm:pt-[var(--header-height)]`}>
       {/* Image */}
@@ -453,7 +451,7 @@ function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { us
     </Tooltip>
 
     {isOwner && <Tooltip content="Налаштування">
-      <PopupButton togglePopupId={settingsPopupID} className="ui-button w-[64px] h-[64px] flex justify-center items-center max-sm:w-[48px] max-sm:h-[48px]">
+      <PopupButton popupId={settingsPopupID} className="ui-button w-[64px] h-[64px] flex justify-center items-center max-sm:w-[48px] max-sm:h-[48px]">
         <MaterialSymbol className="text-white max-sm:!text-[24px]" icon="settings" size={32} />
       </PopupButton>
     </Tooltip>}

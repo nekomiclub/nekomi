@@ -2,7 +2,7 @@
 
 import { useId } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
-import { PopupButton } from '@fullkekw/fkw-popup';
+import { PopupButton } from '@fullkekw/popup';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -58,7 +58,7 @@ const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, i
         </Link>
       </Tooltip>
 
-      <PopupButton togglePopupId={searchPopupId} onClick={forceFocus} className="ui-button max-w-[500px] w-full flex flex-row items-center gap-[8px] px-[12px] py-[8px]">
+      <PopupButton popupId={searchPopupId} onClick={forceFocus} className="ui-button max-w-[500px] w-full flex flex-row items-center gap-[8px] px-[12px] py-[8px]">
         <MaterialSymbol icon="search" size={16} className="text-grey-new" />
         <p className="text-grey-new">Пошук...</p>
       </PopupButton>

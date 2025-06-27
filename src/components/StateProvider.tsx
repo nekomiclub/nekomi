@@ -1,6 +1,7 @@
 'use client'
 
 import { ReactNode, useEffect, useMemo } from 'react'
+import { PopupLayer } from '@fullkekw/popup';
 import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { AppProgressBar } from 'next-nprogress-bar';
@@ -93,9 +94,11 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
       shallowRouting
     />
 
-    <UIReportModal />
+    <PopupLayer>
+      <UIReportModal />
 
-    {children}
+      {children}
+    </PopupLayer>
   </Provider>
 }
 

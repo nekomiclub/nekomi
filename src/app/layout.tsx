@@ -1,5 +1,5 @@
 import '@fullkekw/fkw-menu/css'
-import '@fullkekw/fkw-popup/css'
+import '@fullkekw/popup/css'
 import 'swiper/css';
 import 'react-loading-skeleton/dist/skeleton.css'
 import 'react-material-symbols/rounded';
@@ -64,8 +64,6 @@ export default async function Layout({ children, params }: LayoutProps) {
   // Get user by cookie
   if (sessionToken) {
     try {
-      console.log(sessionToken)
-
       const data = await API.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
         session: sessionToken
       })

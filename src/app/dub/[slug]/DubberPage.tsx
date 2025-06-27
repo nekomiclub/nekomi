@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
+import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -80,32 +80,30 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
 
 
 
-  return isPopupShowing && <PopupLayer className="flex justify-center items-center">
-    <PopupDialog className="max-w-[720px] w-full h-[500px] rounded-[4px] overflow-hidden bg-dark-primary block" id={dialogId} state>
-      <StyledImage src={dubber.banner} width="100%" height="250px" />
+  return isPopupShowing && <PopupWindow className="max-w-[720px] w-full h-[500px] rounded-[4px] overflow-hidden bg-dark-primary block" id={dialogId} isOpen>
+    <StyledImage src={dubber.banner} width="100%" height="250px" />
 
-      <div className="flex flex-col items-center gap-[16px] relative top-[-64px]">
-        <StyledImage src={dubber.avatar} width="128px" height="128px" className="rounded-[128px] overflow-hidden" />
+    <div className="flex flex-col items-center gap-[16px] relative top-[-64px]">
+      <StyledImage src={dubber.avatar} width="128px" height="128px" className="rounded-[128px] overflow-hidden" />
 
-        <div className="flex flex-col gap-[8px] items-center">
-          <p className="text-white text-[24px] font-bold text-center">{dubber.nameUkr}</p>
-          <p className="text-grey-new font-manrope text-center">
-            {inviteType === 'accept' && 'Ти прийняв запрошення в цю команду озвучення'}
-            {inviteType === 'decline' && 'Ти відхилив запрошення в цю команду озвучення'}
-            {inviteType === 'invalid' && 'Ти не був запрошений в цю команду озвучення або в тебе нема акаунту'}
-          </p>
-        </div>
+      <div className="flex flex-col gap-[8px] items-center">
+        <p className="text-white text-[24px] font-bold text-center">{dubber.nameUkr}</p>
+        <p className="text-grey-new font-manrope text-center">
+          {inviteType === 'accept' && 'Ти прийняв запрошення в цю команду озвучення'}
+          {inviteType === 'decline' && 'Ти відхилив запрошення в цю команду озвучення'}
+          {inviteType === 'invalid' && 'Ти не був запрошений в цю команду озвучення або в тебе нема акаунту'}
+        </p>
       </div>
+    </div>
 
-      <PopupButton togglePopupId={dialogId} className="absolute bottom-[24px] left-[50%] translate-x-[-50%] flex items-center gap-[16px] px-[16px] py-[8px] rounded-[4px] bg-dark-medium border border-dark-light duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-        {inviteType === 'accept' && <MaterialSymbol icon="how_to_reg" size={24} className="text-white" />}
-        {inviteType === 'decline' && <MaterialSymbol icon="archive" size={24} className="text-white" />}
-        {inviteType === 'invalid' && <MaterialSymbol icon="sentiment_sad" size={24} className="text-white" />}
+    <PopupButton popupId={dialogId} className="absolute bottom-[24px] left-[50%] translate-x-[-50%] flex items-center gap-[16px] px-[16px] py-[8px] rounded-[4px] bg-dark-medium border border-dark-light duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+      {inviteType === 'accept' && <MaterialSymbol icon="how_to_reg" size={24} className="text-white" />}
+      {inviteType === 'decline' && <MaterialSymbol icon="archive" size={24} className="text-white" />}
+      {inviteType === 'invalid' && <MaterialSymbol icon="sentiment_sad" size={24} className="text-white" />}
 
-        <p className="text-white font-manrope uppercase">{inviteType === 'accept' ? 'Чудово' : 'зрозуміло'}</p>
-      </PopupButton>
-    </PopupDialog>
-  </PopupLayer>
+      <p className="text-white font-manrope uppercase">{inviteType === 'accept' ? 'Чудово' : 'зрозуміло'}</p>
+    </PopupButton>
+  </PopupWindow>
 }
 
 export const DubberBanner: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
