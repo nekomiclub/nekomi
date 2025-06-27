@@ -1,5 +1,3 @@
-// Packages styles
-
 import '@fullkekw/fkw-menu/css'
 import '@fullkekw/fkw-popup/css'
 import 'swiper/css';
@@ -11,7 +9,7 @@ import '../styles/globals.css';
 
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google'
 import { cookies } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
@@ -21,7 +19,7 @@ import { ErrorNoConnection } from '~/components/Errors';
 import NavMenu from '~/components/NavMenu/NavMenu';
 import { StateProvider } from '~/components/StateProvider';
 import { LayoutProps } from '~/interfaces/types';
-import API from '~/services/ApiService';
+import API, { API_ERROR } from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import Footer from '../components/Footer';
 import { config, devMode, metaObject } from '../config';
@@ -58,13 +56,16 @@ export default async function Layout({ children, params }: LayoutProps) {
   const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
 
   let isServerOnline = false;
-  let user: IUserState | undefined;
+  let isSessionExpired = false;
+  let user: IUserState | undefined
 
 
 
   // Get user by cookie
   if (sessionToken) {
     try {
+      console.log(sessionToken)
+
       const data = await API.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
         session: sessionToken
       })
@@ -84,6 +85,8 @@ export default async function Layout({ children, params }: LayoutProps) {
 
       isServerOnline = true;
     } catch (e) {
+      if (e instanceof AxiosError && e.response?.data.code === API_ERROR.AUTH_SESSION_EXPIRED) isSessionExpired = true;
+
       if (devMode) console.error(e)
     }
   }
@@ -100,7 +103,7 @@ export default async function Layout({ children, params }: LayoutProps) {
 
   return <html lang="uk">
     <body className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
-      {isServerOnline ? <StateProvider user={user}>
+      {isServerOnline ? <StateProvider user={user} isSessionExpired={isSessionExpired}>
         <SkeletonTheme baseColor="#181818" highlightColor="#222">
           <NavMenu />
 

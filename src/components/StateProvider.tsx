@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useMemo } from 'react'
 import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { AppProgressBar } from 'next-nprogress-bar';
@@ -12,16 +12,15 @@ import { setupStore } from '~/store/store'
 import { randomNumber } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
-import { NotifySuccess } from './UI/NotifyToast';
+import { NotifySuccess, NotifyWarn } from './UI/NotifyToast';
 import { UIReportModal } from './UI/Report';
 
 
 
-interface IProviderProps {
-  children: ReactNode
-}
+interface StateProviderProps {
+  children: ReactNode | ReactNode[]
+  isSessionExpired: boolean
 
-interface IStateProviderProps extends IProviderProps {
   user?: IUserState
 }
 
@@ -39,22 +38,28 @@ const ConsoleMessages = [
 
 
 /** Setting up websocket & fetch user data */
-export const StateProvider: NextPage<IStateProviderProps> = ({ children, user }) => {
+export const StateProvider: NextPage<StateProviderProps> = ({ children, user, isSessionExpired }) => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
 
 
 
-  // Authorize user
-  useEffect(() => {
-    // Log random fact
-    const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
-    console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
-
-    // Authorize
+  // Handle user authorization
+  useMemo(() => {
     const signinToken = searchParams.get('signinPayload');
 
+    // Logout if session expire
+    if (isSessionExpired && !signinToken) {
+      (async function () {
+        try {
+          await API.userLogout()
+          NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' })
+        } catch (e) { HandleClientError(e) }
+      })()
+    }
+
+    // Authorize
     if (signinToken) {
       router.replace(pathname);
 
@@ -62,16 +67,20 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
         try {
           await API.userSignin({ token: signinToken });
 
-          NotifySuccess({ title: 'Ви увійшли в акаунт', message: 'welcome home!' })
+          NotifySuccess({ title: 'Ви увійшли в акаунт', message: 'welcome!' })
 
-          setTimeout(() => {
-            router.refresh();
-          }, 500);
+          setTimeout(() => router.refresh(), 100);
         } catch (e) {
           HandleClientError(e);
         }
       })()
     }
+  }, [])
+
+  useEffect(() => {
+    // Log random fact
+    const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
+    console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
   }, [])
 
 

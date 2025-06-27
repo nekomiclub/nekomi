@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-import TokenService from '~/services/TokenService';
 import { config } from '../config';
+
+import signCSRF from './signCSRF';
 
 
 
@@ -23,7 +24,7 @@ export const $upload = axios.create({
 
 
 $api.interceptors.request.use(async cfg => {
-  cfg.headers['X-CSRF-Token'] = TokenService.signCSRF()
+  cfg.headers['X-CSRF-Token'] = await signCSRF()
 
   return cfg;
 })
@@ -40,7 +41,7 @@ $api.interceptors.response.use(undefined, e => {
 })
 
 $upload.interceptors.request.use(async cfg => {
-  cfg.headers['X-CSRF-Token'] = TokenService.signCSRF()
+  cfg.headers['X-CSRF-Token'] = await signCSRF()
 
   return cfg;
 })

@@ -20,6 +20,13 @@ interface RequestProps {
 
 
 
+export enum API_ERROR {
+  // === AUTH ===
+  AUTH_SESSION_EXPIRED = 'auth:session_expired',
+}
+
+
+
 class ApiService {
   //* =============== DUBBER ROUTER
   async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache, metadataOnly }: DubberGetOneByQueryProps) {

@@ -1,7 +1,7 @@
+'use server'
+
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-import { config } from '~/config';
-import { getUTC } from '~/utils/utils';
 
 
 
@@ -26,17 +26,5 @@ export default class TokenService {
       verified: null,
       payload,
     };
-  }
-
-
-
-  /** Sign CSRF token */
-  static signCSRF(): string {
-    return jwt.sign({
-      origin: config.domain,
-      expire: getUTC().timestamp + config.vars.CSRF_EXPIRE
-    }, config.env.CSRF_PRIVATE_KEY, {
-      algorithm: 'RS256'
-    });
   }
 }
