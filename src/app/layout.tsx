@@ -22,7 +22,7 @@ import { LayoutProps } from '~/interfaces/types';
 import API, { API_ERROR } from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import Footer from '../components/Footer';
-import { config, devMode, metaObject } from '../config';
+import { config, DevelopmentMode, metaObject } from '../config';
 
 
 
@@ -85,14 +85,14 @@ export default async function Layout({ children, params }: LayoutProps) {
     } catch (e) {
       if (e instanceof AxiosError && e.response?.data.code === API_ERROR.AUTH_SESSION_EXPIRED) isSessionExpired = true;
 
-      if (devMode) console.error(e)
+      if (DevelopmentMode) console.error(e)
     }
   }
 
   // Ping API
   if (!isServerOnline) {
     try {
-      await axios.options(`${config.URL.apiHTTP}/ping`)
+      await axios.options(`${config.URL.nekomi_api}/ping`)
       isServerOnline = true;
     } catch (e) { }
   }

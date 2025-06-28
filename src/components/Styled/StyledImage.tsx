@@ -43,7 +43,7 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
-  const [useNativeImage] = useState(Boolean(useImg) || !src.includes(config.URL.media))
+  const [useNativeImage] = useState(Boolean(useImg) || !src.includes(config.URL.nekomi_media))
   const [imageDims, setImageDims] = useState<number[]>([])
 
   const imageRef = useRef<HTMLImageElement>(null)

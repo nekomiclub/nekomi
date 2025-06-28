@@ -137,7 +137,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
     try {
       setSettingsLinkTelegramStatus('pending')
       const { data } = await $api.get<{ token: string }>(`/user/linkTelegram/token`);
-      router.push(`${config.URL.bot}?start=linkAccount=${data.token}`)
+      router.push(`${config.URL.telegramBot}?start=linkAccount=${data.token}`)
     } catch (e) {
       setSettingsLinkTelegramStatus('error')
       HandleClientError(e);
@@ -171,7 +171,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
       formData.append('file', file);
       formData.append('method', 'upload_banner');
 
-      await $api.patch(`${config.URL.apiHTTP}/user`, formData);
+      await $api.patch(`${config.URL.nekomi_api}/user`, formData);
 
       const { user } = await API.getUser({ query: '*' })
       setBannerURL(user?.banner ?? '')
@@ -186,7 +186,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
     {/* Return dialog only if user is account owner */}
     {isOwner && <PopupWindow id={settingsPopupID} className="px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] max-h-full w-full max-w-[1170px] overflow-y-auto overflow-x-hidden" layerClassName="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[16px] py-[40px]" isOpen={isSettingsOpen} setIsOpen={setIsSettingsOpen}>
       <Label label="Налаштування акаунту" />
-      <Link href={`${config.URL.fkAccount}/me`} className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple">
+      <Link href={`${config.URL.fullkekw_account}/me`} className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple">
         <p className="text-white text-center">Редагувати акаунт Fullkekw</p>
       </Link>
 
@@ -317,7 +317,7 @@ export const UserLibItem: NextPage<UserLibItemProps> = ({ lib, user }) => {
 
 
 
-  return isLibVisible && <Link href={`${config.URL.baseURL}/u/${user.username}/lib/${lib.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px] max-sm:px-[4px] max-sm:py-[8px]">
+  return isLibVisible && <Link href={`${config.URL.nekomi_site}/u/${user.username}/lib/${lib.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px] max-sm:px-[4px] max-sm:py-[8px]">
     <MaterialSymbol className={cn(`text-white max-sm:!text-[80px]`, isFavorite && '!text-primary')} fill={isFavorite} icon={icon} size={128} />
 
     <div className="flex items-center gap-[8px] max-sm:flex-col-reverse">
@@ -432,7 +432,7 @@ function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { us
 
 
   function copyProfileURL() {
-    copyToClipboard(`${config.URL.baseURL}/u/${user.username}`);
+    copyToClipboard(`${config.URL.nekomi_site}/u/${user.username}`);
     setUrlCopied(true);
 
     setTimeout(() => {
@@ -455,7 +455,7 @@ function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { us
       </PopupButton>
     </Tooltip>}
 
-    {!primaryPage && <Link href={`${config.URL.baseURL}/u/${user.username}`}>
+    {!primaryPage && <Link href={`${config.URL.nekomi_site}/u/${user.username}`}>
       <Tooltip content="На головну профілю">
         <button className={`ui-button w-[64px] h-[64px] flex justify-center items-center hover:!bg-primary focus-visible:!bg-primary max-sm:w-[48px] max-sm:h-[48px]`}>
           <MaterialSymbol className="text-white max-sm:!text-[24px]" icon="person" size={32} />

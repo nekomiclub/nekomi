@@ -1,4 +1,4 @@
-import { devMode } from '~/config';
+import { DevelopmentMode } from '~/config';
 import { RoleCapability } from '~/interfaces/RoleIntf';
 import { User } from '~/interfaces/UserIntf';
 import API from '~/services/ApiService';
@@ -48,7 +48,7 @@ export default async function CheckUserAccess({ capabilities, checkMode, session
 
     return {};
   } catch (e) {
-    if (devMode) console.error(e);
+    if (DevelopmentMode) console.error(e);
 
     return {};
   }

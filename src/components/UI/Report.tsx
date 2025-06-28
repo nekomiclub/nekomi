@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialDiscord } from '~/assets/Social';
-import { CONSTS } from '~/config';
+import { config } from '~/config';
 import { cn } from '~/utils/classnames';
 
 import Tooltip from './Tooltip';
@@ -37,7 +37,7 @@ export const UIReportModal: NextPage = ({ }) => {
         </div>
       </div>
 
-      <Link href={CONSTS.social.discordCreateTicket} target="_blank" className="p-[16px] w-full bg-dark-medium rounded-[2px] border border-dark-light flex flex-col items-center gap-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+      <Link href={config.URL.discordCreateTicket} target="_blank" className="p-[16px] w-full bg-dark-medium rounded-[2px] border border-dark-light flex flex-col items-center gap-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
         <IcoSocialDiscord width={64} height={64} fill="#fff" />
 
         <p className="text-white text-center font-manrope">Створити тікет на Discord сервері</p>

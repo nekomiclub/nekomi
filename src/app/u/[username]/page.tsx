@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
 import { HandleServerError } from '~/components/Errors';
-import { CONSTS, devMode, metaObject } from '~/config';
+import { config, DevelopmentMode, metaObject } from '~/config';
 import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
@@ -26,7 +26,7 @@ export async function generateMetadata(
   try {
     const { metadata } = await API.getUser({ query: username, metadataOnly: true });
 
-    const description = `Профіль користувача на ${CONSTS.Domains.nekomi}`;
+    const description = `Профіль користувача на ${config.DOMAIN.nekomi}`;
 
     return metaObject({
       title: metadata?.title,
@@ -39,11 +39,11 @@ export async function generateMetadata(
         username: metadata?.title,
         url: Routes.user.path({ username }),
         locale: 'uk_UA',
-        siteName: CONSTS.Domains.nekomi.split('.')[0],
+        siteName: config.DOMAIN.nekomi.split('.')[0],
       }
     })
   } catch (e) {
-    if (devMode) console.error(`User page generateMetadata error`, e);
+    if (DevelopmentMode) console.error(`User page generateMetadata error`, e);
 
     return metaObject({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] })
   }

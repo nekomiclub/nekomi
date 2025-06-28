@@ -1,65 +1,73 @@
-export const devMode = process.env.NODE_ENV === 'development'
-export const prodMode = process.env.NODE_ENV === 'production';
-
-const NEKOMI_DOMAIN = 'nekomi.club';
-const PROXY_DOMAIN = 'fkgway.cx.ua';
-const FULLKEKW_DOMAIN = 'nekomi.club';
-
-export const CONSTS = {
-  Domains: {
-    proxy: PROXY_DOMAIN,
-
-    nekomi: NEKOMI_DOMAIN,
-    nekomi_api: `api.${NEKOMI_DOMAIN}`,
-    nekomi_media: `media.${NEKOMI_DOMAIN}`,
-    nekomi_websocket: `websocket.${NEKOMI_DOMAIN}`,
-
-    fullkekw: FULLKEKW_DOMAIN,
-    fullkekw_usapi: `usapi.${FULLKEKW_DOMAIN}`,
-    fullkekw_authority: `authority.${FULLKEKW_DOMAIN}`,
-    fullkekw_account: `account.${FULLKEKW_DOMAIN}`,
-  },
-  social: {
-    telegram: 'https://t.me/nekomiclub',
-    discord: 'https://discord.gg/UmDfKTpsh5',
-    discordCreateTicket: 'https://discord.gg/ZXEHQjevEw',
-    tiktok: 'https://tiktok.com/@nekomiclub'
-  }
-}
+export const DevelopmentMode = process.env.NODE_ENV === 'development'
+export const ProductionMode = process.env.NODE_ENV === 'production';
 
 const env = {
-  CSRF_PRIVATE_KEY: process.env['CSRF_PRIVATE_KEY'] as string
+  CSRF_PRIVATE_KEY: String(process.env['CSRF_PRIVATE_KEY']),
+
+  // DOMAINS & MICROSERVICE API ENDPOINTS (29.06.2025)
+  PROXY_DOMAIN: String(process.env['NEXT_PUBLIC_PROXY_DOMAIN']),
+  NEKOMI_DOMAIN: String(process.env['NEXT_PUBLIC_NEKOMI_DOMAIN']),
+  NEKOMI_WEBSOCKET_DOMAIN: String(process.env['NEXT_PUBLIC_NEKOMI_WEBSOCKET_DOMAIN']),
+  NEKOMI_AUTH_DOMAIN: String(process.env['NEXT_PUBLIC_NEKOMI_AUTH_DOMAIN']),
+  NEKOMI_BOT_DOMAIN: String(process.env['NEXT_PUBLIC_NEKOMI_BOT_DOMAIN']),
+  NEKOMI_MEDIA_DOMAIN: String(process.env['NEXT_PUBLIC_NEKOMI_MEDIA_DOMAIN']),
+  NEKOMI_API_DOMAIN: String(process.env['NEXT_PUBLIC_NEKOMI_API_DOMAIN']),
+  FULLKEKW_USERAPI_DOMAIN: String(process.env['NEXT_PUBLIC_FULLKEKW_USERAPI_DOMAIN']),
+  FULLKEKW_AUTHORITY_DOMAIN: String(process.env['NEXT_PUBLIC_FULLKEKW_AUTHORITY_DOMAIN']),
+  FULLKEKW_ACCOUNT_DOMAIN: String(process.env['NEXT_PUBLIC_FULLKEKW_ACCOUNT_DOMAIN']),
+
+  NEKOMI_API_URL: String(process.env['NEXT_PUBLIC_NEKOMI_API_URL']),
+  PROXY_URL: String(process.env['NEXT_PUBLIC_PROXY_URL']),
+  TELEGRAM_BOT_URL: String(process.env['NEXT_PUBLIC_TELEGRAM_BOT_URL']),
+  NEKOMI_NEXTJS_URL: String(process.env['NEXT_PUBLIC_NEKOMI_NEXTJS_URL']),
+  NEKOMI_WEBSOCKET_URL: String(process.env['NEXT_PUBLIC_NEKOMI_WEBSOCKET_URL']),
+  NEKOMI_MEDIA_URL: String(process.env['NEXT_PUBLIC_NEKOMI_MEDIA_URL']),
+  NEKOMI_BOT_URL: String(process.env['NEXT_PUBLIC_NEKOMI_BOT_URL']),
+  NEKOMI_UPLOADS_URL: String(process.env['NEXT_PUBLIC_NEKOMI_UPLOADS_URL']),
+  FULLKEKW_AUTHORITY_URL: String(process.env['NEXT_PUBLIC_FULLKEKW_AUTHORITY_URL']),
+  FULLKEKW_USERAPI_URL: String(process.env['NEXT_PUBLIC_FULLKEKW_USERAPI_URL']),
+  FULLKEKW_ACCOUNT_URL: String(process.env['NEXT_PUBLIC_FULLKEKW_ACCOUNT_URL']),
+}
+
+const DOMAIN = {
+  proxy: env.PROXY_DOMAIN,
+  nekomi: env.NEKOMI_DOMAIN,
+  nekomi_auth: env.NEKOMI_AUTH_DOMAIN,
+  nekomi_api: env.NEKOMI_API_DOMAIN,
+  nekomi_media: env.NEKOMI_MEDIA_DOMAIN,
+  nekomi_bot: env.NEKOMI_BOT_DOMAIN,
+  nekomi_websocket: env.NEKOMI_WEBSOCKET_DOMAIN,
+
+  fullkekw_authority: env.FULLKEKW_AUTHORITY_DOMAIN,
+  fullkekw_userapi: env.FULLKEKW_USERAPI_DOMAIN,
+  fullkekw_account: env.FULLKEKW_ACCOUNT_DOMAIN,
+};
+
+const URL = {
+  proxy: env.PROXY_URL,
+  nekomi_site: env.NEKOMI_NEXTJS_URL,
+  nekomi_ws: env.NEKOMI_WEBSOCKET_URL,
+  nekomi_media: env.NEKOMI_MEDIA_URL,
+  nekomi_api: env.NEKOMI_API_URL,
+  nekomi_bot: env.NEKOMI_BOT_URL,
+  nekomi_uploads: env.NEKOMI_UPLOADS_URL,
+  fullkekw_authority: env.FULLKEKW_AUTHORITY_URL,
+  fullkekw_userapi: env.FULLKEKW_USERAPI_URL,
+  fullkekw_account: env.FULLKEKW_USERAPI_URL,
+
+  telegram: 'https://t.me/nekomiclub',
+  telegramBot: env.TELEGRAM_BOT_URL,
+  discord: 'https://discord.gg/UmDfKTpsh5',
+  discordCreateTicket: 'https://discord.gg/ZXEHQjevEw',
+  tiktok: 'https://tiktok.com/@nekomiclub'
 }
 
 /** Site config */
 export const config = {
-  domain: CONSTS.Domains.nekomi,
+  domain: DOMAIN.nekomi,
 
-  URL: {
-    /** Nekomi core URL */
-    apiHTTP: prodMode ? `https://${CONSTS.Domains.nekomi_api}` : `http://127.0.0.1`,
-
-    /** Nekomi core proxy URL. You should provide header Authorization to pass session */
-    apiProxy: prodMode ? `https://${CONSTS.Domains.proxy}` : `http://127.0.0.1`,
-
-    /** Nekomi bot */
-    bot: prodMode ? `https://t.me/nekoomibot` : `https://t.me/eblano3d_testbot`,
-
-    /** Nekomi media URL */
-    media: prodMode ? `https://${CONSTS.Domains.nekomi_media}` : `http://127.0.0.1:43120`,
-
-    /** Nekomi-core websocket URL */
-    apiWS: prodMode ? `wss://${CONSTS.Domains.nekomi_websocket}` : `ws://127.0.0.1:8080`,
-
-    /** Fullkekw userapi URL */
-    fkUsapi: prodMode ? `https://${CONSTS.Domains.fullkekw_usapi}` : `http://127.0.0.1:45660`,
-
-    /** Fullkekw account URL */
-    fkAccount: prodMode ? `https://${CONSTS.Domains.fullkekw_account}` : `http://127.0.0.1:3000`,
-
-    /** Site own url */
-    baseURL: prodMode ? `https://${CONSTS.Domains.nekomi}` : `http://127.0.0.1:3001`,
-  },
+  DOMAIN,
+  URL,
 
   /** Site vatiables */
   vars: {

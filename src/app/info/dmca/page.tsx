@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { CONSTS } from '../../../config';
+import { config } from '../../../config';
 import { InfoHeader } from '../InfoComponents';
 
 
@@ -36,13 +36,13 @@ const Copyright: NextPage = () => {
 
           <div className="px-[24px] py-[40px] rounded-[2px] bg-darkGrey flex flex-col gap-[16px]">
             <p className="text-white text-[16px]">
-              This Digital Millennium Copyright Act (DMCA) Policy applies to {CONSTS.Domains.nekomi}, an online service provider. We enable legal copyright owners to upload, store, and display various media through our services. We don`t monitor, screen, or review user-uploaded media. We take copyright infringement seriously and will protect legal copyright owner`s rights.
+              This Digital Millennium Copyright Act (DMCA) Policy applies to {config.DOMAIN.nekomi}, an online service provider. We enable legal copyright owners to upload, store, and display various media through our services. We don`t monitor, screen, or review user-uploaded media. We take copyright infringement seriously and will protect legal copyright owner`s rights.
             </p>
 
             <h2 className="text-white text-[24px] font-bold text-center">Designated Agent</h2>
             <p className="text-white text-[16px]">
               For DMCA takedown notices, the designated agent is:
-              Email: dmca@{CONSTS.Domains.nekomi}
+              Email: dmca@{config.DOMAIN.nekomi}
             </p>
 
             <p className="text-white text-[16px]">
@@ -64,7 +64,7 @@ const Copyright: NextPage = () => {
               </li>
 
               <li className="!list-decimal relative left-[16px]">
-                <p className="text-white text-[16px]">Identification of the allegedly infringing material and information sufficient for {CONSTS.Domains.nekomi} to locate it (e.g., URL).</p>
+                <p className="text-white text-[16px]">Identification of the allegedly infringing material and information sufficient for {config.DOMAIN.nekomi} to locate it (e.g., URL).</p>
               </li>
 
               <li className="!list-decimal relative left-[16px]">
@@ -82,17 +82,17 @@ const Copyright: NextPage = () => {
 
             <h2 className="text-white text-[24px] font-bold text-center">Notice and Takedown Procedure</h2>
             <p className="text-white text-[16px]">
-              All users are expected to comply with copyright laws. If {CONSTS.Domains.nekomi} receives a proper copyright infringement notice, we will promptly remove or disable access to the allegedly infringing material after investigating and determining the claimёs validity in our sole discretion. We will comply with the DMCAёs provisions if a counter-notification is received.
+              All users are expected to comply with copyright laws. If {config.DOMAIN.nekomi} receives a proper copyright infringement notice, we will promptly remove or disable access to the allegedly infringing material after investigating and determining the claimёs validity in our sole discretion. We will comply with the DMCAёs provisions if a counter-notification is received.
             </p>
 
             <h2 className="text-white text-[24px] font-bold text-center">Repeat Infringers</h2>
             <p className="text-white text-[16px]">
-              {CONSTS.Domains.nekomi} may, at its discretion, terminate repeat infringersё access to our system or network.
+              {config.DOMAIN.nekomi} may, at its discretion, terminate repeat infringersё access to our system or network.
             </p>
 
             <h2 className="text-white text-[24px] font-bold text-center">Accommodation of Standard Technical Measures</h2>
             <p className="text-white text-[16px]">
-              {CONSTS.Domains.nekomi} respects standard technical measures that copyright owners use to identify or protect their works, provided they are considered reasonable under the circumstances.
+              {config.DOMAIN.nekomi} respects standard technical measures that copyright owners use to identify or protect their works, provided they are considered reasonable under the circumstances.
             </p>
           </div>
         </>}

@@ -209,7 +209,7 @@ function DubberHeaderCopyLink() {
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
   function copyLink() {
-    copyToClipboard(`${config.URL.baseURL}${pathname}`);
+    copyToClipboard(`${config.URL.nekomi_site}${pathname}`);
     setIsLinkCopied(true);
 
     NotifySuccess({ title: 'Copied!', message: 'Посилання на команду скопійовано в буфер обміну' })

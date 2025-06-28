@@ -13,7 +13,7 @@ import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { isUserAgentMobile } from '~/utils/utils';
-import { CONSTS, metaObject } from '../../../config';
+import { config, metaObject } from '../../../config';
 
 import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage'
 
@@ -48,7 +48,7 @@ export async function generateMetadata(
         images: metadata?.photo,
         url: Routes.watch.path({ query }),
         locale: 'uk_UA',
-        siteName: CONSTS.Domains.nekomi.split('.')[0],
+        siteName: config.DOMAIN.nekomi.split('.')[0],
       }
     })
   } catch (e) {

@@ -233,7 +233,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
       await API.deleteAnime({ token, uuid: hydratedAnime.anime.uuid });
 
-      router.replace(`${config.URL.baseURL}`);
+      router.replace(`${config.URL.nekomi_site}`);
     } catch (e) {
       HandleClientError(e)
     }
@@ -637,7 +637,7 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
 
 
   useMemo(() => {
-    setIsNekomiPoster(posterURL.includes(config.URL.media))
+    setIsNekomiPoster(posterURL.includes(config.URL.nekomi_media))
   }, [posterURL])
 
 

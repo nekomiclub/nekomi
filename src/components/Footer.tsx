@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Routes } from '~/routes';
 import { IcoNekomiLogo } from '../assets/Icons';
 import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
-import { CONSTS } from '../config';
+import { config } from '../config';
 
 
 
@@ -26,15 +26,15 @@ const Footer: NextPage = () => {
             </div>
 
             <div className="flex items-center gap-[16px] max-[560px]:justify-between">
-              <Link href={CONSTS.social.telegram} target="_blank" className="footer-socialItem">
+              <Link href={config.URL.telegram} target="_blank" className="footer-socialItem">
                 <IcoSocialTelegram width={32} height={32} />
               </Link>
 
-              <Link href={CONSTS.social.tiktok} target="_blank" className="footer-socialItem">
+              <Link href={config.URL.tiktok} target="_blank" className="footer-socialItem">
                 <IcoSocialTiktok width={32} height={32} />
               </Link>
 
-              <Link href={CONSTS.social.discord} target="_blank" className="footer-socialItem">
+              <Link href={config.URL.discord} target="_blank" className="footer-socialItem">
                 <IcoSocialDiscord width={32} height={32} />
               </Link>
             </div>

@@ -21,7 +21,7 @@ export default async function RSC({ params }: RSCProps) {
   const { slug } = await params as { slug: string };
 
   const { user, capabilities } = await CheckUserAccess({ session: cookies().get(config.vars.SessionCookie)?.value, capabilities: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
-  if (!user) return redirect(config.URL.baseURL);
+  if (!user) return redirect(config.URL.nekomi_site);
 
   let dubber: Dubber | undefined = undefined;
   let members: User[] | undefined = undefined
@@ -46,7 +46,7 @@ export default async function RSC({ params }: RSCProps) {
   if (!capabilities?.includes('root') && !capabilities?.includes('admin')) {
     const member = dubber.members.find(el => el.id === user.id);
     // Redir if user is not a member or not a team leader
-    if (!member || member.role !== 'leader') return redirect(config.URL.baseURL)
+    if (!member || member.role !== 'leader') return redirect(config.URL.nekomi_site)
   }
 
 

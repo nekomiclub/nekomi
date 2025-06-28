@@ -79,11 +79,11 @@ const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, i
       {/* Unauthorized */}
       {!user.id && <div className="relative h-full">
         <div className="flex gap-[4px] absolute top-[50%] right-0 translate-y-[-50%] max-lg:relative">
-          <Link href={`${config.URL.fkAccount}/sso?ref=${config.URL.baseURL}${pathname}`} className="ui-button px-[12px] py-[8px] bg-dark-primary border-none">
+          <Link href={`${config.URL.fullkekw_account}/sso?ref=${config.URL.nekomi_site}${pathname}`} className="ui-button px-[12px] py-[8px] bg-dark-primary border-none">
             <p className="text-white font-manrope font-bold">Увійти</p>
           </Link>
 
-          <Link href={`${config.URL.fkAccount}/sso?ref=${config.URL.baseURL}${pathname}`} className="ui-button px-[12px] py-[8px] bg-primary border-none">
+          <Link href={`${config.URL.fullkekw_account}/sso?ref=${config.URL.nekomi_site}${pathname}`} className="ui-button px-[12px] py-[8px] bg-primary border-none">
             <p className="text-white font-manrope font-bold">Реєстрація</p>
           </Link>
         </div>

@@ -10,14 +10,14 @@ import signCSRF from './signCSRF';
 /** Axios HTTP instance with csrf token specified & creds */
 export const $api = axios.create({
   withCredentials: true,
-  baseURL: config.URL.apiHTTP,
+  baseURL: config.URL.nekomi_api,
   timeout: 10000,
 })
 
 /** Same as $api, but with longer timeout */
 export const $upload = axios.create({
   withCredentials: true,
-  baseURL: config.URL.apiProxy,
+  baseURL: config.URL.proxy,
   timeout: 420000,
 })
 

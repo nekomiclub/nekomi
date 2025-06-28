@@ -57,7 +57,7 @@ export const UserLibSection: NextPage<UserLibProps> = ({ lib, user, hydratedAnim
 
 
   function copyLibURL() {
-    copyToClipboard(`${config.URL.baseURL}${pathname}`);
+    copyToClipboard(`${config.URL.nekomi_site}${pathname}`);
     setUrlCopied(true);
 
     setTimeout(() => {

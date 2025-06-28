@@ -71,7 +71,7 @@ const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMen
 
     {/* Unauthorized */}
     {!user.id && <>
-      <Link href={`${config.URL.fkAccount}/sso?ref=${config.URL.baseURL}${pathname}`} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
+      <Link href={`${config.URL.fullkekw_account}/sso?ref=${config.URL.nekomi_site}${pathname}`} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
         <MaterialSymbol icon="login" className="text-white" size={24} />
         <UIText text="Увійти" className="font-bold" type="mini" />
       </Link>

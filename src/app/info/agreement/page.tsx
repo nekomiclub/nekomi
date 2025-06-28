@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { CONSTS } from '../../../config';
+import { config } from '../../../config';
 import { InfoHeader } from '../InfoComponents';
 
 
@@ -310,7 +310,7 @@ const Agreement: NextPage = () => {
               </li>
 
               <li className="!list-disc relative left-[16px]">
-                <p className="text-white text-[16px]">Not to use materials created by the Fullkekw project ({CONSTS.Domains.nekomi}) and/or other projects exclusively for the site (enchanced quality, subtitles, exclusive voiceover) for your own purposesundefined without the permission of the site administration. undefined</p>
+                <p className="text-white text-[16px]">Not to use materials created by the Fullkekw project ({config.DOMAIN.nekomi}) and/or other projects exclusively for the site (enchanced quality, subtitles, exclusive voiceover) for your own purposesundefined without the permission of the site administration. undefined</p>
               </li>
             </ul>
 
