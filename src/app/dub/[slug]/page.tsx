@@ -1,11 +1,11 @@
 import './styles.scss';
 
 import { Metadata } from 'next';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
 import { metaObject } from '~/config';
+import { DubberPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { timestampToDayMonth } from '~/utils/utils';
@@ -13,10 +13,6 @@ import { timestampToDayMonth } from '~/utils/utils';
 import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberBanner, DubberHeader, DubberTeam } from './DubberPage';
 
 
-
-export interface DubberPageParams extends Params {
-  slug: string
-}
 
 export async function generateMetadata(
   props: RSCProps<DubberPageParams>,

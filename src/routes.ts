@@ -1,8 +1,8 @@
-import { DubberPageParams } from './app/dub/[slug]/page'
-import { PatcherPageParams } from './app/patcher/[uuid]/page'
-import { UserPageLibProps } from './app/u/[username]/lib/[libID]/page';
-import { UserPageProps } from './app/u/[username]/page'
-import { WatchPageParams } from './app/w/[query]/page'
+import { DubberPageParams, PatcherPageParams, UserPageLibProps, UserPageProps, WatchPageParams } from './interfaces/PagesParams';
+
+
+
+
 
 
 

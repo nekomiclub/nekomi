@@ -1,20 +1,15 @@
 import { Metadata } from 'next';
 
 import { HandleServerError } from '~/components/Errors';
+import { UserPageLibProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { metaObject } from '../../../../../config';
-import { UserPageProps } from '../../page';
 import { UserHeader } from '../../UserPage';
 
 import { UserLibOthers, UserLibSection } from './UserLibPage';
 
 
-
-
-export interface UserPageLibProps extends UserPageProps {
-  libID: string
-}
 
 export async function generateMetadata(
   props: RSCProps<{ username: string, libID: string }>,

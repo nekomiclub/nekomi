@@ -1,7 +1,6 @@
 import '~/styles/pages/watch.scss';
 
 import { Metadata } from 'next';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { headers } from 'next/headers';
 
 import AnimeItem from '~/components/AnimeItem';
@@ -9,6 +8,7 @@ import { HandleServerError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
@@ -17,15 +17,6 @@ import { config, metaObject } from '../../../config';
 
 import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage'
 
-
-
-export interface WatchPageParams extends Params {
-  query: string
-}
-
-export interface WatchPageSearchParams extends Params {
-  mobile?: any
-}
 
 
 export async function generateMetadata(

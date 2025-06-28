@@ -1,24 +1,18 @@
 import '~/styles/pages/patcher.scss';
 
 import { Metadata } from 'next';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { PatcherPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
 import { config, metaObject } from '../../../config';
 
 import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './(components)/PatcherPage';
-
-
-
-export interface PatcherPageParams extends Params {
-  uuid: string
-}
 
 
 

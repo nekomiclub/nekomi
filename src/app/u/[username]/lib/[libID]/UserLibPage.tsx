@@ -9,12 +9,12 @@ import AnimeItem from '~/components/AnimeItem';
 import LoadingContent from '~/components/LoadingContent';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { UserPageProps } from '~/interfaces/PagesParams';
 import { cn } from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
 import Tooltip from '../../../../../components/UI/Tooltip';
 import { config } from '../../../../../config';
 import { User, UserLib } from '../../../../../interfaces/UserIntf';
-import { UserPageProps } from '../../page';
 import { UserDivider, UserLibItem } from '../../UserPage';
 
 

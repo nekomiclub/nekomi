@@ -1,9 +1,9 @@
 
 import { Metadata } from 'next';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
 import { HandleServerError } from '~/components/Errors';
 import { config, DevelopmentMode, metaObject } from '~/config';
+import { UserPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
@@ -11,10 +11,6 @@ import API from '~/services/ApiService';
 import { UserHeader, UserSectionLibs, UserStatItem } from './UserPage';
 
 
-
-export interface UserPageProps extends Params {
-  username: string
-}
 
 export async function generateMetadata(
   props: RSCProps<UserPageProps>,
