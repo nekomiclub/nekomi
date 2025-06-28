@@ -1,5 +1,6 @@
 import { DubberPageParams } from './app/dub/[slug]/page'
 import { PatcherPageParams } from './app/patcher/[uuid]/page'
+import { UserPageLibProps } from './app/u/[username]/lib/[libID]/page';
 import { UserPageProps } from './app/u/[username]/page'
 import { WatchPageParams } from './app/w/[query]/page'
 
@@ -49,7 +50,7 @@ const routeDefinitions = {
 
   // === User Pages
   user: { path: ({ username }: UserPageProps) => `/u/${username}` },
-  userLib: { path: ({ username, libID }: Required<UserPageProps>) => `/u/${username}/lib/${libID}` },
+  userLib: { path: ({ username, libID }: Required<UserPageLibProps>) => `/u/${username}/lib/${libID}` },
 
   // === Watch Pages
   watch: { path: ({ query }: WatchPageParams) => `/w/${query}` },

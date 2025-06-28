@@ -14,7 +14,6 @@ import { UserHeader, UserSectionLibs, UserStatItem } from './UserPage';
 
 export interface UserPageProps extends Params {
   username: string
-  libID?: string
 }
 
 export async function generateMetadata(

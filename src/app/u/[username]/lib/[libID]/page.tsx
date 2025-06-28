@@ -12,6 +12,10 @@ import { UserLibOthers, UserLibSection } from './UserLibPage';
 
 
 
+export interface UserPageLibProps extends UserPageProps {
+  libID: string
+}
+
 export async function generateMetadata(
   props: RSCProps<{ username: string, libID: string }>,
 ): Promise<Metadata> {
@@ -25,7 +29,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: RSCProps<UserPageProps>) {
+export default async function RSC(props: RSCProps<UserPageLibProps>) {
   const params = await props.params;
   const { username, libID } = params;
 
