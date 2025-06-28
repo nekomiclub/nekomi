@@ -13,7 +13,6 @@ import StyledImage from '~/components/Styled/StyledImage';
 import { UIReportButton } from '~/components/UI/Report';
 import { UIText } from '~/components/UI/Text.ui';
 import { useAppSelector } from '~/hooks/redux';
-import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
@@ -392,7 +391,7 @@ export const UserDivider: NextPage<UserDividerProps> = ({ label, user, hidden })
 }
 
 function UserWTRoom({ room, user }: { room: UserTogetherRoom, user: User }) {
-  return <Link href={`${config.URL.baseURL}${Routes.watch_together.path}/${user.id}__${room.id}`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full duration-200 max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
+  return <Link href={`/`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full duration-200 max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
     <MaterialSymbol className="text-white max-sm:!text-[80px]" icon="groups" size={128} />
 
     <p className="text-white font-manrope text-center text-[24px] max-sm:text-[16px] text-ellipsis line-clamp-3">{room.settings.name}</p>

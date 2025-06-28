@@ -68,7 +68,7 @@ export const ErrorNotFound: NextPage = () => {
       <UIText text="Ми не можемо знайти контент за цим запитом, або ж просто - 404" type="standart" className="text-grey-new text-center" />
     </div>
 
-    <Link href={Routes.home.path} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
+    <Link href={Routes.home.path()} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
       <MaterialSymbol icon="home" size={24} className="text-white" />
     </Link>
   </div>

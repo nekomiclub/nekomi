@@ -11,7 +11,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { IcoNekomiLogo } from '~/assets/Icons';
 import { config } from '~/config';
 import { useAppDispatch } from '~/hooks/redux';
-import { routes } from '~/routes';
+import { Routes } from '~/routes';
 import userSlice, { IUserState, userStateDefault } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import StyledImage from '../Styled/StyledImage';
@@ -53,7 +53,7 @@ const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, i
   return <header className="fixed w-full h-[var(--header-height)] bg-dark-primary top-0 left-0 z-[110] max-sm:hidden">
     <div className="wrapper w-full h-full !flex-row justify-between items-center gap-[40px]">
       <Tooltip content="Головна">
-        <Link href={routes.home.path} className="outline-none">
+        <Link href={Routes.home.path()} className="outline-none">
           <IcoNekomiLogo width={40} height={40} fill="#fff" />
         </Link>
       </Tooltip>

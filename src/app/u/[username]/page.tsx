@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
 import { HandleServerError } from '~/components/Errors';
-import { config, CONSTS, devMode, metaObject } from '~/config';
+import { CONSTS, devMode, metaObject } from '~/config';
 import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
@@ -37,7 +37,7 @@ export async function generateMetadata(
         type: 'profile',
         images: metadata?.photo,
         username: metadata?.title,
-        url: `${config.URL.baseURL}${Routes.user_profile.path}/${username}`,
+        url: Routes.user.path({ username }),
         locale: 'uk_UA',
         siteName: CONSTS.Domains.nekomi.split('.')[0],
       }

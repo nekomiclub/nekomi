@@ -159,7 +159,7 @@ export const DubberSettingsHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) =
 
       <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
         <Tooltip content="На сторінку команди">
-          <Link href={`${Routes.dubber_profile.path}/${dubber.slug}`} className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 bg-dark-medium border border-dark-light active:scale-[.95] hover:bg-primary-bright focus-visible:bg-primary-bright outline-none')}>
+          <Link href={Routes.dubber.path({ slug: dubber.slug })} className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 bg-dark-medium border border-dark-light active:scale-[.95] hover:bg-primary-bright focus-visible:bg-primary-bright outline-none')}>
             <MaterialSymbol icon="account_box" size={24} color="#fff" />
           </Link>
         </Tooltip>
@@ -701,7 +701,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
 
   return <div className="w-full rounded-[2px] border border-dark-medium flex justify-between gap-[16px] items-center p-[8px] max-md:items-start">
     <div className="w-full">
-      <Link href={`${Routes.user_profile.path}/${user.username}`} className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]">
+      <Link href={Routes.user.path({ username: user.username })} className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]">
         <StyledImage src={user.avatar} width="48px" height="48px" className="rounded-[4px] overflow-hidden" />
 
         <div className="flex flex-col gap-[4px]">

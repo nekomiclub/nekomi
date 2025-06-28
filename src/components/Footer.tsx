@@ -3,10 +3,10 @@ import '../styles/components/Footer.scss'
 import { NextPage } from 'next';
 import Link from 'next/link';
 
+import { Routes } from '~/routes';
 import { IcoNekomiLogo } from '../assets/Icons';
 import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
 import { CONSTS } from '../config';
-import { Routes, routes } from '../routes';
 
 
 
@@ -44,15 +44,15 @@ const Footer: NextPage = () => {
         {/* Center */}
         <div className="flex gap-[24px] max-[760px]:flex-col">
           <ul className="flex flex-col gap-[4px]">
-            <FooterLink href={routes.info_contacts.path} text="Контакти" />
+            <FooterLink href={Routes.infoContacts.path()} text="Контакти" />
             <FooterLink href={'#'} disabled text="FAQ" />
           </ul>
 
           <ul className="flex flex-col gap-[4px]">
-            <FooterLink href={routes.info_agreement.path} text="Угода користувача / Agreement" />
-            <FooterLink href={routes.info_policy.path} text="Політика конфіденційності / Privacy policy" />
-            <FooterLink href={routes.info_dmca.path} text="DMCA" />
-            <FooterLink href={Routes.info_tos.path} text="TOS" />
+            <FooterLink href={Routes.infoAgreement.path()} text="Угода користувача / Agreement" />
+            <FooterLink href={Routes.infoPolicy.path()} text="Політика конфіденційності / Privacy policy" />
+            <FooterLink href={Routes.infoDMCA.path()} text="DMCA" />
+            <FooterLink href={Routes.infoTerms.path()} text="TOS" />
           </ul>
         </div>
 

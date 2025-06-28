@@ -131,7 +131,7 @@ export const DubberHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
       </div>
 
       <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
-        {canEdit && <DubberHeaderOpenSettings />}
+        {canEdit && <DubberHeaderOpenSettings slug={dubber.id} />}
         <DubberHeaderCopyLink />
       </div>
     </div>
@@ -195,11 +195,9 @@ export const DubberTeam: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubb
 
 
 
-function DubberHeaderOpenSettings() {
-  const pathname = usePathname();
-
+function DubberHeaderOpenSettings({ slug }: { slug: string }) {
   return <Tooltip content="Редагувати налаштування">
-    <Link href={`${pathname}${Routes.dubber_settings.path}`} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light outline-none">
+    <Link href={Routes.dubberSettings.path({ slug })} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light outline-none">
       <MaterialSymbol icon="settings" size={24} color="#fff" />
     </Link>
   </Tooltip>
@@ -240,7 +238,7 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
 }
 
 function DubberTeamMember({ user, member }: { user: User, member: DubberMember }) {
-  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
+  return <Link href={Routes.user.path({ username: user.username })} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
     <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full">

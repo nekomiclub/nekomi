@@ -19,7 +19,7 @@ import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeEpisode, AnimeMediaType, AnimeRateType, AnimeRecordType, AnimeSeasonType, AnimeStatusType, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
-import { Routes, routes } from '~/routes';
+import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
 import { DubberCompactMapper } from '~/utils/data-mappers';
@@ -255,7 +255,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         <div className="flex flex-col gap-[4px]">
           {capabilities.canEdit && <MetaSaveButton save={save} saveStatus={saveStatus} />}
 
-          <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${hydratedAnime.anime.uuid}`} className="ui-button patcher-button">
+          <Link href={Routes.watch.path({ query: hydratedAnime.anime.slug })} className="ui-button patcher-button">
             <MaterialSymbol className="text-white" icon="slideshow" size={20} />
             <p className="text-white font-manrope uppercase">НА СТОРІНКУ ПЕРЕГЛЯДУ</p>
           </Link>
@@ -527,7 +527,7 @@ export const PatcherCreateNewAnime: NextPage = () => {
 
       NotifySuccess({ title: 'Створено!', message: 'Нове аніме створено, заміняємо сторінку...' })
 
-      router.replace(`${config.URL.baseURL}${routes.patcher_title.path}/${anime.uuid}`);
+      router.replace(Routes.patcher.path({ uuid: anime.uuid }));
     } catch (e) {
       HandleClientError(e)
       setIsCreating(false)
@@ -559,7 +559,7 @@ export const PatcherWithoutMalId: NextPage = () => {
       setIsFetching(true)
 
       const { results } = await API.searchAnime({ q: '~all' }, { woMalId: true });
-      router.replace(`${config.URL.baseURL}/${Routes.patcher_title.path}/${results[0].anime.uuid}`)
+      router.replace(Routes.patcher.path({ uuid: results[0].anime.uuid }))
 
       NotifySuccess({ title: 'Знайшли!', message: 'Ми знайшли аніме без mal id, удачі!' })
     } catch (e) {

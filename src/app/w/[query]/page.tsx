@@ -10,10 +10,10 @@ import StyledImage from '~/components/Styled/StyledImage';
 import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { RSCProps } from '~/interfaces/types';
+import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { isUserAgentMobile } from '~/utils/utils';
-import { config, CONSTS, metaObject } from '../../../config';
-import { routes } from '../../../routes';
+import { CONSTS, metaObject } from '../../../config';
 
 import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage'
 
@@ -46,7 +46,7 @@ export async function generateMetadata(
         description: metadata?.description,
         type: 'video.tv_show',
         images: metadata?.photo,
-        url: `${config.URL.baseURL}${routes.watch_title.path}/${query}`,
+        url: Routes.watch.path({ query }),
         locale: 'uk_UA',
         siteName: CONSTS.Domains.nekomi.split('.')[0],
       }

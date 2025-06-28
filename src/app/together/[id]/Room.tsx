@@ -69,7 +69,7 @@
 
 //     {/* Reject if user dont has account */}
 //     {!currentUser.id && <>
-//       <div className="w-screen h-screen z-[10000] bg-dark fixed">
+//       <div className="w-full h-screen z-[10000] bg-dark fixed">
 //         <div className="wrapper h-full flex justify-center items-center">
 //           <div className="w-full max-w-[800px] h-[300px] bg-darkGrey px-[32px] py-[24px] rounded-[2px] flex flex-col gap-[24px] items-center justify-between">
 //             <div className="flex flex-col gap-[8px] items-center">

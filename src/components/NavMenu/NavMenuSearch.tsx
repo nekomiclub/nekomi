@@ -12,7 +12,6 @@ import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
-import { config } from '~/config';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { Dubber } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
@@ -321,12 +320,8 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
 
     {/* Anime type */}
     {type === 'anime' && animeResult && <Link href={
-      `${config.URL.baseURL}${usePatcherRouting
-        ? Routes.patcher_title.path
-        : Routes.watch_title.path}/${usePatcherRouting
-          ? animeResult.anime.uuid
-          : animeResult.anime.slug
-      }`
+      usePatcherRouting ? Routes.patcher.path({ uuid: animeResult.anime.uuid })
+        : Routes.watch.path({ query: animeResult.anime.slug })
     } className="menu-search-result">
       <StyledImage src={animeResult.anime.poster} width="120px" height="160px" />
 
@@ -356,7 +351,7 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
     </Link>}
 
     {/* User type */}
-    {(type === 'user' && userResult) && <Link href={`${config.URL.baseURL}${Routes.user_profile.path}/${userResult.username}`} className="menu-search-result">
+    {(type === 'user' && userResult) && <Link href={Routes.user.path({ username: userResult.username })} className="menu-search-result">
       <StyledImage src={userResult.avatar} width="128px" height="128px" />
 
       <div className="menu-search-result_content">
@@ -365,7 +360,7 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
     </Link>}
 
     {/* Dubber type */}
-    {(type === 'dubber' && dubberResult) && <Link href={`${config.URL.baseURL}${Routes.dubber_profile.path}/${dubberResult.slug}`} className="menu-search-result">
+    {(type === 'dubber' && dubberResult) && <Link href={Routes.dubber.path({ slug: dubberResult.slug })} className="menu-search-result">
       <StyledImage src={dubberResult.avatar} width="128px" height="128px" />
 
       <div className="menu-search-result_content">

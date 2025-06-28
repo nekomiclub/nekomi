@@ -38,7 +38,7 @@ const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMen
 
 
   return <nav className="fixed w-full h-[var(--header-height)] bg-dark-primary bottom-0 left-0 z-[110] flex items-center sm:hidden">
-    <Link href={Routes.home.path} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
+    <Link href={Routes.home.path()} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
       <MaterialSymbol icon="home" className="text-white" size={24} />
       <UIText text="Головна" className="font-bold" type="mini" />
     </Link>

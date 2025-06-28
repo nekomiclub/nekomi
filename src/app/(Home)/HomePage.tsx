@@ -14,11 +14,10 @@ import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { AnimeWithMedia } from '~/interfaces/types';
+import { Routes } from '~/routes';
 import { cn } from '~/utils/classnames';
 import { GetNekoplayerData } from '~/utils/nekoplayer-utils';
 import { prettySeconds } from '~/utils/utils';
-import { config } from '../../config';
-import { routes } from '../../routes';
 
 
 
@@ -193,7 +192,7 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
 
 
 
-  return <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${headliner.slug}`} className={cn(`ui-button flex items-center justify-center gap-[24px] bg-dark-medium px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 max-sm:px-[16px] max-sm:py-[12px]`, className)} tabIndex={0}>
+  return <Link href={Routes.watch.path({ query: headliner.slug })} className={cn(`ui-button flex items-center justify-center gap-[24px] bg-dark-medium px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 max-sm:px-[16px] max-sm:py-[12px]`, className)} tabIndex={0}>
     {continueWatch && <MaterialSymbol icon="resume" size={40} className="text-white max-sm:!text-[24px]" />}
     {!continueWatch && <MaterialSymbol icon="live_tv" size={40} className="text-white max-sm:!text-[24px]" />}
     <p className="text-white text-[24px] uppercase max-sm:text-[16px] font-manrope break-all">{label}</p>
