@@ -676,7 +676,7 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
     <input type="file" accept=".png,.jpg,.webp" style={{ display: 'none' }} ref={fileInputRef} onChange={uploadPoster} />
 
     <button className={cn(`patcher-poster_wrapper w-full h-[700px] relative max-sm:h-[520px]`, isUploading && 'patcher-poster_wrapper--uploading')} onClick={selectFile} disabled={isUploading || !capabilities.canEdit}>
-      <StyledImage src={posterURL} width="100%" height="100%" imageClassName="rounded-[4px]" priority />
+      <StyledImage src={posterURL} width="100%" height="100%" rounded={4} loading="eager" />
 
       {capabilities.canEdit && <>
         <div className={cn(`patcher-poster patcher-poster-uploading`, isUploading && 'patcher-poster--uploading')}>
@@ -841,7 +841,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
     <Menu className="w-full" id={id} state={isOpen} stateSetter={setIsOpen} settings={{ align: 'start', animation: 'slide' }} disabled={disabled}>
       <MenuTrigger className={cn(`patcher-button bg-dark-medium border border-dark-light rounded-[4px] w-full !justify-between duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, disabled && 'cursor-not-allowed')} anchor>
         <div className="flex items-center gap-[16px]">
-          {selectedDubber && <StyledImage width="20px" height="20px" src={selectedDubber.avatarURL} imageClassName="rounded-[2px]" />}
+          {selectedDubber && <StyledImage width="20px" height="20px" src={selectedDubber.avatarURL} rounded={2} />}
 
           <p className={cn(`text-white font-manrope line-clamp-1`, disabled && '!text-grey-new')}>{selectedDubber?.nameUkr ?? '-- команда не вибрана --'}</p>
         </div>
@@ -862,7 +862,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
         {/* Results */}
         {searchResults.map((result, i) => {
           return <button className={cn(`px-[16px] py-[8px] duration-100 flex items-center gap-[8px] hover:bg-dark-light focus-visible:bg-dark-light w-full border-t border-t-dark-light`, result.id === selectedId && 'bg-primary')} onClick={() => setSelectedId(result.id)} key={`patcher-select-${id}--${result.id}`}>
-            <StyledImage width="32px" height="32px" src={result.avatarURL} imageClassName="rounded-[2px]" />
+            <StyledImage width="32px" height="32px" src={result.avatarURL} rounded={2} />
 
             <p className="text-white font-manrope">{result.nameUkr}</p>
           </button>
@@ -928,7 +928,7 @@ const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber,
         </button>
       </Tooltip>
 
-      <StyledImage width="40px" height="40px" src={dubber.avatarURL} imageClassName="rounded-[4px]" />
+      <StyledImage width="40px" height="40px" src={dubber.avatarURL} rounded={4} />
       <h3 className="text-white text-[24px] font-manrope font-bold">{dubber.nameUkr}</h3>
       <p className="text-grey-new font-space-grotesk">({maximumEpisode} / {hydratedAnime.anime.episodesCount ?? '—'})</p>
     </div>

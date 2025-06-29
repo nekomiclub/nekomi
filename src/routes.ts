@@ -2,11 +2,6 @@ import { DubberPageParams, PatcherPageParams, UserPageLibProps, UserPageProps, W
 
 
 
-
-
-
-
-
 interface Route<P extends any[] = any[]> {
   path: (...args: P) => string;
 }

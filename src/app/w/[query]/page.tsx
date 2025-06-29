@@ -75,7 +75,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
           <div className="watch-mobile-poster" style={{ backgroundImage: `url(${anime.poster})` }}></div>
 
           <div className="flex flex-col items-center gap-[4px] z-[10] w-fit px-[24px]">
-            <StyledImage src={anime.poster} width="270px" height="370px" className="rounded-[4px] overflow-hidden" priority loading="eager" />
+            <StyledImage src={anime.poster} width="270px" height="370px" className="rounded-[4px] overflow-hidden" loading="eager" />
 
             <WatchEditLibs hydratedAnime={hydratedAnime} />
 
@@ -160,7 +160,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
           {/* Poster */}
           <div className="flex flex-col gap-[8px] w-[500px] shrink-0 max-xl:w-[400px]">
             <div className="watch-poster w-full h-[700px] bg-dark-medium rounded-[4px] overflow-hidden max-xl:h-[600px]">
-              <StyledImage src={anime.poster} width="100%" height="100%" priority loading="eager" />
+              <StyledImage src={anime.poster} width="100%" height="100%" loading="eager" />
             </div>
 
             <WatchEditLibs hydratedAnime={hydratedAnime} />

@@ -24,7 +24,7 @@ interface NavMenuDropdownProps {
 const NavMenuDropdown: NextPage<NavMenuDropdownProps> = ({ user, logout, className }) => {
   return <MenuWrapper className={cn(`bg-dark-primary border border-dark-light rounded-[4px] w-[200px] flex flex-col`, className)}>
     <Link href={`/u/${user.username}`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-      <StyledImage src={user.avatar} width={`24px`} height={`24px`} priority className="rounded-[2px] overflow-hidden" alt="avatar" />
+      <StyledImage src={user.avatar} width={`24px`} height={`24px`} loading="eager" className="rounded-[2px] overflow-hidden" alt="avatar" />
       <p className="text-white w-full font-manrope">Профіль</p>
     </Link>
 

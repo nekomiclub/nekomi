@@ -198,7 +198,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
         </button>
 
         <input type="file" accept=".png,.jpg,.webp" ref={bannerSelectRef} className="hidden absolute -z-[1]" onChange={uploadBanner} />
-        <StyledImage src={bannerURL} width="100%" height="100%" priority />
+        <StyledImage src={bannerURL} width="100%" height="100%" loading="eager" />
       </div>
 
       <Label label={`Під'єднання`} />
@@ -231,7 +231,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
     <div className={`bg-dark relative pt-[16px] sm:pt-[var(--header-height)]`}>
       {/* Image */}
       <div className="w-full h-fit max-h-[500px] aspect-[16/9] relative max-[1140px]:aspect-[16/7]">
-        <StyledImage src={bannerURL} width="100%" height="100%" priority alt="banner" className="w-full h-full object-cover" />
+        <StyledImage src={bannerURL} width="100%" height="100%" loading="eager" alt="banner" className="w-full h-full object-cover" />
 
         <div className="wrapper !absolute w-full top-[8px] items-end">
           <UIReportButton type="icon" text="Поскаржитися на користувача" className="opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" />
@@ -407,7 +407,7 @@ function Label({ label }: { label: string }) {
 
 function AvatarComponent({ user }: { user: User }) {
   return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px] flex-shrink-0">
-    <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square max-[820px]:!w-[160px] max-[820px]:!h-[160px]" priority alt="avatar" />
+    <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square max-[820px]:!w-[160px] max-[820px]:!h-[160px]" loading="eager" alt="avatar" />
   </div>
 }
 

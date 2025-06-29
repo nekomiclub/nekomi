@@ -1,6 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react';
+import '~/styles/components/StyledComponents.scss';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { NextPage } from 'next';
 import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
@@ -17,14 +19,10 @@ export interface StyledImageProps {
   width: string
   height: string
 
-  /** Use default img tag instead of next Image */
-  useImg?: boolean
-
-  /** Class name for image element */
-  imageClassName?: string
-
-  /** Parent class name */
   className?: string
+
+  /** Use native img instead of next image */
+  useImg?: boolean
 
   /** @default "lazy" */
   loading?: 'lazy' | 'eager'
@@ -32,14 +30,17 @@ export interface StyledImageProps {
   /** @default "..." */
   alt?: string
 
-  priority?: boolean
+  /** Border radius in px */
+  rounded?: number
 }
 
 
 
-export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, alt, className, loading, priority, useImg, imageClassName }) => {
+export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, alt, className, loading, useImg, rounded }) => {
   alt = alt ?? '...';
-  loading = !priority ? loading ?? 'lazy' : 'eager'; // Priority and lazy load cannot be both specified
+  loading = loading ?? 'lazy';
+
+  const borderRadius = rounded ?? `${rounded}px`;
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [isErrored, setIsErrored] = useState(false)
@@ -50,54 +51,48 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
 
 
 
+  // Resolve image
+  useMemo(() => {
+    fetch(src, { method: 'HEAD' }).catch(onerror)
+  }, [])
+
+  // Handle image events
   useEffect(() => {
     const image = imageRef.current;
     if (!image) return;
 
     setImageDims([image.offsetWidth, image.offsetHeight])
-
-    const img = new Image();
-
-    img.onload = () => {
-      setIsLoaded(true);
-    }
-
-    img.onerror = () => {
-      console.error(`Image ${src} cannot be loaded`)
-
-      setIsErrored(true);
-      setIsLoaded(false);
-    }
-
-    img.src = src;
+    setIsLoaded(image.complete)
   }, [])
 
 
 
-  return (
-    <div className={cn('relative shrink-0 bg-dark-bright', className)} style={{ width, height }}>
-      <div className={cn(`w-full h-full absolute top-0 left-0 bg-dark-bright duration-200 flex flex-col gap-[8px] justify-center items-center touch-none pointer-events-none z-[2]`, !isErrored && 'opacity-0 invisible')}>
-        <MaterialSymbol icon="broken_image" size={32} className="text-grey-new" />
-        {imageDims[0] > 84 && imageDims[1] > 84 && <UIText text="Зображення відсутнє" type="mini" className="text-grey-new text-center" />}
-      </div>
+  function onload() {
+    setIsLoaded(true)
+  }
 
-      {/* Preserved / default image */}
-      {useNativeImage && <>
-        <img src={src} alt={alt} loading={loading} className={cn('w-full h-full duration-200', !isLoaded && 'opacity-0', imageClassName)} ref={imageRef} />
-      </>}
+  function onerror() {
+    console.error(`Failed to load image (${src})`)
+    setIsErrored(true)
+  }
 
-      {!useNativeImage && <>
-        <ImageNext src={src} alt={alt} fill loading={loading} priority={priority} sizes="100vw" className={cn('w-full h-full duration-200', !isLoaded && 'opacity-0', imageClassName)} ref={imageRef} />
-      </>}
 
-      {!useNativeImage && <>
-        <ImageNext src={src} alt={alt} fill loading={loading} className={cn('w-full h-full duration-200', !isLoaded && 'opacity-0', imageClassName)} ref={imageRef} />
-      </>}
 
-      {/* Loading state */}
-      {loading === 'lazy' && !isLoaded && !isErrored && <Skeleton width={'100%'} height={'100%'} className={cn(`absolute top-0 left-0 duration-200`, isLoaded && 'opacity-0')} />}
+  return <div className={cn('styled-image-wrapper', className)} style={{ width, height, borderRadius }}>
+    {/* Preserved / default image */}
+    {useNativeImage && <img src={src} alt={alt} loading={loading} className={cn('styled-image', isErrored && 'styled-image--hide')} onLoad={onload} onError={onerror} ref={imageRef} />}
+
+    {!useNativeImage && <ImageNext src={src} alt={alt} fill loading={loading} className={cn('styled-image', isErrored && 'styled-image--hide')} onLoadingComplete={onload} onError={onerror} ref={imageRef} />}
+
+    {/* Image skeleton. Render it only when loading is lazy */}
+    {loading === 'lazy' && <Skeleton width={'100%'} height={'100%'} className="styled-image-skeleton" containerClassName={cn(`styled-image-skeleton`, (isLoaded || isErrored) && 'styled-image--hide')} />}
+
+    {/* Load error */}
+    <div className={cn(`styled-image-error`, !isErrored && 'styled-image--hide')}>
+      <MaterialSymbol icon="broken_image" size={32} className="text-grey-new" />
+      {imageDims[0] > 84 && imageDims[1] > 84 && <UIText text="Зображення відсутнє" type="mini" className="text-grey-new text-center" />}
     </div>
-  )
+  </div>
 }
 
 export default StyledImage;

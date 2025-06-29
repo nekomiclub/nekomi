@@ -219,8 +219,8 @@ const HomeHeadlinerPreview: NextPage<HomeHeadlinerPreviewProps> = ({ headliner }
   return <>
     {/* Background */}
     <div className="w-full h-full absolute top-0 left-0">
-      {!isSm && <StyledImage src={headliner.backgroundURL} width="100%" height="100%" loading="eager" priority />}
-      {isSm && <StyledImage src={headliner.poster} width="100%" height="100%" loading="eager" priority />}
+      {!isSm && <StyledImage src={headliner.backgroundURL} width="100%" height="100%" loading="eager" />}
+      {isSm && <StyledImage src={headliner.poster} width="100%" height="100%" loading="eager" />}
 
       <div className="absolute top-0 left-0 w-full h-full bg-dark/[.2] z-[2]"></div>
     </div>

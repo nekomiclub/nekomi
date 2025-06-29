@@ -67,7 +67,7 @@ const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, i
       {user.id && <>
         <Menu gap={16} settings={{ align: 'end' }} className="ui-dropdownMenu--scaleAnimation" state={isDropdownMenuOpen} stateSetter={setIsDropdownMenuOpen} id={dropdownMenuId}>
           <MenuTrigger className="flex items-center gap-[8px] duration-200 relative" anchor>
-            <StyledImage src={user.avatar} width={`40px`} height={`40px`} priority className="rounded-[4px] overflow-hidden" alt="avatar" />
+            <StyledImage src={user.avatar} width={`40px`} height={`40px`} loading="eager" className="rounded-[4px] overflow-hidden" alt="avatar" />
 
             <MaterialSymbol icon="arrow_drop_down" size={24} className={cn(`text-white duration-200 p-[8px]`, isDropdownMenuOpen && 'rotate-180')} />
           </MenuTrigger>
