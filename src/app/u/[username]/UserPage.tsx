@@ -1,5 +1,6 @@
 'use client'
 
+import '~/styles/pages/user.scss';
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { PopupButton, PopupWindow } from '@fullkekw/popup';
@@ -69,55 +70,8 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
   const [bannerURL, setBannerURL] = useState(user.banner);
 
   const bannerSelectRef = useRef<HTMLInputElement>(null)
-  const bannerWrapperRef = useRef<HTMLDivElement>(null)
-  const bannerButtonRef = useRef<HTMLButtonElement>(null)
 
 
-
-
-  // Set popups ids & handle banner hover + dragNdrop
-  useEffect(() => {
-    // Handle banner hover
-    if (user.id) {
-      const input = bannerSelectRef.current;
-      const bannerWrapper = bannerWrapperRef.current;
-      const bannerButton = bannerButtonRef.current;
-      if (!input || !bannerWrapper || !bannerButton) return;
-
-      bannerWrapper.addEventListener('mouseenter', bannerShow)
-      // bannerWrapper.addEventListener('dragenter', bannerShow)
-
-      bannerWrapper.addEventListener('mouseleave', bannerHide)
-      // bannerWrapper.addEventListener('dragleave', bannerHide)
-
-      // bannerButton.addEventListener('drop', e => {
-      //   console.log('drop')
-
-      //   e.preventDefault();
-      //   input.files = e.dataTransfer?.files!;
-      // })
-    }
-
-    function bannerShow(e: MouseEvent) {
-      e.preventDefault();
-
-      const bannerButton = bannerButtonRef.current;
-      if (!bannerButton) return;
-
-      bannerButton.style.opacity = '1';
-      bannerButton.style.visibility = 'visible';
-    }
-
-    function bannerHide(e: MouseEvent) {
-      e.preventDefault();
-
-      const bannerButton = bannerButtonRef.current;
-      if (!bannerButton) return;
-
-      bannerButton.style.opacity = '0';
-      bannerButton.style.visibility = 'invisible';
-    }
-  }, [])
 
   // Open settings popup
   useEffect(() => {
@@ -192,8 +146,8 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
 
       <Label label="Банер профілю" />
 
-      <div className="w-full max-h-[400px] aspect-[16/7] relative shrink-0" ref={bannerWrapperRef}>
-        <button className="w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible" onClick={selectBannerFile} ref={bannerButtonRef}>
+      <div className="up-banner w-full max-h-[400px] aspect-[16/7] relative shrink-0">
+        <button className="up-banner_upload w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible" onClick={selectBannerFile}>
           <p className="uppercase text-[40px] font-bold text-white max-[640px]:text-[24px]">завантажити</p>
         </button>
 
