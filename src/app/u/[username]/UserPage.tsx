@@ -22,7 +22,6 @@ import { IcoSocialTelegram } from '../../../assets/Social';
 import Tooltip from '../../../components/UI/Tooltip';
 import { config } from '../../../config';
 import { User, UserLib, UserTogetherRoom } from '../../../interfaces/UserIntf';
-import { $api } from '../../../utils/http';
 
 
 
@@ -90,8 +89,10 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
   async function linkTelegram() {
     try {
       setSettingsLinkTelegramStatus('pending')
-      const { data } = await $api.get<{ token: string }>(`/user/linkTelegram/token`);
-      router.push(`${config.URL.telegramBot}?start=linkAccount=${data.token}`)
+
+      const { token } = await API.userLinkTelegramToken()
+
+      router.push(`${config.URL.telegramBot}?start=linkAccount=${token}`)
     } catch (e) {
       setSettingsLinkTelegramStatus('error')
       HandleClientError(e);

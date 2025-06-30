@@ -178,6 +178,12 @@ class ApiService {
     })
   }
 
+  async userLinkTelegramToken() {
+    const { data } = await $api.get<{ token: string }>(`/link/telegram/token`);
+
+    return data
+  }
+
 
 
   //* =============== ANIME ROUTER
@@ -215,8 +221,8 @@ class ApiService {
     return data;
   }
 
-  async getAnimeAll() {
-    const { data } = await $api.get<AnimeGetAll>(`/anime/all`);
+  async getAnimeStats() {
+    const { data } = await $api.get<AnimeGetAll>(`/anime/stats`);
 
     return data;
   }

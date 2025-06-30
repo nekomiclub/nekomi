@@ -46,7 +46,7 @@ export default async function RSC(props: RSCProps<PatcherPageParams>) {
 
   try {
     const { anime, genres, media, rate, season, status, dubbers } = await API.getAnime({ query: uuid, detailed: true, fetchDubbers: true })
-    const { fullfilled, total, updated } = await API.getAnimeAll();
+    const { fullfilled, total, updated } = await API.getAnimeStats();
 
     const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status }
 
