@@ -62,8 +62,9 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
     if (!image) return;
 
     setImageDims([image.offsetWidth, image.offsetHeight])
+    setIsErrored(false)
     setIsLoaded(image.complete)
-  }, [])
+  }, [src])
 
 
 

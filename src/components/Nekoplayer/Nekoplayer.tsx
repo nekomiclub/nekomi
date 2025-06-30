@@ -11,7 +11,7 @@ import { getImageSize } from 'react-image-size'
 import { useAppSelector } from '~/hooks/redux';
 import Anime, { AnimeEpisode } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
-import { EpisodeQualityType , LocalStorageKeys } from '~/interfaces/types';
+import { EpisodeQualityType, LocalStorageKeys } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
 import { GetNekoplayerData, GetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
@@ -705,7 +705,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     const record = getCurrentProgressRecord()
 
     try {
-      await API.userRemoveWatchProgress({ animeId: anime.uuid });
+      await API.patchUser({ removeWatchProgress: { animeId: anime.uuid } });
     } catch (e) {
       HandleClientError(e)
     }

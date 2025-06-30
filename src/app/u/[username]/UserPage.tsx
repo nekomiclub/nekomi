@@ -120,15 +120,8 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
     if (!confirm(`Завантажуючи банер профілю ти погоджуєшся з Угодою Користувача (Agreement) та Політикою Конфіденційності (Privacy policy) сайту nekomi.club. Ознайомитись з ними можна внизу сайту`)) return;
 
     try {
-      const formData = new FormData();
-
-      formData.append('file', file);
-      formData.append('method', 'upload_banner');
-
-      await $api.patch(`${config.URL.nekomi_api}/user`, formData);
-
-      const { user } = await API.getUser({ query: '*' })
-      setBannerURL(user?.banner ?? '')
+      const { bannerUrl } = await API.userUploadBanner(file)
+      setBannerURL(bannerUrl)
     } catch (e) {
       HandleClientError(e);
     }

@@ -1,9 +1,10 @@
 import { AxiosProgressEvent } from 'axios'
+import { z } from 'zod'
 
 import Anime, { AnimeEpisode, HydratedAnime } from '../AnimeIntf'
 import { Dubber, DubberCompact, DubberMemberRole } from '../DubberIntf'
 import { RoleCapability } from '../RoleIntf'
-import { Metadata,NumEpisodeQualityType  } from '../types'
+import { Metadata, NumEpisodeQualityType } from '../types'
 import { User, UserTogetherRoom } from '../UserIntf'
 
 export interface DubberGetOneByQueryProps {
@@ -245,6 +246,35 @@ export interface AnimePost {
 export interface AnimeDeleteByUUIDProps {
   uuid: string
   token: string
+}
+
+export const UserPatchSchema = z.object({
+  editFolderAnime: z.object({
+    libId: z.string(),
+    animeId: z.string(),
+  }).optional(),
+
+  watchProgress: z.object({
+    animeId: z.string(),
+    dubberId: z.string(),
+    episodeOrder: z.number(),
+
+    /** Session viewtime in seconds */
+    viewtime: z.number(),
+
+    /** View progress in seconds */
+    progress: z.number()
+  }).optional(),
+
+  removeWatchProgress: z.object({
+    animeId: z.string(),
+  }).optional()
+});
+
+export type UserPatchProps = z.infer<typeof UserPatchSchema>
+
+export interface PutBanner {
+  bannerUrl: string
 }
 
 

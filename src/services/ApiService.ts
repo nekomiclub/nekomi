@@ -1,5 +1,5 @@
 import { config } from '~/config';
-import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
+import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, PutBanner, UserGetByQuery, UserGetByQueryProps, UserPatchProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
 import { $api, $upload } from '~/utils/http';
 
@@ -150,21 +150,22 @@ class ApiService {
     return data;
   }
 
-  /** @todo pending rework */
-  async userEditLibAnime({ folderId, titleId }: { folderId: string, titleId: string }) {
-    await $api.patch(`/user/me`, {
-      method: 'editFolderItem',
-      titleId,
-      folderId,
+  async patchUser({ editFolderAnime, removeWatchProgress, watchProgress }: UserPatchProps) {
+    await $api.patch(`/user`, {
+      editFolderAnime,
+      removeWatchProgress,
+      watchProgress
     })
   }
 
-  /** @todo pending rework */
-  async userRemoveWatchProgress({ animeId }: { animeId: string }) {
-    await $api.patch(`/user/me`, {
-      method: 'removeWatchProgress',
-      titleId: animeId,
-    })
+  async userUploadBanner(file: File): Promise<PutBanner> {
+    const formData = new FormData();
+
+    formData.append('file', file);
+
+    const { data } = await $api.put<PutBanner>('/user/banner', formData);
+
+    return data
   }
 
   async userLogout() {
