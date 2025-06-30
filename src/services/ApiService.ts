@@ -1,3 +1,4 @@
+
 import { config } from '~/config';
 import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, PutBanner, UserGetByQuery, UserGetByQueryProps, UserPatchProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
@@ -29,14 +30,13 @@ export enum API_ERROR {
 
 class ApiService {
   //* =============== DUBBER ROUTER
-  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache, metadataOnly }: DubberGetOneByQueryProps) {
+  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache }: DubberGetOneByQueryProps) {
     const { data } = await $api.get<DubberGetOneByQuery>(`/dubber/${query}`, {
       params: {
         detailed,
         fetchDubbedAnime,
         parseMembers,
         useCache,
-        metadataOnly
       }
     });
 
@@ -122,11 +122,10 @@ class ApiService {
 
 
   //* =============== USER ROUTER
-  async getUser({ query, detailed, metadataOnly, parseCapabilities, parseLibId, parseTogetherRoomId }: UserGetByQueryProps, params?: RequestProps) {
+  async getUser({ query, detailed, parseCapabilities, parseLibId, parseTogetherRoomId }: UserGetByQueryProps, params?: RequestProps) {
     const { data } = await $api.get<UserGetByQuery>(`/user/${query}`, {
       params: {
         detailed,
-        metadataOnly,
         parseCapabilities,
         parseLibId,
         parseTogetherRoomId,
@@ -200,7 +199,7 @@ class ApiService {
     return data;
   }
 
-  async getAnime({ query, detailed, fetchDubbers, fetchRelated, metadataOnly }: AnimeGetByQueryProps) {
+  async getAnime({ query, detailed, fetchDubbers, fetchRelated }: AnimeGetByQueryProps) {
     if (fetchDubbers || fetchRelated) detailed = true
 
     const { data } = await $api.get<AnimeGetByQuery>(`/anime/${query}`, {
@@ -208,7 +207,6 @@ class ApiService {
         detailed,
         fetchDubbers,
         fetchRelated,
-        metadataOnly
       }
     });
 

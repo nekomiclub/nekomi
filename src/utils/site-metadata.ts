@@ -12,10 +12,11 @@ function siteMetadata(payload: {
   keywords?: string[],
   openGraph?: OpenGraph,
   robots?: ('all' | 'noindex' | 'nofollow')[],
+  overwriteTitle?: string
 }): Metadata {
   const defaultKeywords = ['nekomi', 'аніме', 'аніме онлайн', 'некомі', 'anime'];
 
-  const title = payload.title !== undefined ? `${payload.title} ― nekomi` : 'nekomi ― аніме українською';
+  const title = payload.overwriteTitle ? payload.overwriteTitle : payload.title !== undefined ? `${payload.title} ― nekomi` : 'nekomi ― аніме українською';
   const description = payload.description !== undefined ? payload.description : 'Онлайн кінотеатр аніме українською nekomi.club!';
   const keywords = payload.keywords?.length ? [...payload.keywords, ...defaultKeywords] : defaultKeywords
   const siteName = config.DOMAIN.nekomi.split('.')[0];

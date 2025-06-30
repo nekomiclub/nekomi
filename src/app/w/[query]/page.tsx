@@ -1,5 +1,6 @@
 import '~/styles/pages/watch.scss';
 
+import { cache } from 'react';
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
 
@@ -19,6 +20,12 @@ import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber,
 
 
 
+const getAnime = cache(async (query: string) => {
+  return await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true })
+})
+
+
+
 export async function generateMetadata(
   props: RSCProps<WatchPageParams>,
 ): Promise<Metadata> {
@@ -26,17 +33,19 @@ export async function generateMetadata(
   const { query } = params;
 
   try {
-    const { metadata } = await API.getAnime({ query, metadataOnly: true })
+    const { anime } = await getAnime(query);
+    const title = `${anime.names.ukr} (${anime.year})`
+    const description = anime.description ?? 'Опис відсутній'
 
     return metaObject({
-      title: metadata?.title.replace('Аніме ', ''),
-      description: metadata?.description,
-      keywords: metadata?.keywords,
+      title,
+      description,
+      keywords: [anime.names.ukr, anime.names.eng, ...anime.names.alt],
       openGraph: {
-        title: metadata?.title,
-        description: metadata?.description,
+        title,
+        description,
         type: 'video.tv_show',
-        images: metadata?.photo,
+        images: anime.poster,
         url: Routes.watch.path({ query }),
         locale: 'uk_UA',
         siteName: config.DOMAIN.nekomi.split('.')[0],
@@ -59,7 +68,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
 
 
   try {
-    const { anime, genres, media, rate, season, status, related, posterAdapt, nextBroadcast, dubbers } = await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true })
+    const { anime, genres, media, rate, season, status, related, posterAdapt, nextBroadcast, dubbers } = await getAnime(query)
     const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
 
     let maximumEpisode = 0;

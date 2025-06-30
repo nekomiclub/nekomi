@@ -43,14 +43,12 @@ export const UserLibSection: NextPage<UserLibProps> = ({ lib, user, hydratedAnim
   // Define title
   useEffect(() => {
     if (!lib) {
-      window.document.title = `Не знайдена тека ― @${user.username} ― nekomi`;
+      window.document.title = `Тека не знайдена ― @${user.username}`;
       return;
     }
 
-    if (isLibVisible) {
-      window.document.title = `${lib.settings.name} ― @${user.username} ― nekomi`
-    } else {
-      window.document.title = `Приватна тека ― @${user.username} ― nekomi`
+    if (!isLibVisible) {
+      window.document.title = `Приватна тека ― @${user.username}`
     }
   }, [])
 

@@ -1,5 +1,6 @@
 import './styles.scss';
 
+import { cache } from 'react';
 import { Metadata } from 'next';
 import { MaterialSymbol } from 'react-material-symbols';
 
@@ -14,25 +15,30 @@ import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberBanner, Dubbe
 
 
 
+const getDubber = cache(async (query: string) => {
+  return await API.getDubberByQuery({ query, detailed: true, fetchDubbedAnime: true, parseMembers: true })
+})
+
+
+
 export async function generateMetadata(
   props: RSCProps<DubberPageParams>,
 ): Promise<Metadata> {
   const { slug } = await props.params;
 
   try {
-    const { metadata } = await API.getDubberByQuery({
-      query: slug,
-      metadataOnly: true
-    })
+    const { dubber } = await getDubber(slug)
+    const title = dubber.nameUkr
+    const description = dubber.description ?? 'Опис відсутній'
 
     return metaObject({
-      title: metadata?.title,
-      description: metadata?.description,
-      keywords: metadata?.keywords,
+      title,
+      description: description,
+      keywords: [dubber.nameUkr, dubber.nameEng],
       openGraph: {
-        title: metadata?.title,
-        description: metadata?.description,
-        images: metadata?.photo,
+        title,
+        description: description,
+        images: dubber.avatar,
         type: 'profile'
       }
     })
@@ -50,12 +56,7 @@ export default async function RSC({ params, searchParams }: RSCProps<DubberPageP
 
 
   try {
-    const { dubber, dubbedHydratedAnimes, parsedMembers } = await API.getDubberByQuery({
-      query: slug,
-      detailed: true,
-      fetchDubbedAnime: true,
-      parseMembers: true
-    })
+    const { dubber, dubbedHydratedAnimes, parsedMembers } = await getDubber(slug)
 
     return <section className="wrapper gap-[16px] pt-[16px] sm:pt-[var(--header-height)]">
       <DubberBanner dubber={dubber} />

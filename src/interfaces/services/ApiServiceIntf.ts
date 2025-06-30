@@ -4,7 +4,7 @@ import { z } from 'zod'
 import Anime, { AnimeEpisode, HydratedAnime } from '../AnimeIntf'
 import { Dubber, DubberCompact, DubberMemberRole } from '../DubberIntf'
 import { RoleCapability } from '../RoleIntf'
-import { Metadata, NumEpisodeQualityType } from '../types'
+import { NumEpisodeQualityType } from '../types'
 import { User, UserTogetherRoom } from '../UserIntf'
 
 export interface DubberGetOneByQueryProps {
@@ -12,9 +12,6 @@ export interface DubberGetOneByQueryProps {
   detailed?: boolean
   fetchDubbedAnime?: boolean
   parseMembers?: boolean
-
-  /** Fetch only dubber metadata, will set dubber to null */
-  metadataOnly?: boolean
 
   /** Use cache
    * @default true
@@ -26,7 +23,6 @@ export interface DubberGetOneByQuery {
   dubber: Dubber
 
   dubbedHydratedAnimes?: HydratedAnime[]
-  metadata?: Metadata
   parsedMembers?: User[]
 }
 
@@ -130,9 +126,6 @@ export interface AnimeGetSearch {
 export interface AnimeGetByQueryProps {
   query: string
 
-  /** Return only metadata, without hydrated anime */
-  metadataOnly?: boolean
-
   /** Return detailed document */
   detailed?: boolean
 
@@ -145,7 +138,6 @@ export interface AnimeGetByQueryProps {
 export interface AnimeGetByQuery extends HydratedAnime {
   related?: HydratedAnime[]
   dubbers?: DubberCompact[]
-  metadata?: Metadata
   posterAdapt?: DubberCompact
 
   /** UTC-0 timestamp of next planned broadcast */
@@ -155,8 +147,6 @@ export interface AnimeGetByQuery extends HydratedAnime {
 export interface UserGetByQueryProps {
   query: string
 
-  /** Return only metadata */
-  metadataOnly?: boolean
   parseCapabilities?: boolean
   parseLibId?: string
   parseTogetherRoomId?: string
@@ -168,7 +158,6 @@ export interface UserGetByQuery {
   user: User
 
   capabilities?: RoleCapability[]
-  metadata?: Metadata
   parsedLib?: HydratedAnime[]
   parsedTogetherRoom?: {
     anime: HydratedAnime

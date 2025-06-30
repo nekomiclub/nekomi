@@ -8,13 +8,6 @@ export enum LocalStorageKeys {
 
 export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
-export interface Metadata {
-  title: string
-  description: string
-  keywords: string[]
-  photo: string
-}
-
 export interface AnimeWithMedia extends Anime {
   videoURL: string
   backgroundURL: string

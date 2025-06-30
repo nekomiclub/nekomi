@@ -1,4 +1,5 @@
 
+import { cache } from 'react';
 import { Metadata } from 'next';
 
 import { HandleServerError } from '~/components/Errors';
@@ -12,6 +13,12 @@ import { UserHeader, UserSectionLibs, UserStatItem } from './UserPage';
 
 
 
+const getUser = cache(async (query: string) => {
+  return await API.getUser({ query, detailed: true });
+})
+
+
+
 export async function generateMetadata(
   props: RSCProps<UserPageProps>,
 ): Promise<Metadata> {
@@ -19,19 +26,19 @@ export async function generateMetadata(
   const { username } = params;
 
   try {
-    const { metadata } = await API.getUser({ query: username, metadataOnly: true });
-
-    const description = `Профіль користувача на ${config.DOMAIN.nekomi}`;
+    const { user } = await getUser(username)
+    const title = `@${user.username}`
+    const description = `Профіль користувача`
 
     return metaObject({
-      title: metadata?.title,
+      title,
       description,
       openGraph: {
-        title: `${metadata?.description} ― nekomi`,
+        title,
         description,
         type: 'profile',
-        images: metadata?.photo,
-        username: metadata?.title,
+        images: user.avatar,
+        username: user.username,
         url: Routes.user.path({ username }),
         locale: 'uk_UA',
         siteName: config.DOMAIN.nekomi.split('.')[0],
@@ -51,7 +58,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
   const { username } = params;
 
   try {
-    const { user } = await API.getUser({ query: username, detailed: true });
+    const { user } = await getUser(username)
 
     return <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
       <UserHeader user={user} primaryPage />
