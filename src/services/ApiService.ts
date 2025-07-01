@@ -1,8 +1,11 @@
 
+import ky from 'ky';
+
 import { config } from '~/config';
 import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, PutBanner, UserGetByQuery, UserGetByQueryProps, UserPatchProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
 import { $api, $upload } from '~/utils/http';
+import signCSRF from '~/utils/signCSRF';
 
 
 
@@ -213,8 +216,15 @@ class ApiService {
     return data;
   }
 
-  async getFeaturedAnime() {
-    const { data } = await $api.get<AnimeFeatured>(`/anime/featured`)
+  async getFeaturedAnime(): Promise<AnimeFeatured> {
+    // const { data } = await $api.get<AnimeFeatured>(`/anime/featured`)
+
+    const data = await ky.get<AnimeFeatured>(`anime/featured`, {
+      prefixUrl: config.URL.nekomi_api,
+      headers: {
+        'X-CSRF-Token': await signCSRF()
+      }
+    }).json()
 
     return data;
   }

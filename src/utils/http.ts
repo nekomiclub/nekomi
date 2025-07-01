@@ -11,7 +11,7 @@ import signCSRF from './signCSRF';
 export const $api = axios.create({
   withCredentials: true,
   baseURL: config.URL.nekomi_api,
-  timeout: 6000,
+  timeout: 9000,
 })
 
 /** Same as $api, but with longer timeout */
