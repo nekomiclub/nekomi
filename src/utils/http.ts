@@ -24,7 +24,7 @@ export const $upload = axios.create({
 
 
 $api.interceptors.request.use(async cfg => {
-  cfg.headers['X-CSRF-Token'] = await signCSRF()
+  cfg.headers.set('X-CSRF-Token', await signCSRF())
 
   return cfg;
 })
@@ -41,7 +41,7 @@ $api.interceptors.response.use(undefined, e => {
 })
 
 $upload.interceptors.request.use(async cfg => {
-  cfg.headers['X-CSRF-Token'] = await signCSRF()
+  cfg.headers.set('X-CSRF-Token', await signCSRF())
 
   return cfg;
 })

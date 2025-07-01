@@ -6,6 +6,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { IcoNekomiLogo } from '~/assets/Icons';
 import { HandleServerError } from '~/components/Errors';
 import API from '~/services/ApiService';
+import signCSRF from '~/utils/signCSRF';
 import { randomNumber } from '~/utils/utils';
 import { config, metaObject } from '../../config';
 
@@ -23,6 +24,7 @@ export const metadata = metaObject({
 
 export default async function RSC() {
   try {
+    console.log(`rsc: `, await signCSRF())
     const featured = await API.getFeaturedAnime();
     const headliner = featured.headliners[randomNumber(0, featured.headliners.length - 1)]
 
