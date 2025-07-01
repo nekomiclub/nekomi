@@ -21,7 +21,6 @@ import { StateProvider } from '~/components/StateProvider';
 import { LayoutProps } from '~/interfaces/types';
 import API, { API_ERROR } from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
-import signCSRF from '~/utils/signCSRF';
 import Footer from '../components/Footer';
 import { config, DevelopmentMode, metaObject } from '../config';
 
@@ -59,8 +58,6 @@ export default async function Layout({ children, params }: LayoutProps) {
   let isServerOnline = false;
   let isSessionExpired = false;
   let user: IUserState | undefined
-
-  console.log(`layout: `, await signCSRF())
 
 
 
