@@ -28,7 +28,7 @@ export function HandleClientError(e: unknown) {
 }
 
 export async function HandleServerError(e: unknown): Promise<ReactElement> {
-  const date = `${getUTC().date} ${getUTC().time}`
+  const date = `${getUTC().fulldate} ${getUTC().timeAccurate}`
 
   if (e instanceof AxiosError) {
     const status = e.response?.status ?? 500;
@@ -37,7 +37,7 @@ export async function HandleServerError(e: unknown): Promise<ReactElement> {
       DevelopmentMode && console.error(e.response?.data)
       return <ErrorNotFound />;
     } else {
-      console.error(`[${date}]: HTTP error occured - ${JSON.stringify(e.response?.data, null, 2)}`)
+      console.error(`[${date}]: HTTP error occured - ${JSON.stringify(e.response?.data ?? e, null, 2)}`)
       return <ErrorNotRendered />
     }
   } else {

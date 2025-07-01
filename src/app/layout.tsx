@@ -7,6 +7,7 @@ import '../styles/index.scss'
 import '../styles/ui.scss';
 import '../styles/globals.css';
 
+import { cache } from 'react';
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import axios, { AxiosError } from 'axios';
@@ -21,8 +22,9 @@ import { StateProvider } from '~/components/StateProvider';
 import { LayoutProps } from '~/interfaces/types';
 import API, { API_ERROR } from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
+import { getUTC } from '~/utils/utils';
 import Footer from '../components/Footer';
-import { config, DevelopmentMode, metaObject } from '../config';
+import { config, metaObject } from '../config';
 
 
 
@@ -52,6 +54,13 @@ const spaceGrotesk = Space_Grotesk({
 
 
 
+const getUser = cache(async (session: string) => {
+  return await API.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
+    session
+  })
+})
+
+
 export default async function Layout({ children, params }: LayoutProps) {
   const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
 
@@ -64,9 +73,7 @@ export default async function Layout({ children, params }: LayoutProps) {
   // Get user by cookie
   if (sessionToken) {
     try {
-      const data = await API.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
-        session: sessionToken
-      })
+      const data = await getUser(sessionToken)
 
       user = {
         avatar: data.user.avatar,
@@ -83,9 +90,11 @@ export default async function Layout({ children, params }: LayoutProps) {
 
       isServerOnline = true;
     } catch (e) {
+      const date = `${getUTC().fulldate} ${getUTC().timeAccurate}`
+
       if (e instanceof AxiosError && e.response?.data.code === API_ERROR.AUTH_SESSION_EXPIRED) isSessionExpired = true;
 
-      if (DevelopmentMode) console.error(e)
+      console.error(`[${date}]: Session fetch failed - ${JSON.stringify(e, null, 2)}`)
     }
   }
 
