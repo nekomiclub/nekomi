@@ -28,15 +28,13 @@ const NavMenu: NextPage = () => {
 
   async function logout() {
     try {
-      await API.userLogout();
-
-      NotifySuccess({ title: 'Ти вийшов з акаунту', message: 'Ти ж повернешся ще, так?' })
+      NotifySuccess({ title: 'Ви вийшли з акаунту', message: ':(' })
       dispatch(userSlice.actions.reducer(userStateDefault))
       setIsDropdownMenuOpen(false)
 
-      setTimeout(() => {
-        router.refresh();
-      }, 500);
+      setTimeout(() => { router.refresh() }, 100);
+
+      await API.userLogout();
     } catch (e) {
       HandleClientError(e);
     }

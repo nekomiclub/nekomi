@@ -10,9 +10,8 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import { config } from '~/config';
-import { useAppDispatch } from '~/hooks/redux';
 import { Routes } from '~/routes';
-import userSlice, { IUserState, userStateDefault } from '~/store/reducers/userSlice';
+import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import StyledImage from '../Styled/StyledImage';
 import Tooltip from '../UI/Tooltip';
@@ -36,17 +35,7 @@ interface Props {
 
 const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, isDropdownMenuOpen, setIsDropdownMenuOpen }) => {
   const pathname = usePathname();
-  const dispatch = useAppDispatch()
   const dropdownMenuId = useId().replaceAll(':', '')
-
-
-
-  function a() {
-    const b = { ...userStateDefault };
-    b.id = '122112'
-
-    dispatch(userSlice.actions.reducer(b))
-  }
 
 
 

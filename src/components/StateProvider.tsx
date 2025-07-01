@@ -54,13 +54,21 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
     if (isSessionExpired && !signinToken) {
       (async function () {
         try {
-          await API.userLogout()
           NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' })
+          await API.userLogout()
         } catch (e) { HandleClientError(e) }
       })()
     }
+  }, [])
+
+  useEffect(() => {
+    // Log random fact
+    const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
+    console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
 
     // Authorize
+    const signinToken = searchParams.get('signinPayload');
+
     if (signinToken) {
       router.replace(pathname);
 
@@ -76,12 +84,6 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
         }
       })()
     }
-  }, [])
-
-  useEffect(() => {
-    // Log random fact
-    const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
-    console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
   }, [])
 
 

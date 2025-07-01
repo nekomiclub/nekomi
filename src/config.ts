@@ -53,7 +53,7 @@ const URL = {
   nekomi_uploads: env.NEKOMI_UPLOADS_URL,
   fullkekw_authority: env.FULLKEKW_AUTHORITY_URL,
   fullkekw_userapi: env.FULLKEKW_USERAPI_URL,
-  fullkekw_account: env.FULLKEKW_USERAPI_URL,
+  fullkekw_account: env.FULLKEKW_ACCOUNT_URL,
 
   telegram: 'https://t.me/nekomiclub',
   telegramBot: env.TELEGRAM_BOT_URL,
