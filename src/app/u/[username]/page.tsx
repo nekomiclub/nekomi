@@ -1,49 +1,51 @@
 
+import { cache } from 'react';
 import { Metadata } from 'next';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 
 import { HandleServerError } from '~/components/Errors';
-import { config, CONSTS, devMode, metaObject } from '~/config';
+import { config, DevelopmentMode, metaObject } from '~/config';
+import { UserPageProps } from '~/interfaces/PagesParams';
+import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
-import { IRSCProps } from '../../../interfaces/IRSC';
 
 import { UserHeader, UserSectionLibs, UserStatItem } from './UserPage';
 
 
 
-export interface UserPageProps extends Params {
-  username: string
-  libID?: string
-}
+const getUser = cache(async (query: string) => {
+  return await API.getUser({ query, detailed: true });
+})
+
+
 
 export async function generateMetadata(
-  props: IRSCProps<UserPageProps>,
+  props: RSCProps<UserPageProps>,
 ): Promise<Metadata> {
   const params = await props.params;
   const { username } = params;
 
   try {
-    const { metadata } = await API.getUser({ query: username, metadataOnly: true });
-
-    const description = `Профіль користувача на ${CONSTS.Domains.nekomi}`;
+    const { user } = await getUser(username)
+    const title = `@${user.username}`
+    const description = `Профіль користувача`
 
     return metaObject({
-      title: metadata?.title,
+      title,
       description,
       openGraph: {
-        title: `${metadata?.description} ― nekomi`,
+        title,
         description,
         type: 'profile',
-        images: metadata?.photo,
-        username: metadata?.title,
-        url: `${config.URL.baseURL}${Routes.user_profile.path}/${username}`,
+        images: user.avatar,
+        username: user.username,
+        url: Routes.user.path({ username }),
         locale: 'uk_UA',
-        siteName: CONSTS.Domains.nekomi.split('.')[0],
+        siteName: config.DOMAIN.nekomi.split('.')[0],
       }
     })
   } catch (e) {
-    if (devMode) console.error(`User page generateMetadata error`, e);
+    if (DevelopmentMode) console.error(`User page generateMetadata error`, e);
 
     return metaObject({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] })
   }
@@ -51,12 +53,12 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<UserPageProps>) {
+export default async function RSC(props: RSCProps<UserPageProps>) {
   const params = await props.params;
   const { username } = params;
 
   try {
-    const { user } = await API.getUser({ query: username, detailed: true });
+    const { user } = await getUser(username)
 
     return <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
       <UserHeader user={user} primaryPage />

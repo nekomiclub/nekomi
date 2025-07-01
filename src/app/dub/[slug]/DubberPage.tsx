@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { PopupButton, PopupDialog, PopupLayer } from '@fullkekw/fkw-popup';
+import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -9,10 +9,8 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialTelegram } from '~/assets/Social';
 import AnimeItem from '~/components/AnimeItem';
-import { cn, copyToClipboard } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
-import { wordDeclination } from '~/components/handlers';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import { UIText } from '~/components/UI/Text.ui';
@@ -20,10 +18,13 @@ import Tooltip from '~/components/UI/Tooltip';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { IDubber, IDubberMember } from '~/interfaces/IDubber';
-import { IUser } from '~/interfaces/IUser';
+import { Dubber, DubberMember } from '~/interfaces/DubberIntf';
+import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
+import { cn } from '~/utils/classnames';
+import { copyToClipboard, wordDeclination } from '~/utils/utils';
+
 
 
 
@@ -34,7 +35,7 @@ interface IDubberAboutLinkProps {
 
 
 
-export const DubberAnswerInvite: NextPage<{ dubber: IDubber, invite?: 'accept' | 'decline' }> = ({ dubber, invite }) => {
+export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 'decline' }> = ({ dubber, invite }) => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -79,35 +80,33 @@ export const DubberAnswerInvite: NextPage<{ dubber: IDubber, invite?: 'accept' |
 
 
 
-  return isPopupShowing && <PopupLayer className="flex justify-center items-center">
-    <PopupDialog className="max-w-[720px] w-full h-[500px] rounded-[4px] overflow-hidden bg-dark-primary block" id={dialogId} state>
-      <StyledImage src={dubber.banner} width="100%" height="250px" />
+  return isPopupShowing && <PopupWindow className="max-w-[720px] w-full h-[500px] rounded-[4px] overflow-hidden bg-dark-primary block" id={dialogId} isOpen>
+    <StyledImage src={dubber.banner} width="100%" height="250px" />
 
-      <div className="flex flex-col items-center gap-[16px] relative top-[-64px]">
-        <StyledImage src={dubber.avatar} width="128px" height="128px" className="rounded-[128px] overflow-hidden" />
+    <div className="flex flex-col items-center gap-[16px] relative top-[-64px]">
+      <StyledImage src={dubber.avatar} width="128px" height="128px" className="rounded-[128px] overflow-hidden" />
 
-        <div className="flex flex-col gap-[8px] items-center">
-          <p className="text-white text-[24px] font-bold text-center">{dubber.nameUkr}</p>
-          <p className="text-grey-new font-manrope text-center">
-            {inviteType === 'accept' && 'Ти прийняв запрошення в цю команду озвучення'}
-            {inviteType === 'decline' && 'Ти відхилив запрошення в цю команду озвучення'}
-            {inviteType === 'invalid' && 'Ти не був запрошений в цю команду озвучення або в тебе нема акаунту'}
-          </p>
-        </div>
+      <div className="flex flex-col gap-[8px] items-center">
+        <p className="text-white text-[24px] font-bold text-center">{dubber.nameUkr}</p>
+        <p className="text-grey-new font-manrope text-center">
+          {inviteType === 'accept' && 'Ти прийняв запрошення в цю команду озвучення'}
+          {inviteType === 'decline' && 'Ти відхилив запрошення в цю команду озвучення'}
+          {inviteType === 'invalid' && 'Ти не був запрошений в цю команду озвучення або в тебе нема акаунту'}
+        </p>
       </div>
+    </div>
 
-      <PopupButton togglePopupId={dialogId} className="absolute bottom-[24px] left-[50%] translate-x-[-50%] flex items-center gap-[16px] px-[16px] py-[8px] rounded-[4px] bg-dark-medium border border-dark-light duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-        {inviteType === 'accept' && <MaterialSymbol icon="how_to_reg" size={24} className="text-white" />}
-        {inviteType === 'decline' && <MaterialSymbol icon="archive" size={24} className="text-white" />}
-        {inviteType === 'invalid' && <MaterialSymbol icon="sentiment_sad" size={24} className="text-white" />}
+    <PopupButton popupId={dialogId} className="absolute bottom-[24px] left-[50%] translate-x-[-50%] flex items-center gap-[16px] px-[16px] py-[8px] rounded-[4px] bg-dark-medium border border-dark-light duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+      {inviteType === 'accept' && <MaterialSymbol icon="how_to_reg" size={24} className="text-white" />}
+      {inviteType === 'decline' && <MaterialSymbol icon="archive" size={24} className="text-white" />}
+      {inviteType === 'invalid' && <MaterialSymbol icon="sentiment_sad" size={24} className="text-white" />}
 
-        <p className="text-white font-manrope uppercase">{inviteType === 'accept' ? 'Чудово' : 'зрозуміло'}</p>
-      </PopupButton>
-    </PopupDialog>
-  </PopupLayer>
+      <p className="text-white font-manrope uppercase">{inviteType === 'accept' ? 'Чудово' : 'зрозуміло'}</p>
+    </PopupButton>
+  </PopupWindow>
 }
 
-export const DubberBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberBanner: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]">
     <StyledImage src={dubber.banner} width="100%" height="100%" alt={`Team banner`} />
 
@@ -115,7 +114,7 @@ export const DubberBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   </div>
 }
 
-export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const user = useAppSelector(state => state.user);
   const canEdit = user.capabilities.includes('admin') || user.capabilities.includes('root') || dubber.members.find(el => el.id === user.id)?.role === 'leader';
 
@@ -132,14 +131,14 @@ export const DubberHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
       </div>
 
       <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
-        {canEdit && <DubberHeaderOpenSettings />}
+        {canEdit && <DubberHeaderOpenSettings slug={dubber.id} />}
         <DubberHeaderCopyLink />
       </div>
     </div>
   </div>
 }
 
-export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberAbout: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   return <div className="flex flex-col gap-[24px]">
     <ul className="w-full flex items-center justify-center flex-wrap gap-[8px]">
       {dubber.socials.telegram && <DubberAboutLink link={dubber.socials.telegram ?? '#'} label="telegram" />}
@@ -159,7 +158,7 @@ export const DubberAbout: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   </div>
 }
 
-export const DubberAnimeDubbed: NextPage<{ dubber: IDubber, hydratedAnimes: HydratedAnime[] }> = ({ hydratedAnimes, dubber }) => {
+export const DubberAnimeDubbed: NextPage<{ dubber: Dubber, hydratedAnimes: HydratedAnime[] }> = ({ hydratedAnimes, dubber }) => {
   return <div className="flex flex-col gap-[16px]">
     <div className="flex items-center gap-[24px] justify-between">
       <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">З озвученням {dubber.nameUkr}</h3>
@@ -173,7 +172,7 @@ export const DubberAnimeDubbed: NextPage<{ dubber: IDubber, hydratedAnimes: Hydr
   </div>
 }
 
-export const DubberTeam: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ dubber, members }) => {
+export const DubberTeam: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubber, members }) => {
   return <div className="flex flex-col gap-[16px]">
     <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
 
@@ -196,11 +195,9 @@ export const DubberTeam: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ du
 
 
 
-function DubberHeaderOpenSettings() {
-  const pathname = usePathname();
-
+function DubberHeaderOpenSettings({ slug }: { slug: string }) {
   return <Tooltip content="Редагувати налаштування">
-    <Link href={`${pathname}${Routes.dubber_settings.path}`} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light outline-none">
+    <Link href={Routes.dubberSettings.path({ slug })} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light outline-none">
       <MaterialSymbol icon="settings" size={24} color="#fff" />
     </Link>
   </Tooltip>
@@ -212,7 +209,7 @@ function DubberHeaderCopyLink() {
   const [isLinkCopied, setIsLinkCopied] = useState(false);
 
   function copyLink() {
-    copyToClipboard(`${config.URL.baseURL}${pathname}`);
+    copyToClipboard(`${config.URL.nekomi_site}${pathname}`);
     setIsLinkCopied(true);
 
     NotifySuccess({ title: 'Copied!', message: 'Посилання на команду скопійовано в буфер обміну' })
@@ -240,8 +237,8 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
   </li>
 }
 
-function DubberTeamMember({ user, member }: { user: IUser, member: IDubberMember }) {
-  return <Link href={`${config.URL.baseURL}/${Routes.user_profile.path}/${user.username}`} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
+function DubberTeamMember({ user, member }: { user: User, member: DubberMember }) {
+  return <Link href={Routes.user.path({ username: user.username })} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
     <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full">

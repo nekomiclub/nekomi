@@ -1,7 +1,8 @@
-import { $api, $upload } from '~/components/http';
+
 import { config } from '~/config';
-import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
+import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, PutBanner, UserGetByQuery, UserGetByQueryProps, UserPatchProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
+import { $api, $upload } from '~/utils/http';
 
 
 
@@ -20,16 +21,22 @@ interface RequestProps {
 
 
 
+export enum API_ERROR {
+  // === AUTH ===
+  AUTH_SESSION_EXPIRED = 'auth:session_expired',
+}
+
+
+
 class ApiService {
   //* =============== DUBBER ROUTER
-  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache, metadataOnly }: DubberGetOneByQueryProps) {
+  async getDubberByQuery({ query, detailed, fetchDubbedAnime, parseMembers, useCache }: DubberGetOneByQueryProps) {
     const { data } = await $api.get<DubberGetOneByQuery>(`/dubber/${query}`, {
       params: {
         detailed,
         fetchDubbedAnime,
         parseMembers,
         useCache,
-        metadataOnly
       }
     });
 
@@ -115,11 +122,10 @@ class ApiService {
 
 
   //* =============== USER ROUTER
-  async getUser({ query, detailed, metadataOnly, parseCapabilities, parseLibId, parseTogetherRoomId }: UserGetByQueryProps, params?: RequestProps) {
+  async getUser({ query, detailed, parseCapabilities, parseLibId, parseTogetherRoomId }: UserGetByQueryProps, params?: RequestProps) {
     const { data } = await $api.get<UserGetByQuery>(`/user/${query}`, {
       params: {
         detailed,
-        metadataOnly,
         parseCapabilities,
         parseLibId,
         parseTogetherRoomId,
@@ -143,21 +149,38 @@ class ApiService {
     return data;
   }
 
-  /** @todo pending rework */
-  async userEditLibAnime({ folderId, titleId }: { folderId: string, titleId: string }) {
-    await $api.patch(`/user/me`, {
-      method: 'editFolderItem',
-      titleId,
-      folderId,
+  async patchUser({ editFolderAnime, removeWatchProgress, watchProgress }: UserPatchProps) {
+    await $api.patch(`/user`, {
+      editFolderAnime,
+      removeWatchProgress,
+      watchProgress
     })
   }
 
-  /** @todo pending rework */
-  async userRemoveWatchProgress({ animeId }: { animeId: string }) {
-    await $api.patch(`/user/me`, {
-      method: 'removeWatchProgress',
-      titleId: animeId,
+  async userUploadBanner(file: File): Promise<PutBanner> {
+    const formData = new FormData();
+
+    formData.append('file', file);
+
+    const { data } = await $api.put<PutBanner>('/user/banner', formData);
+
+    return data
+  }
+
+  async userLogout() {
+    await $api.get('/user/logout');
+  }
+
+  async userSignin({ token }: { token: string }) {
+    await $api.post(`/user/signin`, {
+      session: token
     })
+  }
+
+  async userLinkTelegramToken() {
+    const { data } = await $api.get<{ token: string }>(`/link/telegram/token`);
+
+    return data
   }
 
 
@@ -176,7 +199,7 @@ class ApiService {
     return data;
   }
 
-  async getAnime({ query, detailed, fetchDubbers, fetchRelated, metadataOnly }: AnimeGetByQueryProps) {
+  async getAnime({ query, detailed, fetchDubbers, fetchRelated }: AnimeGetByQueryProps) {
     if (fetchDubbers || fetchRelated) detailed = true
 
     const { data } = await $api.get<AnimeGetByQuery>(`/anime/${query}`, {
@@ -184,7 +207,6 @@ class ApiService {
         detailed,
         fetchDubbers,
         fetchRelated,
-        metadataOnly
       }
     });
 
@@ -197,8 +219,8 @@ class ApiService {
     return data;
   }
 
-  async getAnimeAll() {
-    const { data } = await $api.get<AnimeGetAll>(`/anime/all`);
+  async getAnimeStats() {
+    const { data } = await $api.get<AnimeGetAll>(`/anime/stats`);
 
     return data;
   }

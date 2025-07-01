@@ -6,10 +6,10 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { devMode } from '~/config';
+import { DevelopmentMode } from '~/config';
 import { Routes } from '~/routes';
+import { getUTC } from '~/utils/utils';
 
-import { getUTC } from './handlers';
 import { NotifyError } from './UI/NotifyToast';
 import { UIReportButton } from './UI/Report';
 import { UIText } from './UI/Text.ui';
@@ -18,7 +18,7 @@ import { UIText } from './UI/Text.ui';
 
 export function HandleClientError(e: unknown) {
   if (e instanceof AxiosError) {
-    if (devMode) console.error(e);
+    if (DevelopmentMode) console.error(e);
 
     NotifyError({ message: e.response?.data?.message ?? e.message, title: `HTTP - ${e.status ?? e.code}` })
   } else {
@@ -32,10 +32,10 @@ export async function HandleServerError(e: unknown): Promise<ReactElement> {
     const status = e.response?.status ?? 500;
 
     if (status === 404) {
-      devMode && console.error(e.response?.data)
+      DevelopmentMode && console.error(e.response?.data)
       return <ErrorNotFound />;
     } else {
-      devMode && console.error(e.response?.data)
+      DevelopmentMode && console.error(e.response?.data)
       return <ErrorNotRendered />
     }
   } else {
@@ -68,7 +68,7 @@ export const ErrorNotFound: NextPage = () => {
       <UIText text="Ми не можемо знайти контент за цим запитом, або ж просто - 404" type="standart" className="text-grey-new text-center" />
     </div>
 
-    <Link href={Routes.home.path} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
+    <Link href={Routes.home.path()} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
       <MaterialSymbol icon="home" size={24} className="text-white" />
     </Link>
   </div>

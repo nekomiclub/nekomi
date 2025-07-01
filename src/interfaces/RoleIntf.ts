@@ -29,4 +29,4 @@ export const RoleCapabilities = [
 /** Type implementation of RoleCapabilities array
  * @see docs/roles.md
  */
-export type TRoleCapability = typeof RoleCapabilities[number];
+export type RoleCapability = typeof RoleCapabilities[number];

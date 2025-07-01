@@ -1,7 +1,5 @@
 import { NextPage } from 'next';
 
-import * as IcoClock from '../../../assets/Clock'
-import * as Icons from '../../../assets/Icons'
 import * as IcoSocial from '../../../assets/Social'
 import * as IcoSupport from '../../../assets/Support'
 
@@ -10,10 +8,6 @@ const page: NextPage = (props) => {
     <div className="page w-full min-h-screen h-full bg-dark">
       <div className="wrapper gap-[16px]">
         <p className="text-white">Icos must be gray and 40x40. If not check icon validity.</p>
-
-        <Group title="Plain" Icons={Icons} />
-
-        <Group title="Clock" Icons={IcoClock} />
 
         <Group title="Support" Icons={IcoSupport} />
         <Group title="Social" Icons={IcoSocial} />

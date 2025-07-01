@@ -3,12 +3,11 @@ import '~/styles/pages/home.scss';
 import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { IcoClockOutlined } from '~/assets/Clock';
-import { IcoNekomiLogo, IcoStar, IcoStarRating } from '~/assets/Icons';
+import { IcoNekomiLogo } from '~/assets/Icons';
 import { HandleServerError } from '~/components/Errors';
-import { randomNumber } from '~/components/handlers';
 import API from '~/services/ApiService';
-import { CONSTS, metaObject } from '../../config';
+import { randomNumber } from '~/utils/utils';
+import { config, metaObject } from '../../config';
 
 import { HomeCategory, HomeHeadliner } from './HomePage';
 
@@ -32,7 +31,7 @@ export default async function RSC() {
 
       {/* Categories */}
       <div className="wrapper gap-[32px]">
-        <HomeCategory label="Популярні" icon={<IcoStar width={32} height={32} className="max-md:w-[24px] max-md:h-[24px]" />} hydratedAnimes={featured.hot} />
+        <HomeCategory label="Популярні" icon={<MaterialSymbol icon="star" size={32} fill className="text-[#FF464E]" />} hydratedAnimes={featured.hot} />
       </div>
 
       <div className="wrapper bg-dark-bright !flex-row gap-[60px] py-[60px] !px-[16px] items-center !my-[60px] max-md:!flex-col">
@@ -45,7 +44,7 @@ export default async function RSC() {
           </div>
 
           <div className="flex flex-col gap-[8px] w-fit max-[650px]:w-full">
-            <Link href={CONSTS.social.telegram} target="_blank" className="px-[16px] py-[16px] rounded-[2px] bg-dark-medium border border-dark-light flex items-center justify-center gap-[16px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95]">
+            <Link href={config.URL.telegram} target="_blank" className="px-[16px] py-[16px] rounded-[2px] bg-dark-medium border border-dark-light flex items-center justify-center gap-[16px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95]">
               <MaterialSymbol icon="ungroup" size={24} className="text-white" />
               <p className="text-white text-[24px] uppercase max-[650px]:text-[16px] font-manrope">підписатися</p>
             </Link>
@@ -55,8 +54,8 @@ export default async function RSC() {
       </div>
 
       <div className="wrapper gap-[32px]">
-        {featured.updatedRecently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<IcoClockOutlined width={32} height={32} className="max-md:w-[24px] max-md:h-[24px]" />} hydratedAnimes={featured.updatedRecently} />}
-        {featured.rated.length > 0 && <HomeCategory label="З високою оцінкою" icon={<IcoStarRating width={32} height={32} className="max-md:w-[24px] max-md:h-[24px]" />} hydratedAnimes={featured.rated} />}
+        {featured.updatedRecently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<MaterialSymbol icon="schedule" size={32} className="text-white max-md:!text-[24px]" />} hydratedAnimes={featured.updatedRecently} />}
+        {featured.rated.length > 0 && <HomeCategory label="З високою оцінкою" icon={<MaterialSymbol icon="star_half" size={32} className="text-white max-md:!text-[24px]" />} hydratedAnimes={featured.rated} />}
       </div>
     </main>
   } catch (e) {

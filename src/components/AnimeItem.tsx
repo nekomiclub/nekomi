@@ -8,16 +8,16 @@ import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { TUserLibType } from '~/interfaces/IUser';
+import { UserLibType } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
+import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
-import prettySeconds from '~/utils/pretty-seconds';
+import { prettySeconds } from '~/utils/utils';
 
-import { cn } from './Components';
 import { HandleClientError } from './Errors';
-import StyledImage from './StyledImage';
+import StyledImage from './Styled/StyledImage';
 import { NotifyWarn } from './UI/NotifyToast';
 import UICheckbox from './UI/UICheckbox';
 
@@ -36,7 +36,7 @@ interface AnimeItemEditMenuProps {
 
 interface AnimeItemEditMenuLibProps {
   hydratedAnime: HydratedAnime
-  type: TUserLibType
+  type: UserLibType
 }
 
 
@@ -132,7 +132,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
       </Menu>
     </div>}
 
-    <Link href={`${Routes.watch_title.path}/${anime.slug}`} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef}>
+    <Link href={Routes.watch.path({ query: anime.slug })} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef}>
       <StyledImage src={anime.poster} className="!absolute top-0 left-0" width="100%" height="100%" />
 
       <div className="flex flex-col">
@@ -212,7 +212,7 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydra
 
       setIsChecked(prev => !prev);
 
-      await API.userEditLibAnime({ titleId: hydratedAnime.anime.uuid, folderId: currentUser.libs.find(el => el.type === type)!.id })
+      await API.patchUser({ editFolderAnime: { animeId: hydratedAnime.anime.uuid, libId: currentUser.libs.find(el => el.type === type)!.id } })
       const state = JSON.parse(JSON.stringify(currentUser)) as IUserState;
 
       const lib = state.libs.find(el => el.type === type)!

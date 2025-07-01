@@ -1,7 +1,7 @@
 import { MaterialSymbol } from 'react-material-symbols';
 import { toast, ToastContent, ToastContentProps } from 'react-toastify';
 
-import { createStringID } from '~/utils/create-string-id';
+import { createStringID } from '~/utils/utils';
 
 
 

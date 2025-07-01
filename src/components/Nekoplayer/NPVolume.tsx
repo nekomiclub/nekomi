@@ -4,7 +4,7 @@ import { FC, useContext, useEffect, useRef } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 import { Range } from 'react-range';
 
-import { cn } from '../Components';
+import { cn } from '~/utils/classnames';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 

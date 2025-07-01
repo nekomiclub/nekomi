@@ -3,8 +3,8 @@ import * as DropMenu from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { DubberCompact } from '~/interfaces/DubberIntf';
-import { cn } from '../Components'
-import StyledImage from '../StyledImage';
+import { cn } from '~/utils/classnames';
+import StyledImage from '../Styled/StyledImage';
 import Tooltip from '../UI/Tooltip';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';

@@ -9,15 +9,15 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import AnimeItem from '~/components/AnimeItem';
-import { GetNekoplayerData } from '~/components/Nekoplayer/Nekoplayer';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
+import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { AnimeWithMedia } from '~/interfaces/types';
-import prettySeconds from '~/utils/pretty-seconds';
-import { cn, PrettySwiper } from '../../components/Components';
-import { config } from '../../config';
-import { routes } from '../../routes';
+import { Routes } from '~/routes';
+import { cn } from '~/utils/classnames';
+import { GetNekoplayerData } from '~/utils/nekoplayer-utils';
+import { prettySeconds } from '~/utils/utils';
 
 
 
@@ -137,17 +137,17 @@ export const HomeCategory: NextPage<HomeCategoryProps> = ({ label, icon, hydrate
 const HomeAnimesSwiper: NextPage<HomeAnimeSwiperProps> = ({ hydratedAnimes }) => {
   const id = useId().replaceAll(':', '');
 
-  return <PrettySwiper>
+  return <StyledSwiper>
     {hydratedAnimes.map((hydrated, i) => {
       return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`homecategory-${id}--${i}`} />
     })}
-  </PrettySwiper>
+  </StyledSwiper>
 }
 
 const HomeDivider: NextPage<HomeDividerProps> = ({ icon, label }) => {
   return <div className="flex items-center gap-[16px]">
     <div className="flex items-center gap-[16px] shrink-0">
-      <div className="w-[32px] h-[32px] max-md:w-[24px] max-md:h-[24px]">
+      <div className="w-[32px] h-[32px] flex justify-center items-center max-md:w-[24px] max-md:h-[24px]">
         {icon}
       </div>
       <h3 className="text-white text-[32px] font-bold max-md:text-[24px] font-manrope">{label}</h3>
@@ -192,7 +192,7 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
 
 
 
-  return <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${headliner.slug}`} className={cn(`ui-button flex items-center justify-center gap-[24px] bg-dark-medium px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 max-sm:px-[16px] max-sm:py-[12px]`, className)} tabIndex={0}>
+  return <Link href={Routes.watch.path({ query: headliner.slug })} className={cn(`ui-button flex items-center justify-center gap-[24px] bg-dark-medium px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 max-sm:px-[16px] max-sm:py-[12px]`, className)} tabIndex={0}>
     {continueWatch && <MaterialSymbol icon="resume" size={40} className="text-white max-sm:!text-[24px]" />}
     {!continueWatch && <MaterialSymbol icon="live_tv" size={40} className="text-white max-sm:!text-[24px]" />}
     <p className="text-white text-[24px] uppercase max-sm:text-[16px] font-manrope break-all">{label}</p>
@@ -219,8 +219,8 @@ const HomeHeadlinerPreview: NextPage<HomeHeadlinerPreviewProps> = ({ headliner }
   return <>
     {/* Background */}
     <div className="w-full h-full absolute top-0 left-0">
-      {!isSm && <StyledImage src={headliner.backgroundURL} width="100%" height="100%" loading="eager" priority />}
-      {isSm && <StyledImage src={headliner.poster} width="100%" height="100%" loading="eager" priority />}
+      {!isSm && <StyledImage src={headliner.backgroundURL} width="100%" height="100%" loading="eager" />}
+      {isSm && <StyledImage src={headliner.poster} width="100%" height="100%" loading="eager" />}
 
       <div className="absolute top-0 left-0 w-full h-full bg-dark/[.2] z-[2]"></div>
     </div>

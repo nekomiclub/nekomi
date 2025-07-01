@@ -8,19 +8,19 @@ import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
-import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
-import { getUTC, timestampToDayMonth } from '~/components/handlers';
 import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
-import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPE, AnimeGenre, AnimeMedia, AnimeRate, AnimeSeason, AnimeStatus, AnimeStudio, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes } from '~/routes';
+import { cn } from '~/utils/classnames';
+import { getUTC, timestampToDayMonth } from '~/utils/utils';
+
 
 
 
@@ -223,7 +223,7 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
     </button> */}
     </>}
 
-    {canEditAnime && <Link href={`${config.URL.baseURL}${Routes.patcher_title.path}/${hydratedAnime.anime.uuid}`} className="ui-button watch-meta-action bg-transparent border-none">
+    {canEditAnime && <Link href={Routes.patcher.path({ uuid: hydratedAnime.anime.uuid })} className="ui-button watch-meta-action bg-transparent border-none">
       <MaterialSymbol icon="edit" size={24} className="text-grey-new max-sm:text-[20px]" />
       <p className="text-grey-new font-manrope uppercase max-sm:text-[14px]">РЕДАГУВАТИ</p>
     </Link>}
@@ -300,7 +300,7 @@ export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, ico
 }
 
 export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt }) => {
-  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow items-center gap-[16px] max-sm:min-w-0 max-sm:p-[4px] max-sm:pr-[8px] max-sm:basis-[160px]" href={`${config.URL.baseURL}${Routes.dubber_profile.path}/${dubber.slug}`}>
+  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow items-center gap-[16px] max-sm:min-w-0 max-sm:p-[4px] max-sm:pr-[8px] max-sm:basis-[160px]" href={Routes.dubber.path({ slug: dubber.slug })}>
     <StyledImage src={dubber.avatarURL} width="48px" height="48px" className="rounded-[2px] overflow-hidden max-sm:w-[40px] max-sm:h-[40px]" />
 
     <div className="flex flex-col gap-[4px]">
@@ -337,7 +337,7 @@ export const WatchPlayer: NextPage<WatchPlayerProps> = ({ hydratedAnime, dubbers
   const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
 
   return <div className="flex flex-col gap-[16px]">
-    <div className="w-screen h-[90svh] bg-black">
+    <div className="w-full h-[90svh] bg-black">
       {haveEpisodes && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
       {!haveEpisodes && <div className="w-full h-full bg-dark-bright flex gap-[32px] items-center justify-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
         <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />

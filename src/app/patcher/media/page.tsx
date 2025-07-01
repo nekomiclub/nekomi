@@ -1,19 +1,20 @@
 import { NextPage } from 'next';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 import { config } from '~/config';
-import { Routes } from '~/routes';
+import { RSCProps } from '~/interfaces/types';
 import CheckUserAccess from '~/utils/check-user-access';
-import { IRSCProps } from '../../../interfaces/IRSC';
 
 import { MediaClient } from './Client';
 
-const RSC: NextPage<IRSCProps> = async () => {
+
+
+const RSC: NextPage<RSCProps> = async () => {
   let session = cookies().get(config.vars.SessionCookie)?.value ?? '';
 
   const { user } = await CheckUserAccess({ capabilities: ['root'], checkMode: 'AND', session })
-  if (!user) return redirect(Routes.home.path);
+  if (!user) return notFound()
 
   return <MediaClient />;
 }

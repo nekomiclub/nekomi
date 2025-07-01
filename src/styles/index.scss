@@ -5,22 +5,17 @@ $fontColor: #000;
 $fontSize: 16px;
 
 $wrapperMaxWidth: 1700px;
-$wrapperMinWidth: 320px;
+$wrapperMinWidth: 200px;
 $wrapperSidePadding: 32px;
 
 html,
 body {
   padding: 0;
   margin: 0;
-  overflow-x: hidden !important;
 }
 
 html {
   scroll-behavior: smooth;
-}
-
-body {
-  overflow: hidden !important;
 }
 
 img {
@@ -124,7 +119,7 @@ textarea {
 
 button,
 button * {
-  user-select: none;
+  user-select: none !important;
 }
 
 * {

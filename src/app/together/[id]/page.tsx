@@ -50,7 +50,7 @@ export const metadata = metaObject({ title: 'Спільний перегляд' 
 // }
 
 export default async function RSC() {
-  return <div className="w-screen h-screen bg-dark-primary flex justify-center items-center">
+  return <div className="w-full h-screen bg-dark-primary flex justify-center items-center">
     <div className="wrapper !flex-row items-center justify-center h-full">
       <div className="flex gap-[40px]">
         <MaterialSymbol icon="power_off" className="text-white" size={55} />

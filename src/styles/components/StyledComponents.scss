@@ -1,0 +1,52 @@
+@import "../colors.scss";
+
+.styled {
+  &-image {
+    width: 100%;
+    height: 100%;
+    transition: 0.2s ease-in-out;
+    border-radius: inherit;
+
+    // IOS border-radius fix
+    display: block;
+    -webkit-mask-image: -webkit-radial-gradient(white, black); /* For Safari */
+    mask-image: radial-gradient(white, black); /* Standard syntax */
+
+    &--hide {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    &-wrapper {
+      position: relative;
+      flex-shrink: 0;
+      background: $darkBright;
+    }
+
+    &-skeleton {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transition: 0.2s ease-in-out;
+      border-radius: inherit;
+    }
+
+    &-error {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: $darkBright;
+      transition: 0.2s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      border-radius: inherit;
+    }
+  }
+}

@@ -5,11 +5,9 @@ import { NextPage } from 'next';
 
 import { AnimeEpisodeMeta } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
-import { ITitleEpisodeMeta } from '~/interfaces/ITitle';
-import prettySeconds from '~/utils/pretty-seconds';
-import { cn } from '../Components';
-import { wordDeclination } from '../handlers';
-import StyledImage from '../StyledImage';
+import { cn } from '~/utils/classnames';
+import { prettySeconds, wordDeclination } from '~/utils/utils';
+import StyledImage from '../Styled/StyledImage';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
@@ -133,7 +131,7 @@ const ContinueWatch: FC = ({ }) => {
 
   const [isVisible, setIsVisible] = useState<boolean>(false)
   const [skipWithin, setSkipWithin] = useState(SKIP_WITHIN_DEFAULT)
-  const [episodeMeta, setEpisodeMeta] = useState<ITitleEpisodeMeta | undefined>(undefined)
+  const [episodeMeta, setEpisodeMeta] = useState<AnimeEpisodeMeta | undefined>(undefined)
   const [nextEpisodeOrder, setNextEpisodeOrder] = useState(episode.order)
 
   const skipWithinInterval = useRef<NodeJS.Timeout | undefined>(undefined)

@@ -2,20 +2,20 @@
 import Link from 'next/link';
 
 import { IcoSocialGithub, IcoSocialTelegram } from '~/assets/Social';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { metaObject } from '../../../config';
 
 
 
 
 export const metadata = metaObject({
-  title: `Devs?`
+  title: `Devs`
 })
 
 
 
 export default async function RSC() {
-  return <main className="w-screen h-screen flex justify-center items-center">
+  return <main className="w-full h-screen flex justify-center items-center">
     <div className="wrapper h-full justify-center items-center">
       <div className="flex flex-col gap-[8px] max-w-[600px] w-full">
         <div className="w-full flex flex-col">

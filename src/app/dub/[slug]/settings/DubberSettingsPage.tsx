@@ -9,22 +9,23 @@ import { useDebounce } from 'use-debounce';
 
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '~/assets/Social';
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/assets/Support';
-import { cn } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
-import { timestampToDayMonth, wordDeclination } from '~/components/handlers';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
 import { useAppSelector } from '~/hooks/redux';
-import { IDubber, IDubberMember, TDubberMemberRole } from '~/interfaces/IDubber';
-import { IUser } from '~/interfaces/IUser';
+import { Dubber, DubberMember as DubberMemberIntf, DubberMemberRole } from '~/interfaces/DubberIntf';
 import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
+import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
+import { cn } from '~/utils/classnames';
 import { DubberParseRoleName } from '~/utils/data-mappers';
+import { timestampToDayMonth, wordDeclination } from '~/utils/utils';
+
 
 
 
@@ -37,7 +38,7 @@ interface ISettingsGroupProps {
 interface ILinkItemProps {
   state: IUIFieldState
   setState: (val: IUIFieldState) => void
-  type: keyof IDubber['socials'] | keyof IDubber['support']
+  type: keyof Dubber['socials'] | keyof Dubber['support']
 }
 
 interface IControlsProps {
@@ -48,21 +49,21 @@ interface IControlsProps {
 }
 
 interface IDubberMemberProps {
-  user: IUser
-  member: IDubberMember
+  user: User
+  member: DubberMemberIntf
   currentUser: IUserState
-  dubber: IDubber
+  dubber: Dubber
 
   kickMember: (id: string, username: string) => void
 }
 
 interface IMemberInviteResultProps extends IUserGetSearchResult {
-  dubber: IDubber
+  dubber: Dubber
 }
 
 
 
-export const DubberSettingsBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberSettingsBanner: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const [bannerURL, setBannerURL] = useState(dubber.banner);
   const [isActive, setIsActive] = useState(false);
 
@@ -143,7 +144,7 @@ export const DubberSettingsBanner: NextPage<{ dubber: IDubber }> = ({ dubber }) 
   </div>
 }
 
-export const DubberSettingsHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+export const DubberSettingsHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
     {/* Avatar placeholder */}
     <div className="relative w-[256px] h-[128px] shrink-0 max-md:w-[128px] max-md:h-[64px]">
@@ -158,7 +159,7 @@ export const DubberSettingsHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) 
 
       <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
         <Tooltip content="На сторінку команди">
-          <Link href={`${Routes.dubber_profile.path}/${dubber.slug}`} className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 bg-dark-medium border border-dark-light active:scale-[.95] hover:bg-primary-bright focus-visible:bg-primary-bright outline-none')}>
+          <Link href={Routes.dubber.path({ slug: dubber.slug })} className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 bg-dark-medium border border-dark-light active:scale-[.95] hover:bg-primary-bright focus-visible:bg-primary-bright outline-none')}>
             <MaterialSymbol icon="account_box" size={24} color="#fff" />
           </Link>
         </Tooltip>
@@ -167,7 +168,7 @@ export const DubberSettingsHeader: NextPage<{ dubber: IDubber }> = ({ dubber }) 
   </div>
 }
 
-export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[] }> = ({ dubber, members }) => {
+export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubber, members }) => {
   const currentUser = useAppSelector(state => state.user);
 
   const [nameUkr, setNameUkr] = useState<IUIFieldState>({ initialValue: dubber.nameUkr });
@@ -184,7 +185,7 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
   const [monobankLink, setMonobankLink] = useState<IUIFieldState>({ initialValue: dubber.support.monobank });
   const [diakaLink, setDiakaLink] = useState<IUIFieldState>({ initialValue: dubber.support.diaka });
 
-  const [dubberMembers, setDubberMembers] = useState<IDubberMember[]>(dubber.members);
+  const [dubberMembers, setDubberMembers] = useState<DubberMemberIntf[]>(dubber.members);
   const [isSomethingChanged, setIsSomethingChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -386,7 +387,7 @@ export const DubberSettingsContent: NextPage<{ dubber: IDubber, members: IUser[]
   </div>
 }
 
-const InviteMembers: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+const InviteMembers: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const [searchQuery, setSearchQuery] = useState<IUIFieldState>({ status: 'waiting', initialValue: '' });
   const [debouncedSearchQuery] = useDebounce(searchQuery.value ?? '', 500)
   const [searchResults, setSearchResults] = useState<IUserGetSearchResult[]>([])
@@ -472,7 +473,7 @@ const InviteMembers: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
   </div>
 }
 
-const DubberSettingsAvatar: NextPage<{ dubber: IDubber }> = ({ dubber }) => {
+const DubberSettingsAvatar: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const [isActive, setIsActive] = useState(false);
   const [avatarURL, setAvatarURL] = useState(dubber.avatar);
 
@@ -681,7 +682,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
 
 
 
-  async function changeRole(to: TDubberMemberRole) {
+  async function changeRole(to: DubberMemberRole) {
     try {
       await API.dubberEditMember({
         dubberId: dubber.id,
@@ -700,7 +701,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
 
   return <div className="w-full rounded-[2px] border border-dark-medium flex justify-between gap-[16px] items-center p-[8px] max-md:items-start">
     <div className="w-full">
-      <Link href={`${Routes.user_profile.path}/${user.username}`} className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]">
+      <Link href={Routes.user.path({ username: user.username })} className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]">
         <StyledImage src={user.avatar} width="48px" height="48px" className="rounded-[4px] overflow-hidden" />
 
         <div className="flex flex-col gap-[4px]">

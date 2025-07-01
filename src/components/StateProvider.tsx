@@ -1,27 +1,27 @@
 'use client'
 
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useMemo } from 'react'
+import { PopupLayer } from '@fullkekw/popup';
 import { NextPage } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
+import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import { setupStore } from '~/store/store'
+import { randomNumber } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
-import { randomNumber } from './handlers';
-import { $api } from './http';
-import { NotifySuccess } from './UI/NotifyToast';
+import { NotifySuccess, NotifyWarn } from './UI/NotifyToast';
 import { UIReportModal } from './UI/Report';
 
 
 
-interface IProviderProps {
-  children: ReactNode
-}
+interface StateProviderProps {
+  children: ReactNode | ReactNode[]
+  isSessionExpired: boolean
 
-interface IStateProviderProps extends IProviderProps {
   user?: IUserState
 }
 
@@ -32,41 +32,45 @@ const ConsoleMessages = [
   `🐈 nekomi.club`,
   `nekomi nekoma nekome neko mimi ne bebebebebeb`,
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ⌚`,
-  `Will I be known and loved?\nIs there one that I trust?\nStarting to sober up\nHas it been long enough?`,
-  `imma fullstack overflow developer 🤓`,
-  `This site is written on NextJS`,
+  `This site is written on NextJS!`,
   `NPM - Newton's Pickle Machine`
 ]
 
 
 
 /** Setting up websocket & fetch user data */
-export const StateProvider: NextPage<IStateProviderProps> = ({ children, user }) => {
+export const StateProvider: NextPage<StateProviderProps> = ({ children, user, isSessionExpired }) => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
 
 
 
-  // Authorize user
-  useEffect(() => {
-    // Log random fact
-    const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
-    console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
-
-
+  // Handle user authorization
+  useMemo(() => {
     const signinToken = searchParams.get('signinPayload');
 
+    // Logout if session expire
+    if (isSessionExpired && !signinToken) {
+      (async function () {
+        try {
+          await API.userLogout()
+          NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' })
+        } catch (e) { HandleClientError(e) }
+      })()
+    }
+
+    // Authorize
     if (signinToken) {
       router.replace(pathname);
 
       (async function () {
         try {
-          await $api.post(`/user/signin`, {
-            session: signinToken
-          })
+          await API.userSignin({ token: signinToken });
 
-          NotifySuccess({ title: 'Ви увійшли в акаунт!', message: 'Перезавантажте сторінку для оновлення інформації' })
+          NotifySuccess({ title: 'Ви увійшли в акаунт', message: 'welcome!' })
+
+          setTimeout(() => router.refresh(), 100);
         } catch (e) {
           HandleClientError(e);
         }
@@ -74,13 +78,15 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
     }
   }, [])
 
+  useEffect(() => {
+    // Log random fact
+    const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
+    console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
+  }, [])
 
 
-  return <Provider store={setupStore({
-    preloadedState: {
-      user
-    }
-  })}>
+
+  return <Provider store={setupStore({ preloadedState: { user } })}>
     <AppProgressBar
       height="2px"
       color="linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%)"
@@ -88,14 +94,15 @@ export const StateProvider: NextPage<IStateProviderProps> = ({ children, user })
       shallowRouting
     />
 
-    <UIReportModal />
-    <SetupIntertnals />
+    <PopupLayer>
+      <UIReportModal />
 
-    {children}
+      {children}
+    </PopupLayer>
   </Provider>
 }
 
-/** Setup redux internals state */
+/** Setup redux internals state @deprecated */
 const SetupIntertnals: NextPage = () => {
   // const dispatch = useAppDispatch();
 

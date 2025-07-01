@@ -4,6 +4,24 @@ Migrating to nextjs 15 is not possible due to errors in @fullkekw modules till t
 
 ## [Tree](./docs/tree.md)
 
+## Setup
+Create local ```.env``` file from ```.env.example```
+
+```bash
+$ npm ci
+$ npm run build
+$ npm run start
+```
+
+## Husky
+To setup husky, run:
+
+```bash
+$ npx husky init
+```
+
+Paste ```npm run husky``` in ```.husky/pre-commit```
+
 ## Notes
 Classes
 ```scss
@@ -26,9 +44,3 @@ Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```
 .ui-text // Default text styling
 .ui-button // Default styled button with dark-medium background, border & animations
 ```
-
-## Dependencies
-- nekomi-api
-- nekomi-media
-- fk-usapi
-- fk-authority

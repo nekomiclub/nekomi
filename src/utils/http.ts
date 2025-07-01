@@ -1,29 +1,30 @@
 import axios from 'axios';
-import { KJUR } from 'jsrsasign'
 
-import XNcZbkZyomwTPdcY from '../../someBoringData/XNcZbkZyomwTPdcY'
 import { config } from '../config';
+
+import signCSRF from './signCSRF';
+
 
 
 
 /** Axios HTTP instance with csrf token specified & creds */
 export const $api = axios.create({
   withCredentials: true,
-  baseURL: config.URL.apiHTTP,
+  baseURL: config.URL.nekomi_api,
   timeout: 10000,
 })
 
 /** Same as $api, but with longer timeout */
 export const $upload = axios.create({
   withCredentials: true,
-  baseURL: config.URL.apiProxy,
+  baseURL: config.URL.proxy,
   timeout: 420000,
 })
 
 
 
-$api.interceptors.request.use(cfg => {
-  cfg.headers['X-CSRF-Token'] = signCSRF();
+$api.interceptors.request.use(async cfg => {
+  cfg.headers['X-CSRF-Token'] = await signCSRF()
 
   return cfg;
 })
@@ -40,7 +41,7 @@ $api.interceptors.response.use(undefined, e => {
 })
 
 $upload.interceptors.request.use(async cfg => {
-  cfg.headers['X-CSRF-Token'] = signCSRF();
+  cfg.headers['X-CSRF-Token'] = await signCSRF()
 
   return cfg;
 })
@@ -55,17 +56,3 @@ $upload.interceptors.response.use(undefined, e => {
 
   throw e;
 })
-
-
-
-/** Sign CSRF token */
-export function signCSRF(): string {
-  const alg = 'RS256'
-
-  const KEY = `-----BEGIN PRIVATE KEY-----\n` + XNcZbkZyomwTPdcY + `-----END PRIVATE KEY-----\n`;
-
-  return KJUR.jws.JWS.sign(alg, { alg }, {
-    origin: config.domain,
-    expire: new Date().getTime() + config.vars.CSRF_EXPIRE
-  }, KEY)
-}

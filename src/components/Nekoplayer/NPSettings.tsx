@@ -3,13 +3,12 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import axios from 'axios';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
-import { EpisodeQualityType } from '~/interfaces/Interfaces';
-import { cn } from '../Components';
-import { parseVideoQuality } from '../handlers';
+import { EpisodeQualityType } from '~/interfaces/types';
+import { cn } from '~/utils/classnames';
+import { GetNekoplayerPreferences, SetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
 import { NotifySuccess } from '../UI/NotifyToast';
 import Tooltip from '../UI/Tooltip';
 
-import { GetNekoplayerPreferences, SetNekoplayerPreferences } from './Nekoplayer';
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
 
@@ -299,3 +298,15 @@ const SettingsQualitySelect: FC<SettingsQualitySelectProps> = ({ currentQuality,
 
 
 export default NPSettings
+
+
+
+function parseVideoQuality(quality: EpisodeQualityType) {
+  switch (quality) {
+    case 'q4k': return '2160p';
+    case 'q1080': return '1080p';
+    case 'q720': return '720p';
+    case 'q480': return '480p';
+    case 'q240': return '240p';
+  }
+}

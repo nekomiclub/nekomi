@@ -1,0 +1,10 @@
+.up {
+  &-banner {
+    &:hover {
+      .up-banner_upload {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
+}

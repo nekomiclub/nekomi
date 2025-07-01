@@ -6,23 +6,25 @@ import { useParams, usePathname } from 'next/navigation'
 import { MaterialSymbol } from 'react-material-symbols';
 
 import AnimeItem from '~/components/AnimeItem';
+import LoadingContent from '~/components/LoadingContent';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { cn, copyToClipboard, LoadingContent } from '../../../../../components/Components';
+import { UserPageProps } from '~/interfaces/PagesParams';
+import { cn } from '~/utils/classnames';
+import { copyToClipboard } from '~/utils/utils';
 import Tooltip from '../../../../../components/UI/Tooltip';
 import { config } from '../../../../../config';
-import { IUser, IUserLib } from '../../../../../interfaces/IUser';
-import { UserPageProps } from '../../page';
+import { User, UserLib } from '../../../../../interfaces/UserIntf';
 import { UserDivider, UserLibItem } from '../../UserPage';
 
 
 
 interface UserSectionProps {
-  user: IUser
+  user: User
 }
 
 interface UserLibProps extends UserSectionProps {
-  lib: IUserLib | undefined
+  lib: UserLib | undefined
   hydratedAnimes: HydratedAnime[]
 }
 
@@ -41,21 +43,19 @@ export const UserLibSection: NextPage<UserLibProps> = ({ lib, user, hydratedAnim
   // Define title
   useEffect(() => {
     if (!lib) {
-      window.document.title = `Не знайдена тека ― @${user.username} ― nekomi`;
+      window.document.title = `Тека не знайдена ― @${user.username}`;
       return;
     }
 
-    if (isLibVisible) {
-      window.document.title = `${lib.settings.name} ― @${user.username} ― nekomi`
-    } else {
-      window.document.title = `Приватна тека ― @${user.username} ― nekomi`
+    if (!isLibVisible) {
+      window.document.title = `Приватна тека ― @${user.username}`
     }
   }, [])
 
 
 
   function copyLibURL() {
-    copyToClipboard(`${config.URL.baseURL}${pathname}`);
+    copyToClipboard(`${config.URL.nekomi_site}${pathname}`);
     setUrlCopied(true);
 
     setTimeout(() => {

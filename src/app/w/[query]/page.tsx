@@ -1,54 +1,54 @@
 import '~/styles/pages/watch.scss';
 
+import { cache } from 'react';
 import { Metadata } from 'next';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { headers } from 'next/headers';
 
 import AnimeItem from '~/components/AnimeItem';
-import { PrettySwiper } from '~/components/Components';
 import { HandleServerError } from '~/components/Errors';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
+import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams';
+import { RSCProps } from '~/interfaces/types';
+import { Routes } from '~/routes';
 import API from '~/services/ApiService';
-import isUserAgentMobile from '~/utils/is-user-agent-mobile';
-import { config, CONSTS, metaObject } from '../../../config';
-import { IRSCProps } from '../../../interfaces/IRSC';
-import { routes } from '../../../routes';
+import { isUserAgentMobile } from '~/utils/utils';
+import { config, metaObject } from '../../../config';
 
-import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
+import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage'
 
 
 
-export interface WatchPageParams extends Params {
-  query: string
-}
+const getAnime = cache(async (query: string) => {
+  return await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true })
+})
 
-export interface WatchPageSearchParams extends Params {
-  mobile?: any
-}
 
 
 export async function generateMetadata(
-  props: IRSCProps<WatchPageParams>,
+  props: RSCProps<WatchPageParams>,
 ): Promise<Metadata> {
   const params = await props.params;
   const { query } = params;
 
   try {
-    const { metadata } = await API.getAnime({ query, metadataOnly: true })
+    const { anime } = await getAnime(query);
+    const title = `${anime.names.ukr} (${anime.year})`
+    const description = anime.description ?? 'Опис відсутній'
 
     return metaObject({
-      title: metadata?.title.replace('Аніме ', ''),
-      description: metadata?.description,
-      keywords: metadata?.keywords,
+      title,
+      description,
+      keywords: [anime.names.ukr, anime.names.eng, ...anime.names.alt],
       openGraph: {
-        title: metadata?.title,
-        description: metadata?.description,
+        title,
+        description,
         type: 'video.tv_show',
-        images: metadata?.photo,
-        url: `${config.URL.baseURL}${routes.watch_title.path}/${query}`,
+        images: anime.poster,
+        url: Routes.watch.path({ query }),
         locale: 'uk_UA',
-        siteName: CONSTS.Domains.nekomi.split('.')[0],
+        siteName: config.DOMAIN.nekomi.split('.')[0],
       }
     })
   } catch (e) {
@@ -58,7 +58,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSearchParams>) {
+export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSearchParams>) {
   const { query } = await props.params;
   const { mobile } = await props.searchParams;
 
@@ -68,7 +68,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
 
 
   try {
-    const { anime, genres, media, rate, season, status, related, posterAdapt, nextBroadcast, dubbers } = await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true })
+    const { anime, genres, media, rate, season, status, related, posterAdapt, nextBroadcast, dubbers } = await getAnime(query)
     const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
 
     let maximumEpisode = 0;
@@ -84,7 +84,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
           <div className="watch-mobile-poster" style={{ backgroundImage: `url(${anime.poster})` }}></div>
 
           <div className="flex flex-col items-center gap-[4px] z-[10] w-fit px-[24px]">
-            <StyledImage src={anime.poster} width="270px" height="370px" className="rounded-[4px] overflow-hidden" priority loading="eager" />
+            <StyledImage src={anime.poster} width="270px" height="370px" className="rounded-[4px] overflow-hidden" loading="eager" />
 
             <WatchEditLibs hydratedAnime={hydratedAnime} />
 
@@ -146,11 +146,11 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
           {related && related?.length > 0 && <div className="wrapper gap-[16px]">
             <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
 
-            <PrettySwiper>
+            <StyledSwiper>
               {related.map((hydrated, i) => {
                 return <AnimeItem hydrated={hydrated} className="!w-[170px]" key={`animerelated-${anime.uuid}--${i}`} />
               })}
-            </PrettySwiper>
+            </StyledSwiper>
           </div>}
 
           {/* Player */}
@@ -169,7 +169,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
           {/* Poster */}
           <div className="flex flex-col gap-[8px] w-[500px] shrink-0 max-xl:w-[400px]">
             <div className="watch-poster w-full h-[700px] bg-dark-medium rounded-[4px] overflow-hidden max-xl:h-[600px]">
-              <StyledImage src={anime.poster} width="100%" height="100%" priority loading="eager" />
+              <StyledImage src={anime.poster} width="100%" height="100%" loading="eager" />
             </div>
 
             <WatchEditLibs hydratedAnime={hydratedAnime} />
@@ -244,11 +244,11 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
         {related && related?.length > 0 && <div className="wrapper gap-[16px]">
           <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
 
-          <PrettySwiper>
+          <StyledSwiper>
             {related.map((hydrated, i) => {
               return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`animerelated-${anime.uuid}--${i}`} />
             })}
-          </PrettySwiper>
+          </StyledSwiper>
         </div>}
 
         {/* Player */}

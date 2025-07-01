@@ -1,8 +1,8 @@
-import React from 'react'
 
-import { ErrorNotFound } from '~/components/Errors'
-import { devMode, metaObject } from '../../config'
-import { ILayoutProps } from '../../interfaces/IRSC'
+import { notFound } from 'next/navigation'
+
+import { LayoutProps } from '~/interfaces/types'
+import { DevelopmentMode, metaObject } from '../../config'
 
 
 
@@ -11,8 +11,8 @@ export const metadata = metaObject({ robots: ['nofollow', 'noindex'] })
 
 
 // Layout
-export default async function Layout({ children }: ILayoutProps) {
-  if (!devMode) return <ErrorNotFound />
+export default async function Layout({ children }: LayoutProps) {
+  if (!DevelopmentMode) return notFound()
 
   return children;
 }

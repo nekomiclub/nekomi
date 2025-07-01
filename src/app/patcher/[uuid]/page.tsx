@@ -1,37 +1,38 @@
 import '~/styles/pages/patcher.scss';
 
+import { cache } from 'react';
 import { Metadata } from 'next';
-import { Params } from 'next/dist/shared/lib/router/utils/route-matcher';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { PatcherPageParams } from '~/interfaces/PagesParams';
+import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
 import { config, metaObject } from '../../../config';
-import { IRSCProps } from '../../../interfaces/IRSC';
 
 import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './(components)/PatcherPage';
 
 
 
-export interface PatcherPageParams extends Params {
-  uuid: string
-}
+const getAnime = cache(async (query: string) => {
+  return await API.getAnime({ query, detailed: true, fetchDubbers: true })
+})
 
 
 
 export async function generateMetadata(
-  props: IRSCProps<PatcherPageParams>,
+  props: RSCProps<PatcherPageParams>,
 ): Promise<Metadata> {
   const { uuid } = await props.params;
 
   try {
-    const { metadata } = await API.getAnime({ query: uuid, metadataOnly: true })
+    const { anime } = await getAnime(uuid)
 
     return metaObject({
-      title: metadata?.title.replace('Аніме ', 'Редагування '),
+      overwriteTitle: `${anime.names.ukr} - Редактор`
     })
   } catch (e) {
     return metaObject({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] })
@@ -40,7 +41,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<PatcherPageParams>) {
+export default async function RSC(props: RSCProps<PatcherPageParams>) {
   const { uuid } = await props.params;
 
   const session = cookies().get(config.vars.SessionCookie)?.value ?? '';
@@ -51,8 +52,8 @@ export default async function RSC(props: IRSCProps<PatcherPageParams>) {
 
 
   try {
-    const { anime, genres, media, rate, season, status, dubbers } = await API.getAnime({ query: uuid, detailed: true, fetchDubbers: true })
-    const { fullfilled, total, updated } = await API.getAnimeAll();
+    const { anime, genres, media, rate, season, status, dubbers } = await getAnime(uuid)
+    const { fullfilled, total, updated } = await API.getAnimeStats();
 
     const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status }
 

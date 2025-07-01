@@ -9,10 +9,8 @@ import { useRouter } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
-import { cn, copyToClipboard } from '~/components/Components';
 import { HandleClientError } from '~/components/Errors';
-import { getUTC } from '~/components/handlers';
-import StyledImage from '~/components/StyledImage';
+import StyledImage from '~/components/Styled/StyledImage';
 import { UIField, UIFieldProps, UIFieldState } from '~/components/UI/Input';
 import { NotifyError, NotifySuccess } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';
@@ -21,11 +19,11 @@ import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeEpisode, AnimeMediaType, AnimeRateType, AnimeRecordType, AnimeSeasonType, AnimeStatusType, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
-import { Routes, routes } from '~/routes';
+import { Routes } from '~/routes';
 import API from '~/services/ApiService';
-import { alphabeticSort } from '~/utils/alphabetic-sort';
-import { createStringID } from '~/utils/create-string-id';
+import { cn } from '~/utils/classnames';
 import { DubberCompactMapper } from '~/utils/data-mappers';
+import { alphabeticSort, copyToClipboard, createStringID, getUTC } from '~/utils/utils';
 
 import PatcherStack from './PatcherStack';
 import { PatcherEpisode } from './PatcherTypes';
@@ -235,7 +233,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
       await API.deleteAnime({ token, uuid: hydratedAnime.anime.uuid });
 
-      router.replace(`${config.URL.baseURL}`);
+      router.replace(`${config.URL.nekomi_site}`);
     } catch (e) {
       HandleClientError(e)
     }
@@ -257,7 +255,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         <div className="flex flex-col gap-[4px]">
           {capabilities.canEdit && <MetaSaveButton save={save} saveStatus={saveStatus} />}
 
-          <Link href={`${config.URL.baseURL}${routes.watch_title.path}/${hydratedAnime.anime.uuid}`} className="ui-button patcher-button">
+          <Link href={Routes.watch.path({ query: hydratedAnime.anime.slug })} className="ui-button patcher-button">
             <MaterialSymbol className="text-white" icon="slideshow" size={20} />
             <p className="text-white font-manrope uppercase">НА СТОРІНКУ ПЕРЕГЛЯДУ</p>
           </Link>
@@ -386,7 +384,7 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
 
   function handleFilename() {
     const fileInput = fileInputRef.current
-    if (!fileInput || !fileInput.files) return
+    if (!fileInput || !fileInput.files?.length) return
 
     const file = fileInput.files[0];
 
@@ -529,7 +527,7 @@ export const PatcherCreateNewAnime: NextPage = () => {
 
       NotifySuccess({ title: 'Створено!', message: 'Нове аніме створено, заміняємо сторінку...' })
 
-      router.replace(`${config.URL.baseURL}${routes.patcher_title.path}/${anime.uuid}`);
+      router.replace(Routes.patcher.path({ uuid: anime.uuid }));
     } catch (e) {
       HandleClientError(e)
       setIsCreating(false)
@@ -561,7 +559,7 @@ export const PatcherWithoutMalId: NextPage = () => {
       setIsFetching(true)
 
       const { results } = await API.searchAnime({ q: '~all' }, { woMalId: true });
-      router.replace(`${config.URL.baseURL}/${Routes.patcher_title.path}/${results[0].anime.uuid}`)
+      router.replace(Routes.patcher.path({ uuid: results[0].anime.uuid }))
 
       NotifySuccess({ title: 'Знайшли!', message: 'Ми знайшли аніме без mal id, удачі!' })
     } catch (e) {
@@ -639,7 +637,7 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
 
 
   useMemo(() => {
-    setIsNekomiPoster(posterURL.includes(config.URL.media))
+    setIsNekomiPoster(posterURL.includes(config.URL.nekomi_media))
   }, [posterURL])
 
 
@@ -678,7 +676,7 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
     <input type="file" accept=".png,.jpg,.webp" style={{ display: 'none' }} ref={fileInputRef} onChange={uploadPoster} />
 
     <button className={cn(`patcher-poster_wrapper w-full h-[700px] relative max-sm:h-[520px]`, isUploading && 'patcher-poster_wrapper--uploading')} onClick={selectFile} disabled={isUploading || !capabilities.canEdit}>
-      <StyledImage src={posterURL} width="100%" height="100%" imageClassName="rounded-[4px]" priority />
+      <StyledImage src={posterURL} width="100%" height="100%" rounded={4} loading="eager" />
 
       {capabilities.canEdit && <>
         <div className={cn(`patcher-poster patcher-poster-uploading`, isUploading && 'patcher-poster--uploading')}>
@@ -732,7 +730,7 @@ const PatcherSelect: NextPage<PatcherSelectProps> = ({ options, title, autosync,
 
     <Menu className="w-full" id={id} state={isOpen} stateSetter={setIsOpen} settings={{ align: 'start', animation: 'slide' }} disabled={disabled}>
       <MenuTrigger className={cn(`patcher-button bg-dark-medium border border-dark-light rounded-[4px] w-full !justify-between duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, disabled && 'cursor-not-allowed')} anchor>
-        <p className={cn(`text-white font-manrope`, disabled && '!text-grey-new')}>{options[slug].name}</p>
+        <p className={cn(`text-white font-manrope`, disabled && '!text-grey-new')}>{options[slug]?.name}</p>
 
         {!disabled && <MaterialSymbol className="text-grey-new" icon="expand_all" size={16} />}
       </MenuTrigger>
@@ -843,7 +841,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
     <Menu className="w-full" id={id} state={isOpen} stateSetter={setIsOpen} settings={{ align: 'start', animation: 'slide' }} disabled={disabled}>
       <MenuTrigger className={cn(`patcher-button bg-dark-medium border border-dark-light rounded-[4px] w-full !justify-between duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, disabled && 'cursor-not-allowed')} anchor>
         <div className="flex items-center gap-[16px]">
-          {selectedDubber && <StyledImage width="20px" height="20px" src={selectedDubber.avatarURL} imageClassName="rounded-[2px]" />}
+          {selectedDubber && <StyledImage width="20px" height="20px" src={selectedDubber.avatarURL} rounded={2} />}
 
           <p className={cn(`text-white font-manrope line-clamp-1`, disabled && '!text-grey-new')}>{selectedDubber?.nameUkr ?? '-- команда не вибрана --'}</p>
         </div>
@@ -864,7 +862,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
         {/* Results */}
         {searchResults.map((result, i) => {
           return <button className={cn(`px-[16px] py-[8px] duration-100 flex items-center gap-[8px] hover:bg-dark-light focus-visible:bg-dark-light w-full border-t border-t-dark-light`, result.id === selectedId && 'bg-primary')} onClick={() => setSelectedId(result.id)} key={`patcher-select-${id}--${result.id}`}>
-            <StyledImage width="32px" height="32px" src={result.avatarURL} imageClassName="rounded-[2px]" />
+            <StyledImage width="32px" height="32px" src={result.avatarURL} rounded={2} />
 
             <p className="text-white font-manrope">{result.nameUkr}</p>
           </button>
@@ -930,7 +928,7 @@ const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber,
         </button>
       </Tooltip>
 
-      <StyledImage width="40px" height="40px" src={dubber.avatarURL} imageClassName="rounded-[4px]" />
+      <StyledImage width="40px" height="40px" src={dubber.avatarURL} rounded={4} />
       <h3 className="text-white text-[24px] font-manrope font-bold">{dubber.nameUkr}</h3>
       <p className="text-grey-new font-space-grotesk">({maximumEpisode} / {hydratedAnime.anime.episodesCount ?? '—'})</p>
     </div>

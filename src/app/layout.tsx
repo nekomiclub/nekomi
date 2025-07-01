@@ -1,7 +1,5 @@
-// Packages styles
-
 import '@fullkekw/fkw-menu/css'
-import '@fullkekw/fkw-popup/css'
+import '@fullkekw/popup/css'
 import 'swiper/css';
 import 'react-loading-skeleton/dist/skeleton.css'
 import 'react-material-symbols/rounded';
@@ -11,21 +9,20 @@ import '../styles/globals.css';
 
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import axios from 'axios';
-import { preconnect } from 'next/dist/server/app-render/entry-base';
+import axios, { AxiosError } from 'axios';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google'
 import { cookies } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
 import { ErrorNoConnection } from '~/components/Errors';
-import { StateProvider } from '~/components/Providers';
-import API from '~/services/ApiService';
+import NavMenu from '~/components/NavMenu/NavMenu';
+import { StateProvider } from '~/components/StateProvider';
+import { LayoutProps } from '~/interfaces/types';
+import API, { API_ERROR } from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
 import Footer from '../components/Footer';
-import Header from '../components/Menu';
-import { config, metaObject } from '../config';
-import { ILayoutProps } from '../interfaces/IRSC';
+import { config, DevelopmentMode, metaObject } from '../config';
 
 
 
@@ -55,12 +52,12 @@ const spaceGrotesk = Space_Grotesk({
 
 
 
-export default async function Layout({ children, params }: ILayoutProps) {
+export default async function Layout({ children, params }: LayoutProps) {
   const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
 
-  /** Check is server online */
   let isServerOnline = false;
-  let user: IUserState | undefined = undefined
+  let isSessionExpired = false;
+  let user: IUserState | undefined
 
 
 
@@ -86,43 +83,40 @@ export default async function Layout({ children, params }: ILayoutProps) {
 
       isServerOnline = true;
     } catch (e) {
-      console.error(`User fetched with error at RootLayout`, e)
+      if (e instanceof AxiosError && e.response?.data.code === API_ERROR.AUTH_SESSION_EXPIRED) isSessionExpired = true;
 
-      // Ping API
-      try {
-        await axios.get(`${config.URL.apiHTTP}/ping`)
-        isServerOnline = true;
-      } catch (e) { }
+      if (DevelopmentMode) console.error(e)
     }
-  } else {
-    // Ping API
+  }
+
+  // Ping API
+  if (!isServerOnline) {
     try {
-      await axios.get(`${config.URL.apiHTTP}/ping`)
+      await axios.options(`${config.URL.nekomi_api}/ping`)
       isServerOnline = true;
     } catch (e) { }
   }
 
 
-  preconnect(config.URL.apiHTTP);
-  preconnect(config.URL.media);
 
   return <html lang="uk">
-    <body id="root" className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
-      <Analytics />
-      <SpeedInsights />
-
-      {/* Return layout if server respond */}
-      {isServerOnline ? <StateProvider user={user}>
+    <body className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
+      {isServerOnline ? <StateProvider user={user} isSessionExpired={isSessionExpired}>
         <SkeletonTheme baseColor="#181818" highlightColor="#222">
-          <Header />
+          <NavMenu />
 
           {children}
 
           <Footer />
 
+
+
           <ToastContainer />
         </SkeletonTheme>
       </StateProvider> : <ErrorNoConnection />}
+
+      <Analytics />
+      <SpeedInsights />
     </body>
   </html>
 }
