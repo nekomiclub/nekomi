@@ -20,6 +20,11 @@ export interface Anime {
   studios: AnimeStudio[]
   malId: number | null
 
+  /** @since 2.1.2 */
+  imdbId: string | null
+  /** @since 2.1.2 */
+  isDMCARestricted: boolean
+
   /** UTC timestamp @private */
   updatedAt: number
   /** UTC timestamp @since 2.1.0 @private */
@@ -28,16 +33,16 @@ export interface Anime {
   episodes: AnimeEpisode[]
   /** @private */
   episodesMeta: AnimeEpisodeMeta[]
-  /** MAL sync UTC-0 timestamp @since 2.1.0 @private */
+  /** MAL sync UTC-0 timestamp @private */
   malSyncedAt: number | null
-  /** Anime pictures URL's @since 2.1.0 @private */
+  /** Anime pictures URL's @private */
   pictures: string[]
-  /** Related animes ID's @since 2.1.0 @private */
+  /** Related animes ID's @private */
   related: string[]
-  /** Poster adapted by dubber ID @since 2.1.0 */
+  /** Poster adapted by dubber ID */
   posterAdapt: string | null
 
-  /** Prevent services sync @since 2.1.0 @private */
+  /** Prevent services sync @private */
   stopSync: {
     /** Can be true to prevent sync at all */
     mal?: boolean
