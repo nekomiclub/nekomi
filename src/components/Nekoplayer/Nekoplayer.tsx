@@ -4,6 +4,7 @@ import '~/styles/components/Nekoplayer.scss';
 
 import { useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
+import Hls from 'hls.js';
 import { NextPage } from 'next';
 import { useIdleTimer } from 'react-idle-timer';
 import { getImageSize } from 'react-image-size'
@@ -65,6 +66,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   const [currentScreen, setCurrentScreen] = useState<NekoplayerScreenType>('none')
   const [localData, setLocalData] = useState<NekoplayerLocalstorageRecord>()
   const [isControlsHiddenUnderScreen, setIsControlsHiddenUnderScreen] = useState<boolean>(true) // Define if player timeline and menu will be hidden under screeen
+  const [videoSrc, setVideoSrc] = useState('')
 
   // Settings states
   const [quality, setQuality] = useState<EpisodeQualityType>('q1080')
@@ -758,7 +760,23 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     const video = videoRef.current;
     if (!video) return;
 
-    video.setAttribute('src', src);
+    if (src.includes('.m3u8')) {
+      // HLS streaming
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Native support
+        setVideoSrc(src)
+      } else if (Hls.isSupported()) {
+        const hls = new Hls();
+
+        hls.loadSource(src)
+        hls.attachMedia(video)
+      } else {
+        alert(`HLS is not supported in this browser`)
+      }
+    } else {
+      // Default streaming
+      setVideoSrc(src)
+    }
 
     await new Promise((res, rej) => {
       video.addEventListener('loadedmetadata', () => {
@@ -883,7 +901,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
           <loader.DotPulse color="#fff" size={80} />
         </div>
 
-        <video src={''} preload="auto" controlsList="nodownload" className={cn(`w-full h-full`, stretch && 'object-cover')} id="kekwplayer-video" controls={false} ref={videoRef}></video>
+        <video src={videoSrc} preload="auto" controlsList="nodownload" className={cn(`w-full h-full`, stretch && 'object-cover')} id="kekwplayer-video" controls={false} ref={videoRef}></video>
       </div>
 
       {/* Screens */}
