@@ -17,7 +17,7 @@ const env = {
   FULLKEKW_ACCOUNT_DOMAIN: String(process.env['NEXT_PUBLIC_FULLKEKW_ACCOUNT_DOMAIN']),
 
   NEKOMI_API_URL: String(process.env['NEXT_PUBLIC_NEKOMI_API_URL']),
-  PROXY_URL: String(process.env['PROXY_URL']),
+  PROXY_URL: String(process.env['NEXT_PUBLIC_PROXY_URL']),
   TELEGRAM_BOT_URL: String(process.env['NEXT_PUBLIC_TELEGRAM_BOT_URL']),
   NEKOMI_NEXTJS_URL: String(process.env['NEXT_PUBLIC_NEKOMI_NEXTJS_URL']),
   NEKOMI_WEBSOCKET_URL: String(process.env['NEXT_PUBLIC_NEKOMI_WEBSOCKET_URL']),
