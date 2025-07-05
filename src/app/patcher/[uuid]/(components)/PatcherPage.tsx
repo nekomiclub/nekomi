@@ -137,6 +137,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
   const [nameEng, setNameEng] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.eng })
   const [nameAlt, setNameAlt] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.alt.join(', ') })
   const [malId, setMalId] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.malId) })
+  const [imdbId, setImdbId] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.imdbId) })
   const [scoreIMDB, setScoreIMDB] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.imdb) })
   const [scoreMAL, setScoreMAL] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.mal) })
   const [malScoredBy, setMalScoredBy] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.malScoredBy) })
@@ -159,6 +160,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
   // Checkboxes
   const [malSync, setMalSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.mal : false)
+  const [isDMCARestricted, setIsDMCARestricted] = useState<boolean>(hydratedAnime.anime.isDMCARestricted)
   const [shikimoriSync, setShikimoriSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.shikimori : false)
 
   const [posterAdaptDubbers, setPosterAdaptDubbers] = useState<DubberCompact[]>([])
@@ -179,6 +181,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         nameEng: m(nameEng),
         description: m(description),
         details: m(details),
+        imdbId: m(imdbId),
 
         scoreIMDB: mn(scoreIMDB),
         malId: mn(malId),
@@ -186,6 +189,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         episodesCount: mn(episodesCount),
         malScoredBy: mn(malScoredBy),
         year: mn(year),
+        isDMCARestricted,
 
         nameAlt: ma(nameAlt),
         studios: ma(studios),
@@ -274,7 +278,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         <PatcherField state={nameEng} stateSetter={setNameEng} title="Назва Англійською" disabled={!capabilities.canEdit} symbolsLimited={256} />
         {capabilities.canEdit && <PatcherField state={nameAlt} stateSetter={setNameAlt} fieldType="textarea" title="Альтернативні назви" note="(Японська..., через кому)" disabled={!capabilities.canEdit} symbolsLimited={256} />}
         <PatcherField state={malId} stateSetter={setMalId} title="MyAnimeList ID" disabled={!capabilities.canEdit} type="number" />
-        <PatcherField state={scoreIMDB} stateSetter={setScoreIMDB} title="Рейтинг IMDB" note="(0 - 10)" disabled={!capabilities.canEdit} type="number" />
+        <PatcherField state={imdbId} stateSetter={setImdbId} title="IMDB ID" disabled={!capabilities.canEdit} type="text" autosync={malSync} />
         <PatcherField state={scoreMAL} stateSetter={setScoreMAL} title="Рейтинг MyAnimeList" note="(0 - 10)" autosync={malSync} disabled={!capabilities.canEdit} type="number" />
         <PatcherField state={malScoredBy} stateSetter={setMalScoredBy} title="Кількість рецензій MyAnimeList" autosync={malSync} disabled={!capabilities.canEdit} type="number" />
         <PatcherField state={episodesCount} stateSetter={setEpisodesCount} title="Кількість епізодів" note="(1 - 9999)" autosync={malSync} disabled={!capabilities.canEdit} type="number" />
@@ -301,7 +305,8 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
         {/* Checkboxes */}
         <div className="flex items-center justify-center w-full gap-[16px] max-lg:flex-col">
-          <PatcherCheckbox label="Синхронізація інформації про аніме з MyAnimeList" checked={malSync} setChecked={setMalSync} disabled={!capabilities.canEdit || !hydratedAnime.anime.malId} />
+          {/* <PatcherCheckbox label="Синхронізація інформації про аніме з MyAnimeList" checked={malSync} setChecked={setMalSync} disabled={!capabilities.canEdit || !hydratedAnime.anime.malId} /> */}
+          <PatcherCheckbox label="DMCA Restricted" checked={isDMCARestricted} setChecked={setIsDMCARestricted} disabled={!capabilities.admin} />
           {/* <PatcherCheckbox label="Синхронізація зображень з Shikimori" checked={shikimoriSync} setChecked={setShikimoriSync} disabled={!capabilities.canEdit || !hydratedAnime.anime.malId} /> */}
         </div>
       </section>
@@ -895,7 +900,7 @@ const PatcherEpisodesUploadButton: NextPage<PatcherEpisodesUploadButtonProps> = 
       <MaterialSymbol icon="backup" size={20} className={cn(`text-white duration-100`, !canUpload && '!text-grey-new')} />
     </button>
 
-    {canUploadQ2160 && <PatcherCheckbox checked={processQ2160} setChecked={setProcessQ2160} label="4K" disabled={!canSeriesUpload} />}
+    {/* {canUploadQ2160 && <PatcherCheckbox checked={processQ2160} setChecked={setProcessQ2160} label="4K" disabled={!canSeriesUpload} />} */}
   </div>
 }
 
