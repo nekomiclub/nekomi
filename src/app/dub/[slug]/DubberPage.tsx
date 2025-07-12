@@ -197,7 +197,7 @@ export const DubberTeam: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubb
 
 function DubberHeaderOpenSettings({ slug }: { slug: string }) {
   return <Tooltip content="Редагувати налаштування">
-    <Link href={Routes.dubberSettings.path({ slug })} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light outline-none">
+    <Link href={Routes.dubberSettings.path({ slug })} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light outline-none" prefetch={false}>
       <MaterialSymbol icon="settings" size={24} color="#fff" />
     </Link>
   </Tooltip>
@@ -228,7 +228,7 @@ function DubberHeaderCopyLink() {
 
 function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
   return <li>
-    <Link href={link} className="dubber-about_link flex items-center gap-[16px] py-[6px] px-[16px]">
+    <Link href={link} className="dubber-about_link flex items-center gap-[16px] py-[6px] px-[16px]" prefetch={false}>
       {label === 'telegram' && <IcoSocialTelegram width={24} height={24} fill="#555" />}
       {label !== 'telegram' && <MaterialSymbol icon="ungroup" size={24} color="#555" />}
 
@@ -238,7 +238,7 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
 }
 
 function DubberTeamMember({ user, member }: { user: User, member: DubberMember }) {
-  return <Link href={Routes.user.path({ username: user.username })} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none">
+  return <Link href={Routes.user.path({ username: user.username })} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none" prefetch={false}>
     <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full">

@@ -223,7 +223,7 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
     </button> */}
     </>}
 
-    {canEditAnime && <Link href={Routes.patcher.path({ uuid: hydratedAnime.anime.uuid })} className="ui-button watch-meta-action bg-transparent border-none">
+    {canEditAnime && <Link href={Routes.patcher.path({ uuid: hydratedAnime.anime.uuid })} className="ui-button watch-meta-action bg-transparent border-none" prefetch={false}>
       <MaterialSymbol icon="edit" size={24} className="text-grey-new max-sm:text-[20px]" />
       <p className="text-grey-new font-manrope uppercase max-sm:text-[14px]">РЕДАГУВАТИ</p>
     </Link>}
@@ -300,7 +300,7 @@ export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, ico
 }
 
 export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt }) => {
-  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow items-center gap-[16px] max-sm:min-w-0 max-sm:p-[4px] max-sm:pr-[8px] max-sm:basis-[160px]" href={Routes.dubber.path({ slug: dubber.slug })}>
+  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow items-center gap-[16px] max-sm:min-w-0 max-sm:p-[4px] max-sm:pr-[8px] max-sm:basis-[160px]" href={Routes.dubber.path({ slug: dubber.slug })} prefetch={false}>
     <StyledImage src={dubber.avatarURL} width="48px" height="48px" className="rounded-[2px] overflow-hidden max-sm:w-[40px] max-sm:h-[40px]" />
 
     <div className="flex flex-col gap-[4px]">
