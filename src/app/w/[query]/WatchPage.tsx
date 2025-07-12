@@ -156,7 +156,6 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) =>
 
 export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   const currentUser = useAppSelector(state => state.user);
-  const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
   const [isTogetherRoomCreating, setIsTogetherRoomCreating] = useState(false)
@@ -168,6 +167,9 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
     || currentUser.capabilities.includes('titleEdit')
     || currentUser.capabilities.includes('seriesAdd')
   )
+
+  const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
+  const isDMCARestricted = hydratedAnime.anime.isDMCARestricted && !currentUser.id
 
 
 
@@ -203,7 +205,7 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
 
 
   return (haveEpisodes || canEditAnime) && <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
-    {haveEpisodes && <>
+    {haveEpisodes && !isDMCARestricted && <>
       <Link href={'#player'} scroll className="ui-button watch-meta-action">
         <MaterialSymbol icon="live_tv" size={24} className="text-white max-sm:text-[20px]" />
         <p className="text-white font-manrope uppercase max-sm:text-[14px]">розпочати перегляд</p>
