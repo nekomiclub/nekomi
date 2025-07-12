@@ -3,6 +3,7 @@ import axios from 'axios';
 import { config } from '../config';
 
 import signCSRF from './signCSRF';
+import { getUTC } from './utils';
 
 
 
@@ -24,12 +25,20 @@ export const $upload = axios.create({
 
 
 $api.interceptors.request.use(async cfg => {
+  cfg['timeStart'] = getUTC().timestamp
   cfg.headers.set('X-CSRF-Token', await signCSRF())
 
   return cfg;
 })
 
-$api.interceptors.response.use(undefined, async e => {
+$api.interceptors.response.use(async cfg => {
+  const timeStart = cfg.config['timeStart'] as number
+  const timeEnd = getUTC().timestamp
+
+  console.log(`[API]: ${cfg.config.method?.toUpperCase()} ${cfg.config.url} executed within ${timeEnd - timeStart} ms`)
+
+  return cfg
+}, async e => {
   // Retry ECONNRESET & ECONNABORTED
   if ((e.code === 'ECONNRESET' || e.code === 'ECONNABORTED') && !e.config.__isRetryRequest) {
     e.config.headers.set('X-CSRF-Token', await signCSRF())
