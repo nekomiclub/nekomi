@@ -77,7 +77,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPiP, setIsPip] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
+  const [isMuted, setIsMuted] = useState(true)
   const [isLastEpisode, setIsLastEpisode] = useState(false)
   const [isIdle, setIsIdle] = useState(false)
   const [isVideoLoading, setIsVideoLoading] = useState(true);
@@ -739,7 +739,6 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   async function changeVideoSrc(src: string, moment?: number, stopPlayback?: boolean) {
     // Set optional vars
     moment = moment ?? 0;
-    console.log(stopPlayback)
 
     const video = videoRef.current;
     if (!video) return;
@@ -774,6 +773,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     if (stopPlayback) {
       video.pause();
     } else {
+      video.muted = false
       video.play().catch(e => { })
     }
   }
@@ -885,7 +885,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
           <loader.DotPulse color="#fff" size={80} />
         </div>
 
-        <video src={videoSrc} className={cn(`w-full h-full`, stretch && 'object-cover')} preload="metadata" playsInline controlsList="nodownload" muted controls={false} id="kekwplayer-video" ref={videoRef}></video>
+        <video src={videoSrc} className={cn(`w-full h-full`, stretch && 'object-cover')} preload="metadata" playsInline controlsList="nodownload" muted={isMuted} controls={false} id="kekwplayer-video" ref={videoRef}></video>
       </div>
 
       {/* Screens */}
