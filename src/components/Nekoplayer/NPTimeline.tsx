@@ -36,7 +36,6 @@ const NPTimeline: FC<NPTimelineProps> = ({ loadedRef, previewRef, progressRef, h
 
           renderTrack={({ children, props }) => <div
             {...props}
-            key={NekoplayerIDs.TimelineTrack}
             style={{
               ...props.style,
               position: 'relative',
@@ -56,7 +55,7 @@ const NPTimeline: FC<NPTimelineProps> = ({ loadedRef, previewRef, progressRef, h
 
           renderThumb={({ props }) => <div
             {...props}
-            key={NekoplayerIDs.TimelineThumb}
+            key={props.key}
             style={{
               ...props.style,
               touchAction: 'none',

@@ -19,7 +19,7 @@ import { GetNekoplayerData, GetNekoplayerPreferences } from '~/utils/nekoplayer-
 import { prettySeconds } from '~/utils/utils';
 import { $api } from '../../utils/http';
 import { HandleClientError } from '../Errors';
-import { NotifySuccess } from '../UI/NotifyToast';
+import { NotifySuccess, NotifyWarn } from '../UI/NotifyToast';
 
 import NPControls from './NPControls';
 import NPFullscreen from './NPFullscreen';
@@ -192,7 +192,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
       setCurrentScreen('progress_continue');
 
-      loadProgress({ preload: true })
+      loadProgress()
       setLocalData(progress);
     } else {
       // Progress is missing, load default playback
@@ -215,9 +215,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
 
     // Hide context menu
-    player.addEventListener('contextmenu', e => {
-      e.preventDefault();
-    })
+    player.addEventListener('contextmenu', e => e.preventDefault())
 
     // Handle keyboard
     player.addEventListener('keydown', e => {
@@ -330,14 +328,10 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     })
 
     // Handle fullscreen
-    player.addEventListener('fullscreenchange', () => {
-      setIsFullscreen(document.fullscreenElement ? true : false)
-    })
+    player.addEventListener('fullscreenchange', () => setIsFullscreen(document.fullscreenElement ? true : false))
 
     // Handle loading
-    video.addEventListener('waiting', () => {
-      setIsVideoLoading(true)
-    })
+    video.addEventListener('waiting', () => setIsVideoLoading(true))
 
     // Handle playing
     video.addEventListener('playing', () => {
@@ -353,9 +347,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     })
 
     // Handle playback rate
-    video.addEventListener('ratechange', () => {
-      setSpeed(video.playbackRate)
-    })
+    video.addEventListener('ratechange', () => setSpeed(video.playbackRate))
 
     // Handle current time
     video.addEventListener('timeupdate', () => {
@@ -386,9 +378,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     })
 
     // Handle playing
-    video.addEventListener('play', () => {
-      setIsPlaying(true)
-    })
+    video.addEventListener('play', () => setIsPlaying(true))
 
     // Handle pause & onPause patch timeout
     video.addEventListener('pause', () => {
@@ -410,14 +400,16 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     });
 
     // Handle PiP leave
-    video.addEventListener('leavepictureinpicture', () => {
-      setIsPip(false)
-    })
+    video.addEventListener('leavepictureinpicture', () => setIsPip(false))
 
     // Handle PiP enter
-    video.addEventListener('enterpictureinpicture', () => {
-      setIsPip(true)
-    })
+    video.addEventListener('enterpictureinpicture', () => setIsPip(true))
+
+
+
+    return () => {
+      video.remove()
+    }
   }, [])
 
   // Handle preview visibility on touch
@@ -447,20 +439,20 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
       }, 1000);
     }, { passive: false })
 
-    timeline.addEventListener('pointerenter', () => timelineTouchStartHandler())
+    timeline.addEventListener('pointerenter', () => timelineTouchStartHandler(), { passive: false })
     timeline.addEventListener('pointerdown', () => {
       isDragging = true;
       timelineTouchStartHandler()
-    })
+    }, { passive: false })
 
     document.addEventListener('pointerup', () => {
       isDragging = false;
       timelineTouchEndHandler()
-    })
+    }, { passive: false })
     timeline.addEventListener('pointerleave', () => {
       if (isDragging) return
       timelineTouchEndHandler();
-    })
+    }, { passive: false })
 
 
 
@@ -484,15 +476,13 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     const timeline = document.querySelector(`#${NekoplayerIDs.Timeline}`) as HTMLDivElement
     if (!timeline) return
 
-    timeline.addEventListener('pointermove', handlePointermove);
-
-
-
     function handlePointermove(e: PointerEvent) {
       movePreview(e.offsetX)
     }
 
 
+
+    timeline.addEventListener('pointermove', handlePointermove, { passive: false });
 
     return () => {
       return timeline.removeEventListener('pointermove', handlePointermove)
@@ -503,10 +493,6 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
-    video.addEventListener('timeupdate', handleTimeupdate)
-
-
 
     // Save progress & handle screens
     function handleTimeupdate() {
@@ -556,6 +542,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
 
 
+    video.addEventListener('timeupdate', handleTimeupdate)
+
     return () => {
       video.removeEventListener('timeupdate', handleTimeupdate)
     }
@@ -578,7 +566,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
     const videoUrl = episode.qualities[quality] ?? episode.qualities.q1080;
 
-    if (video.src !== videoUrl) changeVideoSrc(videoUrl, moment);
+    if (video.src !== videoUrl) changeVideoSrc(videoUrl, moment, video.paused);
   }, [quality])
 
   // Handle isControlsHiddenUnderScreen
@@ -590,21 +578,16 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
 
 
-  // Listen currentScreen 
-  useEffect(() => console.debug(`[nekoplayer]: Set screen: ${currentScreen}`), [currentScreen])
-
-
-
   /** Load user progress */
-  async function loadProgress(props?: { preload?: boolean }) {
+  async function loadProgress() {
     const record = getCurrentProgressRecord();
     if (!record) return LoadDefaultPlayback();
 
     const episode = anime.episodes.find(el => el.dubberID === record.dub && el.order === record.ep);
     if (!episode) return LoadDefaultPlayback();
 
-    !props?.preload && setCurrentScreen('none')
-    await changeEpisode(episode, record.moment, props?.preload);
+    setCurrentScreen('none')
+    await changeEpisode(episode, record.moment, true);
 
     console.debug(`[nekoplayer]: User watch progress loaded. [dubber: ${record.dub}; episode: ${record.ep} (${prettySeconds(record.moment).pretty})]`)
   }
@@ -736,8 +719,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     setEpisode(episode)
 
     await Promise.all([
-      await definePreviewFormat(episode.frames[0]),
-      await changeVideoSrc(episode.qualities[quality] ?? episode.qualities.q1080, moment, stopPlayback),
+      definePreviewFormat(episode.frames[0]),
+      changeVideoSrc(episode.qualities[quality] ?? episode.qualities.q1080, moment, stopPlayback),
     ])
 
     // Check if episode is last
@@ -756,6 +739,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   async function changeVideoSrc(src: string, moment?: number, stopPlayback?: boolean) {
     // Set optional vars
     moment = moment ?? 0;
+    console.log(stopPlayback)
 
     const video = videoRef.current;
     if (!video) return;
@@ -771,7 +755,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
         hls.loadSource(src)
         hls.attachMedia(video)
       } else {
-        alert(`HLS is not supported in this browser`)
+        NotifyWarn({ title: 'Помилка відео', message: `Ваш браузер не підтримує HLS, спробуйте інший` })
       }
     } else {
       // Default streaming
@@ -780,8 +764,8 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
 
     await new Promise((res, rej) => {
       video.addEventListener('loadedmetadata', () => {
-        res(true)
         setDuration(video.duration)
+        res(true)
       })
     })
 
@@ -901,7 +885,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
           <loader.DotPulse color="#fff" size={80} />
         </div>
 
-        <video src={videoSrc} preload="auto" controlsList="nodownload" className={cn(`w-full h-full`, stretch && 'object-cover')} id="kekwplayer-video" controls={false} ref={videoRef}></video>
+        <video src={videoSrc} className={cn(`w-full h-full`, stretch && 'object-cover')} preload="metadata" playsInline controlsList="nodownload" muted controls={false} id="kekwplayer-video" ref={videoRef}></video>
       </div>
 
       {/* Screens */}
