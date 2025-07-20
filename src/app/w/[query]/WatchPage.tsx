@@ -14,6 +14,7 @@ import StyledImage from '~/components/Styled/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
+import { H2, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPE, AnimeGenre, AnimeMedia, AnimeRate, AnimeSeason, AnimeStatus, AnimeStudio, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
@@ -155,7 +156,6 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) =>
 
 export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   const currentUser = useAppSelector(state => state.user);
-  const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
   const [isTogetherRoomCreating, setIsTogetherRoomCreating] = useState(false)
@@ -167,6 +167,9 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
     || currentUser.capabilities.includes('titleEdit')
     || currentUser.capabilities.includes('seriesAdd')
   )
+
+  const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
+  const isDMCARestricted = hydratedAnime.anime.isDMCARestricted && !currentUser.id
 
 
 
@@ -202,7 +205,7 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
 
 
   return (haveEpisodes || canEditAnime) && <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
-    {haveEpisodes && <>
+    {haveEpisodes && !isDMCARestricted && <>
       <Link href={'#player'} scroll className="ui-button watch-meta-action">
         <MaterialSymbol icon="live_tv" size={24} className="text-white max-sm:text-[20px]" />
         <p className="text-white font-manrope uppercase max-sm:text-[14px]">розпочати перегляд</p>
@@ -334,22 +337,36 @@ export const WatchDetails: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
 }
 
 export const WatchPlayer: NextPage<WatchPlayerProps> = ({ hydratedAnime, dubbers }) => {
+  const user = useAppSelector(state => state.user);
+
+  const isDMCARestricted = hydratedAnime.anime.isDMCARestricted && !user.id
   const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
 
   return <div className="flex flex-col gap-[16px]">
     <div className="w-full h-[90svh] bg-black">
-      {haveEpisodes && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
-      {!haveEpisodes && <div className="w-full h-full bg-dark-bright flex gap-[32px] items-center justify-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
-        <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />
+      {isDMCARestricted ? <div className="w-full h-full bg-dark-bright flex justify-center items-center">
+        <div className="flex gap-[16px]">
+          <MaterialSymbol icon="copyright" size={44} className="text-white" />
 
-        <div className="flex flex-col gap-[8px] items-center w-full">
-          <p className="text-white text-[40px] font-manrope font-bold max-sm:text-[24px]">А серій нема</p>
-          <p className="text-grey-new font-manrope">Отак бува, та...</p>
+          <div className="flex flex-col gap-[8px] w-[300px]">
+            <H2 text="DMCA RESTRICTED" bold size={32} />
+            <P text="Selected content is infringing copyright and beeing removed from nekomi.club" className="!text-grey-new" />
+          </div>
         </div>
-      </div>}
+      </div> : <>
+        {haveEpisodes && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
+        {!haveEpisodes && <div className="w-full h-full bg-dark-bright flex gap-[32px] items-center justify-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
+          <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />
+
+          <div className="flex flex-col gap-[8px] items-center w-full">
+            <p className="text-white text-[40px] font-manrope font-bold max-sm:text-[24px]">А серій нема</p>
+            <p className="text-grey-new font-manrope">Отак бува, та...</p>
+          </div>
+        </div>}
+      </>}
     </div>
 
-    {haveEpisodes && <div className="wrapper items-start">
+    {haveEpisodes && !isDMCARestricted && <div className="wrapper items-start">
       <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
     </div>}
   </div>

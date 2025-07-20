@@ -1,6 +1,6 @@
 {
   "name": "nekomi-nextjs",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": true,
   "scripts": {
     "dev": "npx next dev --port 3001",
@@ -32,6 +32,7 @@
     "@vercel/speed-insights": "^1.0.12",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
+    "hls.js": "^1.6.6",
     "jsonwebtoken": "^9.0.2",
     "next": "^14.2.17",
     "next-nprogress-bar": "^2.3.15",

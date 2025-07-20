@@ -74,6 +74,7 @@ const NPControls: FC = () => {
     if (!video) return;
 
     if (video.paused) {
+      video.muted = false
       video.play().catch(e => null)
     } else {
       video.pause();

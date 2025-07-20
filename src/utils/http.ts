@@ -35,7 +35,7 @@ $api.interceptors.response.use(async cfg => {
   const timeStart = cfg.config['timeStart'] as number
   const timeEnd = getUTC().timestamp
 
-  console.log(`[API]: ${cfg.config.method?.toUpperCase()} ${cfg.config.url} executed within ${timeEnd - timeStart} ms`)
+  console.debug(`[API]: ${cfg.config.method?.toUpperCase()} ${cfg.config.url} executed within ${timeEnd - timeStart} ms`)
 
   return cfg
 }, async e => {
