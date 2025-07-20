@@ -99,7 +99,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   useIdleTimer({
     timeout: 3000,
     throttle: 500,
-    onIdle: () => setIsIdle(true),
+    onIdle: () => setIsIdle(isPlaying),
     onAction: () => setIsIdle(false)
   })
 
