@@ -1,4 +1,4 @@
-export const DevelopmentMode = process.env.NODE_ENV === 'development'
+export const DevelopmentMode = process.env.NODE_ENV === 'development';
 export const ProductionMode = process.env.NODE_ENV === 'production';
 
 const env = {
@@ -27,7 +27,7 @@ const env = {
   FULLKEKW_AUTHORITY_URL: String(process.env['NEXT_PUBLIC_FULLKEKW_AUTHORITY_URL']),
   FULLKEKW_USERAPI_URL: String(process.env['NEXT_PUBLIC_FULLKEKW_USERAPI_URL']),
   FULLKEKW_ACCOUNT_URL: String(process.env['NEXT_PUBLIC_FULLKEKW_ACCOUNT_URL']),
-}
+};
 
 const DOMAIN = {
   proxy: env.PROXY_DOMAIN,
@@ -60,7 +60,7 @@ const URL = {
   discord: 'https://discord.gg/UmDfKTpsh5',
   discordCreateTicket: 'https://discord.gg/ZXEHQjevEw',
   tiktok: 'https://tiktok.com/@nekomiclub'
-}
+};
 
 /** Site config */
 export const config = {
@@ -79,7 +79,7 @@ export const config = {
   },
 
   env,
-}
+};
 
 /** Site metadata @deprecated use siteMetadata instead */
-export { default as metaObject } from '~/utils/site-metadata'
+export { default as metaObject } from '~/utils/site-metadata';

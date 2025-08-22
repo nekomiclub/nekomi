@@ -1,5 +1,5 @@
 import clsx from 'clsx';
 
-export const cn = clsx
+export const cn = clsx;
 
-export default cn
+export default cn;

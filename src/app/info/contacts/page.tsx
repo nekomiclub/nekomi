@@ -3,14 +3,14 @@ import Link from 'next/link';
 
 import { IcoSocialGithub, IcoSocialTelegram } from '~/assets/Social';
 import StyledImage from '~/components/Styled/StyledImage';
-import { metaObject } from '../../../config';
+import { metaObject } from '~/config';
 
 
 
 
 export const metadata = metaObject({
   title: `Devs`
-})
+});
 
 
 
@@ -54,5 +54,5 @@ export default async function RSC() {
         <p className="text-grey-new text-[8px] font-space-grotesk select-none">Will I be known and loved? Little closer, close enough I`m a loser, loosen up Setting free, must be tough — Borderline, Tame Impala</p>
       </div>
     </div>
-  </main>
+  </main>;
 }

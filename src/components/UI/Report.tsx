@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import { NextPage } from 'next';
+import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
@@ -44,8 +44,8 @@ export const UIReportModal: NextPage = ({ }) => {
         <p className="text-grey-new text-center font-manrope">Support {'>'} #тікети</p>
       </Link>
     </div>
-  </PopupWindow>
-}
+  </PopupWindow>;
+};
 
 export const UIReportButton: NextPage<IReportButtonProps> = ({ type, text, className }) => {
   text = text ?? `Створити тікет`;
@@ -68,5 +68,5 @@ export const UIReportButton: NextPage<IReportButtonProps> = ({ type, text, class
 
       <p className="text-white font-manrope">{text}</p>
     </PopupButton>}
-  </>
-}
+  </>;
+};

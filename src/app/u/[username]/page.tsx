@@ -1,6 +1,6 @@
 
-import { cache } from 'react';
 import { Metadata } from 'next';
+import { cache } from 'react';
 
 import { HandleServerError } from '~/components/Errors';
 import { config, DevelopmentMode, metaObject } from '~/config';
@@ -15,7 +15,7 @@ import { UserHeader, UserSectionLibs, UserStatItem } from './UserPage';
 
 const getUser = cache(async (query: string) => {
   return await API.getUser({ query, detailed: true });
-})
+});
 
 
 
@@ -26,9 +26,9 @@ export async function generateMetadata(
   const { username } = params;
 
   try {
-    const { user } = await getUser(username)
-    const title = `@${user.username}`
-    const description = `Профіль користувача`
+    const { user } = await getUser(username);
+    const title = `@${user.username}`;
+    const description = `Профіль користувача`;
 
     return metaObject({
       title,
@@ -43,11 +43,11 @@ export async function generateMetadata(
         locale: 'uk_UA',
         siteName: config.DOMAIN.nekomi.split('.')[0],
       }
-    })
+    });
   } catch (e) {
     if (DevelopmentMode) console.error(`User page generateMetadata error`, e);
 
-    return metaObject({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] })
+    return metaObject({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] });
   }
 }
 
@@ -58,7 +58,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
   const { username } = params;
 
   try {
-    const { user } = await getUser(username)
+    const { user } = await getUser(username);
 
     return <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
       <UserHeader user={user} primaryPage />
@@ -74,8 +74,8 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
         <UserSectionLibs user={user} />
         {/* <UserSectionWTRooms user={user} /> */}
       </div>
-    </div>
+    </div>;
   } catch (e) {
-    return HandleServerError(e)
+    return HandleServerError(e);
   }
 }

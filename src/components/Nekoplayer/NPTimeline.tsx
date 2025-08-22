@@ -84,9 +84,9 @@ const NPTimeline: FC<NPTimelineProps> = ({ loadedRef, previewRef, progressRef, h
 
       <p className="text-white font-space-grotesk">{prettySeconds(hoveredMoment).pretty}</p>
     </div>
-  </div>
-}
+  </div>;
+};
 
 
 
-export default NPTimeline
+export default NPTimeline;

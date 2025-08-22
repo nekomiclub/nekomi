@@ -30,21 +30,21 @@ const Text: FC<TextProps> = ({ tag, size, text, className, bold, italic, center,
   return <Tag className={cn(`ui-typo ui-typo--${size}`, bold && 'ui-typo--bold', italic && 'ui-typo--italic', center && 'ui-typo--center', className)}>
     {text}
     {children}
-  </Tag>
-}
+  </Tag>;
+};
 
 export const H1: FC<FontProps> = ({ ...props }) => {
-  return <Text tag="h1" {...props} />
-}
+  return <Text tag="h1" {...props} />;
+};
 
 export const H2: FC<FontProps> = ({ ...props }) => {
-  return <Text tag="h2" {...props} />
-}
+  return <Text tag="h2" {...props} />;
+};
 
 export const H3: FC<FontProps> = ({ ...props }) => {
-  return <Text tag="h3" {...props} />
-}
+  return <Text tag="h3" {...props} />;
+};
 
 export const P: FC<FontProps> = ({ ...props }) => {
-  return <Text tag="p" {...props} />
-}
+  return <Text tag="p" {...props} />;
+};

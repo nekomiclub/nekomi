@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
+import { NextPage } from 'next';
 import { useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { AxiosError } from 'axios';
-import { NextPage } from 'next';
 import Link from 'next/link';
 
 import { HandleClientError } from '~/components/Errors';
@@ -49,25 +49,25 @@ const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
 }, {
   code: 'video/srt-temp',
   label: 'Тимчасові субтитри для відео'
-}]
+}];
 
 
 
 export const MediaClient: NextPage = () => {
-  const user = useAppSelector(state => state.user)
+  const user = useAppSelector(state => state.user);
 
-  const [file, setFile] = useState<File | undefined>(undefined)
-  const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false)
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false);
   const [uploadLink, setUploadLink] = useState('');
-  const [uploadType, setUploadType] = useState<TUploadType>('photo/user/avatar')
-  const [uploadStatus, setUploadStatus] = useState<TActionButtonStatus>('default')
+  const [uploadType, setUploadType] = useState<TUploadType>('photo/user/avatar');
+  const [uploadStatus, setUploadStatus] = useState<TActionButtonStatus>('default');
 
-  const [deleteUploadValue, setDeleteUploadValue] = useState('')
-  const [deleteUploadErrors, setDeleteUploadErrors] = useState<string[]>([])
+  const [deleteUploadValue, setDeleteUploadValue] = useState('');
+  const [deleteUploadErrors, setDeleteUploadErrors] = useState<string[]>([]);
   const [deleteStatus, setDeleteStatus] = useState<TActionButtonStatus>('default');
 
 
-  const fileRef = useRef<HTMLInputElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null);
 
 
 
@@ -85,7 +85,7 @@ export const MediaClient: NextPage = () => {
     if (!input) return;
 
     if (!input.files?.length) {
-      setFile(undefined)
+      setFile(undefined);
     } else {
       const file = input.files[0];
 
@@ -97,30 +97,30 @@ export const MediaClient: NextPage = () => {
     try {
       if (!file) return console.warn(`Prevented submitting due to no file selected`);
 
-      setUploadLink('')
-      setUploadStatus('pending')
+      setUploadLink('');
+      setUploadStatus('pending');
 
-      console.log('ffsdsfddf')
+      console.log('ffsdsfddf');
 
       const formData = new FormData();
 
       formData.append('file', file);
       formData.append('type', uploadType);
 
-      const { data } = await $upload.post<{ url: string, srt_id?: string }>(`${config.URL.nekomi_api}/upload`, formData)
+      const { data } = await $upload.post<{ url: string, srt_id?: string }>(`${config.URL.nekomi_api}/upload`, formData);
 
       if (uploadType !== 'video/srt-temp') {
-        setUploadLink(data.url)
+        setUploadLink(data.url);
       } else {
         setUploadLink(`${config.URL.nekomi_media}/${data.srt_id}`);
       }
-      setUploadStatus('success')
+      setUploadStatus('success');
     } catch (e) {
       HandleClientError(e);
-      setUploadStatus('error')
+      setUploadStatus('error');
     } finally {
       setTimeout(() => {
-        setUploadStatus('default')
+        setUploadStatus('default');
       }, 2000);
     }
   }
@@ -130,25 +130,25 @@ export const MediaClient: NextPage = () => {
   async function deleteUploadHandler(e: React.FormEvent) {
     e.preventDefault();
 
-    setDeleteUploadErrors([])
-    setDeleteStatus('pending')
+    setDeleteUploadErrors([]);
+    setDeleteStatus('pending');
 
     try {
       await $api.delete(`${config.URL.nekomi_api}/upload/${deleteUploadValue}`);
 
-      setDeleteStatus('success')
+      setDeleteStatus('success');
     } catch (e) {
       HandleClientError(e);
-      setDeleteStatus('error')
+      setDeleteStatus('error');
 
       if (e instanceof AxiosError) {
-        setDeleteUploadErrors([`Сталась HTTP помилка ${e.status} - ${e.response?.data.message || e.response?.data.msg || e.response?.data}`])
+        setDeleteUploadErrors([`Сталась HTTP помилка ${e.status} - ${e.response?.data.message || e.response?.data.msg || e.response?.data}`]);
       } else {
-        setDeleteUploadErrors([`Щось пішло не так... Відправ лог консолі в тікети діскорд сервера (детальніше про тікети можна прочитати на сторінці FAQ)`])
+        setDeleteUploadErrors([`Щось пішло не так... Відправ лог консолі в тікети діскорд сервера (детальніше про тікети можна прочитати на сторінці FAQ)`]);
       }
     } finally {
       setTimeout(() => {
-        setDeleteStatus('default')
+        setDeleteStatus('default');
       }, 2000);
     }
   }
@@ -186,7 +186,7 @@ export const MediaClient: NextPage = () => {
                 {uploadTypesOptions.map(el => {
                   return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, uploadType === el.code && 'bg-purple')} key={`select-option--${el.code}`} onClick={() => setUploadType(el.code)}>
                     <p className="text-white">{el.label}</p>
-                  </button>
+                  </button>;
                 })}
               </MenuWrapper>
             </Menu>
@@ -248,7 +248,7 @@ export const MediaClient: NextPage = () => {
       </div>
     </div>
   );
-}
+};
 
 interface IGroupLabel extends React.HTMLAttributes<HTMLDivElement> {
   label: string
@@ -268,4 +268,4 @@ const GroupLabel: NextPage<IGroupLabel> = ({ label, className, headingClassName,
       <span className={cn('w-full h-[1px]', dividerColor ? `bg-[#${dividerColor}]` : `bg-grey`)}></span>
     </div>
   );
-}
+};

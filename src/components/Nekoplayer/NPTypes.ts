@@ -1,7 +1,7 @@
-import { createContext, RefObject } from 'react'
+import { createContext, RefObject } from 'react';
 
-import Anime, { AnimeEpisode } from '~/interfaces/AnimeIntf'
-import { DubberCompact } from '~/interfaces/DubberIntf'
+import Anime, { AnimeEpisode } from '~/interfaces/AnimeIntf';
+import { DubberCompact } from '~/interfaces/DubberIntf';
 
 
 
@@ -77,7 +77,7 @@ export interface NekoplayerContextProps {
   changeMoment: (val: number, synthetic?: boolean) => void
 }
 
-export const NekoplayerContext = createContext<Partial<NekoplayerContextProps>>({})
+export const NekoplayerContext = createContext<Partial<NekoplayerContextProps>>({});
 
 export enum NekoplayerIDs {
   Timeline = 'nekoplayer-timeline',

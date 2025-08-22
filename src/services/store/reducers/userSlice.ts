@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { RoleCapability } from '~/interfaces/RoleIntf';
 import { UserLib, UserTogetherRoom, UserWatchProgress } from '~/interfaces/UserIntf';
-import { IReduxAction } from '../store'
+import { IReduxAction } from '~/store/store';
 
 /** User local state */
 export interface IUserState {
@@ -30,7 +30,7 @@ export const userStateDefault: IUserState = {
   isTelegramLinked: false,
   dubberTeamMember: null,
   togetherRooms: []
-}
+};
 
 const userSlice = createSlice({
   name: 'user',
@@ -42,6 +42,6 @@ const userSlice = createSlice({
       }
     }
   }
-})
+});
 
 export default userSlice;

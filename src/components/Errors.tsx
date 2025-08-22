@@ -1,8 +1,8 @@
-import '~/styles/components/Errors.scss'
+import '~/styles/components/Errors.scss';
 
+import { NextPage } from 'next';
 import { ReactElement } from 'react';
 import { AxiosError } from 'axios';
-import { NextPage } from 'next';
 import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
@@ -20,30 +20,30 @@ export function HandleClientError(e: unknown) {
   if (e instanceof AxiosError) {
     if (DevelopmentMode) console.error(e);
 
-    NotifyError({ message: e.response?.data?.message ?? e.message, title: `HTTP - ${e.status ?? e.code}` })
+    NotifyError({ message: e.response?.data?.message ?? e.message, title: `HTTP - ${e.status ?? e.code}` });
   } else {
-    console.error(e)
-    NotifyError({ message: `При обробці запиту виникла невідома помилка. Створіть тікет з логом консолі (F12)`, title: 'Щось пішло не так...' })
+    console.error(e);
+    NotifyError({ message: `При обробці запиту виникла невідома помилка. Створіть тікет з логом консолі (F12)`, title: 'Щось пішло не так...' });
   }
 }
 
 export async function HandleServerError(e: unknown): Promise<ReactElement> {
-  const date = `${getUTC().fulldate} ${getUTC().timeAccurate}`
+  const date = `${getUTC().fulldate} ${getUTC().timeAccurate}`;
 
   if (e instanceof AxiosError) {
     const status = e.response?.status ?? 500;
 
     if (status === 404) {
-      DevelopmentMode && console.error(e.response?.data)
+      DevelopmentMode && console.error(e.response?.data);
       return <ErrorNotFound />;
     } else {
-      console.error(`[${date}]: HTTP error occured - ${JSON.stringify(e.response?.data ?? e, null, 2)}`)
-      return <ErrorNotRendered />
+      console.error(`[${date}]: HTTP error occured - ${JSON.stringify(e.response?.data ?? e, null, 2)}`);
+      return <ErrorNotRendered />;
     }
   } else {
     console.error(`[${date}]: Server error occured - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
 
-    return <ErrorNotRendered />
+    return <ErrorNotRendered />;
   }
 }
 
@@ -57,8 +57,8 @@ export const ErrorNoConnection: NextPage = () => {
       <UIText text="Відсутнє з’єднання з сервером" type="h1" className="text-center" />
       <UIText text="Якщо у вас є інтернет, то ми вже працюємо над його відновленням. Це не повинно тривати довго" type="standart" className="text-grey-new text-center" />
     </div>
-  </div>
-}
+  </div>;
+};
 
 export const ErrorNotFound: NextPage = () => {
   return <div className="wrapper error-wrapper">
@@ -72,8 +72,8 @@ export const ErrorNotFound: NextPage = () => {
     <Link href={Routes.home.path()} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
       <MaterialSymbol icon="home" size={24} className="text-white" />
     </Link>
-  </div>
-}
+  </div>;
+};
 
 export const ErrorNotRendered: NextPage = () => {
   return <div className="wrapper error-wrapper">
@@ -85,5 +85,5 @@ export const ErrorNotRendered: NextPage = () => {
     </div>
 
     <UIReportButton type="button" />
-  </div>
-}
+  </div>;
+};

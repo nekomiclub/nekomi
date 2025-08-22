@@ -1,12 +1,12 @@
-import '../styles/components/Footer.scss'
+import '~/styles/components/Footer.scss';
 
 import { NextPage } from 'next';
 import Link from 'next/link';
 
+import { IcoNekomiLogo } from '~/assets/Icons';
+import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '~/assets/Social';
+import { config } from '~/config';
 import { Routes } from '~/routes';
-import { IcoNekomiLogo } from '../assets/Icons';
-import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
-import { config } from '../config';
 
 
 
@@ -61,14 +61,14 @@ const Footer: NextPage = () => {
       </div>
     </footer>
   );
-}
+};
 
 function FooterLink({ href, text, disabled }: { href: string, text: string, disabled?: boolean }) {
   return <li>
     <Link href={href} aria-disabled={disabled} className={`outline-none ${disabled ? 'text-lightGrey' : 'text-white duration-100 hover:text-gradientPrimaryFallback focus-visible:text-gradientPrimaryFallback'}`} prefetch={false}>
       {text}
     </Link>
-  </li>
+  </li>;
 }
 
 export default Footer;

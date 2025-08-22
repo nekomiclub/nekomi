@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 
-import * as IcoSocial from '../../../assets/Social'
-import * as IcoSupport from '../../../assets/Support'
+import * as IcoSocial from '~/assets/Social';
+import * as IcoSupport from '~/assets/Support';
 
 const page: NextPage = (props) => {
   return (
@@ -25,8 +25,8 @@ const page: NextPage = (props) => {
           })}
         </div>
       </div>
-    )
+    );
   }
-}
+};
 
 export default page;

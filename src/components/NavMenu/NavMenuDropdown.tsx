@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { MenuWrapper } from '@fullkekw/fkw-menu';
 import { NextPage } from 'next';
+import { MenuWrapper } from '@fullkekw/fkw-menu';
 import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import StyledImage from '~/components/Styled/StyledImage';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
-import StyledImage from '../Styled/StyledImage';
 
 
 
@@ -45,7 +45,7 @@ const NavMenuDropdown: NextPage<NavMenuDropdownProps> = ({ user, logout, classNa
       <MaterialSymbol icon="logout" size={24} className="text-primary" />
       <p className="text-white text-center w-full font-bold font-manrope">Вийти</p>
     </button>
-  </MenuWrapper>
-}
+  </MenuWrapper>;
+};
 
-export default NavMenuDropdown
+export default NavMenuDropdown;

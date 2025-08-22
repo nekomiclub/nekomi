@@ -13,7 +13,7 @@ import { DubberSettingsBanner, DubberSettingsContent, DubberSettingsHeader } fro
 
 
 
-export const metadata = metaObject({ title: 'Налаштування команди озвучення', robots: ['nofollow', 'noindex'] })
+export const metadata = metaObject({ title: 'Налаштування команди озвучення', robots: ['nofollow', 'noindex'] });
 
 
 
@@ -24,7 +24,7 @@ export default async function RSC({ params }: RSCProps) {
   if (!user) return redirect(config.URL.nekomi_site);
 
   let dubber: Dubber | undefined = undefined;
-  let members: User[] | undefined = undefined
+  let members: User[] | undefined = undefined;
 
 
 
@@ -34,19 +34,19 @@ export default async function RSC({ params }: RSCProps) {
       detailed: true,
       parseMembers: true,
       useCache: false
-    })
+    });
 
     dubber = data.dubber!;
     members = data.parsedMembers!;
   } catch (e) {
-    return HandleServerError(e)
+    return HandleServerError(e);
   }
 
   // Skip checks if user is root or admin
   if (!capabilities?.includes('root') && !capabilities?.includes('admin')) {
     const member = dubber.members.find(el => el.id === user.id);
     // Redir if user is not a member or not a team leader
-    if (!member || member.role !== 'leader') return redirect(config.URL.nekomi_site)
+    if (!member || member.role !== 'leader') return redirect(config.URL.nekomi_site);
   }
 
 
@@ -59,5 +59,5 @@ export default async function RSC({ params }: RSCProps) {
       <DubberSettingsHeader dubber={dubber} />
       <DubberSettingsContent dubber={dubber} members={members} />
     </div>
-  </section>
+  </section>;
 }

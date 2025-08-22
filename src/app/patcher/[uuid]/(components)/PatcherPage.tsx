@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
+import { NextPage } from 'next';
 import { createContext, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
-import * as Loader from '@uiball/loaders'
-import { NextPage } from 'next';
+import * as Loader from '@uiball/loaders';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
@@ -124,46 +124,46 @@ type SaveMetaStatusType = 'default' | 'error' | 'saving' | 'saved' | 'noChanges'
 
 
 // @ts-ignore
-const PatcherEpisodesContext = createContext<PatcherEpisodesContextProps>({})
+const PatcherEpisodesContext = createContext<PatcherEpisodesContextProps>({});
 
 
 
 export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities }) => {
   const router = useRouter();
-  const [saveStatus, setSaveStatus] = useState<SaveMetaStatusType>('default')
+  const [saveStatus, setSaveStatus] = useState<SaveMetaStatusType>('default');
 
   // Fields
-  const [nameUkr, setNameUkr] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.ukr })
-  const [nameEng, setNameEng] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.eng })
-  const [nameAlt, setNameAlt] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.alt.join(', ') })
-  const [malId, setMalId] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.malId) })
-  const [imdbId, setImdbId] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.imdbId) })
-  const [scoreIMDB, setScoreIMDB] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.imdb) })
-  const [scoreMAL, setScoreMAL] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.mal) })
-  const [malScoredBy, setMalScoredBy] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.malScoredBy) })
-  const [episodesCount, setEpisodesCount] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.episodesCount) })
-  const [year, setYear] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.year) })
-  const [studios, setStudios] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.studios.map(el => el.name).join(', ') })
-  const [genres, setGenres] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.genres.join(', ') })
-  const [description, setDescription] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.description) })
-  const [details, setDetails] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.details) })
+  const [nameUkr, setNameUkr] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.ukr });
+  const [nameEng, setNameEng] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.eng });
+  const [nameAlt, setNameAlt] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.names.alt.join(', ') });
+  const [malId, setMalId] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.malId) });
+  const [imdbId, setImdbId] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.imdbId) });
+  const [scoreIMDB, setScoreIMDB] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.imdb) });
+  const [scoreMAL, setScoreMAL] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.mal) });
+  const [malScoredBy, setMalScoredBy] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.score.malScoredBy) });
+  const [episodesCount, setEpisodesCount] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.episodesCount) });
+  const [year, setYear] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.year) });
+  const [studios, setStudios] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.studios.map(el => el.name).join(', ') });
+  const [genres, setGenres] = useState<UIFieldState>({ initialValue: hydratedAnime.anime.genres.join(', ') });
+  const [description, setDescription] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.description) });
+  const [details, setDetails] = useState<UIFieldState>({ initialValue: x(hydratedAnime.anime.details) });
 
-  const fieldsData = [nameUkr, nameEng, nameAlt, malId, scoreIMDB, scoreMAL, malScoredBy, episodesCount, year, studios, genres, description, details]
-  const fieldsSetters = [setNameUkr, setNameEng, setNameAlt, setMalId, setScoreIMDB, setScoreMAL, setMalScoredBy, setEpisodesCount, setYear, setStudios, setGenres, setDescription, setDetails]
+  const fieldsData = [nameUkr, nameEng, nameAlt, malId, scoreIMDB, scoreMAL, malScoredBy, episodesCount, year, studios, genres, description, details];
+  const fieldsSetters = [setNameUkr, setNameEng, setNameAlt, setMalId, setScoreIMDB, setScoreMAL, setMalScoredBy, setEpisodesCount, setYear, setStudios, setGenres, setDescription, setDetails];
 
   // Selects
-  const [status, setStatus] = useState<AnimeStatusType>(hydratedAnime.anime.status)
-  const [season, setSeason] = useState<AnimeSeasonType>(hydratedAnime.anime.season)
-  const [mediaType, setMediaType] = useState<AnimeMediaType>(hydratedAnime.anime.media)
-  const [rate, setRate] = useState<AnimeRateType>(hydratedAnime.anime.rate)
-  const [posterAdaptedId, setPosterAdaptedId] = useState<string>(hydratedAnime.anime.posterAdapt ?? '')
+  const [status, setStatus] = useState<AnimeStatusType>(hydratedAnime.anime.status);
+  const [season, setSeason] = useState<AnimeSeasonType>(hydratedAnime.anime.season);
+  const [mediaType, setMediaType] = useState<AnimeMediaType>(hydratedAnime.anime.media);
+  const [rate, setRate] = useState<AnimeRateType>(hydratedAnime.anime.rate);
+  const [posterAdaptedId, setPosterAdaptedId] = useState<string>(hydratedAnime.anime.posterAdapt ?? '');
 
   // Checkboxes
-  const [malSync, setMalSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.mal : false)
-  const [isDMCARestricted, setIsDMCARestricted] = useState<boolean>(hydratedAnime.anime.isDMCARestricted)
-  const [shikimoriSync, setShikimoriSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.shikimori : false)
+  const [malSync, setMalSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.mal : false);
+  const [isDMCARestricted, setIsDMCARestricted] = useState<boolean>(hydratedAnime.anime.isDMCARestricted);
+  const [shikimoriSync, setShikimoriSync] = useState<boolean>(hydratedAnime.anime.malId ? !hydratedAnime.anime.stopSync.shikimori : false);
 
-  const [posterAdaptDubbers, setPosterAdaptDubbers] = useState<DubberCompact[]>([])
+  const [posterAdaptDubbers, setPosterAdaptDubbers] = useState<DubberCompact[]>([]);
 
 
 
@@ -173,7 +173,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
 
 
-      setSaveStatus('saving')
+      setSaveStatus('saving');
 
       await API.patchAnime({
         uuid: hydratedAnime.anime.uuid,
@@ -201,7 +201,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         rate: ms(rate, hydratedAnime.anime.rate),
 
         posterAdapt: ms(posterAdaptedId, hydratedAnime.anime.posterAdapt ?? ''),
-      })
+      });
 
       fieldsData.forEach((field, i) => {
         if (field.status !== 'changes_pending') return;
@@ -209,43 +209,43 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
         fieldsSetters[i]({
           ...field,
           status: 'success'
-        })
-      })
+        });
+      });
 
-      setSaveStatus('saved')
-      NotifySuccess({ title: 'Збережено!', message: 'Контент оновлено' })
+      setSaveStatus('saved');
+      NotifySuccess({ title: 'Збережено!', message: 'Контент оновлено' });
     } catch (e) {
-      HandleClientError(e)
-      setSaveStatus('error')
+      HandleClientError(e);
+      setSaveStatus('error');
     } finally {
       setTimeout(() => {
-        setSaveStatus('default')
+        setSaveStatus('default');
 
         fieldsData.forEach((field, i) => {
           fieldsSetters[i]({
             ...field,
             status: 'waiting'
-          })
-        })
+          });
+        });
       }, 3000);
     }
   }
 
   async function remove() {
     try {
-      const token = prompt(`Enter token:`) ?? ''
+      const token = prompt(`Enter token:`) ?? '';
 
       await API.deleteAnime({ token, uuid: hydratedAnime.anime.uuid });
 
       router.replace(`${config.URL.nekomi_site}`);
     } catch (e) {
-      HandleClientError(e)
+      HandleClientError(e);
     }
   }
 
   async function copyText(text: string) {
-    copyToClipboard(text)
-    NotifySuccess({ title: 'Скопійовано!', message: `Текст скопійовано в буфер обміну - ${text}` })
+    copyToClipboard(text);
+    NotifySuccess({ title: 'Скопійовано!', message: `Текст скопійовано в буфер обміну - ${text}` });
   }
 
 
@@ -320,21 +320,21 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
       {hydratedAnime.anime.malSyncedAt && <p className="text-grey-new font-space-grotesk">MAL Synced At: {new Date(hydratedAnime.anime.malSyncedAt ?? 0).toUTCString()}</p>}
       {/* <p className="text-grey-new font-space-grotesk">Shikimori Synced At: null</p> */}
     </section>
-  </>
-}
+  </>;
+};
 
 export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, hydratedAnime, dubbers: parsedDubbers, session }) => {
   const canSeriesUpload = capabilities.canSeriesUpload;
 
-  const [order, setOrder] = useState<UIFieldState>({ initialValue: '' })
-  const [selectedDubberId, setSelectedDubberId] = useState(parsedDubbers[0]?.id ?? '')
-  const [dubbers, setDubbers] = useState<DubberCompact[]>(parsedDubbers)
-  const [episodesDubbing, setEpisodesDubbing] = useState<EpisodesDubbing[]>([])
-  const [episodes, setEpisodes] = useState<PatcherEpisode[]>(hydratedAnime.anime.episodes.map(ep => AnimeEpisodeToPatcherEpisode(ep)))
+  const [order, setOrder] = useState<UIFieldState>({ initialValue: '' });
+  const [selectedDubberId, setSelectedDubberId] = useState(parsedDubbers[0]?.id ?? '');
+  const [dubbers, setDubbers] = useState<DubberCompact[]>(parsedDubbers);
+  const [episodesDubbing, setEpisodesDubbing] = useState<EpisodesDubbing[]>([]);
+  const [episodes, setEpisodes] = useState<PatcherEpisode[]>(hydratedAnime.anime.episodes.map(ep => AnimeEpisodeToPatcherEpisode(ep)));
 
-  const [processQ2160, setProcessQ2160] = useState<boolean>(false)
-  const [filename, setFilename] = useState('')
-  const [canUpload, setCanUpload] = useState(false)
+  const [processQ2160, setProcessQ2160] = useState<boolean>(false);
+  const [filename, setFilename] = useState('');
+  const [canUpload, setCanUpload] = useState(false);
 
   const [Stack] = useState(new PatcherStack({
     anime: hydratedAnime.anime,
@@ -342,9 +342,9 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
     session,
     patchEpisode: patchEpisodeState,
     throwError: throwStackError
-  }))
+  }));
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
 
@@ -356,57 +356,57 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
     if (Boolean(order.value && filename && selectedDubberId)) canUpload = true;
 
     // Check if episode is not exist
-    if (episodes.some(el => el.episode.dubberID === selectedDubberId && el.episode.order === Number(order.value))) canUpload = false
+    if (episodes.some(el => el.episode.dubberID === selectedDubberId && el.episode.order === Number(order.value))) canUpload = false;
 
-    setCanUpload(canUpload)
-  }, [order, filename, selectedDubberId, episodes])
+    setCanUpload(canUpload);
+  }, [order, filename, selectedDubberId, episodes]);
 
   // Handle episodes dubbing
   useMemo(() => {
-    const episodesDubbing: EpisodesDubbing[] = []
+    const episodesDubbing: EpisodesDubbing[] = [];
 
     episodes.forEach(ep => {
-      const exist = episodesDubbing.find(el => el.dubber.id === ep.episode.dubberID)
+      const exist = episodesDubbing.find(el => el.dubber.id === ep.episode.dubberID);
 
       if (exist) {
         // append
 
-        exist.episodes.push(ep)
+        exist.episodes.push(ep);
       } else {
         // create
 
         episodesDubbing.push({
           dubber: dubbers.find(el => el.id === ep.episode.dubberID)!,
           episodes: [ep]
-        })
+        });
       }
-    })
+    });
 
     setEpisodesDubbing(episodesDubbing);
-  }, [episodes, dubbers])
+  }, [episodes, dubbers]);
 
 
 
   function handleFilename() {
-    const fileInput = fileInputRef.current
-    if (!fileInput || !fileInput.files?.length) return
+    const fileInput = fileInputRef.current;
+    if (!fileInput || !fileInput.files?.length) return;
 
     const file = fileInput.files[0];
 
-    setFilename(file.name)
+    setFilename(file.name);
   }
 
   function selectFile() {
-    const fileInput = fileInputRef.current
-    if (!fileInput) return
+    const fileInput = fileInputRef.current;
+    if (!fileInput) return;
 
     fileInput.value = '';
     fileInput.click();
   }
 
   function upload() {
-    const fileInput = fileInputRef.current
-    if (!fileInput || !fileInput.files) return
+    const fileInput = fileInputRef.current;
+    if (!fileInput || !fileInput.files) return;
 
     const file = fileInput.files[0];
 
@@ -430,35 +430,35 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
           q240: null,
         }
       }
-    }
+    };
 
-    setProcessQ2160(false)
-    setEpisodes([...episodes, episode])
+    setProcessQ2160(false);
+    setEpisodes([...episodes, episode]);
 
-    Stack.append(episode)
+    Stack.append(episode);
   }
 
   function throwStackError(e: any, id?: string) {
-    HandleClientError(e)
-    setEpisodes(prev => prev.filter(el => el.id !== id))
+    HandleClientError(e);
+    setEpisodes(prev => prev.filter(el => el.id !== id));
   }
 
   function patchEpisodeState(episode: PatcherEpisode) {
-    setEpisodes(prev => [...prev.filter(el => el.id !== episode.id), episode])
+    setEpisodes(prev => [...prev.filter(el => el.id !== episode.id), episode]);
   }
 
   async function deleteEpisode(id: string) {
     const episode = episodes.find(el => el.id === id);
-    if (!episode) return NotifyError({ title: 'Не знайдено', message: 'Ми не знайшли епізод який ти хочеш видалити' })
+    if (!episode) return NotifyError({ title: 'Не знайдено', message: 'Ми не знайшли епізод який ти хочеш видалити' });
 
     try {
-      await API.deleteAnimeEpisode({ dubberId: episode.episode.dubberID, order: episode.episode.order, uuid: hydratedAnime.anime.uuid })
+      await API.deleteAnimeEpisode({ dubberId: episode.episode.dubberID, order: episode.episode.order, uuid: hydratedAnime.anime.uuid });
 
       Stack.remove(id);
       setEpisodes(prev => prev.filter(el => el.id !== id));
-      NotifySuccess({ title: 'Видалено!', message: 'Ми видалили цей епізод' })
+      NotifySuccess({ title: 'Видалено!', message: 'Ми видалили цей епізод' });
     } catch (e) {
-      HandleClientError(e)
+      HandleClientError(e);
     }
   }
 
@@ -503,39 +503,39 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
       <section className="flex flex-col gap-[32px]">
         {/* Render selected dub */}
         {[episodesDubbing.find(el => el.dubber.id === selectedDubberId)].map((dub) => {
-          return dub && <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
+          return dub && <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />;
         })}
 
         {/* Render other dubs */}
         {episodesDubbing.filter(el => el.dubber.id !== selectedDubberId).toSorted((a, b) => alphabeticSort(a.dubber.nameUkr, b.dubber.nameUkr)).map((dub) => {
-          return <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />
+          return <PatcherEpisodesDubbing dubber={dub.dubber} episodes={dub.episodes} capabilities={capabilities} hydratedAnime={hydratedAnime} selectedDubberId={selectedDubberId} key={`patcherepisodes-${dub.dubber.id}`} />;
         })}
       </section>
     </PatcherEpisodesContext.Provider>
-  </section>
-}
+  </section>;
+};
 
 
 
 export const PatcherCreateNewAnime: NextPage = () => {
   const router = useRouter();
 
-  const [isCreating, setIsCreating] = useState(false)
+  const [isCreating, setIsCreating] = useState(false);
 
 
 
   async function createNew() {
     try {
-      setIsCreating(true)
+      setIsCreating(true);
 
-      const { anime } = await API.postAnime()
+      const { anime } = await API.postAnime();
 
-      NotifySuccess({ title: 'Створено!', message: 'Нове аніме створено, заміняємо сторінку...' })
+      NotifySuccess({ title: 'Створено!', message: 'Нове аніме створено, заміняємо сторінку...' });
 
       router.replace(Routes.patcher.path({ uuid: anime.uuid }));
     } catch (e) {
-      HandleClientError(e)
-      setIsCreating(false)
+      HandleClientError(e);
+      setIsCreating(false);
     }
   }
 
@@ -549,27 +549,27 @@ export const PatcherCreateNewAnime: NextPage = () => {
       {!isCreating && 'СТВОРИТИ НОВЕ'}
       {isCreating && 'СТВОРЮЄМО...'}
     </p>
-  </button>
-}
+  </button>;
+};
 
 export const PatcherWithoutMalId: NextPage = () => {
   const router = useRouter();
 
-  const [isFetching, setIsFetching] = useState(false)
+  const [isFetching, setIsFetching] = useState(false);
 
 
 
   async function getRandAnime() {
     try {
-      setIsFetching(true)
+      setIsFetching(true);
 
       const { results } = await API.searchAnime({ q: '~all' }, { woMalId: true });
-      router.replace(Routes.patcher.path({ uuid: results[0].anime.uuid }))
+      router.replace(Routes.patcher.path({ uuid: results[0].anime.uuid }));
 
-      NotifySuccess({ title: 'Знайшли!', message: 'Ми знайшли аніме без mal id, удачі!' })
+      NotifySuccess({ title: 'Знайшли!', message: 'Ми знайшли аніме без mal id, удачі!' });
     } catch (e) {
-      HandleClientError(e)
-      setIsFetching(false)
+      HandleClientError(e);
+      setIsFetching(false);
     }
   }
 
@@ -583,44 +583,44 @@ export const PatcherWithoutMalId: NextPage = () => {
       {!isFetching && 'БЕЗ MAL ID'}
       {isFetching && 'ШУКАЄМО...'}
     </p>
-  </button>
-}
+  </button>;
+};
 
 const MetaSaveButton: NextPage<MetaSaveButtonProps> = ({ save, saveStatus }) => {
-  const [icon, setIcon] = useState<SymbolCodepoints>('cloud_done')
-  const [label, setLabel] = useState('ЗБЕРЕГТИ')
+  const [icon, setIcon] = useState<SymbolCodepoints>('cloud_done');
+  const [label, setLabel] = useState('ЗБЕРЕГТИ');
   const [isSaving, setIsSaving] = useState(false);
 
 
 
   useEffect(() => {
-    setIsSaving(saveStatus === 'saving')
+    setIsSaving(saveStatus === 'saving');
 
     if (saveStatus === 'default') {
-      setIcon('cloud_done')
-      setLabel('ЗБЕРЕГТИ')
+      setIcon('cloud_done');
+      setLabel('ЗБЕРЕГТИ');
     }
 
     if (saveStatus === 'saved') {
-      setIcon('cloud_done')
-      setLabel('ЗБЕРЕЖЕНО!')
+      setIcon('cloud_done');
+      setLabel('ЗБЕРЕЖЕНО!');
     }
 
     if (saveStatus === 'saving') {
-      setIcon('cloud_done')
-      setLabel('ЗБЕРЕЖЕННЯ...')
+      setIcon('cloud_done');
+      setLabel('ЗБЕРЕЖЕННЯ...');
     }
 
     if (saveStatus === 'error') {
-      setIcon('emergency_home')
-      setLabel('ПОМИЛКА')
+      setIcon('emergency_home');
+      setLabel('ПОМИЛКА');
     }
 
     if (saveStatus === 'noChanges') {
-      setIcon('question_exchange')
-      setLabel('відсутні зміни')
+      setIcon('question_exchange');
+      setLabel('відсутні зміни');
     }
-  }, [saveStatus])
+  }, [saveStatus]);
 
 
 
@@ -629,47 +629,47 @@ const MetaSaveButton: NextPage<MetaSaveButtonProps> = ({ save, saveStatus }) => 
     {!isSaving && <MaterialSymbol className="text-white" icon={icon} size={20} />}
 
     <p className={cn(`patcher-button-saveMeta_text text-white font-manrope uppercase duration-200`)}>{label}</p>
-  </button>
-}
+  </button>;
+};
 
 const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities }) => {
   const [posterURL, setPosterURL] = useState(hydratedAnime.anime.poster);
-  const [isUploading, setIsUploading] = useState(false)
-  const [isNekomiPoster, setIsNekomiPoster] = useState(true)
+  const [isUploading, setIsUploading] = useState(false);
+  const [isNekomiPoster, setIsNekomiPoster] = useState(true);
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
 
   useMemo(() => {
-    setIsNekomiPoster(posterURL.includes(config.URL.nekomi_media))
-  }, [posterURL])
+    setIsNekomiPoster(posterURL.includes(config.URL.nekomi_media));
+  }, [posterURL]);
 
 
 
   async function uploadPoster() {
-    const fileInput = fileInputRef.current
-    if (!fileInput || !fileInput.files) return
+    const fileInput = fileInputRef.current;
+    if (!fileInput || !fileInput.files) return;
 
     const file = fileInput.files[0];
 
     try {
-      setIsUploading(true)
+      setIsUploading(true);
 
       const { url } = await API.putAnimePoster({ file, uuid: hydratedAnime.anime.uuid });
 
-      setPosterURL(url)
-      NotifySuccess({ title: 'Завантажено!', message: 'Новий постер завантажено' })
+      setPosterURL(url);
+      NotifySuccess({ title: 'Завантажено!', message: 'Новий постер завантажено' });
       setIsUploading(false);
     } catch (e) {
-      HandleClientError(e)
+      HandleClientError(e);
       setIsUploading(false);
     }
   }
 
   function selectFile() {
-    const fileInput = fileInputRef.current
-    if (!fileInput) return
+    const fileInput = fileInputRef.current;
+    if (!fileInput) return;
 
     fileInput.value = '';
     fileInput.click();
@@ -696,8 +696,8 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
     </button>
 
     {!isNekomiPoster && <p className="text-orange text-[14px] font-manrope">* Постер не на сервері nekomi</p>}
-  </div>
-}
+  </div>;
+};
 
 const PatcherLabel: NextPage<PatcherLabelProps> = ({ autosync, disabled, note, title }) => {
   return <div className="flex items-center gap-[8px]">
@@ -706,27 +706,27 @@ const PatcherLabel: NextPage<PatcherLabelProps> = ({ autosync, disabled, note, t
 
     <p className={cn(`text-white font-manrope whitespace-nowrap`, disabled && '!text-grey-new')}>{title}</p>
     {note && <p className="text-grey-new text-[14px] font-manrope">{note}</p>}
-  </div>
-}
+  </div>;
+};
 
 const PatcherField: NextPage<PatcherFieldProps> = ({ title, autosync, disabled, note, ...props }) => {
   return <div className="flex flex-col gap-[8px] basis-[500px] grow max-[1615px]:basis-[400px]">
     <PatcherLabel title={title} autosync={autosync} disabled={disabled} note={note} />
 
     <UIField disabled={disabled} {...props} />
-  </div>
-}
+  </div>;
+};
 
 const PatcherSelect: NextPage<PatcherSelectProps> = ({ options, title, autosync, note, disabled, setSlug, slug }) => {
   const id = useId().replaceAll(':', '');
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
 
 
   useEffect(() => {
-    setIsOpen(false)
-  }, [slug])
+    setIsOpen(false);
+  }, [slug]);
 
 
 
@@ -744,12 +744,12 @@ const PatcherSelect: NextPage<PatcherSelectProps> = ({ options, title, autosync,
         {Object.keys(options).map((optionSlug) => {
           return <button className={cn(`px-[16px] py-[8px] duration-100 flex items-start hover:bg-dark-light focus-visible:bg-dark-light w-full border-b border-b-dark-light last:border-none`, slug === optionSlug && 'bg-primary')} onClick={() => setSlug(optionSlug)} key={`patcher-select-${id}--${optionSlug}`}>
             <p className="text-white font-manrope">{options[optionSlug].name}</p>
-          </button>
+          </button>;
         })}
       </MenuWrapper>
     </Menu>
-  </div>
-}
+  </div>;
+};
 
 const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabled, dubbers, selectedId, setDubbers, setSelectedId, capabilities, initialDubberFetch }) => {
   const id = useId().replaceAll(':', '');
@@ -758,12 +758,12 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
   const canSeriesUpload = currentUser.dubberTeamMember ? capabilities.admin : capabilities.canSeriesUpload;
   disabled = !canSeriesUpload;
 
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectedDubber, setSelectedDubber] = useState<DubberCompact | null>(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedDubber, setSelectedDubber] = useState<DubberCompact | null>(null);
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState<DubberCompact[]>(dubbers);
 
-  const [searchTextDebounce] = useDebounce(searchText, 700)
+  const [searchTextDebounce] = useDebounce(searchText, 700);
 
 
 
@@ -777,33 +777,33 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
       try {
         if (!dubberFetch) return;
 
-        const { dubber } = await API.getDubberByQuery({ query: dubberFetch })
+        const { dubber } = await API.getDubberByQuery({ query: dubberFetch });
         const dubberCompact = DubberCompactMapper(dubber);
 
         setDubbers([...dubbers, dubberCompact]);
         setSelectedId(dubberCompact.id);
-        setSearchResults([...dubbers, dubberCompact])
+        setSearchResults([...dubbers, dubberCompact]);
       } catch (e) {
-        HandleClientError(e)
+        HandleClientError(e);
       }
     })();
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setIsOpen(false)
-  }, [selectedId])
+    setIsOpen(false);
+  }, [selectedId]);
 
   useEffect(() => {
     focusSearch();
-  }, [isOpen])
+  }, [isOpen]);
 
   useEffect(() => {
     setSelectedDubber(dubbers.find(el => el.id === selectedId) ?? null);
-  }, [dubbers, selectedId])
+  }, [dubbers, selectedId]);
 
   useEffect(() => {
-    search(searchTextDebounce)
-  }, [searchTextDebounce])
+    search(searchTextDebounce);
+  }, [searchTextDebounce]);
 
 
 
@@ -811,16 +811,16 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
     try {
       if (query.length === 0) return;
 
-      const { results } = await API.searchDubber({ q: query })
+      const { results } = await API.searchDubber({ q: query });
 
-      const dubberResults = results.map(dubber => DubberCompactMapper(dubber))
-      const uniqueResults = dubberResults.filter(dubber => !dubbers.some(el => el.id === dubber.id))
+      const dubberResults = results.map(dubber => DubberCompactMapper(dubber));
+      const uniqueResults = dubberResults.filter(dubber => !dubbers.some(el => el.id === dubber.id));
 
       // Push total dubbers fetched
-      setDubbers([...dubbers, ...uniqueResults])
+      setDubbers([...dubbers, ...uniqueResults]);
       setSearchResults(dubberResults);
     } catch (e) {
-      HandleClientError(e)
+      HandleClientError(e);
     }
   }
 
@@ -870,16 +870,16 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
             <StyledImage width="32px" height="32px" src={result.avatarURL} rounded={2} />
 
             <p className="text-white font-manrope">{result.nameUkr}</p>
-          </button>
+          </button>;
         })}
       </MenuWrapper>
     </Menu>
-  </div>
-}
+  </div>;
+};
 
 const PatcherCheckbox: NextPage<PatcherCheckboxProps> = ({ checked, label, setChecked, disabled }) => {
   function toggle() {
-    setChecked(!checked)
+    setChecked(!checked);
   }
 
   return <button className={cn(`flex items-center gap-[8px]`, disabled && 'cursor-not-allowed')} onClick={toggle} disabled={disabled}>
@@ -888,8 +888,8 @@ const PatcherCheckbox: NextPage<PatcherCheckboxProps> = ({ checked, label, setCh
     {disabled && <MaterialSymbol className="text-grey-new" icon="lock" size={20} />}
 
     <p className={cn(`text-white font-manrope`, disabled && '!text-grey-new')}>{label}</p>
-  </button>
-}
+  </button>;
+};
 
 const PatcherEpisodesUploadButton: NextPage<PatcherEpisodesUploadButtonProps> = ({ processQ2160, setProcessQ2160, className, canUpload, upload, capabilities }) => {
   const { canSeriesUpload, canUploadQ2160 } = capabilities;
@@ -901,8 +901,8 @@ const PatcherEpisodesUploadButton: NextPage<PatcherEpisodesUploadButtonProps> = 
     </button>
 
     {/* {canUploadQ2160 && <PatcherCheckbox checked={processQ2160} setChecked={setProcessQ2160} label="4K" disabled={!canSeriesUpload} />} */}
-  </div>
-}
+  </div>;
+};
 
 const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber, episodes, hydratedAnime, selectedDubberId }) => {
   const [maximumEpisode, setMaximumEpisode] = useState(0);
@@ -916,12 +916,12 @@ const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber,
     episodes.filter(el => el.episode.dubberID === dubber.id).forEach(ep => ep.episode.order > maximumEpisode ? maximumEpisode = ep.episode.order : undefined);
 
     setMaximumEpisode(maximumEpisode);
-  }, [episodes])
+  }, [episodes]);
 
   // Handle collapse
   useEffect(() => {
-    setCollapsed(dubber.id !== selectedDubberId)
-  }, [selectedDubberId])
+    setCollapsed(dubber.id !== selectedDubberId);
+  }, [selectedDubberId]);
 
 
 
@@ -940,11 +940,11 @@ const PatcherEpisodesDubbing: NextPage<PatcherEpisodesDubbingProps> = ({ dubber,
 
     <div className={cn(`flex flex-col gap-[4px] overflow-y-auto duration-200`, collapsed ? 'max-h-0' : 'max-h-[600px]')}>
       {episodes.toSorted((a, b) => b.episode.order - a.episode.order).map(ep => {
-        return <PatcherDubbedEpisode {...ep} key={`patcherepisode-${ep.id}`} />
+        return <PatcherDubbedEpisode {...ep} key={`patcherepisode-${ep.id}`} />;
       })}
     </div>
-  </div>
-}
+  </div>;
+};
 
 const PatcherDubbedEpisode: NextPage<PatcherEpisode> = ({ File, episode, id, newUpload, stackOrder, progress, status }) => {
   const { capabilities, deleteEpisode } = useContext(PatcherEpisodesContext) as PatcherEpisodesContextProps;
@@ -987,8 +987,8 @@ const PatcherDubbedEpisode: NextPage<PatcherEpisode> = ({ File, episode, id, new
     {status !== 'uploading' && canSeriesDelete && <button className="w-[28px] h-[28px] flex justify-center items-center" onClick={() => deleteEpisode(id)}>
       <MaterialSymbol icon="delete" size={20} className="text-grey-new" />
     </button>}
-  </div>
-}
+  </div>;
+};
 
 
 
@@ -1003,22 +1003,22 @@ function x(value: string | number | null | undefined): string {
 
 /** Check if state has been mutated. Return string or undefined */
 function m(state: UIFieldState): string | undefined {
-  return state.mutated ? state.value : undefined
+  return state.mutated ? state.value : undefined;
 }
 
 /** Check if state has been mutated. Return number or undefined */
 function mn(state: UIFieldState): number | undefined {
-  return state.mutated ? Number(state.value) : undefined
+  return state.mutated ? Number(state.value) : undefined;
 }
 
 /** Check if state has been mutated. Split value by commas or undefined */
 function ma(state: UIFieldState): string[] | undefined {
-  return state.mutated ? state.value?.split(',') : undefined
+  return state.mutated ? state.value?.split(',') : undefined;
 }
 
 /** Check if value has been mutated. Return new value or undefined */
 function ms(curr: string, prev: string): string | undefined {
-  return curr !== prev ? curr : undefined
+  return curr !== prev ? curr : undefined;
 }
 
 function AnimeEpisodeToPatcherEpisode(episode: AnimeEpisode): PatcherEpisode {
@@ -1030,5 +1030,5 @@ function AnimeEpisodeToPatcherEpisode(episode: AnimeEpisode): PatcherEpisode {
     stackOrder: 0,
     progress: 0,
     status: 'uploaded'
-  }
+  };
 }

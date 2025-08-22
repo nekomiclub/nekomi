@@ -22,7 +22,7 @@ export const setupStore = (props?: {
   return configureStore({
     reducer: rootReducer,
     preloadedState
-  })
+  });
 };
 
 export type RootState = ReturnType<typeof rootReducer>;

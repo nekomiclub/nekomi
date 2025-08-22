@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { FC, useContext, useEffect, useRef } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
@@ -14,9 +14,9 @@ const NPVolume: FC = () => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { videoRef, volume, isMuted } = ctx;
 
-  const volumeWrapperRef = useRef<HTMLDivElement>(null)
-  const volumeRangeRef = useRef<HTMLDivElement>(null)
-  const volumeRef = useRef<HTMLDivElement>(null)
+  const volumeWrapperRef = useRef<HTMLDivElement>(null);
+  const volumeRangeRef = useRef<HTMLDivElement>(null);
+  const volumeRef = useRef<HTMLDivElement>(null);
 
 
 
@@ -34,21 +34,21 @@ const NPVolume: FC = () => {
     volumeWrapper.addEventListener('pointerenter', () => {
       volumeRange.style.opacity = '1';
       volumeRange.style.maxWidth = `${volumeWidth}px`;
-    })
+    });
 
     volumeWrapper.addEventListener('pointerleave', () => {
       volumeRange.style.maxWidth = '0';
       volumeRange.style.opacity = '0';
-    })
-  }, [])
+    });
+  }, []);
 
   //* Handle volume progress
   useEffect(() => {
     const ref = volumeRef.current;
     if (!ref) return;
 
-    ref.style.width = `${volume}px`
-  }, [volume])
+    ref.style.width = `${volume}px`;
+  }, [volume]);
 
 
 
@@ -61,13 +61,13 @@ const NPVolume: FC = () => {
 
   function setVolume(to: number) {
     const video = videoRef?.current;
-    if (!video) return
+    if (!video) return;
 
     video.volume = to / 100;
   }
 
   function getLabel() {
-    return isMuted ? 'Увімкнути звук (m)' : 'Вимкнути звук (m)'
+    return isMuted ? 'Увімкнути звук (m)' : 'Вимкнути звук (m)';
   }
 
 
@@ -122,8 +122,8 @@ const NPVolume: FC = () => {
 
       <p className="text-white font-space-grotesk w-[40px]">{volume}%</p>
     </div>
-  </div>
-}
+  </div>;
+};
 
 
-export default NPVolume
+export default NPVolume;

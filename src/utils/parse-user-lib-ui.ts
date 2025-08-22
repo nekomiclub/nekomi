@@ -12,13 +12,13 @@ interface ParseUserLibUIProps {
 
 
 function parseUserLibUI({ type, setIcon, setTitle }: ParseUserLibUIProps) {
-  if (type === 'favorite') { setTitle('Улюблені'); setIcon('favorite') }
-  if (type === 'watching') { setTitle('Переглядаю'); setIcon('visibility') }
-  if (type === 'watched') { setTitle('Переглянуті'); setIcon('bookmark_added') }
-  if (type === 'plans') { setTitle('Заплановані'); setIcon('stack') }
-  if (type === 'delayed') { setTitle('Відкладені'); setIcon('auto_delete') }
+  if (type === 'favorite') { setTitle('Улюблені'); setIcon('favorite'); }
+  if (type === 'watching') { setTitle('Переглядаю'); setIcon('visibility'); }
+  if (type === 'watched') { setTitle('Переглянуті'); setIcon('bookmark_added'); }
+  if (type === 'plans') { setTitle('Заплановані'); setIcon('stack'); }
+  if (type === 'delayed') { setTitle('Відкладені'); setIcon('auto_delete'); }
 }
 
 
 
-export default parseUserLibUI
+export default parseUserLibUI;

@@ -4,7 +4,7 @@ import { ErrorNotFound } from '~/components/Errors';
 
 
 const RSC: NextPage = (props) => {
-  return <ErrorNotFound />
-}
+  return <ErrorNotFound />;
+};
 
 export default RSC;

@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
 import { NextPage } from 'next';
-import { useParams, usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react';
+import { useParams, usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import { UserDivider, UserLibItem } from '~/app/u/[username]/UserPage';
 import AnimeItem from '~/components/AnimeItem';
 import LoadingContent from '~/components/LoadingContent';
+import Tooltip from '~/components/UI/Tooltip';
+import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { UserPageProps } from '~/interfaces/PagesParams';
+import { User, UserLib } from '~/interfaces/UserIntf';
 import { cn } from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
-import Tooltip from '../../../../../components/UI/Tooltip';
-import { config } from '../../../../../config';
-import { User, UserLib } from '../../../../../interfaces/UserIntf';
-import { UserDivider, UserLibItem } from '../../UserPage';
 
 
 
@@ -35,8 +35,8 @@ export const UserLibSection: NextPage<UserLibProps> = ({ lib, user, hydratedAnim
   const currentUser = useAppSelector(state => state.user);
 
   const [isOwner] = useState(user.id === currentUser.id);
-  const [isLibVisible] = useState(isOwner || !lib?.settings.hidden)
-  const [urlCopied, setUrlCopied] = useState(false)
+  const [isLibVisible] = useState(isOwner || !lib?.settings.hidden);
+  const [urlCopied, setUrlCopied] = useState(false);
 
 
 
@@ -48,9 +48,9 @@ export const UserLibSection: NextPage<UserLibProps> = ({ lib, user, hydratedAnim
     }
 
     if (!isLibVisible) {
-      window.document.title = `Приватна тека ― @${user.username}`
+      window.document.title = `Приватна тека ― @${user.username}`;
     }
-  }, [])
+  }, []);
 
 
 
@@ -82,17 +82,17 @@ export const UserLibSection: NextPage<UserLibProps> = ({ lib, user, hydratedAnim
 
     <div className="grid gap-[16px] grid-cols-6 max-[1470px]:grid-cols-5 max-[1250px]:grid-cols-4 max-[940px]:grid-cols-3 max-[720px]:grid-cols-2">
       {hydratedAnimes.length ? hydratedAnimes.toReversed().map((hydrated, i) => {
-        return <AnimeItem className="max-[720px]:!min-w-[160px]" hydrated={hydrated} key={`userlib-${lib.id}--${i}`} libControls />
+        return <AnimeItem className="max-[720px]:!min-w-[160px]" hydrated={hydrated} key={`userlib-${lib.id}--${i}`} libControls />;
       }) : <LoadingContent />}
     </div>
   </div> : <div className="w-full flex justify-center items-center gap-[16px]">
     <MaterialSymbol icon="lock" size={20} className="text-grey-new" />
     <p className="text-grey-new">Ви не можете переглядати цю теку, або її просто не існує</p>
-  </div>
-}
+  </div>;
+};
 
 export const UserLibOthers: NextPage<UserSectionProps> = ({ user }) => {
-  const { libID: currentLibId } = useParams<UserPageProps>()
+  const { libID: currentLibId } = useParams<UserPageProps>();
 
 
 
@@ -102,12 +102,12 @@ export const UserLibOthers: NextPage<UserSectionProps> = ({ user }) => {
     <div className="flex flex-wrap gap-[16px]">
       {user.libs.some(el => !el.settings.hidden) ? <>
         {user.libs.filter(el => el.id !== currentLibId).map(lib => {
-          return <UserLibItem lib={lib} user={user} key={`userlib-${user.id}--${lib.id}`} />
+          return <UserLibItem lib={lib} user={user} key={`userlib-${user.id}--${lib.id}`} />;
         })}
       </> : <div className="w-full flex justify-center items-center gap-[16px]">
         <MaterialSymbol icon="lock" size={20} className="text-grey-new" />
         <p className="text-grey-new">Здається, ви не можете переглядати жодну з його тек...</p>
       </div>}
     </div>
-  </div>
-}
+  </div>;
+};

@@ -1,18 +1,18 @@
-'use client'
+'use client';
 
+import { NextPage } from 'next';
 import { useId } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import { PopupButton } from '@fullkekw/popup';
-import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import { UIText } from '~/components/UI/Text.ui';
 import { config } from '~/config';
 import { Routes } from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
-import { UIText } from '../UI/Text.ui';
 
 import NavMenuDropdown from './NavMenuDropdown';
 
@@ -33,7 +33,7 @@ interface Props {
 
 const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMenuOpen, forceFocus, setIsDropdownMenuOpen }) => {
   const pathname = usePathname();
-  const dropdownMenuId = useId().replaceAll(':', '')
+  const dropdownMenuId = useId().replaceAll(':', '');
 
 
 
@@ -76,7 +76,7 @@ const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMen
         <UIText text="Увійти" className="font-bold" type="mini" />
       </Link>
     </>}
-  </nav>
-}
+  </nav>;
+};
 
 export default MobileNav;

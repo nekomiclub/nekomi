@@ -46,4 +46,4 @@ module.exports = {
       'space-grotesk': 'var(--font-space-grotesk)',
     }
   }
-}
+};

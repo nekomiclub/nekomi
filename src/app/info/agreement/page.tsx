@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { config } from '../../../config';
-import { InfoHeader } from '../InfoComponents';
+import { InfoHeader } from '~/app/info/InfoComponents';
+import { config } from '~/config';
 
 
 
@@ -14,11 +14,11 @@ const Agreement: NextPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [lang, setLang] = useState<'eng' | 'ukr'>(searchParams.get('lang') === 'ukr' ? 'ukr' : 'eng')
+  const [lang, setLang] = useState<'eng' | 'ukr'>(searchParams.get('lang') === 'ukr' ? 'ukr' : 'eng');
 
   useEffect(() => {
-    router.replace(`${pathname}?lang=${lang}`)
-  }, [lang])
+    router.replace(`${pathname}?lang=${lang}`);
+  }, [lang]);
 
   return (
     <div className="w-full min-h-screen items-center" style={{ paddingTop: `132px` }}>
@@ -367,6 +367,6 @@ const Agreement: NextPage = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Agreement;

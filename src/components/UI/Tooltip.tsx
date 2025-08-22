@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { useId } from 'react';
 import { NextPage } from 'next';
-import { Tooltip as RT } from 'react-tooltip'
+import { useId } from 'react';
+import { Tooltip as RT } from 'react-tooltip';
 
 import { cn } from '~/utils/classnames';
 
@@ -28,6 +28,6 @@ const Tooltip: NextPage<Props> = ({ content, children, fitWrapper, className }) 
       {children}
     </div>
   );
-}
+};
 
 export default Tooltip;

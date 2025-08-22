@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react';
 import { NextPage } from 'next';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import { InfoArticle, InfoHeader, InfoLangType, InfoList, InfoWrapper } from '~/app/info/InfoComponents';
 import { H2, P } from '~/components/UI/Typography';
-import { InfoArticle, InfoHeader, InfoLangType, InfoList, InfoWrapper } from '../InfoComponents';
 
 
 
@@ -14,13 +14,13 @@ const Agreement: NextPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [lang, setLang] = useState<InfoLangType>(searchParams.get('lang') === 'ukr' ? 'ukr' : 'eng')
+  const [lang, setLang] = useState<InfoLangType>(searchParams.get('lang') === 'ukr' ? 'ukr' : 'eng');
 
 
 
   useEffect(() => {
-    router.replace(`${pathname}?lang=${lang}`)
-  }, [lang])
+    router.replace(`${pathname}?lang=${lang}`);
+  }, [lang]);
 
 
 
@@ -76,7 +76,7 @@ const Agreement: NextPage = () => {
         <P text="TOS available only in Ukranian language" center />
       </InfoArticle>
     </>}
-  </InfoWrapper>
-}
+  </InfoWrapper>;
+};
 
 export default Agreement;

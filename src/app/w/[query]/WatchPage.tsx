@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
+import { NextPage } from 'next';
 import { useEffect, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
-import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
@@ -75,71 +75,71 @@ export const WatchCheckMobile: NextPage = () => {
     if (typeof window === 'undefined') return;
 
     if (window.innerWidth >= 640) {
-      router.replace(pathname)
+      router.replace(pathname);
     } else {
-      router.replace(`${pathname}?mobile=1`)
+      router.replace(`${pathname}?mobile=1`);
     }
-  }, [])
+  }, []);
 
 
 
-  return <></>
-}
+  return <></>;
+};
 
 export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   const currentUser = useAppSelector(state => state.user);
-  const id = useId().replaceAll(':', '')
+  const id = useId().replaceAll(':', '');
 
-  const [icon, setIcon] = useState<SymbolCodepoints>('create_new_folder')
-  const [title, setTitle] = useState('В ТЕКИ')
-  const [isFavorite, setIsFavorite] = useState(false)
-  const [isChanged, setIsChanged] = useState(false)
+  const [icon, setIcon] = useState<SymbolCodepoints>('create_new_folder');
+  const [title, setTitle] = useState('В ТЕКИ');
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
 
 
 
   useMemo(() => {
-    if (!currentUser.id) return
+    if (!currentUser.id) return;
     let isChanged = false;
 
-    setTitle('В ТЕКИ')
-    setIcon('create_new_folder')
+    setTitle('В ТЕКИ');
+    setIcon('create_new_folder');
     setIsChanged(false);
     setIsFavorite(false);
 
     currentUser.libs.filter(el => el.titles.includes(hydratedAnime.anime.uuid)).forEach(lib => {
       if (lib.type === 'favorite') {
-        setIsFavorite(true)
-        setTitle('УЛЮБЛЕНІ')
-        setIcon('favorite')
+        setIsFavorite(true);
+        setTitle('УЛЮБЛЕНІ');
+        setIcon('favorite');
       }
 
       if (isChanged) return;
 
       if (lib.type === 'delayed') {
-        setTitle('ВІДКЛАДЕНІ')
-        setIcon('auto_delete')
+        setTitle('ВІДКЛАДЕНІ');
+        setIcon('auto_delete');
       }
 
       if (lib.type === 'plans') {
-        setTitle('ЗАПЛАНОВАНІ')
-        setIcon('stack')
+        setTitle('ЗАПЛАНОВАНІ');
+        setIcon('stack');
       }
 
       if (lib.type === 'watched') {
-        setTitle('ПЕРЕГЛЯНУТІ')
-        setIcon('bookmark_added')
+        setTitle('ПЕРЕГЛЯНУТІ');
+        setIcon('bookmark_added');
       }
 
       if (lib.type === 'watching') {
-        setTitle('ПЕРЕГЛЯДАЮ')
-        setIcon('visibility')
+        setTitle('ПЕРЕГЛЯДАЮ');
+        setIcon('visibility');
       }
 
       isChanged = true;
-    })
+    });
 
     setIsChanged(isChanged);
-  }, [currentUser])
+  }, [currentUser]);
 
 
 
@@ -151,14 +151,14 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) =>
     </MenuTrigger>
 
     <AnimeItemEditMenu hydratedAnime={hydratedAnime} />
-  </Menu>
-}
+  </Menu>;
+};
 
 export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   const currentUser = useAppSelector(state => state.user);
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
-  const [isTogetherRoomCreating, setIsTogetherRoomCreating] = useState(false)
+  const [isTogetherRoomCreating, setIsTogetherRoomCreating] = useState(false);
 
   const [canEditAnime] = useState(
     currentUser.capabilities.includes('root')
@@ -166,10 +166,10 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
     || currentUser.capabilities.includes('editor')
     || currentUser.capabilities.includes('titleEdit')
     || currentUser.capabilities.includes('seriesAdd')
-  )
+  );
 
   const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
-  const isDMCARestricted = hydratedAnime.anime.isDMCARestricted && !currentUser.id
+  const isDMCARestricted = hydratedAnime.anime.isDMCARestricted && !currentUser.id;
 
 
 
@@ -177,18 +177,18 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
     let timeout: NodeJS.Timeout;
 
     try {
-      if (!isUserAuth) return NotifyWarn({ title: 'Потрібна авторизація!', message: 'Нажаль, ти не можеш дивитися аніме з кимось, не маючи акаунту :(' })
-      if (isTogetherRoomCreating) return NotifyWarn({ title: `Ми пам'ятаємо!`, message: 'Ми вже створюємо кімнату, вона буде з секунди на секунду!' })
+      if (!isUserAuth) return NotifyWarn({ title: 'Потрібна авторизація!', message: 'Нажаль, ти не можеш дивитися аніме з кимось, не маючи акаунту :(' });
+      if (isTogetherRoomCreating) return NotifyWarn({ title: `Ми пам'ятаємо!`, message: 'Ми вже створюємо кімнату, вона буде з секунди на секунду!' });
 
       setIsTogetherRoomCreating(true);
 
       timeout = setTimeout(() => {
-        NotifyError({ title: 'Ой!', message: 'Ми не змогли створити кімнату впродовж 6 секунд, спробуй ще раз!' })
+        NotifyError({ title: 'Ой!', message: 'Ми не змогли створити кімнату впродовж 6 секунд, спробуй ще раз!' });
         setIsTogetherRoomCreating(false);
       }, 6000);
 
       // TODO: create together room
-      console.log(`create together room for ${hydratedAnime.anime.uuid}`)
+      console.log(`create together room for ${hydratedAnime.anime.uuid}`);
 
       //* async shit...
       setTimeout(() => {
@@ -230,13 +230,13 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
       <MaterialSymbol icon="edit" size={24} className="text-grey-new max-sm:text-[20px]" />
       <p className="text-grey-new font-manrope uppercase max-sm:text-[14px]">РЕДАГУВАТИ</p>
     </Link>}
-  </div>
-}
+  </div>;
+};
 
 export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, rate, season, status, studios, value, year, className }) => {
   if (season && year) value = `${season.name} ${year}`;
-  if (media) value = media.slug === ANIME_MEDIA_TYPE.UNKNOWN ? null : media.name
-  if (status) value = status.name
+  if (media) value = media.slug === ANIME_MEDIA_TYPE.UNKNOWN ? null : media.name;
+  if (status) value = status.name;
 
   return <div className={cn(`watch-meta-detail`, className)}>
     {value && <p className="watch-meta-detail_value font-manrope">{value}</p>}
@@ -254,7 +254,7 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
               {genre.name}
               {++immutableI < genres.length ? ',' : ''}
             </span>
-          </Tooltip>
+          </Tooltip>;
         })}
       </div> : <p className="text-grey-new text-center font-manrope max-sm:text-start">—</p>}
     </>}
@@ -267,14 +267,14 @@ export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, r
           return <span className="text-white max-sm:text-[14px]" key={`animemeta-studio--${i}`}>
             {studio.name}
             {++immutableI < studios.length ? ',' : ''}
-          </span>
+          </span>;
         })}
       </div> : <p className="text-grey-new text-center font-manrope max-sm:text-start">—</p>}
     </>}
 
     <p className="watch-meta-detail_label font-manrope">{name}</p>
-  </div>
-}
+  </div>;
+};
 
 export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp }) => {
   return <Tooltip className="w-full" content="Вказано час та дату виходу епізоду в Японії. Переклад та озвучення вийдуть пізніше.">
@@ -291,16 +291,16 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
         </p>
       </div>
     </div>
-  </Tooltip>
-}
+  </Tooltip>;
+};
 
 export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, icon }) => {
   return <div className="flex items-center gap-[16px]">
     <MaterialSymbol icon={icon} size={24} className="text-white max-sm:text-[20px]" />
 
     <h3 className="text-white text-[24px] font-manrope font-bold max-sm:text-[20px]">{label}</h3>
-  </div>
-}
+  </div>;
+};
 
 export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt }) => {
   return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow items-center gap-[16px] max-sm:min-w-0 max-sm:p-[4px] max-sm:pr-[8px] max-sm:basis-[160px]" href={Routes.dubber.path({ slug: dubber.slug })} prefetch={false}>
@@ -311,8 +311,8 @@ export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt })
 
       {posterAdapt && <p className="text-grey-new font-manrope max-sm:text-[12px] whitespace-nowrap">Адаптація постеру</p>}
     </div>
-  </Link>
-}
+  </Link>;
+};
 
 export const WatchRating: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   const scoredByFormatter = Intl.NumberFormat('en', { notation: 'compact' });
@@ -325,21 +325,21 @@ export const WatchRating: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
     </div>
 
     <p className="text-grey-new font-manrope whitespace-nowrap">{hydratedAnime.anime.score.malScoredBy ? scoredByFormatter.format(hydratedAnime.anime.score.malScoredBy) : 'Немає'} оцінок</p>
-  </>
-}
+  </>;
+};
 
 export const WatchDetails: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
   return <div className="watch-meta-detail_outlined">
     <MaterialSymbol icon="info" size={24} className="text-grey-new max-sm:text-[20px]" />
 
     <p className="text-grey-new font-manrope max-sm:text-[14px]">{hydratedAnime.anime.details}</p>
-  </div>
-}
+  </div>;
+};
 
 export const WatchPlayer: NextPage<WatchPlayerProps> = ({ hydratedAnime, dubbers }) => {
   const user = useAppSelector(state => state.user);
 
-  const isDMCARestricted = hydratedAnime.anime.isDMCARestricted && !user.id
+  const isDMCARestricted = hydratedAnime.anime.isDMCARestricted && !user.id;
   const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
 
   return <div className="flex flex-col gap-[16px]">
@@ -369,5 +369,5 @@ export const WatchPlayer: NextPage<WatchPlayerProps> = ({ hydratedAnime, dubbers
     {haveEpisodes && !isDMCARestricted && <div className="wrapper items-start">
       <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
     </div>}
-  </div>
-}
+  </div>;
+};

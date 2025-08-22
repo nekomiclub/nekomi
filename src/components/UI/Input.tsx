@@ -1,9 +1,9 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { NextPage } from 'next'
+import { NextPage } from 'next';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
-import { cn } from '~/utils/classnames'
+import { cn } from '~/utils/classnames';
 
-import Tooltip from './Tooltip'
+import Tooltip from './Tooltip';
 
 
 
@@ -43,19 +43,19 @@ export interface UIFieldProps extends React.InputHTMLAttributes<HTMLElement> {
 
 /** @deprecated use UIField instead */
 const Input: NextPage<IInputProps> = ({ state, stateSetter, className, placeholder, ...props }) => {
-  return <input {...props} className={cn('px-[12px] py-[8px] bg-grey text-white text-[16px] placeholder:text-lightGrey placeholder:text-[16px]', className)} value={state} onChange={e => stateSetter(e.target.value)} placeholder={placeholder ?? '...'} />
-}
+  return <input {...props} className={cn('px-[12px] py-[8px] bg-grey text-white text-[16px] placeholder:text-lightGrey placeholder:text-[16px]', className)} value={state} onChange={e => stateSetter(e.target.value)} placeholder={placeholder ?? '...'} />;
+};
 
 export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className, placeholder, disablePending, symbolsLimited, fieldType, parentClassName, disabled, ...props }) => {
   fieldType = fieldType ?? 'input';
 
   const [initialValue, setInitialValue] = useState<string>(state.value ?? state.initialValue ?? '');
   const [value, setValue] = useState<string>(initialValue);
-  const [status, setStatus] = useState<UIFieldState['status']>(state.status)
+  const [status, setStatus] = useState<UIFieldState['status']>(state.status);
 
-  const inputRef = useRef<HTMLInputElement>(null)
-  const symbolsLimitedRef = useRef<HTMLParagraphElement>(null)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null);
+  const symbolsLimitedRef = useRef<HTMLParagraphElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 
 
@@ -70,7 +70,7 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
     if (symbolsLimited !== undefined) {
       input.style.paddingRight = `${24 + symbolsLimitedParent.offsetWidth}px`;
     }
-  }, [])
+  }, []);
 
   // Field type: textarea
   useEffect(() => {
@@ -81,16 +81,16 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
 
     textarea.style.height = ``;
     textarea.style.height = `${textarea.scrollHeight}px`;
-  }, [value])
+  }, [value]);
 
   useEffect(() => {
-    setValue(state.value ?? state.initialValue ?? '')
-    setStatus(state.status)
+    setValue(state.value ?? state.initialValue ?? '');
+    setStatus(state.status);
 
     if (state.status === 'success') {
-      setInitialValue(state.value ?? '')
+      setInitialValue(state.value ?? '');
     }
-  }, [state])
+  }, [state]);
 
 
 
@@ -100,7 +100,7 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
     const value = (e.target as HTMLInputElement).value;
     const mutated = value !== initialValue;
 
-    setValue(value)
+    setValue(value);
 
     if (value === initialValue) {
       return stateSetter({
@@ -109,7 +109,7 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
         newValue: mutated ? value : undefined,
         initialValue,
         status: 'waiting',
-      })
+      });
     }
 
     if (symbolsLimited && value.length > symbolsLimited) {
@@ -119,7 +119,7 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
         newValue: mutated ? value : undefined,
         initialValue,
         status: 'error',
-      })
+      });
     }
 
     if (!disablePending) {
@@ -129,7 +129,7 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
         newValue: mutated ? value : undefined,
         initialValue,
         status: 'changes_pending',
-      })
+      });
     } else {
       return stateSetter({
         value,
@@ -137,23 +137,23 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
         newValue: mutated ? value : undefined,
         initialValue,
         status: 'waiting',
-      })
+      });
     }
   }
 
   function handleMousewheel(e: React.WheelEvent) {
     // Prevent the input value change
     // @ts-ignore
-    e.target.blur()
+    e.target.blur();
 
     // Prevent the page/container scrolling
-    e.stopPropagation()
+    e.stopPropagation();
 
     // Refocus immediately, on the next tick (after the current function is done)
     setTimeout(() => {
       // @ts-ignore
-      e.target.focus()
-    }, 0)
+      e.target.focus();
+    }, 0);
   }
 
 
@@ -200,8 +200,8 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
       />
       {symbolsLimited !== undefined && <p className={cn('duration-200 font-space-grotesk text-[12px]', value?.length > symbolsLimited ? 'text-info-error' : 'text-grey-new')}>{value?.length} / {symbolsLimited}</p>}
     </Tooltip>}
-  </>
-}
+  </>;
+};
 
 
 

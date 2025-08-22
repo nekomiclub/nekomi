@@ -1,11 +1,11 @@
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react';
 import * as DropMenu from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import StyledImage from '~/components/Styled/StyledImage';
+import Tooltip from '~/components/UI/Tooltip';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { cn } from '~/utils/classnames';
-import StyledImage from '../Styled/StyledImage';
-import Tooltip from '../UI/Tooltip';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
@@ -28,8 +28,8 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { anime, dubbers, episode, changeEpisode, moment } = ctx;
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [selectedDubber, setSelectedDubber] = useState<DubberCompact | null>(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedDubber, setSelectedDubber] = useState<DubberCompact | null>(null);
 
 
 
@@ -38,14 +38,14 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
     if (isIdle) {
       setIsMenuOpen(false);
     }
-  }, [isIdle])
+  }, [isIdle]);
 
   useEffect(() => {
-    const dubber = dubbers.find(el => el.id === episode.dubberID)
-    if (!dubber) return
+    const dubber = dubbers.find(el => el.id === episode.dubberID);
+    if (!dubber) return;
 
     setSelectedDubber(dubber);
-  }, [episode])
+  }, [episode]);
 
 
 
@@ -55,11 +55,11 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
     const nextEpisode = anime.episodes.find(el => el.dubberID === episode.dubberID && el.order === order + 1);
     if (!nextEpisode) return;
 
-    changeEpisode(nextEpisode)
+    changeEpisode(nextEpisode);
   }
 
   function setEpisode(order: number) {
-    changeEpisode(anime.episodes.find(el => el.dubberID === episode.dubberID && el.order === order)!, 0)
+    changeEpisode(anime.episodes.find(el => el.dubberID === episode.dubberID && el.order === order)!, 0);
   }
 
   function setDubber(id: string) {
@@ -68,7 +68,7 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
     // Set same ep or if not found set first in array
     const sameEpisode = dubbedEpisodes.find(el => el.order === episode.order);
 
-    return changeEpisode(sameEpisode || dubbedEpisodes[0], sameEpisode ? moment : 0)
+    return changeEpisode(sameEpisode || dubbedEpisodes[0], sameEpisode ? moment : 0);
   }
 
 
@@ -86,7 +86,7 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
             const hasQ2160Eps = dubbedEpisodes.some(el => el.qualities.q4k !== null);
 
             const isSelected = Boolean(selectedDubber.id === dubber.id);
-            const dubberMaxEp = Math.max(...[0, ...dubbedEpisodes.map(el => el.order)])
+            const dubberMaxEp = Math.max(...[0, ...dubbedEpisodes.map(el => el.order)]);
 
 
 
@@ -108,7 +108,7 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
                   <p className="text-white font-space-grotesk font-bold whitespace-nowrap">4K</p>
                 </div>}
               </div>
-            </button>
+            </button>;
           })}
         </div>
 
@@ -120,7 +120,7 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
           {anime.episodes.filter(el => el.dubberID === selectedDubber.id).map(episode => {
             return <button className={cn(`w-full px-[8px] flex justify-center items-center h-[44px] shrink-0 duration-100 hover:bg-dark-light focus-visible:bg-dark-light`, episode.order === order && 'bg-primary')} onClick={() => setEpisode(episode.order)} tabIndex={0} key={`np-menuepisode-${episode.dubberID}--${episode.order}`}>
               <p className="text-white font-space-grotesk font-bold">{String(episode.order).padStart(2, '0')}</p>
-            </button>
+            </button>;
           })}
         </div>
       </DropMenu.MenuWrapper>
@@ -140,8 +140,8 @@ const NPMenu: FC<MenuProps> = ({ order, isLastEpisode, isIdle, className, totalE
         </button>
       </Tooltip>
     </DropMenu.Menu>
-  </div> : <div></div>
-}
+  </div> : <div></div>;
+};
 
 
-export default NPMenu
+export default NPMenu;

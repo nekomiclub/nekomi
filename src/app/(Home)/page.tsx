@@ -5,9 +5,9 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import { HandleServerError } from '~/components/Errors';
+import { config, metaObject } from '~/config';
 import API from '~/services/ApiService';
 import { randomNumber } from '~/utils/utils';
-import { config, metaObject } from '../../config';
 
 import { HomeCategory, HomeHeadliner } from './HomePage';
 
@@ -17,14 +17,14 @@ import { HomeCategory, HomeHeadliner } from './HomePage';
 export const metadata = metaObject({
   title: 'nekomi',
   description: 'Nekomi - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!'
-})
+});
 
 
 
 export default async function RSC() {
   try {
     const featured = await API.getFeaturedAnime();
-    const headliner = featured.headliners[randomNumber(0, featured.headliners.length - 1)]
+    const headliner = featured.headliners[randomNumber(0, featured.headliners.length - 1)];
 
     return <main className="w-full h-full bg-dark min-h-screen">
       <HomeHeadliner headliner={headliner} />
@@ -57,7 +57,7 @@ export default async function RSC() {
         {featured.updatedRecently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<MaterialSymbol icon="schedule" size={32} className="text-white max-md:!text-[24px]" />} hydratedAnimes={featured.updatedRecently} />}
         {featured.rated.length > 0 && <HomeCategory label="З високою оцінкою" icon={<MaterialSymbol icon="star_half" size={32} className="text-white max-md:!text-[24px]" />} hydratedAnimes={featured.rated} />}
       </div>
-    </main>
+    </main>;
   } catch (e) {
     return HandleServerError(e);
   }

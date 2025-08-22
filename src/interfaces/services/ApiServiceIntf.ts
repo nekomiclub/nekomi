@@ -1,11 +1,11 @@
-import { AxiosProgressEvent } from 'axios'
-import { z } from 'zod'
+import { AxiosProgressEvent } from 'axios';
+import { z } from 'zod';
 
-import Anime, { AnimeEpisode, HydratedAnime } from '../AnimeIntf'
-import { Dubber, DubberCompact, DubberMemberRole } from '../DubberIntf'
-import { RoleCapability } from '../RoleIntf'
-import { NumEpisodeQualityType } from '../types'
-import { User, UserTogetherRoom } from '../UserIntf'
+import Anime, { AnimeEpisode, HydratedAnime } from '~/interfaces/AnimeIntf';
+import { Dubber, DubberCompact, DubberMemberRole } from '~/interfaces/DubberIntf';
+import { RoleCapability } from '~/interfaces/RoleIntf';
+import { NumEpisodeQualityType } from '~/interfaces/types';
+import { User, UserTogetherRoom } from '~/interfaces/UserIntf';
 
 export interface DubberGetOneByQueryProps {
   query: string

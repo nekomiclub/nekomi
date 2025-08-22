@@ -1,7 +1,7 @@
 import './styles.scss';
 
-import { cache } from 'react';
 import { Metadata } from 'next';
+import { cache } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
@@ -16,8 +16,8 @@ import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberBanner, Dubbe
 
 
 const getDubber = cache(async (query: string) => {
-  return await API.getDubberByQuery({ query, detailed: true, fetchDubbedAnime: true, parseMembers: true })
-})
+  return await API.getDubberByQuery({ query, detailed: true, fetchDubbedAnime: true, parseMembers: true });
+});
 
 
 
@@ -27,9 +27,9 @@ export async function generateMetadata(
   const { slug } = await props.params;
 
   try {
-    const { dubber } = await getDubber(slug)
-    const title = dubber.nameUkr
-    const description = dubber.description ?? 'Опис відсутній'
+    const { dubber } = await getDubber(slug);
+    const title = dubber.nameUkr;
+    const description = dubber.description ?? 'Опис відсутній';
 
     return metaObject({
       title,
@@ -41,9 +41,9 @@ export async function generateMetadata(
         images: dubber.avatar,
         type: 'profile'
       }
-    })
+    });
   } catch (e) {
-    return metaObject({ title: 'Команда озвучення не знайдена', robots: ['nofollow', 'noindex'] })
+    return metaObject({ title: 'Команда озвучення не знайдена', robots: ['nofollow', 'noindex'] });
   }
 }
 
@@ -56,7 +56,7 @@ export default async function RSC({ params, searchParams }: RSCProps<DubberPageP
 
 
   try {
-    const { dubber, dubbedHydratedAnimes, parsedMembers } = await getDubber(slug)
+    const { dubber, dubbedHydratedAnimes, parsedMembers } = await getDubber(slug);
 
     return <section className="wrapper gap-[16px] pt-[16px] sm:pt-[var(--header-height)]">
       <DubberBanner dubber={dubber} />
@@ -73,8 +73,8 @@ export default async function RSC({ params, searchParams }: RSCProps<DubberPageP
           <p className="text-grey-new text-[12px] font-manrope">На nekomi з: {timestampToDayMonth(dubber.statistics.createdAt)}</p>
         </div>
       </div>
-    </section>
+    </section>;
   } catch (e) {
-    return HandleServerError(e)
+    return HandleServerError(e);
   }
 }

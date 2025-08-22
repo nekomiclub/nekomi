@@ -1,8 +1,8 @@
 import { FC, useContext } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import { HandleClientError } from '~/components/Errors';
 import { cn } from '~/utils/classnames';
-import { HandleClientError } from '../Errors';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
@@ -15,11 +15,11 @@ const NPFullscreen: FC = () => {
 
 
   function changeFullscreen() {
-    const player = playerRef.current
+    const player = playerRef.current;
 
     if (!player) {
-      console.error('Player is not found')
-      return
+      console.error('Player is not found');
+      return;
     }
 
     if (document.fullscreenElement) {
@@ -38,8 +38,8 @@ const NPFullscreen: FC = () => {
   return <button className="kekwplayer-fullscreen_button relative w-[32px] h-[32px]" onClick={changeFullscreen} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
     <MaterialSymbol className={cn(`kekwplayer-fullscreen text-white`, isFullscreen && 'opacity-0')} icon="fullscreen" size={32} />
     <MaterialSymbol className={cn(`kekwplayer-fullscreen text-white`, !isFullscreen && 'opacity-0')} icon="fullscreen_exit" size={32} />
-  </button>
-}
+  </button>;
+};
 
 
 export default NPFullscreen;

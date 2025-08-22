@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { NextPage } from 'next';
+import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import StyledImage from '~/components/Styled/StyledImage';
 import { AnimeEpisodeMeta } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { cn } from '~/utils/classnames';
 import { prettySeconds, wordDeclination } from '~/utils/utils';
-import StyledImage from '../Styled/StyledImage';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
@@ -19,14 +19,14 @@ import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 const NPScreens: FC = ({ }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
 
-  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
 
 
   // Handle container visibility
   useMemo(() => {
     setIsVisible(ctx.currentScreen !== 'none');
-  }, [ctx])
+  }, [ctx]);
 
 
 
@@ -35,8 +35,8 @@ const NPScreens: FC = ({ }) => {
     <ContinueWatch />
     <LastDubbedEpisode />
     <AnimeEnd />
-  </div>
-}
+  </div>;
+};
 
 
 
@@ -44,16 +44,16 @@ const ProgressContinue: FC = ({ }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
   const { currentScreen, anime, dubbers, watchProgress, passProgress, loadProgress } = ctx;
 
-  const [isVisible, setIsVisible] = useState<boolean>(false)
-  const [progressDubber, setProgressDubber] = useState<DubberCompact | null>(null)
-  const [episodeMeta, setEpisodeMeta] = useState<AnimeEpisodeMeta | null>(null)
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [progressDubber, setProgressDubber] = useState<DubberCompact | null>(null);
+  const [episodeMeta, setEpisodeMeta] = useState<AnimeEpisodeMeta | null>(null);
 
 
 
   //* Sync currentScreen
   useMemo(() => {
-    setIsVisible(ctx.currentScreen === 'progress_continue')
-  }, [currentScreen])
+    setIsVisible(ctx.currentScreen === 'progress_continue');
+  }, [currentScreen]);
 
   //* Sync watch progress
   useMemo(() => {
@@ -67,9 +67,9 @@ const ProgressContinue: FC = ({ }) => {
       // Replace "~~~" name with "—"
       episodeMeta.names.ukr = episodeMeta.names.ukr === '~~~' ? '—' : episodeMeta.names.ukr;
 
-      setEpisodeMeta(episodeMeta)
+      setEpisodeMeta(episodeMeta);
     }
-  }, [watchProgress])
+  }, [watchProgress]);
 
 
 
@@ -101,27 +101,27 @@ const ProgressContinue: FC = ({ }) => {
     </button>
 
     <p className="text-grey-new font-manrope text-center max-sm:text-[16px]">Чи може, <button className="font-bold" onClick={passProgress}>почнемо спочатку</button>?</p>
-  </div>
-}
+  </div>;
+};
 
 const LastDubbedEpisode: FC = ({ }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
 
-  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
 
 
   useMemo(() => {
-    setIsVisible(ctx.currentScreen === 'last_dubbed_episode')
-  }, [ctx])
+    setIsVisible(ctx.currentScreen === 'last_dubbed_episode');
+  }, [ctx]);
 
 
 
   return <div className={cn(`w-full bg-dark-primary p-[32px] flex flex-col items-center gap-[16px] duration-200`, !isVisible && 'opacity-0 invisible absolute touch-none pointer-events-none')}>
     <h4 className="text-white text-[24px] font-manrope font-bold">Епізод завершено</h4>
     <p className="text-grey-new text-[16px] font-manrope">Це останній епізод в цьому озвученні</p>
-  </div>
-}
+  </div>;
+};
 
 const ContinueWatch: FC = ({ }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
@@ -129,18 +129,18 @@ const ContinueWatch: FC = ({ }) => {
 
   const SKIP_WITHIN_DEFAULT = 5;
 
-  const [isVisible, setIsVisible] = useState<boolean>(false)
-  const [skipWithin, setSkipWithin] = useState(SKIP_WITHIN_DEFAULT)
-  const [episodeMeta, setEpisodeMeta] = useState<AnimeEpisodeMeta | undefined>(undefined)
-  const [nextEpisodeOrder, setNextEpisodeOrder] = useState(episode.order)
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [skipWithin, setSkipWithin] = useState(SKIP_WITHIN_DEFAULT);
+  const [episodeMeta, setEpisodeMeta] = useState<AnimeEpisodeMeta | undefined>(undefined);
+  const [nextEpisodeOrder, setNextEpisodeOrder] = useState(episode.order);
 
-  const skipWithinInterval = useRef<NodeJS.Timeout | undefined>(undefined)
+  const skipWithinInterval = useRef<NodeJS.Timeout | undefined>(undefined);
 
 
 
   useEffect(() => {
-    setIsVisible(currentScreen === 'continue_watch')
-  }, [ctx])
+    setIsVisible(currentScreen === 'continue_watch');
+  }, [ctx]);
 
   //* Handle next episode order & meta, auto skip
   useEffect(() => {
@@ -171,7 +171,7 @@ const ContinueWatch: FC = ({ }) => {
         skipEpisode(nextEpisodeOrder);
       }
     }, 1000);
-  }, [currentScreen])
+  }, [currentScreen]);
 
 
 
@@ -179,7 +179,7 @@ const ContinueWatch: FC = ({ }) => {
     const video = videoRef.current;
     if (!video) return;
 
-    const nextEpisode = anime.episodes.find(el => el.dubberID === episode.dubberID && el.order === order)
+    const nextEpisode = anime.episodes.find(el => el.dubberID === episode.dubberID && el.order === order);
     if (!nextEpisode) return console.error(`Next episode is not found in EpisodeEnd screen`);
 
     changeEpisode(nextEpisode);
@@ -204,28 +204,28 @@ const ContinueWatch: FC = ({ }) => {
 
       <p className="text-grey-new font-manrope text-center">Через: {skipWithin} {wordDeclination(skipWithin, ['секунду', 'секунди', 'секунд'])}</p>
     </div>
-  </div>
-}
+  </div>;
+};
 
 const AnimeEnd: NextPage = ({ }) => {
   const ctx = useContext(NekoplayerContext) as NekoplayerContextProps;
 
-  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
 
 
   useMemo(() => {
-    setIsVisible(ctx.currentScreen === 'anime_end')
-  }, [ctx])
+    setIsVisible(ctx.currentScreen === 'anime_end');
+  }, [ctx]);
 
 
 
   return <div className={cn(`w-full bg-dark-primary p-[32px] flex flex-col items-center gap-[16px] duration-200`, !isVisible && 'opacity-0 invisible absolute touch-none pointer-events-none')}>
     <h4 className="text-white text-[24px] font-manrope font-bold">Ти переглянув останній епізод</h4>
     <p className="text-grey-new text-[16px] font-manrope">Дякуємо за вибір nekomi!</p>
-  </div>
-}
+  </div>;
+};
 
 
 
-export default NPScreens
+export default NPScreens;

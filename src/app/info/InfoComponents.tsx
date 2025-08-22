@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { FC } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
@@ -24,24 +24,24 @@ export type InfoLangType = 'eng' | 'ukr'
 export const InfoWrapper: FC<Props> = ({ children }) => {
   return <section className="wrapper min-h-screen gap-[40px] max-w-[1170px] w-full pb-[40px]" style={{ paddingTop: `calc(var(--header-height) + 40px)` }}>
     {children}
-  </section>
-}
+  </section>;
+};
 
 export const InfoArticle: FC<Props> = ({ children }) => {
   return <article className="px-[24px] py-[16px] rounded-[2px] bg-dark-bright border border-dark-light flex flex-col gap-[16px]">
     {children}
-  </article>
-}
+  </article>;
+};
 
 export const InfoList: FC<Props> = ({ children }) => {
   return <ul className="flex flex-col gap-[4px] text-white">
     {React.Children.map(children, el => {
       return <li className="!list-disc relative left-[16px]">
         {el}
-      </li>
+      </li>;
     })}
-  </ul>
-}
+  </ul>;
+};
 
 export const InfoHeader: FC<InfoHeaderProps> = ({ heading, lang, setLang }) => {
   return <div className="flex items-center gap-[32px] justify-center w-full max-[880px]:flex-col">
@@ -54,8 +54,8 @@ export const InfoHeader: FC<InfoHeaderProps> = ({ heading, lang, setLang }) => {
           : 'English'
       } />
     </button>
-  </div>
-}
+  </div>;
+};
 
 // export const InfoComponents: FC<Props> = ({ children }) => {
 //   return <div>

@@ -1,15 +1,15 @@
-'use client'
+'use client';
 
-import { ReactNode, useEffect, useMemo } from 'react'
-import { PopupLayer } from '@fullkekw/popup';
 import { NextPage } from 'next';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { ReactNode, useEffect, useMemo } from 'react';
+import { PopupLayer } from '@fullkekw/popup';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
-import { setupStore } from '~/store/store'
+import { setupStore } from '~/store/store';
 import { randomNumber } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
@@ -34,7 +34,7 @@ const ConsoleMessages = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ⌚`,
   `This site is written on NextJS!`,
   `NPM - Newton's Pickle Machine`
-]
+];
 
 
 
@@ -54,17 +54,17 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
     if (isSessionExpired && !signinToken) {
       (async function () {
         try {
-          NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' })
-          await API.userLogout()
-        } catch (e) { HandleClientError(e) }
-      })()
+          NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' });
+          await API.userLogout();
+        } catch (e) { HandleClientError(e); }
+      })();
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     // Log random fact
     const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
-    console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`)
+    console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`);
 
     // Authorize
     const signinToken = searchParams.get('signinPayload');
@@ -76,15 +76,15 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
         try {
           await API.userSignin({ token: signinToken });
 
-          NotifySuccess({ title: 'Ви увійшли в акаунт', message: 'welcome!' })
+          NotifySuccess({ title: 'Ви увійшли в акаунт', message: 'welcome!' });
 
           setTimeout(() => router.refresh(), 100);
         } catch (e) {
           HandleClientError(e);
         }
-      })()
+      })();
     }
-  }, [])
+  }, []);
 
 
 
@@ -101,8 +101,8 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
 
       {children}
     </PopupLayer>
-  </Provider>
-}
+  </Provider>;
+};
 
 /** Setup redux internals state @deprecated */
 const SetupIntertnals: NextPage = () => {
@@ -205,5 +205,5 @@ const SetupIntertnals: NextPage = () => {
 
 
 
-  return <></>
-}
+  return <></>;
+};

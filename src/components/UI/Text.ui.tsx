@@ -16,5 +16,5 @@ export const UIText: NextPage<TextProps> = ({ type, text, className, title, ...p
     {type === 'h3' && <h3 className={`ui-text ui-text--h3 ${className ? className : ''}`} title={title ?? text} {...props}>{text}</h3>}
     {type === 'standart' && <p className={`ui-text line-clamp-6 ${className ? className : ''}`} title={title ?? text} {...props}>{text} </p>}
     {type === 'mini' && <p className={`ui-text ui-text--mini ${className ? className : ''}`} title={title ?? text} {...props}>{text}</p>}
-  </>
-}
+  </>;
+};

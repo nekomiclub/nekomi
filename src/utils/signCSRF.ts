@@ -1,4 +1,4 @@
-'use server'
+'use server';
 
 /**
  * @fileoverview server-side function to sign CSRF token

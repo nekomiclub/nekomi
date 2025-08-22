@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
 import '~/styles/components/StyledComponents.scss';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { NextPage } from 'next';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import { UIText } from '~/components/UI/Text.ui';
 import { config } from '~/config';
 import { cn } from '~/utils/classnames';
-import { UIText } from '../UI/Text.ui';
 
 
 
@@ -42,39 +42,39 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
 
   const borderRadius = rounded ?? `${rounded}px`;
 
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [isErrored, setIsErrored] = useState(false)
-  const [useNativeImage] = useState(Boolean(useImg) || !src.includes(config.URL.nekomi_media))
-  const [imageDims, setImageDims] = useState<number[]>([])
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isErrored, setIsErrored] = useState(false);
+  const [useNativeImage] = useState(Boolean(useImg) || !src.includes(config.URL.nekomi_media));
+  const [imageDims, setImageDims] = useState<number[]>([]);
 
-  const imageRef = useRef<HTMLImageElement>(null)
+  const imageRef = useRef<HTMLImageElement>(null);
 
 
 
   // Resolve image
   useMemo(() => {
-    fetch(src, { method: 'HEAD' }).catch(onerror)
-  }, [])
+    fetch(src, { method: 'HEAD' }).catch(onerror);
+  }, []);
 
   // Handle image events
   useEffect(() => {
     const image = imageRef.current;
     if (!image) return;
 
-    setImageDims([image.offsetWidth, image.offsetHeight])
-    setIsErrored(false)
-    setIsLoaded(image.complete)
-  }, [src])
+    setImageDims([image.offsetWidth, image.offsetHeight]);
+    setIsErrored(false);
+    setIsLoaded(image.complete);
+  }, [src]);
 
 
 
   function onload() {
-    setIsLoaded(true)
+    setIsLoaded(true);
   }
 
   function onerror() {
-    console.error(`Failed to load image (${src})`)
-    setIsErrored(true)
+    console.error(`Failed to load image (${src})`);
+    setIsErrored(true);
   }
 
 
@@ -93,7 +93,7 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
       <MaterialSymbol icon="broken_image" size={32} className="text-grey-new" />
       {imageDims[0] > 84 && imageDims[1] > 84 && <UIText text="Зображення відсутнє" type="mini" className="text-grey-new text-center" />}
     </div>
-  </div>
-}
+  </div>;
+};
 
 export default StyledImage;

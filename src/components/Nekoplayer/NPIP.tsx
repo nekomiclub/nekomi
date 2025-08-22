@@ -1,8 +1,8 @@
 import { FC, useContext } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import { HandleClientError } from '~/components/Errors';
 import { cn } from '~/utils/classnames';
-import { HandleClientError } from '../Errors';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
@@ -25,12 +25,12 @@ const NPIP: FC = () => {
     if (document.pictureInPictureElement) {
       document.exitPictureInPicture().catch(e => HandleClientError(e));
     } else {
-      video.requestPictureInPicture().catch(e => HandleClientError(e))
+      video.requestPictureInPicture().catch(e => HandleClientError(e));
     }
   }
 
   function getTitle() {
-    return isPiP ? 'Вийти з режиму Картинка в Картинці (p)' : 'Увійти в режим Картинка в Картинці (p)'
+    return isPiP ? 'Вийти з режиму Картинка в Картинці (p)' : 'Увійти в режим Картинка в Картинці (p)';
   }
 
 
@@ -38,9 +38,9 @@ const NPIP: FC = () => {
   return <button className="kekwplayer-pip_button relative w-[32px] h-[32px] max-[600px]:hidden" onClick={changePiP} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
     <MaterialSymbol className={cn(`kekwplayer-pip text-white`, isPiP && 'opacity-0')} icon="pip" size={32} />
     <MaterialSymbol className={cn(`kekwplayer-pip text-white`, !isPiP && 'opacity-0')} icon="pip_exit" size={32} />
-  </button>
-}
+  </button>;
+};
 
 
 
-export default NPIP
+export default NPIP;

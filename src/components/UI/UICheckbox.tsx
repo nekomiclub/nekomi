@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { NextPage } from 'next';
 import { MaterialSymbol } from 'react-material-symbols';
@@ -26,13 +26,13 @@ const UICheckbox: NextPage<Props> = ({ isChecked, setIsChecked, className, disab
     if (disableDefaultToggle) return;
     if (disabled) return;
 
-    setIsChecked(!isChecked)
+    setIsChecked(!isChecked);
   }
 
   return <div className={cn(`ui-checkbox`, isChecked && 'ui-checkbox--checked', disabled && 'cursor-not-allowed', className)} role="checkbox" aria-checked={isChecked} onClick={toggle}>
     <MaterialSymbol icon="check" size={16} className={cn(`ui-checkbox_checkmark`)} />
-  </div>
-}
+  </div>;
+};
 
 
 

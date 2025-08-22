@@ -1,27 +1,27 @@
-'use client'
+'use client';
 
 import '~/styles/pages/user.scss';
 
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import { NextPage } from 'next';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
+import { IcoSocialTelegram } from '~/assets/Social';
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import { UIReportButton } from '~/components/UI/Report';
 import { UIText } from '~/components/UI/Text.ui';
+import Tooltip from '~/components/UI/Tooltip';
+import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
+import { User, UserLib, UserTogetherRoom } from '~/interfaces/UserIntf';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
 import { copyToClipboard, getUTC, wordDeclination } from '~/utils/utils';
-import { IcoSocialTelegram } from '../../../assets/Social';
-import Tooltip from '../../../components/UI/Tooltip';
-import { config } from '../../../config';
-import { User, UserLib, UserTogetherRoom } from '../../../interfaces/UserIntf';
 
 
 
@@ -64,11 +64,11 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
   const currentUser = useAppSelector(state => state.user);
 
   const [isOwner] = useState(user.id === currentUser.id);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [settingsLinkTelegramStatus, setSettingsLinkTelegramStatus] = useState<TTelegramLinkStatus>(user.statistics.isTelegramLinked ? 'connected' : 'notConnected')
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsLinkTelegramStatus, setSettingsLinkTelegramStatus] = useState<TTelegramLinkStatus>(user.statistics.isTelegramLinked ? 'connected' : 'notConnected');
   const [bannerURL, setBannerURL] = useState(user.banner);
 
-  const bannerSelectRef = useRef<HTMLInputElement>(null)
+  const bannerSelectRef = useRef<HTMLInputElement>(null);
 
 
 
@@ -76,29 +76,29 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
   useEffect(() => {
     if (searchParams.get('openSettings') === null) return;
 
-    setIsSettingsOpen(true)
-  }, [searchParams])
+    setIsSettingsOpen(true);
+  }, [searchParams]);
 
   // Remove open settings param
   useEffect(() => {
-    if (!isSettingsOpen && searchParams.has('openSettings')) router.replace(pathname)
-  }, [isSettingsOpen])
+    if (!isSettingsOpen && searchParams.has('openSettings')) router.replace(pathname);
+  }, [isSettingsOpen]);
 
 
 
   async function linkTelegram() {
     try {
-      setSettingsLinkTelegramStatus('pending')
+      setSettingsLinkTelegramStatus('pending');
 
-      const { token } = await API.userLinkTelegramToken()
+      const { token } = await API.userLinkTelegramToken();
 
-      router.push(`${config.URL.telegramBot}?start=linkAccount=${token}`)
+      router.push(`${config.URL.telegramBot}?start=linkAccount=${token}`);
     } catch (e) {
-      setSettingsLinkTelegramStatus('error')
+      setSettingsLinkTelegramStatus('error');
       HandleClientError(e);
     } finally {
       setTimeout(() => {
-        setSettingsLinkTelegramStatus('notConnected')
+        setSettingsLinkTelegramStatus('notConnected');
       }, 3000);
     }
   }
@@ -121,8 +121,8 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
     if (!confirm(`Завантажуючи банер профілю ти погоджуєшся з Угодою Користувача (Agreement) та Політикою Конфіденційності (Privacy policy) сайту nekomi.club. Ознайомитись з ними можна внизу сайту`)) return;
 
     try {
-      const { bannerUrl } = await API.userUploadBanner(file)
-      setBannerURL(bannerUrl)
+      const { bannerUrl } = await API.userUploadBanner(file);
+      setBannerURL(bannerUrl);
     } catch (e) {
       HandleClientError(e);
     }
@@ -210,8 +210,8 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
         </div>
       </div>
     </div>
-  </>
-}
+  </>;
+};
 
 export const UserSectionLibs: NextPage<UserSectionProps> = ({ user }) => {
   return <div className="flex flex-col gap-[24px]" id="user-libs">
@@ -226,8 +226,8 @@ export const UserSectionLibs: NextPage<UserSectionProps> = ({ user }) => {
         <UserLibItem lib={user.libs.find(el => el.type === 'delayed')!} user={user} />
       </> : <p className="text-lightGrey">Всі теки цього користувача приватні</p>}
     </div>
-  </div>
-}
+  </div>;
+};
 
 export const UserSectionWTRooms: NextPage<UserSectionProps> = ({ user }) => {
   const currentUser = useAppSelector(state => state.user);
@@ -241,27 +241,27 @@ export const UserSectionWTRooms: NextPage<UserSectionProps> = ({ user }) => {
 
     <div className="flex flex-wrap gap-[16px]">
       {user.togetherRooms.map(room => {
-        return <UserWTRoom room={room} user={user} key={`user-wtroom-${room.id}`} />
+        return <UserWTRoom room={room} user={user} key={`user-wtroom-${room.id}`} />;
       })}
     </div>
-  </div>
-}
+  </div>;
+};
 
 export const UserLibItem: NextPage<UserLibItemProps> = ({ lib, user }) => {
   const currentUser = useAppSelector(state => state.user);
 
-  const [icon, setIcon] = useState<SymbolCodepoints>('favorite')
-  const [title, setTitle] = useState('Тека')
-  const [isFavorite] = useState(lib.type === 'favorite')
+  const [icon, setIcon] = useState<SymbolCodepoints>('favorite');
+  const [title, setTitle] = useState('Тека');
+  const [isFavorite] = useState(lib.type === 'favorite');
   const [isOwner] = useState(user.id === currentUser.id);
   const [isLibVisible] = useState(!lib.settings.hidden || isOwner);
 
 
 
   useMemo(() => {
-    parseUserLibUI({ type: lib.type, setTitle, setIcon })
+    parseUserLibUI({ type: lib.type, setTitle, setIcon });
     setTitle(lib.settings.name);
-  }, [])
+  }, []);
 
 
 
@@ -271,37 +271,37 @@ export const UserLibItem: NextPage<UserLibItemProps> = ({ lib, user }) => {
     <div className="flex items-center gap-[8px] max-sm:flex-col-reverse">
       <p className="text-white font-manrope text-center text-[24px] max-sm:text-[16px]">{title} <span className="text-grey-new">({lib.titles.length})</span></p>
     </div>
-  </Link>
-}
+  </Link>;
+};
 
 export const UserStatItem: NextPage<UserStatItemProps> = ({ label, value, className }) => {
-  const [icon, setIcon] = useState<SymbolCodepoints>('favorite')
-  const [title, setTitle] = useState('—')
-  const [isFavorite] = useState(label === 'favs')
+  const [icon, setIcon] = useState<SymbolCodepoints>('favorite');
+  const [title, setTitle] = useState('—');
+  const [isFavorite] = useState(label === 'favs');
 
 
 
   useMemo(() => {
     if (label === 'favs') {
-      setTitle(wordDeclination(value, ['Улюблене аніме', 'Улюблених аніме', 'Улюблених аніме']))
-      setIcon('favorite')
+      setTitle(wordDeclination(value, ['Улюблене аніме', 'Улюблених аніме', 'Улюблених аніме']));
+      setIcon('favorite');
     }
 
     if (label === 'viewtime') {
-      setTitle(wordDeclination(value, ['Година перегляду', 'Години перегляду', 'Годин перегляду']))
-      setIcon('hourglass_bottom')
+      setTitle(wordDeclination(value, ['Година перегляду', 'Години перегляду', 'Годин перегляду']));
+      setIcon('hourglass_bottom');
     }
 
     if (label === 'watched') {
-      parseUserLibUI({ type: 'watched', setIcon, setTitle })
-      setTitle(wordDeclination(value, ['Переглянуте аніме', 'Переглянутих аніме', 'Переглянутих аніме']))
+      parseUserLibUI({ type: 'watched', setIcon, setTitle });
+      setTitle(wordDeclination(value, ['Переглянуте аніме', 'Переглянутих аніме', 'Переглянутих аніме']));
     }
 
     if (label === 'watching') {
-      parseUserLibUI({ type: 'watching', setIcon, setTitle })
-      setTitle(wordDeclination(value, ['Переглядаєме аніме', 'Переглядаємих аніме', 'Переглядаємих аніме']))
+      parseUserLibUI({ type: 'watching', setIcon, setTitle });
+      setTitle(wordDeclination(value, ['Переглядаєме аніме', 'Переглядаємих аніме', 'Переглядаємих аніме']));
     }
-  }, [])
+  }, []);
 
 
 
@@ -316,8 +316,8 @@ export const UserStatItem: NextPage<UserStatItemProps> = ({ label, value, classN
         <p className="text-white font-manrope w-full text-center">{title}</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export const UserDivider: NextPage<UserDividerProps> = ({ label, user, hidden }) => {
   const currentUser = useAppSelector(state => state.user);
@@ -335,28 +335,28 @@ export const UserDivider: NextPage<UserDividerProps> = ({ label, user, hidden })
     </div>}
 
     <div className="block w-full h-[3px] bg-dark-light"></div>
-  </Tooltip>
-}
+  </Tooltip>;
+};
 
 function UserWTRoom({ room, user }: { room: UserTogetherRoom, user: User }) {
   return <Link href={`/`} className="ui-button grow basis-[290px] p-[24px] flex flex-col items-center gap-[24px] w-full duration-200 max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
     <MaterialSymbol className="text-white max-sm:!text-[80px]" icon="groups" size={128} />
 
     <p className="text-white font-manrope text-center text-[24px] max-sm:text-[16px] text-ellipsis line-clamp-3">{room.settings.name}</p>
-  </Link>
+  </Link>;
 }
 
 function Label({ label }: { label: string }) {
   return <div className="flex items-center gap-[16px]">
     <h3 className="text-white text-[24px] font-bold shrink-0">{label}</h3>
     <span className="w-full h-[3px] bg-grey"></span>
-  </div>
+  </div>;
 }
 
 function AvatarComponent({ user }: { user: User }) {
   return <div className="w-[256px] h-full relative max-[820px]:w-[160px] max-[670px]:h-[32px] flex-shrink-0">
     <StyledImage src={user.avatar} width={'256px'} height={'256px'} className="!absolute bottom-0 left-0 rounded-[4px] w-full h-fit aspect-square max-[820px]:!w-[160px] max-[820px]:!h-[160px]" loading="eager" alt="avatar" />
-  </div>
+  </div>;
 }
 
 function UserComponent({ user }: { user: User }) {
@@ -371,11 +371,11 @@ function UserComponent({ user }: { user: User }) {
         <p className="text-white font-manrope opacity-70">{getUTC(user.statistics.accountCreated).fulldate}</p>
       </div>
     </Tooltip>
-  </div>
+  </div>;
 }
 
 function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { user: User, isOwner: boolean, settingsPopupID: string, primaryPage: boolean }) {
-  const [urlCopied, setUrlCopied] = useState(false)
+  const [urlCopied, setUrlCopied] = useState(false);
 
 
 
@@ -410,5 +410,5 @@ function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { us
         </button>
       </Tooltip>
     </Link>}
-  </div>
+  </div>;
 }

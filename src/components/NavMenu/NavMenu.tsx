@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { useId, useState } from 'react';
 import { NextPage } from 'next';
+import { useId, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { HandleClientError } from '~/components/Errors';
+import { NotifySuccess } from '~/components/UI/NotifyToast';
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import API from '~/services/ApiService';
 import userSlice, { userStateDefault } from '~/store/reducers/userSlice';
-import { HandleClientError } from '../Errors';
-import { NotifySuccess } from '../UI/NotifyToast';
 
 import HeaderNav from './HeaderNav';
 import MobileNav from './MobileNav';
@@ -20,19 +20,19 @@ const NavMenu: NextPage = () => {
   const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const searchPopupId = useId().replaceAll(':', '')
+  const searchPopupId = useId().replaceAll(':', '');
 
-  const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false)
+  const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
 
 
 
   async function logout() {
     try {
-      NotifySuccess({ title: 'Ви вийшли з акаунту', message: ':(' })
-      dispatch(userSlice.actions.reducer(userStateDefault))
-      setIsDropdownMenuOpen(false)
+      NotifySuccess({ title: 'Ви вийшли з акаунту', message: ':(' });
+      dispatch(userSlice.actions.reducer(userStateDefault));
+      setIsDropdownMenuOpen(false);
 
-      setTimeout(() => { router.refresh() }, 100);
+      setTimeout(() => { router.refresh(); }, 100);
 
       await API.userLogout();
     } catch (e) {
@@ -42,7 +42,7 @@ const NavMenu: NextPage = () => {
 
   function forceFocus() {
     const search = document.querySelector('#search-searchBar') as HTMLInputElement;
-    if (!search) return
+    if (!search) return;
 
     let i = 0;
 
@@ -61,7 +61,7 @@ const NavMenu: NextPage = () => {
     <MobileNav user={user} logout={logout} forceFocus={forceFocus} searchPopupId={searchPopupId} isDropdownMenuOpen={isDropdownMenuOpen} setIsDropdownMenuOpen={setIsDropdownMenuOpen} />
 
     <NavMenuSearch dialogId={searchPopupId} />
-  </>
-}
+  </>;
+};
 
 export default NavMenu;
