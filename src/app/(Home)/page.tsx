@@ -34,7 +34,7 @@ export default async function RSC() {
         <HomeCategory label="Популярні" icon={<MaterialSymbol icon="star" size={32} fill className="text-[#FF464E]" />} hydratedAnimes={featured.hot} />
       </div>
 
-      <div className="wrapper bg-dark-bright !flex-row gap-[60px] py-[60px] !px-[16px] items-center !my-[60px] max-md:!flex-col">
+      <div className="wrapper bg-expo/[.5] !flex-row gap-[60px] py-[60px] !px-[16px] items-center !my-[60px] max-md:!flex-col">
         <IcoNekomiLogo width={256} height={256} className="shrink-0 max-md:w-[128px] max-md:h-[128px]" fill="#fff" />
 
         <div className="flex flex-col gap-[24px]">

@@ -23,16 +23,6 @@ $ npx husky init
 Paste ```npm run husky``` in ```.husky/pre-commit```
 
 ## Notes
-Classes
-```scss
-.gradient--primary // New background gradient
-  &-text // New text gradient
-  &-hover // Fills background on hover and focus-visible
-
-.gradient--secondary // New background gradient
-  &-hover // Fills background on hover and focus-visible
-```
-
 Server unavailable screen logic placed in ```./layout.tsx```
 404 route fallback to define if route simple not added placed in ```./not-found.tsx```
 Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```
@@ -41,6 +31,5 @@ Text elipsis class - ```text-ellipsis line-clamp-[{LINES}]```
 
 ## UI
 ```scss
-.ui-text // Default text styling
 .ui-button // Default styled button with dark-medium background, border & animations
 ```

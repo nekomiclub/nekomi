@@ -1,4 +1,6 @@
-@import "../colors.scss";
+@import "../vars.scss";
+
+$purple: red;
 
 #nekoplayer {
   &-timeline {
@@ -27,27 +29,6 @@
 }
 
 .kekwplayer {
-  &-menu {
-    &_item {
-      transition: 0.2s ease-in-out;
-      padding: 4px 8px;
-      border-radius: 2px;
-      width: 100%;
-      background: $darkGrey;
-
-      &:hover,
-      &:focus-visible {
-        &:not(.kekwplayer-menu_item--active) {
-          background: $grey;
-        }
-      }
-
-      &--active {
-        background: $purple;
-      }
-    }
-  }
-
   &-play {
     position: absolute;
     top: 0;
@@ -133,18 +114,6 @@
         visibility: visible;
         touch-action: all;
         pointer-events: all;
-      }
-    }
-  }
-
-  &-screen {
-    &-continue {
-      &_action {
-        &:hover {
-          p {
-            color: $white;
-          }
-        }
       }
     }
   }

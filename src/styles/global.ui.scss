@@ -1,5 +1,4 @@
-@import "./vars";
-@import "./colors";
+@import "./vars.scss";
 
 .gui {
   &-footer {
@@ -50,7 +49,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba($color: $darkPrimary, $alpha: 0.5);
+      background: rgba($color: $dark_primary, $alpha: 0.5);
       transition: 0.2s ease-in-out;
       opacity: 0;
       display: flex;
@@ -77,8 +76,8 @@
   // UserLayout component styles
   &-ul {
     &-action {
-      background: $darkMedium;
-      border: 1px solid $darkLight;
+      background: $dark-medium;
+      border: 1px solid $dark-light;
       transition: 0.1s ease-in-out;
       padding: 16px;
       border-radius: 4px;
@@ -93,7 +92,7 @@
 
       &:hover,
       &:focus-visible {
-        background: $darkLight;
+        background: $dark-light;
       }
 
       &_icon {
@@ -105,11 +104,11 @@
       }
 
       &--succeed {
-        background: $green;
+        background: $info-success;
 
         &:hover,
         &:focus-visible {
-          background: $green;
+          background: $info-success;
         }
       }
     }

@@ -19,6 +19,7 @@ import StyledImage from './Styled/StyledImage';
 import { NotifySuccess, NotifyWarn } from './UI/NotifyToast';
 import { UIReportButton } from './UI/Report';
 import Tooltip from './UI/Tooltip';
+import { H2, H3, P } from './UI/Typography';
 
 
 
@@ -101,8 +102,8 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
       <div className="w-full flex items-center justify-between gap-[24px] pb-[24px] max-lg:pb-[4px] max-lg:pt-[12px] max-md:p-0">
         <div className="flex flex-col gap-[8px] max-lg:gap-[4px]">
-          <h2 className={cn(`text-white font-bold text-[32px] max-lg:text-[24px] break-all`, isUser && 'font-space-grotesk', isDubber && 'font-manrope')}>{user?.username ?? dubber?.nameUkr}</h2>
-          {isDubber && <h3 className="text-grey-new font-space-grotesk text-[20px] max-lg:text-[16px] line-clamp-1 break-all">@{dubber?.slug}</h3>}
+          <H2 text={user?.username ?? dubber?.nameUkr} size={32} className={cn(`text-white font-bold break-all`, isUser && 'font-space-grotesk', isDubber && 'font-manrope')} />
+          {isDubber && <H3 text={`@${dubber?.slug}`} size={20} className="text-grey-new font-space-grotesk line-clamp-1 text-ellipsis break-all" />}
         </div>
 
         <div className="flex items-center gap-[4px]">
@@ -235,9 +236,9 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
         <MaterialSymbol icon="backup" size={64} className="text-white" />
 
         <div className="flex flex-col items-center gap-[8px]">
-          <p className="text-white font-manrope font-bold text-[24px] uppercase">завантажити</p>
-          <p className="text-white font-manrope text-[14px]">.png .jpg .webp, до 1го мегабайта</p>
-          <p className="text-white font-manrope text-[12px]">Рекомендований розмір: 256х256</p>
+          <P text="завантажити" size={24} className="text-white font-manrope font-bold uppercase" />
+          <P text=".png .jpg .webp, до 1го мегабайта" size={14} className="text-white font-manrope" />
+          <P text="Рекомендований розмір: 256х256" size={12} className="text-white font-manrope" />
         </div>
       </button>
     </>}
@@ -344,9 +345,9 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
         <MaterialSymbol icon="backup" size={128} className="text-white max-xl:!text-[64px]" />
 
         <div className="flex flex-col items-center gap-[8px]">
-          <p className="text-white font-manrope font-bold text-[40px] uppercase max-xl:text-[32px]">завантажити</p>
-          <p className="text-white font-manrope max-xl:text-[14px]">.png .jpg .webp, до 2х мегабайтів</p>
-          <p className="text-white font-manrope max-xl:text-[14px]">Рекомендований розмір: 1920x500</p>
+          <P text="завантажити" size={32} className="text-white font-manrope font-bold uppercase" />
+          <P text=".png .jpg .webp, до 2х мегабайтів" className="text-white font-manrope" />
+          <P text="Рекомендований розмір: 1920x500" className="text-white font-manrope" />
         </div>
       </button>
     </>}

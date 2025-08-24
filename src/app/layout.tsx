@@ -4,9 +4,10 @@ import 'swiper/css';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'react-material-symbols/rounded';
 import '~/styles/index.scss';
+import '~/styles/typography.scss';
 import '~/styles/ui.scss';
-import '~/styles/globals.css';
 import '~/styles/global.ui.scss';
+import '~/styles/tailwind.css';
 
 import { cache } from 'react';
 import { Analytics } from '@vercel/analytics/react';

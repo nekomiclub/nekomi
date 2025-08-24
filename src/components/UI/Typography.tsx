@@ -1,5 +1,3 @@
-import '~/styles/typography.scss';
-
 import { FC } from 'react';
 
 import { cn } from '~/utils/classnames';
@@ -7,7 +5,7 @@ import { cn } from '~/utils/classnames';
 
 
 interface TextProps {
-  text: string
+  text: string | undefined
   tag: 'h1' | 'h2' | 'h3' | 'p' | 'span' | 'b' | 'i'
 
   size?: 10 | 12 | 14 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 64

@@ -13,8 +13,8 @@ import { IcoSocialTelegram } from '~/assets/Social';
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import { UIReportButton } from '~/components/UI/Report';
-import { UIText } from '~/components/UI/Text.ui';
 import Tooltip from '~/components/UI/Tooltip';
+import { H2 } from '~/components/UI/Typography';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { User, UserLib, UserTogetherRoom } from '~/interfaces/UserIntf';
@@ -362,7 +362,7 @@ function AvatarComponent({ user }: { user: User }) {
 function UserComponent({ user }: { user: User }) {
   return <div className="flex flex-col gap-[8px]">
     <div className="flex items-center gap-[16px]">
-      <UIText text={`@${user.username}`} type="h1" className="break-all font-space-grotesk" />
+      <H2 text={`@${user.username}`} size={32} className="break-all font-space-grotesk" />
     </div>
 
     <Tooltip content="На nekomi з:">

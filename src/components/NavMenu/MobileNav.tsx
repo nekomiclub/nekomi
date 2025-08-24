@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { UIText } from '~/components/UI/Text.ui';
+import { P } from '~/components/UI/Typography';
 import { config } from '~/config';
 import { Routes } from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
@@ -40,19 +40,19 @@ const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMen
   return <nav className="fixed w-full h-[var(--header-height)] bg-dark-primary bottom-0 left-0 z-[110] flex items-center sm:hidden">
     <Link href={Routes.home.path()} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
       <MaterialSymbol icon="home" className="text-white" size={24} />
-      <UIText text="Головна" className="font-bold" type="mini" />
+      <P text="Головна" className="font-bold" size={14} />
     </Link>
 
     <PopupButton className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]" popupId={searchPopupId} onClick={forceFocus}>
       <MaterialSymbol icon="search" className="text-white" size={24} />
-      <UIText text="Пошук" className="font-bold" type="mini" />
+      <P text="Пошук" className="font-bold" size={14} />
     </PopupButton>
 
     {/* Authorized */}
     {user.id && <>
       <Link href={`/u/${user.username}#user-libs`} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
         <MaterialSymbol icon="folder_copy" className="text-white" size={24} />
-        <UIText text="Теки" className="font-bold" type="mini" />
+        <P text="Теки" className="font-bold" size={14} />
       </Link>
 
       <Menu gap={16} settings={{ align: 'end', direction: 'top' }} className="ui-dropdownMenu--scaleAnimation w-full" state={isDropdownMenuOpen} stateSetter={setIsDropdownMenuOpen} id={dropdownMenuId}>
@@ -62,7 +62,7 @@ const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMen
             <MaterialSymbol icon="close" className={cn('text-white duration-200 absolute top-0 left-0', !isDropdownMenuOpen && 'opacity-0')} size={24} />
           </div>
 
-          <UIText text="Меню" className="font-bold" type="mini" />
+          <P text="Меню" className="font-bold" size={14} />
         </MenuTrigger>
 
         <NavMenuDropdown user={user} logout={logout} className="!right-[8px]" />
@@ -73,7 +73,7 @@ const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMen
     {!user.id && <>
       <Link href={`${config.URL.fullkekw_account}/sso?ref=${config.URL.nekomi_site}${pathname}`} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
         <MaterialSymbol icon="login" className="text-white" size={24} />
-        <UIText text="Увійти" className="font-bold" type="mini" />
+        <P text="Увійти" className="font-bold" size={14} />
       </Link>
     </>}
   </nav>;

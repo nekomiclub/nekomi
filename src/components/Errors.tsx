@@ -12,7 +12,7 @@ import { getUTC } from '~/utils/utils';
 
 import { NotifyError } from './UI/NotifyToast';
 import { UIReportButton } from './UI/Report';
-import { UIText } from './UI/Text.ui';
+import { H1, P } from './UI/Typography';
 
 
 
@@ -54,8 +54,8 @@ export const ErrorNoConnection: NextPage = () => {
     <MaterialSymbol icon="cloud_off" size={256} className="text-white" />
 
     <div className="error-content">
-      <UIText text="Відсутнє з’єднання з сервером" type="h1" className="text-center" />
-      <UIText text="Якщо у вас є інтернет, то ми вже працюємо над його відновленням. Це не повинно тривати довго" type="standart" className="text-grey-new text-center" />
+      <H1 text="Відсутнє з’єднання з сервером" className="text-center" />
+      <P text="Якщо у вас є інтернет, то ми вже працюємо над його відновленням. Це не повинно тривати довго" className="text-grey-new text-center" />
     </div>
   </div>;
 };
@@ -65,8 +65,8 @@ export const ErrorNotFound: NextPage = () => {
     <MaterialSymbol icon="mystery" size={256} className="text-white" />
 
     <div className="error-content">
-      <UIText text="Те, що ви шукаєте, не існує" type="h1" className="text-center" />
-      <UIText text="Ми не можемо знайти контент за цим запитом, або ж просто - 404" type="standart" className="text-grey-new text-center" />
+      <H1 text="Те, що ви шукаєте, не існує" className="text-center" />
+      <P text="Ми не можемо знайти контент за цим запитом, або ж просто - 404" className="text-grey-new text-center" />
     </div>
 
     <Link href={Routes.home.path()} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
@@ -80,8 +80,8 @@ export const ErrorNotRendered: NextPage = () => {
     <MaterialSymbol icon="contract_delete" size={256} className="text-white" />
 
     <div className="error-content">
-      <UIText text="Сталась помилка при відображенні сторінки" type="h1" className="text-center" />
-      <UIText text="Створіть  будь ласка тікет" type="standart" className="text-grey-new text-center" />
+      <H1 text="Сталась помилка при відображенні сторінки" className="text-center" />
+      <P text="Створіть  будь ласка тікет" className="text-grey-new text-center" />
     </div>
 
     <UIReportButton type="button" />

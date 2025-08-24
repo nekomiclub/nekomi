@@ -8,7 +8,7 @@ import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { UIText } from '~/components/UI/Text.ui';
+import { P } from '~/components/UI/Typography';
 import { config } from '~/config';
 import { cn } from '~/utils/classnames';
 
@@ -94,7 +94,7 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
     {/* Load error */}
     <div className={cn(`styled-image-error`, !isErrored && 'styled-image--hide')}>
       <MaterialSymbol icon="broken_image" size={32} className="text-grey-new" />
-      {imageDims[0] > 84 && imageDims[1] > 84 && <UIText text="Зображення відсутнє" type="mini" className="text-grey-new text-center" />}
+      {imageDims[0] > 84 && imageDims[1] > 84 && <P text="Зображення відсутнє" size={12} className="text-grey-new text-center" />}
     </div>
   </div>;
 };

@@ -1,4 +1,3 @@
-@use "colors.scss";
 @import "./vars.scss";
 
 $fontColor: #000;
@@ -136,97 +135,15 @@ button {
   }
 
   &::-webkit-scrollbar-track {
-    background: colors.$grey;
+    background: $dark-medium;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: colors.$gradientPrimary;
+    background: $primary;
   }
 }
 
 svg {
   user-select: none;
   pointer-events: none;
-}
-
-//* ------------ NEW -------------------
-// SVG TO DATA IMAGE https://www.svgbackgrounds.com/tools/svg-to-css/
-.gradient {
-  &--primary {
-    background: colors.$gradientPrimary;
-
-    &-text {
-      background: colors.$gradientPrimary;
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    &-hover {
-      position: relative;
-
-      &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        transition: 0.2s ease-in-out;
-        border-radius: 4px;
-        z-index: 1;
-        background: colors.$gradientPrimary;
-      }
-
-      &:hover,
-      &:focus-visible {
-        &::after {
-          opacity: 1;
-        }
-      }
-
-      * {
-        z-index: 2;
-      }
-    }
-  }
-
-  &--secondary {
-    background: colors.$gradientSecondary;
-
-    &-text {
-      background: colors.$gradientSecondary;
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    &-hover {
-      &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        transition: 0.2s ease-in-out;
-        border-radius: 4px;
-        z-index: 1;
-        background: colors.$gradientSecondary;
-      }
-
-      &:hover,
-      &:focus-visible {
-        &::after {
-          opacity: 1;
-        }
-      }
-
-      * {
-        z-index: 2;
-      }
-    }
-  }
 }
