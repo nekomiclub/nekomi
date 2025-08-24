@@ -12,7 +12,6 @@ import AnimeItem from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
-import { UIReportButton } from '~/components/UI/Report';
 import { UIText } from '~/components/UI/Text.ui';
 import Tooltip from '~/components/UI/Tooltip';
 import { config } from '~/config';
@@ -104,14 +103,6 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
       <p className="text-white font-manrope uppercase">{inviteType === 'accept' ? 'Чудово' : 'зрозуміло'}</p>
     </PopupButton>
   </PopupWindow>;
-};
-
-export const DubberBanner: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
-  return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]">
-    <StyledImage src={dubber.banner} width="100%" height="100%" alt={`Team banner`} />
-
-    <UIReportButton className="!absolute top-[8px] right-[8px] opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" type="icon" text="Поскаржитися на команду озвучення" />
-  </div>;
 };
 
 export const DubberHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {

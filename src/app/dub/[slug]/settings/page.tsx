@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
+import UserBanner from '~/components/UserBanner';
 import { config, metaObject } from '~/config';
 import { Dubber } from '~/interfaces/DubberIntf';
 import { RSCProps } from '~/interfaces/types';
@@ -9,7 +10,7 @@ import { User } from '~/interfaces/UserIntf';
 import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
 
-import { DubberSettingsBanner, DubberSettingsContent, DubberSettingsHeader } from './DubberSettingsPage';
+import { DubberSettingsContent, DubberSettingsHeader } from './DubberSettingsPage';
 
 
 
@@ -51,9 +52,9 @@ export default async function RSC({ params }: RSCProps) {
 
 
 
-
+  dubber.banner = '/assets/footer-bg.png'; // !TMP
   return user && <section className="wrapper pt-[16px] sm:pt-[var(--header-height)] gap-[16px]">
-    <DubberSettingsBanner dubber={dubber} />
+    <UserBanner bannerUrl={dubber.banner} isEdit entityId={dubber.id} entityType={'dubber'} />
 
     <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">
       <DubberSettingsHeader dubber={dubber} />

@@ -5,13 +5,14 @@ import { cache } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
+import UserBanner from '~/components/UserBanner';
 import { metaObject } from '~/config';
 import { DubberPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { timestampToDayMonth } from '~/utils/utils';
 
-import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberBanner, DubberHeader, DubberTeam } from './DubberPage';
+import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberHeader, DubberTeam } from './DubberPage';
 
 
 
@@ -58,8 +59,9 @@ export default async function RSC({ params, searchParams }: RSCProps<DubberPageP
   try {
     const { dubber, dubbedHydratedAnimes, parsedMembers } = await getDubber(slug);
 
+    dubber.banner = '/assets/footer-bg.png'; // !TMP
     return <section className="wrapper gap-[16px] pt-[16px] sm:pt-[var(--header-height)]">
-      <DubberBanner dubber={dubber} />
+      <UserBanner bannerUrl={dubber.banner} />
 
       <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">
         <DubberAnswerInvite dubber={dubber} invite={invite} />

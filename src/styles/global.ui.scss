@@ -1,3 +1,6 @@
+@import "./vars";
+@import "./colors";
+
 .gui {
   &-footer {
     &-link {
@@ -35,6 +38,34 @@
 
       &:active {
         scale: 0.97;
+      }
+    }
+  }
+
+  // UserBanner component styles
+  &-ub {
+    &-upload {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba($color: $darkPrimary, $alpha: 0.5);
+      transition: 0.2s ease-in-out;
+      opacity: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+
+      &--visible {
+        opacity: 100;
+      }
+
+      &:hover,
+      &:focus-visible {
+        @extend .gui-ub-upload--visible;
       }
     }
   }
