@@ -144,7 +144,7 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) =>
 
 
   return <Menu className="w-full" id={id} settings={{ animation: 'slide', align: 'start' }}>
-    <MenuTrigger className={cn(`ui-button w-full px-[16px] py-[12px] rounded-[4px] flex items-center justify-center gap-[16px] max-sm:py-[8px]`, isChanged && 'bg-green', isFavorite && 'bg-primary max-sm:py-[8px]')} anchor>
+    <MenuTrigger className={cn(`ui-button w-full px-[16px] py-[12px] rounded-[4px] flex items-center justify-center gap-[16px] max-sm:py-[8px]`, isChanged && 'bg-info-success', isFavorite && 'bg-primary max-sm:py-[8px]')} anchor>
       <MaterialSymbol icon={icon} size={24} className={cn(`text-white max-sm:text-[20px]`)} />
 
       <p className={cn(`text-white font-manrope uppercase max-sm:text-[14px]`, isChanged && 'font-bold')}>{title}</p>

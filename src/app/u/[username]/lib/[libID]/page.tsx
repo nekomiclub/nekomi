@@ -42,7 +42,7 @@ export default async function RSC(props: RSCProps<UserPageLibProps>) {
     const { user, parsedLib } = await getUser(username, libID);
     const lib = user.libs.find(el => el.id === params.libID);
 
-    return <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
+    return <div className="w-full h-full min-h-screen bg-dark-primary flex flex-col gap-[40px]">
       <UserHeader user={user} />
 
       <div className="wrapper gap-[40px]">

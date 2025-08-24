@@ -60,7 +60,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
   try {
     const { user } = await getUser(username);
 
-    return <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
+    return <div className="w-full h-full min-h-screen bg-dark-primary flex flex-col gap-[40px]">
       <UserHeader user={user} primaryPage />
 
       <div className="wrapper gap-[40px]">

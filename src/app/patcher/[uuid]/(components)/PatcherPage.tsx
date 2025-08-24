@@ -695,7 +695,7 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
       </>}
     </button>
 
-    {!isNekomiPoster && <p className="text-orange text-[14px] font-manrope">* Постер не на сервері nekomi</p>}
+    {!isNekomiPoster && <p className="text-info-warn text-[14px] font-manrope">* Постер не на сервері nekomi</p>}
   </div>;
 };
 
@@ -960,7 +960,7 @@ const PatcherDubbedEpisode: NextPage<PatcherEpisode> = ({ File, episode, id, new
 
       <div className="flex items-center gap-[8px]">
         {status === 'pending' && <>
-          <MaterialSymbol icon="pace" size={20} className="text-orange" />
+          <MaterialSymbol icon="pace" size={20} className="text-info-warn" />
 
           <p className="text-grey-new font-manrope">В черзі на завантаження:</p>
           <p className="text-grey-new text-[14px] font-manrope">{File?.name}</p>
@@ -968,7 +968,7 @@ const PatcherDubbedEpisode: NextPage<PatcherEpisode> = ({ File, episode, id, new
         </>}
 
         {status === 'uploading' && <>
-          <MaterialSymbol icon="clock_loader_20" size={20} className="text-green" />
+          <MaterialSymbol icon="clock_loader_20" size={20} className="text-info-success" />
 
           <p className="text-grey-new font-manrope">Завантажується:</p>
           <p className="text-grey-new text-[14px] font-space-grotesk">{progress.toFixed(2)}%</p>

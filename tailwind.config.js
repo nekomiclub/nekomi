@@ -10,21 +10,6 @@ module.exports = {
       colors: {
         white: '#FFFFFF',
 
-
-
-        dark: '#121212',
-        darkGrey: '#181818',
-        lightGrey: '#747474',
-        grey: '#222222',
-        purple: '#6C5CE7',
-        orange: '#F39C12',
-        green: '#2ecc71',
-        red: '#e74c3c',
-        gradientPrimaryFallback: '#FF464E',
-        gradientSecondaryFallback: '#FF9966',
-
-
-
         'grey-new': '#555555',
         'dark-primary': '#121212',
         'dark-bright': '#141414',
@@ -37,6 +22,10 @@ module.exports = {
         'info-error': '#E74C3C',
         'info-success': '#2ECC71',
         'info-warn': '#F39C12',
+
+        // deprecated
+        lightGrey: '#747474',
+        grey: '#222222',
       },
       plugins: [],
     },

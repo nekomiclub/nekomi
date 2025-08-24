@@ -132,16 +132,16 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
 
   return <>
     {/* Return dialog only if user is account owner */}
-    {isOwner && <PopupWindow id={settingsPopupID} className="px-[24px] py-[16px] rounded-[4px] bg-dark flex flex-col gap-[16px] max-h-full w-full max-w-[1170px] overflow-y-auto overflow-x-hidden" layerClassName="bg-dark/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[16px] py-[40px]" isOpen={isSettingsOpen} setIsOpen={setIsSettingsOpen}>
+    {isOwner && <PopupWindow id={settingsPopupID} className="px-[24px] py-[16px] rounded-[4px] bg-dark-primary flex flex-col gap-[16px] max-h-full w-full max-w-[1170px] overflow-y-auto overflow-x-hidden" layerClassName="bg-dark-primary/[.1] backdrop-blur-[64px] flex justify-center items-center overflow-y-auto px-[16px] py-[40px]" isOpen={isSettingsOpen} setIsOpen={setIsSettingsOpen}>
       <Label label="Налаштування акаунту" />
-      <Link href={`${config.URL.fullkekw_account}/me`} className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey duration-200 hover:bg-purple focus-visible:bg-purple">
+      <Link href={`${config.URL.fullkekw_account}/me`} className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-dark-medium duration-200 hover:bg-primary focus-visible:bg-primary">
         <p className="text-white text-center">Редагувати акаунт Fullkekw</p>
       </Link>
 
       <Label label="Банер профілю" />
 
       <div className="up-banner w-full max-h-[400px] aspect-[16/7] relative shrink-0">
-        <button className="up-banner_upload w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark/[.3] duration-200 opacity-0 invisible" onClick={selectBannerFile}>
+        <button className="up-banner_upload w-full h-full absolute top-0 left-0 flex justify-center items-center gap-[16px] z-[3] bg-dark-primary/[.3] duration-200 opacity-0 invisible" onClick={selectBannerFile}>
           <p className="uppercase text-[40px] font-bold text-white max-[640px]:text-[24px]">завантажити</p>
         </button>
 
@@ -152,7 +152,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
       <Label label={`Під'єднання`} />
       {settingsLinkTelegramStatus === 'connected' ?
         <div className="flex flex-col gap-[8px]">
-          <div className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-darkGrey">
+          <div className="flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] bg-dark-medium">
             <MaterialSymbol icon="star" size={24} fill className="text-[#FF464E]" />
             <p className="text-white text-center">Акаунт Telegram прив’язано! </p>
           </div>
@@ -164,7 +164,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
         </div> :
 
         <div className="flex flex-col gap-[8px]">
-          <button className={`flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] duration-200 ${settingsLinkTelegramStatus === 'pending' ? 'bg-orange' : settingsLinkTelegramStatus === 'error' ? 'bg-red' : 'bg-darkGrey hover:bg-purple focus-visible:bg-purple'}`} onClick={linkTelegram}>
+          <button className={`flex justify-center items-center gap-[24px] px-[16px] py-[12px] rounded-[2px] duration-200 ${settingsLinkTelegramStatus === 'pending' ? 'bg-info-warn' : settingsLinkTelegramStatus === 'error' ? 'bg-info-error' : 'bg-dark-medium hover:bg-primary focus-visible:bg-primary'}`} onClick={linkTelegram}>
             <IcoSocialTelegram width={24} height={24} />
             <p className="text-white">
               {settingsLinkTelegramStatus === 'notConnected' && 'Прив’язати акаунт Telegram'}
@@ -176,7 +176,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
       }
     </PopupWindow>}
 
-    <div className={`bg-dark relative pt-[16px] sm:pt-[var(--header-height)]`}>
+    <div className={`bg-dark-primary relative pt-[16px] sm:pt-[var(--header-height)]`}>
       {/* Image */}
       <div className="w-full h-fit max-h-[500px] aspect-[16/9] relative max-[1140px]:aspect-[16/7]">
         <StyledImage src={bannerURL} width="100%" height="100%" loading="eager" alt="banner" className="w-full h-full object-cover" />
@@ -189,7 +189,7 @@ export const UserHeader: NextPage<UserHeaderProps> = ({ user, primaryPage }) => 
       {/* Layouts */}
       <div className="wrapper z-[2]">
         {/* PC */}
-        <div className={`min-[670px]:flex hidden flex-row justify-between absolute bottom-0 left-0 w-full bg-dark/[.3] backdrop-blur-[32px] px-[32px] py-[16px]`}>
+        <div className={`min-[670px]:flex hidden flex-row justify-between absolute bottom-0 left-0 w-full bg-dark-primary/[.3] backdrop-blur-[32px] px-[32px] py-[16px]`}>
           <div className="flex gap-[32px] min-[670px]">
             <AvatarComponent user={user} />
 
@@ -392,7 +392,7 @@ function SettingsComponent({ user, isOwner, primaryPage, settingsPopupID }: { us
 
   return <div className="flex items-center gap-[8px]">
     <Tooltip content={urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на профіль'}>
-      <button className={`ui-button w-[64px] h-[64px] flex justify-center items-center ${urlCopied ? 'bg-green' : 'bg-transparent border-none hover:!bg-purple focus-visible:!bg-purple'} rounded-[4px] max-sm:w-[48px] max-sm:h-[48px]`} onClick={copyProfileURL}>
+      <button className={`ui-button w-[64px] h-[64px] flex justify-center items-center ${urlCopied ? 'bg-info-success' : 'bg-transparent border-none hover:!bg-primary focus-visible:!bg-primary'} rounded-[4px] max-sm:w-[48px] max-sm:h-[48px]`} onClick={copyProfileURL}>
         <MaterialSymbol className="text-white max-sm:!text-[24px]" icon="link" size={32} />
       </button>
     </Tooltip>

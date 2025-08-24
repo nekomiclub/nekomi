@@ -26,7 +26,7 @@ const Agreement: NextPage = () => {
         {lang === 'ukr' && <>
           <InfoHeader heading="Угода користувача" lang="eng" setLang={setLang} />
 
-          <div className="px-[24px] py-[40px] rounded-[2px] bg-darkGrey flex flex-col gap-[16px]">
+          <div className="px-[24px] py-[40px] rounded-[2px] bg-dark-medium flex flex-col gap-[16px]">
             <h2 className="text-white text-[24px] font-bold text-center">Загальні відомості</h2>
 
             <p className="text-white text-[16px]">
@@ -195,7 +195,7 @@ const Agreement: NextPage = () => {
         {lang === 'eng' && <>
           <InfoHeader heading="Agreement" lang="ukr" setLang={setLang} />
 
-          <div className="px-[24px] py-[40px] rounded-[2px] bg-darkGrey flex flex-col gap-[16px]">
+          <div className="px-[24px] py-[40px] rounded-[2px] bg-dark-medium flex flex-col gap-[16px]">
             <h2 className="text-white text-[24px] font-bold text-center">General statements</h2>
 
             <p className="text-white text-[16px]">

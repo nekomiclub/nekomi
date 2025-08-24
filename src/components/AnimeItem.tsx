@@ -136,7 +136,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
       <StyledImage src={anime.poster} className="!absolute top-0 left-0" width="100%" height="100%" />
 
       <div className="flex flex-col">
-        <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark/[.8]`} ref={bottomRef}>
+        <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark-primary/[.8]`} ref={bottomRef}>
           <div className="flex flex-col gap-[4px]">
             <p className="titleCardNew-heading text-white text-[14px] font-bold text-ellipsis line-clamp-[2] font-manrope max-md:text-[14px]" title={anime.names.ukr} ref={titleRef}>{anime.names.ukr}</p>
 
@@ -157,7 +157,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
 
             <div className="flex items-center gap-[4px]">
               <MaterialSymbol icon="star_half" size={16} color="#FF464E" />
-              <p className="text-gradientPrimaryFallback text-[12px] font-bold font-space-grotesk">{anime.score.mal ?? anime.score.imdb ?? '—'}</p>
+              <p className="text-primary text-[12px] font-bold font-space-grotesk">{anime.score.mal ?? anime.score.imdb ?? '—'}</p>
             </div>
           </div>
         </div>

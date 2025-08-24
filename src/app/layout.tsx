@@ -111,7 +111,7 @@ export default async function Layout({ children, params }: LayoutProps) {
 
 
   return <html lang="uk">
-    <body className={`bg-dark ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
+    <body className={`bg-dark-primary ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
       {isServerOnline ? <StateProvider user={user} isSessionExpired={isSessionExpired}>
         <SkeletonTheme baseColor="#181818" highlightColor="#222">
           <NavMenu />

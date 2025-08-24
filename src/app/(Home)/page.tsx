@@ -26,7 +26,7 @@ export default async function RSC() {
     const featured = await API.getFeaturedAnime();
     const headliner = featured.headliners[randomNumber(0, featured.headliners.length - 1)];
 
-    return <main className="w-full h-full bg-dark min-h-screen">
+    return <main className="w-full h-full bg-dark-primary min-h-screen">
       <HomeHeadliner headliner={headliner} />
 
       {/* Categories */}

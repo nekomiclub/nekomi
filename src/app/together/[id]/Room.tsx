@@ -69,9 +69,9 @@
 
 //     {/* Reject if user dont has account */}
 //     {!currentUser.id && <>
-//       <div className="w-full h-screen z-[10000] bg-dark fixed">
+//       <div className="w-full h-screen z-[10000] bg-dark-primary fixed">
 //         <div className="wrapper h-full flex justify-center items-center">
-//           <div className="w-full max-w-[800px] h-[300px] bg-darkGrey px-[32px] py-[24px] rounded-[2px] flex flex-col gap-[24px] items-center justify-between">
+//           <div className="w-full max-w-[800px] h-[300px] bg-dark-medium px-[32px] py-[24px] rounded-[2px] flex flex-col gap-[24px] items-center justify-between">
 //             <div className="flex flex-col gap-[8px] items-center">
 //               <IcoUser width={64} height={64} fill="#fff" />
 
@@ -81,7 +81,7 @@
 //               </div>
 //             </div>
 
-//             <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className="px-[16px] py-[8px] rounded-[2px] bg-grey duration-200 hover:bg-gradientPrimaryFallback flex justify-center items-center gap-[16px] max-w-[500px] w-full">
+//             <Link href={`${config.URL.fkAccount}/login?ref=${config.URL.baseURL}${pathname}`} className="px-[16px] py-[8px] rounded-[2px] bg-grey duration-200 hover:bg-primary flex justify-center items-center gap-[16px] max-w-[500px] w-full">
 //               <p className="text-white">Створити акаунт</p>
 //               <IcoArrow width={16} height={16} className="-rotate-[90deg]" fill="#fff" />
 //             </Link>
@@ -362,7 +362,7 @@
 // function Settings({ className }: { className?: string }) {
 //   const { isOwner } = useContext(Context)
 
-//   return isOwner && <div className={cn('px-[24px] py-[16px] flex flex-col gap-[24px] rounded-[2px] border-[2px] border-darkGrey', className)}>
+//   return isOwner && <div className={cn('px-[24px] py-[16px] flex flex-col gap-[24px] rounded-[2px] border-[2px] border-dark-medium', className)}>
 //     <h2 className="text-[24px] text-white font-bold">Налаштування кімнати</h2>
 
 //     <div className="flex flex-col gap-[16px]">
@@ -402,7 +402,7 @@
 
 
 
-//   return <div className="w-full px-[24px] py-[16px] rounded-[4px] border-[2px] border-darkGrey h-full min-h-[300px] max-h-[920px] gap-[16px] flex flex-col max-[1020px]:h-[500px]">
+//   return <div className="w-full px-[24px] py-[16px] rounded-[4px] border-[2px] border-dark-medium h-full min-h-[300px] max-h-[920px] gap-[16px] flex flex-col max-[1020px]:h-[500px]">
 //     <div className="w-full overflow-x-hidden overflow-y-auto h-full flex-1 flex flex-col gap-[8px]" ref={messagesRef}>
 //       {messages.length === 0 && <p className="text-lightGrey text-center">Тут поки що нічого нема :(</p>}
 
@@ -415,7 +415,7 @@
 //     </div>
 
 //     <form className="flex items-center gap-[16px] w-full" onSubmit={e => { e.preventDefault(); sendMessage() }}>
-//       <Input state={message} stateSetter={setMessage} placeholder={placeholder} className="!bg-darkGrey w-full" />
+//       <Input state={message} stateSetter={setMessage} placeholder={placeholder} className="!bg-dark-medium w-full" />
 
 //       <button>
 //         <IcoSocialTelegram width={24} height={24} fill="#fff" />
@@ -435,7 +435,7 @@
 //         <div className="flex flex-col gap-[4px]">
 //           <p className="text-lightGrey text-[12px]">@{username}</p>
 
-//           <div className="px-[12px] py-[6px] bg-darkGrey rounded-[4px] rounded-bl-none w-fit relative">
+//           <div className="px-[12px] py-[6px] bg-dark-medium rounded-[4px] rounded-bl-none w-fit relative">
 //             <p className="text-white break-all">{text}</p>
 
 //             <p className="text-[10px] text-lightGrey absolute right-0 -bottom-[15px]">{getUTC(date + offset).time}</p>
@@ -453,7 +453,7 @@
 
 //   return <div className="w-full flex justify-end relative">
 //     <div className="relative pb-[16px]">
-//       <div className="px-[12px] py-[6px] bg-purple rounded-[4px] rounded-br-none">
+//       <div className="px-[12px] py-[6px] bg-primary rounded-[4px] rounded-br-none">
 //         <p className="text-white break-all">{text}</p>
 //       </div>
 
@@ -501,7 +501,7 @@
 
 
 //   return <div className="flex gap-[8px] items-center max-[1330px]:flex-col">
-//     <button className={cn('w-full px-[8] py-[12px] flex justify-center gap-[8px] border-[2px] rounded-[2px] border-darkGrey duration-200 hover:bg-darkGrey', urlCopied && 'bg-green border-green hover:!bg-green')} onClick={shareRoom}>
+//     <button className={cn('w-full px-[8] py-[12px] flex justify-center gap-[8px] border-[2px] rounded-[2px] border-dark-medium duration-200 hover:bg-dark-medium', urlCopied && 'bg-info-success border-info-success hover:!bg-info-success')} onClick={shareRoom}>
 //       <IcoChain width={24} height={24} fill="#fff" />
 //       <p className="text-white uppercase whitespace-nowrap">
 //         {!urlCopied && 'поділитися кімнатою'}
@@ -509,7 +509,7 @@
 //       </p>
 //     </button>
 
-//     {isOwner && <button className="w-full px-[8] py-[12px] flex justify-center gap-[8px] border-[2px] rounded-[2px] border-darkGrey bg-darkGrey duration-200 hover:bg-red hover:border-red" onClick={deleteRoom}>
+//     {isOwner && <button className="w-full px-[8] py-[12px] flex justify-center gap-[8px] border-[2px] rounded-[2px] border-dark-medium bg-dark-medium duration-200 hover:bg-info-error hover:border-info-error" onClick={deleteRoom}>
 //       <IcoCan width={24} height={24} fill="#fff" />
 //       <p className="text-white uppercase whitespace-nowrap">видалити кімнату</p>
 //     </button>}

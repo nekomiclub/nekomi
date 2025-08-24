@@ -73,7 +73,7 @@ export const UserLibSection: NextPage<UserLibProps> = ({ lib, user, hydratedAnim
 
       <div className="flex gap-[8px]">
         <Tooltip content={!lib.settings.hidden ? urlCopied ? 'Посилання скопійовано!' : 'Копіювати посилання на теку' : 'Неможливо поділитися приватною текою'}>
-          <button className={cn(`ui-button w-[40px] h-[40px] flex justify-center items-center rounded-[4px]`, urlCopied ? 'bg-green' : 'bg-transparent border-none hover:!bg-purple focus-visible:!bg-purple', lib.settings.hidden && 'hover:!bg-red focus-visible:!bg-red cursor-not-allowed')} onClick={copyLibURL} disabled={lib.settings.hidden}>
+          <button className={cn(`ui-button w-[40px] h-[40px] flex justify-center items-center rounded-[4px]`, urlCopied ? 'bg-info-success' : 'bg-transparent border-none hover:!bg-primary focus-visible:!bg-primary', lib.settings.hidden && 'hover:!bg-info-error focus-visible:!bg-info-error cursor-not-allowed')} onClick={copyLibURL} disabled={lib.settings.hidden}>
             <MaterialSymbol className={lib.settings.hidden ? 'text-grey-new' : 'text-white'} icon="link" size={24} />
           </button>
         </Tooltip>
