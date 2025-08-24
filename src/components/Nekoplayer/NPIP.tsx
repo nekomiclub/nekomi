@@ -35,9 +35,9 @@ const NPIP: FC = () => {
 
 
 
-  return <button className="kekwplayer-pip_button relative w-[32px] h-[32px] max-[600px]:hidden" onClick={changePiP} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
-    <MaterialSymbol className={cn(`kekwplayer-pip text-white`, isPiP && 'opacity-0')} icon="pip" size={32} />
-    <MaterialSymbol className={cn(`kekwplayer-pip text-white`, !isPiP && 'opacity-0')} icon="pip_exit" size={32} />
+  return <button className="nekoplayer-action relative w-[32px] h-[32px] max-[600px]:hidden" onClick={changePiP} tabIndex={0} aria-label={getTitle()} title={getTitle()}>
+    <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`, isPiP && 'opacity-0')} icon="pip" size={32} />
+    <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`, !isPiP && 'opacity-0')} icon="pip_exit" size={32} />
   </button>;
 };
 

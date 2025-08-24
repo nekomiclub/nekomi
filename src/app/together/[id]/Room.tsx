@@ -170,7 +170,7 @@
 //   // Handle player video events
 //   useEffect(() => {
 //     const parent = parentRef.current
-//     const video = parent?.querySelector('#kekwplayer-video') as HTMLVideoElement | undefined;
+//     const video = parent?.querySelector('#nekoplayer-video') as HTMLVideoElement | undefined;
 //     if (!parent || !video) return;
 
 //     video.addEventListener('waiting', () => setIsBuffering(true));
@@ -205,7 +205,7 @@
 
 //         if (message.type === 'wt_sync') {
 //           const { payload } = message as Response<IWS_WTSync>
-//           const video = parentRef.current?.querySelector('#kekwplayer-video') as HTMLVideoElement | undefined;
+//           const video = parentRef.current?.querySelector('#nekoplayer-video') as HTMLVideoElement | undefined;
 //           if (payload.syncedWithId === currentUser.id || !video) return;
 
 //           const { dubberId, isBuffering, isPlaying, moment, order } = payload;

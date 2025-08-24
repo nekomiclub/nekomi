@@ -30,9 +30,9 @@ const NPlay: FC = () => {
 
 
 
-  return <button className="kekwplayer-play_button relative w-[40px] h-[40px]" onClick={changePlaying} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
-    <MaterialSymbol className={cn(`kekwplayer-play text-white`, isPlaying && 'opacity-0')} icon="play_arrow" fill size={40} />
-    <MaterialSymbol className={cn(`kekwplayer-play text-white`, !isPlaying && 'opacity-0')} icon="pause" fill size={40} />
+  return <button className="nekoplayer-action relative w-[40px] h-[40px]" onClick={changePlaying} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
+    <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`, isPlaying && 'opacity-0')} icon="play_arrow" fill size={40} />
+    <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`, !isPlaying && 'opacity-0')} icon="pause" fill size={40} />
   </button>;
 };
 

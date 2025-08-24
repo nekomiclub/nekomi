@@ -153,8 +153,8 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
 
   return <div className="relative max-[460px]:opacity-0 max-[460px]:invisible max-[460px]:absolute">
     <Menu className="h-[32px]" settings={{ direction: 'top', align: 'end', animation: 'slide' }} gap={24} state={isMenuOpen} stateSetter={setIsMenuOpen} id={menuId}>
-      <MenuTrigger anchor className={'kekwplayer-settings_button relative w-[32px] h-[32px]'} aria-label={'Налаштування'}>
-        <MaterialSymbol className={cn(`kekwplayer-settings text-white`)} icon="settings" size={32} />
+      <MenuTrigger anchor className={'nekoplayer-action relative w-[32px] h-[32px]'} aria-label={'Налаштування'}>
+        <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`)} icon="settings" size={32} />
       </MenuTrigger>
 
       <MenuWrapper className={`nekoplayer-settings-menu_wrapper !w-[300px] rounded-[2px] bg-dark-primary flex flex-col border border-dark-light overflow-x-hidden overflow-y-auto max-h-[500px] !translate-x-[30px] duration-200 max-md:max-h-[300px]`}>

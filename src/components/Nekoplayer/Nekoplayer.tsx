@@ -885,7 +885,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
           <loader.DotPulse color="#fff" size={80} />
         </div>
 
-        <video src={videoSrc} className={cn(`w-full h-full`, stretch && 'object-cover')} preload="metadata" playsInline controlsList="nodownload" muted={isMuted} controls={false} id="kekwplayer-video" ref={videoRef}></video>
+        <video src={videoSrc} className={cn(`w-full h-full`, stretch && 'object-cover')} preload="metadata" playsInline controlsList="nodownload" muted={isMuted} controls={false} id="nekoplayer-video" ref={videoRef}></video>
       </div>
 
       {/* Screens */}

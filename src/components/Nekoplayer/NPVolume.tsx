@@ -73,10 +73,10 @@ const NPVolume: FC = () => {
 
 
   return <div className="relative flex items-center gap-[8px] max-[600px]:hidden" ref={volumeWrapperRef}>
-    <button className="kekwplayer-volume_button relative w-[32px] h-[32px]" onClick={() => changeMuted()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
-      <MaterialSymbol className={cn(`kekwplayer-volume text-white`, !(isMuted) && 'opacity-0')} icon="volume_off" size={32} />
-      <MaterialSymbol className={cn(`kekwplayer-volume text-white`, !(volume < 45 && !isMuted) && 'opacity-0')} icon="volume_down" size={32} />
-      <MaterialSymbol className={cn(`kekwplayer-volume text-white`, !(volume >= 45 && !isMuted) && 'opacity-0')} icon="volume_up" size={32} />
+    <button className="nekoplayer-action relative w-[32px] h-[32px]" onClick={() => changeMuted()} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
+      <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`, !(isMuted) && 'opacity-0')} icon="volume_off" size={32} />
+      <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`, !(volume < 45 && !isMuted) && 'opacity-0')} icon="volume_down" size={32} />
+      <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`, !(volume >= 45 && !isMuted) && 'opacity-0')} icon="volume_up" size={32} />
     </button>
 
     <div className="flex items-center gap-[16px] w-fit overflow-hidden opacity-0 duration-500 max-0" ref={volumeRangeRef}>
@@ -98,7 +98,7 @@ const NPVolume: FC = () => {
               zIndex: 3,
               outline: 'none'
             }}
-            id="kekwplayer-volume_thumb"
+            id="nekoplayer-volume_thumb"
             className={`w-[12px] h-[12px] bg-primary rounded-[32px]`}
           />}
 
