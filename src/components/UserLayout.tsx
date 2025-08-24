@@ -15,6 +15,7 @@ import cn from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
+import StyledButton from './Styled/StyledButton';
 import StyledImage from './Styled/StyledImage';
 import { NotifySuccess, NotifyWarn } from './UI/NotifyToast';
 import { UIReportButton } from './UI/Report';
@@ -109,24 +110,24 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
         <div className="flex items-center gap-[4px]">
           {/* Settings */}
           {(type === 'dubber_profile' || type === 'user_profile') && showSettings && <Link href={settingsUrl}>
-            <button className="gui-ul-action">
+            <StyledButton className="gui-ul-action">
               <MaterialSymbol icon="settings" size={24} className="gui-ul-action_icon" />
-            </button>
+            </StyledButton>
           </Link>}
 
           {/* Copy link */}
           {(type === 'dubber_profile' || type === 'user_profile' || type === 'user_lib') && <Tooltip content={isLinkCopied ? 'Посилання скопійовано!' : 'Скопіювати посилання'}>
-            <button className={cn(`gui-ul-action`, isLinkCopied && 'gui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
+            <StyledButton className={cn(`gui-ul-action`, isLinkCopied && 'gui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
               <MaterialSymbol icon="link" size={24} className="gui-ul-action_icon" />
-            </button>
+            </StyledButton>
           </Tooltip>}
 
           {/* Back to profile */}
           {(type === 'dubber_settings' || type === 'user_settings' || type === 'user_lib') && <Tooltip content="На сторінку профілю">
             <Link href={profileUrl}>
-              <button className="gui-ul-action">
+              <StyledButton className="gui-ul-action">
                 <MaterialSymbol icon="account_box" size={24} className="gui-ul-action_icon" />
-              </button>
+              </StyledButton>
             </Link>
           </Tooltip>}
         </div>

@@ -1,6 +1,15 @@
 @import "./vars.scss";
 
 .ui {
+  &-buttonJam {
+    transition: 0.1s linear scale;
+
+    &:active,
+    &:focus-visible {
+      scale: 0.95;
+    }
+  }
+
   &-notifyToast {
     &_progressBar {
       &--success {
@@ -127,6 +136,37 @@
   &-hideScroll {
     &::-webkit-scrollbar {
       display: none;
+    }
+  }
+
+  &-button {
+    padding: 15px 30px;
+    border-radius: 4px;
+    transition: 0.2s ease-in-out;
+
+    &--default {
+      background: $dark-medium;
+      border: 1px solid $dark-light;
+
+      &:hover,
+      &:focus-visible {
+        background: $dark-light;
+      }
+    }
+
+    &--none {
+      padding: 0;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+    }
+
+    &--icon {
+      padding: 0 !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 }
