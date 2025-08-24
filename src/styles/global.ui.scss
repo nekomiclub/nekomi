@@ -1,0 +1,41 @@
+.gui {
+  &-footer {
+    &-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      transition: 0.1s ease-in-out;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: #fff;
+        transition: 0.2s ease-in-out;
+      }
+
+      &:hover,
+      &:focus-visible {
+        &::after {
+          width: 100%;
+        }
+      }
+
+      &:active {
+        scale: 0.97;
+      }
+    }
+
+    &-social {
+      transition: 0.2s ease-in-out;
+
+      &:active {
+        scale: 0.97;
+      }
+    }
+  }
+}
