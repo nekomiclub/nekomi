@@ -14,6 +14,7 @@ import StyledImage from '~/components/Styled/StyledImage';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
 import { UIText } from '~/components/UI/Text.ui';
 import Tooltip from '~/components/UI/Tooltip';
+import UserAvatar from '~/components/UserAvatar';
 import { config } from '~/config';
 import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
@@ -110,10 +111,7 @@ export const DubberHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const canEdit = user.capabilities.includes('admin') || user.capabilities.includes('root') || dubber.members.find(el => el.id === user.id)?.role === 'leader';
 
   return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
-    {/* Avatar placeholder */}
-    <div className="relative w-[256px] h-[128px] shrink-0 max-md:w-[128px] max-md:h-[64px]">
-      <StyledImage src={dubber.avatar} width={'256px'} height={'256px'} alt="Dubber avatar" className="absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px] max-md:w-[128px] max-md:h-[128px] max-md:top-[-64px]" />
-    </div>
+    <UserAvatar avatarUrl={dubber.avatar} />
 
     <div className="w-full flex items-center justify-between gap-[24px]">
       <div className="flex flex-col gap-[8px]">

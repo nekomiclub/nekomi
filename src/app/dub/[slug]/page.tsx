@@ -59,7 +59,6 @@ export default async function RSC({ params, searchParams }: RSCProps<DubberPageP
   try {
     const { dubber, dubbedHydratedAnimes, parsedMembers } = await getDubber(slug);
 
-    dubber.banner = '/assets/footer-bg.png'; // !TMP
     return <section className="wrapper gap-[16px] pt-[16px] sm:pt-[var(--header-height)]">
       <UserBanner bannerUrl={dubber.banner} />
 

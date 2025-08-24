@@ -52,7 +52,6 @@ export default async function RSC({ params }: RSCProps) {
 
 
 
-  dubber.banner = '/assets/footer-bg.png'; // !TMP
   return user && <section className="wrapper pt-[16px] sm:pt-[var(--header-height)] gap-[16px]">
     <UserBanner bannerUrl={dubber.banner} isEdit entityId={dubber.id} entityType={'dubber'} />
 

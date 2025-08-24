@@ -1,7 +1,7 @@
 'use client';
 
 import { NextPage } from 'next';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
@@ -15,6 +15,7 @@ import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
+import UserAvatar from '~/components/UserAvatar';
 import { useAppSelector } from '~/hooks/redux';
 import { Dubber, DubberMember as DubberMemberIntf, DubberMemberRole } from '~/interfaces/DubberIntf';
 import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
@@ -65,10 +66,8 @@ interface IMemberInviteResultProps extends IUserGetSearchResult {
 
 export const DubberSettingsHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
-    {/* Avatar placeholder */}
-    <div className="relative w-[256px] h-[128px] shrink-0 max-md:w-[128px] max-md:h-[64px]">
-      <DubberSettingsAvatar dubber={dubber} />
-    </div>
+    <UserAvatar avatarUrl={dubber.avatar} entityId={dubber.id} entityType="dubber" isEdit className="!absolute -top-[128px] max-md:-top-[64px]" />
+    <div className="w-[256px] h-[128px] flex-shrink-0 max-md:w-[128px] max-md:h-[64px]"></div> {/* placeholder */}
 
     <div className="w-full flex items-center justify-between gap-[24px]">
       <div className="flex flex-col gap-[8px]">
@@ -389,87 +388,6 @@ const InviteMembers: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
         </div>}
       </MenuWrapper>
     </Menu>
-  </div>;
-};
-
-const DubberSettingsAvatar: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
-  const [isActive, setIsActive] = useState(false);
-  const [avatarURL, setAvatarURL] = useState(dubber.avatar);
-
-  const avatarRef = useRef<HTMLDivElement>(null);
-  const selectFileRef = useRef<HTMLInputElement>(null);
-
-
-
-  useEffect(() => {
-    const avatar = avatarRef.current;
-    if (!avatar) return;
-
-
-
-    function show() {
-      setIsActive(true);
-    }
-
-    function hide() {
-      setIsActive(false);
-    }
-
-    avatar.addEventListener('mouseenter', show);
-    avatar.addEventListener('mouseleave', hide);
-  }, []);
-
-
-
-  async function uploadAvatar() {
-    const select = selectFileRef.current;
-    if (!select) return;
-
-    if (!select.files?.length) return NotifyWarn({ title: 'Файл відсутній', message: 'Неможливо оновити аватар без файлу' });
-    const file = select.files[0];
-
-    try {
-      NotifySuccess({ message: `Завантажуємо файл: ${file.name}`, title: 'Завантажуємо...' });
-
-      const { url } = await API.putDubberAvatar({ dubberId: dubber.id, file });
-
-      setAvatarURL(url);
-      NotifySuccess({ message: `Файл завантажено`, title: 'Аватар оновлено!' });
-    } catch (e) {
-      HandleClientError(e);
-    }
-  }
-
-  function selectFile() {
-    const select = selectFileRef.current;
-    if (!select) return;
-
-    select.value = '';
-    select.click();
-  }
-
-
-
-  return <div className="w-[256px] h-[256px] absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px] max-md:w-[128px] max-md:h-[128px] max-md:top-[-64px]" ref={avatarRef}>
-    <StyledImage src={avatarURL} width="100%" height="100%" alt="Dubber avatar" />
-
-    <div className="w-[32px] h-[32px] flex justify-center items-center rounded-[32px] absolute top-[8px] right-[8px] opacity-[.5] bg-dark-primary">
-      <MaterialSymbol icon="edit" size={16} color="#fff" />
-    </div>
-
-    <input type="file" className="hidden" accept=".png,.jpg,.webp" ref={selectFileRef} onChange={uploadAvatar} />
-
-    <button onClick={selectFile} className={cn('w-full h-full absolute top-0 left-0 bg-dark-primary/[.5] flex justify-center items-center duration-200', !isActive && 'opacity-0 invisible')}>
-      <div className="flex flex-col items-center gap-[16px] max-md:gap-[8px]">
-        <MaterialSymbol icon="backup" size={64} color="#fff" className="max-md:!text-[32px]" />
-
-        <div className="flex flex-col gap-[8px]">
-          <h3 className="text-white text-[24px] font-bold font-manrope text-center uppercase max-md:text-[16px]">завантажити аватар</h3>
-          <p className="text-white text-[16px] font-manrope text-center max-md:hidden">.png .jpg .webp <br /> до 1го мегабайта</p>
-          <p className="text-white text-[12px] font-manrope text-center max-md:hidden">Рекомендований розмір: 256x256</p>
-        </div>
-      </div>
-    </button>
   </div>;
 };
 

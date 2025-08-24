@@ -13,7 +13,7 @@ import { UIReportButton } from './UI/Report';
 
 
 
-interface Props {
+interface IProps {
   bannerUrl: string
 
   isEdit?: boolean
@@ -25,7 +25,7 @@ interface Props {
 
 
 
-const UserBanner: FC<Props> = ({ bannerUrl: initialBannerUrl, isEdit, entityId, entityType }) => {
+const UserBanner: FC<IProps> = ({ bannerUrl: initialBannerUrl, isEdit, entityId, entityType }) => {
   const [bannerUrl, setBannerUrl] = useState(initialBannerUrl);
   const [isDrag, setIsDrag] = useState(false);
 
@@ -111,7 +111,7 @@ const UserBanner: FC<Props> = ({ bannerUrl: initialBannerUrl, isEdit, entityId, 
 
 
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[250px]">
-    <StyledImage src={bannerUrl} width="100%" height="100%" alt={`Team banner`} />
+    <StyledImage src={bannerUrl} width="100%" height="100%" alt={`Team banner`} rounded={4} />
 
     {/* Edit layout */}
     {isEdit && <>
