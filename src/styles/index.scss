@@ -122,9 +122,17 @@ button * {
   user-select: none !important;
 }
 
+button {
+  font-size: 0 !important;
+}
+
 * {
   &::-webkit-scrollbar {
     width: 2px;
+  }
+
+  &::-webkit-scrollbar:horizontal {
+    display: none;
   }
 
   &::-webkit-scrollbar-track {

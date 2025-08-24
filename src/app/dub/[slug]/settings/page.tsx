@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
-import UserBanner from '~/components/UserBanner';
+import UserLayout from '~/components/UserLayout';
 import { config, metaObject } from '~/config';
 import { Dubber } from '~/interfaces/DubberIntf';
 import { RSCProps } from '~/interfaces/types';
@@ -10,7 +10,7 @@ import { User } from '~/interfaces/UserIntf';
 import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
 
-import { DubberSettingsContent, DubberSettingsHeader } from './DubberSettingsPage';
+import { DubberSettingsContent } from './DubberSettingsPage';
 
 
 
@@ -52,12 +52,11 @@ export default async function RSC({ params }: RSCProps) {
 
 
 
-  return user && <section className="wrapper pt-[16px] sm:pt-[var(--header-height)] gap-[16px]">
-    <UserBanner bannerUrl={dubber.banner} isEdit entityId={dubber.id} entityType={'dubber'} />
+  return user && <>
+    <UserLayout type="dubber_settings" dubber={dubber} />
 
-    <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">
-      <DubberSettingsHeader dubber={dubber} />
+    <section className="wrapper gap-[40px] pt-[24px] relative">
       <DubberSettingsContent dubber={dubber} members={members} />
-    </div>
-  </section>;
+    </section>
+  </>;
 }

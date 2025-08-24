@@ -11,19 +11,13 @@ import { IcoSocialTelegram } from '~/assets/Social';
 import AnimeItem from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
-import { NotifySuccess } from '~/components/UI/NotifyToast';
-import { UIText } from '~/components/UI/Text.ui';
-import Tooltip from '~/components/UI/Tooltip';
-import UserAvatar from '~/components/UserAvatar';
-import { config } from '~/config';
-import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { Dubber, DubberMember } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
-import { copyToClipboard, wordDeclination } from '~/utils/utils';
+import { wordDeclination } from '~/utils/utils';
 
 
 
@@ -106,27 +100,6 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
   </PopupWindow>;
 };
 
-export const DubberHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
-  const user = useAppSelector(state => state.user);
-  const canEdit = user.capabilities.includes('admin') || user.capabilities.includes('root') || dubber.members.find(el => el.id === user.id)?.role === 'leader';
-
-  return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
-    <UserAvatar avatarUrl={dubber.avatar} />
-
-    <div className="w-full flex items-center justify-between gap-[24px]">
-      <div className="flex flex-col gap-[8px]">
-        <UIText text={dubber.nameUkr} type="h1" className="break-all" />
-        <UIText text={`@${dubber.slug}`} type="h3" className="text-grey-new font-space-grotesk break-all font-normal" />
-      </div>
-
-      <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
-        {canEdit && <DubberHeaderOpenSettings slug={dubber.id} />}
-        <DubberHeaderCopyLink />
-      </div>
-    </div>
-  </div>;
-};
-
 export const DubberAbout: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   return <div className="flex flex-col gap-[24px]">
     <ul className="w-full flex items-center justify-center flex-wrap gap-[8px]">
@@ -182,38 +155,6 @@ export const DubberTeam: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubb
 };
 
 
-
-
-function DubberHeaderOpenSettings({ slug }: { slug: string }) {
-  return <Tooltip content="Редагувати налаштування">
-    <Link href={Routes.dubberSettings.path({ slug })} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light outline-none" prefetch={false}>
-      <MaterialSymbol icon="settings" size={24} color="#fff" />
-    </Link>
-  </Tooltip>;
-}
-
-function DubberHeaderCopyLink() {
-  const pathname = usePathname();
-
-  const [isLinkCopied, setIsLinkCopied] = useState(false);
-
-  function copyLink() {
-    copyToClipboard(`${config.URL.nekomi_site}${pathname}`);
-    setIsLinkCopied(true);
-
-    NotifySuccess({ title: 'Copied!', message: 'Посилання на команду скопійовано в буфер обміну' });
-
-    setTimeout(() => {
-      setIsLinkCopied(false);
-    }, 3000);
-  }
-
-  return <Tooltip content="Скопіювати посилання на команду">
-    <button className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 active:scale-[.95] border outline-none', isLinkCopied ? 'bg-info-success border-info-success' : 'bg-dark-medium hover:bg-dark-light focus-visible:bg-dark-light max-md:p-[12px] border-dark-light')} onClick={copyLink}>
-      <MaterialSymbol icon="link" size={24} color="#fff" />
-    </button>
-  </Tooltip>;
-}
 
 function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
   return <li>

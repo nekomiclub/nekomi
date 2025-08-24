@@ -5,14 +5,14 @@ import { cache } from 'react';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
-import UserBanner from '~/components/UserBanner';
+import UserLayout from '~/components/UserLayout';
 import { metaObject } from '~/config';
 import { DubberPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { timestampToDayMonth } from '~/utils/utils';
 
-import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberHeader, DubberTeam } from './DubberPage';
+import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberTeam } from './DubberPage';
 
 
 
@@ -59,12 +59,12 @@ export default async function RSC({ params, searchParams }: RSCProps<DubberPageP
   try {
     const { dubber, dubbedHydratedAnimes, parsedMembers } = await getDubber(slug);
 
-    return <section className="wrapper gap-[16px] pt-[16px] sm:pt-[var(--header-height)]">
-      <UserBanner bannerUrl={dubber.banner} />
+    return <>
+      <DubberAnswerInvite dubber={dubber} invite={invite} />
 
-      <div className="px-[16px] pt-[160px] max-md:pt-[224px] pb-[16px] rounded-[4px] bg-dark-bright flex flex-col gap-[40px] relative max-sm:px-[8px]">
-        <DubberAnswerInvite dubber={dubber} invite={invite} />
-        <DubberHeader dubber={dubber} />
+      <UserLayout type="dubber_profile" dubber={dubber} />
+
+      <section className="wrapper gap-[40px] pt-[24px] relative">
         <DubberAbout dubber={dubber} />
         {dubbedHydratedAnimes?.length ? <DubberAnimeDubbed dubber={dubber} hydratedAnimes={dubbedHydratedAnimes} /> : undefined}
         {parsedMembers?.length ? <DubberTeam dubber={dubber} members={parsedMembers} /> : undefined}
@@ -73,8 +73,8 @@ export default async function RSC({ params, searchParams }: RSCProps<DubberPageP
           <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
           <p className="text-grey-new text-[12px] font-manrope">На nekomi з: {timestampToDayMonth(dubber.statistics.createdAt)}</p>
         </div>
-      </div>
-    </section>;
+      </section>
+    </>;
   } catch (e) {
     return HandleServerError(e);
   }

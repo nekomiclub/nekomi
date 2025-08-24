@@ -15,7 +15,6 @@ import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
-import UserAvatar from '~/components/UserAvatar';
 import { useAppSelector } from '~/hooks/redux';
 import { Dubber, DubberMember as DubberMemberIntf, DubberMemberRole } from '~/interfaces/DubberIntf';
 import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
@@ -63,28 +62,6 @@ interface IMemberInviteResultProps extends IUserGetSearchResult {
 }
 
 
-
-export const DubberSettingsHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
-  return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
-    <UserAvatar avatarUrl={dubber.avatar} entityId={dubber.id} entityType="dubber" isEdit className="!absolute -top-[128px] max-md:-top-[64px]" />
-    <div className="w-[256px] h-[128px] flex-shrink-0 max-md:w-[128px] max-md:h-[64px]"></div> {/* placeholder */}
-
-    <div className="w-full flex items-center justify-between gap-[24px]">
-      <div className="flex flex-col gap-[8px]">
-        <h2 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">{dubber.nameUkr}</h2>
-        <h4 className="text-grey-new text-[24px] font-space-grotesk">@{dubber.slug}</h4>
-      </div>
-
-      <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
-        <Tooltip content="На сторінку команди">
-          <Link href={Routes.dubber.path({ slug: dubber.slug })} className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 bg-dark-medium border border-dark-light active:scale-[.95] hover:bg-primary-bright focus-visible:bg-primary-bright outline-none')}>
-            <MaterialSymbol icon="account_box" size={24} color="#fff" />
-          </Link>
-        </Tooltip>
-      </div>
-    </div>
-  </div>;
-};
 
 export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubber, members }) => {
   const currentUser = useAppSelector(state => state.user);
@@ -235,7 +212,7 @@ export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }
 
   return <div className="flex flex-col gap-[16px]">
     <div className="w-full flex justify-between items-center pb-[16px] border-b border-dark-light gap-[16px] max-md:flex-col">
-      <h2 className="text-white text-[32px] font-bold font-manrope max-md:text-[24px]">Налаштування команди</h2>
+      <h2 className="text-white text-[32px] font-manrope max-md:text-[24px]">Налаштування команди</h2>
 
       <Controls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>
@@ -451,7 +428,7 @@ function Controls({ resetChanges, saveChanges, isSomethingChanged, isSaving }: I
 function SettingsGroup({ title, description, children }: ISettingsGroupProps) {
   return <div className="w-full flex justify-between pb-[16px] border-b border-dark-light gap-[16px] max-lg:flex-col">
     <div className="w-[300px] flex flex-col gap-[4px] shrink-0 max-lg:w-auto">
-      <h4 className="text-white text-[24px] font-bold font-manrope">{title}</h4>
+      <h4 className="text-white text-[24px] font-manrope">{title}</h4>
       <h4 className="text-grey-new font-manrope">{description}</h4>
     </div>
 

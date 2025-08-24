@@ -73,4 +73,45 @@
       }
     }
   }
+
+  // UserLayout component styles
+  &-ul {
+    &-action {
+      background: $darkMedium;
+      border: 1px solid $darkLight;
+      transition: 0.1s ease-in-out;
+      padding: 16px;
+      border-radius: 4px;
+
+      @media only screen and (max-width: $break-md) {
+        padding: 12px;
+      }
+
+      &:active {
+        scale: 0.97;
+      }
+
+      &:hover,
+      &:focus-visible {
+        background: $darkLight;
+      }
+
+      &_icon {
+        color: #fff;
+
+        @media only screen and (max-width: $break-md) {
+          font-size: 20px !important;
+        }
+      }
+
+      &--succeed {
+        background: $green;
+
+        &:hover,
+        &:focus-visible {
+          background: $green;
+        }
+      }
+    }
+  }
 }
