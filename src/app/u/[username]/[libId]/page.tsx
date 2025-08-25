@@ -11,7 +11,7 @@ import Tooltip from '~/components/UI/Tooltip';
 import { H2, H3, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { config, metaObject } from '~/config';
-import { UserPageLibProps } from '~/interfaces/PagesParams';
+import { UserLibPageProps } from '~/interfaces/PagesParams';
 import { UserGetByQuery } from '~/interfaces/services/ApiServiceIntf';
 import { RSCProps } from '~/interfaces/types';
 import { UserLib } from '~/interfaces/UserIntf';
@@ -30,7 +30,7 @@ const getUser = cache(async (query: string, libId: string): Promise<UserGetByQue
 
 
 export async function generateMetadata(
-  props: RSCProps<UserPageLibProps>,
+  props: RSCProps<UserLibPageProps>,
 ): Promise<Metadata> {
   const { username, libId } = await props.params;
   const { user } = await getUser(username, libId);
@@ -44,7 +44,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: RSCProps<UserPageLibProps>) {
+export default async function RSC(props: RSCProps<UserLibPageProps>) {
   const params = await props.params;
   const { username, libId } = params;
 

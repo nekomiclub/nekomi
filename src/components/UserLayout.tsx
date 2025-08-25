@@ -20,7 +20,7 @@ import StyledImage from './Styled/StyledImage';
 import { NotifySuccess, NotifyWarn } from './UI/NotifyToast';
 import { UIReportButton } from './UI/Report';
 import Tooltip from './UI/Tooltip';
-import { H2, H3, P } from './UI/Typography';
+import { H1, H2, P } from './UI/Typography';
 
 
 
@@ -70,7 +70,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const isEdit = type === 'dubber_settings' || type === 'user_settings';
 
   const profileUrl = user ? Routes.user.path({ username: user.username }) : dubber ? Routes.dubber.path({ slug: dubber.slug }) : '#';
-  const settingsUrl = user ? Routes.user.path({ username: user.username }) : dubber ? Routes.dubberSettings.path({ slug: dubber.slug }) : '#';
+  const settingsUrl = user ? Routes.userSettings.path({ username: user.username }) : dubber ? Routes.dubberSettings.path({ slug: dubber.slug }) : '#';
 
   const canEditUser = currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('root') || user?.id === currentUser.id;
   const canEditDubber = currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('root') || dubber?.members.find(el => el.id === currentUser.id)?.role === 'leader';
@@ -103,17 +103,19 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
       <div className="w-full flex items-center justify-between gap-[24px] pb-[24px] max-lg:pb-[4px] max-lg:pt-[12px] max-md:p-0">
         <div className="flex flex-col gap-[8px] max-lg:gap-[4px]">
-          <H2 text={user?.username ?? dubber?.nameUkr} size={32} className={cn(`text-white font-bold break-all`, isUser && 'font-space-grotesk', isDubber && 'font-manrope')} />
-          {isDubber && <H3 text={`@${dubber?.slug}`} size={20} className="text-grey-new font-space-grotesk line-clamp-1 text-ellipsis break-all" />}
+          <H1 text={user?.username ?? dubber?.nameUkr} size={32} className={cn(`text-white font-bold break-all`, isUser && 'font-space-grotesk', isDubber && 'font-manrope')} />
+          {isDubber && <H2 text={`@${dubber?.slug}`} size={20} className="text-grey-new font-space-grotesk line-clamp-1 text-ellipsis break-all" />}
         </div>
 
         <div className="flex items-center gap-[4px]">
           {/* Settings */}
-          {(type === 'dubber_profile' || type === 'user_profile') && showSettings && <Link href={settingsUrl}>
-            <StyledButton className="gui-ul-action">
-              <MaterialSymbol icon="settings" size={24} className="gui-ul-action_icon" />
-            </StyledButton>
-          </Link>}
+          {(type === 'dubber_profile' || type === 'user_profile') && showSettings && <Tooltip content="Налаштування">
+            <Link href={settingsUrl}>
+              <StyledButton className="gui-ul-action">
+                <MaterialSymbol icon="settings" size={24} className="gui-ul-action_icon" />
+              </StyledButton>
+            </Link>
+          </Tooltip>}
 
           {/* Copy link */}
           {(type === 'dubber_profile' || type === 'user_profile' || type === 'user_lib') && <Tooltip content={isLinkCopied ? 'Посилання скопійовано!' : 'Скопіювати посилання'}>
@@ -123,7 +125,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
           </Tooltip>}
 
           {/* Back to profile */}
-          {(type === 'dubber_settings' || type === 'user_settings' || type === 'user_lib') && <Tooltip content="На сторінку профілю">
+          {(type === 'dubber_settings' || type === 'user_settings' || type === 'user_lib') && <Tooltip content="В профіль">
             <Link href={profileUrl}>
               <StyledButton className="gui-ul-action">
                 <MaterialSymbol icon="account_box" size={24} className="gui-ul-action_icon" />
@@ -190,7 +192,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
     if (!input) return console.error(`[dev]: Input not provided to function`);
 
     const file = input.files && input.files[0];
-    if (!file) return NotifyWarn({ title: 'Файл не завантажено', message: '' });
+    if (!file) return NotifyWarn({ title: 'Аватар не завантажено', message: '' });
 
     uploadFile(file);
   }
@@ -204,7 +206,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
       NotifySuccess({ title: 'Завантажуємо аватар...', message: file.name });
 
       if (entityType === 'user') {
-        return console.error(`[dev]: Entity type cannot be handled (${entityType})`);
+        return NotifyWarn({ title: 'Аватар не завантажено', message: 'Ви можете оновити аватар тільки в акаунті Fullkekw' });
       } else if (entityType === 'dubber') {
         const res = await API.putDubberAvatar({ dubberId: entityId, file });
         url = res.url;
@@ -277,7 +279,7 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
       setIsDrag(false);
 
       const file = e.dataTransfer?.files[0];
-      if (!file) return NotifyWarn({ title: 'Файл не завантажено', message: '' });
+      if (!file) return NotifyWarn({ title: 'Банер не завантажено', message: '' });
 
       uploadFile(file);
     });
@@ -298,7 +300,7 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
     if (!input) return console.error(`[dev]: Input not provided to function`);
 
     const file = input.files && input.files[0];
-    if (!file) return NotifyWarn({ title: 'Файл не завантажено', message: '' });
+    if (!file) return NotifyWarn({ title: 'Банер не завантажено', message: '' });
 
     uploadFile(file);
   }

@@ -15,6 +15,7 @@ import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
+import { H3, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
 import { Dubber, DubberMember as DubberMemberIntf, DubberMemberRole } from '~/interfaces/DubberIntf';
 import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
@@ -210,9 +211,9 @@ export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }
 
 
 
-  return <div className="flex flex-col gap-[16px]">
-    <div className="w-full flex justify-between items-center pb-[16px] border-b border-dark-light gap-[16px] max-md:flex-col">
-      <h2 className="text-white text-[32px] font-manrope max-md:text-[24px]">Налаштування команди</h2>
+  return <div className="flex flex-col gap-[24px]">
+    <div className="w-full flex justify-between items-center gap-[16px] max-md:flex-col">
+      <h2 className="text-white text-[32px] font-manrope max-md:text-[24px] font-bold">Налаштування команди</h2>
 
       <Controls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>
@@ -426,10 +427,10 @@ function Controls({ resetChanges, saveChanges, isSomethingChanged, isSaving }: I
 }
 
 function SettingsGroup({ title, description, children }: ISettingsGroupProps) {
-  return <div className="w-full flex justify-between pb-[16px] border-b border-dark-light gap-[16px] max-lg:flex-col">
+  return <div className="w-full flex justify-between pt-[24px] border-t border-dark-light gap-[16px] max-lg:flex-col">
     <div className="w-[300px] flex flex-col gap-[4px] shrink-0 max-lg:w-auto">
-      <h4 className="text-white text-[24px] font-manrope">{title}</h4>
-      <h4 className="text-grey-new font-manrope">{description}</h4>
+      <H3 text={title} size={24} className="text-white" bold />
+      <P text={description} className="text-grey-new" />
     </div>
 
     {children}

@@ -179,7 +179,7 @@ class ApiService {
   }
 
   async userLinkTelegramToken() {
-    const { data } = await $api.get<{ token: string }>(`/link/telegram/token`);
+    const { data } = await $api.get<{ token: string }>(`/user/link/telegram/token`);
 
     return data;
   }

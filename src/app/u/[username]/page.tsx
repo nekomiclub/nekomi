@@ -94,7 +94,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
           <UserStatisticsItem viewtime={viewtime} />
         </div>
 
-        {hasVisibleLibs && <div className="flex flex-col gap-[16px]">
+        {hasVisibleLibs && <div className="flex flex-col gap-[16px]" id="user-libs">
           <UserTitle title="Теки" />
 
           <div className="flex flex-wrap gap-[8px]">

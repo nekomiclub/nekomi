@@ -102,7 +102,7 @@ export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
 
         <div className="flex items-center gap-[8px]">
           <P text={title} size={16} bold className="text-white" />
-          <P text={`(${lib.titles.length})`} size={16} className="text-grey-new" />
+          {lib.titles.length !== 0 && <P text={`(${lib.titles.length})`} size={16} className="text-grey-new" />}
         </div>
       </div>
     </StyledButton>
