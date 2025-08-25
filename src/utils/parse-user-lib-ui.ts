@@ -12,11 +12,23 @@ interface ParseUserLibUIProps {
 
 
 function parseUserLibUI({ type, setIcon, setTitle }: ParseUserLibUIProps) {
-  if (type === 'favorite') { setTitle('Улюблені'); setIcon('favorite'); }
-  if (type === 'watching') { setTitle('Переглядаю'); setIcon('visibility'); }
-  if (type === 'watched') { setTitle('Переглянуті'); setIcon('bookmark_added'); }
-  if (type === 'plans') { setTitle('Заплановані'); setIcon('stack'); }
-  if (type === 'delayed') { setTitle('Відкладені'); setIcon('auto_delete'); }
+  setTitle(parseLibTitle(type));
+
+  if (type === 'favorite') setIcon('favorite');
+  if (type === 'watching') setIcon('visibility');
+  if (type === 'watched') setIcon('bookmark_added');
+  if (type === 'plans') setIcon('stack');
+  if (type === 'delayed') setIcon('auto_delete');
+}
+
+export function parseLibTitle(type: UserLibType): string {
+  if (type === 'favorite') return 'Улюблені';
+  if (type === 'watching') return 'Переглядаю';
+  if (type === 'watched') return 'Переглянуті';
+  if (type === 'plans') return 'Заплановані';
+  if (type === 'delayed') return 'Відкладені';
+
+  return '~~~';
 }
 
 

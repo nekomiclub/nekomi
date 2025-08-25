@@ -45,7 +45,7 @@ const routeDefinitions = {
 
   // === User Pages
   user: { path: ({ username }: UserPageProps) => `/u/${username}` },
-  userLib: { path: ({ username, libID }: Required<UserPageLibProps>) => `/u/${username}/lib/${libID}` },
+  userLib: { path: ({ username, libId }: Required<UserPageLibProps>) => `/u/${username}/${libId}` },
 
   // === Watch Pages
   watch: { path: ({ query }: WatchPageParams) => `/w/${query}` },

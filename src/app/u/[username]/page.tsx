@@ -2,7 +2,6 @@ import '~/styles/pages/user.scss';
 
 import { Metadata } from 'next';
 import { cache } from 'react';
-import { notFound } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
@@ -11,6 +10,7 @@ import { P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { config, DevelopmentMode, metaObject } from '~/config';
 import { UserPageProps } from '~/interfaces/PagesParams';
+import { UserGetByQuery } from '~/interfaces/services/ApiServiceIntf';
 import { RSCProps } from '~/interfaces/types';
 import { UserLib } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
@@ -22,7 +22,7 @@ import { UserLibItem, UserStatisticsItem, UserTitle } from './UserPage';
 
 
 
-const getUser = cache(async (query: string) => {
+const getUser = cache(async (query: string): Promise<UserGetByQuery> => {
   return await API.getUser({ query, detailed: true });
 });
 
@@ -68,7 +68,6 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
 
   try {
     const { user } = await getUser(username);
-    if (!user) return notFound();
 
     const animeSeen = user.libs.find(el => el.type === 'watched')?.titles.length ?? 0;
     const viewtime = Math.floor(user.statistics.viewtime / 60 / 60);
@@ -84,7 +83,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
       ...user.libs.filter(el => el.type === 'custom')
     ].filter(el => el !== undefined);
 
-    user.banner = '/assets/footer-bg.png'; // !TMP
+
 
     return <>
       <UserLayout type="user_profile" user={user} />

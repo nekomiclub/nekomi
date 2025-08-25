@@ -91,12 +91,12 @@ export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
 
 
 
-  return showLib && <Link href={'#'} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
+  return showLib && <Link href={Routes.userLib.path({ username: user.username, libId: lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
     <StyledButton as="div" className="w-full flex flex-col items-center gap-[8px] p-[16px]">
       <MaterialSymbol icon={icon} size={80} className="text-white" fill={icon === 'favorite'} />
 
       <div className="flex items-center gap-[16px]">
-        {isOwner && isLibHidden && <Tooltip content="Прихована тека, доступна тільки вам" className="flex items-center">
+        {isOwner && isLibHidden && <Tooltip content="Прихована тека, вона доступна тільки вам" className="flex items-center">
           <MaterialSymbol icon={'visibility_lock'} size={20} className="text-grey-new" />
         </Tooltip>}
 

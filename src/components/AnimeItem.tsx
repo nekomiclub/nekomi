@@ -162,7 +162,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
           </div>
         </div>
 
-        {watchProgress && watchProgress.progress > 3 && <div className="gradient--primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
+        {watchProgress && watchProgress.progress > 3 && <div className="bg-primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
           <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episodeOrder} еп, {prettySeconds(watchProgress.progress).pretty}</p>
 
           <MaterialSymbol icon="resume" size={16} color="#fff" />

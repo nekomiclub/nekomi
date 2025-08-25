@@ -4,6 +4,7 @@ import { NextPage } from 'next';
 import { ReactElement } from 'react';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { DevelopmentMode } from '~/config';
@@ -30,12 +31,15 @@ export function HandleClientError(e: unknown) {
 export async function HandleServerError(e: unknown): Promise<ReactElement> {
   const date = `${getUTC().fulldate} ${getUTC().timeAccurate}`;
 
+  // Handle notFound nextjs directive
+  if ('digest' in (e as any) && (e as any)?.digest === 'NEXT_NOT_FOUND') return notFound();
+
   if (e instanceof AxiosError) {
     const status = e.response?.status ?? 500;
 
     if (status === 404) {
       DevelopmentMode && console.error(e.response?.data);
-      return <ErrorNotFound />;
+      return notFound();
     } else {
       console.error(`[${date}]: HTTP error occured - ${JSON.stringify(e.response?.data ?? e, null, 2)}`);
       return <ErrorNotRendered />;

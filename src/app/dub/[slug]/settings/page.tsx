@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';
@@ -22,7 +22,7 @@ export default async function RSC({ params }: RSCProps) {
   const { slug } = await params as { slug: string };
 
   const { user, capabilities } = await CheckUserAccess({ session: cookies().get(config.vars.SessionCookie)?.value, capabilities: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
-  if (!user) return redirect(config.URL.nekomi_site);
+  if (!user) return notFound();
 
   let dubber: Dubber | undefined = undefined;
   let members: User[] | undefined = undefined;

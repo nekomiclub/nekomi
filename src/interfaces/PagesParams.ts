@@ -17,7 +17,7 @@ export interface PatcherPageParams extends Params {
 
 
 export interface UserPageLibProps extends UserPageProps {
-  libID: string;
+  libId: string;
 }
 
 export interface UserPageProps extends Params {
