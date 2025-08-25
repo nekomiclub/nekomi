@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { cache } from 'react';
 
-import { UserHeader } from '~/app/u/[username]/UserPage';
+import { UserHeader } from '~/app/u/[username]/UserPage.old';
 import { HandleServerError } from '~/components/Errors';
 import { metaObject } from '~/config';
 import { UserPageLibProps } from '~/interfaces/PagesParams';

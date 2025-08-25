@@ -5,7 +5,7 @@ import { cn } from '~/utils/classnames';
 
 
 interface TextProps {
-  text: string | undefined
+  text: string | number | undefined
   tag: 'h1' | 'h2' | 'h3' | 'p' | 'span' | 'b' | 'i'
 
   size?: 10 | 12 | 14 | 16 | 20 | 24 | 32 | 40 | 48 | 56 | 64

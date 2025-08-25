@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import { useParams, usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { UserDivider, UserLibItem } from '~/app/u/[username]/UserPage';
+import { UserLibItem } from '~/app/u/[username]/UserPage';
+import { UserDivider } from '~/app/u/[username]/UserPage.old';
 import AnimeItem from '~/components/AnimeItem';
 import LoadingContent from '~/components/LoadingContent';
 import Tooltip from '~/components/UI/Tooltip';

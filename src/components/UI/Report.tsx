@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialDiscord } from '~/assets/Social';
+import StyledButton from '~/components/Styled/StyledButton';
 import { config } from '~/config';
 import { cn } from '~/utils/classnames';
 
@@ -52,8 +53,10 @@ export const UIReportButton: NextPage<IReportButtonProps> = ({ type, text, class
 
   return <>
     {type === 'icon' && <Tooltip content={text} className={cn(`z-[5] w-fit h-fit`, className)}>
-      <PopupButton className={cn('ui-button w-[40px] h-[40px] flex justify-center items-center rounded-[4px]')} popupId={REPORT_MODAL_ID}>
-        <MaterialSymbol icon="flag" size={24} className="text-white" />
+      <PopupButton popupId={REPORT_MODAL_ID}>
+        <StyledButton as="div" isIcon className={cn('w-[40px] h-[40px] flex justify-center items-center rounded-[4px]')}>
+          <MaterialSymbol icon="flag" size={24} className="text-white" />
+        </StyledButton>
       </PopupButton>
     </Tooltip>}
 
@@ -63,10 +66,12 @@ export const UIReportButton: NextPage<IReportButtonProps> = ({ type, text, class
       <p className="text-grey-new font-manrope">{text}</p>
     </PopupButton>}
 
-    {type === 'button' && <PopupButton className={cn('ui-button flex justify-center items-center gap-[8px] px-[16px] py-[8px]')} popupId={REPORT_MODAL_ID}>
-      <MaterialSymbol icon="flag" size={24} className="text-white" />
+    {type === 'button' && <PopupButton popupId={REPORT_MODAL_ID}>
+      <StyledButton as="div" className={cn('flex justify-center items-center gap-[8px] px-[16px] py-[8px]')}>
+        <MaterialSymbol icon="flag" size={24} className="text-white" />
 
-      <p className="text-white font-manrope">{text}</p>
+        <p className="text-white font-manrope">{text}</p>
+      </StyledButton>
     </PopupButton>}
   </>;
 };

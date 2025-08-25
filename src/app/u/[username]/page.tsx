@@ -1,15 +1,24 @@
+import '~/styles/pages/user.scss';
 
 import { Metadata } from 'next';
 import { cache } from 'react';
+import { notFound } from 'next/navigation';
+import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
+import Tooltip from '~/components/UI/Tooltip';
+import { P } from '~/components/UI/Typography';
+import UserLayout from '~/components/UserLayout';
 import { config, DevelopmentMode, metaObject } from '~/config';
 import { UserPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
+import { UserLib } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
+import { getUTC, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
-import { UserHeader, UserSectionLibs, UserStatItem } from './UserPage';
+import { UserLibItem, UserStatisticsItem, UserTitle } from './UserPage';
+
 
 
 
@@ -59,22 +68,51 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
 
   try {
     const { user } = await getUser(username);
+    if (!user) return notFound();
 
-    return <div className="w-full h-full min-h-screen bg-dark-primary flex flex-col gap-[40px]">
-      <UserHeader user={user} primaryPage />
+    const animeSeen = user.libs.find(el => el.type === 'watched')?.titles.length ?? 0;
+    const viewtime = Math.floor(user.statistics.viewtime / 60 / 60);
+    const hasVisibleLibs = user.libs.some(el => !el.settings.hidden);
+    const daysOnNekomi = Math.round((getUTC().timestamp - user.statistics.accountCreated) / 60000 / 60 / 24);
 
-      <div className="wrapper gap-[40px]">
-        <div className="flex gap-[16px] overflow-x-auto ui-hideScroll">
-          <UserStatItem value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label="favs" />
-          <UserStatItem value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label="watched" />
-          <UserStatItem value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label="watching" />
-          <UserStatItem value={Math.floor(user?.statistics.viewtime / 60 / 60)} label="viewtime" />
+    const sortedLibs: UserLib[] = [
+      user.libs.find(el => el.type === 'favorite'),
+      user.libs.find(el => el.type === 'watching'),
+      user.libs.find(el => el.type === 'watched'),
+      user.libs.find(el => el.type === 'plans'),
+      user.libs.find(el => el.type === 'delayed'),
+      ...user.libs.filter(el => el.type === 'custom')
+    ].filter(el => el !== undefined);
+
+    user.banner = '/assets/footer-bg.png'; // !TMP
+
+    return <>
+      <UserLayout type="user_profile" user={user} />
+
+      <div className="wrapper pt-[24px] gap-[24px]">
+        <div className="flex gap-[8px] w-full overflow-x-auto ui-hideScroll">
+          <UserStatisticsItem animeSeen={animeSeen} />
+          <UserStatisticsItem viewtime={viewtime} />
         </div>
 
-        <UserSectionLibs user={user} />
-        {/* <UserSectionWTRooms user={user} /> */}
+        {hasVisibleLibs && <div className="flex flex-col gap-[16px]">
+          <UserTitle title="Теки" />
+
+          <div className="flex flex-wrap gap-[8px]">
+            {sortedLibs.map(lib => {
+              return <UserLibItem lib={lib} user={user} key={`user-libitem--${lib.id}`} />;
+            })}
+          </div>
+        </div>}
+
+        <div className="flex items-center gap-[8px]">
+          <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
+          <Tooltip content={`Акаунт зареєстровано: ${timestampToDayMonth(user.statistics.accountCreated)}`}>
+            <P text={`${daysOnNekomi} ${wordDeclination(daysOnNekomi, ['день', 'дні', 'днів'])} на nekomi!`} size={12} className="text-grey-new" />
+          </Tooltip>
+        </div>
       </div>
-    </div>;
+    </>;
   } catch (e) {
     return HandleServerError(e);
   }
