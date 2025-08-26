@@ -19,12 +19,11 @@ import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
 import { parseLibTitle } from '~/utils/parse-user-lib-ui';
 
-import { UserLibRenameTitle } from './UserLibPage';
 
 
 
-const getUser = cache(async (query: string, libId: string): Promise<UserGetByQuery> => {
-  return await API.getUser({ query, detailed: true, parseLibId: libId });
+const getUser = cache(async (query: string, libId: string, session?: string): Promise<UserGetByQuery> => {
+  return await API.getUser({ query, detailed: true, parseLibId: libId }, { session });
 });
 
 
@@ -32,14 +31,26 @@ const getUser = cache(async (query: string, libId: string): Promise<UserGetByQue
 export async function generateMetadata(
   props: RSCProps<UserLibPageProps>,
 ): Promise<Metadata> {
-  const { username, libId } = await props.params;
-  const { user } = await getUser(username, libId);
+  const params = await props.params;
+  const { username, libId } = params;
+  const session = cookies().get(config.vars.SessionCookie)?.value;
 
-  return metaObject({
-    title: `Сама звичайна тека з аніме`,
-    description: `Список аніме @${user.username}`,
-    robots: ['nofollow', 'noindex']
-  });
+  try {
+    const { user, parsedLib } = await getUser(username, libId, session);
+    const lib = user.libs.find(el => el.id === params.libId);
+    if (!lib || !parsedLib) return notFound();
+
+    return metaObject({
+      overwriteTitle: `${lib.settings.name} ― тека @${user.username} на nekomi`,
+      description: `Список аніме @${username}`,
+      robots: ['nofollow', 'noindex']
+    });
+  } catch (e) {
+    return metaObject({
+      title: 'Цієї теки не існує',
+      robots: ['nofollow', 'noindex']
+    });
+  }
 }
 
 
@@ -47,18 +58,16 @@ export async function generateMetadata(
 export default async function RSC(props: RSCProps<UserLibPageProps>) {
   const params = await props.params;
   const { username, libId } = params;
+  const session = cookies().get(config.vars.SessionCookie)?.value;
 
   try {
-    const { user: currentUser } = await CheckUserAccess({ session: cookies().get(config.vars.SessionCookie)?.value });
-    const { user, parsedLib } = await getUser(username, libId);
+    const { user: currentUser } = await CheckUserAccess({ session });
+    const { user, parsedLib } = await getUser(username, libId, session);
     const lib = user.libs.find(el => el.id === params.libId);
     if (!lib || !parsedLib) return notFound();
 
     const isOwner = user.id === currentUser?.id;
     const isLibHidden = lib.settings.hidden;
-
-    // Throw not found if lib hidden and current user is not owner
-    if (isLibHidden && !isOwner) return notFound();
 
     const sortedLibs: UserLib[] = [
       user.libs.find(el => el.type === 'favorite'),
@@ -73,9 +82,6 @@ export default async function RSC(props: RSCProps<UserLibPageProps>) {
 
     return <>
       <UserLayout type="user_lib" user={user} />
-
-      {/* Rename page title is lib is public */}
-      {(isOwner || !isLibHidden) && <UserLibRenameTitle title={`${lib.settings.name} ― тека @${user.username}`} />}
 
       <div className="wrapper pt-[24px] gap-[24px]">
         {/* Title */}

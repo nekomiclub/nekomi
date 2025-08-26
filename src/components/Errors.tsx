@@ -37,7 +37,7 @@ export async function HandleServerError(e: unknown): Promise<ReactElement> {
   if (e instanceof AxiosError) {
     const status = e.response?.status ?? 500;
 
-    if (status === 404) {
+    if (status === 401 || status === 403 || status === 404) {
       DevelopmentMode && console.error(e.response?.data);
       return notFound();
     } else {
