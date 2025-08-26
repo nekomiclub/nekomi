@@ -2,6 +2,7 @@ import '~/styles/pages/user.scss';
 
 import { Metadata } from 'next';
 import { cache } from 'react';
+import { cookies } from 'next/headers';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
@@ -22,8 +23,8 @@ import { UserLibItem, UserStatisticsItem, UserTitle } from './UserPage';
 
 
 
-const getUser = cache(async (query: string): Promise<UserGetByQuery> => {
-  return await API.getUser({ query, detailed: true });
+const getUser = cache(async (query: string, session?: string): Promise<UserGetByQuery> => {
+  return await API.getUser({ query, detailed: true }, { session });
 });
 
 
@@ -65,13 +66,13 @@ export async function generateMetadata(
 export default async function RSC(props: RSCProps<UserPageProps>) {
   const params = await props.params;
   const { username } = params;
+  const session = cookies().get(config.vars.SessionCookie)?.value;
 
   try {
-    const { user } = await getUser(username);
+    const { user } = await getUser(username, session);
 
     const animeSeen = user.libs.find(el => el.type === 'watched')?.titles.length ?? 0;
     const viewtime = Math.floor(user.statistics.viewtime / 60 / 60);
-    const hasVisibleLibs = user.libs.some(el => !el.settings.hidden);
     const daysOnNekomi = Math.round((getUTC().timestamp - user.statistics.accountCreated) / 60000 / 60 / 24);
 
     const sortedLibs: UserLib[] = [
@@ -94,7 +95,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
           <UserStatisticsItem viewtime={viewtime} />
         </div>
 
-        {hasVisibleLibs && <div className="flex flex-col gap-[16px]" id="user-libs">
+        {user.libs.length !== 0 && <div className="flex flex-col gap-[16px]" id="user-libs">
           <UserTitle title="Теки" />
 
           <div className="flex flex-wrap gap-[8px]">

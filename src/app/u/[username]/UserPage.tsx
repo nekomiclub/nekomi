@@ -81,7 +81,6 @@ export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
 
   const isOwner = currentUser.id === user.id;
   const isLibHidden = lib.settings.hidden;
-  const showLib = isOwner || !isLibHidden;
 
 
 
@@ -91,7 +90,7 @@ export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
 
 
 
-  return showLib && <Link href={Routes.userLib.path({ username: user.username, libId: lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
+  return <Link href={Routes.userLib.path({ username: user.username, libId: lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
     <StyledButton as="div" className="w-full flex flex-col items-center gap-[8px] p-[16px]">
       <MaterialSymbol icon={icon} size={80} className="text-white" fill={icon === 'favorite'} />
 
