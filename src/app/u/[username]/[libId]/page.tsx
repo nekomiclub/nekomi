@@ -1,6 +1,4 @@
 import { Metadata } from 'next';
-import { cache } from 'react';
-import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
@@ -10,21 +8,13 @@ import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';
 import { H2, H3, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
-import { config, metaObject } from '~/config';
+import { metaObject } from '~/config';
 import { UserLibPageProps } from '~/interfaces/PagesParams';
-import { UserGetByQuery } from '~/interfaces/services/ApiServiceIntf';
 import { RSCProps } from '~/interfaces/types';
 import { UserLib } from '~/interfaces/UserIntf';
-import API from '~/services/ApiService';
+import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
 import CheckUserAccess from '~/utils/check-user-access';
 import { parseLibTitle } from '~/utils/parse-user-lib-ui';
-
-
-
-
-const getUser = cache(async (query: string, libId: string, session?: string): Promise<UserGetByQuery> => {
-  return await API.getUser({ query, detailed: true, parseLibId: libId }, { session });
-});
 
 
 
@@ -33,10 +23,11 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const params = await props.params;
   const { username, libId } = params;
-  const session = cookies().get(config.vars.SessionCookie)?.value;
+
+
 
   try {
-    const { user, parsedLib } = await getUser(username, libId, session);
+    const { user, parsedLib } = await getCachedUser(username, libId, await getSessionToken());
     const lib = user.libs.find(el => el.id === params.libId);
     if (!lib || !parsedLib) return notFound();
 
@@ -58,11 +49,13 @@ export async function generateMetadata(
 export default async function RSC(props: RSCProps<UserLibPageProps>) {
   const params = await props.params;
   const { username, libId } = params;
-  const session = cookies().get(config.vars.SessionCookie)?.value;
+  const session = await getSessionToken();
+
+
 
   try {
     const { user: currentUser } = await CheckUserAccess({ session });
-    const { user, parsedLib } = await getUser(username, libId, session);
+    const { user, parsedLib } = await getCachedUser(username, libId, session);
     const lib = user.libs.find(el => el.id === params.libId);
     if (!lib || !parsedLib) return notFound();
 

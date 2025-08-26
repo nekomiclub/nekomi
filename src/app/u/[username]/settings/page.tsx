@@ -1,6 +1,4 @@
 import { Metadata } from 'next';
-import { cache } from 'react';
-import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
@@ -11,42 +9,44 @@ import { H2, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { config, metaObject } from '~/config';
 import { UserPageProps, UserSettingsPageProps } from '~/interfaces/PagesParams';
-import { UserGetByQuery } from '~/interfaces/services/ApiServiceIntf';
 import { RSCProps } from '~/interfaces/types';
-import API from '~/services/ApiService';
+import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
 import CheckUserAccess from '~/utils/check-user-access';
 
 import { UserSettingsGroup, UserSettingsLinkTelegram } from './UserSettingsPage';
 
-const getUser = cache(async (query: string): Promise<UserGetByQuery> => {
-  return await API.getUser({ query, detailed: true });
-});
 
 
+export async function generateMetadata({ params, searchParams }: RSCProps<UserPageProps>,): Promise<Metadata> {
+  const { username } = await params;
 
-export async function generateMetadata(
-  props: RSCProps<UserPageProps>,
-): Promise<Metadata> {
-  const { username } = await props.params;
+  try {
+    await getCachedUser(username);
 
-  return metaObject({
-    title: `Налаштування @${username}`,
-    robots: ['nofollow', 'noindex']
-  });
+    return metaObject({
+      title: `Налаштування @${username}`,
+      robots: ['nofollow', 'noindex']
+    });
+  } catch (e) {
+    return metaObject({
+      title: `Акаунта не існує`,
+      robots: ['nofollow', 'noindex']
+    });
+  }
 }
 
 
 
-export default async function RSC(props: RSCProps<UserSettingsPageProps>) {
-  const params = await props.params;
-  const { username } = params;
+export default async function RSC({ params }: RSCProps<UserSettingsPageProps>) {
+  const { username } = await params;
+  const session = await getSessionToken();
 
   try {
-    const { user } = await getUser(username);
-    const { user: currentUser } = await CheckUserAccess({ session: cookies().get(config.vars.SessionCookie)?.value });
+    const { user } = await getCachedUser(username);
+    const { user: currentUser, capabilities } = await CheckUserAccess({ session });
 
     const isOwner = currentUser?.id === user.id;
-    if (!isOwner || !currentUser) return notFound();
+    if (!isOwner && !capabilities?.includes('admin') && !capabilities?.includes('root') && !capabilities?.includes('mod')) return notFound();
 
 
 

@@ -1,8 +1,6 @@
 import '~/styles/pages/user.scss';
 
 import { Metadata } from 'next';
-import { cache } from 'react';
-import { cookies } from 'next/headers';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
@@ -11,21 +9,13 @@ import { P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { config, DevelopmentMode, metaObject } from '~/config';
 import { UserPageProps } from '~/interfaces/PagesParams';
-import { UserGetByQuery } from '~/interfaces/services/ApiServiceIntf';
 import { RSCProps } from '~/interfaces/types';
 import { UserLib } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
 import { getUTC, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
 import { UserLibItem, UserStatisticsItem, UserTitle } from './UserPage';
-
-
-
-
-const getUser = cache(async (query: string, session?: string): Promise<UserGetByQuery> => {
-  return await API.getUser({ query, detailed: true }, { session });
-});
 
 
 
@@ -36,7 +26,7 @@ export async function generateMetadata(
   const { username } = params;
 
   try {
-    const { user } = await getUser(username);
+    const { user } = await getCachedUser(username, undefined, await getSessionToken());
     const title = `@${user.username}`;
     const description = `Профіль користувача`;
 
@@ -66,10 +56,11 @@ export async function generateMetadata(
 export default async function RSC(props: RSCProps<UserPageProps>) {
   const params = await props.params;
   const { username } = params;
-  const session = cookies().get(config.vars.SessionCookie)?.value;
+
+
 
   try {
-    const { user } = await getUser(username, session);
+    const { user } = await getCachedUser(username, undefined, await getSessionToken());
 
     const animeSeen = user.libs.find(el => el.type === 'watched')?.titles.length ?? 0;
     const viewtime = Math.floor(user.statistics.viewtime / 60 / 60);

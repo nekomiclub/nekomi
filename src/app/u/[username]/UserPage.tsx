@@ -56,11 +56,11 @@ export const UserStatisticsItem: FC<IUserStatisticsItemProps> = ({ animeSeen, du
     </Link>}
 
     {!dubber && <div className="pgu-stat-item">
-      <MaterialSymbol icon={animeSeen ? 'bookmark_added' : viewtime ? 'acute' : 'question_answer'} size={80} className="text-white shrink-0 max-lg:!text-[64px]" />
+      <MaterialSymbol icon={animeSeen !== undefined ? 'bookmark_added' : viewtime !== undefined ? 'acute' : 'question_answer'} size={80} className="text-white shrink-0 max-lg:!text-[64px]" />
 
       <div className="pgu-stat-item-content">
         <P text={animeSeen ?? viewtime ?? ''} size={32} bold className="text-white font-manrope" />
-        <P text={animeSeen ? 'Аніме переглянуто' : viewtime ? 'Час перегляду (год)' : ''} size={16} center className="text-grey-new font-manrope" />
+        <P text={animeSeen !== undefined ? 'Аніме переглянуто' : viewtime !== undefined ? 'Час перегляду (год)' : ''} size={16} center className="text-grey-new font-manrope" />
       </div>
     </div>}
   </>;
