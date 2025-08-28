@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
 import '~/styles/components/StyledComponents.scss';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { NextPage } from 'next';
+import { useEffect, useRef, useState } from 'react';
 import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import { P } from '~/components/UI/Typography';
 import { config } from '~/config';
 import { cn } from '~/utils/classnames';
-import { UIText } from '../UI/Text.ui';
 
 
 
@@ -42,48 +42,51 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
 
   const borderRadius = rounded ?? `${rounded}px`;
 
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [isErrored, setIsErrored] = useState(false)
-  const [useNativeImage] = useState(Boolean(useImg) || !src.includes(config.URL.nekomi_media))
-  const [imageDims, setImageDims] = useState<number[]>([])
+  const [imageSrc, setImageSrc] = useState('');
+  const [imageDims, setImageDims] = useState<number[]>([]); // width, height
 
-  const imageRef = useRef<HTMLImageElement>(null)
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isErrored, setIsErrored] = useState(false);
+  const [useNativeImage, setUseNativeImage] = useState(Boolean(useImg) || !src.includes(config.URL.nekomi_media));
+
+  const imageRef = useRef<HTMLImageElement>(null);
 
 
 
-  // Resolve image
-  useMemo(() => {
-    fetch(src, { method: 'HEAD' }).catch(onerror)
-  }, [])
-
-  // Handle image events
+  // Handle image dims
   useEffect(() => {
-    const image = imageRef.current;
-    if (!image) return;
+    const img = imageRef.current;
+    if (!img) return;
 
-    setImageDims([image.offsetWidth, image.offsetHeight])
-    setIsErrored(false)
-    setIsLoaded(image.complete)
-  }, [src])
+    setImageDims([img.width, img.height]);
+  }, [imageSrc]);
 
+  // Handle image load
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
 
+    img.onload = () => {
+      setIsLoaded(true);
+      setIsErrored(false);
+      setImageSrc(src);
+    };
 
-  function onload() {
-    setIsLoaded(true)
-  }
+    img.onerror = () => {
+      setIsErrored(true);
+      setIsLoaded(false);
+    };
 
-  function onerror() {
-    console.error(`Failed to load image (${src})`)
-    setIsErrored(true)
-  }
+    setUseNativeImage(Boolean(useImg) || !src.includes(config.URL.nekomi_media));
+  }, [src]);
 
 
 
   return <div className={cn('styled-image-wrapper', className)} style={{ width, height, borderRadius }}>
     {/* Preserved / default image */}
-    {useNativeImage && <img src={src} alt={alt} loading={loading} className={cn('styled-image', isErrored && 'styled-image--hide')} onLoad={onload} onError={onerror} ref={imageRef} />}
+    {useNativeImage && imageSrc && <img src={imageSrc} alt={alt} loading={loading} className={cn('styled-image', isErrored && 'styled-image--hide')} ref={imageRef} />}
 
-    {!useNativeImage && <ImageNext src={src} alt={alt} fill loading={loading} className={cn('styled-image', isErrored && 'styled-image--hide')} onLoadingComplete={onload} onError={onerror} ref={imageRef} />}
+    {!useNativeImage && imageSrc && <ImageNext src={imageSrc} alt={alt} fill loading={loading} className={cn('styled-image', isErrored && 'styled-image--hide')} ref={imageRef} />}
 
     {/* Image skeleton. Render it only when loading is lazy */}
     {loading === 'lazy' && <Skeleton width={'100%'} height={'100%'} className="styled-image-skeleton" containerClassName={cn(`styled-image-skeleton`, (isLoaded || isErrored) && 'styled-image--hide')} />}
@@ -91,9 +94,9 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
     {/* Load error */}
     <div className={cn(`styled-image-error`, !isErrored && 'styled-image--hide')}>
       <MaterialSymbol icon="broken_image" size={32} className="text-grey-new" />
-      {imageDims[0] > 84 && imageDims[1] > 84 && <UIText text="Зображення відсутнє" type="mini" className="text-grey-new text-center" />}
+      {imageDims[0] > 84 && imageDims[1] > 84 && <P text="Зображення відсутнє" size={12} className="text-grey-new text-center" />}
     </div>
-  </div>
-}
+  </div>;
+};
 
 export default StyledImage;

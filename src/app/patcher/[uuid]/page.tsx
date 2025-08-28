@@ -1,25 +1,25 @@
 import '~/styles/pages/patcher.scss';
 
-import { cache } from 'react';
 import { Metadata } from 'next';
+import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
+import { config, metaObject } from '~/config';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { PatcherPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
-import { config, metaObject } from '../../../config';
 
 import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './(components)/PatcherPage';
 
 
 
 const getAnime = cache(async (query: string) => {
-  return await API.getAnime({ query, detailed: true, fetchDubbers: true })
-})
+  return await API.getAnime({ query, detailed: true, fetchDubbers: true });
+});
 
 
 
@@ -29,13 +29,13 @@ export async function generateMetadata(
   const { uuid } = await props.params;
 
   try {
-    const { anime } = await getAnime(uuid)
+    const { anime } = await getAnime(uuid);
 
     return metaObject({
       overwriteTitle: `${anime.names.ukr} - Редактор`
-    })
+    });
   } catch (e) {
-    return metaObject({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] })
+    return metaObject({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
   }
 }
 
@@ -46,16 +46,16 @@ export default async function RSC(props: RSCProps<PatcherPageParams>) {
 
   const session = cookies().get(config.vars.SessionCookie)?.value ?? '';
 
-  const { user, capabilities } = await CheckUserAccess({ capabilities: ['titleEdit', 'seriesAdd'], checkMode: 'OR', session })
+  const { user, capabilities } = await CheckUserAccess({ capabilities: ['titleEdit', 'seriesAdd'], checkMode: 'OR', session });
   if (!user || !capabilities) return notFound();
 
 
 
   try {
-    const { anime, genres, media, rate, season, status, dubbers } = await getAnime(uuid)
+    const { anime, genres, media, rate, season, status, dubbers } = await getAnime(uuid);
     const { fullfilled, total, updated } = await API.getAnimeStats();
 
-    const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status }
+    const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
 
     const isRoot = capabilities.includes('root');
     const isAdmin = isRoot || capabilities.includes('admin');
@@ -73,7 +73,7 @@ export default async function RSC(props: RSCProps<PatcherPageParams>) {
       canSeriesUpload,
       canUploadQ2160,
       admin: isAdmin,
-    }
+    };
 
 
 
@@ -105,8 +105,8 @@ export default async function RSC(props: RSCProps<PatcherPageParams>) {
 
         <PatcherEpisodes hydratedAnime={hydratedAnime} capabilities={caps} dubbers={dubbers ?? []} session={session} />
       </main>
-    </>
+    </>;
   } catch (e) {
-    return HandleServerError(e)
+    return HandleServerError(e);
   }
 }

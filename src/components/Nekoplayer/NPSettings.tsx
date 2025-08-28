@@ -3,11 +3,11 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import axios from 'axios';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
+import { NotifySuccess } from '~/components/UI/NotifyToast';
+import Tooltip from '~/components/UI/Tooltip';
 import { EpisodeQualityType } from '~/interfaces/types';
 import { cn } from '~/utils/classnames';
 import { GetNekoplayerPreferences, SetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
-import { NotifySuccess } from '../UI/NotifyToast';
-import Tooltip from '../UI/Tooltip';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
@@ -67,58 +67,58 @@ interface SettingsQualitySelectProps {
 
 
 const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, setStretch, isIdle }) => {
-  const { videoRef, episode, DeleteWatchProgress, anime } = useContext(NekoplayerContext) as NekoplayerContextProps
+  const { videoRef, episode, DeleteWatchProgress, anime } = useContext(NekoplayerContext) as NekoplayerContextProps;
   const menuId = useId().replaceAll(':', '');
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [menu, setMenu] = useState<SettingsMenuType>('general')
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menu, setMenu] = useState<SettingsMenuType>('general');
   const [saveProgress, setSaveProgress] = useState(true);
 
 
 
   // Close menu on user idle
   useEffect(() => {
-    if (isIdle) setIsMenuOpen(false)
-  }, [isIdle])
+    if (isIdle) setIsMenuOpen(false);
+  }, [isIdle]);
 
   // Reset menu on close
   useEffect(() => {
-    if (isMenuOpen) return
+    if (isMenuOpen) return;
 
     setTimeout(() => {
-      setMenu('general')
+      setMenu('general');
     }, 500);
-  }, [isMenuOpen])
+  }, [isMenuOpen]);
 
   useEffect(() => {
-    calcMenusPosition()
-  }, [menu])
+    calcMenusPosition();
+  }, [menu]);
 
   // Fetch prefereces
   useEffect(() => {
-    const prefArray = GetNekoplayerPreferences()
+    const prefArray = GetNekoplayerPreferences();
     const preferences = prefArray.find(el => el.uuid === anime.uuid);
-    if (!preferences) return
+    if (!preferences) return;
 
-    setSaveProgress(Boolean(preferences.saveProgress))
-  }, [])
+    setSaveProgress(Boolean(preferences.saveProgress));
+  }, []);
 
 
 
   function calcMenusPosition() {
     const wrapper = document.querySelector('.nekoplayer-settings-menu_wrapper') as HTMLDivElement | undefined;
-    if (!wrapper) return
+    if (!wrapper) return;
 
     const menus = wrapper.querySelectorAll(`.nekoplayer-settings-menu`) as NodeListOf<HTMLDivElement> | undefined;
     const activeMenu = wrapper.querySelector(`.nekoplayer-settings-menu_${menu}`) as HTMLDivElement | undefined;
-    if (!activeMenu || !menus?.length) return
+    if (!activeMenu || !menus?.length) return;
 
     wrapper.style.height = `${activeMenu.offsetHeight}px`;
 
     menus.forEach(menu => {
-      menu.style.translate = '105%'
-      menu.style.opacity = '0'
-    })
+      menu.style.translate = '105%';
+      menu.style.opacity = '0';
+    });
 
     activeMenu.style.translate = '0';
     activeMenu.style.opacity = '1';
@@ -126,7 +126,7 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
 
   function setSpeed(amplifier: number) {
     const video = videoRef.current;
-    if (!video) return
+    if (!video) return;
 
     video.playbackRate = amplifier;
   }
@@ -134,27 +134,27 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
   function toggleSaveProgress() {
     const to = !saveProgress;
 
-    const prefArray = GetNekoplayerPreferences()
+    const prefArray = GetNekoplayerPreferences();
     const preferences = prefArray.find(el => el.uuid === anime.uuid) ?? {
       uuid: anime.uuid,
       saveProgress: true
     };
 
-    preferences.saveProgress = to
+    preferences.saveProgress = to;
 
-    setSaveProgress(to)
+    setSaveProgress(to);
     SetNekoplayerPreferences(preferences);
 
-    NotifySuccess({ title: 'Налаштування оновлені', message: to ? 'Ми почнемо зберігати твій прогрес перегляду!' : 'Ми перестанемо збирати твій прогрес перегляду :(' })
-    console.debug(`[nekoplayer]: Set settings:saveProgress to ${to}`)
+    NotifySuccess({ title: 'Налаштування оновлені', message: to ? 'Ми почнемо зберігати твій прогрес перегляду!' : 'Ми перестанемо збирати твій прогрес перегляду :(' });
+    console.debug(`[nekoplayer]: Set settings:saveProgress to ${to}`);
   }
 
 
 
   return <div className="relative max-[460px]:opacity-0 max-[460px]:invisible max-[460px]:absolute">
     <Menu className="h-[32px]" settings={{ direction: 'top', align: 'end', animation: 'slide' }} gap={24} state={isMenuOpen} stateSetter={setIsMenuOpen} id={menuId}>
-      <MenuTrigger anchor className={'kekwplayer-settings_button relative w-[32px] h-[32px]'} aria-label={'Налаштування'}>
-        <MaterialSymbol className={cn(`kekwplayer-settings text-white`)} icon="settings" size={32} />
+      <MenuTrigger anchor className={'nekoplayer-action relative w-[32px] h-[32px]'} aria-label={'Налаштування'}>
+        <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`)} icon="settings" size={32} />
       </MenuTrigger>
 
       <MenuWrapper className={`nekoplayer-settings-menu_wrapper !w-[300px] rounded-[2px] bg-dark-primary flex flex-col border border-dark-light overflow-x-hidden overflow-y-auto max-h-[500px] !translate-x-[30px] duration-200 max-md:max-h-[300px]`}>
@@ -209,14 +209,14 @@ const NPSettings: FC<SettingsProps> = ({ quality, setQuality, speed, stretch, se
         </SettingsMenu>
       </MenuWrapper>
     </Menu>
-  </div>
-}
+  </div>;
+};
 
 
 
 const SettingsButton: FC<SettingsButtonProps> = ({ icon, menu, setMenu, title, onclick, value }) => {
   function onClick() {
-    setMenu(menu)
+    setMenu(menu);
 
     onclick && onclick();
   }
@@ -228,14 +228,14 @@ const SettingsButton: FC<SettingsButtonProps> = ({ icon, menu, setMenu, title, o
     </div>
 
     {value && <p className={cn(`text-white font-space-grotesk font-bold`, value === '2160p' && 'font-bold !text-primary')}>{value}</p>}
-  </button>
-}
+  </button>;
+};
 
 const SettingsMenu: FC<SettingsMenuProps> = ({ children, menu, className }) => {
   return <div className={cn(`nekoplayer-settings-menu w-full overflow-y-auto absolute bottom-0 left-0 duration-[350ms]`, `nekoplayer-settings-menu_${menu}`, className)}>
     {children}
-  </div>
-}
+  </div>;
+};
 
 const SettingsBack: FC<SettingsBackProps> = ({ icon, title, setMenu }) => {
   return <button className="w-full flex justify-center items-center gap-[12px] px-[12px] py-[8px] duration-100 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => setMenu('general')}>
@@ -243,8 +243,8 @@ const SettingsBack: FC<SettingsBackProps> = ({ icon, title, setMenu }) => {
 
     <MaterialSymbol icon={icon} className="text-white" size={24} />
     <p className="text-white font-manrope">{title}</p>
-  </button>
-}
+  </button>;
+};
 
 const SettingsSpeedSelect: FC<SettingsSpeedSelectProps> = ({ amplifier, currentSpeed, setSpeed }) => {
   return <button className={cn(`px-[12px] py-[8px] flex justify-center bg-dark-medium duration-100 hover:bg-dark-light focus-visible:bg-dark-light w-full`, currentSpeed === amplifier && 'bg-primary')} onClick={() => setSpeed(amplifier)}>
@@ -252,15 +252,15 @@ const SettingsSpeedSelect: FC<SettingsSpeedSelectProps> = ({ amplifier, currentS
       {amplifier === 1 && '1x (Нормальна)'}
       {amplifier !== 1 && `${amplifier}x`}
     </p>
-  </button>
-}
+  </button>;
+};
 
 const SettingsQualitySelect: FC<SettingsQualitySelectProps> = ({ currentQuality, quality, setQuality }) => {
-  const { episode } = useContext(NekoplayerContext) as NekoplayerContextProps
-  const isQ2160 = quality === 'q4k'
+  const { episode } = useContext(NekoplayerContext) as NekoplayerContextProps;
+  const isQ2160 = quality === 'q4k';
 
   const [isQualityAvailable, setIsQualityAvailable] = useState(false);
-  const [isQualitySelected, setIsQualitySelected] = useState(false)
+  const [isQualitySelected, setIsQualitySelected] = useState(false);
 
 
 
@@ -269,20 +269,20 @@ const SettingsQualitySelect: FC<SettingsQualitySelectProps> = ({ currentQuality,
     (async function () {
       try {
         const url = episode.qualities[quality];
-        if (!url) return
+        if (!url) return;
 
-        await axios.head(url)
+        await axios.head(url);
         setIsQualityAvailable(true);
       } catch (e) {
-        setIsQualityAvailable(false)
+        setIsQualityAvailable(false);
       }
-    })()
-  }, [episode])
+    })();
+  }, [episode]);
 
   // Handle isSelected
   useEffect(() => {
-    setIsQualitySelected(currentQuality === quality)
-  }, [currentQuality])
+    setIsQualitySelected(currentQuality === quality);
+  }, [currentQuality]);
 
 
 
@@ -292,12 +292,12 @@ const SettingsQualitySelect: FC<SettingsQualitySelectProps> = ({ currentQuality,
     </Tooltip>}
 
     <p className={cn(`text-white font-space-grotesk`, isQ2160 && 'font-bold !text-primary', currentQuality === 'q4k' && '!text-white')}>{parseVideoQuality(quality)}</p>
-  </button>
-}
+  </button>;
+};
 
 
 
-export default NPSettings
+export default NPSettings;
 
 
 

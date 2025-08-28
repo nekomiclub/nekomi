@@ -1,11 +1,11 @@
 import { NextPage } from 'next';
 
-import * as IcoSocial from '../../../assets/Social'
-import * as IcoSupport from '../../../assets/Support'
+import * as IcoSocial from '~/assets/Social';
+import * as IcoSupport from '~/assets/Support';
 
 const page: NextPage = (props) => {
   return (
-    <div className="page w-full min-h-screen h-full bg-dark">
+    <div className="page w-full min-h-screen h-full bg-dark-primary">
       <div className="wrapper gap-[16px]">
         <p className="text-white">Icos must be gray and 40x40. If not check icon validity.</p>
 
@@ -25,8 +25,8 @@ const page: NextPage = (props) => {
           })}
         </div>
       </div>
-    )
+    );
   }
-}
+};
 
 export default page;

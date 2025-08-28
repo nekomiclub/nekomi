@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
+import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { PopupButton, PopupWindow } from '@fullkekw/popup';
-import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
@@ -11,19 +11,13 @@ import { IcoSocialTelegram } from '~/assets/Social';
 import AnimeItem from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
-import { NotifySuccess } from '~/components/UI/NotifyToast';
-import { UIReportButton } from '~/components/UI/Report';
-import { UIText } from '~/components/UI/Text.ui';
-import Tooltip from '~/components/UI/Tooltip';
-import { config } from '~/config';
-import { useAppSelector } from '~/hooks/redux';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { Dubber, DubberMember } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
-import { copyToClipboard, wordDeclination } from '~/utils/utils';
+import { wordDeclination } from '~/utils/utils';
 
 
 
@@ -50,23 +44,23 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
 
     (async function () {
       try {
-        await API.dubberGetInvite({ dubberId: dubber.id })
+        await API.dubberGetInvite({ dubberId: dubber.id });
       } catch (e) {
         setIsPopupShowing(true);
         setInviteType('invalid');
 
-        return
+        return;
       }
 
       try {
         if (invite === 'accept') {
           setInviteType('accept');
-          await API.dubberInviteAccept({ dubberId: dubber.id, userId: '' })
+          await API.dubberInviteAccept({ dubberId: dubber.id, userId: '' });
         };
 
         if (invite === 'decline') {
           setInviteType('decline');
-          await API.dubberInviteDecline({ dubberId: dubber.id, userId: '' })
+          await API.dubberInviteDecline({ dubberId: dubber.id, userId: '' });
         };
 
         setIsPopupShowing(true);
@@ -75,8 +69,8 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
       }
     })();
 
-    router.replace(pathname, { scroll: false })
-  }, [])
+    router.replace(pathname, { scroll: false });
+  }, []);
 
 
 
@@ -103,40 +97,8 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
 
       <p className="text-white font-manrope uppercase">{inviteType === 'accept' ? 'Чудово' : 'зрозуміло'}</p>
     </PopupButton>
-  </PopupWindow>
-}
-
-export const DubberBanner: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
-  return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[200px]">
-    <StyledImage src={dubber.banner} width="100%" height="100%" alt={`Team banner`} />
-
-    <UIReportButton className="!absolute top-[8px] right-[8px] opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" type="icon" text="Поскаржитися на команду озвучення" />
-  </div>
-}
-
-export const DubberHeader: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
-  const user = useAppSelector(state => state.user);
-  const canEdit = user.capabilities.includes('admin') || user.capabilities.includes('root') || dubber.members.find(el => el.id === user.id)?.role === 'leader';
-
-  return <div className="flex gap-[24px] absolute top-0 w-full pr-[32px] max-md:sm-[16px] max-md:flex-col">
-    {/* Avatar placeholder */}
-    <div className="relative w-[256px] h-[128px] shrink-0 max-md:w-[128px] max-md:h-[64px]">
-      <StyledImage src={dubber.avatar} width={'256px'} height={'256px'} alt="Dubber avatar" className="absolute left-0 bottom-0 rounded-[4px] overflow-hidden -top-[128px] max-md:w-[128px] max-md:h-[128px] max-md:top-[-64px]" />
-    </div>
-
-    <div className="w-full flex items-center justify-between gap-[24px]">
-      <div className="flex flex-col gap-[8px]">
-        <UIText text={dubber.nameUkr} type="h1" className="break-all" />
-        <UIText text={`@${dubber.slug}`} type="h3" className="text-grey-new font-space-grotesk break-all font-normal" />
-      </div>
-
-      <div className="flex gap-[4px] max-md:absolute max-md:top-[16px] max-md:right-[32px] max-sm:right-[16px]">
-        {canEdit && <DubberHeaderOpenSettings slug={dubber.id} />}
-        <DubberHeaderCopyLink />
-      </div>
-    </div>
-  </div>
-}
+  </PopupWindow>;
+};
 
 export const DubberAbout: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   return <div className="flex flex-col gap-[24px]">
@@ -155,8 +117,8 @@ export const DubberAbout: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
 
     {dubber.description && <p className="w-full text-white text-[20px] font-manrope max-lg:text-[16px]">{dubber.description}</p>}
     {!dubber.description && <p className="w-full text-grey-new font-manrope italic">Опис відсутній</p>}
-  </div>
-}
+  </div>;
+};
 
 export const DubberAnimeDubbed: NextPage<{ dubber: Dubber, hydratedAnimes: HydratedAnime[] }> = ({ hydratedAnimes, dubber }) => {
   return <div className="flex flex-col gap-[16px]">
@@ -166,11 +128,11 @@ export const DubberAnimeDubbed: NextPage<{ dubber: Dubber, hydratedAnimes: Hydra
 
     <div className="grid gap-[16px] grid-cols-6 max-[1440px]:grid-cols-5 max-xl:grid-cols-4 max-lg:grid-cols-3 max-md:grid-cols-2 grid-rows-1">
       {hydratedAnimes.slice(0, 6).map((hydrated, i) => {
-        return <AnimeItem hydrated={hydrated} key={`dubbed_anime-${dubber.id}--${i}`} />
+        return <AnimeItem hydrated={hydrated} key={`dubbed_anime-${dubber.id}--${i}`} />;
       })}
     </div>
-  </div>
-}
+  </div>;
+};
 
 export const DubberTeam: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubber, members }) => {
   return <div className="flex flex-col gap-[16px]">
@@ -178,53 +140,21 @@ export const DubberTeam: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubb
 
     <div className="flex flex-wrap gap-[16px]">
       {dubber.members.filter(el => el.role === 'leader').map(member => {
-        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />
+        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />;
       })}
 
       {dubber.members.filter(el => el.role === 'editor').map(member => {
-        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />
+        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />;
       })}
 
       {dubber.members.filter(el => el.role === 'member').map(member => {
-        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />
+        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />;
       })}
     </div>
-  </div>
-}
+  </div>;
+};
 
 
-
-
-function DubberHeaderOpenSettings({ slug }: { slug: string }) {
-  return <Tooltip content="Редагувати налаштування">
-    <Link href={Routes.dubberSettings.path({ slug })} className="p-[16px] rounded-[4px] bg-dark-medium flex justify-center items-center shrink-0 duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95] max-md:p-[12px] border border-dark-light outline-none" prefetch={false}>
-      <MaterialSymbol icon="settings" size={24} color="#fff" />
-    </Link>
-  </Tooltip>
-}
-
-function DubberHeaderCopyLink() {
-  const pathname = usePathname();
-
-  const [isLinkCopied, setIsLinkCopied] = useState(false);
-
-  function copyLink() {
-    copyToClipboard(`${config.URL.nekomi_site}${pathname}`);
-    setIsLinkCopied(true);
-
-    NotifySuccess({ title: 'Copied!', message: 'Посилання на команду скопійовано в буфер обміну' })
-
-    setTimeout(() => {
-      setIsLinkCopied(false);
-    }, 3000);
-  }
-
-  return <Tooltip content="Скопіювати посилання на команду">
-    <button className={cn('p-[16px] rounded-[4px] flex justify-center items-center shrink-0 duration-200 active:scale-[.95] border outline-none', isLinkCopied ? 'bg-info-success border-info-success' : 'bg-dark-medium hover:bg-dark-light focus-visible:bg-dark-light max-md:p-[12px] border-dark-light')} onClick={copyLink}>
-      <MaterialSymbol icon="link" size={24} color="#fff" />
-    </button>
-  </Tooltip>
-}
 
 function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
   return <li>
@@ -234,7 +164,7 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
 
       <p className="text-grey-new text-[24px] font-space-grotesk max-lg:text-[16px]">{`${label.charAt(0).toUpperCase()}${label.slice(1)}`}</p>
     </Link>
-  </li>
+  </li>;
 }
 
 function DubberTeamMember({ user, member }: { user: User, member: DubberMember }) {
@@ -256,5 +186,5 @@ function DubberTeamMember({ user, member }: { user: User, member: DubberMember }
         </p>}
       </div>
     </div>
-  </Link>
+  </Link>;
 }

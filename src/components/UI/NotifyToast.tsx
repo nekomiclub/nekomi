@@ -34,20 +34,20 @@ function NotifyTrigger({ component, data }: INotifyInnerProps) {
     closeButton: false,
     theme: 'dark',
     className: 'bg-transparent p-0 h-fit w-[40vw] min-w-[300px] rounded-[2px] overflow-hidden',
-  })
+  });
 }
 
 
 
 function Toast({ closeToast, data }: ToastContentProps) {
-  const id = createStringID(8)
+  const id = createStringID(8);
   const { message, title, type } = data as INotifyProps;
 
   const duration = type === 'error' ? 6000 : 3000;
 
   setTimeout(() => {
     try {
-      closeToast(false)
+      closeToast(false);
     } catch (e) {
       // ignore
     }
@@ -65,5 +65,5 @@ function Toast({ closeToast, data }: ToastContentProps) {
     </div>
 
     <p className="text-grey-new font-manrope whitespace-pre-wrap">{message}</p>
-  </div>
+  </div>;
 }

@@ -1,4 +1,4 @@
-import { DubberPageParams, PatcherPageParams, UserPageLibProps, UserPageProps, WatchPageParams } from './interfaces/PagesParams';
+import { DubberPageParams, PatcherPageParams, UserLibPageProps, UserPageProps, UserSettingsPageProps, WatchPageParams } from './interfaces/PagesParams';
 
 
 
@@ -45,7 +45,8 @@ const routeDefinitions = {
 
   // === User Pages
   user: { path: ({ username }: UserPageProps) => `/u/${username}` },
-  userLib: { path: ({ username, libID }: Required<UserPageLibProps>) => `/u/${username}/lib/${libID}` },
+  userLib: { path: ({ username, libId }: Required<UserLibPageProps>) => `/u/${username}/${libId}` },
+  userSettings: { path: ({ username }: Required<UserSettingsPageProps>) => `/u/${username}/settings` },
 
   // === Watch Pages
   watch: { path: ({ query }: WatchPageParams) => `/w/${query}` },

@@ -1,18 +1,18 @@
 
-import { notFound } from 'next/navigation'
+import { notFound } from 'next/navigation';
 
-import { LayoutProps } from '~/interfaces/types'
-import { DevelopmentMode, metaObject } from '../../config'
+import { DevelopmentMode, metaObject } from '~/config';
+import { LayoutProps } from '~/interfaces/types';
 
 
 
-export const metadata = metaObject({ robots: ['nofollow', 'noindex'] })
+export const metadata = metaObject({ robots: ['nofollow', 'noindex'] });
 
 
 
 // Layout
 export default async function Layout({ children }: LayoutProps) {
-  if (!DevelopmentMode) return notFound()
+  if (!DevelopmentMode) return notFound();
 
   return children;
 }

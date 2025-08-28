@@ -18,7 +18,7 @@ function siteMetadata(payload: {
 
   const title = payload.overwriteTitle ? payload.overwriteTitle : payload.title !== undefined ? `${payload.title} ― nekomi` : 'nekomi ― аніме українською';
   const description = payload.description !== undefined ? payload.description : 'Онлайн кінотеатр аніме українською nekomi.club!';
-  const keywords = payload.keywords?.length ? [...payload.keywords, ...defaultKeywords] : defaultKeywords
+  const keywords = payload.keywords?.length ? [...payload.keywords, ...defaultKeywords] : defaultKeywords;
   const siteName = config.DOMAIN.nekomi.split('.')[0];
   const robots: string = payload.robots?.length ? payload.robots?.join(',') : 'all';
 
@@ -38,9 +38,9 @@ function siteMetadata(payload: {
       locale: 'uk_UA',
       type: 'website',
     }
-  }
+  };
 }
 
 
 
-export default siteMetadata
+export default siteMetadata;

@@ -5,14 +5,14 @@ import { LocalStorageKeys } from '~/interfaces/types';
 
 /** Get local nekoplayer watch progress data */
 export function GetNekoplayerData(): NekoplayerLocalstorageRecord[] {
-  if (typeof window === 'undefined') return []
+  if (typeof window === 'undefined') return [];
 
-  return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerData) ?? '[]')
+  return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerData) ?? '[]');
 }
 
 /** Get local nekoplayer preferences data */
 export function GetNekoplayerPreferences(): NekoplayerLocalStoragePreferences[] {
-  if (typeof window === 'undefined') return []
+  if (typeof window === 'undefined') return [];
 
   return JSON.parse(localStorage.getItem(LocalStorageKeys.NekoplayerPreferences) ?? '[]') as NekoplayerLocalStoragePreferences[];
 }
@@ -23,5 +23,5 @@ export function SetNekoplayerPreferences(pref: NekoplayerLocalStoragePreferences
 
   const prefArray = GetNekoplayerPreferences();
 
-  localStorage.setItem(LocalStorageKeys.NekoplayerPreferences, JSON.stringify([...prefArray.filter(el => el.uuid !== pref.uuid), pref]))
+  localStorage.setItem(LocalStorageKeys.NekoplayerPreferences, JSON.stringify([...prefArray.filter(el => el.uuid !== pref.uuid), pref]));
 }

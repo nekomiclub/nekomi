@@ -1,17 +1,19 @@
-'use client'
+'use client';
 
 import '~/styles/components/Menu.scss';
 
+import { NextPage } from 'next';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { PopupWindow } from '@fullkekw/popup';
-import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
+import { HandleClientError } from '~/components/Errors';
+import StyledImage from '~/components/Styled/StyledImage';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { Dubber } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
@@ -19,8 +21,6 @@ import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { cn } from '~/utils/classnames';
 import { randomNumber } from '~/utils/utils';
-import { HandleClientError } from '../Errors';
-import StyledImage from '../Styled/StyledImage';
 
 
 
@@ -61,7 +61,7 @@ const SearchStartTypingDictionary = [
   'Кайджу номер 8',
   'dandadan',
   'jujutsu kaisen 2'
-]
+];
 
 
 
@@ -71,7 +71,7 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
 
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState<MenuSearchResultType[]>([]);
-  const [searchType, setSearchType] = useState<MenuSearchType>('anime')
+  const [searchType, setSearchType] = useState<MenuSearchType>('anime');
   const [startTypingText, setStartTypingText] = useState('');
   const [showStartTyping, setShowStartTyping] = useState(true);
   const [showNotFound, setShowNotFound] = useState(false);
@@ -79,66 +79,66 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
   const [isSelectSearchTypeOpen, setIsSelectSearchTypeOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const [searchTextDebounce] = useDebounce(searchText, 700)
+  const [searchTextDebounce] = useDebounce(searchText, 700);
 
-  const contentRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null);
   const searchingQueryRef = useRef('');
 
 
 
   // Init
   useEffect(() => {
-    setStartTypingText(SearchStartTypingDictionary[randomNumber(0, SearchStartTypingDictionary.length - 1)])
-  }, [])
+    setStartTypingText(SearchStartTypingDictionary[randomNumber(0, SearchStartTypingDictionary.length - 1)]);
+  }, []);
 
   // Handle typing search effect
   useEffect(() => {
     setShowStartTyping(false);
-    setShowNotFound(false)
+    setShowNotFound(false);
 
     if (searchText.length === 0) {
-      setShowStartTyping(true)
+      setShowStartTyping(true);
       setSearchResults([]);
 
-      return
+      return;
     }
 
-    setSearchResults([null, null, null, null, null])
-  }, [searchText])
+    setSearchResults([null, null, null, null, null]);
+  }, [searchText]);
 
   // Handle patcher routing & hide dialog on route change
   useEffect(() => {
-    setUserPatcherRouting(pathname.includes('/patcher'))
+    setUserPatcherRouting(pathname.includes('/patcher'));
     setIsSearchOpen(false);
-  }, [pathname])
+  }, [pathname]);
 
   // Handle search via debounce query
   useEffect(() => {
     setShowStartTyping(false);
-    setShowNotFound(false)
+    setShowNotFound(false);
 
     if (searchTextDebounce.length === 0) {
-      setShowStartTyping(true)
+      setShowStartTyping(true);
       setSearchResults([]);
 
-      return
+      return;
     }
 
     search();
-  }, [searchTextDebounce])
+  }, [searchTextDebounce]);
 
   // Handle search results
   useEffect(() => {
     if (searchResults.length === 0 && !showStartTyping) return setShowNotFound(true);
 
-    contentRef.current?.scrollTo({ top: 0, behavior: 'instant' })
-  }, [searchResults])
+    contentRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+  }, [searchResults]);
 
   // Close select search type on select 
   useEffect(() => {
     setIsSelectSearchTypeOpen(false);
     setSearchResults([]);
-  }, [searchType])
+  }, [searchType]);
 
 
 
@@ -148,7 +148,7 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
     // Reset states
     if (searchText.length === 0) {
       setShowStartTyping(true);
-      setShowNotFound(false)
+      setShowNotFound(false);
       setSearchResults([]);
 
       return;
@@ -160,34 +160,34 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
 
     try {
       if (searchType === 'anime') {
-        const { results, extended } = await API.searchAnime({ q: searchText })
+        const { results, extended } = await API.searchAnime({ q: searchText });
 
         setSearchResults(results.map(result => {
           return {
             ...result,
             dubbedEpisodes: extended.dubbedEpisodes[result.anime.uuid]
-          }
-        }))
+          };
+        }));
       }
 
       if (searchType === 'user') {
-        const { results } = await API.searchUsers({ q: searchText })
+        const { results } = await API.searchUsers({ q: searchText });
 
-        setSearchResults(results.map(el => el.user))
+        setSearchResults(results.map(el => el.user));
       }
 
       if (searchType === 'dubber') {
-        const { results } = await API.searchDubber({ q: searchText })
+        const { results } = await API.searchDubber({ q: searchText });
 
         setSearchResults(results);
       }
 
       setShowStartTyping(false);
     } catch (e) {
-      setShowStartTyping(true)
-      setShowNotFound(false)
-      setSearchResults([])
-      HandleClientError(e)
+      setShowStartTyping(true);
+      setShowNotFound(false);
+      setSearchResults([]);
+      HandleClientError(e);
     }
   }
 
@@ -246,12 +246,12 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
         </div>
 
         {searchResults.map((result, i) => {
-          return <MenuSearchResult item={result} type={searchType} usePatcherRouting={usePatcherRouting} key={`menusearch-result--${i}`} />
+          return <MenuSearchResult item={result} type={searchType} usePatcherRouting={usePatcherRouting} key={`menusearch-result--${i}`} />;
         })}
       </div>
     </div>
-  </PopupWindow>
-}
+  </PopupWindow>;
+};
 
 
 
@@ -269,26 +269,26 @@ const MenuSearchSelectTypeButton: NextPage<MenuSearchSelectTypeButtonProps> = ({
       {type === 'user' && 'Користувач'}
       {type === 'dubber' && 'Озвучення'}
     </p>
-  </div>
-}
+  </div>;
+};
 
 
 
 const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatcherRouting }) => {
-  const [firstLineWidth] = useState(randomNumber(80, 320))
-  const [secondLineWidth] = useState(randomNumber(40, 250))
+  const [firstLineWidth] = useState(randomNumber(80, 320));
+  const [secondLineWidth] = useState(randomNumber(40, 250));
 
-  const [animeResult, setAnimeResult] = useState<SearchAnime | null>(null)
-  const [userResult, setUserResult] = useState<User | null>(null)
-  const [dubberResult, setDubberResult] = useState<Dubber | null>(null)
+  const [animeResult, setAnimeResult] = useState<SearchAnime | null>(null);
+  const [userResult, setUserResult] = useState<User | null>(null);
+  const [dubberResult, setDubberResult] = useState<Dubber | null>(null);
 
 
 
   useEffect(() => {
-    setAnimeResult(type === 'anime' ? item as SearchAnime : null)
-    setUserResult(type === 'user' ? item as User : null)
-    setDubberResult(type === 'dubber' ? item as Dubber : null)
-  }, [item])
+    setAnimeResult(type === 'anime' ? item as SearchAnime : null);
+    setUserResult(type === 'user' ? item as User : null);
+    setDubberResult(type === 'dubber' ? item as Dubber : null);
+  }, [item]);
 
 
 
@@ -368,7 +368,7 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
         {dubberResult.description && <p className="text-grey-new font-manrope line-clamp-2" title={dubberResult.description}>{dubberResult.description}</p>}
       </div>
     </Link>}
-  </>
-}
+  </>;
+};
 
 export default NavMenuSearch;

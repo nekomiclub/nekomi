@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
+import { NextPage } from 'next';
 import { useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { AxiosError } from 'axios';
-import { NextPage } from 'next';
 import Link from 'next/link';
 
 import { HandleClientError } from '~/components/Errors';
@@ -49,25 +49,25 @@ const uploadTypesOptions: IPatcherSelectOption<TUploadType>[] = [{
 }, {
   code: 'video/srt-temp',
   label: 'Тимчасові субтитри для відео'
-}]
+}];
 
 
 
 export const MediaClient: NextPage = () => {
-  const user = useAppSelector(state => state.user)
+  const user = useAppSelector(state => state.user);
 
-  const [file, setFile] = useState<File | undefined>(undefined)
-  const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false)
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false);
   const [uploadLink, setUploadLink] = useState('');
-  const [uploadType, setUploadType] = useState<TUploadType>('photo/user/avatar')
-  const [uploadStatus, setUploadStatus] = useState<TActionButtonStatus>('default')
+  const [uploadType, setUploadType] = useState<TUploadType>('photo/user/avatar');
+  const [uploadStatus, setUploadStatus] = useState<TActionButtonStatus>('default');
 
-  const [deleteUploadValue, setDeleteUploadValue] = useState('')
-  const [deleteUploadErrors, setDeleteUploadErrors] = useState<string[]>([])
+  const [deleteUploadValue, setDeleteUploadValue] = useState('');
+  const [deleteUploadErrors, setDeleteUploadErrors] = useState<string[]>([]);
   const [deleteStatus, setDeleteStatus] = useState<TActionButtonStatus>('default');
 
 
-  const fileRef = useRef<HTMLInputElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null);
 
 
 
@@ -85,7 +85,7 @@ export const MediaClient: NextPage = () => {
     if (!input) return;
 
     if (!input.files?.length) {
-      setFile(undefined)
+      setFile(undefined);
     } else {
       const file = input.files[0];
 
@@ -97,30 +97,30 @@ export const MediaClient: NextPage = () => {
     try {
       if (!file) return console.warn(`Prevented submitting due to no file selected`);
 
-      setUploadLink('')
-      setUploadStatus('pending')
+      setUploadLink('');
+      setUploadStatus('pending');
 
-      console.log('ffsdsfddf')
+      console.log('ffsdsfddf');
 
       const formData = new FormData();
 
       formData.append('file', file);
       formData.append('type', uploadType);
 
-      const { data } = await $upload.post<{ url: string, srt_id?: string }>(`${config.URL.nekomi_api}/upload`, formData)
+      const { data } = await $upload.post<{ url: string, srt_id?: string }>(`${config.URL.nekomi_api}/upload`, formData);
 
       if (uploadType !== 'video/srt-temp') {
-        setUploadLink(data.url)
+        setUploadLink(data.url);
       } else {
         setUploadLink(`${config.URL.nekomi_media}/${data.srt_id}`);
       }
-      setUploadStatus('success')
+      setUploadStatus('success');
     } catch (e) {
       HandleClientError(e);
-      setUploadStatus('error')
+      setUploadStatus('error');
     } finally {
       setTimeout(() => {
-        setUploadStatus('default')
+        setUploadStatus('default');
       }, 2000);
     }
   }
@@ -130,25 +130,25 @@ export const MediaClient: NextPage = () => {
   async function deleteUploadHandler(e: React.FormEvent) {
     e.preventDefault();
 
-    setDeleteUploadErrors([])
-    setDeleteStatus('pending')
+    setDeleteUploadErrors([]);
+    setDeleteStatus('pending');
 
     try {
       await $api.delete(`${config.URL.nekomi_api}/upload/${deleteUploadValue}`);
 
-      setDeleteStatus('success')
+      setDeleteStatus('success');
     } catch (e) {
       HandleClientError(e);
-      setDeleteStatus('error')
+      setDeleteStatus('error');
 
       if (e instanceof AxiosError) {
-        setDeleteUploadErrors([`Сталась HTTP помилка ${e.status} - ${e.response?.data.message || e.response?.data.msg || e.response?.data}`])
+        setDeleteUploadErrors([`Сталась HTTP помилка ${e.status} - ${e.response?.data.message || e.response?.data.msg || e.response?.data}`]);
       } else {
-        setDeleteUploadErrors([`Щось пішло не так... Відправ лог консолі в тікети діскорд сервера (детальніше про тікети можна прочитати на сторінці FAQ)`])
+        setDeleteUploadErrors([`Щось пішло не так... Відправ лог консолі в тікети діскорд сервера (детальніше про тікети можна прочитати на сторінці FAQ)`]);
       }
     } finally {
       setTimeout(() => {
-        setDeleteStatus('default')
+        setDeleteStatus('default');
       }, 2000);
     }
   }
@@ -158,7 +158,7 @@ export const MediaClient: NextPage = () => {
   return (
     <div className={`wrapper min-h-screen gap-[40px] pt-[16px] sm:pt-[var(--header-height)]`}>
       <div className="flex flex-col gap-[8px]">
-        <div className="w-full h-[200px] flex items-center justify-center gap-[32px] bg-darkGrey p-[32px]">
+        <div className="w-full h-[200px] flex items-center justify-center gap-[32px] bg-dark-medium p-[32px]">
           <h2 className="text-white text-[32px] font-bold uppercase">керування медіа-контентом</h2>
         </div>
 
@@ -184,9 +184,9 @@ export const MediaClient: NextPage = () => {
 
               <MenuWrapper className="flex flex-col bg-grey max-h-[50vh] !w-fit overflow-x-hidden overflow-y-auto">
                 {uploadTypesOptions.map(el => {
-                  return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-purple focus-visible:bg-purple w-full flex items-center gap-[16px]`, uploadType === el.code && 'bg-purple')} key={`select-option--${el.code}`} onClick={() => setUploadType(el.code)}>
+                  return <button className={cn(`px-[16px] py-[6px] duration-200 hover:bg-primary focus-visible:bg-primary w-full flex items-center gap-[16px]`, uploadType === el.code && 'bg-primary')} key={`select-option--${el.code}`} onClick={() => setUploadType(el.code)}>
                     <p className="text-white">{el.label}</p>
-                  </button>
+                  </button>;
                 })}
               </MenuWrapper>
             </Menu>
@@ -199,13 +199,13 @@ export const MediaClient: NextPage = () => {
             <div className="w-full">
               <input type="file" className="hidden" ref={fileRef} onChange={selectFile} />
 
-              <button className="patcher-field flex justify-center items-center gap-[16px] bg-grey w-full duration-200 hover:bg-purple focus-visible:bg-purple px-[16px] py-[8px]" onClick={chooseFile}>
+              <button className="patcher-field flex justify-center items-center gap-[16px] bg-grey w-full duration-200 hover:bg-primary focus-visible:bg-primary px-[16px] py-[8px]" onClick={chooseFile}>
                 <p className={`text-white break-words line-clamp-1 text-ellipsis ${file?.name ? '' : 'uppercase'}`}>{file?.name || 'вибери файл'}</p>
               </button>
             </div>
           </div>
 
-          <button className={cn('px-[16px] py-[8px] bg-grey rounded-[4px] flex items-center gap-[8px] duration-200 active:scale-[.95] w-fit', uploadStatus === 'default' && 'hover:bg-green focus-visible:bg-green')} onClick={uploadFile} disabled={uploadStatus !== 'default'}>
+          <button className={cn('px-[16px] py-[8px] bg-grey rounded-[4px] flex items-center gap-[8px] duration-200 active:scale-[.95] w-fit', uploadStatus === 'default' && 'hover:bg-info-success focus-visible:bg-info-success')} onClick={uploadFile} disabled={uploadStatus !== 'default'}>
             <p className="text-white uppercase font-bold">
               {uploadStatus === 'default' && 'завантажити'}
               {uploadStatus === 'error' && 'помилка'}
@@ -216,7 +216,7 @@ export const MediaClient: NextPage = () => {
         </div>
 
         {uploadLink && <Link href={uploadLink} target="_blank" className="flex items-center gap-[8px]">
-          <p className="text-purple">Переглянути завантаження</p>
+          <p className="text-primary">Переглянути завантаження</p>
         </Link>}
       </div>
 
@@ -233,7 +233,7 @@ export const MediaClient: NextPage = () => {
           <form className="w-full flex items-center gap-[8px]" onSubmit={deleteUploadHandler}>
             <Input state={deleteUploadValue} stateSetter={setDeleteUploadValue} className="w-full" placeholder={`hello-world-123-45de`} />
 
-            <button type="submit" className={cn('px-[16px] py-[8px] flex items-center gap-[16px] rounded-[2px] bg-grey duration-200 active:scale-[.95]', deleteStatus === 'default' && 'hover:bg-red focus-visible:bg-red')} disabled={deleteStatus !== 'default'}>
+            <button type="submit" className={cn('px-[16px] py-[8px] flex items-center gap-[16px] rounded-[2px] bg-grey duration-200 active:scale-[.95]', deleteStatus === 'default' && 'hover:bg-info-error focus-visible:bg-info-error')} disabled={deleteStatus !== 'default'}>
               <p className="text-white uppercase">
                 {deleteStatus === 'default' && 'видалити'}
                 {deleteStatus === 'error' && 'помилка'}
@@ -243,12 +243,12 @@ export const MediaClient: NextPage = () => {
             </button>
           </form>
 
-          {deleteStatus === 'success' && <p className="text-red">Аплоад видалено</p>}
+          {deleteStatus === 'success' && <p className="text-info-error">Аплоад видалено</p>}
         </div>
       </div>
     </div>
   );
-}
+};
 
 interface IGroupLabel extends React.HTMLAttributes<HTMLDivElement> {
   label: string
@@ -268,4 +268,4 @@ const GroupLabel: NextPage<IGroupLabel> = ({ label, className, headingClassName,
       <span className={cn('w-full h-[1px]', dividerColor ? `bg-[#${dividerColor}]` : `bg-grey`)}></span>
     </div>
   );
-}
+};

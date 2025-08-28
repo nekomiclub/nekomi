@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
-import * as loader from '@uiball/loaders';
 import { NextPage } from 'next';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import * as loader from '@uiball/loaders';
 import Link from 'next/link';
 import { useIdleTimer } from 'react-idle-timer';
 import { MaterialSymbol } from 'react-material-symbols';
@@ -62,16 +62,16 @@ interface HomeHeadlinerTrailerProps {
 
 
 export const HomeHeadliner: NextPage<HomeHeadlinerProps> = ({ headliner }) => {
-  const [activeScreen, setActiveScreen] = useState<HomeHeadlinerScreen>('preview')
+  const [activeScreen, setActiveScreen] = useState<HomeHeadlinerScreen>('preview');
 
-  const previewScreenRef = useRef<HTMLDivElement>(null)
-  const trailerScreenRef = useRef<HTMLDivElement>(null)
+  const previewScreenRef = useRef<HTMLDivElement>(null);
+  const trailerScreenRef = useRef<HTMLDivElement>(null);
 
 
 
   useEffect(() => {
     setTimeout(() => setActiveScreen('trailer'), 5000);
-  }, [])
+  }, []);
 
   useEffect(() => {
     const poster = previewScreenRef.current;
@@ -81,10 +81,10 @@ export const HomeHeadliner: NextPage<HomeHeadlinerProps> = ({ headliner }) => {
     (async function () {
       if (activeScreen === 'trailer') {
         await hide(poster);
-        await show(trailer)
+        await show(trailer);
       } else {
         await hide(trailer);
-        await show(poster)
+        await show(poster);
       }
 
 
@@ -99,10 +99,10 @@ export const HomeHeadliner: NextPage<HomeHeadlinerProps> = ({ headliner }) => {
             el.style.opacity = '1';
             res(1);
           }, 500);
-        })
+        });
       }
-    })()
-  }, [activeScreen])
+    })();
+  }, [activeScreen]);
 
 
 
@@ -118,8 +118,8 @@ export const HomeHeadliner: NextPage<HomeHeadlinerProps> = ({ headliner }) => {
     <div className="home-headliner-screen items-center justify-center !z-[1]">
       <IcoNekomiLogo width={128} height={128} fill="#fff" />
     </div>
-  </div>
-}
+  </div>;
+};
 
 export const HomeCategory: NextPage<HomeCategoryProps> = ({ label, icon, hydratedAnimes }) => {
   return <div className="flex flex-col gap-[16px]">
@@ -129,8 +129,8 @@ export const HomeCategory: NextPage<HomeCategoryProps> = ({ label, icon, hydrate
       <HomeAnimesSwiper hydratedAnimes={hydratedAnimes.slice(0, 10)} />
       <HomeAnimesSwiper hydratedAnimes={hydratedAnimes.slice(10, 20)} />
     </div> : <HomeAnimesSwiper hydratedAnimes={hydratedAnimes} />}
-  </div>
-}
+  </div>;
+};
 
 
 
@@ -139,10 +139,10 @@ const HomeAnimesSwiper: NextPage<HomeAnimeSwiperProps> = ({ hydratedAnimes }) =>
 
   return <StyledSwiper>
     {hydratedAnimes.map((hydrated, i) => {
-      return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`homecategory-${id}--${i}`} />
+      return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`homecategory-${id}--${i}`} />;
     })}
-  </StyledSwiper>
-}
+  </StyledSwiper>;
+};
 
 const HomeDivider: NextPage<HomeDividerProps> = ({ icon, label }) => {
   return <div className="flex items-center gap-[16px]">
@@ -154,14 +154,14 @@ const HomeDivider: NextPage<HomeDividerProps> = ({ icon, label }) => {
     </div>
 
     <span className="w-full h-[3px] gradient--primary"></span>
-  </div>
-}
+  </div>;
+};
 
 const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, className }) => {
   const currentUser = useAppSelector(state => state.user);
 
   const [label, setLabel] = useState('');
-  const [continueWatch, setContinueWatch] = useState(false)
+  const [continueWatch, setContinueWatch] = useState(false);
 
 
 
@@ -173,9 +173,9 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
       setLabel(`продовжити (${watchProgress.episodeOrder} еп, ${prettySeconds(watchProgress.progress).pretty})`);
       setContinueWatch(true);
     } else {
-      setLabel('розпочати перегляд')
+      setLabel('розпочати перегляд');
     }
-  }, [currentUser])
+  }, [currentUser]);
 
   // Get user watch progress from local storage
   useEffect(() => {
@@ -188,7 +188,7 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
       setLabel(`продовжити (${localCurrent.ep} еп, ${prettySeconds(localCurrent.moment).pretty})`);
       setContinueWatch(true);
     }
-  }, [])
+  }, []);
 
 
 
@@ -196,22 +196,22 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
     {continueWatch && <MaterialSymbol icon="resume" size={40} className="text-white max-sm:!text-[24px]" />}
     {!continueWatch && <MaterialSymbol icon="live_tv" size={40} className="text-white max-sm:!text-[24px]" />}
     <p className="text-white text-[24px] uppercase max-sm:text-[16px] font-manrope break-all">{label}</p>
-  </Link>
-}
+  </Link>;
+};
 
 const HomeHeadlinerPreview: NextPage<HomeHeadlinerPreviewProps> = ({ headliner }) => {
-  const [isSm, setIsSm] = useState(false)
+  const [isSm, setIsSm] = useState(false);
 
 
 
   useEffect(() => {
     handleIsSm();
 
-    window.addEventListener('resize', handleIsSm)
-  }, [])
+    window.addEventListener('resize', handleIsSm);
+  }, []);
 
   function handleIsSm() {
-    setIsSm(window.innerWidth <= 620)
+    setIsSm(window.innerWidth <= 620);
   }
 
 
@@ -222,7 +222,7 @@ const HomeHeadlinerPreview: NextPage<HomeHeadlinerPreviewProps> = ({ headliner }
       {!isSm && <StyledImage src={headliner.backgroundURL} width="100%" height="100%" loading="eager" />}
       {isSm && <StyledImage src={headliner.poster} width="100%" height="100%" loading="eager" />}
 
-      <div className="absolute top-0 left-0 w-full h-full bg-dark/[.2] z-[2]"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-dark-primary/[.2] z-[2]"></div>
     </div>
 
     {/* Main */}
@@ -239,15 +239,15 @@ const HomeHeadlinerPreview: NextPage<HomeHeadlinerPreviewProps> = ({ headliner }
     <div className="absolute bottom-[60px] z-[3] pr-[32px] max-sm:w-full max-sm:bottom-[90px]">
       <HomeWatchHeadliner headliner={headliner} />
     </div>
-  </>
-}
+  </>;
+};
 
 const HomeHeadlinerTrailer: NextPage<HomeHeadlinerTrailerProps> = ({ headliner, activeScreen, setActiveScreen }) => {
   const [isMuted, setIsMuted] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
 
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null);
 
 
 
@@ -257,7 +257,7 @@ const HomeHeadlinerTrailer: NextPage<HomeHeadlinerTrailerProps> = ({ headliner, 
     throttle: 500,
     onIdle: () => setIsIdle(true),
     onAction: () => setIsIdle(false)
-  })
+  });
 
   // Init
   useEffect(() => {
@@ -270,7 +270,7 @@ const HomeHeadlinerTrailer: NextPage<HomeHeadlinerTrailerProps> = ({ headliner, 
 
     video.addEventListener('ended', () => setActiveScreen('preview'));
     video.addEventListener('contextmenu', e => e.preventDefault());
-  }, [])
+  }, []);
 
   // Handle video events
   useEffect(() => {
@@ -284,7 +284,7 @@ const HomeHeadlinerTrailer: NextPage<HomeHeadlinerTrailerProps> = ({ headliner, 
       video.pause();
     }
 
-  }, [activeScreen])
+  }, [activeScreen]);
 
 
 
@@ -332,5 +332,5 @@ const HomeHeadlinerTrailer: NextPage<HomeHeadlinerTrailerProps> = ({ headliner, 
         </div>
       </div>
     </>
-  )
-}
+  );
+};

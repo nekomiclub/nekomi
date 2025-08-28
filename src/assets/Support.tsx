@@ -17,7 +17,7 @@ export const IcoSupportByMeACoffee = ({ className, fill, height, width }: IAsset
     </svg>
 
   );
-}
+};
 
 export const IcoSupportPatreon = ({ className, fill, height, width }: IAssetProps) => {
   return (
@@ -32,7 +32,7 @@ export const IcoSupportPatreon = ({ className, fill, height, width }: IAssetProp
       </defs>
     </svg>
   );
-}
+};
 
 export const IcoSupportPrivatbank = ({ className, fill, height, width }: IAssetProps) => {
   return (
@@ -41,16 +41,16 @@ export const IcoSupportPrivatbank = ({ className, fill, height, width }: IAssetP
       <path d="M12.5042 19.4597H0V31.9776H12.5042V19.4597Z" fill="#fff" />
     </svg>
   );
-}
+};
 
 export const IcoSupportMonobank = ({ width, className, height }: { width?: number, height?: number, className?: string }) => {
   return (
     <Image src={'/assets/monobank.png'} alt="monobank logo" width={width ? width : 32} height={height ? height : 32} className={className} />
   );
-}
+};
 
 export const IcoSupportDiaka = ({ width, className, height }: { width?: number, height?: number, className?: string }) => {
   return (
     <Image src={'/assets/diaka.png'} alt="diaka logo" width={width ? width : 32} height={height ? height : 32} className={className} />
   );
-}
+};

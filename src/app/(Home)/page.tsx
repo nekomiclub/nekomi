@@ -5,9 +5,9 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import { HandleServerError } from '~/components/Errors';
+import { config, metaObject } from '~/config';
 import API from '~/services/ApiService';
 import { randomNumber } from '~/utils/utils';
-import { config, metaObject } from '../../config';
 
 import { HomeCategory, HomeHeadliner } from './HomePage';
 
@@ -17,16 +17,16 @@ import { HomeCategory, HomeHeadliner } from './HomePage';
 export const metadata = metaObject({
   title: 'nekomi',
   description: 'Nekomi - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!'
-})
+});
 
 
 
 export default async function RSC() {
   try {
     const featured = await API.getFeaturedAnime();
-    const headliner = featured.headliners[randomNumber(0, featured.headliners.length - 1)]
+    const headliner = featured.headliners[randomNumber(0, featured.headliners.length - 1)];
 
-    return <main className="w-full h-full bg-dark min-h-screen">
+    return <main className="w-full h-full bg-dark-primary min-h-screen">
       <HomeHeadliner headliner={headliner} />
 
       {/* Categories */}
@@ -34,7 +34,7 @@ export default async function RSC() {
         <HomeCategory label="Популярні" icon={<MaterialSymbol icon="star" size={32} fill className="text-[#FF464E]" />} hydratedAnimes={featured.hot} />
       </div>
 
-      <div className="wrapper bg-dark-bright !flex-row gap-[60px] py-[60px] !px-[16px] items-center !my-[60px] max-md:!flex-col">
+      <div className="wrapper bg-expo/[.5] !flex-row gap-[60px] py-[60px] !px-[16px] items-center !my-[60px] max-md:!flex-col">
         <IcoNekomiLogo width={256} height={256} className="shrink-0 max-md:w-[128px] max-md:h-[128px]" fill="#fff" />
 
         <div className="flex flex-col gap-[24px]">
@@ -57,7 +57,7 @@ export default async function RSC() {
         {featured.updatedRecently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<MaterialSymbol icon="schedule" size={32} className="text-white max-md:!text-[24px]" />} hydratedAnimes={featured.updatedRecently} />}
         {featured.rated.length > 0 && <HomeCategory label="З високою оцінкою" icon={<MaterialSymbol icon="star_half" size={32} className="text-white max-md:!text-[24px]" />} hydratedAnimes={featured.rated} />}
       </div>
-    </main>
+    </main>;
   } catch (e) {
     return HandleServerError(e);
   }

@@ -4,7 +4,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { metaObject } from '~/config';
 
 
-export const metadata = metaObject({ title: 'Спільний перегляд' })
+export const metadata = metaObject({ title: 'Спільний перегляд' });
 
 // export default async function RSC({ params }: IRSCProps) {
 //   const { id } = await params as { id: string };
@@ -62,5 +62,5 @@ export default async function RSC() {
         </div>
       </div>
     </div>
-  </div>
+  </div>;
 }

@@ -1,4 +1,27 @@
-// Breakpoints
+:root {
+  --header-height: 60px;
+
+  --color-info-error: #e74c3c;
+  --color-info-warn: #f39c12;
+  --color-info-success: #2ecc71;
+}
+
+$white: #ffffff;
+$grey: #555555;
+
+$dark-primary: #121212;
+$dark-bright: #141414;
+$dark-medium: #181818;
+$dark-light: #202020;
+
+$primary: #ff464e;
+$primary-bright: #ff6160;
+
+$info-error: #e74c3c;
+$info-success: #2ecc71;
+$info-warn: #f39c12;
+
+//* Breakpoints
 $break-sm: 640px;
 $break-md: 768px;
 $break-lg: 1024px;

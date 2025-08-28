@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
 import { FC, useId, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react'
+import { Swiper, SwiperSlide } from 'swiper/react';
 
+import LoadingContent from '~/components/LoadingContent';
 import { cn } from '~/utils/classnames';
-import LoadingContent from '../LoadingContent';
 
 
 
@@ -36,4 +36,4 @@ const StyledSwiper: FC<Props> = ({ children }) => {
   </div>;
 };
 
-export default StyledSwiper
+export default StyledSwiper;

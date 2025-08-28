@@ -15,8 +15,8 @@ export function DubberCompactMapper(dubber: Dubber): DubberCompact {
 
 export function DubberParseRoleName(role: DubberMemberRole) {
   switch (role) {
-    case 'leader': return 'Лідер'
-    case 'editor': return 'Редактор'
-    case 'member': return 'Учасник'
+    case 'leader': return 'Лідер';
+    case 'editor': return 'Редактор';
+    case 'member': return 'Учасник';
   }
 }

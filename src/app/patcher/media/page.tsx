@@ -13,10 +13,10 @@ import { MediaClient } from './Client';
 const RSC: NextPage<RSCProps> = async () => {
   let session = cookies().get(config.vars.SessionCookie)?.value ?? '';
 
-  const { user } = await CheckUserAccess({ capabilities: ['root'], checkMode: 'AND', session })
-  if (!user) return notFound()
+  const { user } = await CheckUserAccess({ capabilities: ['root'], checkMode: 'AND', session });
+  if (!user) return notFound();
 
   return <MediaClient />;
-}
+};
 
 export default RSC;

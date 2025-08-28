@@ -1,28 +1,28 @@
 import '~/styles/pages/watch.scss';
 
-import { cache } from 'react';
 import { Metadata } from 'next';
+import { cache } from 'react';
 import { headers } from 'next/headers';
 
 import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import StyledSwiper from '~/components/Styled/StyledSwiper';
+import { config, metaObject } from '~/config';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
 import { isUserAgentMobile } from '~/utils/utils';
-import { config, metaObject } from '../../../config';
 
-import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage'
+import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
 
 
 
 const getAnime = cache(async (query: string) => {
-  return await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true })
-})
+  return await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true });
+});
 
 
 
@@ -34,8 +34,8 @@ export async function generateMetadata(
 
   try {
     const { anime } = await getAnime(query);
-    const title = `${anime.names.ukr} (${anime.year})`
-    const description = anime.description ?? 'Опис відсутній'
+    const title = `${anime.names.ukr} (${anime.year})`;
+    const description = anime.description ?? 'Опис відсутній';
 
     return metaObject({
       title,
@@ -50,9 +50,9 @@ export async function generateMetadata(
         locale: 'uk_UA',
         siteName: config.DOMAIN.nekomi.split('.')[0],
       }
-    })
+    });
   } catch (e) {
-    return metaObject({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] })
+    return metaObject({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
   }
 }
 
@@ -63,12 +63,12 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
   const { mobile } = await props.searchParams;
 
   const userAgent = headers().get('user-agent') || '';
-  const isMobile = mobile ?? isUserAgentMobile(userAgent) ?? true
+  const isMobile = mobile ?? isUserAgentMobile(userAgent) ?? true;
 
 
 
   try {
-    const { anime, genres, media, rate, season, status, related, posterAdapt, nextBroadcast, dubbers } = await getAnime(query)
+    const { anime, genres, media, rate, season, status, related, posterAdapt, nextBroadcast, dubbers } = await getAnime(query);
     const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
 
     let maximumEpisode = 0;
@@ -135,7 +135,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
               {posterAdapt && <WatchDubber dubber={posterAdapt} posterAdapt key={`animedub-posterAdapt--${posterAdapt.id}`} />}
 
               {dubbers?.filter(el => el.id !== anime.posterAdapt).map(dubber => {
-                return <WatchDubber dubber={dubber} key={`animedub--${dubber.id}`} />
+                return <WatchDubber dubber={dubber} key={`animedub--${dubber.id}`} />;
               })}
             </div>
           </div>}
@@ -148,7 +148,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
 
             <StyledSwiper>
               {related.map((hydrated, i) => {
-                return <AnimeItem hydrated={hydrated} className="!w-[170px]" key={`animerelated-${anime.uuid}--${i}`} />
+                return <AnimeItem hydrated={hydrated} className="!w-[170px]" key={`animerelated-${anime.uuid}--${i}`} />;
               })}
             </StyledSwiper>
           </div>}
@@ -231,7 +231,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
                 {posterAdapt && <WatchDubber dubber={posterAdapt} posterAdapt key={`animedub-posterAdapt--${posterAdapt.id}`} />}
 
                 {dubbers?.filter(el => el.id !== anime.posterAdapt).map(dubber => {
-                  return <WatchDubber dubber={dubber} key={`animedub--${dubber.id}`} />
+                  return <WatchDubber dubber={dubber} key={`animedub--${dubber.id}`} />;
                 })}
               </div>
             </div>}
@@ -246,7 +246,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
 
           <StyledSwiper>
             {related.map((hydrated, i) => {
-              return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`animerelated-${anime.uuid}--${i}`} />
+              return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`animerelated-${anime.uuid}--${i}`} />;
             })}
           </StyledSwiper>
         </div>}
@@ -254,8 +254,8 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
         {/* Player */}
         <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} />
       </main>
-    </>
+    </>;
   } catch (e) {
-    return HandleServerError(e)
+    return HandleServerError(e);
   }
 }

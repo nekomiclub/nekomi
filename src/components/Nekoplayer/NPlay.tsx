@@ -20,22 +20,22 @@ const NPlay: FC = () => {
     if (video.paused) {
       video.play().catch(e => null);
     } else {
-      video.pause()
+      video.pause();
     }
   }
 
   function getLabel() {
-    return isPlaying ? 'Зупинити відео (k)' : 'Продовжити відео (k)'
+    return isPlaying ? 'Зупинити відео (k)' : 'Продовжити відео (k)';
   }
 
 
 
-  return <button className="kekwplayer-play_button relative w-[40px] h-[40px]" onClick={changePlaying} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
-    <MaterialSymbol className={cn(`kekwplayer-play text-white`, isPlaying && 'opacity-0')} icon="play_arrow" fill size={40} />
-    <MaterialSymbol className={cn(`kekwplayer-play text-white`, !isPlaying && 'opacity-0')} icon="pause" fill size={40} />
-  </button>
-}
+  return <button className="nekoplayer-action relative w-[40px] h-[40px]" onClick={changePlaying} tabIndex={0} aria-label={getLabel()} title={getLabel()}>
+    <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`, isPlaying && 'opacity-0')} icon="play_arrow" fill size={40} />
+    <MaterialSymbol className={cn(`nekoplayer-action_icon text-white`, !isPlaying && 'opacity-0')} icon="pause" fill size={40} />
+  </button>;
+};
 
 
 
-export default NPlay
+export default NPlay;

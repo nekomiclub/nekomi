@@ -1,4 +1,4 @@
-@import "../colors.scss";
+@import "../vars.scss";
 
 .styled {
   &-image {
@@ -20,7 +20,7 @@
     &-wrapper {
       position: relative;
       flex-shrink: 0;
-      background: $darkBright;
+      background: $dark-bright;
     }
 
     &-skeleton {
@@ -39,7 +39,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: $darkBright;
+      background: $dark-bright;
       transition: 0.2s ease-in-out;
       display: flex;
       flex-direction: column;

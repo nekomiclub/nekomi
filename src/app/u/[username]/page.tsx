@@ -1,21 +1,21 @@
+import '~/styles/pages/user.scss';
 
-import { cache } from 'react';
 import { Metadata } from 'next';
+import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
+import Tooltip from '~/components/UI/Tooltip';
+import { P } from '~/components/UI/Typography';
+import UserLayout from '~/components/UserLayout';
 import { config, DevelopmentMode, metaObject } from '~/config';
 import { UserPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
+import { UserLib } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
+import { getUTC, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
-import { UserHeader, UserSectionLibs, UserStatItem } from './UserPage';
-
-
-
-const getUser = cache(async (query: string) => {
-  return await API.getUser({ query, detailed: true });
-})
+import { UserLibItem, UserStatisticsItem, UserTitle } from './UserPage';
 
 
 
@@ -26,9 +26,9 @@ export async function generateMetadata(
   const { username } = params;
 
   try {
-    const { user } = await getUser(username)
-    const title = `@${user.username}`
-    const description = `Профіль користувача`
+    const { user } = await getCachedUser(username, undefined, await getSessionToken());
+    const title = `@${user.username}`;
+    const description = `Профіль користувача`;
 
     return metaObject({
       title,
@@ -43,11 +43,11 @@ export async function generateMetadata(
         locale: 'uk_UA',
         siteName: config.DOMAIN.nekomi.split('.')[0],
       }
-    })
+    });
   } catch (e) {
     if (DevelopmentMode) console.error(`User page generateMetadata error`, e);
 
-    return metaObject({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] })
+    return metaObject({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] });
   }
 }
 
@@ -57,25 +57,54 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
   const params = await props.params;
   const { username } = params;
 
+
+
   try {
-    const { user } = await getUser(username)
+    const { user } = await getCachedUser(username, undefined, await getSessionToken());
 
-    return <div className="w-full h-full min-h-screen bg-dark flex flex-col gap-[40px]">
-      <UserHeader user={user} primaryPage />
+    const animeSeen = user.libs.find(el => el.type === 'watched')?.titles.length ?? 0;
+    const viewtime = Math.floor(user.statistics.viewtime / 60 / 60);
+    const daysOnNekomi = Math.round((getUTC().timestamp - user.statistics.accountCreated) / 60000 / 60 / 24);
 
-      <div className="wrapper gap-[40px]">
-        <div className="flex gap-[16px] overflow-x-auto ui-hideScroll">
-          <UserStatItem value={user?.libs.find(el => el.type === 'favorite')?.titles.length!} label="favs" />
-          <UserStatItem value={user?.libs.find(el => el.type === 'watched')?.titles.length!} label="watched" />
-          <UserStatItem value={user?.libs.find(el => el.type === 'watching')?.titles.length!} label="watching" />
-          <UserStatItem value={Math.floor(user?.statistics.viewtime / 60 / 60)} label="viewtime" />
+    const sortedLibs: UserLib[] = [
+      user.libs.find(el => el.type === 'favorite'),
+      user.libs.find(el => el.type === 'watching'),
+      user.libs.find(el => el.type === 'watched'),
+      user.libs.find(el => el.type === 'plans'),
+      user.libs.find(el => el.type === 'delayed'),
+      ...user.libs.filter(el => el.type === 'custom')
+    ].filter(el => el !== undefined);
+
+
+
+    return <>
+      <UserLayout type="user_profile" user={user} />
+
+      <div className="wrapper pt-[24px] gap-[24px]">
+        <div className="flex gap-[8px] w-full overflow-x-auto ui-hideScroll">
+          <UserStatisticsItem animeSeen={animeSeen} />
+          <UserStatisticsItem viewtime={viewtime} />
         </div>
 
-        <UserSectionLibs user={user} />
-        {/* <UserSectionWTRooms user={user} /> */}
+        {user.libs.length !== 0 && <div className="flex flex-col gap-[16px]" id="user-libs">
+          <UserTitle title="Теки" />
+
+          <div className="flex flex-wrap gap-[8px]">
+            {sortedLibs.map(lib => {
+              return <UserLibItem lib={lib} user={user} key={`user-libitem--${lib.id}`} />;
+            })}
+          </div>
+        </div>}
+
+        <div className="flex items-center gap-[8px]">
+          <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
+          <Tooltip content={`Акаунт зареєстровано: ${timestampToDayMonth(user.statistics.accountCreated)}`}>
+            <P text={`${daysOnNekomi} ${wordDeclination(daysOnNekomi, ['день', 'дні', 'днів'])} на nekomi!`} size={12} className="text-grey-new" />
+          </Tooltip>
+        </div>
       </div>
-    </div>
+    </>;
   } catch (e) {
-    return HandleServerError(e)
+    return HandleServerError(e);
   }
 }

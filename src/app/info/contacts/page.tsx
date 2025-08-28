@@ -3,14 +3,14 @@ import Link from 'next/link';
 
 import { IcoSocialGithub, IcoSocialTelegram } from '~/assets/Social';
 import StyledImage from '~/components/Styled/StyledImage';
-import { metaObject } from '../../../config';
+import { metaObject } from '~/config';
 
 
 
 
 export const metadata = metaObject({
   title: `Devs`
-})
+});
 
 
 
@@ -33,10 +33,7 @@ export default async function RSC() {
               <p className="text-primary font-space-grotesk font-bold">Software Engineer</p>
               <p className="text-grey-new font-space-grotesk">•</p>
 
-              <p className="text-white font-space-grotesk">UI Designer</p>
-              <p className="text-grey-new font-space-grotesk">•</p>
-
-              <p className="text-white font-space-grotesk">Fullkekw Founder</p>
+              <p className="text-white font-space-grotesk">nekomi CEO</p>
             </div>
 
             <div className="flex items-center gap-[8px] flex-shrink-0">
@@ -50,9 +47,7 @@ export default async function RSC() {
             </div>
           </div>
         </div>
-
-        <p className="text-grey-new text-[8px] font-space-grotesk select-none">Will I be known and loved? Little closer, close enough I`m a loser, loosen up Setting free, must be tough — Borderline, Tame Impala</p>
       </div>
     </div>
-  </main>
+  </main>;
 }

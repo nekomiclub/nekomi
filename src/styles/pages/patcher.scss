@@ -1,4 +1,3 @@
-@import "../colors.scss";
 @import "../vars.scss";
 
 .patcher {
@@ -14,34 +13,34 @@
         cursor: not-allowed;
 
         .patcher-button-saveMeta_text {
-          color: $greyNew;
+          color: $grey;
         }
       }
 
       &--saved {
-        background-color: $green;
+        background-color: $info-success;
 
         &:hover,
         &:focus-visible {
-          background: $green;
+          background: $info-success;
         }
       }
 
       &--noChanges {
-        background-color: $orange;
+        background-color: $info-warn;
 
         &:hover,
         &:focus-visible {
-          background: $orange;
+          background: $info-warn;
         }
       }
 
       &--error {
-        background-color: $red;
+        background-color: $info-error;
 
         &:hover,
         &:focus-visible {
-          background: $red;
+          background: $info-error;
         }
       }
     }
@@ -53,7 +52,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    background: rgba($color: $darkPrimary, $alpha: 0.6);
+    background: rgba($color: $dark_primary, $alpha: 0.6);
     transition: 0.2s ease-in-out;
     opacity: 0;
     visibility: hidden;

@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
+import { NextPage } from 'next';
 import { useId } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import { PopupButton } from '@fullkekw/popup';
-import { NextPage } from 'next';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
+import StyledImage from '~/components/Styled/StyledImage';
+import Tooltip from '~/components/UI/Tooltip';
 import { config } from '~/config';
 import { Routes } from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
-import StyledImage from '../Styled/StyledImage';
-import Tooltip from '../UI/Tooltip';
 
 import NavMenuDropdown from './NavMenuDropdown';
 
@@ -35,7 +35,7 @@ interface Props {
 
 const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, isDropdownMenuOpen, setIsDropdownMenuOpen }) => {
   const pathname = usePathname();
-  const dropdownMenuId = useId().replaceAll(':', '')
+  const dropdownMenuId = useId().replaceAll(':', '');
 
 
 
@@ -78,7 +78,7 @@ const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, i
         </div>
       </div>}
     </div>
-  </header>
-}
+  </header>;
+};
 
 export default HeaderNav;

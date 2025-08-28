@@ -27,18 +27,18 @@ export default async function CheckUserAccess({ capabilities, checkMode, session
   try {
     const { user, capabilities } = await API.getUser({ query: '*', parseCapabilities: true }, {
       session
-    })
+    });
 
     // Pass root
     if (capabilities?.includes('root')) return { user, capabilities };
     // Pass if no capabilities required
     if (!capabilities?.length) return { user, capabilities };
 
-    const passCaps: RoleCapability[] = []
+    const passCaps: RoleCapability[] = [];
 
     capabilities.forEach(cap => {
       if (capabilities?.includes(cap)) passCaps.push(cap);
-    })
+    });
 
     // Pass if each of required capability present
     if (checkMode === 'AND' && passCaps.length === capabilities.length) return { user, capabilities };

@@ -7,7 +7,7 @@ import { metaObject } from '~/config';
 export const metadata = metaObject({
   title: 'Спільний перегляд аніме',
   description: 'Дивись аніме на українській мові з друзями разом, без втрати якості!'
-})
+});
 
 export default async function RSC() {
   return <main>
@@ -49,5 +49,5 @@ export default async function RSC() {
         </div>
       </section>
     </div>
-  </main>
+  </main>;
 }

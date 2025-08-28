@@ -1,5 +1,5 @@
-import { FC } from 'react'
-import { Ring } from '@uiball/loaders'
+import { FC } from 'react';
+import { Ring } from '@uiball/loaders';
 
 
 
@@ -9,7 +9,7 @@ const LoadingContent: FC = () => {
     <Ring size={16} color="#555555" />
 
     <p className="text-grey-new">Завантажуємо контент...</p>
-  </div>
-}
+  </div>;
+};
 
-export default LoadingContent
+export default LoadingContent;

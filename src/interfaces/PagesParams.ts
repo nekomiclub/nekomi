@@ -16,13 +16,15 @@ export interface PatcherPageParams extends Params {
 
 
 
-export interface UserPageLibProps extends UserPageProps {
-  libID: string;
+export interface UserLibPageProps extends UserPageProps {
+  libId: string;
 }
 
 export interface UserPageProps extends Params {
   username: string;
 }
+
+export interface UserSettingsPageProps extends UserPageProps { }
 
 
 

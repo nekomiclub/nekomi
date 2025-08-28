@@ -27,10 +27,10 @@ interface PatcherStackProps {
 
 export default class PatcherStack {
   /** Episodes IDs to upload */
-  private uploadStack: string[] = []
+  private uploadStack: string[] = [];
 
   /** Contains current processing episode ID */
-  private busy: string | null = null
+  private busy: string | null = null;
 
   private session: string;
   private anime: Anime;
@@ -60,9 +60,9 @@ export default class PatcherStack {
       status: 'pending',
       progress: 0,
       stackOrder: uploadOrder
-    })
+    });
 
-    console.debug(`[PatcherStack]: Episode appended. [id: ${episode.id}; dubber: ${episode.episode.dubberID}; order: ${episode.episode.order}]`)
+    console.debug(`[PatcherStack]: Episode appended. [id: ${episode.id}; dubber: ${episode.episode.dubberID}; order: ${episode.episode.order}]`);
 
     this.upload();
   }
@@ -87,7 +87,7 @@ export default class PatcherStack {
     this.episodes.forEach(stackEl => {
       stackEl.stackOrder = this.uploadStack.findIndex(el => el === stackEl.id);
       this.patchEpisode(stackEl);
-    })
+    });
 
     this.patchEpisode(episode);
   }
@@ -96,21 +96,21 @@ export default class PatcherStack {
   private async upload() {
     if (this.busy) return;
 
-    const episode = this.episodes.find(el => el.id === this.uploadStack[0])
+    const episode = this.episodes.find(el => el.id === this.uploadStack[0]);
     if (!episode) return;
 
     this.busy = episode.id;
 
-    console.debug(`[PatcherStack]: Start uploading episode. [id: ${episode.id}; dubber: ${episode.episode.dubberID}; order: ${episode.episode.order}]`)
+    console.debug(`[PatcherStack]: Start uploading episode. [id: ${episode.id}; dubber: ${episode.episode.dubberID}; order: ${episode.episode.order}]`);
 
     this.patch({
       id: episode.id,
       status: 'uploading',
       progress: 0
-    })
+    });
 
-    let sourceURL = ''
-    let progress = 0
+    let sourceURL = '';
+    let progress = 0;
     let interval;
 
     try {
@@ -152,7 +152,7 @@ export default class PatcherStack {
 
       // Patch progress
       interval = setInterval(() => {
-        this.patch({ id: episode.id, progress })
+        this.patch({ id: episode.id, progress });
       }, 500);
 
       const { episode: upload } = await API.postAnimeEpisode({
@@ -168,7 +168,7 @@ export default class PatcherStack {
 
           progress = +(perc * 100).toFixed(2);
         }
-      })
+      });
 
       clearInterval(interval);
       sourceURL = upload.qualities.q1080;
@@ -177,14 +177,14 @@ export default class PatcherStack {
         id: episode.id,
         status: 'uploaded',
         sourceURL,
-      })
+      });
     } catch (e) {
       this.throwError(e, episode.id);
     }
 
-    console.debug(`[PatcherStack]: Episode uploaded. [id: ${episode.id}]`)
+    console.debug(`[PatcherStack]: Episode uploaded. [id: ${episode.id}]`);
 
-    this.remove(episode.id)
+    this.remove(episode.id);
     this.busy = null;
     this.upload();
   }

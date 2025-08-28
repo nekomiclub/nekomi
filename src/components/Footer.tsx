@@ -1,74 +1,82 @@
-import '../styles/components/Footer.scss'
-
-import { NextPage } from 'next';
+import { FC } from 'react';
 import Link from 'next/link';
+import { MaterialSymbol } from 'react-material-symbols';
 
+import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '~/assets/Social';
+import { config } from '~/config';
 import { Routes } from '~/routes';
-import { IcoNekomiLogo } from '../assets/Icons';
-import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '../assets/Social';
-import { config } from '../config';
+
+import StyledImage from './Styled/StyledImage';
 
 
 
+const Footer: FC = () => {
+  return <footer className="h-[500px] bg-dark-bright flex flex-col justify-end relative mt-[40px]">
+    <StyledImage width="100%" height="100%" src="/assets/footer-bg.png" useImg className="!absolute top-0 left-0" />
 
-const Footer: NextPage = () => {
-  return (
-    <footer className="relative w-full bg-dark">
-      <div className="wrapper min-[1260px]:!flex-row justify-between items-start !px-[32px] !py-[40px] max-[1260px]:gap-[40px] max-[1260px]:items-center max-[760px]:items-start gap-[24px]">
-        {/* Left */}
-        <div className="flex gap-[16px] items-center max-[760px]:w-full max-[760px]:justify-center max-[560px]:flex-col">
-          <IcoNekomiLogo width={128} height={128} fill="#fff" />
+    <div className="wrapper gap-[32px] !flex-row justify-between items-end mb-[16px] max-2xl:!flex-col max-2xl:items-start max-sm:pb-[var(--header-height)]">
+      <Link href={Routes.home.path()}>
+        <h3 className="text-white text-[60px] font-space-grotesk font-bold">nekomi</h3>
+      </Link>
 
-          <div className="flex flex-col gap-[16px]">
-            <div className="flex flex-col gap-[4px]">
-              <p className="text-[32px] text-white font-bold max-[560px]:text-center">NEKOMI</p>
-              <p className="text-lightGrey max-[560px]:text-center">Поринь у світ україномовного аніме!</p>
-            </div>
+      <ul className="h-[50px] flex items-center gap-y-[8px] gap-[32px] flex-wrap max-2xl:h-auto">
+        <li>
+          <Link href={Routes.infoContacts.path()} className="gui-footer-link">
+            <MaterialSymbol icon="code_blocks" size={20} className="text-white" />
+            <p className="text-white font-manrope">Розробники</p>
+          </Link>
+        </li>
 
-            <div className="flex items-center gap-[16px] max-[560px]:justify-between">
-              <Link href={config.URL.telegram} target="_blank" className="footer-socialItem">
-                <IcoSocialTelegram width={32} height={32} />
-              </Link>
+        <li>
+          <Link href={Routes.infoAgreement.path()} className="gui-footer-link">
+            <MaterialSymbol icon="contract" size={20} className="text-white" />
+            <p className="text-white font-manrope">Угода користувача</p>
+          </Link>
+        </li>
 
-              <Link href={config.URL.tiktok} target="_blank" className="footer-socialItem">
-                <IcoSocialTiktok width={32} height={32} />
-              </Link>
+        <li>
+          <Link href={Routes.infoPolicy.path()} className="gui-footer-link">
+            <MaterialSymbol icon="encrypted" size={20} className="text-white" />
+            <p className="text-white font-manrope">Політика конфіденційності</p>
+          </Link>
+        </li>
 
-              <Link href={config.URL.discord} target="_blank" className="footer-socialItem">
-                <IcoSocialDiscord width={32} height={32} />
-              </Link>
-            </div>
-          </div>
-        </div>
+        <li>
+          <Link href={Routes.infoTerms.path()} className="gui-footer-link">
+            <MaterialSymbol icon="gavel" size={20} className="text-white" />
+            <p className="text-white font-manrope">Умови користування</p>
+          </Link>
+        </li>
 
-        {/* Center */}
-        <div className="flex gap-[24px] max-[760px]:flex-col">
-          <ul className="flex flex-col gap-[4px]">
-            <FooterLink href={Routes.infoContacts.path()} text="Контакти" />
-            <FooterLink href={'#'} disabled text="FAQ" />
-          </ul>
+        <li>
+          <Link href={Routes.infoDMCA.path()} className="gui-footer-link">
+            <MaterialSymbol icon="copyright" size={20} className="text-white" />
+            <p className="text-white font-manrope">DMCA</p>
+          </Link>
+        </li>
+      </ul>
 
-          <ul className="flex flex-col gap-[4px]">
-            <FooterLink href={Routes.infoAgreement.path()} text="Угода користувача / Agreement" />
-            <FooterLink href={Routes.infoPolicy.path()} text="Політика конфіденційності / Privacy policy" />
-            <FooterLink href={Routes.infoDMCA.path()} text="DMCA" />
-            <FooterLink href={Routes.infoTerms.path()} text="TOS" />
-          </ul>
-        </div>
+      <ul className="h-[50px] flex justify-center items-center gap-[16px]">
+        <li>
+          <Link href={config.URL.telegram} className="gui-footer-social">
+            <IcoSocialTelegram width={32} height={32} fill="#fff" />
+          </Link>
+        </li>
 
-        {/* Right */}
-        <div className="flex justify-center max-[760px]:w-full"></div>
-      </div>
-    </footer>
-  );
-}
+        <li>
+          <Link href={config.URL.tiktok} className="gui-footer-social">
+            <IcoSocialTiktok width={32} height={32} fill="#fff" />
+          </Link>
+        </li>
 
-function FooterLink({ href, text, disabled }: { href: string, text: string, disabled?: boolean }) {
-  return <li>
-    <Link href={href} aria-disabled={disabled} className={`outline-none ${disabled ? 'text-lightGrey' : 'text-white duration-100 hover:text-gradientPrimaryFallback focus-visible:text-gradientPrimaryFallback'}`} prefetch={false}>
-      {text}
-    </Link>
-  </li>
-}
+        <li>
+          <Link href={config.URL.discord} className="gui-footer-social">
+            <IcoSocialDiscord width={32} height={32} fill="#fff" />
+          </Link>
+        </li>
+      </ul>
+    </div>
+  </footer>;
+};
 
 export default Footer;

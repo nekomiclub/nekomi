@@ -57,8 +57,8 @@ class ApiService {
   async putDubberAvatar({ dubberId, file }: IDubberPutAvatarProps) {
     const formData = new FormData();
 
-    formData.append('file', file)
-    formData.append('dubberId', dubberId)
+    formData.append('file', file);
+    formData.append('dubberId', dubberId);
 
     const { data } = await $api.put<{ url: string }>(`/dubber/avatar`, formData);
 
@@ -68,8 +68,8 @@ class ApiService {
   async putDubberBanner({ dubberId, file }: IDubberPutBannerProps) {
     const formData = new FormData();
 
-    formData.append('file', file)
-    formData.append('dubberId', dubberId)
+    formData.append('file', file);
+    formData.append('dubberId', dubberId);
 
     const { data } = await $api.put<{ url: string }>(`/dubber/banner`, formData);
 
@@ -134,7 +134,7 @@ class ApiService {
       headers: {
         Cookie: params?.session ? `${config.vars.SessionCookie}=${params?.session}` : undefined
       }
-    })
+    });
 
     return data;
   }
@@ -155,7 +155,7 @@ class ApiService {
       editFolderAnime,
       removeWatchProgress,
       watchProgress
-    })
+    });
   }
 
   async userUploadBanner(file: File): Promise<PutBanner> {
@@ -165,7 +165,7 @@ class ApiService {
 
     const { data } = await $api.put<PutBanner>('/user/banner', formData);
 
-    return data
+    return data;
   }
 
   async userLogout() {
@@ -175,13 +175,13 @@ class ApiService {
   async userSignin({ token }: { token: string }) {
     await $api.post(`/user/signin`, {
       session: token
-    })
+    });
   }
 
   async userLinkTelegramToken() {
-    const { data } = await $api.get<{ token: string }>(`/link/telegram/token`);
+    const { data } = await $api.get<{ token: string }>(`/user/link/telegram/token`);
 
-    return data
+    return data;
   }
 
 
@@ -201,7 +201,7 @@ class ApiService {
   }
 
   async getAnime({ query, detailed, fetchDubbers, fetchRelated }: AnimeGetByQueryProps) {
-    if (fetchDubbers || fetchRelated) detailed = true
+    if (fetchDubbers || fetchRelated) detailed = true;
 
     const { data } = await $api.get<AnimeGetByQuery>(`/anime/${query}`, {
       params: {
@@ -215,7 +215,7 @@ class ApiService {
   }
 
   async getFeaturedAnime(): Promise<AnimeFeatured> {
-    const { data } = await $api.get<AnimeFeatured>(`/anime/featured`)
+    const { data } = await $api.get<AnimeFeatured>(`/anime/featured`);
 
     return data;
   }
@@ -229,10 +229,10 @@ class ApiService {
   async putAnimePoster({ file, uuid }: AnimePutPosterProps) {
     const formData = new FormData();
 
-    formData.set('file', file)
-    formData.set('uuid', uuid)
+    formData.set('file', file);
+    formData.set('uuid', uuid);
 
-    const { data } = await $api.put<AnimePutPoster>(`/anime/poster`, formData)
+    const { data } = await $api.put<AnimePutPoster>(`/anime/poster`, formData);
 
     return data;
   }
@@ -240,18 +240,18 @@ class ApiService {
   async postAnimeEpisode({ dubberId, file, order, qualities, uuid }: AnimePostEpisodeProps, params?: AnimePostEpisodeParams) {
     const formData = new FormData();
 
-    formData.set('file', file)
-    formData.set('uuid', uuid)
-    formData.set('dubberId', dubberId)
-    formData.set('order', `${order}`)
-    formData.set('qualities', JSON.stringify(qualities))
+    formData.set('file', file);
+    formData.set('uuid', uuid);
+    formData.set('dubberId', dubberId);
+    formData.set('order', `${order}`);
+    formData.set('qualities', JSON.stringify(qualities));
 
     const { data } = await $upload.post<AnimePostEpisode>(`/anime/episode`, formData, {
       onUploadProgress: params?.onUploadProgress,
       headers: params?.session ? {
         Authorization: params?.session
       } : undefined
-    })
+    });
 
     return data;
   }
@@ -263,7 +263,7 @@ class ApiService {
         order,
         uuid
       }
-    })
+    });
   }
 
   async postAnime() {
@@ -277,7 +277,7 @@ class ApiService {
       params: {
         token
       }
-    })
+    });
   }
 
   async patchAnime(props: AnimePatchByUuidProps) {

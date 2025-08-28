@@ -27,5 +27,5 @@ export default function IconDTO({ height, width, className, fill, strokeColor, s
     height,
     className,
     fillOpacity,
-  }
+  };
 }

@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useRef } from 'react';
 
-import { HandleClientError } from '../Errors';
+import { HandleClientError } from '~/components/Errors';
 
 import { NekoplayerContext, NekoplayerContextProps } from './NPTypes';
 
@@ -12,12 +12,12 @@ const NPControls: FC = () => {
 
 
 
-  const playpauseRef = useRef<HTMLDivElement>(null)
-  const prevRef = useRef<HTMLDivElement>(null)
-  const nextRef = useRef<HTMLDivElement>(null)
+  const playpauseRef = useRef<HTMLDivElement>(null);
+  const prevRef = useRef<HTMLDivElement>(null);
+  const nextRef = useRef<HTMLDivElement>(null);
 
-  const multiskipTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
-  const isMultiskip = useRef<boolean>(false) // Each double click will skip by 10s, in multiskip each click will skip by 10
+  const multiskipTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const isMultiskip = useRef<boolean>(false); // Each double click will skip by 10s, in multiskip each click will skip by 10
 
 
 
@@ -28,8 +28,8 @@ const NPControls: FC = () => {
 
     if (!prev || !next) return;
 
-    prev.addEventListener('dblclick', () => handleDBClick('prev'))
-    next.addEventListener('dblclick', () => handleDBClick('next'))
+    prev.addEventListener('dblclick', () => handleDBClick('prev'));
+    next.addEventListener('dblclick', () => handleDBClick('next'));
 
     function handleDBClick(dir: 'prev' | 'next') {
       // Pass if multiskip enabled
@@ -38,7 +38,7 @@ const NPControls: FC = () => {
 
       skipTime(dir);
     }
-  }, [])
+  }, []);
 
   //* Handle click
   useEffect(() => {
@@ -48,11 +48,11 @@ const NPControls: FC = () => {
 
     if (!prev || !next || !playpause) return;
 
-    prev.addEventListener('click', () => skipTime('prev'))
-    next.addEventListener('click', () => skipTime('next'))
+    prev.addEventListener('click', () => skipTime('prev'));
+    next.addEventListener('click', () => skipTime('next'));
 
     // Handle play/pause by clicking
-    playpause.addEventListener('click', playPause)
+    playpause.addEventListener('click', playPause);
 
     // Enter fullscreen
     playpause.addEventListener('dblclick', () => {
@@ -64,8 +64,8 @@ const NPControls: FC = () => {
       } else {
         player.requestFullscreen().catch(e => HandleClientError(e));
       }
-    })
-  }, [])
+    });
+  }, []);
 
 
 
@@ -74,8 +74,8 @@ const NPControls: FC = () => {
     if (!video) return;
 
     if (video.paused) {
-      video.muted = false
-      video.play().catch(e => null)
+      video.muted = false;
+      video.play().catch(e => null);
     } else {
       video.pause();
     }
@@ -90,7 +90,7 @@ const NPControls: FC = () => {
     const skipTo = dir === 'next' ? video.currentTime + 10 : video.currentTime - 10;
 
     clearTimeout(multiskipTimeoutRef.current);
-    changeMoment(skipTo)
+    changeMoment(skipTo);
 
     multiskipTimeoutRef.current = setTimeout(() => {
       isMultiskip.current = false;
@@ -105,8 +105,8 @@ const NPControls: FC = () => {
     <div className="w-full flex-[3] h-full shrink-0" ref={playpauseRef}></div>
 
     <div className="w-full flex-1 h-full shrink-0" ref={nextRef}></div>
-  </div>
-}
+  </div>;
+};
 
 
-export default NPControls
+export default NPControls;
