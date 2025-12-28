@@ -12,9 +12,7 @@ import '~/styles/tailwind.css';
 import { cache } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { AxiosError } from 'axios';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
-import { cookies } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
@@ -22,11 +20,10 @@ import { ErrorNoConnection } from '~/components/Errors';
 import Footer from '~/components/Footer';
 import NavMenu from '~/components/NavMenu/NavMenu';
 import { StateProvider } from '~/components/StateProvider';
-import { config, metaObject } from '~/config';
+import { metaObject } from '~/config';
 import { LayoutProps } from '~/interfaces/types';
-import API, { API_ERROR } from '~/services/ApiService';
+import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
-import { getUTC } from '~/utils/utils';
 
 
 
@@ -64,7 +61,7 @@ const getUser = cache(async (session: string) => {
 
 
 export default async function Layout({ children, params }: LayoutProps) {
-  const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
+  // const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
 
   let isServerOnline = false;
   let isSessionExpired = false;
@@ -72,33 +69,33 @@ export default async function Layout({ children, params }: LayoutProps) {
 
 
 
-  // Get user by cookie
-  if (sessionToken) {
-    try {
-      const data = await getUser(sessionToken);
+  // // Get user by cookie
+  // if (sessionToken) {
+  //   try {
+  //     const data = await getUser(sessionToken);
 
-      user = {
-        avatar: data.user.avatar,
-        id: data.user.id,
-        isTelegramLinked: data.user.statistics.isTelegramLinked,
-        roles: data.user.roles,
-        username: data.user.username,
-        watchProgress: data.user.watchProgress,
-        capabilities: data.capabilities!,
-        libs: data.user.libs,
-        dubberTeamMember: data.user.statistics.dubber_team_member,
-        togetherRooms: data.user.togetherRooms
-      };
+  //     user = {
+  //       avatar: data.user.avatar,
+  //       id: data.user.id,
+  //       isTelegramLinked: data.user.statistics.isTelegramLinked,
+  //       roles: data.user.roles,
+  //       username: data.user.username,
+  //       watchProgress: data.user.watchProgress,
+  //       capabilities: data.capabilities!,
+  //       libs: data.user.libs,
+  //       dubberTeamMember: data.user.statistics.dubber_team_member,
+  //       togetherRooms: data.user.togetherRooms
+  //     };
 
-      isServerOnline = true;
-    } catch (e) {
-      const date = `${getUTC().fulldate} ${getUTC().timeAccurate}`;
+  //     isServerOnline = true;
+  //   } catch (e) {
+  //     const date = `${getUTC().fulldate} ${getUTC().timeAccurate}`;
 
-      if (e instanceof AxiosError && e.response?.data.code === API_ERROR.AUTH_SESSION_EXPIRED) isSessionExpired = true;
+  //     if (e instanceof AxiosError && e.response?.data.code === API_ERROR.AUTH_SESSION_EXPIRED) isSessionExpired = true;
 
-      console.error(`[${date}]: Session fetch failed - ${JSON.stringify(e, null, 2)}`);
-    }
-  }
+  //     console.error(`[${date}]: Session fetch failed - ${JSON.stringify(e, null, 2)}`);
+  //   }
+  // }
 
   // // Ping API
   // if (!isServerOnline) {
