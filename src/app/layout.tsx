@@ -12,7 +12,7 @@ import '~/styles/tailwind.css';
 import { cache } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
@@ -100,13 +100,13 @@ export default async function Layout({ children, params }: LayoutProps) {
     }
   }
 
-  // Ping API
-  if (!isServerOnline) {
-    try {
-      await axios.options(`${config.URL.nekomi_api}/ping`);
-      isServerOnline = true;
-    } catch (e) { }
-  }
+  // // Ping API
+  // if (!isServerOnline) {
+  //   try {
+  //     await axios.options(`${config.URL.nekomi_api}/ping`);
+  //     isServerOnline = true;
+  //   } catch (e) { }
+  // }
 
 
 
