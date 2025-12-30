@@ -20,7 +20,7 @@ import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeEpisode, AnimeMediaType, AnimeRateType, AnimeRecordType, AnimeSeasonType, AnimeStatusType, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import { cn } from '~/utils/classnames';
 import { DubberCompactMapper } from '~/utils/data-mappers';
 import { alphabeticSort, copyToClipboard, createStringID, getUTC } from '~/utils/utils';
@@ -175,7 +175,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
       setSaveStatus('saving');
 
-      await API.patchAnime({
+      await APIOld.patchAnime({
         uuid: hydratedAnime.anime.uuid,
         nameUkr: m(nameUkr),
         nameEng: m(nameEng),
@@ -235,7 +235,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
     try {
       const token = prompt(`Enter token:`) ?? '';
 
-      await API.deleteAnime({ token, uuid: hydratedAnime.anime.uuid });
+      await APIOld.deleteAnime({ token, uuid: hydratedAnime.anime.uuid });
 
       router.replace(`${conf.URL.nekomiSite}`);
     } catch (e) {
@@ -452,7 +452,7 @@ export const PatcherEpisodes: NextPage<PatcherEpisodesProps> = ({ capabilities, 
     if (!episode) return NotifyError({ title: 'Не знайдено', message: 'Ми не знайшли епізод який ти хочеш видалити' });
 
     try {
-      await API.deleteAnimeEpisode({ dubberId: episode.episode.dubberID, order: episode.episode.order, uuid: hydratedAnime.anime.uuid });
+      await APIOld.deleteAnimeEpisode({ dubberId: episode.episode.dubberID, order: episode.episode.order, uuid: hydratedAnime.anime.uuid });
 
       Stack.remove(id);
       setEpisodes(prev => prev.filter(el => el.id !== id));
@@ -528,7 +528,7 @@ export const PatcherCreateNewAnime: NextPage = () => {
     try {
       setIsCreating(true);
 
-      const { anime } = await API.postAnime();
+      const { anime } = await APIOld.postAnime();
 
       NotifySuccess({ title: 'Створено!', message: 'Нове аніме створено, заміняємо сторінку...' });
 
@@ -563,7 +563,7 @@ export const PatcherWithoutMalId: NextPage = () => {
     try {
       setIsFetching(true);
 
-      const { results } = await API.searchAnime({ q: '~all' }, { woMalId: true });
+      const { results } = await APIOld.searchAnime({ q: '~all' }, { woMalId: true });
       router.replace(Routes.patcher.path({ uuid: results[0].anime.uuid }));
 
       NotifySuccess({ title: 'Знайшли!', message: 'Ми знайшли аніме без mal id, удачі!' });
@@ -656,7 +656,7 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
     try {
       setIsUploading(true);
 
-      const { url } = await API.putAnimePoster({ file, uuid: hydratedAnime.anime.uuid });
+      const { url } = await APIOld.putAnimePoster({ file, uuid: hydratedAnime.anime.uuid });
 
       setPosterURL(url);
       NotifySuccess({ title: 'Завантажено!', message: 'Новий постер завантажено' });
@@ -777,7 +777,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
       try {
         if (!dubberFetch) return;
 
-        const { dubber } = await API.getDubberByQuery({ query: dubberFetch });
+        const { dubber } = await APIOld.getDubberByQuery({ query: dubberFetch });
         const dubberCompact = DubberCompactMapper(dubber);
 
         setDubbers([...dubbers, dubberCompact]);
@@ -811,7 +811,7 @@ const PatcherSelectDubber: NextPage<PatcherSelectDubberProps> = ({ title, disabl
     try {
       if (query.length === 0) return;
 
-      const { results } = await API.searchDubber({ q: query });
+      const { results } = await APIOld.searchDubber({ q: query });
 
       const dubberResults = results.map(dubber => DubberCompactMapper(dubber));
       const uniqueResults = dubberResults.filter(dubber => !dubbers.some(el => el.id === dubber.id));

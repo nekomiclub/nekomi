@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 import siteMetadata from '~/utils/site-metadata';
 
@@ -10,6 +11,8 @@ export const metadata = siteMetadata({
 });
 
 export default async function RSC() {
+  notFound();
+
   return <main>
     <div className="wrapper h-full min-h-[100svh] pb-[32px] max-sm:!p-0 max-sm:rounded-0" style={{ paddingTop: 'calc(var(--header-height) + 8px)' }}>
       <section className="w-full h-full grow rounded-[4px] relative bg-dark-light flex items-center justify-center overflow-hidden px-[24px]">

@@ -6,7 +6,7 @@ import { cookies } from 'next/headers';
 import { conf } from '~/conf';
 import { UserGetByQuery } from '~/interfaces/services/ApiServiceIntf';
 
-import API from './ApiService';
+import APIOld from './ApiService.old';
 
 
 
@@ -15,5 +15,5 @@ export async function getSessionToken(): Promise<string | undefined> {
 }
 
 export const getCachedUser = cache(async (query: string, libId?: string, session?: string): Promise<UserGetByQuery> => {
-  return await API.getUser({ query, detailed: true, parseLibId: libId }, { session });
+  return await APIOld.getUser({ query, detailed: true, parseLibId: libId }, { session });
 });

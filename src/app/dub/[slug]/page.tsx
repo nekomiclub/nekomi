@@ -8,7 +8,7 @@ import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';
 import { DubberPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import siteMetadata from '~/utils/site-metadata';
 import { timestampToDayMonth } from '~/utils/utils';
 
@@ -17,7 +17,7 @@ import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberTeam } from '
 
 
 const getDubber = cache(async (query: string) => {
-  return await API.getDubberByQuery({ query, detailed: true, fetchDubbedAnime: true, parseMembers: true });
+  return await APIOld.getDubberByQuery({ query, detailed: true, fetchDubbedAnime: true, parseMembers: true });
 });
 
 

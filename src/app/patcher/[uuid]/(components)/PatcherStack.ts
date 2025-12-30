@@ -1,6 +1,6 @@
 import Anime from '~/interfaces/AnimeIntf';
 import { NumEpisodeQualityType } from '~/interfaces/types';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 
 import { PatcherEpisode, PatcherEpisodeStatusType } from './PatcherTypes';
 
@@ -155,7 +155,7 @@ export default class PatcherStack {
         this.patch({ id: episode.id, progress });
       }, 500);
 
-      const { episode: upload } = await API.postAnimeEpisode({
+      const { episode: upload } = await APIOld.postAnimeEpisode({
         dubberId: episode.episode.dubberID,
         file: episode.File!,
         order: episode.episode.order,

@@ -1,49 +1,44 @@
 import '~/styles/pages/patcher.scss';
 
-import { Metadata } from 'next';
-import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
-import { HandleServerError } from '~/components/Errors';
 import { conf } from '~/conf';
-import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { PatcherPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
-import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
-import siteMetadata from '~/utils/site-metadata';
-
-import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './(components)/PatcherPage';
 
 
 
-const getAnime = cache(async (query: string) => {
-  return await API.getAnime({ query, detailed: true, fetchDubbers: true });
-});
+
+// const getAnime = cache(async (query: string) => {
+//   return await APIOld.getAnime({ query, detailed: true, fetchDubbers: true });
+// });
 
 
 
-export async function generateMetadata(
-  props: RSCProps<PatcherPageParams>,
-): Promise<Metadata> {
-  const { uuid } = await props.params;
+// export async function generateMetadata(
+//   props: RSCProps<PatcherPageParams>,
+// ): Promise<Metadata> {
+//   const { uuid } = await props.params;
 
-  try {
-    const { anime } = await getAnime(uuid);
+//   try {
+//     const { anime } = await getAnime(uuid);
 
-    return siteMetadata({
-      overwriteTitle: `${anime.names.ukr} - Редактор`
-    });
-  } catch (e) {
-    return siteMetadata({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
-  }
-}
+//     return siteMetadata({
+//       overwriteTitle: `${anime.names.ukr} - Редактор`
+//     });
+//   } catch (e) {
+//     return siteMetadata({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
+//   }
+// }
 
 
 
 export default async function RSC(props: RSCProps<PatcherPageParams>) {
   const { uuid } = await props.params;
+
+  notFound();
 
   const session = cookies().get(conf.vars.SessionCookie)?.value ?? '';
 
@@ -52,62 +47,62 @@ export default async function RSC(props: RSCProps<PatcherPageParams>) {
 
 
 
-  try {
-    const { anime, genres, media, rate, season, status, dubbers } = await getAnime(uuid);
-    const { fullfilled, total, updated } = await API.getAnimeStats();
+  // try {
+  //   const { anime, genres, media, rate, season, status, dubbers } = await getAnime(uuid);
+  //   const { fullfilled, total, updated } = await APIOld.getAnimeStats();
 
-    const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
+  //   const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
 
-    const isRoot = capabilities.includes('root');
-    const isAdmin = isRoot || capabilities.includes('admin');
-    const canAdd = isAdmin || capabilities.includes('titleAdd');
-    const canEdit = isAdmin || capabilities.includes('titleEdit');
-    const canDelete = isAdmin || capabilities.includes('titleDelete');
-    const canSeriesUpload = isAdmin || capabilities.includes('seriesAdd');
-    const canSeriesDelete = isAdmin || capabilities.includes('seriesDelete');
-    const canUploadQ2160 = isAdmin || capabilities.includes('admin');
+  //   const isRoot = capabilities.includes('root');
+  //   const isAdmin = isRoot || capabilities.includes('admin');
+  //   const canAdd = isAdmin || capabilities.includes('titleAdd');
+  //   const canEdit = isAdmin || capabilities.includes('titleEdit');
+  //   const canDelete = isAdmin || capabilities.includes('titleDelete');
+  //   const canSeriesUpload = isAdmin || capabilities.includes('seriesAdd');
+  //   const canSeriesDelete = isAdmin || capabilities.includes('seriesDelete');
+  //   const canUploadQ2160 = isAdmin || capabilities.includes('admin');
 
-    const caps: PatcherCapabilities = {
-      canDelete,
-      canEdit,
-      canSeriesDelete,
-      canSeriesUpload,
-      canUploadQ2160,
-      admin: isAdmin,
-    };
+  //   const caps: PatcherCapabilities = {
+  //     canDelete,
+  //     canEdit,
+  //     canSeriesDelete,
+  //     canSeriesUpload,
+  //     canUploadQ2160,
+  //     admin: isAdmin,
+  //   };
 
 
 
-    return <>
-      <div style={{ height: `calc(32px + var(--header-height))` }}></div>
+  //   return <>
+  //     <div style={{ height: `calc(32px + var(--header-height))` }}></div>
 
-      <main className="flex flex-col gap-[40px] pb-[100px]">
-        {/* Metadata */}
-        <section className="wrapper gap-[40px]">
-          {/* Header */}
-          <section className="flex items-center justify-between gap-[24px] max-md:flex-col">
-            <div className="flex items-center gap-[32px]">
-              <h2 className="text-white text-[40px] font-manrope font-bold max-lg:text-[24px]">РЕДАКТОР АНІМЕ</h2>
+  //     <main className="flex flex-col gap-[40px] pb-[100px]">
+  //       {/* Metadata */}
+  //       <section className="wrapper gap-[40px]">
+  //         {/* Header */}
+  //         <section className="flex items-center justify-between gap-[24px] max-md:flex-col">
+  //           <div className="flex items-center gap-[32px]">
+  //             <h2 className="text-white text-[40px] font-manrope font-bold max-lg:text-[24px]">РЕДАКТОР АНІМЕ</h2>
 
-              <div className="flex items-center gap-[8px]">
-                {canEdit && <PatcherWithoutMalId />}
-                {canAdd && <PatcherCreateNewAnime />}
-              </div>
-            </div>
+  //             <div className="flex items-center gap-[8px]">
+  //               {canEdit && <PatcherWithoutMalId />}
+  //               {canAdd && <PatcherCreateNewAnime />}
+  //             </div>
+  //           </div>
 
-            <div className="flex flex-col items-end gap-[4px] max-md:flex-row max-md:gap-[16px]">
-              <p className="text-grey-new font-manrope">Аніме оновлено: <span className="font-space-grotesk">{updated} / {total} ({((updated / total) * 100).toFixed(2)}%)</span></p>
-              <p className="text-grey-new font-manrope">Аніме з MAL ID: <span className="font-space-grotesk">{fullfilled} / {total} ({((fullfilled / total) * 100).toFixed(2)}%)</span></p>
-            </div>
-          </section>
+  //           <div className="flex flex-col items-end gap-[4px] max-md:flex-row max-md:gap-[16px]">
+  //             <p className="text-grey-new font-manrope">Аніме оновлено: <span className="font-space-grotesk">{updated} / {total} ({((updated / total) * 100).toFixed(2)}%)</span></p>
+  //             <p className="text-grey-new font-manrope">Аніме з MAL ID: <span className="font-space-grotesk">{fullfilled} / {total} ({((fullfilled / total) * 100).toFixed(2)}%)</span></p>
+  //           </div>
+  //         </section>
 
-          <PatcherMeta hydratedAnime={hydratedAnime} capabilities={caps} />
-        </section>
+  //         <PatcherMeta hydratedAnime={hydratedAnime} capabilities={caps} />
+  //       </section>
 
-        <PatcherEpisodes hydratedAnime={hydratedAnime} capabilities={caps} dubbers={dubbers ?? []} session={session} />
-      </main>
-    </>;
-  } catch (e) {
-    return HandleServerError(e);
-  }
+  //       <PatcherEpisodes hydratedAnime={hydratedAnime} capabilities={caps} dubbers={dubbers ?? []} session={session} />
+  //     </main>
+  //   </>;
+  // } catch (e) {
+  //   return HandleServerError(e);
+  // }
 }

@@ -12,8 +12,8 @@ import AnimeItem from '~/components/AnimeItem';
 import StyledImage from '~/components/Styled/StyledImage';
 import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { useAppSelector } from '~/hooks/redux';
-import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { AnimeWithMedia } from '~/interfaces/types';
+import { AnimeCardType } from '~/interfaces/IAnime';
+import { IHomeFeedHero } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import { cn } from '~/utils/classnames';
 import { GetNekoplayerData } from '~/utils/nekoplayer-utils';
@@ -24,17 +24,17 @@ import { prettySeconds } from '~/utils/utils';
 type HomeHeadlinerScreen = 'preview' | 'trailer'
 
 interface HomeHeadlinerProps {
-  headliner: AnimeWithMedia
+  hero: IHomeFeedHero
 }
 
 interface HomeCategoryProps {
   label: string
   icon: React.ReactElement
-  hydratedAnimes: HydratedAnime[]
+  animes: AnimeCardType[]
 }
 
 interface HomeAnimeSwiperProps {
-  hydratedAnimes: HydratedAnime[]
+  animes: AnimeCardType[]
 }
 
 interface HomeDividerProps {
@@ -43,17 +43,17 @@ interface HomeDividerProps {
 }
 
 interface HomeWatchHeadlinerProps {
-  headliner: AnimeWithMedia
+  hero: IHomeFeedHero
 
   className?: string
 }
 
 interface HomeHeadlinerPreviewProps {
-  headliner: AnimeWithMedia
+  hero: IHomeFeedHero
 }
 
 interface HomeHeadlinerTrailerProps {
-  headliner: AnimeWithMedia
+  hero: IHomeFeedHero
 
   activeScreen: HomeHeadlinerScreen
   setActiveScreen: (val: HomeHeadlinerScreen) => void
@@ -61,7 +61,7 @@ interface HomeHeadlinerTrailerProps {
 
 
 
-export const HomeHeadliner: NextPage<HomeHeadlinerProps> = ({ headliner }) => {
+export const HomeHero: NextPage<HomeHeadlinerProps> = ({ hero }) => {
   const [activeScreen, setActiveScreen] = useState<HomeHeadlinerScreen>('preview');
 
   const previewScreenRef = useRef<HTMLDivElement>(null);
@@ -108,11 +108,11 @@ export const HomeHeadliner: NextPage<HomeHeadlinerProps> = ({ headliner }) => {
 
   return <div className="wrapper w-full h-[100svh] !mb-[40px]">
     <div className={cn(`home-headliner-screen`)} ref={previewScreenRef}>
-      <HomeHeadlinerPreview headliner={headliner} />
+      <HomeHeroPreview hero={hero} />
     </div>
 
     <div className={cn(`home-headliner-screen opacity-0`)} ref={trailerScreenRef}>
-      <HomeHeadlinerTrailer headliner={headliner} activeScreen={activeScreen} setActiveScreen={setActiveScreen} />
+      <HomeHeadlinerTrailer hero={hero} activeScreen={activeScreen} setActiveScreen={setActiveScreen} />
     </div>
 
     <div className="home-headliner-screen items-center justify-center !z-[1]">
@@ -121,25 +121,25 @@ export const HomeHeadliner: NextPage<HomeHeadlinerProps> = ({ headliner }) => {
   </div>;
 };
 
-export const HomeCategory: NextPage<HomeCategoryProps> = ({ label, icon, hydratedAnimes }) => {
+export const HomeCategory: NextPage<HomeCategoryProps> = ({ label, icon, animes }) => {
   return <div className="flex flex-col gap-[16px]">
     <HomeDivider icon={icon} label={label} />
 
-    {hydratedAnimes.length > 10 ? <div className="flex flex-col gap-[8px]">
-      <HomeAnimesSwiper hydratedAnimes={hydratedAnimes.slice(0, 10)} />
-      <HomeAnimesSwiper hydratedAnimes={hydratedAnimes.slice(10, 20)} />
-    </div> : <HomeAnimesSwiper hydratedAnimes={hydratedAnimes} />}
+    {animes.length > 10 ? <div className="flex flex-col gap-[8px]">
+      <HomeAnimesSwiper animes={animes.slice(0, 10)} />
+      <HomeAnimesSwiper animes={animes.slice(10, 20)} />
+    </div> : <HomeAnimesSwiper animes={animes} />}
   </div>;
 };
 
 
 
-const HomeAnimesSwiper: NextPage<HomeAnimeSwiperProps> = ({ hydratedAnimes }) => {
+const HomeAnimesSwiper: NextPage<HomeAnimeSwiperProps> = ({ animes }) => {
   const id = useId().replaceAll(':', '');
 
   return <StyledSwiper>
-    {hydratedAnimes.map((hydrated, i) => {
-      return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`homecategory-${id}--${i}`} />;
+    {animes.map((anime, i) => {
+      return <AnimeItem anime={anime} className="!w-[230px]" key={`homecategory-${id}--${i}`} />;
     })}
   </StyledSwiper>;
 };
@@ -157,7 +157,7 @@ const HomeDivider: NextPage<HomeDividerProps> = ({ icon, label }) => {
   </div>;
 };
 
-const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, className }) => {
+const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ hero, className }) => {
   const currentUser = useAppSelector(state => state.user);
 
   const [label, setLabel] = useState('');
@@ -167,7 +167,7 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
 
   // Get user watch progress from state
   useMemo(() => {
-    const watchProgress = currentUser.watchProgress.find(el => el.titleID === headliner.uuid);
+    const watchProgress = currentUser.watchProgress.find(el => el.titleID === hero.id);
 
     if (watchProgress && watchProgress.progress > 3) {
       setLabel(`продовжити (${watchProgress.episodeOrder} еп, ${prettySeconds(watchProgress.progress).pretty})`);
@@ -182,7 +182,7 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
     if (continueWatch || typeof window === 'undefined') return;
 
     const localData = GetNekoplayerData();
-    const localCurrent = localData.find(el => el.id === headliner.uuid);
+    const localCurrent = localData.find(el => el.id === hero.id);
 
     if (localCurrent && localCurrent.moment > 3) {
       setLabel(`продовжити (${localCurrent.ep} еп, ${prettySeconds(localCurrent.moment).pretty})`);
@@ -192,14 +192,14 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ headliner, clas
 
 
 
-  return <Link href={Routes.watch.path({ query: headliner.slug })} className={cn(`ui-button flex items-center justify-center gap-[24px] bg-dark-medium px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 max-sm:px-[16px] max-sm:py-[12px]`, className)} tabIndex={0}>
+  return <Link href={Routes.watch.path({ query: hero.slug })} className={cn(`ui-button flex items-center justify-center gap-[24px] bg-dark-medium px-[24px] py-[16px] rounded-[4px] z-[3] duration-200 max-sm:px-[16px] max-sm:py-[12px]`, className)} tabIndex={0}>
     {continueWatch && <MaterialSymbol icon="resume" size={40} className="text-white max-sm:!text-[24px]" />}
     {!continueWatch && <MaterialSymbol icon="live_tv" size={40} className="text-white max-sm:!text-[24px]" />}
     <p className="text-white text-[24px] uppercase max-sm:text-[16px] font-manrope break-all">{label}</p>
   </Link>;
 };
 
-const HomeHeadlinerPreview: NextPage<HomeHeadlinerPreviewProps> = ({ headliner }) => {
+const HomeHeroPreview: NextPage<HomeHeadlinerPreviewProps> = ({ hero }) => {
   const [isSm, setIsSm] = useState(false);
 
 
@@ -219,8 +219,8 @@ const HomeHeadlinerPreview: NextPage<HomeHeadlinerPreviewProps> = ({ headliner }
   return <>
     {/* Background */}
     <div className="w-full h-full absolute top-0 left-0">
-      {!isSm && <StyledImage src={headliner.backgroundURL} width="100%" height="100%" loading="eager" />}
-      {isSm && <StyledImage src={headliner.poster} width="100%" height="100%" loading="eager" />}
+      {!isSm && <StyledImage src={hero.cover} width="100%" height="100%" loading="eager" />}
+      {isSm && <StyledImage src={hero.poster} width="100%" height="100%" loading="eager" />}
 
       <div className="absolute top-0 left-0 w-full h-full bg-dark-primary/[.2] z-[2]"></div>
     </div>
@@ -229,20 +229,20 @@ const HomeHeadlinerPreview: NextPage<HomeHeadlinerPreviewProps> = ({ headliner }
     <div className="relative z-[3] max-w-[1170px] flex flex-col gap-[24px] max-lg:max-w-none">
       <div className="flex flex-col gap-[8px]">
         <p className="text-white text-[24px] uppercase max-md:text-[16px] font-manrope">ОБРАНЕ КОРИСТУВАЧАМИ NEKOMI</p>
-        <h1 className="text-white text-[60px] font-black text-ellipsis line-clamp-[2] uppercase max-lg:text-[40px] max-sm:text-[32px] max-sm:line-clamp-4 font-manrope w-fit" title={headliner.names.ukr}>{headliner.names.ukr}</h1>
+        <h1 className="text-white text-[60px] font-black text-ellipsis line-clamp-[2] uppercase max-lg:text-[40px] max-sm:text-[32px] max-sm:line-clamp-4 font-manrope w-fit" title={hero.title}>{hero.title}</h1>
       </div>
 
-      <p className={cn(`text-[24px] text-ellipsis line-clamp-[3] max-md:text-[16px] font-manrope w-fit`, headliner.description ? 'text-white' : 'text-grey-new')} title={headliner.description ?? undefined}>{headliner.description ?? 'Опис відсутній'}</p>
+      <p className={cn(`text-[24px] text-ellipsis line-clamp-[3] max-md:text-[16px] font-manrope w-fit`, hero.synopsys ? 'text-white' : 'text-grey-new')} title={hero.synopsys ?? undefined}>{hero.synopsys ?? 'Опис відсутній'}</p>
     </div>
 
     {/* Watch */}
     <div className="absolute bottom-[60px] z-[3] pr-[32px] max-sm:w-full max-sm:bottom-[90px]">
-      <HomeWatchHeadliner headliner={headliner} />
+      <HomeWatchHeadliner hero={hero} />
     </div>
   </>;
 };
 
-const HomeHeadlinerTrailer: NextPage<HomeHeadlinerTrailerProps> = ({ headliner, activeScreen, setActiveScreen }) => {
+const HomeHeadlinerTrailer: NextPage<HomeHeadlinerTrailerProps> = ({ hero, activeScreen, setActiveScreen }) => {
   const [isMuted, setIsMuted] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
@@ -307,7 +307,7 @@ const HomeHeadlinerTrailer: NextPage<HomeHeadlinerTrailerProps> = ({ headliner, 
     <>
       {/* Trailer */}
       <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center bg-black">
-        <video src={headliner.videoURL} muted controls={false} ref={videoRef} preload="metadata" className="absolute top-0 left-0 w-full h-full object-cover" />
+        <video src={hero.video} muted controls={false} ref={videoRef} preload="metadata" className="absolute top-0 left-0 w-full h-full object-cover" />
         <div className="absolute top-0 left-0 w-full h-full block z-[2]" style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .5))' }}></div>
 
         {/* Loading */}
@@ -318,10 +318,10 @@ const HomeHeadlinerTrailer: NextPage<HomeHeadlinerTrailerProps> = ({ headliner, 
 
       {/* Main */}
       <div className={cn(`wrapper !absolute bottom-[60px] left-0 flex flex-col gap-[16px] max-w-[1170px] duration-200 z-[3] max-sm:pr-[16px] max-sm:max-w-none max-sm:w-full max-sm:bottom-[90px]`, isIdle && 'translate-y-[40px] opacity-0 invisible')}>
-        <h3 className="text-white uppercase text-[32px] font-black text-ellipsis line-clamp-[1] font-manrope max-md:text-[24px] max-sm:line-clamp-3 w-fit" title={headliner.names.ukr}>{headliner.names.ukr}</h3>
+        <h3 className="text-white uppercase text-[32px] font-black text-ellipsis line-clamp-[1] font-manrope max-md:text-[24px] max-sm:line-clamp-3 w-fit" title={hero.title}>{hero.title}</h3>
 
         <div className="flex gap-[8px] w-full">
-          <HomeWatchHeadliner headliner={headliner} className="max-sm:w-full" />
+          <HomeWatchHeadliner hero={hero} className="max-sm:w-full" />
 
           <button className="ui-button relative p-[16px] duration-200 rounded-[4px] flex justify-center items-center" tabIndex={0} onClick={mute}>
             <div className="relative w-[40px] h-[40px] max-sm:w-[24px] max-sm:h-[24px]">

@@ -1,8 +1,7 @@
 
 
 import { conf } from '~/conf';
-import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, PutBanner, UserGetByQuery, UserGetByQueryProps, UserPatchProps } from '~/interfaces/services/ApiServiceIntf';
-import { AnimeFeatured } from '~/interfaces/types';
+import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, PutBanner, UserGetByQuery, UserGetByQueryProps, UserPatchProps } from '~/interfaces/services/ApiServiceIntf';
 import { $api, $upload } from '~/utils/http';
 
 
@@ -200,26 +199,6 @@ class ApiService {
     return data;
   }
 
-  async getAnime({ query, detailed, fetchDubbers, fetchRelated }: AnimeGetByQueryProps) {
-    if (fetchDubbers || fetchRelated) detailed = true;
-
-    const { data } = await $api.get<AnimeGetByQuery>(`/anime/${query}`, {
-      params: {
-        detailed,
-        fetchDubbers,
-        fetchRelated,
-      }
-    });
-
-    return data;
-  }
-
-  async getFeaturedAnime(): Promise<AnimeFeatured> {
-    const { data } = await $api.get<AnimeFeatured>(`/anime/featured`);
-
-    return data;
-  }
-
   async getAnimeStats() {
     const { data } = await $api.get<AnimeGetAll>(`/anime/stats`);
 
@@ -287,5 +266,5 @@ class ApiService {
 
 
 
-const API = new ApiService();
-export default API;
+const APIOld = new ApiService();
+export default APIOld;

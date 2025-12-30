@@ -6,11 +6,12 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { IcoNekomiLogo } from '~/assets/Icons';
 import { HandleServerError } from '~/components/Errors';
 import { conf } from '~/conf';
-import API from '~/services/ApiService';
+import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
 import { randomNumber } from '~/utils/utils';
 
-import { HomeCategory, HomeHeadliner } from './HomePage';
+import { HomeCategory, HomeHero } from './HomePage';
+
 
 
 
@@ -24,15 +25,17 @@ export const metadata = siteMetadata({
 
 export default async function RSC() {
   try {
-    const featured = await API.getFeaturedAnime();
-    const headliner = featured.headliners[randomNumber(0, featured.headliners.length - 1)];
+    const feed = await API.getHomeFeed();
+    const hero = feed.hero[randomNumber(0, feed.hero.length - 1)];
+
+
 
     return <main className="w-full h-full bg-dark-primary min-h-screen">
-      <HomeHeadliner headliner={headliner} />
+      {hero && <HomeHero hero={hero} />}
 
       {/* Categories */}
       <div className="wrapper gap-[32px]">
-        <HomeCategory label="Популярні" icon={<MaterialSymbol icon="star" size={32} fill className="text-[#FF464E]" />} hydratedAnimes={featured.hot} />
+        <HomeCategory label="Популярні" icon={<MaterialSymbol icon="star" size={32} fill className="text-[#FF464E]" />} animes={feed.hot} />
       </div>
 
       <div className="wrapper bg-expo/[.5] !flex-row gap-[60px] py-[60px] !px-[16px] items-center !my-[60px] max-md:!flex-col">
@@ -55,8 +58,8 @@ export default async function RSC() {
       </div>
 
       <div className="wrapper gap-[32px]">
-        {featured.updatedRecently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<MaterialSymbol icon="schedule" size={32} className="text-white max-md:!text-[24px]" />} hydratedAnimes={featured.updatedRecently} />}
-        {featured.rated.length > 0 && <HomeCategory label="З високою оцінкою" icon={<MaterialSymbol icon="star_half" size={32} className="text-white max-md:!text-[24px]" />} hydratedAnimes={featured.rated} />}
+        {feed.updated_recently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<MaterialSymbol icon="schedule" size={32} className="text-white max-md:!text-[24px]" />} animes={feed.updated_recently} />}
+        {feed.highest_rate.length > 0 && <HomeCategory label="З високою оцінкою" icon={<MaterialSymbol icon="star_half" size={32} className="text-white max-md:!text-[24px]" />} animes={feed.highest_rate} />}
       </div>
     </main>;
   } catch (e) {

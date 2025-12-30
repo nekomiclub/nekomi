@@ -12,6 +12,7 @@ import '~/styles/tailwind.css';
 import { cache } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import axios from 'axios';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
@@ -20,8 +21,9 @@ import { ErrorNoConnection } from '~/components/Errors';
 import Footer from '~/components/Footer';
 import NavMenu from '~/components/NavMenu/NavMenu';
 import { StateProvider } from '~/components/StateProvider';
+import conf from '~/conf';
 import { LayoutProps } from '~/interfaces/types';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import { IUserState } from '~/store/reducers/userSlice';
 import siteMetadata from '~/utils/site-metadata';
 
@@ -54,7 +56,7 @@ const spaceGrotesk = Space_Grotesk({
 
 
 const getUser = cache(async (session: string) => {
-  return await API.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
+  return await APIOld.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
     session
   });
 });
@@ -97,13 +99,13 @@ export default async function Layout({ children, params }: LayoutProps) {
   //   }
   // }
 
-  // // Ping API
-  // if (!isServerOnline) {
-  //   try {
-  //     await axios.options(`${config.URL.nekomi_api}/ping`);
-  //     isServerOnline = true;
-  //   } catch (e) { }
-  // }
+  // Ping API
+  if (!isServerOnline) {
+    try {
+      await axios.options(`${conf.URL.nekomiApi}/ping`);
+      isServerOnline = true;
+    } catch (e) { }
+  }
 
 
 

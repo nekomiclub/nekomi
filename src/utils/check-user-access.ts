@@ -1,7 +1,7 @@
 import { DevelopmentMode } from '~/conf';
 import { RoleCapability } from '~/interfaces/RoleIntf';
 import { User } from '~/interfaces/UserIntf';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 
 
 
@@ -25,7 +25,7 @@ export default async function CheckUserAccess({ capabilities, checkMode, session
   checkMode = checkMode ?? 'AND';
 
   try {
-    const { user, capabilities } = await API.getUser({ query: '*', parseCapabilities: true }, {
+    const { user, capabilities } = await APIOld.getUser({ query: '*', parseCapabilities: true }, {
       session
     });
 

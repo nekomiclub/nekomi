@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { HandleClientError } from '~/components/Errors';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import userSlice, { userStateDefault } from '~/store/reducers/userSlice';
 
 import HeaderNav from './HeaderNav';
@@ -34,7 +34,7 @@ const NavMenu: NextPage = () => {
 
       setTimeout(() => { router.refresh(); }, 100);
 
-      await API.userLogout();
+      await APIOld.userLogout();
     } catch (e) {
       HandleClientError(e);
     }

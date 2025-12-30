@@ -8,14 +8,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialTelegram } from '~/assets/Social';
-import AnimeItem from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { Dubber, DubberMember } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import { cn } from '~/utils/classnames';
 import { wordDeclination } from '~/utils/utils';
 
@@ -44,7 +43,7 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
 
     (async function () {
       try {
-        await API.dubberGetInvite({ dubberId: dubber.id });
+        await APIOld.dubberGetInvite({ dubberId: dubber.id });
       } catch (e) {
         setIsPopupShowing(true);
         setInviteType('invalid');
@@ -55,12 +54,12 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
       try {
         if (invite === 'accept') {
           setInviteType('accept');
-          await API.dubberInviteAccept({ dubberId: dubber.id, userId: '' });
+          await APIOld.dubberInviteAccept({ dubberId: dubber.id, userId: '' });
         };
 
         if (invite === 'decline') {
           setInviteType('decline');
-          await API.dubberInviteDecline({ dubberId: dubber.id, userId: '' });
+          await APIOld.dubberInviteDecline({ dubberId: dubber.id, userId: '' });
         };
 
         setIsPopupShowing(true);
@@ -127,9 +126,9 @@ export const DubberAnimeDubbed: NextPage<{ dubber: Dubber, hydratedAnimes: Hydra
     </div>
 
     <div className="grid gap-[16px] grid-cols-6 max-[1440px]:grid-cols-5 max-xl:grid-cols-4 max-lg:grid-cols-3 max-md:grid-cols-2 grid-rows-1">
-      {hydratedAnimes.slice(0, 6).map((hydrated, i) => {
-        return <AnimeItem hydrated={hydrated} key={`dubbed_anime-${dubber.id}--${i}`} />;
-      })}
+      {/* {hydratedAnimes.slice(0, 6).map((hydrated, i) => {
+        return <AnimeItem anime={hydrated} key={`dubbed_anime-${dubber.id}--${i}`} />;
+      })} */}
     </div>
   </div>;
 };

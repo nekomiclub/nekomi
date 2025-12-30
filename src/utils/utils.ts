@@ -2,6 +2,8 @@
  * @fileoverview utils with zero-dependencies
  */
 
+import { IAnimePosterNode } from '~/interfaces/IAnime';
+
 
 
 
@@ -234,3 +236,8 @@ export function getUTC(timestamp?: number | null): {
   };
 }
 
+
+
+export function getAnimeHeroPoster(posters: IAnimePosterNode[]): IAnimePosterNode {
+  return posters.find(el => el.is_hero) ?? posters[0];
+}

@@ -9,7 +9,7 @@ import StyledButton from '~/components/Styled/StyledButton';
 import { H3, P } from '~/components/UI/Typography';
 import { conf } from '~/conf';
 import { User } from '~/interfaces/UserIntf';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import cn from '~/utils/classnames';
 
 
@@ -60,7 +60,7 @@ export const UserSettingsLinkTelegram: FC<IUserSettingsLinkProps> = ({ user }) =
     try {
       setStatus('connecting');
 
-      const { token } = await API.userLinkTelegramToken();
+      const { token } = await APIOld.userLinkTelegramToken();
 
       router.push(`${conf.URL.telegramBot}?start=linkAccount=${token}`);
     } catch (e) {

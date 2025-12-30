@@ -7,7 +7,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import { IUserState } from '~/store/reducers/userSlice';
 import { setupStore } from '~/store/store';
 import { randomNumber } from '~/utils/utils';
@@ -55,7 +55,7 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
       (async function () {
         try {
           NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' });
-          await API.userLogout();
+          await APIOld.userLogout();
         } catch (e) { HandleClientError(e); }
       })();
     }
@@ -74,7 +74,7 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
 
       (async function () {
         try {
-          await API.userSignin({ token: signinToken });
+          await APIOld.userSignin({ token: signinToken });
 
           NotifySuccess({ title: 'Ви увійшли в акаунт', message: 'welcome!' });
 

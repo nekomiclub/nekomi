@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { UserLibItem } from '~/app/u/[username]/UserPage';
-import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';
 import { H2, H3, P } from '~/components/UI/Typography';
@@ -101,9 +100,9 @@ export default async function RSC(props: RSCProps<UserLibPageProps>) {
         </div>}
 
         {parsedLib.length !== 0 && <div className="grid gap-[16px] grid-cols-6 max-[1470px]:grid-cols-5 max-[1250px]:grid-cols-4 max-[940px]:grid-cols-3 max-[720px]:grid-cols-2">
-          {parsedLib.toReversed().map((hydrated, i) => {
-            return <AnimeItem className="max-[720px]:!min-w-[160px]" hydrated={hydrated} key={`userlib-${lib.id}--${i}`} libControls />;
-          })}
+          {/* {parsedLib.toReversed().map((hydrated, i) => {
+            return <AnimeItem className="max-[720px]:!min-w-[160px]" anime={hydrated} key={`userlib-${lib.id}--${i}`} libControls />;
+          })} */}
         </div>}
 
         <div className="flex flex-wrap gap-[8px]">

@@ -2,7 +2,7 @@
 
 import { NextPage } from 'next';
 import { useId } from 'react';
-import { Tooltip as RT } from 'react-tooltip';
+import { PlacesType, Tooltip as RT } from 'react-tooltip';
 
 import { cn } from '~/utils/classnames';
 
@@ -12,6 +12,7 @@ interface Props {
   children: any
   content: string
 
+  place?: PlacesType
   fitWrapper?: boolean
   className?: string
 }
@@ -19,12 +20,12 @@ interface Props {
 /** Tooltip component
  * @prop fitWrapper will fit tooltip in parent width & center content
  */
-const Tooltip: NextPage<Props> = ({ content, children, fitWrapper, className }) => {
+const Tooltip: NextPage<Props> = ({ content, children, fitWrapper, className, place }) => {
   const id = useId();
 
   return (
     <div data-tooltip-id={id} data-tooltip-content={content} className={cn(`relative z-[5]`, className)}>
-      <RT id={id} className={cn(fitWrapper && '!w-fit text-center')} />
+      <RT id={id} place={place} className={cn(fitWrapper && '!w-fit text-center')} />
       {children}
     </div>
   );

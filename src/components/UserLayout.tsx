@@ -10,7 +10,7 @@ import { useAppSelector } from '~/hooks/redux';
 import { Dubber } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import cn from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
 
@@ -208,7 +208,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
       if (entityType === 'user') {
         return NotifyWarn({ title: 'Аватар не завантажено', message: 'Ви можете оновити аватар тільки в акаунті Fullkekw' });
       } else if (entityType === 'dubber') {
-        const res = await API.putDubberAvatar({ dubberId: entityId, file });
+        const res = await APIOld.putDubberAvatar({ dubberId: entityId, file });
         url = res.url;
       } else {
         return console.error(`[dev]: Entity type cannot be handled (${entityType})`);
@@ -314,10 +314,10 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
       NotifySuccess({ title: 'Завантажуємо банер...', message: file.name });
 
       if (entityType === 'user') {
-        const res = await API.userUploadBanner(file);
+        const res = await APIOld.userUploadBanner(file);
         url = res.bannerUrl;
       } else if (entityType === 'dubber') {
-        const res = await API.putDubberBanner({ dubberId: entityId, file });
+        const res = await APIOld.putDubberBanner({ dubberId: entityId, file });
         url = res.url;
       } else {
         return console.error(`[dev]: Entity type cannot be handled (${entityType})`);

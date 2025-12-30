@@ -7,7 +7,7 @@ import { conf } from '~/conf';
 import { Dubber } from '~/interfaces/DubberIntf';
 import { RSCProps } from '~/interfaces/types';
 import { User } from '~/interfaces/UserIntf';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import CheckUserAccess from '~/utils/check-user-access';
 import siteMetadata from '~/utils/site-metadata';
 
@@ -31,7 +31,7 @@ export default async function RSC({ params }: RSCProps) {
 
 
   try {
-    const data = await API.getDubberByQuery({
+    const data = await APIOld.getDubberByQuery({
       query: slug,
       detailed: true,
       parseMembers: true,

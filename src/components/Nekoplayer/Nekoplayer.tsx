@@ -15,7 +15,7 @@ import { useAppSelector } from '~/hooks/redux';
 import Anime, { AnimeEpisode } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { EpisodeQualityType, LocalStorageKeys } from '~/interfaces/types';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import { cn } from '~/utils/classnames';
 import { $api } from '~/utils/http';
 import { GetNekoplayerData, GetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
@@ -690,7 +690,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     const record = getCurrentProgressRecord();
 
     try {
-      await API.patchUser({ removeWatchProgress: { animeId: anime.uuid } });
+      await APIOld.patchUser({ removeWatchProgress: { animeId: anime.uuid } });
     } catch (e) {
       HandleClientError(e);
     }

@@ -21,7 +21,7 @@ import { Dubber, DubberMember as DubberMemberIntf, DubberMemberRole } from '~/in
 import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
 import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import APIOld from '~/services/ApiService.old';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import { DubberParseRoleName } from '~/utils/data-mappers';
@@ -131,7 +131,7 @@ export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }
     try {
       setIsSaving(true);
 
-      await API.patchDubberSettings({
+      await APIOld.patchDubberSettings({
         dubberId: dubber.id,
         nameUkr: nameUkr.newValue,
         nameEng: nameEng.newValue,
@@ -197,7 +197,7 @@ export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }
     try {
       if (!confirm(`Ви дійсно хочете видалити ${username}?`)) return;
 
-      await API.dubberKickMember({
+      await APIOld.dubberKickMember({
         dubberId: dubber.id,
         userId: id
       });
@@ -303,7 +303,7 @@ const InviteMembers: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
       if (query.length < 3) return;
 
       try {
-        const { results } = await API.searchUsers({ q: query, parseInvitationStatusFor: dubber.id });
+        const { results } = await APIOld.searchUsers({ q: query, parseInvitationStatusFor: dubber.id });
         setSearchResults(results);
         setIsMenuOpen(true);
       } catch (e) {
@@ -448,7 +448,7 @@ function InviteMemberResult({ user, invitationStatus, dubber }: IMemberInviteRes
     try {
       setIsInvited(true);
 
-      await API.dubberSendInvite({
+      await APIOld.dubberSendInvite({
         dubberId: dubber.id,
         userId: user.id
       });
@@ -499,7 +499,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
 
   async function changeRole(to: DubberMemberRole) {
     try {
-      await API.dubberEditMember({
+      await APIOld.dubberEditMember({
         dubberId: dubber.id,
         userId: user.id,
         role: to
