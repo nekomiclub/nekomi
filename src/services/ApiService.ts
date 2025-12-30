@@ -1,6 +1,6 @@
 
 
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { AnimeDeleteByUUIDProps, AnimeDeleteEpisodeProps, AnimeGetAll, AnimeGetByQuery, AnimeGetByQueryProps, AnimeGetSearch, AnimeGetSearchProps, AnimePatchByUuidProps, AnimePost, AnimePostEpisode, AnimePostEpisodeParams, AnimePostEpisodeProps, AnimePutPoster, AnimePutPosterProps, DubberGetOneByQuery, DubberGetOneByQueryProps, DubberGetSearch, DubberGetSearchProps, IDubberDeleteMemberByIdProps, IDubberGetInviteByIdProps, IDubberPatchMemberByIdProps, IDubberPatchSettingsProps, IDubberPostInviteSADProps, IDubberPutAvatarProps, IDubberPutBannerProps, IUserGetSearch, IUserGetSearchResult, PutBanner, UserGetByQuery, UserGetByQueryProps, UserPatchProps } from '~/interfaces/services/ApiServiceIntf';
 import { AnimeFeatured } from '~/interfaces/types';
 import { $api, $upload } from '~/utils/http';
@@ -132,7 +132,7 @@ class ApiService {
         parseTogetherRoomId,
       },
       headers: {
-        Cookie: params?.session ? `${config.vars.SessionCookie}=${params?.session}` : undefined
+        Cookie: params?.session ? `${conf.vars.SessionCookie}=${params?.session}` : undefined
       }
     });
 

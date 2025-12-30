@@ -3,12 +3,12 @@ import Link from 'next/link';
 
 import { IcoSocialGithub, IcoSocialTelegram } from '~/assets/Social';
 import StyledImage from '~/components/Styled/StyledImage';
-import { metaObject } from '~/config';
+import siteMetadata from '~/utils/site-metadata';
 
 
 
 
-export const metadata = metaObject({
+export const metadata = siteMetadata({
   title: `Devs`
 });
 

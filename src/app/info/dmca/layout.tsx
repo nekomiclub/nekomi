@@ -1,7 +1,7 @@
-import { metaObject } from '~/config';
 import { LayoutProps } from '~/interfaces/types';
+import siteMetadata from '~/utils/site-metadata';
 
-export const metadata = metaObject({
+export const metadata = siteMetadata({
   title: 'DMCA'
 });
 

@@ -15,7 +15,7 @@ import { UIField, UIFieldProps, UIFieldState } from '~/components/UI/Input';
 import { NotifyError, NotifySuccess } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';
 import UICheckbox from '~/components/UI/UICheckbox';
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { useAppSelector } from '~/hooks/redux';
 import { ANIME_MEDIA_TYPES, ANIME_RATES, ANIME_SEASONS, ANIME_STATUSES, AnimeEpisode, AnimeMediaType, AnimeRateType, AnimeRecordType, AnimeSeasonType, AnimeStatusType, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
@@ -237,7 +237,7 @@ export const PatcherMeta: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capa
 
       await API.deleteAnime({ token, uuid: hydratedAnime.anime.uuid });
 
-      router.replace(`${config.URL.nekomi_site}`);
+      router.replace(`${conf.URL.nekomiSite}`);
     } catch (e) {
       HandleClientError(e);
     }
@@ -642,7 +642,7 @@ const MetaPoster: NextPage<PatcherGenerciProps> = ({ hydratedAnime, capabilities
 
 
   useMemo(() => {
-    setIsNekomiPoster(posterURL.includes(config.URL.nekomi_media));
+    setIsNekomiPoster(posterURL.includes(conf.URL.nekomiMedia));
   }, [posterURL]);
 
 

@@ -8,13 +8,13 @@ import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';
 import { H2, H3, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
-import { metaObject } from '~/config';
 import { UserLibPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import { UserLib } from '~/interfaces/UserIntf';
 import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
 import CheckUserAccess from '~/utils/check-user-access';
 import { parseLibTitle } from '~/utils/parse-user-lib-ui';
+import siteMetadata from '~/utils/site-metadata';
 
 
 
@@ -31,13 +31,13 @@ export async function generateMetadata(
     const lib = user.libs.find(el => el.id === params.libId);
     if (!lib || !parsedLib) return notFound();
 
-    return metaObject({
+    return siteMetadata({
       overwriteTitle: `${lib.settings.name} ― тека @${user.username} на nekomi`,
       description: `Список аніме @${username}`,
       robots: ['nofollow', 'noindex']
     });
   } catch (e) {
-    return metaObject({
+    return siteMetadata({
       title: 'Цієї теки не існує',
       robots: ['nofollow', 'noindex']
     });

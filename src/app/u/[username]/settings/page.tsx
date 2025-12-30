@@ -7,11 +7,12 @@ import { HandleServerError } from '~/components/Errors';
 import StyledButton from '~/components/Styled/StyledButton';
 import { H2, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
-import { config, metaObject } from '~/config';
+import { conf } from '~/conf';
 import { UserPageProps, UserSettingsPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
 import CheckUserAccess from '~/utils/check-user-access';
+import siteMetadata from '~/utils/site-metadata';
 
 import { UserSettingsGroup, UserSettingsLinkTelegram } from './UserSettingsPage';
 
@@ -23,12 +24,12 @@ export async function generateMetadata({ params, searchParams }: RSCProps<UserPa
   try {
     await getCachedUser(username);
 
-    return metaObject({
+    return siteMetadata({
       title: `Налаштування @${username}`,
       robots: ['nofollow', 'noindex']
     });
   } catch (e) {
-    return metaObject({
+    return siteMetadata({
       title: `Акаунта не існує`,
       robots: ['nofollow', 'noindex']
     });
@@ -58,7 +59,7 @@ export default async function RSC({ params }: RSCProps<UserSettingsPageProps>) {
 
         <UserSettingsGroup title="Загальна інформація" description="Аватар, юзернейм ...">
           <div className="w-full flex items-center">
-            <Link href={`${config.URL.fullkekw_account}/me`} target="_blank">
+            <Link href={`${conf.URL.fullkekw_account}/me`} target="_blank">
               <StyledButton as="div">
                 <MaterialSymbol icon="account_circle" size={20} className="text-white" />
                 <P text={`Редагувати акаунт Fullkekw`} />

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { useAppSelector } from '~/hooks/redux';
 import { Dubber } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
@@ -79,7 +79,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
 
   function copyLink() {
-    copyToClipboard(`${config.URL.nekomi_site}${pathname}`);
+    copyToClipboard(`${conf.URL.nekomiSite}${pathname}`);
     setIsLinkCopied(true);
 
     NotifySuccess({ title: 'Copied!', message: 'Посилання на команду скопійовано в буфер обміну' });

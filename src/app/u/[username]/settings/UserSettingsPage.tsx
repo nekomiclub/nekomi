@@ -7,7 +7,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { HandleClientError } from '~/components/Errors';
 import StyledButton from '~/components/Styled/StyledButton';
 import { H3, P } from '~/components/UI/Typography';
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { User } from '~/interfaces/UserIntf';
 import API from '~/services/ApiService';
 import cn from '~/utils/classnames';
@@ -62,7 +62,7 @@ export const UserSettingsLinkTelegram: FC<IUserSettingsLinkProps> = ({ user }) =
 
       const { token } = await API.userLinkTelegramToken();
 
-      router.push(`${config.URL.telegramBot}?start=linkAccount=${token}`);
+      router.push(`${conf.URL.telegramBot}?start=linkAccount=${token}`);
     } catch (e) {
       HandleClientError(e);
 

@@ -6,10 +6,10 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';
-import { metaObject } from '~/config';
 import { DubberPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
+import siteMetadata from '~/utils/site-metadata';
 import { timestampToDayMonth } from '~/utils/utils';
 
 import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberTeam } from './DubberPage';
@@ -32,7 +32,7 @@ export async function generateMetadata(
     const title = dubber.nameUkr;
     const description = dubber.description ?? 'Опис відсутній';
 
-    return metaObject({
+    return siteMetadata({
       title,
       description: description,
       keywords: [dubber.nameUkr, dubber.nameEng],
@@ -44,7 +44,7 @@ export async function generateMetadata(
       }
     });
   } catch (e) {
-    return metaObject({ title: 'Команда озвучення не знайдена', robots: ['nofollow', 'noindex'] });
+    return siteMetadata({ title: 'Команда озвучення не знайдена', robots: ['nofollow', 'noindex'] });
   }
 }
 

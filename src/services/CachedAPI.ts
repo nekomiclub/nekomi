@@ -3,7 +3,7 @@
 import { cache } from 'react';
 import { cookies } from 'next/headers';
 
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { UserGetByQuery } from '~/interfaces/services/ApiServiceIntf';
 
 import API from './ApiService';
@@ -11,7 +11,7 @@ import API from './ApiService';
 
 
 export async function getSessionToken(): Promise<string | undefined> {
-  return cookies().get(config.vars.SessionCookie)?.value;
+  return cookies().get(conf.vars.SessionCookie)?.value;
 }
 
 export const getCachedUser = cache(async (query: string, libId?: string, session?: string): Promise<UserGetByQuery> => {

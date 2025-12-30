@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
-import { metaObject } from '~/config';
+import siteMetadata from '~/utils/site-metadata';
 
 
 
-export const metadata = metaObject({
+export const metadata = siteMetadata({
   title: 'Спільний перегляд аніме',
   description: 'Дивись аніме на українській мові з друзями разом, без втрати якості!'
 });

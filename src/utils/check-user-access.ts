@@ -1,4 +1,4 @@
-import { DevelopmentMode } from '~/config';
+import { DevelopmentMode } from '~/conf';
 import { RoleCapability } from '~/interfaces/RoleIntf';
 import { User } from '~/interfaces/UserIntf';
 import API from '~/services/ApiService';

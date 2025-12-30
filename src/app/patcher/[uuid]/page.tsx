@@ -6,12 +6,13 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
-import { config, metaObject } from '~/config';
+import { conf } from '~/conf';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { PatcherPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import CheckUserAccess from '~/utils/check-user-access';
+import siteMetadata from '~/utils/site-metadata';
 
 import { PatcherCapabilities, PatcherCreateNewAnime, PatcherEpisodes, PatcherMeta, PatcherWithoutMalId } from './(components)/PatcherPage';
 
@@ -31,11 +32,11 @@ export async function generateMetadata(
   try {
     const { anime } = await getAnime(uuid);
 
-    return metaObject({
+    return siteMetadata({
       overwriteTitle: `${anime.names.ukr} - Редактор`
     });
   } catch (e) {
-    return metaObject({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
+    return siteMetadata({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
   }
 }
 
@@ -44,7 +45,7 @@ export async function generateMetadata(
 export default async function RSC(props: RSCProps<PatcherPageParams>) {
   const { uuid } = await props.params;
 
-  const session = cookies().get(config.vars.SessionCookie)?.value ?? '';
+  const session = cookies().get(conf.vars.SessionCookie)?.value ?? '';
 
   const { user, capabilities } = await CheckUserAccess({ capabilities: ['titleEdit', 'seriesAdd'], checkMode: 'OR', session });
   if (!user || !capabilities) return notFound();

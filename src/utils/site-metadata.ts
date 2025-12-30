@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types';
 
-import { config } from '~/config';
+import { conf } from '~/conf';
 
 
 
@@ -19,7 +19,7 @@ function siteMetadata(payload: {
   const title = payload.overwriteTitle ? payload.overwriteTitle : payload.title !== undefined ? `${payload.title} ― nekomi` : 'nekomi ― аніме українською';
   const description = payload.description !== undefined ? payload.description : 'Онлайн кінотеатр аніме українською nekomi.club!';
   const keywords = payload.keywords?.length ? [...payload.keywords, ...defaultKeywords] : defaultKeywords;
-  const siteName = config.DOMAIN.nekomi.split('.')[0];
+  const siteName = conf.domain.split('.')[0];
   const robots: string = payload.robots?.length ? payload.robots?.join(',') : 'all';
 
   if (payload.openGraph) payload.openGraph.title = `${payload.openGraph.title} ― nekomi`;

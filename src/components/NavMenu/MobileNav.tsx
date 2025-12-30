@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { P } from '~/components/UI/Typography';
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { Routes } from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
@@ -71,7 +71,7 @@ const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMen
 
     {/* Unauthorized */}
     {!user.id && <>
-      <Link href={`${config.URL.fullkekw_account}/sso?ref=${config.URL.nekomi_site}${pathname}`} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
+      <Link href={`${conf.URL.fullkekw_account}/sso?ref=${conf.URL.nekomiSite}${pathname}`} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
         <MaterialSymbol icon="login" className="text-white" size={24} />
         <P text="Увійти" className="font-bold" size={14} />
       </Link>

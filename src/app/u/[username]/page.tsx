@@ -7,12 +7,13 @@ import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';
 import { P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
-import { config, DevelopmentMode, metaObject } from '~/config';
+import { conf, DevelopmentMode } from '~/conf';
 import { UserPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import { UserLib } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
+import siteMetadata from '~/utils/site-metadata';
 import { getUTC, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
 import { UserLibItem, UserStatisticsItem, UserTitle } from './UserPage';
@@ -30,7 +31,7 @@ export async function generateMetadata(
     const title = `@${user.username}`;
     const description = `Профіль користувача`;
 
-    return metaObject({
+    return siteMetadata({
       title,
       description,
       openGraph: {
@@ -41,13 +42,13 @@ export async function generateMetadata(
         username: user.username,
         url: Routes.user.path({ username }),
         locale: 'uk_UA',
-        siteName: config.DOMAIN.nekomi.split('.')[0],
+        siteName: conf.domain.split('.')[0],
       }
     });
   } catch (e) {
     if (DevelopmentMode) console.error(`User page generateMetadata error`, e);
 
-    return metaObject({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] });
+    return siteMetadata({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] });
   }
 }
 

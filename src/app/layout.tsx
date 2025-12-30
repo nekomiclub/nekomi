@@ -20,14 +20,14 @@ import { ErrorNoConnection } from '~/components/Errors';
 import Footer from '~/components/Footer';
 import NavMenu from '~/components/NavMenu/NavMenu';
 import { StateProvider } from '~/components/StateProvider';
-import { metaObject } from '~/config';
 import { LayoutProps } from '~/interfaces/types';
 import API from '~/services/ApiService';
 import { IUserState } from '~/store/reducers/userSlice';
+import siteMetadata from '~/utils/site-metadata';
 
 
 
-export const metadata = metaObject({});
+export const metadata = siteMetadata({});
 
 
 

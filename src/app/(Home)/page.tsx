@@ -5,8 +5,9 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import { HandleServerError } from '~/components/Errors';
-import { config, metaObject } from '~/config';
+import { conf } from '~/conf';
 import API from '~/services/ApiService';
+import siteMetadata from '~/utils/site-metadata';
 import { randomNumber } from '~/utils/utils';
 
 import { HomeCategory, HomeHeadliner } from './HomePage';
@@ -14,7 +15,7 @@ import { HomeCategory, HomeHeadliner } from './HomePage';
 
 
 
-export const metadata = metaObject({
+export const metadata = siteMetadata({
   title: 'nekomi',
   description: 'Nekomi - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!'
 });
@@ -44,7 +45,7 @@ export default async function RSC() {
           </div>
 
           <div className="flex flex-col gap-[8px] w-fit max-[650px]:w-full">
-            <Link href={config.URL.telegram} target="_blank" className="px-[16px] py-[16px] rounded-[2px] bg-dark-medium border border-dark-light flex items-center justify-center gap-[16px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95]">
+            <Link href={conf.URL.telegram} target="_blank" className="px-[16px] py-[16px] rounded-[2px] bg-dark-medium border border-dark-light flex items-center justify-center gap-[16px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95]">
               <MaterialSymbol icon="ungroup" size={24} className="text-white" />
               <p className="text-white text-[24px] uppercase max-[650px]:text-[16px] font-manrope">підписатися</p>
             </Link>

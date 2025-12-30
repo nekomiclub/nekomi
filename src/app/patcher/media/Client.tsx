@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 import { HandleClientError } from '~/components/Errors';
 import Input from '~/components/UI/Input';
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { useAppSelector } from '~/hooks/redux';
 import { cn } from '~/utils/classnames';
 import { $api, $upload } from '~/utils/http';
@@ -107,12 +107,12 @@ export const MediaClient: NextPage = () => {
       formData.append('file', file);
       formData.append('type', uploadType);
 
-      const { data } = await $upload.post<{ url: string, srt_id?: string }>(`${config.URL.nekomi_api}/upload`, formData);
+      const { data } = await $upload.post<{ url: string, srt_id?: string }>(`${conf.URL.nekomiApi}/upload`, formData);
 
       if (uploadType !== 'video/srt-temp') {
         setUploadLink(data.url);
       } else {
-        setUploadLink(`${config.URL.nekomi_media}/${data.srt_id}`);
+        setUploadLink(`${conf.URL.nekomiMedia}/${data.srt_id}`);
       }
       setUploadStatus('success');
     } catch (e) {
@@ -134,7 +134,7 @@ export const MediaClient: NextPage = () => {
     setDeleteStatus('pending');
 
     try {
-      await $api.delete(`${config.URL.nekomi_api}/upload/${deleteUploadValue}`);
+      await $api.delete(`${conf.URL.nekomiApi}/upload/${deleteUploadValue}`);
 
       setDeleteStatus('success');
     } catch (e) {

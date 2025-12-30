@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { DevelopmentMode } from '~/config';
+import { DevelopmentMode } from '~/conf';
 import { Routes } from '~/routes';
 import { getUTC } from '~/utils/utils';
 

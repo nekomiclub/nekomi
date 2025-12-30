@@ -8,12 +8,13 @@ import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import StyledSwiper from '~/components/Styled/StyledSwiper';
-import { config, metaObject } from '~/config';
+import { conf } from '~/conf';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
 import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/ApiService';
+import siteMetadata from '~/utils/site-metadata';
 import { isUserAgentMobile } from '~/utils/utils';
 
 import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
@@ -37,7 +38,7 @@ export async function generateMetadata(
     const title = `${anime.names.ukr} (${anime.year})`;
     const description = anime.description ?? 'Опис відсутній';
 
-    return metaObject({
+    return siteMetadata({
       title,
       description,
       keywords: [anime.names.ukr, anime.names.eng, ...anime.names.alt],
@@ -48,11 +49,11 @@ export async function generateMetadata(
         images: anime.poster,
         url: Routes.watch.path({ query }),
         locale: 'uk_UA',
-        siteName: config.DOMAIN.nekomi.split('.')[0],
+        siteName: conf.domain.split('.')[0],
       }
     });
   } catch (e) {
-    return metaObject({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
+    return siteMetadata({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
   }
 }
 

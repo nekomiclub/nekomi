@@ -6,7 +6,7 @@
 
 import jwt from 'jsonwebtoken';
 
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { createStringID, getUTC } from '~/utils/utils';
 
 
@@ -14,10 +14,10 @@ import { createStringID, getUTC } from '~/utils/utils';
 /** Sign CSRF token */
 export default async function signCSRF(): Promise<string> {
   return jwt.sign({
-    origin: config.domain,
+    origin: conf.domain,
     hash: createStringID(32),
-    expire: getUTC().timestamp + config.vars.CSRF_EXPIRE
-  }, config.env.CSRF_PRIVATE_KEY, {
+    expire: getUTC().timestamp + conf.vars.CSRF_TOKEN_LIFETIME_MS
+  }, conf.env.CSRF_SK, {
     algorithm: 'RS256'
   });
 }

@@ -1,0 +1,60 @@
+import ms from 'ms';
+
+
+
+export const DevelopmentMode = process.env.NODE_ENV === 'development';
+export const ProductionMode = process.env.NODE_ENV === 'production';
+
+
+
+const env = {
+  CSRF_SK: String(process.env['CSRF_SK']),
+
+  NEXT_PUBLIC_NEKOMI_API_URL: String(process.env['NEXT_PUBLIC_NEKOMI_API_URL']),
+  NEXT_PUBLIC_TELEGRAM_BOT_URL: String(process.env['NEXT_PUBLIC_TELEGRAM_BOT_URL']),
+  NEXT_PUBLIC_NEKOMI_NEXTJS_URL: String(process.env['NEXT_PUBLIC_NEKOMI_NEXTJS_URL']),
+};
+
+const URL = {
+  /** @deprecated */
+  proxy: '/',
+
+  /** @deprecated */
+  fullkekw_account: '/',
+
+  /** @deprecated */
+  nekomiMedia: 'https://media.nekomi.club',
+
+  nekomiSite: env.NEXT_PUBLIC_NEKOMI_NEXTJS_URL,
+  nekomiApi: env.NEXT_PUBLIC_NEKOMI_API_URL,
+
+  telegram: 'https://t.me/nekomiclub',
+  telegramBot: env.NEXT_PUBLIC_TELEGRAM_BOT_URL,
+  discord: 'https://discord.gg/UmDfKTpsh5',
+  discordCreateTicket: 'https://discord.gg/ZXEHQjevEw',
+  tiktok: 'https://tiktok.com/@nekomiclub'
+};
+
+const vars = {
+  /** 
+   * Nekomi security cookie
+   * 
+   * @deprecated redutant
+   */
+  SessionCookie: 'SEC_31N',
+
+  CSRF_TOKEN_LIFETIME_MS: ms('1min'),
+};
+
+
+
+export const conf = {
+  domain: 'nekomi.club',
+  env,
+  URL,
+  vars
+};
+
+
+
+export default conf;
