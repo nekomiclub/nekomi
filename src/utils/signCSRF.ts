@@ -13,13 +13,11 @@ import { createStringID, getUTC } from '~/utils/utils';
 
 /** Sign CSRF token */
 export default async function signCSRF(): Promise<string> {
-  if (!conf.env.CSRF_SK) return 'no-sk';
-
   return jwt.sign({
     origin: conf.domain,
     hash: createStringID(32),
     expire: getUTC().timestamp + conf.vars.CSRF_TOKEN_LIFETIME_MS
-  }, conf.env.CSRF_SK.replace(/\\n/g, '\n'), {
+  }, conf.env.CSRF_SK.replace(/\\n/g, '\n').replace(/\n/g, '\n'), {
     algorithm: 'RS256'
   });
 }
