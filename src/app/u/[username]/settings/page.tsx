@@ -1,13 +1,8 @@
 import { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
-import StyledButton from '~/components/Styled/StyledButton';
-import { H2, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
-import { conf } from '~/conf';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { UserPageProps, UserSettingsPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
@@ -15,7 +10,7 @@ import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
 import CheckUserAccess from '~/utils/check-user-access';
 import siteMetadata from '~/utils/site-metadata';
 
-import { UserSettingsGroup } from './UserSettingsPage';
+import { UserSettingsContent } from './UserSettingsPage';
 
 
 
@@ -56,24 +51,7 @@ export default async function RSC({ params }: RSCProps<UserSettingsPageProps>) {
       <UserLayout type="user_settings" user={user} />
 
       <div className="wrapper pt-[24px] pb-[80px] gap-[24px]">
-        <H2 text={`Налаштування профілю`} size={32} bold />
-
-        <UserSettingsGroup title="Загальна інформація" description="Аватар, юзернейм ...">
-          <div className="w-full flex items-center">
-            <Link href={`${conf.URL.fullkekw_account}/me`} target="_blank">
-              <StyledButton as="div">
-                <MaterialSymbol icon="account_circle" size={20} className="text-white" />
-                <P text={`Редагувати акаунт Fullkekw`} />
-              </StyledButton>
-            </Link>
-          </div>
-        </UserSettingsGroup>
-
-        {/* <UserSettingsGroup title={`Під'єднання`}>
-          <div className="w-full flex flex-col gap-[8px]">
-            <UserSettingsLinkTelegram user={user} />
-          </div>
-        </UserSettingsGroup> */}
+        <UserSettingsContent user={user} />
       </div>
     </>;
   } catch (e) {

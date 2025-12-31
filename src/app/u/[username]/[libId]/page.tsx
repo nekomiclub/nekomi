@@ -56,7 +56,7 @@ export default async function RSC(props: RSCProps<UserLibPageProps>) {
 
   try {
     const { user: currentUser } = await CheckUserAccess({ session });
-    const { user, libs, catalog } = await API.getUserLib({ userId: username, libId: libId });
+    const { user, libs, catalog } = await API.getUserLib({ userId: username, libId: libId }, { sessionToken: session });
     const lib = libs.find(el => el.id === libId);
     if (!lib) return notFound();
 

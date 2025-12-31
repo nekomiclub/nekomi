@@ -1,5 +1,6 @@
 import z from 'zod';
 
+import conf from '~/conf';
 import { AnimeCardType } from '~/interfaces/IAnime';
 import { IUserLib, UserCardType } from '~/interfaces/IUser';
 import { IAPISearchPagination } from '~/services/api/APIDefinitions';
@@ -22,6 +23,13 @@ const ParamsSchema = z.object({
 
 
 
-export default async function _GetUserLib(params: z.infer<typeof ParamsSchema>): Promise<IResponse> {
-  return (await $api.get<IResponse>(`/user/${params.userId}/lib/${params.libId}`)).data;
+export default async function _GetUserLib(
+  params: z.infer<typeof ParamsSchema>,
+  props?: { sessionToken?: string }
+): Promise<IResponse> {
+  return (await $api.get<IResponse>(`/user/${params.userId}/lib/${params.libId}`, {
+    headers: {
+      Cookie: props?.sessionToken ? `${conf.vars.SessionCookie}=${props?.sessionToken}` : undefined
+    }
+  })).data;
 }
