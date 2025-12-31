@@ -12,20 +12,19 @@ import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportP
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
-import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
+import { NotifySuccess } from '~/components/UI/NotifyToast';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
 import { H3, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
-import { Dubber, DubberMember as DubberMemberIntf, DubberMemberRole } from '~/interfaces/DubberIntf';
+import { Dubber, DubberMemberRole } from '~/interfaces/DubberIntf';
 import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
-import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
+import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import APIOld from '~/services/ApiService.old';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
-import { DubberParseRoleName } from '~/utils/data-mappers';
-import { timestampToDayMonth, wordDeclination } from '~/utils/utils';
+import { getUTC, timestampToDayMonth } from '~/utils/utils';
 
 
 
@@ -50,10 +49,9 @@ interface IControlsProps {
 }
 
 interface IDubberMemberProps {
-  user: User
-  member: DubberMemberIntf
+  member: IDubberMemberCard
   currentUser: IUserState
-  dubber: Dubber
+  dubber: DubberFullType
 
   kickMember: (id: string, username: string) => void
 }
@@ -64,30 +62,29 @@ interface IMemberInviteResultProps extends IUserGetSearchResult {
 
 
 
-export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubber, members }) => {
+export const DubberSettingsContent: NextPage<{ dubber: DubberFullType, members: IDubberMemberCard[] }> = ({ dubber, members }) => {
   const currentUser = useAppSelector(state => state.user);
 
-  const [nameUkr, setNameUkr] = useState<IUIFieldState>({ initialValue: dubber.nameUkr });
-  const [nameEng, setNameEng] = useState<IUIFieldState>({ initialValue: dubber.nameEng });
-  const [description, setDescription] = useState<IUIFieldState>({ initialValue: dubber.description });
+  const [nameUkr, setNameUkr] = useState<IUIFieldState>({ initialValue: dubber.name });
+  const [description, setDescription] = useState<IUIFieldState>({ initialValue: dubber.about });
 
-  const [telegramLink, setTelegramLink] = useState<IUIFieldState>({ initialValue: dubber.socials.telegram });
-  const [instagramLink, setInstagramLink] = useState<IUIFieldState>({ initialValue: dubber.socials.instagram });
-  const [tiktokLink, setTiktokLink] = useState<IUIFieldState>({ initialValue: dubber.socials.tiktok });
-  const [youtubeLink, setYoutubeLink] = useState<IUIFieldState>({ initialValue: dubber.socials.youtube });
+  const [telegramLink, setTelegramLink] = useState<IUIFieldState>({ initialValue: dubber.socials.telegram ?? '' });
+  const [instagramLink, setInstagramLink] = useState<IUIFieldState>({ initialValue: dubber.socials.instagram ?? '' });
+  const [tiktokLink, setTiktokLink] = useState<IUIFieldState>({ initialValue: dubber.socials.tiktok ?? '' });
+  const [youtubeLink, setYoutubeLink] = useState<IUIFieldState>({ initialValue: dubber.socials.youtube ?? '' });
 
-  const [patreonLink, setPatreonLink] = useState<IUIFieldState>({ initialValue: dubber.support.patreon });
-  const [bmcLink, setBmcLink] = useState<IUIFieldState>({ initialValue: dubber.support.bymeacoffee });
-  const [monobankLink, setMonobankLink] = useState<IUIFieldState>({ initialValue: dubber.support.monobank });
-  const [diakaLink, setDiakaLink] = useState<IUIFieldState>({ initialValue: dubber.support.diaka });
+  const [patreonLink, setPatreonLink] = useState<IUIFieldState>({ initialValue: dubber.support.patreon ?? '' });
+  const [bmcLink, setBmcLink] = useState<IUIFieldState>({ initialValue: dubber.support.bymeacoffee ?? '' });
+  const [monobankLink, setMonobankLink] = useState<IUIFieldState>({ initialValue: dubber.support.monobank ?? '' });
+  const [diakaLink, setDiakaLink] = useState<IUIFieldState>({ initialValue: dubber.support.diaka ?? '' });
 
-  const [dubberMembers, setDubberMembers] = useState<DubberMemberIntf[]>(dubber.members);
+  const [dubberMembers, setDubberMembers] = useState<IDubberMemberCard[]>(members);
   const [isSomethingChanged, setIsSomethingChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   //! MUST INCLUDE ALL OF THE CHANGING STATES
-  const DubberParams = [nameUkr, nameEng, description, telegramLink, instagramLink, tiktokLink, youtubeLink, patreonLink, bmcLink, monobankLink, diakaLink];
-  const DubberParamsSetters = [setNameUkr, setNameEng, setDescription, setTelegramLink, setInstagramLink, setTiktokLink, setYoutubeLink, setPatreonLink, setBmcLink, setMonobankLink, setDiakaLink];
+  const DubberParams = [nameUkr, description, telegramLink, instagramLink, tiktokLink, youtubeLink, patreonLink, bmcLink, monobankLink, diakaLink];
+  const DubberParamsSetters = [setNameUkr, setDescription, setTelegramLink, setInstagramLink, setTiktokLink, setYoutubeLink, setPatreonLink, setBmcLink, setMonobankLink, setDiakaLink];
 
 
   // Handle isSomethingChanged
@@ -126,87 +123,87 @@ export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }
   }
 
   async function saveChanges() {
-    if (!isSomethingChanged) return NotifyWarn({ title: 'Нема що зберігати', message: 'Ніяких змін не сталося' });
+    // if (!isSomethingChanged) return NotifyWarn({ title: 'Нема що зберігати', message: 'Ніяких змін не сталося' });
 
-    try {
-      setIsSaving(true);
+    // try {
+    //   setIsSaving(true);
 
-      await APIOld.patchDubberSettings({
-        dubberId: dubber.id,
-        nameUkr: nameUkr.newValue,
-        nameEng: nameEng.newValue,
-        description: description.newValue,
-        socialLinks: {
-          telegram: telegramLink.newValue,
-          instagram: instagramLink.newValue,
-          tiktok: tiktokLink.newValue,
-          youtube: youtubeLink.newValue,
-        },
-        supportLinks: {
-          patreon: patreonLink.newValue,
-          bymeacoffee: bmcLink.newValue,
-          monobank: monobankLink.newValue,
-          diaka: diakaLink.newValue,
-        }
-      });
+    //   // await APIOld.patchDubberSettings({
+    //   //   dubberId: dubber.id,
+    //   //   nameUkr: nameUkr.newValue,
+    //   //   nameEng: nameEng.newValue,
+    //   //   description: description.newValue,
+    //   //   socialLinks: {
+    //   //     telegram: telegramLink.newValue,
+    //   //     instagram: instagramLink.newValue,
+    //   //     tiktok: tiktokLink.newValue,
+    //   //     youtube: youtubeLink.newValue,
+    //   //   },
+    //   //   supportLinks: {
+    //   //     patreon: patreonLink.newValue,
+    //   //     bymeacoffee: bmcLink.newValue,
+    //   //     monobank: monobankLink.newValue,
+    //   //     diaka: diakaLink.newValue,
+    //   //   }
+    //   // });
 
-      DubberParamsSetters.forEach(setter => {
-        setter(prev => {
-          if (prev.status === 'changes_pending' || prev.status === 'error') {
-            const instance = { ...prev };
-            instance.status = 'success';
+    //   DubberParamsSetters.forEach(setter => {
+    //     setter(prev => {
+    //       if (prev.status === 'changes_pending' || prev.status === 'error') {
+    //         const instance = { ...prev };
+    //         instance.status = 'success';
 
-            return instance;
-          } else return prev;
-        });
-      });
+    //         return instance;
+    //       } else return prev;
+    //     });
+    //   });
 
-      NotifySuccess({ title: 'Збережено!', message: 'Зміни збережені' });
+    //   NotifySuccess({ title: 'Збережено!', message: 'Зміни збережені' });
 
-      setTimeout(() => {
-        DubberParamsSetters.forEach(setter => {
-          setter(prev => {
-            if (prev.status === 'success') {
-              const instance = { ...prev };
-              instance.status = 'waiting';
+    //   setTimeout(() => {
+    //     DubberParamsSetters.forEach(setter => {
+    //       setter(prev => {
+    //         if (prev.status === 'success') {
+    //           const instance = { ...prev };
+    //           instance.status = 'waiting';
 
-              return instance;
-            } else return prev;
-          });
-        });
-      }, 3000);
-    } catch (e) {
-      HandleClientError(e);
+    //           return instance;
+    //         } else return prev;
+    //       });
+    //     });
+    //   }, 3000);
+    // } catch (e) {
+    //   HandleClientError(e);
 
-      DubberParamsSetters.forEach(setter => {
-        setter(prev => {
-          if (prev.status === 'changes_pending') {
-            const instance = { ...prev };
-            instance.status = 'error';
+    //   DubberParamsSetters.forEach(setter => {
+    //     setter(prev => {
+    //       if (prev.status === 'changes_pending') {
+    //         const instance = { ...prev };
+    //         instance.status = 'error';
 
-            return instance;
-          } else return prev;
-        });
-      });
-    } finally {
-      setIsSaving(false);
-    }
+    //         return instance;
+    //       } else return prev;
+    //     });
+    //   });
+    // } finally {
+    //   setIsSaving(false);
+    // }
   }
 
   async function kickMember(id: string, username: string) {
-    try {
-      if (!confirm(`Ви дійсно хочете видалити ${username}?`)) return;
+    // try {
+    //   if (!confirm(`Ви дійсно хочете видалити ${username}?`)) return;
 
-      await APIOld.dubberKickMember({
-        dubberId: dubber.id,
-        userId: id
-      });
+    //   await APIOld.dubberKickMember({
+    //     dubberId: dubber.id,
+    //     userId: id
+    //   });
 
-      setDubberMembers(prev => prev.filter(el => el.id !== id));
-      NotifySuccess({ title: 'Учасник видалений', message: 'Ми видалили цього користувача з команди' });
-    } catch (e) {
-      HandleClientError(e);
-    }
+    //   setDubberMembers(prev => prev.filter(el => el.id !== id));
+    //   NotifySuccess({ title: 'Учасник видалений', message: 'Ми видалили цього користувача з команди' });
+    // } catch (e) {
+    //   HandleClientError(e);
+    // }
   }
 
 
@@ -224,11 +221,6 @@ export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }
           <div className="flex flex-col gap-[4px] w-full">
             <p className="text-grey-new font-manrope"><span className="text-info-error font-bold">*</span> Українська назва</p>
             <UIField fieldType="input" state={nameUkr} stateSetter={setNameUkr} symbolsLimited={32} required />
-          </div>
-
-          <div className="flex flex-col gap-[4px] w-full">
-            <p className="text-grey-new font-manrope"><span className="text-info-error font-bold">*</span> Англійська назва</p>
-            <UIField fieldType="input" state={nameEng} stateSetter={setNameEng} symbolsLimited={32} className="font-space-grotesk" required />
           </div>
         </div>
 
@@ -257,21 +249,21 @@ export const DubberSettingsContent: NextPage<{ dubber: Dubber, members: User[] }
       </div>
     </SettingsGroup>
 
-    <SettingsGroup title={`Команда (${dubberMembers.length} ${wordDeclination(dubberMembers.length, ['учасник', 'учасника', 'учасників'])})`} description="Керування складом команди">
+    {/* <SettingsGroup title={`Команда (${dubberMembers.length} ${wordDeclination(dubberMembers.length, ['учасник', 'учасника', 'учасників'])})`} description="Керування складом команди">
       <InviteMembers dubber={dubber} />
-    </SettingsGroup>
+    </SettingsGroup> */}
 
     <div className={cn('grid gap-[8px] max-lg:grid-cols-1', dubberMembers.length === 1 ? 'grid-cols-1' : 'grid-cols-2')}>
       {dubberMembers.filter(el => el.role === 'leader').map(member => {
-        return <DubberMember member={member} user={members.find(el => el.id === member.id)!} currentUser={currentUser} dubber={dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
+        return <DubberMember member={member} currentUser={currentUser} dubber={dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
       })}
 
       {dubberMembers.filter(el => el.role === 'editor').map(member => {
-        return <DubberMember member={member} user={members.find(el => el.id === member.id)!} currentUser={currentUser} dubber={dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
+        return <DubberMember member={member} currentUser={currentUser} dubber={dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
       })}
 
       {dubberMembers.filter(el => el.role === 'member').map(member => {
-        return <DubberMember member={member} user={members.find(el => el.id === member.id)!} currentUser={currentUser} dubber={dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
+        return <DubberMember member={member} currentUser={currentUser} dubber={dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
       })}
     </div>
 
@@ -443,22 +435,22 @@ function InviteMemberResult({ user, invitationStatus, dubber }: IMemberInviteRes
 
 
   async function inviteMember() {
-    if (invitationStatus !== 'can_be_invited' || isInvited) return NotifyWarn({ title: 'Неможливо запросити', message: 'Користувача неможливо запросити в команду' });
+    // if (invitationStatus !== 'can_be_invited' || isInvited) return NotifyWarn({ title: 'Неможливо запросити', message: 'Користувача неможливо запросити в команду' });
 
-    try {
-      setIsInvited(true);
+    // try {
+    //   setIsInvited(true);
 
-      await APIOld.dubberSendInvite({
-        dubberId: dubber.id,
-        userId: user.id
-      });
+    //   await APIOld.dubberSendInvite({
+    //     dubberId: dubber.id,
+    //     userId: user.id
+    //   });
 
-      NotifySuccess({ title: 'Запрошення надіслано', message: `Ми надіслали @${user.username} запрошення в команду, тепер залишилося почекати на його розгляд` });
-      setIsInvited(true);
-    } catch (e) {
-      setIsInvited(false);
-      HandleClientError(e);
-    }
+    //   NotifySuccess({ title: 'Запрошення надіслано', message: `Ми надіслали @${user.username} запрошення в команду, тепер залишилося почекати на його розгляд` });
+    //   setIsInvited(true);
+    // } catch (e) {
+    //   setIsInvited(false);
+    //   HandleClientError(e);
+    // }
   }
 
 
@@ -488,9 +480,9 @@ function InviteMemberResult({ user, invitationStatus, dubber }: IMemberInviteRes
   </button>;
 }
 
-function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubberMemberProps) {
+function DubberMember({ member, currentUser, dubber, kickMember }: IDubberMemberProps) {
   const canKick = currentUser.capabilities.includes('root') || currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('dubberEditEditors');
-  const canRedactRole = canKick && currentUser.id !== user.id || (currentUser.capabilities.includes('root') || currentUser.capabilities.includes('admin'));
+  const canRedactRole = canKick && currentUser.id !== member.id || (currentUser.capabilities.includes('root') || currentUser.capabilities.includes('admin'));
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [memberRole, setMemberRole] = useState(member.role);
@@ -498,40 +490,40 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
 
 
   async function changeRole(to: DubberMemberRole) {
-    try {
-      await APIOld.dubberEditMember({
-        dubberId: dubber.id,
-        userId: user.id,
-        role: to
-      });
+    // try {
+    //   await APIOld.dubberEditMember({
+    //     dubberId: dubber.id,
+    //     userId: member.id,
+    //     role: to
+    //   });
 
-      setMemberRole(to);
-      NotifySuccess({ title: 'Роль змінена', message: `Роль @${user.username} змінена з ${DubberParseRoleName(member.role)} > ${DubberParseRoleName(to)}` });
-    } catch (e) {
-      HandleClientError(e);
-    }
+    //   setMemberRole(to);
+    //   NotifySuccess({ title: 'Роль змінена', message: `Роль @${user.username} змінена з ${DubberParseRoleName(member.role)} > ${DubberParseRoleName(to)}` });
+    // } catch (e) {
+    //   HandleClientError(e);
+    // }
   }
 
 
 
   return <div className="w-full rounded-[2px] border border-dark-medium flex justify-between gap-[16px] items-center p-[8px] max-md:items-start">
     <div className="w-full">
-      <Link href={Routes.user.path({ username: user.username })} className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]" prefetch={false}>
-        <StyledImage src={user.avatar} width="48px" height="48px" className="rounded-[4px] overflow-hidden" />
+      <Link href={Routes.user.path({ username: member.username })} className="flex items-center gap-[24px] w-fit max-md:flex-col max-md:items-start max-md:gap-[8px]" prefetch={false}>
+        <StyledImage src={member.avatar} width="48px" height="48px" className="rounded-[4px] overflow-hidden" />
 
         <div className="flex flex-col gap-[4px]">
-          <p className="text-white font-space-grotesk">@{user.username}</p>
+          <p className="text-white font-space-grotesk">@{member.username}</p>
 
           <div className="flex items-center gap-[8px]">
             <MaterialSymbol icon="calendar_add_on" size={16} color="#555" />
-            <p className="text-grey-new text-[12px] font-manrope">Учасник з: {timestampToDayMonth(member.memberSince)}</p>
+            <p className="text-grey-new text-[12px] font-manrope">Учасник з: {timestampToDayMonth(getUTC(member.member_since).timestamp)}</p>
           </div>
         </div>
       </Link>
     </div>
 
-    <Menu stateSetter={setIsMenuOpen} settings={{ align: 'end' }} id={`dubber-settings-memberSettings--${user.id}`}>
-      <MenuTrigger anchor className="flex items-center gap-[16px] p-[8px]" disabled={!canRedactRole}>
+    <Menu stateSetter={setIsMenuOpen} settings={{ align: 'end' }} id={`dubber-settings-memberSettings--${member.id}`}>
+      {/* <MenuTrigger anchor className="flex items-center gap-[16px] p-[8px]" disabled={!canRedactRole}>
         <div className="flex items-center gap-[8px]">
           {memberRole === 'leader' && <MaterialSymbol icon="star" size={16} color="#fff" />}
           {memberRole === 'editor' && <MaterialSymbol icon="edit" size={16} color="#fff" />}
@@ -541,7 +533,7 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
         </div>
 
         {canRedactRole && <MaterialSymbol icon="arrow_drop_down" size={16} color="#fff" className={cn(`duration-200`, isMenuOpen && 'rotate-180')} />}
-      </MenuTrigger>
+      </MenuTrigger> */}
 
       <MenuWrapper className="flex flex-col w-[160px] bg-dark-bright border border-dark-light rounded-[2px]">
         <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('leader')}>
@@ -561,10 +553,10 @@ function DubberMember({ member, user, currentUser, dubber, kickMember }: IDubber
       </MenuWrapper>
     </Menu>
 
-    {canKick && <Tooltip content="Видалити учасника">
+    {/* {canKick && <Tooltip content="Видалити учасника">
       <button className="p-[8px] flex justify-center items-center rounded-[2px] duration-200 hover:bg-info-error focus-visible:bg-info-error" onClick={() => kickMember(user.id, user.username)}>
         <MaterialSymbol icon="person_remove" size={24} color="#fff" />
       </button>
-    </Tooltip>}
+    </Tooltip>} */}
   </div>;
 }

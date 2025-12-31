@@ -4,10 +4,9 @@ import { notFound, redirect } from 'next/navigation';
 import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';
 import { conf } from '~/conf';
-import { Dubber } from '~/interfaces/DubberIntf';
 import { RSCProps } from '~/interfaces/types';
-import { User } from '~/interfaces/UserIntf';
-import APIOld from '~/services/ApiService.old';
+import API from '~/services/api/API';
+import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import CheckUserAccess from '~/utils/check-user-access';
 import siteMetadata from '~/utils/site-metadata';
 
@@ -25,28 +24,23 @@ export default async function RSC({ params }: RSCProps) {
   const { user, capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SessionCookie)?.value, capabilities: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
   if (!user) return notFound();
 
-  let dubber: Dubber | undefined = undefined;
-  let members: User[] | undefined = undefined;
+  let dubber: DubberFullType | undefined;
+  let members: IDubberMemberCard[] | undefined;
 
 
 
   try {
-    const data = await APIOld.getDubberByQuery({
-      query: slug,
-      detailed: true,
-      parseMembers: true,
-      useCache: false
-    });
+    const data = await API.getDubber({ query: slug }, { view: 'full', get_members: true });
 
-    dubber = data.dubber!;
-    members = data.parsedMembers!;
+    dubber = data.dubber;
+    members = data.dubber.members ?? [];
   } catch (e) {
     return HandleServerError(e);
   }
 
   // Skip checks if user is root or admin
   if (!capabilities?.includes('root') && !capabilities?.includes('admin')) {
-    const member = dubber.members.find(el => el.id === user.id);
+    const member = members.find(el => el.id === user.id);
     // Redir if user is not a member or not a team leader
     if (!member || member.role !== 'leader') return redirect(conf.URL.nekomiSite);
   }

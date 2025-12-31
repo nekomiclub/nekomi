@@ -182,37 +182,16 @@ export function wordDeclination(number: number, words_arr: string[]) {
 
 
 
-/** Get UTC date
- * @param timestamp Timestamp to start from. Default - now
+/** 
+ * Get UTC date
+ * 
+ * @param ts ISO/UTC string, timestamp or Date
  */
-export function getUTC(timestamp?: number | null): {
-  year: number;
-  /** January is first month, december is 12 */
-  month: number;
-  date: number;
-  weekDay: number;
-  hrs: number;
-  mins: number;
-  secs: number;
-  ms: number;
-  timestamp: number;
-  /** Time
-   * @returns 'hh:mm'
-   */
-  time: string;
-  /** Accurate time
-   * @returns 'hh:mm:ss.mss'
-   */
-  timeAccurate: string;
-  /** European fulldate
-   * @returns 'dd.mm.yyyy'
-   */
-  fulldate: string;
-} {
-  const now = timestamp ? new Date(timestamp) : new Date();
+export function getUTC(ts?: string | number | Date) {
+  const now = new Date(ts ?? new Date());
 
   const year = now.getUTCFullYear();
-  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const month = String(now.getUTCMonth()).padStart(2, '0');
   const date = String(now.getUTCDate()).padStart(2, '0');
   const weekDay = now.getUTCDay();
   const hrs = String(now.getUTCHours()).padStart(2, '0');
@@ -231,8 +210,12 @@ export function getUTC(timestamp?: number | null): {
     ms: +ms,
     timestamp: now.getTime(),
     fulldate: `${date}.${month}.${year}`,
-    time: `${hrs}:${mins}`,
-    timeAccurate: `${hrs}:${mins}:${secs}.${ms}`,
+    time: `${hrs}:${mins}:${secs}`,
+
+    /** Stringified values (with pads) */
+    str: { month, hrs, mins, secs, ms },
+
+    ISO: now.toISOString(),
   };
 }
 

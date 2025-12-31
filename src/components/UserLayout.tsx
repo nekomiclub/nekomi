@@ -7,9 +7,10 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { conf } from '~/conf';
 import { useAppSelector } from '~/hooks/redux';
-import { Dubber } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
+import API from '~/services/api/API';
+import { DubberFullType } from '~/services/api/dubber/GetDubber.api';
 import APIOld from '~/services/ApiService.old';
 import cn from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
@@ -28,7 +29,7 @@ interface IProps {
   type: 'user_profile' | 'user_settings' | 'user_lib' | 'dubber_profile' | 'dubber_settings'
 
   user?: User
-  dubber?: Dubber
+  dubber?: DubberFullType
 }
 
 interface IUserBannerProps {
@@ -64,7 +65,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const isDubber = Boolean(dubber);
 
   const avatarUrl = user?.avatar ?? dubber?.avatar ?? '';
-  const bannerUrl = user?.banner ?? dubber?.banner ?? '';
+  const bannerUrl = user?.banner ?? dubber?.cover ?? '';
   const entityId = user?.id ?? dubber?.id ?? '';
   const entityType = user ? 'user' : dubber ? 'dubber' : 'user';
   const isEdit = type === 'dubber_settings' || type === 'user_settings';
@@ -73,7 +74,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const settingsUrl = user ? Routes.userSettings.path({ username: user.username }) : dubber ? Routes.dubberSettings.path({ slug: dubber.slug }) : '#';
 
   const canEditUser = currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('root') || user?.id === currentUser.id;
-  const canEditDubber = currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('root') || dubber?.members.find(el => el.id === currentUser.id)?.role === 'leader';
+  const canEditDubber = currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('root'); /* || dubber?.members.find(el => el.id === currentUser.id)?.role === 'leader'; */
   const showSettings = isUser ? canEditUser : isDubber ? canEditDubber : false;
 
 
@@ -89,6 +90,8 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
     }, 3000);
   }
 
+  console.log(dubber);
+
 
 
 
@@ -103,7 +106,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
       <div className="w-full flex items-center justify-between gap-[24px] pb-[24px] max-lg:pb-[4px] max-lg:pt-[12px] max-md:p-0">
         <div className="flex flex-col gap-[8px] max-lg:gap-[4px]">
-          <H1 text={user?.username ?? dubber?.nameUkr} size={32} className={cn(`text-white font-bold break-all`, isUser && 'font-space-grotesk', isDubber && 'font-manrope')} />
+          <H1 text={user?.username ?? dubber?.name} size={32} className={cn(`text-white font-bold break-all`, isUser && 'font-space-grotesk', isDubber && 'font-manrope')} />
           {isDubber && <H2 text={`@${dubber?.slug}`} size={20} className="text-grey-new font-space-grotesk line-clamp-1 text-ellipsis break-all" />}
         </div>
 
@@ -208,7 +211,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
       if (entityType === 'user') {
         return NotifyWarn({ title: 'Аватар не завантажено', message: 'Ви можете оновити аватар тільки в акаунті Fullkekw' });
       } else if (entityType === 'dubber') {
-        const res = await APIOld.putDubberAvatar({ dubberId: entityId, file });
+        const res = await API.putDubberAvatar({ id: entityId }, file);
         url = res.url;
       } else {
         return console.error(`[dev]: Entity type cannot be handled (${entityType})`);
@@ -317,7 +320,7 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
         const res = await APIOld.userUploadBanner(file);
         url = res.bannerUrl;
       } else if (entityType === 'dubber') {
-        const res = await APIOld.putDubberBanner({ dubberId: entityId, file });
+        const res = await API.putDubberCover({ id: entityId }, file);
         url = res.url;
       } else {
         return console.error(`[dev]: Entity type cannot be handled (${entityType})`);

@@ -1,191 +1,191 @@
-import Anime from '~/interfaces/AnimeIntf';
-import { NumEpisodeQualityType } from '~/interfaces/types';
-import APIOld from '~/services/ApiService.old';
+// import Anime from '~/interfaces/AnimeIntf';
+// import { NumEpisodeQualityType } from '~/interfaces/types';
+// import APIOld from '~/services/ApiService.old';
 
-import { PatcherEpisode, PatcherEpisodeStatusType } from './PatcherTypes';
-
-
-
-interface PatchEpisodeProps {
-  id: string
-  status?: PatcherEpisodeStatusType
-  stackOrder?: number
-  progress?: number
-  sourceURL?: string
-}
-
-interface PatcherStackProps {
-  session: string,
-  anime: Anime,
-  episodes: PatcherEpisode[],
-
-  patchEpisode: (episode: PatcherEpisode) => void,
-  throwError: (e: any) => void,
-}
+// import { PatcherEpisode, PatcherEpisodeStatusType } from './PatcherTypes';
 
 
 
-export default class PatcherStack {
-  /** Episodes IDs to upload */
-  private uploadStack: string[] = [];
+// interface PatchEpisodeProps {
+//   id: string
+//   status?: PatcherEpisodeStatusType
+//   stackOrder?: number
+//   progress?: number
+//   sourceURL?: string
+// }
 
-  /** Contains current processing episode ID */
-  private busy: string | null = null;
+// interface PatcherStackProps {
+//   session: string,
+//   anime: Anime,
+//   episodes: PatcherEpisode[],
 
-  private session: string;
-  private anime: Anime;
-  private episodes: PatcherEpisode[];
-  private patchEpisode: (episode: PatcherEpisode) => void;
-  private throwError: (e: any, id?: string) => void;
-
-  constructor({ anime, episodes, patchEpisode, session, throwError }: PatcherStackProps) {
-    this.session = session;
-    this.anime = anime;
-    this.episodes = episodes;
-    this.patchEpisode = patchEpisode;
-    this.throwError = throwError;
-  }
+//   patchEpisode: (episode: PatcherEpisode) => void,
+//   throwError: (e: any) => void,
+// }
 
 
 
-  /** Append item to stack */
-  append(episode: PatcherEpisode) {
-    this.episodes.push(episode);
-    this.uploadStack.push(episode.id);
+// export default class PatcherStack {
+//   /** Episodes IDs to upload */
+//   private uploadStack: string[] = [];
 
-    const uploadOrder = this.uploadStack.findIndex(el => el === episode.id);
+//   /** Contains current processing episode ID */
+//   private busy: string | null = null;
 
-    this.patch({
-      id: episode.id,
-      status: 'pending',
-      progress: 0,
-      stackOrder: uploadOrder
-    });
+//   private session: string;
+//   private anime: Anime;
+//   private episodes: PatcherEpisode[];
+//   private patchEpisode: (episode: PatcherEpisode) => void;
+//   private throwError: (e: any, id?: string) => void;
 
-    console.debug(`[PatcherStack]: Episode appended. [id: ${episode.id}; dubber: ${episode.episode.dubberID}; order: ${episode.episode.order}]`);
+//   constructor({ anime, episodes, patchEpisode, session, throwError }: PatcherStackProps) {
+//     this.session = session;
+//     this.anime = anime;
+//     this.episodes = episodes;
+//     this.patchEpisode = patchEpisode;
+//     this.throwError = throwError;
+//   }
 
-    this.upload();
-  }
 
-  /** Remove item from stack */
-  remove(id: string) {
-    this.uploadStack = this.uploadStack.filter(el => el !== id);
-    this.episodes = this.episodes.filter(el => el.id !== id);
-    this.upload();
-  }
 
-  /** Patch episode props */
-  private patch({ id, progress, sourceURL, status }: PatchEpisodeProps) {
-    const episode = this.episodes.find(el => el.id === id);
-    if (!episode) return;
+//   /** Append item to stack */
+//   append(episode: PatcherEpisode) {
+//     this.episodes.push(episode);
+//     this.uploadStack.push(episode.id);
 
-    if (progress) episode.progress = +progress.toFixed(2);
-    if (status) episode.status = status;
-    if (sourceURL) episode.episode.qualities.q1080 = sourceURL;
+//     const uploadOrder = this.uploadStack.findIndex(el => el === episode.id);
 
-    // Update orders
-    this.episodes.forEach(stackEl => {
-      stackEl.stackOrder = this.uploadStack.findIndex(el => el === stackEl.id);
-      this.patchEpisode(stackEl);
-    });
+//     this.patch({
+//       id: episode.id,
+//       status: 'pending',
+//       progress: 0,
+//       stackOrder: uploadOrder
+//     });
 
-    this.patchEpisode(episode);
-  }
+//     console.debug(`[PatcherStack]: Episode appended. [id: ${episode.id}; dubber: ${episode.episode.dubberID}; order: ${episode.episode.order}]`);
 
-  /** Upload episode */
-  private async upload() {
-    if (this.busy) return;
+//     this.upload();
+//   }
 
-    const episode = this.episodes.find(el => el.id === this.uploadStack[0]);
-    if (!episode) return;
+//   /** Remove item from stack */
+//   remove(id: string) {
+//     this.uploadStack = this.uploadStack.filter(el => el !== id);
+//     this.episodes = this.episodes.filter(el => el.id !== id);
+//     this.upload();
+//   }
 
-    this.busy = episode.id;
+//   /** Patch episode props */
+//   private patch({ id, progress, sourceURL, status }: PatchEpisodeProps) {
+//     const episode = this.episodes.find(el => el.id === id);
+//     if (!episode) return;
 
-    console.debug(`[PatcherStack]: Start uploading episode. [id: ${episode.id}; dubber: ${episode.episode.dubberID}; order: ${episode.episode.order}]`);
+//     if (progress) episode.progress = +progress.toFixed(2);
+//     if (status) episode.status = status;
+//     if (sourceURL) episode.episode.qualities.q1080 = sourceURL;
 
-    this.patch({
-      id: episode.id,
-      status: 'uploading',
-      progress: 0
-    });
+//     // Update orders
+//     this.episodes.forEach(stackEl => {
+//       stackEl.stackOrder = this.uploadStack.findIndex(el => el === stackEl.id);
+//       this.patchEpisode(stackEl);
+//     });
 
-    let sourceURL = '';
-    let progress = 0;
-    let interval;
+//     this.patchEpisode(episode);
+//   }
 
-    try {
-      //* TESTING
-      // await new Promise((res) => {
-      //   setTimeout(() => {
-      //     this.patch({
-      //       id: episode.id,
-      //       progress: 20
-      //     })
-      //   }, 500);
+//   /** Upload episode */
+//   private async upload() {
+//     if (this.busy) return;
 
-      //   setTimeout(() => {
-      //     this.patch({
-      //       id: episode.id,
-      //       progress: 48
-      //     })
-      //   }, 1500);
+//     const episode = this.episodes.find(el => el.id === this.uploadStack[0]);
+//     if (!episode) return;
 
-      //   setTimeout(() => {
-      //     this.patch({
-      //       id: episode.id,
-      //       progress: 95
-      //     })
-      //   }, 3200);
+//     this.busy = episode.id;
 
-      //   setTimeout(() => {
-      //     this.patch({
-      //       id: episode.id,
-      //       progress: 100
-      //     })
+//     console.debug(`[PatcherStack]: Start uploading episode. [id: ${episode.id}; dubber: ${episode.episode.dubberID}; order: ${episode.episode.order}]`);
 
-      //     res(1)
-      //   }, 4000);
-      // })
+//     this.patch({
+//       id: episode.id,
+//       status: 'uploading',
+//       progress: 0
+//     });
 
-      const qualities: NumEpisodeQualityType[] = [1080, 480];
-      if (episode.q2160) qualities.push(2160);
+//     let sourceURL = '';
+//     let progress = 0;
+//     let interval;
 
-      // Patch progress
-      interval = setInterval(() => {
-        this.patch({ id: episode.id, progress });
-      }, 500);
+//     try {
+//       //* TESTING
+//       // await new Promise((res) => {
+//       //   setTimeout(() => {
+//       //     this.patch({
+//       //       id: episode.id,
+//       //       progress: 20
+//       //     })
+//       //   }, 500);
 
-      const { episode: upload } = await APIOld.postAnimeEpisode({
-        dubberId: episode.episode.dubberID,
-        file: episode.File!,
-        order: episode.episode.order,
-        qualities,
-        uuid: this.anime.uuid
-      }, {
-        session: this.session,
-        onUploadProgress: (e) => {
-          const perc = e.progress ?? 0;
+//       //   setTimeout(() => {
+//       //     this.patch({
+//       //       id: episode.id,
+//       //       progress: 48
+//       //     })
+//       //   }, 1500);
 
-          progress = +(perc * 100).toFixed(2);
-        }
-      });
+//       //   setTimeout(() => {
+//       //     this.patch({
+//       //       id: episode.id,
+//       //       progress: 95
+//       //     })
+//       //   }, 3200);
 
-      clearInterval(interval);
-      sourceURL = upload.qualities.q1080;
+//       //   setTimeout(() => {
+//       //     this.patch({
+//       //       id: episode.id,
+//       //       progress: 100
+//       //     })
 
-      this.patch({
-        id: episode.id,
-        status: 'uploaded',
-        sourceURL,
-      });
-    } catch (e) {
-      this.throwError(e, episode.id);
-    }
+//       //     res(1)
+//       //   }, 4000);
+//       // })
 
-    console.debug(`[PatcherStack]: Episode uploaded. [id: ${episode.id}]`);
+//       const qualities: NumEpisodeQualityType[] = [1080, 480];
+//       if (episode.q2160) qualities.push(2160);
 
-    this.remove(episode.id);
-    this.busy = null;
-    this.upload();
-  }
-}
+//       // Patch progress
+//       interval = setInterval(() => {
+//         this.patch({ id: episode.id, progress });
+//       }, 500);
+
+//       const { episode: upload } = await APIOld.postAnimeEpisode({
+//         dubberId: episode.episode.dubberID,
+//         file: episode.File!,
+//         order: episode.episode.order,
+//         qualities,
+//         uuid: this.anime.uuid
+//       }, {
+//         session: this.session,
+//         onUploadProgress: (e) => {
+//           const perc = e.progress ?? 0;
+
+//           progress = +(perc * 100).toFixed(2);
+//         }
+//       });
+
+//       clearInterval(interval);
+//       sourceURL = upload.qualities.q1080;
+
+//       this.patch({
+//         id: episode.id,
+//         status: 'uploaded',
+//         sourceURL,
+//       });
+//     } catch (e) {
+//       this.throwError(e, episode.id);
+//     }
+
+//     console.debug(`[PatcherStack]: Episode uploaded. [id: ${episode.id}]`);
+
+//     this.remove(episode.id);
+//     this.busy = null;
+//     this.upload();
+//   }
+// }

@@ -1,4 +1,5 @@
-import { Dubber, DubberCompact , DubberMemberRole } from '~/interfaces/DubberIntf';
+import { Dubber, DubberCompact } from '~/interfaces/DubberIntf';
+import { DubberRoleType } from '~/interfaces/IDubber';
 
 
 
@@ -13,7 +14,7 @@ export function DubberCompactMapper(dubber: Dubber): DubberCompact {
   };
 }
 
-export function DubberParseRoleName(role: DubberMemberRole) {
+export function DubberParseRoleName(role: DubberRoleType) {
   switch (role) {
     case 'leader': return 'Лідер';
     case 'editor': return 'Редактор';

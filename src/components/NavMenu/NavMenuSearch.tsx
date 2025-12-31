@@ -14,11 +14,11 @@ import { useDebounce } from 'use-debounce';
 
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
-import { Dubber } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import { AnimeSearchResultType } from '~/services/api/anime/GetAnimeSearch.api';
 import API from '~/services/api/API';
+import { DubberSearchResultType } from '~/services/api/dubber/GetDubberSearch.api';
 import APIOld from '~/services/ApiService.old';
 import { cn } from '~/utils/classnames';
 import { randomNumber } from '~/utils/utils';
@@ -38,7 +38,7 @@ interface MenuSearchSelectTypeButtonProps {
   className?: string
 }
 
-type MenuSearchResultType = Dubber | AnimeSearchResultType | User | null
+type MenuSearchResultType = DubberSearchResultType | AnimeSearchResultType | User | null
 
 interface MenuSearchResultProps {
   item: MenuSearchResultType
@@ -165,7 +165,7 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
       }
 
       if (searchType === 'dubber') {
-        const { results } = await APIOld.searchDubber({ q: searchText });
+        const { results } = await API.getDubberSearch({ q: searchText });
 
         setSearchResults(results);
       }
@@ -268,14 +268,14 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
 
   const [animeResult, setAnimeResult] = useState<AnimeSearchResultType | null>(null);
   const [userResult, setUserResult] = useState<User | null>(null);
-  const [dubberResult, setDubberResult] = useState<Dubber | null>(null);
+  const [dubberResult, setDubberResult] = useState<DubberSearchResultType | null>(null);
 
 
 
   useEffect(() => {
     setAnimeResult(type === 'anime' ? item as AnimeSearchResultType : null);
     setUserResult(type === 'user' ? item as User : null);
-    setDubberResult(type === 'dubber' ? item as Dubber : null);
+    setDubberResult(type === 'dubber' ? item as DubberSearchResultType : null);
   }, [item]);
 
 
@@ -358,8 +358,8 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
       <StyledImage src={dubberResult.avatar} width="128px" height="128px" />
 
       <div className="menu-search-result_content">
-        <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-1" title={dubberResult.nameUkr}>{dubberResult.nameUkr}</h4>
-        {dubberResult.description && <p className="text-grey-new font-manrope line-clamp-2" title={dubberResult.description}>{dubberResult.description}</p>}
+        <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-1" title={dubberResult.name}>{dubberResult.name}</h4>
+        {dubberResult.about && <p className="text-grey-new font-manrope line-clamp-2" title={dubberResult.about}>{dubberResult.about}</p>}
       </div>
     </Link>}
   </>;

@@ -29,7 +29,7 @@ export function HandleClientError(e: unknown) {
 }
 
 export async function HandleServerError(e: unknown): Promise<ReactElement> {
-  const date = `${getUTC().fulldate} ${getUTC().timeAccurate}`;
+  const date = getUTC().ISO;
 
   // Handle notFound nextjs directive
   if ('digest' in (e as any) && (e as any)?.digest === 'NEXT_NOT_FOUND') return notFound();
