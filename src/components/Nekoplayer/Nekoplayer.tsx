@@ -15,7 +15,7 @@ import { useAppSelector } from '~/hooks/redux';
 import Anime, { AnimeEpisode } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { EpisodeQualityType, LocalStorageKeys } from '~/interfaces/types';
-import APIOld from '~/services/ApiService.old';
+import API from '~/services/api/API';
 import { cn } from '~/utils/classnames';
 import { $api } from '~/utils/http';
 import { GetNekoplayerData, GetNekoplayerPreferences } from '~/utils/nekoplayer-utils';
@@ -655,13 +655,13 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
   function getCurrentProgressRecord(props?: { localOnly?: boolean }): NekoplayerLocalstorageRecord | null {
     // Get progress from user watch progress
     if (user.id && !props?.localOnly) {
-      const record = user.watchProgress.find(el => el.titleID === anime.uuid);
+      const record = user.view_progress.find(el => el.anime_id === anime.uuid);
 
       // Procced if title saved, otherwise procced by default
       if (record) return {
-        dub: record.dubberID,
-        ep: record.episodeOrder,
-        id: record.titleID,
+        dub: record.dubber_id,
+        ep: record.episode,
+        id: record.anime_id,
         moment: record.progress
       };
     }
@@ -690,7 +690,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     const record = getCurrentProgressRecord();
 
     try {
-      await APIOld.patchUser({ removeWatchProgress: { animeId: anime.uuid } });
+      await API.patchUser({}, { remove_view_progress: { anime_id: anime.uuid } });
     } catch (e) {
       HandleClientError(e);
     }

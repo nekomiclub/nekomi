@@ -1,7 +1,7 @@
 import { DevelopmentMode } from '~/conf';
-import { RoleCapability } from '~/interfaces/RoleIntf';
-import { User } from '~/interfaces/UserIntf';
-import APIOld from '~/services/ApiService.old';
+import { ROLE_PERMISSION } from '~/interfaces/IRole';
+import API from '~/services/api/API';
+import { UserFullType } from '~/services/api/user/GetUser.api';
 
 
 
@@ -9,7 +9,7 @@ interface CheckUserAccessProps {
   session?: string
 
   /** @default [] */
-  capabilities?: RoleCapability[]
+  permissions?: ROLE_PERMISSION[]
 
   /** @default "AND" */
   checkMode?: 'AND' | 'OR'
@@ -18,32 +18,31 @@ interface CheckUserAccessProps {
 
 
 /** Fetch user & check it's access, if user pass it's object will return */
-export default async function CheckUserAccess({ capabilities, checkMode, session }: CheckUserAccessProps): Promise<{ user?: User, capabilities?: RoleCapability[] }> {
+export default async function CheckUserAccess({ permissions, checkMode, session }: CheckUserAccessProps): Promise<{ user?: UserFullType, permissions?: ROLE_PERMISSION[] }> {
   if (!session) return {};
 
-  capabilities = capabilities ?? [];
+  permissions = permissions ?? [];
   checkMode = checkMode ?? 'AND';
 
   try {
-    const { user, capabilities } = await APIOld.getUser({ query: '*', parseCapabilities: true }, {
-      session
-    });
+    const { user } = await API.getUser({}, { view: 'full', get_permissions: true }, { sessionToken: session });
+    const permissions = user.permissions ?? [];
 
     // Pass root
-    if (capabilities?.includes('root')) return { user, capabilities };
+    if (permissions?.includes(ROLE_PERMISSION.ABSOLUTE)) return { user, permissions };
     // Pass if no capabilities required
-    if (!capabilities?.length) return { user, capabilities };
+    if (!permissions?.length) return { user, permissions };
 
-    const passCaps: RoleCapability[] = [];
+    const passPerms: ROLE_PERMISSION[] = [];
 
-    capabilities.forEach(cap => {
-      if (capabilities?.includes(cap)) passCaps.push(cap);
+    permissions.forEach(cap => {
+      if (permissions?.includes(cap)) passPerms.push(cap);
     });
 
     // Pass if each of required capability present
-    if (checkMode === 'AND' && passCaps.length === capabilities.length) return { user, capabilities };
+    if (checkMode === 'AND' && passPerms.length === permissions.length) return { user, permissions };
     // Pass if at least one required capability present
-    if (checkMode === 'OR' && passCaps.length > 0) return { user, capabilities };
+    if (checkMode === 'OR' && passPerms.length > 0) return { user, permissions };
 
 
     return {};

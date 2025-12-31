@@ -1,12 +1,9 @@
 import '~/styles/pages/patcher.scss';
 
-import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
-import { conf } from '~/conf';
 import { PatcherPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
-import CheckUserAccess from '~/utils/check-user-access';
 
 
 
@@ -40,10 +37,10 @@ export default async function RSC(props: RSCProps<PatcherPageParams>) {
 
   notFound();
 
-  const session = cookies().get(conf.vars.SessionCookie)?.value ?? '';
+  // const session = cookies().get(conf.vars.SessionCookie)?.value ?? '';
 
-  const { user, capabilities } = await CheckUserAccess({ capabilities: ['titleEdit', 'seriesAdd'], checkMode: 'OR', session });
-  if (!user || !capabilities) return notFound();
+  // const { user, permissions: capabilities } = await CheckUserAccess({ permissions: ['titleEdit', 'seriesAdd'], checkMode: 'OR', session });
+  // if (!user || !capabilities) return notFound();
 
 
 

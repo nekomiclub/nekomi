@@ -2,12 +2,15 @@
 
 import { NextPage } from 'next';
 import { useId, useState } from 'react';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
 import { HandleClientError } from '~/components/Errors';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
+import { firebaseApp } from '~/conf';
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
-import APIOld from '~/services/ApiService.old';
+import API from '~/services/api/API';
+import { AUTH_METHOD } from '~/services/api/generic/PostAuth.api';
 import userSlice, { userStateDefault } from '~/store/reducers/userSlice';
 
 import HeaderNav from './HeaderNav';
@@ -23,8 +26,30 @@ const NavMenu: NextPage = () => {
   const searchPopupId = useId().replaceAll(':', '');
 
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
 
+
+  async function signin() {
+    if (isSigningIn) return;
+
+    const auth = getAuth(firebaseApp);
+
+    try {
+      const data = await signInWithPopup(auth, new GoogleAuthProvider());
+
+      if ('accessToken' in data.user) {
+        const token = data.user.accessToken as string;
+        await API.postAuth({ method: AUTH_METHOD.GOOGLE, token });
+
+        router.refresh();
+      } else throw new Error('No access token in provider data');
+    } catch (e) {
+      HandleClientError(e);
+    } finally {
+      setIsSigningIn(false);
+    }
+  }
 
   async function logout() {
     try {
@@ -32,9 +57,9 @@ const NavMenu: NextPage = () => {
       dispatch(userSlice.actions.reducer(userStateDefault));
       setIsDropdownMenuOpen(false);
 
-      setTimeout(() => { router.refresh(); }, 100);
+      await API.getAuthLogout({});
 
-      await APIOld.userLogout();
+      router.refresh();
     } catch (e) {
       HandleClientError(e);
     }
@@ -57,8 +82,8 @@ const NavMenu: NextPage = () => {
 
 
   return <>
-    <HeaderNav user={user} logout={logout} forceFocus={forceFocus} searchPopupId={searchPopupId} isDropdownMenuOpen={isDropdownMenuOpen} setIsDropdownMenuOpen={setIsDropdownMenuOpen} />
-    <MobileNav user={user} logout={logout} forceFocus={forceFocus} searchPopupId={searchPopupId} isDropdownMenuOpen={isDropdownMenuOpen} setIsDropdownMenuOpen={setIsDropdownMenuOpen} />
+    <HeaderNav user={user} logout={logout} signin={signin} forceFocus={forceFocus} searchPopupId={searchPopupId} isDropdownMenuOpen={isDropdownMenuOpen} setIsDropdownMenuOpen={setIsDropdownMenuOpen} isSigningIn={isSigningIn} />
+    <MobileNav user={user} logout={logout} signin={signin} forceFocus={forceFocus} searchPopupId={searchPopupId} isDropdownMenuOpen={isDropdownMenuOpen} setIsDropdownMenuOpen={setIsDropdownMenuOpen} isSigningIn={isSigningIn} />
 
     <NavMenuSearch dialogId={searchPopupId} />
   </>;

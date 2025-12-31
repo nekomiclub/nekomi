@@ -1,3 +1,4 @@
+import { initializeApp } from 'firebase/app';
 import ms from 'ms';
 
 
@@ -45,6 +46,15 @@ const vars = {
 
   CSRF_TOKEN_LIFETIME_MS: ms('1min'),
 };
+
+export const firebaseApp = initializeApp({
+  apiKey: 'AIzaSyD0w3_nOwF59xSx4Ey7yJRbhBxBqGkV4-g',
+  authDomain: 'auth.nekomi.club',
+  projectId: 'fk-usapi',
+  storageBucket: 'fk-usapi.appspot.com',
+  messagingSenderId: '122911638615',
+  appId: '1:122911638615:web:8b2bb675020b3b48cecf12'
+});
 
 
 

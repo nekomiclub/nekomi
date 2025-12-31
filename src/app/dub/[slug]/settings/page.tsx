@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';
 import { conf } from '~/conf';
+import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { RSCProps } from '~/interfaces/types';
 import API from '~/services/api/API';
 import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
@@ -21,7 +22,8 @@ export const metadata = siteMetadata({ title: 'Налаштування кома
 export default async function RSC({ params }: RSCProps) {
   const { slug } = await params as { slug: string };
 
-  const { user, capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SessionCookie)?.value, capabilities: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
+  // const { user, capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SessionCookie)?.value, permissions: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
+  const { user, permissions: capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SessionCookie)?.value, permissions: [ROLE_PERMISSION.ABSOLUTE], checkMode: 'OR' });
   if (!user) return notFound();
 
   let dubber: DubberFullType | undefined;
@@ -39,7 +41,7 @@ export default async function RSC({ params }: RSCProps) {
   }
 
   // Skip checks if user is root or admin
-  if (!capabilities?.includes('root') && !capabilities?.includes('admin')) {
+  if (!capabilities?.includes(ROLE_PERMISSION.ABSOLUTE) /* && !capabilities?.includes('admin') */) {
     const member = members.find(el => el.id === user.id);
     // Redir if user is not a member or not a team leader
     if (!member || member.role !== 'leader') return redirect(conf.URL.nekomiSite);

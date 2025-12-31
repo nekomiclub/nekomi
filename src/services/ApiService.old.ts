@@ -1,7 +1,7 @@
 
 
 import { conf } from '~/conf';
-import { IUserGetSearch, IUserGetSearchResult, PutBanner, UserGetByQuery, UserGetByQueryProps, UserPatchProps } from '~/interfaces/services/ApiServiceIntf';
+import { IUserGetSearch, IUserGetSearchResult, PutBanner, UserGetByQuery, UserGetByQueryProps } from '~/interfaces/services/ApiServiceIntf';
 import { $api } from '~/utils/http';
 
 
@@ -17,13 +17,6 @@ interface SearchAnimeParams {
 
 interface RequestProps {
   session?: string
-}
-
-
-
-export enum API_ERROR {
-  // === AUTH ===
-  AUTH_SESSION_EXPIRED = 'auth:session_expired',
 }
 
 
@@ -57,36 +50,12 @@ class ApiService {
     return data;
   }
 
-  async patchUser({ editFolderAnime, removeWatchProgress, watchProgress }: UserPatchProps) {
-    await $api.patch(`/user`, {
-      editFolderAnime,
-      removeWatchProgress,
-      watchProgress
-    });
-  }
-
   async userUploadBanner(file: File): Promise<PutBanner> {
     const formData = new FormData();
 
     formData.append('file', file);
 
     const { data } = await $api.put<PutBanner>('/user/banner', formData);
-
-    return data;
-  }
-
-  async userLogout() {
-    await $api.get('/user/logout');
-  }
-
-  async userSignin({ token }: { token: string }) {
-    await $api.post(`/user/signin`, {
-      session: token
-    });
-  }
-
-  async userLinkTelegramToken() {
-    const { data } = await $api.get<{ token: string }>(`/user/link/telegram/token`);
 
     return data;
   }

@@ -167,10 +167,10 @@ const HomeWatchHeadliner: NextPage<HomeWatchHeadlinerProps> = ({ hero, className
 
   // Get user watch progress from state
   useMemo(() => {
-    const watchProgress = currentUser.watchProgress.find(el => el.titleID === hero.id);
+    const watchProgress = currentUser.view_progress.find(el => el.anime_id === hero.id);
 
     if (watchProgress && watchProgress.progress > 3) {
-      setLabel(`продовжити (${watchProgress.episodeOrder} еп, ${prettySeconds(watchProgress.progress).pretty})`);
+      setLabel(`продовжити (${watchProgress.episode} еп, ${prettySeconds(watchProgress.progress).pretty})`);
       setContinueWatch(true);
     } else {
       setLabel('розпочати перегляд');

@@ -8,6 +8,7 @@ import StyledButton from '~/components/Styled/StyledButton';
 import { H2, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { conf } from '~/conf';
+import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { UserPageProps, UserSettingsPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
@@ -44,10 +45,10 @@ export default async function RSC({ params }: RSCProps<UserSettingsPageProps>) {
 
   try {
     const { user } = await getCachedUser(username);
-    const { user: currentUser, capabilities } = await CheckUserAccess({ session });
+    const { user: currentUser, permissions: capabilities } = await CheckUserAccess({ session });
 
     const isOwner = currentUser?.id === user.id;
-    if (!isOwner && !capabilities?.includes('admin') && !capabilities?.includes('root') && !capabilities?.includes('mod')) return notFound();
+    if (!isOwner && !capabilities?.includes(ROLE_PERMISSION.ABSOLUTE) /* && !capabilities?.includes('admn') && !capabilities?.includes('mod') */) return notFound();
 
 
 

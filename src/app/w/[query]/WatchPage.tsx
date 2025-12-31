@@ -15,6 +15,7 @@ import Tooltip from '~/components/UI/Tooltip';
 import { useAppSelector } from '~/hooks/redux';
 import { DubberCompact } from '~/interfaces/DubberIntf';
 import { ANIME_TYPE, AnimeGenreType, AnimeRateType, AnimeSeasonType, AnimeStatusType, AnimeType, IAnimeStudio } from '~/interfaces/IAnime';
+import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { Routes } from '~/routes';
 import { AnimeFullType } from '~/services/api/anime/GetAnime.api';
 import { cn } from '~/utils/classnames';
@@ -104,7 +105,7 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ anime: anime }) => 
     setIsChanged(false);
     setIsFavorite(false);
 
-    currentUser.libs.filter(el => el.titles.includes(anime.id)).forEach(lib => {
+    currentUser.libs.filter(el => el.anime_ids.includes(anime.id)).forEach(lib => {
       if (lib.type === 'favorite') {
         setIsFavorite(true);
         setTitle('УЛЮБЛЕНІ');
@@ -159,11 +160,11 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ anime }) => {
   const [isTogetherRoomCreating, setIsTogetherRoomCreating] = useState(false);
 
   const [canEditAnime] = useState(
-    currentUser.capabilities.includes('root')
-    || currentUser.capabilities.includes('admin')
-    || currentUser.capabilities.includes('editor')
-    || currentUser.capabilities.includes('titleEdit')
-    || currentUser.capabilities.includes('seriesAdd')
+    currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE)
+    // || currentUser.permissions.includes('admin')
+    // || currentUser.permissions.includes('editor')
+    // || currentUser.permissions.includes('titleEdit')
+    // || currentUser.permissions.includes('seriesAdd')
   );
 
   const haveEpisodes = true;

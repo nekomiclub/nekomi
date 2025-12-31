@@ -18,12 +18,14 @@ import Tooltip from '~/components/UI/Tooltip';
 import { H3, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
 import { Dubber, DubberMemberRole } from '~/interfaces/DubberIntf';
+import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
 import { Routes } from '~/routes';
 import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import APIOld from '~/services/ApiService.old';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
+import { DubberParseRoleName } from '~/utils/data-mappers';
 import { getUTC, timestampToDayMonth } from '~/utils/utils';
 
 
@@ -68,15 +70,15 @@ export const DubberSettingsContent: NextPage<{ dubber: DubberFullType, members: 
   const [nameUkr, setNameUkr] = useState<IUIFieldState>({ initialValue: dubber.name });
   const [description, setDescription] = useState<IUIFieldState>({ initialValue: dubber.about });
 
-  const [telegramLink, setTelegramLink] = useState<IUIFieldState>({ initialValue: dubber.socials.telegram ?? '' });
-  const [instagramLink, setInstagramLink] = useState<IUIFieldState>({ initialValue: dubber.socials.instagram ?? '' });
-  const [tiktokLink, setTiktokLink] = useState<IUIFieldState>({ initialValue: dubber.socials.tiktok ?? '' });
-  const [youtubeLink, setYoutubeLink] = useState<IUIFieldState>({ initialValue: dubber.socials.youtube ?? '' });
+  const [telegramLink, setTelegramLink] = useState<IUIFieldState>({ initialValue: dubber.socials?.telegram ?? '' });
+  const [instagramLink, setInstagramLink] = useState<IUIFieldState>({ initialValue: dubber.socials?.instagram ?? '' });
+  const [tiktokLink, setTiktokLink] = useState<IUIFieldState>({ initialValue: dubber.socials?.tiktok ?? '' });
+  const [youtubeLink, setYoutubeLink] = useState<IUIFieldState>({ initialValue: dubber.socials?.youtube ?? '' });
 
-  const [patreonLink, setPatreonLink] = useState<IUIFieldState>({ initialValue: dubber.support.patreon ?? '' });
-  const [bmcLink, setBmcLink] = useState<IUIFieldState>({ initialValue: dubber.support.bymeacoffee ?? '' });
-  const [monobankLink, setMonobankLink] = useState<IUIFieldState>({ initialValue: dubber.support.monobank ?? '' });
-  const [diakaLink, setDiakaLink] = useState<IUIFieldState>({ initialValue: dubber.support.diaka ?? '' });
+  const [patreonLink, setPatreonLink] = useState<IUIFieldState>({ initialValue: dubber.support?.patreon ?? '' });
+  const [bmcLink, setBmcLink] = useState<IUIFieldState>({ initialValue: dubber.support?.bymeacoffee ?? '' });
+  const [monobankLink, setMonobankLink] = useState<IUIFieldState>({ initialValue: dubber.support?.monobank ?? '' });
+  const [diakaLink, setDiakaLink] = useState<IUIFieldState>({ initialValue: dubber.support?.diaka ?? '' });
 
   const [dubberMembers, setDubberMembers] = useState<IDubberMemberCard[]>(members);
   const [isSomethingChanged, setIsSomethingChanged] = useState(false);
@@ -481,8 +483,8 @@ function InviteMemberResult({ user, invitationStatus, dubber }: IMemberInviteRes
 }
 
 function DubberMember({ member, currentUser, dubber, kickMember }: IDubberMemberProps) {
-  const canKick = currentUser.capabilities.includes('root') || currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('dubberEditEditors');
-  const canRedactRole = canKick && currentUser.id !== member.id || (currentUser.capabilities.includes('root') || currentUser.capabilities.includes('admin'));
+  const canKick = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE) /* || currentUser.permissions.includes('admin') || currentUser.permissions.includes('dubberEditEditors') */;
+  const canRedactRole = canKick && currentUser.id !== member.id || (currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE)) /* || currentUser.permissions.includes('admin')) */;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [memberRole, setMemberRole] = useState(member.role);
@@ -523,7 +525,7 @@ function DubberMember({ member, currentUser, dubber, kickMember }: IDubberMember
     </div>
 
     <Menu stateSetter={setIsMenuOpen} settings={{ align: 'end' }} id={`dubber-settings-memberSettings--${member.id}`}>
-      {/* <MenuTrigger anchor className="flex items-center gap-[16px] p-[8px]" disabled={!canRedactRole}>
+      <MenuTrigger anchor className="flex items-center gap-[16px] p-[8px]" disabled={!canRedactRole}>
         <div className="flex items-center gap-[8px]">
           {memberRole === 'leader' && <MaterialSymbol icon="star" size={16} color="#fff" />}
           {memberRole === 'editor' && <MaterialSymbol icon="edit" size={16} color="#fff" />}
@@ -533,7 +535,7 @@ function DubberMember({ member, currentUser, dubber, kickMember }: IDubberMember
         </div>
 
         {canRedactRole && <MaterialSymbol icon="arrow_drop_down" size={16} color="#fff" className={cn(`duration-200`, isMenuOpen && 'rotate-180')} />}
-      </MenuTrigger> */}
+      </MenuTrigger>
 
       <MenuWrapper className="flex flex-col w-[160px] bg-dark-bright border border-dark-light rounded-[2px]">
         <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('leader')}>

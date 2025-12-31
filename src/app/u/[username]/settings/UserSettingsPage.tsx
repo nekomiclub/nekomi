@@ -7,9 +7,7 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { HandleClientError } from '~/components/Errors';
 import StyledButton from '~/components/Styled/StyledButton';
 import { H3, P } from '~/components/UI/Typography';
-import { conf } from '~/conf';
 import { User } from '~/interfaces/UserIntf';
-import APIOld from '~/services/ApiService.old';
 import cn from '~/utils/classnames';
 
 
@@ -57,20 +55,20 @@ export const UserSettingsLinkTelegram: FC<IUserSettingsLinkProps> = ({ user }) =
 
 
   async function onLink() {
-    try {
-      setStatus('connecting');
+    // try {
+    //   setStatus('connecting');
 
-      const { token } = await APIOld.userLinkTelegramToken();
+    //   const { token } = await APIOld.userLinkTelegramToken();
 
-      router.push(`${conf.URL.telegramBot}?start=linkAccount=${token}`);
-    } catch (e) {
-      HandleClientError(e);
+    //   router.push(`${conf.URL.telegramBot}?start=linkAccount=${token}`);
+    // } catch (e) {
+    //   HandleClientError(e);
 
-      setStatus('error');
-      setTimeout(() => {
-        setStatus('not_connected');
-      }, 6000);
-    }
+    //   setStatus('error');
+    //   setTimeout(() => {
+    //     setStatus('not_connected');
+    //   }, 6000);
+    // }
   }
 
   async function onUnlink() {

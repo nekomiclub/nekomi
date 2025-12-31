@@ -12,8 +12,9 @@ import '~/styles/tailwind.css';
 import { cache } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
+import { cookies } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
@@ -23,9 +24,10 @@ import NavMenu from '~/components/NavMenu/NavMenu';
 import { StateProvider } from '~/components/StateProvider';
 import conf from '~/conf';
 import { LayoutProps } from '~/interfaces/types';
-import APIOld from '~/services/ApiService.old';
+import API from '~/services/api/API';
 import { IUserState } from '~/store/reducers/userSlice';
 import siteMetadata from '~/utils/site-metadata';
+import { getUTC } from '~/utils/utils';
 
 
 
@@ -56,14 +58,12 @@ const spaceGrotesk = Space_Grotesk({
 
 
 const getUser = cache(async (session: string) => {
-  return await APIOld.getUser({ query: '*', detailed: true, parseCapabilities: true }, {
-    session
-  });
+  return await API.getUser({}, { view: 'full', get_permissions: true, get_view_progress: true, get_libs: true }, { sessionToken: session });
 });
 
 
 export default async function Layout({ children, params }: LayoutProps) {
-  // const sessionToken = (await cookies()).get(config.vars.SessionCookie)?.value;
+  const sessionToken = cookies().get(conf.vars.SessionCookie)?.value;
 
   let isServerOnline = false;
   let isSessionExpired = false;
@@ -71,36 +71,34 @@ export default async function Layout({ children, params }: LayoutProps) {
 
 
 
-  // // Get user by cookie
-  // if (sessionToken) {
-  //   try {
-  //     const data = await getUser(sessionToken);
+  // Get user by cookie
+  if (sessionToken) {
+    try {
+      const data = await getUser(sessionToken);
 
-  //     user = {
-  //       avatar: data.user.avatar,
-  //       id: data.user.id,
-  //       isTelegramLinked: data.user.statistics.isTelegramLinked,
-  //       roles: data.user.roles,
-  //       username: data.user.username,
-  //       watchProgress: data.user.watchProgress,
-  //       capabilities: data.capabilities!,
-  //       libs: data.user.libs,
-  //       dubberTeamMember: data.user.statistics.dubber_team_member,
-  //       togetherRooms: data.user.togetherRooms
-  //     };
+      user = {
+        avatar: data.user.avatar,
+        id: data.user.id,
+        roles: data.user.roles,
+        username: data.user.username,
+        view_progress: data.user.view_progress ?? [],
+        permissions: data.user.permissions ?? [],
+        libs: data.user.libs ?? [],
+        dubber_team_member: data.user.dubber_team_member,
+      };
 
-  //     isServerOnline = true;
-  //   } catch (e) {
-  //     const date = `${getUTC().fulldate} ${getUTC().timeAccurate}`;
+      isServerOnline = true;
+    } catch (e) {
+      const date = getUTC().ISO;
 
-  //     if (e instanceof AxiosError && e.response?.data.code === API_ERROR.AUTH_SESSION_EXPIRED) isSessionExpired = true;
+      if (e instanceof AxiosError && ['auth:session_token_expired', 'auth:session_token_invalid', 'auth:session_not_exist'].includes(e.response?.data.code)) isSessionExpired = true;
 
-  //     console.error(`[${date}]: Session fetch failed - ${JSON.stringify(e, null, 2)}`);
-  //   }
-  // }
+      console.error(`[${date}]: Session fetch failed - ${JSON.stringify(e, null, 2)}`);
+    }
+  }
 
   // Ping API
-  if (!isServerOnline) {
+  if (!isServerOnline && !sessionToken) {
     try {
       await axios.options(`${conf.URL.nekomiApi}/ping`);
       isServerOnline = true;

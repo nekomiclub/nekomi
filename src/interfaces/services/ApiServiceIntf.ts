@@ -3,7 +3,6 @@ import { z } from 'zod';
 
 import Anime, { AnimeEpisode, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { Dubber, DubberCompact, DubberMemberRole } from '~/interfaces/DubberIntf';
-import { RoleCapability } from '~/interfaces/RoleIntf';
 import { NumEpisodeQualityType } from '~/interfaces/types';
 import { User, UserTogetherRoom } from '~/interfaces/UserIntf';
 
@@ -157,7 +156,7 @@ export interface UserGetByQuery {
   /** Will be undefined with metadataOnly specified */
   user: User
 
-  capabilities?: RoleCapability[]
+  capabilities?: any[]
   parsedLib?: HydratedAnime[]
   parsedTogetherRoom?: {
     anime: HydratedAnime

@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import { AnimeCardType } from '~/interfaces/IAnime';
 import { UserLibType } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
-import APIOld from '~/services/ApiService.old';
+import API from '~/services/api/API';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
@@ -53,7 +53,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) 
 
   const topOffset = 4;
   const bottomOffset = 8;
-  const watchProgress = currentUser.watchProgress.find(el => el.titleID === anime.id);
+  const watchProgress = currentUser.view_progress.find(el => el.anime_id === anime.id);
 
 
 
@@ -161,7 +161,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) 
         </div>
 
         {watchProgress && watchProgress.progress > 3 && <div className="bg-primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
-          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episodeOrder} еп, {prettySeconds(watchProgress.progress).pretty}</p>
+          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episode} еп, {prettySeconds(watchProgress.progress).pretty}</p>
 
           <MaterialSymbol icon="resume" size={16} color="#fff" />
         </div>}
@@ -198,7 +198,7 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, anime
 
     if (currentUser.id) {
       const lib = currentUser.libs.find(el => el.type === type)!;
-      setIsChecked(lib.titles.includes(animeId));
+      setIsChecked(lib.anime_ids.includes(animeId));
     }
   }, []);
 
@@ -210,17 +210,18 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, anime
 
       setIsChecked(prev => !prev);
 
-      await APIOld.patchUser({ editFolderAnime: { animeId: animeId, libId: currentUser.libs.find(el => el.type === type)!.id } });
       const state = JSON.parse(JSON.stringify(currentUser)) as IUserState;
 
       const lib = state.libs.find(el => el.type === type)!;
 
-      if (lib.titles.includes(animeId)) {
+      if (lib.anime_ids.includes(animeId)) {
         // remove
-        lib.titles = lib.titles.filter(el => el !== animeId);
+        await API.patchUser({}, { remove_lib_anime: { lib_id: lib.id, anime_id: animeId } });
+        lib.anime_ids = lib.anime_ids.filter(el => el !== animeId);
       } else {
         // add
-        lib.titles.push(animeId);
+        await API.patchUser({}, { add_lib_anime: { lib_id: lib.id, anime_id: animeId } });
+        lib.anime_ids.push(animeId);
       }
 
       dispatch(userSlice.actions.reducer(state));
