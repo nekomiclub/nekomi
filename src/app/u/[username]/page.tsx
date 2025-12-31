@@ -8,9 +8,9 @@ import Tooltip from '~/components/UI/Tooltip';
 import { P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { conf, DevelopmentMode } from '~/conf';
+import { IUserLib } from '~/interfaces/IUser';
 import { UserPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
-import { UserLib } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
 import siteMetadata from '~/utils/site-metadata';
@@ -27,7 +27,7 @@ export async function generateMetadata(
   const { username } = params;
 
   try {
-    const { user } = await getCachedUser(username, undefined, await getSessionToken());
+    const user = await getCachedUser(username, await getSessionToken());
     const title = `@${user.username}`;
     const description = `Профіль користувача`;
 
@@ -61,19 +61,19 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
 
 
   try {
-    const { user } = await getCachedUser(username, undefined, await getSessionToken());
+    const user = await getCachedUser(username, await getSessionToken());
+    const libs = user.libs ?? [];
 
-    const animeSeen = user.libs.find(el => el.type === 'watched')?.titles.length ?? 0;
-    const viewtime = Math.floor(user.statistics.viewtime / 60 / 60);
-    const daysOnNekomi = Math.round((getUTC().timestamp - user.statistics.accountCreated) / 60000 / 60 / 24);
+    const animeSeen = libs.find(el => el.type === 'watched')?.anime_ids.length ?? 0;
+    const viewtime = Math.floor(user.total_viewtime / 60 / 60);
+    const daysOnNekomi = Math.round((getUTC().timestamp - getUTC(user.created_at).timestamp) / 60000 / 60 / 24);
 
-    const sortedLibs: UserLib[] = [
-      user.libs.find(el => el.type === 'favorite'),
-      user.libs.find(el => el.type === 'watching'),
-      user.libs.find(el => el.type === 'watched'),
-      user.libs.find(el => el.type === 'plans'),
-      user.libs.find(el => el.type === 'delayed'),
-      ...user.libs.filter(el => el.type === 'custom')
+    const sortedLibs: IUserLib[] = [
+      libs.find(el => el.type === 'favorite'),
+      libs.find(el => el.type === 'watching'),
+      libs.find(el => el.type === 'watched'),
+      libs.find(el => el.type === 'plans'),
+      libs.find(el => el.type === 'delayed')
     ].filter(el => el !== undefined);
 
 
@@ -87,7 +87,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
           <UserStatisticsItem viewtime={viewtime} />
         </div>
 
-        {user.libs.length !== 0 && <div className="flex flex-col gap-[16px]" id="user-libs">
+        {libs.length !== 0 && <div className="flex flex-col gap-[16px]" id="user-libs">
           <UserTitle title="Теки" />
 
           <div className="flex flex-wrap gap-[8px]">
@@ -99,7 +99,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
 
         <div className="flex items-center gap-[8px]">
           <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
-          <Tooltip content={`Акаунт зареєстровано: ${timestampToDayMonth(user.statistics.accountCreated)}`}>
+          <Tooltip content={`Акаунт зареєстровано: ${timestampToDayMonth(getUTC(user.created_at).timestamp)}`}>
             <P text={`${daysOnNekomi} ${wordDeclination(daysOnNekomi, ['день', 'дні', 'днів'])} на nekomi!`} size={12} className="text-grey-new" />
           </Tooltip>
         </div>

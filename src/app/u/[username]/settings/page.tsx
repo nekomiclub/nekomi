@@ -15,7 +15,7 @@ import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
 import CheckUserAccess from '~/utils/check-user-access';
 import siteMetadata from '~/utils/site-metadata';
 
-import { UserSettingsGroup, UserSettingsLinkTelegram } from './UserSettingsPage';
+import { UserSettingsGroup } from './UserSettingsPage';
 
 
 
@@ -44,7 +44,7 @@ export default async function RSC({ params }: RSCProps<UserSettingsPageProps>) {
   const session = await getSessionToken();
 
   try {
-    const { user } = await getCachedUser(username);
+    const user = await getCachedUser(username, session);
     const { user: currentUser, permissions: capabilities } = await CheckUserAccess({ session });
 
     const isOwner = currentUser?.id === user.id;
@@ -69,11 +69,11 @@ export default async function RSC({ params }: RSCProps<UserSettingsPageProps>) {
           </div>
         </UserSettingsGroup>
 
-        <UserSettingsGroup title={`Під'єднання`}>
+        {/* <UserSettingsGroup title={`Під'єднання`}>
           <div className="w-full flex flex-col gap-[8px]">
             <UserSettingsLinkTelegram user={user} />
           </div>
-        </UserSettingsGroup>
+        </UserSettingsGroup> */}
       </div>
     </>;
   } catch (e) {

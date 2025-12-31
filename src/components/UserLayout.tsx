@@ -8,11 +8,10 @@ import { MaterialSymbol } from 'react-material-symbols';
 import { conf } from '~/conf';
 import { useAppSelector } from '~/hooks/redux';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
-import { User } from '~/interfaces/UserIntf';
+import { UserCardType } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import API from '~/services/api/API';
 import { DubberFullType } from '~/services/api/dubber/GetDubber.api';
-import APIOld from '~/services/ApiService.old';
 import cn from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
 
@@ -29,7 +28,7 @@ import { H1, H2, P } from './UI/Typography';
 interface IProps {
   type: 'user_profile' | 'user_settings' | 'user_lib' | 'dubber_profile' | 'dubber_settings'
 
-  user?: User
+  user?: UserCardType
   dubber?: DubberFullType
 }
 
@@ -66,7 +65,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const isDubber = Boolean(dubber);
 
   const avatarUrl = user?.avatar ?? dubber?.avatar ?? '';
-  const bannerUrl = user?.banner ?? dubber?.cover ?? '';
+  const coverUrl = user?.cover ?? dubber?.cover ?? '';
   const entityId = user?.id ?? dubber?.id ?? '';
   const entityType = user ? 'user' : dubber ? 'dubber' : 'user';
   const isEdit = type === 'dubber_settings' || type === 'user_settings';
@@ -95,7 +94,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
 
   return <section className="wrapper relative pt-[16px] sm:pt-[var(--header-height)] gap-0">
-    <UserBanner bannerUrl={bannerUrl} isEdit={isEdit} entityId={entityId} entityType={entityType} />
+    <UserBanner bannerUrl={coverUrl} isEdit={isEdit} entityId={entityId} entityType={entityType} />
 
     <div className="flex items-end gap-[24px] relative px-[16px] max-md:flex-col max-md:items-start max-md:gap-[8px]">
       <div className="w-[256px] h-[128px] flex-shrink-0 max-lg:h-[64px] max-lg:w-[128px]">
@@ -207,7 +206,8 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
       NotifySuccess({ title: 'Завантажуємо аватар...', message: file.name });
 
       if (entityType === 'user') {
-        return NotifyWarn({ title: 'Аватар не завантажено', message: 'Ви можете оновити аватар тільки в акаунті Fullkekw' });
+        const res = await API.putUserAvatar({ id: entityId }, file);
+        url = res.url;
       } else if (entityType === 'dubber') {
         const res = await API.putDubberAvatar({ id: entityId }, file);
         url = res.url;
@@ -315,8 +315,8 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
       NotifySuccess({ title: 'Завантажуємо банер...', message: file.name });
 
       if (entityType === 'user') {
-        const res = await APIOld.userUploadBanner(file);
-        url = res.bannerUrl;
+        const res = await API.putUserCover({ id: entityId }, file);
+        url = res.url;
       } else if (entityType === 'dubber') {
         const res = await API.putDubberCover({ id: entityId }, file);
         url = res.url;

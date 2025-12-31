@@ -19,7 +19,7 @@ import { Routes } from '~/routes';
 import { AnimeSearchResultType } from '~/services/api/anime/GetAnimeSearch.api';
 import API from '~/services/api/API';
 import { DubberSearchResultType } from '~/services/api/dubber/GetDubberSearch.api';
-import APIOld from '~/services/ApiService.old';
+import { UserSearchResultType } from '~/services/api/user/GetUserSearch.api';
 import { cn } from '~/utils/classnames';
 import { randomNumber } from '~/utils/utils';
 
@@ -38,7 +38,7 @@ interface MenuSearchSelectTypeButtonProps {
   className?: string
 }
 
-type MenuSearchResultType = DubberSearchResultType | AnimeSearchResultType | User | null
+type MenuSearchResultType = DubberSearchResultType | AnimeSearchResultType | UserSearchResultType | null
 
 interface MenuSearchResultProps {
   item: MenuSearchResultType
@@ -159,9 +159,9 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
       }
 
       if (searchType === 'user') {
-        const { results } = await APIOld.searchUsers({ q: searchText });
+        const { results } = await API.getUserSearch({ q: searchText });
 
-        setSearchResults(results.map(el => el.user));
+        setSearchResults(results);
       }
 
       if (searchType === 'dubber') {

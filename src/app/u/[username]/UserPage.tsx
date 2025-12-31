@@ -10,10 +10,10 @@ import Tooltip from '~/components/UI/Tooltip';
 import { H3, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
 import { Dubber, DubberMember } from '~/interfaces/DubberIntf';
-import { User, UserLib } from '~/interfaces/UserIntf';
+import { IUserLib, UserCardType } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import { DubberParseRoleName } from '~/utils/data-mappers';
-import parseUserLibUI from '~/utils/parse-user-lib-ui';
+import parseUserLibUI, { parseLibTitle } from '~/utils/parse-user-lib-ui';
 
 
 
@@ -32,8 +32,8 @@ interface IUserTitleProps {
 }
 
 interface IUserLibItemProps {
-  lib: UserLib
-  user: User
+  lib: IUserLib
+  user: UserCardType
 }
 
 
@@ -76,11 +76,11 @@ export const UserTitle: FC<IUserTitleProps> = ({ title }) => {
 export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
   const currentUser = useAppSelector(state => state.user);
 
-  const [title, setTitle] = useState(lib.settings.name);
+  const [title, setTitle] = useState(parseLibTitle(lib.type));
   const [icon, setIcon] = useState<SymbolCodepoints>('favorite');
 
   const isOwner = currentUser.id === user.id;
-  const isLibHidden = lib.settings.hidden;
+  const isPublic = lib.is_public;
 
 
 
@@ -95,13 +95,13 @@ export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
       <MaterialSymbol icon={icon} size={80} className="text-white" fill={icon === 'favorite'} />
 
       <div className="flex items-center gap-[16px]">
-        {isOwner && isLibHidden && <Tooltip content="Прихована тека, вона доступна тільки вам" className="flex items-center">
+        {isOwner && !isPublic && <Tooltip content="Прихована тека, вона доступна тільки вам" className="flex items-center">
           <MaterialSymbol icon={'visibility_lock'} size={20} className="text-grey-new" />
         </Tooltip>}
 
         <div className="flex items-center gap-[8px]">
           <P text={title} size={16} bold className="text-white" />
-          {lib.titles.length !== 0 && <P text={`(${lib.titles.length})`} size={16} className="text-grey-new" />}
+          {lib.anime_ids.length !== 0 && <P text={`(${lib.anime_ids.length})`} size={16} className="text-grey-new" />}
         </div>
       </div>
     </StyledButton>

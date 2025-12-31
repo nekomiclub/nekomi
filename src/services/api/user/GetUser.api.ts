@@ -17,6 +17,7 @@ const QuerySchema = z.object({
 
   get_permissions: zBoolean.optional(),
   get_username_changed_at: zBoolean.optional(),
+  get_timestamps: zBoolean.optional(),
 
   /** @requires Authorization (CSRF) */
   get_view_progress: zBoolean.optional(),
@@ -38,7 +39,7 @@ export type UserFullType = Pick<IUser, typeof FullResponseKeys[number]>
 type ViewType = z.infer<typeof QuerySchema>['view']
 
 
-interface IResponseMisc {
+export interface IUserResponseMisc {
   /** @method get_email */
   email?: string
 
@@ -66,6 +67,14 @@ interface IResponseMisc {
 
   /** @method get_libs */
   libs?: IUserLib[]
+
+
+
+  /** @method get_timestamps */
+  created_at?: ISODateString
+
+  /** @method get_timestamps */
+  updated_at?: ISODateString
 }
 
 type ResponseTypeMap = {
@@ -76,7 +85,7 @@ type ResponseTypeMap = {
 
 interface IResponse<T extends object> {
   message: string
-  user: IResponseMisc & T
+  user: IUserResponseMisc & T
 }
 
 
@@ -85,7 +94,7 @@ export default async function _GetUser<V extends ViewType>(
   params: z.infer<typeof ParamsSchema>,
   query: Partial<z.infer<typeof QuerySchema>> & { view: V },
   props?: { sessionToken?: string }
-): Promise<IResponse<ResponseTypeMap[V]>> {
+): Promise<IResponse<IUserResponseMisc & ResponseTypeMap[V]>> {
   const userQuery = params.query ? `/${params.query}` : '';
 
   return (await $api.get(`/user${userQuery}`, {

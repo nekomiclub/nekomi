@@ -8,7 +8,11 @@ import getAuthLogout from './generic/GetAuthLogout.api';
 import getHomeFeed from './generic/GetHomeFeed.api';
 import postAuth from './generic/PostAuth.api';
 import getUser from './user/GetUser.api';
+import getUserLib from './user/GetUserLib.api';
+import getUserSearch from './user/GetUserSearch.api';
 import patchUser from './user/PatchUser.api';
+import putUserAvatar from './user/PutUserAvatar.api';
+import putUserCover from './user/PutUserCover.api';
 
 
 
@@ -34,7 +38,13 @@ const API = {
 
 
   getUser,
-  patchUser
+  getUserSearch,
+  getUserLib,
+
+  patchUser,
+
+  putUserAvatar,
+  putUserCover,
 };
 
 

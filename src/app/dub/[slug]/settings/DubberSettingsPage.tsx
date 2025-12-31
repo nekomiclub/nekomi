@@ -9,7 +9,6 @@ import { useDebounce } from 'use-debounce';
 
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '~/assets/Social';
 import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/assets/Support';
-import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
@@ -19,10 +18,8 @@ import { H3, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
 import { Dubber, DubberMemberRole } from '~/interfaces/DubberIntf';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
-import { IUserGetSearchResult } from '~/interfaces/services/ApiServiceIntf';
 import { Routes } from '~/routes';
 import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
-import APIOld from '~/services/ApiService.old';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import { DubberParseRoleName } from '~/utils/data-mappers';
@@ -58,7 +55,7 @@ interface IDubberMemberProps {
   kickMember: (id: string, username: string) => void
 }
 
-interface IMemberInviteResultProps extends IUserGetSearchResult {
+interface IMemberInviteResultProps {
   dubber: Dubber
 }
 
@@ -280,7 +277,7 @@ export const DubberSettingsContent: NextPage<{ dubber: DubberFullType, members: 
 const InviteMembers: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
   const [searchQuery, setSearchQuery] = useState<IUIFieldState>({ status: 'waiting', initialValue: '' });
   const [debouncedSearchQuery] = useDebounce(searchQuery.value ?? '', 500);
-  const [searchResults, setSearchResults] = useState<IUserGetSearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [isNotFound, setIsNotFound] = useState(false);
@@ -290,20 +287,20 @@ const InviteMembers: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
 
 
   useEffect(() => {
-    (async function () {
-      setIsSearched(true);
+    // (async function () {
+    //   setIsSearched(true);
 
-      const query = debouncedSearchQuery.replace('@', '');
-      if (query.length < 3) return;
+    //   const query = debouncedSearchQuery.replace('@', '');
+    //   if (query.length < 3) return;
 
-      try {
-        const { results } = await APIOld.searchUsers({ q: query, parseInvitationStatusFor: dubber.id });
-        setSearchResults(results);
-        setIsMenuOpen(true);
-      } catch (e) {
-        HandleClientError(e);
-      }
-    })();
+    //   try {
+    //     const { results } = await APIOld.searchUsers({ q: query, parseInvitationStatusFor: dubber.id });
+    //     setSearchResults(results);
+    //     setIsMenuOpen(true);
+    //   } catch (e) {
+    //     HandleClientError(e);
+    //   }
+    // })();
   }, [debouncedSearchQuery]);
 
   // Handle isWaiting
@@ -344,9 +341,9 @@ const InviteMembers: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
 
       <MenuWrapper className="w-full bg-dark-bright rounded-[2px] flex flex-col border border-dark-light max-h-[300px] overflow-y-auto">
         {searchResults.length ? <>
-          {searchResults.map(result => {
+          {/* {searchResults.map(result => {
             return <InviteMemberResult {...result} dubber={dubber} key={`dubber-settings-result--${result.user.id}`} />;
-          })}
+          })} */}
         </> : <div className="px-[12px] py-[8px]">
           {isNotFound && <div className="flex items-center gap-[16px]">
             <MaterialSymbol icon="indeterminate_question_box" size={16} className="text-info-warn" />
@@ -431,56 +428,56 @@ function SettingsGroup({ title, description, children }: ISettingsGroupProps) {
   </div>;
 }
 
-function InviteMemberResult({ user, invitationStatus, dubber }: IMemberInviteResultProps) {
-  const [isInvited, setIsInvited] = useState(false);
+// function InviteMemberResult({ user, invitationStatus, dubber }: IMemberInviteResultProps) {
+//   const [isInvited, setIsInvited] = useState(false);
 
 
 
-  async function inviteMember() {
-    // if (invitationStatus !== 'can_be_invited' || isInvited) return NotifyWarn({ title: 'Неможливо запросити', message: 'Користувача неможливо запросити в команду' });
+//   async function inviteMember() {
+//     // if (invitationStatus !== 'can_be_invited' || isInvited) return NotifyWarn({ title: 'Неможливо запросити', message: 'Користувача неможливо запросити в команду' });
 
-    // try {
-    //   setIsInvited(true);
+//     // try {
+//     //   setIsInvited(true);
 
-    //   await APIOld.dubberSendInvite({
-    //     dubberId: dubber.id,
-    //     userId: user.id
-    //   });
+//     //   await APIOld.dubberSendInvite({
+//     //     dubberId: dubber.id,
+//     //     userId: user.id
+//     //   });
 
-    //   NotifySuccess({ title: 'Запрошення надіслано', message: `Ми надіслали @${user.username} запрошення в команду, тепер залишилося почекати на його розгляд` });
-    //   setIsInvited(true);
-    // } catch (e) {
-    //   setIsInvited(false);
-    //   HandleClientError(e);
-    // }
-  }
+//     //   NotifySuccess({ title: 'Запрошення надіслано', message: `Ми надіслали @${user.username} запрошення в команду, тепер залишилося почекати на його розгляд` });
+//     //   setIsInvited(true);
+//     // } catch (e) {
+//     //   setIsInvited(false);
+//     //   HandleClientError(e);
+//     // }
+//   }
 
 
 
-  return <button className={cn('px-[12px] py-[8px] flex items-center gap-[16px] duration-200 hover:bg-dark-light focus-visible:hover:bg-dark-light', (invitationStatus !== 'can_be_invited' || isInvited) && 'cursor-not-allowed')} disabled={invitationStatus !== 'can_be_invited' || isInvited} onClick={inviteMember}>
-    <StyledImage src={user.avatar} width="64px" height="64px" className="rounded-[4px] overflow-hidden" />
+//   return <button className={cn('px-[12px] py-[8px] flex items-center gap-[16px] duration-200 hover:bg-dark-light focus-visible:hover:bg-dark-light', (invitationStatus !== 'can_be_invited' || isInvited) && 'cursor-not-allowed')} disabled={invitationStatus !== 'can_be_invited' || isInvited} onClick={inviteMember}>
+//     <StyledImage src={user.avatar} width="64px" height="64px" className="rounded-[4px] overflow-hidden" />
 
-    <div className="flex flex-col items-start gap-[4px]">
-      <p className="text-white font-space-grotesk">@{user.username}</p>
+//     <div className="flex flex-col items-start gap-[4px]">
+//       <p className="text-white font-space-grotesk">@{user.username}</p>
 
-      <div className="flex items-center gap-[8px]">
-        {!isInvited && invitationStatus === 'can_be_invited' && <MaterialSymbol icon="person_add" size={16} className="text-white" />}
-        {!isInvited && invitationStatus === 'invite_pending' && <MaterialSymbol icon="hourglass_bottom" size={16} className="text-grey-new" />}
-        {!isInvited && invitationStatus === 'telegram_not_linked' && <MaterialSymbol icon="link_off" size={16} className="text-grey-new" />}
-        {!isInvited && invitationStatus === 'others_member_already' && <MaterialSymbol icon="interpreter_mode" size={16} className="text-grey-new" />}
-        {isInvited && <MaterialSymbol icon="mark_email_read" size={16} className="text-info-success" />}
+//       <div className="flex items-center gap-[8px]">
+//         {!isInvited && invitationStatus === 'can_be_invited' && <MaterialSymbol icon="person_add" size={16} className="text-white" />}
+//         {!isInvited && invitationStatus === 'invite_pending' && <MaterialSymbol icon="hourglass_bottom" size={16} className="text-grey-new" />}
+//         {!isInvited && invitationStatus === 'telegram_not_linked' && <MaterialSymbol icon="link_off" size={16} className="text-grey-new" />}
+//         {!isInvited && invitationStatus === 'others_member_already' && <MaterialSymbol icon="interpreter_mode" size={16} className="text-grey-new" />}
+//         {isInvited && <MaterialSymbol icon="mark_email_read" size={16} className="text-info-success" />}
 
-        <p className={cn('font-manrope max-md:text-[14px]', invitationStatus === 'can_be_invited' ? 'text-white' : 'text-grey-new', isInvited && '!text-info-success')}>
-          {!isInvited && invitationStatus === 'can_be_invited' && 'Ти можеш запросити цього користувача у команду'}
-          {!isInvited && invitationStatus === 'invite_pending' && 'Запрошення очікує на розгляд користувачем'}
-          {!isInvited && invitationStatus === 'telegram_not_linked' && 'Користувач ще не прив’язав телеграм до свого акаунту'}
-          {!isInvited && invitationStatus === 'others_member_already' && 'Користувач вже є учасником іншої команди'}
-          {isInvited && 'Запрошення надіслано!'}
-        </p>
-      </div>
-    </div>
-  </button>;
-}
+//         <p className={cn('font-manrope max-md:text-[14px]', invitationStatus === 'can_be_invited' ? 'text-white' : 'text-grey-new', isInvited && '!text-info-success')}>
+//           {!isInvited && invitationStatus === 'can_be_invited' && 'Ти можеш запросити цього користувача у команду'}
+//           {!isInvited && invitationStatus === 'invite_pending' && 'Запрошення очікує на розгляд користувачем'}
+//           {!isInvited && invitationStatus === 'telegram_not_linked' && 'Користувач ще не прив’язав телеграм до свого акаунту'}
+//           {!isInvited && invitationStatus === 'others_member_already' && 'Користувач вже є учасником іншої команди'}
+//           {isInvited && 'Запрошення надіслано!'}
+//         </p>
+//       </div>
+//     </div>
+//   </button>;
+// }
 
 function DubberMember({ member, currentUser, dubber, kickMember }: IDubberMemberProps) {
   const canKick = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE) /* || currentUser.permissions.includes('admin') || currentUser.permissions.includes('dubberEditEditors') */;
