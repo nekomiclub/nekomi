@@ -9,7 +9,6 @@ import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { P } from '~/components/UI/Typography';
-import { config } from '~/config';
 import { cn } from '~/utils/classnames';
 
 
@@ -47,7 +46,7 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [isErrored, setIsErrored] = useState(false);
-  const [useNativeImage, setUseNativeImage] = useState(Boolean(useImg) || !src.includes(config.URL.nekomi_media));
+  const [useNativeImage, setUseNativeImage] = useState(Boolean(useImg));
 
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -77,7 +76,7 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
       setIsLoaded(false);
     };
 
-    setUseNativeImage(Boolean(useImg) || !src.includes(config.URL.nekomi_media));
+    setUseNativeImage(Boolean(useImg));
   }, [src]);
 
 

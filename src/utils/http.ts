@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { config } from '~/config';
+import { conf } from '~/conf';
 
 import signCSRF from './signCSRF';
 import { getUTC } from './utils';
@@ -11,14 +11,14 @@ import { getUTC } from './utils';
 /** Axios HTTP instance with csrf token specified & creds */
 export const $api = axios.create({
   withCredentials: true,
-  baseURL: config.URL.nekomi_api,
+  baseURL: conf.URL.nekomiApi,
   timeout: 9000,
 });
 
 /** Same as $api, but with longer timeout */
 export const $upload = axios.create({
   withCredentials: true,
-  baseURL: config.URL.proxy,
+  baseURL: conf.URL.proxy,
   timeout: 420000,
 });
 

@@ -7,10 +7,10 @@ import Link from 'next/link';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
-import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { AnimeCardType } from '~/interfaces/IAnime';
 import { UserLibType } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import API from '~/services/api/API';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
@@ -24,26 +24,24 @@ import UICheckbox from './UI/UICheckbox';
 
 
 interface AnimeItemProps {
-  hydrated: HydratedAnime
+  anime: AnimeCardType
 
   className?: string
   libControls?: boolean
 }
 
 interface AnimeItemEditMenuProps {
-  hydratedAnime: HydratedAnime
+  animeId: string
 }
 
 interface AnimeItemEditMenuLibProps {
-  hydratedAnime: HydratedAnime
+  animeId: string
   type: UserLibType
 }
 
 
 
-const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls }) => {
-  const { anime, genres, media, rate, season } = hydrated;
-
+const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) => {
   const editLibsMenuId = useId().replaceAll(':', '');
   const currentUser = useAppSelector(state => state.user);
 
@@ -55,7 +53,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
 
   const topOffset = 4;
   const bottomOffset = 8;
-  const watchProgress = currentUser.watchProgress.find(el => el.titleID === anime.uuid);
+  const watchProgress = currentUser.view_progress.find(el => el.anime_id === anime.id);
 
 
 
@@ -128,7 +126,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
           <MaterialSymbol className="text-white" icon="more_horiz" size={16} />
         </MenuTrigger>
 
-        <AnimeItemEditMenu hydratedAnime={hydrated} />
+        <AnimeItemEditMenu animeId={anime.id} />
       </Menu>
     </div>}
 
@@ -138,13 +136,13 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
       <div className="flex flex-col">
         <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark-primary/[.8]`} ref={bottomRef}>
           <div className="flex flex-col gap-[4px]">
-            <p className="titleCardNew-heading text-white text-[14px] font-bold text-ellipsis line-clamp-[2] font-manrope max-md:text-[14px]" title={anime.names.ukr} ref={titleRef}>{anime.names.ukr}</p>
+            <p className="titleCardNew-heading text-white text-[14px] font-bold text-ellipsis line-clamp-[2] font-manrope max-md:text-[14px]" title={anime.title} ref={titleRef}>{anime.title}</p>
 
             <p className="text-lightGrey text-[12px] whitespace-break-spaces font-manrope">
-              {genres.length ? genres.slice(0, 3).map((genre, i) => {
+              {anime.genres.length ? anime.genres.slice(0, 3).map((genre, i) => {
                 let immutableI = i;
 
-                return `${genre.name}${++immutableI < genres?.slice(0, 3).length! ? ' • ' : ''}`;
+                return `${genre.name}${++immutableI < anime.genres?.slice(0, 3).length! ? ' • ' : ''}`;
               }) : 'Жанри відсутні'}
             </p>
           </div>
@@ -152,18 +150,18 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-[4px]">
               <MaterialSymbol icon="acute" size={16} color="#fff" />
-              <p className="text-white text-[12px] font-space-grotesk">{anime.episodesCount ?? '—'}</p>
+              <p className="text-white text-[12px] font-space-grotesk">{anime.episodes_total ?? '—'}</p>
             </div>
 
             <div className="flex items-center gap-[4px]">
               <MaterialSymbol icon="star_half" size={16} color="#FF464E" />
-              <p className="text-primary text-[12px] font-bold font-space-grotesk">{anime.score.mal ?? anime.score.imdb ?? '—'}</p>
+              <p className="text-primary text-[12px] font-bold font-space-grotesk">{anime.score ?? '—'}</p>
             </div>
           </div>
         </div>
 
         {watchProgress && watchProgress.progress > 3 && <div className="bg-primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
-          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episodeOrder} еп, {prettySeconds(watchProgress.progress).pretty}</p>
+          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episode} еп, {prettySeconds(watchProgress.progress).pretty}</p>
 
           <MaterialSymbol icon="resume" size={16} color="#fff" />
         </div>}
@@ -172,19 +170,19 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ hydrated, className, libControls 
   </div>;
 };
 
-export const AnimeItemEditMenu: NextPage<AnimeItemEditMenuProps> = ({ hydratedAnime }) => {
+export const AnimeItemEditMenu: NextPage<AnimeItemEditMenuProps> = ({ animeId }) => {
   return <MenuWrapper className="w-full min-w-fit bg-dark-primary rounded-[4px] flex flex-col border border-dark-light">
-    <AnimeItemEditMenuLib type="favorite" hydratedAnime={hydratedAnime} />
-    <AnimeItemEditMenuLib type="watching" hydratedAnime={hydratedAnime} />
-    <AnimeItemEditMenuLib type="watched" hydratedAnime={hydratedAnime} />
-    <AnimeItemEditMenuLib type="plans" hydratedAnime={hydratedAnime} />
-    <AnimeItemEditMenuLib type="delayed" hydratedAnime={hydratedAnime} />
+    <AnimeItemEditMenuLib type="favorite" animeId={animeId} />
+    <AnimeItemEditMenuLib type="watching" animeId={animeId} />
+    <AnimeItemEditMenuLib type="watched" animeId={animeId} />
+    <AnimeItemEditMenuLib type="plans" animeId={animeId} />
+    <AnimeItemEditMenuLib type="delayed" animeId={animeId} />
   </MenuWrapper>;
 };
 
 
 
-const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydratedAnime }) => {
+const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, animeId }) => {
   const currentUser = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
 
@@ -200,7 +198,7 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydra
 
     if (currentUser.id) {
       const lib = currentUser.libs.find(el => el.type === type)!;
-      setIsChecked(lib.titles.includes(hydratedAnime.anime.uuid));
+      setIsChecked(lib.anime_ids.includes(animeId));
     }
   }, []);
 
@@ -212,17 +210,18 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, hydra
 
       setIsChecked(prev => !prev);
 
-      await API.patchUser({ editFolderAnime: { animeId: hydratedAnime.anime.uuid, libId: currentUser.libs.find(el => el.type === type)!.id } });
       const state = JSON.parse(JSON.stringify(currentUser)) as IUserState;
 
       const lib = state.libs.find(el => el.type === type)!;
 
-      if (lib.titles.includes(hydratedAnime.anime.uuid)) {
+      if (lib.anime_ids.includes(animeId)) {
         // remove
-        lib.titles = lib.titles.filter(el => el !== hydratedAnime.anime.uuid);
+        await API.patchUser({}, { remove_lib_anime: { lib_id: lib.id, anime_id: animeId } });
+        lib.anime_ids = lib.anime_ids.filter(el => el !== animeId);
       } else {
         // add
-        lib.titles.push(hydratedAnime.anime.uuid);
+        await API.patchUser({}, { add_lib_anime: { lib_id: lib.id, anime_id: animeId } });
+        lib.anime_ids.push(animeId);
       }
 
       dispatch(userSlice.actions.reducer(state));

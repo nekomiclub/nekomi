@@ -9,9 +9,9 @@ import { usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
+import StyledButton from '~/components/Styled/StyledButton';
 import StyledImage from '~/components/Styled/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
-import { config } from '~/config';
 import { Routes } from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
@@ -25,15 +25,18 @@ interface Props {
   searchPopupId: string
 
   logout(): Promise<void>
+  signin(): Promise<void>
   forceFocus(): void
 
   isDropdownMenuOpen: boolean
   setIsDropdownMenuOpen(val: boolean): void
+
+  isSigningIn: boolean
 }
 
 
 
-const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, isDropdownMenuOpen, setIsDropdownMenuOpen }) => {
+const HeaderNav: NextPage<Props> = ({ user, logout, signin, searchPopupId, forceFocus, isDropdownMenuOpen, setIsDropdownMenuOpen, isSigningIn }) => {
   const pathname = usePathname();
   const dropdownMenuId = useId().replaceAll(':', '');
 
@@ -68,13 +71,13 @@ const HeaderNav: NextPage<Props> = ({ user, logout, searchPopupId, forceFocus, i
       {/* Unauthorized */}
       {!user.id && <div className="relative h-full">
         <div className="flex gap-[4px] absolute top-[50%] right-0 translate-y-[-50%] max-lg:relative">
-          <Link href={`${config.URL.fullkekw_account}/sso?ref=${config.URL.nekomi_site}${pathname}`} className="ui-button px-[12px] py-[8px] bg-dark-primary border-none">
+          <StyledButton className="px-[12px] py-[8px] border-none bg-transparent" onClick={signin} disabled={isSigningIn}>
             <p className="text-white font-manrope font-bold">Увійти</p>
-          </Link>
+          </StyledButton>
 
-          <Link href={`${config.URL.fullkekw_account}/sso?ref=${config.URL.nekomi_site}${pathname}`} className="ui-button px-[12px] py-[8px] bg-primary border-none">
+          <StyledButton className="px-[12px] py-[8px] bg-primary border-none" onClick={signin} disabled={isSigningIn}>
             <p className="text-white font-manrope font-bold">Реєстрація</p>
-          </Link>
+          </StyledButton>
         </div>
       </div>}
     </div>

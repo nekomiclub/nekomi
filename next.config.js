@@ -10,7 +10,10 @@ const nextConfig = {
   reactStrictMode: false,
   sassOptions: {
     silenceDeprecations: ['legacy-js-api'],
-  }
+  },
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
 };
 
 module.exports = nextConfig;

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '~/assets/Social';
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { Routes } from '~/routes';
 
 import StyledImage from './Styled/StyledImage';
@@ -58,19 +58,19 @@ const Footer: FC = () => {
 
       <ul className="h-[50px] flex justify-center items-center gap-[16px]">
         <li>
-          <Link href={config.URL.telegram} className="gui-footer-social">
+          <Link href={conf.URL.telegram} className="gui-footer-social">
             <IcoSocialTelegram width={32} height={32} fill="#fff" />
           </Link>
         </li>
 
         <li>
-          <Link href={config.URL.tiktok} className="gui-footer-social">
+          <Link href={conf.URL.tiktok} className="gui-footer-social">
             <IcoSocialTiktok width={32} height={32} fill="#fff" />
           </Link>
         </li>
 
         <li>
-          <Link href={config.URL.discord} className="gui-footer-social">
+          <Link href={conf.URL.discord} className="gui-footer-social">
             <IcoSocialDiscord width={32} height={32} fill="#fff" />
           </Link>
         </li>

@@ -5,20 +5,21 @@ import { useEffect, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
-import Nekoplayer from '~/components/Nekoplayer/Nekoplayer';
 import StyledImage from '~/components/Styled/StyledImage';
 import { NotifyError, NotifyWarn } from '~/components/UI/NotifyToast';
-import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
-import { H2, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
-import { ANIME_MEDIA_TYPE, AnimeGenre, AnimeMedia, AnimeRate, AnimeSeason, AnimeStatus, AnimeStudio, HydratedAnime } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
+import { ANIME_TYPE, AnimeGenreType, AnimeRateType, AnimeSeasonType, AnimeStatusType, AnimeType, IAnimeStudio } from '~/interfaces/IAnime';
+import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { Routes } from '~/routes';
+import { AnimeFullType } from '~/services/api/anime/GetAnime.api';
+import API from '~/services/api/API';
 import { cn } from '~/utils/classnames';
 import { getUTC, timestampToDayMonth } from '~/utils/utils';
 
@@ -26,20 +27,20 @@ import { getUTC, timestampToDayMonth } from '~/utils/utils';
 
 
 interface WatchGenericProps {
-  hydratedAnime: HydratedAnime
+  anime: AnimeFullType
 }
 
 interface WatchDetailProps {
   name: string
 
   value?: string | null
-  status?: AnimeStatus
-  rate?: AnimeRate
-  season?: AnimeSeason
+  status?: AnimeStatusType
+  rate?: AnimeRateType
+  season?: AnimeSeasonType
   year?: number
-  media?: AnimeMedia
-  genres?: AnimeGenre[]
-  studios?: AnimeStudio[]
+  type?: AnimeType
+  genres?: AnimeGenreType[]
+  studios?: IAnimeStudio[]
 
   className?: string
 }
@@ -86,12 +87,12 @@ export const WatchCheckMobile: NextPage = () => {
   return <></>;
 };
 
-export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
+export const WatchEditLibs: NextPage<WatchGenericProps> = ({ anime: anime }) => {
   const currentUser = useAppSelector(state => state.user);
   const id = useId().replaceAll(':', '');
 
   const [icon, setIcon] = useState<SymbolCodepoints>('create_new_folder');
-  const [title, setTitle] = useState('В ТЕКИ');
+  const [title, setTitle] = useState('ДОДАТИ В ТЕКУ');
   const [isFavorite, setIsFavorite] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
 
@@ -101,12 +102,12 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) =>
     if (!currentUser.id) return;
     let isChanged = false;
 
-    setTitle('В ТЕКИ');
+    setTitle('ДОДАТИ В ТЕКУ');
     setIcon('create_new_folder');
     setIsChanged(false);
     setIsFavorite(false);
 
-    currentUser.libs.filter(el => el.titles.includes(hydratedAnime.anime.uuid)).forEach(lib => {
+    currentUser.libs.filter(el => el.anime_ids.includes(anime.id)).forEach(lib => {
       if (lib.type === 'favorite') {
         setIsFavorite(true);
         setTitle('УЛЮБЛЕНІ');
@@ -150,26 +151,26 @@ export const WatchEditLibs: NextPage<WatchGenericProps> = ({ hydratedAnime }) =>
       <p className={cn(`text-white font-manrope uppercase max-sm:text-[14px]`, isChanged && 'font-bold')}>{title}</p>
     </MenuTrigger>
 
-    <AnimeItemEditMenu hydratedAnime={hydratedAnime} />
+    <AnimeItemEditMenu animeId={anime.id} />
   </Menu>;
 };
 
-export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
+export const WatchActions: NextPage<WatchGenericProps> = ({ anime }) => {
   const currentUser = useAppSelector(state => state.user);
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
   const [isTogetherRoomCreating, setIsTogetherRoomCreating] = useState(false);
 
   const [canEditAnime] = useState(
-    currentUser.capabilities.includes('root')
-    || currentUser.capabilities.includes('admin')
-    || currentUser.capabilities.includes('editor')
-    || currentUser.capabilities.includes('titleEdit')
-    || currentUser.capabilities.includes('seriesAdd')
+    currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE)
+    // || currentUser.permissions.includes('admin')
+    // || currentUser.permissions.includes('editor')
+    // || currentUser.permissions.includes('titleEdit')
+    // || currentUser.permissions.includes('seriesAdd')
   );
 
-  const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
-  const isDMCARestricted = hydratedAnime.anime.isDMCARestricted && !currentUser.id;
+  const haveEpisodes = true;
+  const isDMCARestricted = anime.is_DMCA_restricted && !currentUser.id;
 
 
 
@@ -188,7 +189,7 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
       }, 6000);
 
       // TODO: create together room
-      console.log(`create together room for ${hydratedAnime.anime.uuid}`);
+      console.log(`create together room for ${anime.id}`);
 
       //* async shit...
       setTimeout(() => {
@@ -226,16 +227,21 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ hydratedAnime }) => 
     </button> */}
     </>}
 
-    {canEditAnime && <Link href={Routes.patcher.path({ uuid: hydratedAnime.anime.uuid })} className="ui-button watch-meta-action bg-transparent border-none" prefetch={false}>
+    <Link href={`https://hikka.io/edit/new?slug=${anime.hikka_slug}&content_type=anime`} target="_blank" className="ui-button watch-meta-action">
+      <StyledImage src="https://avatars.githubusercontent.com/u/48723041?s=200&v=4" width="24px" height="24px" rounded={4} useImg />
+      <p className="text-white font-manrope uppercase max-sm:text-[14px]">Редагувати на hikka.io</p>
+    </Link>
+
+    {canEditAnime && <Link href={Routes.patcher.path({ uuid: anime.id })} className="ui-button watch-meta-action bg-transparent border-none" prefetch={false}>
       <MaterialSymbol icon="edit" size={24} className="text-grey-new max-sm:text-[20px]" />
       <p className="text-grey-new font-manrope uppercase max-sm:text-[14px]">РЕДАГУВАТИ</p>
     </Link>}
   </div>;
 };
 
-export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, media, rate, season, status, studios, value, year, className }) => {
+export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, type, rate, season, status, studios, value, year, className }) => {
   if (season && year) value = `${season.name} ${year}`;
-  if (media) value = media.slug === ANIME_MEDIA_TYPE.UNKNOWN ? null : media.name;
+  if (type) value = type.slug === ANIME_TYPE.UNKNOWN ? null : type.name;
   if (status) value = status.name;
 
   return <div className={cn(`watch-meta-detail`, className)}>
@@ -302,72 +308,92 @@ export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, ico
   </div>;
 };
 
-export const WatchDubber: NextPage<WatchDubberProps> = ({ dubber, posterAdapt }) => {
-  return <Link className="ui-button p-[8px] pr-[16px] rounded-[4px] flex grow items-center gap-[16px] max-sm:min-w-0 max-sm:p-[4px] max-sm:pr-[8px] max-sm:basis-[160px]" href={Routes.dubber.path({ slug: dubber.slug })} prefetch={false}>
-    <StyledImage src={dubber.avatarURL} width="48px" height="48px" className="rounded-[2px] overflow-hidden max-sm:w-[40px] max-sm:h-[40px]" />
-
-    <div className="flex flex-col gap-[4px]">
-      <p className={cn(`text-white font-manrope font-bold max-sm:text-[14px]`, posterAdapt ? 'line-clamp-1' : 'line-clamp-2')}>{dubber.nameUkr}</p>
-
-      {posterAdapt && <p className="text-grey-new font-manrope max-sm:text-[12px] whitespace-nowrap">Адаптація постеру</p>}
-    </div>
-  </Link>;
-};
-
-export const WatchRating: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
+export const WatchRating: NextPage<WatchGenericProps> = ({ anime }) => {
   const scoredByFormatter = Intl.NumberFormat('en', { notation: 'compact' });
 
   return <>
     <div className="flex items-center gap-[8px]">
-      <p className={cn('text-primary text-[24px] font-bold font-space-grotesk max-sm:text-[16px]')}>{hydratedAnime.anime.score.mal?.toFixed(2) ?? hydratedAnime.anime.score.imdb?.toFixed(2) ?? '―'}</p>
+      <p className={cn('text-primary text-[24px] font-bold font-space-grotesk max-sm:text-[16px]')}>{anime.score.toFixed(2) ?? '―'}</p>
 
       <MaterialSymbol icon="star_half" size={24} className={cn(`text-primary max-sm:text-[20px]`)} />
     </div>
 
-    <p className="text-grey-new font-manrope whitespace-nowrap">{hydratedAnime.anime.score.malScoredBy ? scoredByFormatter.format(hydratedAnime.anime.score.malScoredBy) : 'Немає'} оцінок</p>
+    <p className="text-grey-new font-manrope whitespace-nowrap">{anime.scored_by ? scoredByFormatter.format(anime.scored_by) : 'Немає'} оцінок</p>
   </>;
 };
 
-export const WatchDetails: NextPage<WatchGenericProps> = ({ hydratedAnime }) => {
-  return <div className="watch-meta-detail_outlined">
-    <MaterialSymbol icon="info" size={24} className="text-grey-new max-sm:text-[20px]" />
+export const WatchExternalPlayer: NextPage<{ animeId: string }> = ({ animeId }) => {
+  const [ashdiUrl, setAshdiUrl] = useState<string | undefined>(undefined);
+  const [isFinished, setIsFinished] = useState(false);
 
-    <p className="text-grey-new font-manrope max-sm:text-[14px]">{hydratedAnime.anime.details}</p>
-  </div>;
-};
 
-export const WatchPlayer: NextPage<WatchPlayerProps> = ({ hydratedAnime, dubbers }) => {
-  const user = useAppSelector(state => state.user);
 
-  const isDMCARestricted = hydratedAnime.anime.isDMCARestricted && !user.id;
-  const haveEpisodes = hydratedAnime.anime.episodes.length > 0;
+  useMemo(() => {
+    (async function () {
+      try {
+        const { anime } = await API.getAnime({ query: animeId }, { view: 'empty', get_episodes: true });
 
-  return <div className="flex flex-col gap-[16px]">
-    <div className="w-full h-[90svh] bg-black">
-      {isDMCARestricted ? <div className="w-full h-full bg-dark-bright flex justify-center items-center">
-        <div className="flex gap-[16px]">
-          <MaterialSymbol icon="copyright" size={44} className="text-white" />
+        setAshdiUrl(anime.ashdi_url);
+        setIsFinished(true);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, []);
 
-          <div className="flex flex-col gap-[8px] w-[300px]">
-            <H2 text="DMCA RESTRICTED" bold size={32} />
-            <P text="Selected content is infringing copyright and beeing removed from nekomi.club" className="!text-grey-new" />
-          </div>
-        </div>
-      </div> : <>
-        {haveEpisodes && <Nekoplayer anime={hydratedAnime.anime} dubbers={dubbers ?? []} />}
-        {!haveEpisodes && <div className="w-full h-full bg-dark-bright flex gap-[32px] items-center justify-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
+
+
+  return <>
+    <div className="w-full bg-black" style={{ height: 'calc(100svh - var(--header-height))' }}>
+      {ashdiUrl && <iframe src={ashdiUrl} width={'100%'} height={'100%'} allowFullScreen frameBorder={0} scrolling="no" allowTransparency></iframe>}
+      {isFinished && !ashdiUrl && <>
+        <div className="w-full h-full bg-dark-bright flex gap-[32px] items-center justify-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
           <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />
 
           <div className="flex flex-col gap-[8px] items-center w-full">
-            <p className="text-white text-[40px] font-manrope font-bold max-sm:text-[24px]">А серій нема</p>
-            <p className="text-grey-new font-manrope">Отак бува, та...</p>
+            <p className="text-white text-[40px] font-manrope font-bold max-sm:text-[24px]">Серії відсутні</p>
+            <p className="text-grey-new font-manrope">Або при завантаженні плеера сталась помилка</p>
           </div>
-        </div>}
+        </div>
       </>}
-    </div>
 
-    {haveEpisodes && !isDMCARestricted && <div className="wrapper items-start">
-      <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
-    </div>}
-  </div>;
+      {!isFinished && <Skeleton width={'100%'} height={'100%'} />}
+    </div>
+  </>;
 };
+
+// export const WatchPlayer: NextPage<WatchPlayerProps> = ({ anime, dubbers }) => {
+//   const user = useAppSelector(state => state.user);
+
+//   const isDMCARestricted = anime.is_DMCA_restricted && !user.id;
+//   const haveEpisodes = true;
+
+//   return <div className="flex flex-col gap-[16px]">
+//     <div className="w-full h-[90svh] bg-black">
+//       {isDMCARestricted ? <div className="w-full h-full bg-dark-bright flex justify-center items-center">
+//         <div className="flex gap-[16px]">
+//           <MaterialSymbol icon="copyright" size={44} className="text-white" />
+
+//           <div className="flex flex-col gap-[8px] w-[300px]">
+//             <H2 text="DMCA RESTRICTED" bold size={32} />
+//             <P text="Selected content is infringing copyright and beeing removed from nekomi.club" className="!text-grey-new" />
+//           </div>
+//         </div>
+//       </div> : <>
+//         {haveEpisodes && <Nekoplayer anime={anime.anime} dubbers={dubbers ?? []} />}
+//         {!haveEpisodes && <div className="w-full h-full bg-dark-bright flex gap-[32px] items-center justify-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
+//           <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />
+
+//           <div className="flex flex-col gap-[8px] items-center w-full">
+//             <p className="text-white text-[40px] font-manrope font-bold max-sm:text-[24px]">А серій нема</p>
+//             <p className="text-grey-new font-manrope">Отак бува, та...</p>
+//           </div>
+//         </div>}
+//       </>}
+//     </div>
+
+//     {haveEpisodes && !isDMCARestricted && <div className="wrapper items-start">
+//       <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
+//     </div>}
+//   </div>;
+// };

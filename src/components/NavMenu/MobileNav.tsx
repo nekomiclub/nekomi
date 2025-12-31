@@ -8,8 +8,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
+import StyledButton from '~/components/Styled/StyledButton';
 import { P } from '~/components/UI/Typography';
-import { config } from '~/config';
 import { Routes } from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
@@ -23,15 +23,18 @@ interface Props {
   searchPopupId: string
 
   logout(): Promise<void>
+  signin(): Promise<void>
   forceFocus(): void
 
   isDropdownMenuOpen: boolean
   setIsDropdownMenuOpen(val: boolean): void
+
+  isSigningIn: boolean
 }
 
 
 
-const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMenuOpen, forceFocus, setIsDropdownMenuOpen }) => {
+const MobileNav: NextPage<Props> = ({ user, logout, signin, searchPopupId, isDropdownMenuOpen, forceFocus, setIsDropdownMenuOpen, isSigningIn }) => {
   const pathname = usePathname();
   const dropdownMenuId = useId().replaceAll(':', '');
 
@@ -71,10 +74,10 @@ const MobileNav: NextPage<Props> = ({ user, logout, searchPopupId, isDropdownMen
 
     {/* Unauthorized */}
     {!user.id && <>
-      <Link href={`${config.URL.fullkekw_account}/sso?ref=${config.URL.nekomi_site}${pathname}`} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
+      <StyledButton className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px] bg-transparent border-none hover:bg-transparent" onClick={signin} disabled={isSigningIn}>
         <MaterialSymbol icon="login" className="text-white" size={24} />
         <P text="Увійти" className="font-bold" size={14} />
-      </Link>
+      </StyledButton>
     </>}
   </nav>;
 };

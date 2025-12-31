@@ -14,11 +14,12 @@ import { useDebounce } from 'use-debounce';
 
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
-import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { Dubber } from '~/interfaces/DubberIntf';
 import { User } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import { AnimeSearchResultType } from '~/services/api/anime/GetAnimeSearch.api';
+import API from '~/services/api/API';
+import { DubberSearchResultType } from '~/services/api/dubber/GetDubberSearch.api';
+import { UserSearchResultType } from '~/services/api/user/GetUserSearch.api';
 import { cn } from '~/utils/classnames';
 import { randomNumber } from '~/utils/utils';
 
@@ -37,11 +38,7 @@ interface MenuSearchSelectTypeButtonProps {
   className?: string
 }
 
-interface SearchAnime extends HydratedAnime {
-  dubbedEpisodes: number | null
-}
-
-type MenuSearchResultType = Dubber | SearchAnime | User | null
+type MenuSearchResultType = DubberSearchResultType | AnimeSearchResultType | UserSearchResultType | null
 
 interface MenuSearchResultProps {
   item: MenuSearchResultType
@@ -51,17 +48,11 @@ interface MenuSearchResultProps {
 
 
 
-const SearchStartTypingDictionary = [
-  'Тільки я візьму новий рівень (2 сезон)',
-  'Студія Качур',
-  '@unniiiverse',
-  '@nekomiclub',
-  'резеро 3',
-  'кордон шангріла',
-  'Кайджу номер 8',
-  'dandadan',
-  'jujutsu kaisen 2'
-];
+const SearchStartTypingDictionary: Record<MenuSearchType, string[]> = {
+  anime: ['JuJutsu kaisen', 'атака титанів', 'Цей прекрасний світ, благословенний Богом!: Багряна легенда'],
+  dubber: ['Студія Качур', 'amanogawa'],
+  user: ['@nekomiclub']
+};
 
 
 
@@ -86,10 +77,12 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
 
 
 
-  // Init
+  // Handle startTypingText
   useEffect(() => {
-    setStartTypingText(SearchStartTypingDictionary[randomNumber(0, SearchStartTypingDictionary.length - 1)]);
-  }, []);
+    const dictionary = SearchStartTypingDictionary[searchType];
+
+    setStartTypingText(dictionary[randomNumber(0, dictionary.length - 1)]);
+  }, [searchType]);
 
   // Handle typing search effect
   useEffect(() => {
@@ -160,24 +153,19 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
 
     try {
       if (searchType === 'anime') {
-        const { results, extended } = await API.searchAnime({ q: searchText });
+        const { results } = await API.getAnimeSearch({ q: searchText });
 
-        setSearchResults(results.map(result => {
-          return {
-            ...result,
-            dubbedEpisodes: extended.dubbedEpisodes[result.anime.uuid]
-          };
-        }));
+        setSearchResults(results);
       }
 
       if (searchType === 'user') {
-        const { results } = await API.searchUsers({ q: searchText });
+        const { results } = await API.getUserSearch({ q: searchText });
 
-        setSearchResults(results.map(el => el.user));
+        setSearchResults(results);
       }
 
       if (searchType === 'dubber') {
-        const { results } = await API.searchDubber({ q: searchText });
+        const { results } = await API.getDubberSearch({ q: searchText });
 
         setSearchResults(results);
       }
@@ -278,16 +266,16 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
   const [firstLineWidth] = useState(randomNumber(80, 320));
   const [secondLineWidth] = useState(randomNumber(40, 250));
 
-  const [animeResult, setAnimeResult] = useState<SearchAnime | null>(null);
+  const [animeResult, setAnimeResult] = useState<AnimeSearchResultType | null>(null);
   const [userResult, setUserResult] = useState<User | null>(null);
-  const [dubberResult, setDubberResult] = useState<Dubber | null>(null);
+  const [dubberResult, setDubberResult] = useState<DubberSearchResultType | null>(null);
 
 
 
   useEffect(() => {
-    setAnimeResult(type === 'anime' ? item as SearchAnime : null);
+    setAnimeResult(type === 'anime' ? item as AnimeSearchResultType : null);
     setUserResult(type === 'user' ? item as User : null);
-    setDubberResult(type === 'dubber' ? item as Dubber : null);
+    setDubberResult(type === 'dubber' ? item as DubberSearchResultType : null);
   }, [item]);
 
 
@@ -320,32 +308,38 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
 
     {/* Anime type */}
     {type === 'anime' && animeResult && <Link href={
-      usePatcherRouting ? Routes.patcher.path({ uuid: animeResult.anime.uuid })
-        : Routes.watch.path({ query: animeResult.anime.slug })
+      usePatcherRouting ? Routes.patcher.path({ uuid: animeResult.id })
+        : Routes.watch.path({ query: animeResult.slug })
     } className="menu-search-result">
-      <StyledImage src={animeResult.anime.poster} width="120px" height="160px" />
+      <StyledImage src={animeResult.poster} width="120px" height="160px" />
 
       <div className="menu-search-result_content">
-        <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.anime.names.ukr}>{animeResult.anime.names.ukr}</h4>
-        <h5 className="text-grey-new font-space-grotesk line-clamp-2" title={animeResult.anime.names.eng}>{animeResult.anime.names.eng}</h5>
+        {animeResult.title_ua && <>
+          <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.title_ua}>{animeResult.title_ua}</h4>
+          <h5 className="text-grey-new font-space-grotesk line-clamp-2" title={animeResult.title_en}>{animeResult.title_en}</h5>
+        </>}
+
+        {!animeResult.title_ua && <>
+          <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.title_en}>{animeResult.title_en}</h4>
+        </>}
 
         <div className="flex items-center gap-[8px] flex-wrap">
           <div className="flex items-center gap-[8px]">
             <MaterialSymbol className="text-primary" icon="star_half" size={16} />
-            <p className="text-primary font-space-grotesk font-bold whitespace-nowrap">{animeResult.anime.score.mal?.toFixed(2) ?? animeResult.anime.score.imdb?.toFixed(2) ?? '—'}</p>
+            <p className="text-primary font-space-grotesk font-bold whitespace-nowrap">{animeResult.score.toFixed(2) ?? '—'}</p>
           </div>
           <span className="text-grey-new font-manrope">•</span>
 
           <div className="flex items-center gap-[8px]">
             <MaterialSymbol className="text-white" icon="acute" size={16} />
-            <p className="text-white font-space-grotesk whitespace-nowrap">{`${animeResult.dubbedEpisodes ?? '—'} / ${animeResult.anime.episodesCount ?? '—'}`}</p>
+            <p className="text-white font-space-grotesk whitespace-nowrap">{`${animeResult.episodes_released ?? '—'} / ${animeResult.episodes_total ?? '—'}`}</p>
           </div>
           <span className="text-grey-new font-manrope">•</span>
 
-          <p className="text-white font-manrope">{animeResult.media.name}</p>
+          <p className="text-white font-manrope">{animeResult.type?.name}</p>
           <span className="text-grey-new font-manrope">•</span>
 
-          <p className="text-white font-space-grotesk whitespace-nowrap">{animeResult.anime.year}</p>
+          <p className="text-white font-space-grotesk whitespace-nowrap">{animeResult.year}</p>
         </div>
       </div>
     </Link>}
@@ -364,8 +358,8 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
       <StyledImage src={dubberResult.avatar} width="128px" height="128px" />
 
       <div className="menu-search-result_content">
-        <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-1" title={dubberResult.nameUkr}>{dubberResult.nameUkr}</h4>
-        {dubberResult.description && <p className="text-grey-new font-manrope line-clamp-2" title={dubberResult.description}>{dubberResult.description}</p>}
+        <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-1" title={dubberResult.name}>{dubberResult.name}</h4>
+        {dubberResult.about && <p className="text-grey-new font-manrope line-clamp-2" title={dubberResult.about}>{dubberResult.about}</p>}
       </div>
     </Link>}
   </>;

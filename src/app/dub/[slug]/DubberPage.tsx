@@ -1,21 +1,19 @@
 'use client';
 
 import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialTelegram } from '~/assets/Social';
-import AnimeItem from '~/components/AnimeItem';
-import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import { HydratedAnime } from '~/interfaces/AnimeIntf';
-import { Dubber, DubberMember } from '~/interfaces/DubberIntf';
-import { User } from '~/interfaces/UserIntf';
+import { Dubber } from '~/interfaces/DubberIntf';
+import IDubber from '~/interfaces/IDubber';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import { cn } from '~/utils/classnames';
 import { wordDeclination } from '~/utils/utils';
 
@@ -39,38 +37,38 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
 
 
 
-  useEffect(() => {
-    if (invite !== 'accept' && invite !== 'decline') return router.replace(pathname, { scroll: false });
+  // useEffect(() => {
+  //   if (invite !== 'accept' && invite !== 'decline') return router.replace(pathname, { scroll: false });
 
-    (async function () {
-      try {
-        await API.dubberGetInvite({ dubberId: dubber.id });
-      } catch (e) {
-        setIsPopupShowing(true);
-        setInviteType('invalid');
+  //   (async function () {
+  //     try {
+  //       await APIOld.dubberGetInvite({ dubberId: dubber.id });
+  //     } catch (e) {
+  //       setIsPopupShowing(true);
+  //       setInviteType('invalid');
 
-        return;
-      }
+  //       return;
+  //     }
 
-      try {
-        if (invite === 'accept') {
-          setInviteType('accept');
-          await API.dubberInviteAccept({ dubberId: dubber.id, userId: '' });
-        };
+  //     try {
+  //       if (invite === 'accept') {
+  //         setInviteType('accept');
+  //         await APIOld.dubberInviteAccept({ dubberId: dubber.id, userId: '' });
+  //       };
 
-        if (invite === 'decline') {
-          setInviteType('decline');
-          await API.dubberInviteDecline({ dubberId: dubber.id, userId: '' });
-        };
+  //       if (invite === 'decline') {
+  //         setInviteType('decline');
+  //         await APIOld.dubberInviteDecline({ dubberId: dubber.id, userId: '' });
+  //       };
 
-        setIsPopupShowing(true);
-      } catch (e) {
-        HandleClientError(e);
-      }
-    })();
+  //       setIsPopupShowing(true);
+  //     } catch (e) {
+  //       HandleClientError(e);
+  //     }
+  //   })();
 
-    router.replace(pathname, { scroll: false });
-  }, []);
+  //   router.replace(pathname, { scroll: false });
+  // }, []);
 
 
 
@@ -100,55 +98,55 @@ export const DubberAnswerInvite: NextPage<{ dubber: Dubber, invite?: 'accept' | 
   </PopupWindow>;
 };
 
-export const DubberAbout: NextPage<{ dubber: Dubber }> = ({ dubber }) => {
+export const DubberAbout: NextPage<{ dubber: DubberFullType }> = ({ dubber }) => {
   return <div className="flex flex-col gap-[24px]">
     <ul className="w-full flex items-center justify-center flex-wrap gap-[8px]">
-      {dubber.socials.telegram && <DubberAboutLink link={dubber.socials.telegram ?? '#'} label="telegram" />}
-      {dubber.socials.tiktok && <DubberAboutLink link={dubber.socials.tiktok ?? '#'} label="tiktok" />}
-      {dubber.socials.youtube && <DubberAboutLink link={dubber.socials.youtube ?? '#'} label="youtube" />}
-      {dubber.socials.instagram && <DubberAboutLink link={dubber.socials.instagram ?? '#'} label="instagram" />}
-      {dubber.support.monobank && <DubberAboutLink link={dubber.support.monobank ?? '#'} label="monobank" />}
-      {dubber.support.diaka && <DubberAboutLink link={dubber.support.diaka ?? '#'} label="diaka" />}
-      {dubber.support.bymeacoffee && <DubberAboutLink link={dubber.support.bymeacoffee ?? '#'} label="bymeacoffee" />}
-      {dubber.support.patreon && <DubberAboutLink link={dubber.support.patreon ?? '#'} label="patreon" />}
+      {dubber.socials?.telegram && <DubberAboutLink link={dubber.socials?.telegram ?? '#'} label="telegram" />}
+      {dubber.socials?.tiktok && <DubberAboutLink link={dubber.socials?.tiktok ?? '#'} label="tiktok" />}
+      {dubber.socials?.youtube && <DubberAboutLink link={dubber.socials?.youtube ?? '#'} label="youtube" />}
+      {dubber.socials?.instagram && <DubberAboutLink link={dubber.socials?.instagram ?? '#'} label="instagram" />}
+      {dubber.support?.monobank && <DubberAboutLink link={dubber.support?.monobank ?? '#'} label="monobank" />}
+      {dubber.support?.diaka && <DubberAboutLink link={dubber.support?.diaka ?? '#'} label="diaka" />}
+      {dubber.support?.bymeacoffee && <DubberAboutLink link={dubber.support?.bymeacoffee ?? '#'} label="bymeacoffee" />}
+      {dubber.support?.patreon && <DubberAboutLink link={dubber.support?.patreon ?? '#'} label="patreon" />}
     </ul>
 
     <div className="w-full h-[1px] bg-dark-light"></div>
 
-    {dubber.description && <p className="w-full text-white text-[20px] font-manrope max-lg:text-[16px]">{dubber.description}</p>}
-    {!dubber.description && <p className="w-full text-grey-new font-manrope italic">Опис відсутній</p>}
+    {dubber.about && <p className="w-full text-white text-[20px] font-manrope max-lg:text-[16px]">{dubber.about}</p>}
+    {!dubber.about && <p className="w-full text-grey-new font-manrope italic">Опис відсутній</p>}
   </div>;
 };
 
-export const DubberAnimeDubbed: NextPage<{ dubber: Dubber, hydratedAnimes: HydratedAnime[] }> = ({ hydratedAnimes, dubber }) => {
+export const DubberAnimeDubbed: NextPage<{ dubber: IDubber, animes: HydratedAnime[] }> = ({ animes, dubber }) => {
   return <div className="flex flex-col gap-[16px]">
     <div className="flex items-center gap-[24px] justify-between">
-      <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">З озвученням {dubber.nameUkr}</h3>
+      <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">З озвученням {dubber.name}</h3>
     </div>
 
     <div className="grid gap-[16px] grid-cols-6 max-[1440px]:grid-cols-5 max-xl:grid-cols-4 max-lg:grid-cols-3 max-md:grid-cols-2 grid-rows-1">
-      {hydratedAnimes.slice(0, 6).map((hydrated, i) => {
-        return <AnimeItem hydrated={hydrated} key={`dubbed_anime-${dubber.id}--${i}`} />;
-      })}
+      {/* {hydratedAnimes.slice(0, 6).map((hydrated, i) => {
+        return <AnimeItem anime={hydrated} key={`dubbed_anime-${dubber.id}--${i}`} />;
+      })} */}
     </div>
   </div>;
 };
 
-export const DubberTeam: NextPage<{ dubber: Dubber, members: User[] }> = ({ dubber, members }) => {
+export const DubberTeam: NextPage<{ members: IDubberMemberCard[] }> = ({ members }) => {
   return <div className="flex flex-col gap-[16px]">
-    <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
+    <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {members.length} {wordDeclination(members.length, ['учасник', 'учасника', 'учасників'])}</h3>
 
     <div className="flex flex-wrap gap-[16px]">
-      {dubber.members.filter(el => el.role === 'leader').map(member => {
-        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />;
+      {members.filter(el => el.role === 'leader').map(member => {
+        return <DubberTeamMember member={member} key={`member--${member.id}`} />;
       })}
 
-      {dubber.members.filter(el => el.role === 'editor').map(member => {
-        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />;
+      {members.filter(el => el.role === 'editor').map(member => {
+        return <DubberTeamMember member={member} key={`member--${member.id}`} />;
       })}
 
-      {dubber.members.filter(el => el.role === 'member').map(member => {
-        return <DubberTeamMember user={members.find(el => el.id === member.id)!} member={member} key={`dubber-team-member--${member.id}`} />;
+      {members.filter(el => el.role === 'member').map(member => {
+        return <DubberTeamMember member={member} key={`member--${member.id}`} />;
       })}
     </div>
   </div>;
@@ -167,12 +165,12 @@ function DubberAboutLink({ link, label }: IDubberAboutLinkProps) {
   </li>;
 }
 
-function DubberTeamMember({ user, member }: { user: User, member: DubberMember }) {
-  return <Link href={Routes.user.path({ username: user.username })} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none" prefetch={false}>
-    <StyledImage height="64px" width="64px" src={user.avatar} className="rounded-[4px] overflow-hidden" />
+function DubberTeamMember({ member }: { member: IDubberMemberCard }) {
+  return <Link href={Routes.user.path({ username: member.username })} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none" prefetch={false}>
+    <StyledImage height="64px" width="64px" src={member.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full">
-      <p className={cn(`text-white font-space-grotesk text-[20px] max-md:text-[20px] line-clamp-1 text-ellipsis break-all w-full`, member.role === 'leader' && 'font-bold !text-primary')}>@{user.username}</p>
+      <p className={cn(`text-white font-space-grotesk text-[20px] max-md:text-[20px] line-clamp-1 text-ellipsis break-all w-full`, member.role === 'leader' && 'font-bold !text-primary')}>@{member.username}</p>
 
       <div className="flex items-center gap-[8px]">
         {member.role === 'leader' && <MaterialSymbol icon="star" size={24} color="#fff" />}

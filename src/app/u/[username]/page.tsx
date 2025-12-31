@@ -7,12 +7,13 @@ import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';
 import { P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
-import { config, DevelopmentMode, metaObject } from '~/config';
+import { conf, DevelopmentMode } from '~/conf';
+import { IUserLib } from '~/interfaces/IUser';
 import { UserPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
-import { UserLib } from '~/interfaces/UserIntf';
 import { Routes } from '~/routes';
 import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
+import siteMetadata from '~/utils/site-metadata';
 import { getUTC, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
 import { UserLibItem, UserStatisticsItem, UserTitle } from './UserPage';
@@ -26,11 +27,11 @@ export async function generateMetadata(
   const { username } = params;
 
   try {
-    const { user } = await getCachedUser(username, undefined, await getSessionToken());
+    const user = await getCachedUser(username, await getSessionToken());
     const title = `@${user.username}`;
     const description = `Профіль користувача`;
 
-    return metaObject({
+    return siteMetadata({
       title,
       description,
       openGraph: {
@@ -41,13 +42,13 @@ export async function generateMetadata(
         username: user.username,
         url: Routes.user.path({ username }),
         locale: 'uk_UA',
-        siteName: config.DOMAIN.nekomi.split('.')[0],
+        siteName: conf.domain.split('.')[0],
       }
     });
   } catch (e) {
     if (DevelopmentMode) console.error(`User page generateMetadata error`, e);
 
-    return metaObject({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] });
+    return siteMetadata({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] });
   }
 }
 
@@ -60,19 +61,19 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
 
 
   try {
-    const { user } = await getCachedUser(username, undefined, await getSessionToken());
+    const user = await getCachedUser(username, await getSessionToken());
+    const libs = user.libs ?? [];
 
-    const animeSeen = user.libs.find(el => el.type === 'watched')?.titles.length ?? 0;
-    const viewtime = Math.floor(user.statistics.viewtime / 60 / 60);
-    const daysOnNekomi = Math.round((getUTC().timestamp - user.statistics.accountCreated) / 60000 / 60 / 24);
+    const animeSeen = libs.find(el => el.type === 'watched')?.anime_ids.length ?? 0;
+    const viewtime = Math.floor(user.total_viewtime / 60 / 60);
+    const daysOnNekomi = Math.round((getUTC().timestamp - getUTC(user.created_at).timestamp) / 60000 / 60 / 24);
 
-    const sortedLibs: UserLib[] = [
-      user.libs.find(el => el.type === 'favorite'),
-      user.libs.find(el => el.type === 'watching'),
-      user.libs.find(el => el.type === 'watched'),
-      user.libs.find(el => el.type === 'plans'),
-      user.libs.find(el => el.type === 'delayed'),
-      ...user.libs.filter(el => el.type === 'custom')
+    const sortedLibs: IUserLib[] = [
+      libs.find(el => el.type === 'favorite'),
+      libs.find(el => el.type === 'watching'),
+      libs.find(el => el.type === 'watched'),
+      libs.find(el => el.type === 'plans'),
+      libs.find(el => el.type === 'delayed')
     ].filter(el => el !== undefined);
 
 
@@ -86,7 +87,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
           <UserStatisticsItem viewtime={viewtime} />
         </div>
 
-        {user.libs.length !== 0 && <div className="flex flex-col gap-[16px]" id="user-libs">
+        {libs.length !== 0 && <div className="flex flex-col gap-[16px]" id="user-libs">
           <UserTitle title="Теки" />
 
           <div className="flex flex-wrap gap-[8px]">
@@ -98,7 +99,7 @@ export default async function RSC(props: RSCProps<UserPageProps>) {
 
         <div className="flex items-center gap-[8px]">
           <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
-          <Tooltip content={`Акаунт зареєстровано: ${timestampToDayMonth(user.statistics.accountCreated)}`}>
+          <Tooltip content={`Акаунт зареєстровано: ${timestampToDayMonth(getUTC(user.created_at).timestamp)}`}>
             <P text={`${daysOnNekomi} ${wordDeclination(daysOnNekomi, ['день', 'дні', 'днів'])} на nekomi!`} size={12} className="text-grey-new" />
           </Tooltip>
         </div>

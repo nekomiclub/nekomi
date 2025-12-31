@@ -3,25 +3,26 @@ import '~/styles/pages/watch.scss';
 import { Metadata } from 'next';
 import { cache } from 'react';
 import { headers } from 'next/headers';
+import Link from 'next/link';
 
 import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import StyledSwiper from '~/components/Styled/StyledSwiper';
-import { config, metaObject } from '~/config';
-import { HydratedAnime } from '~/interfaces/AnimeIntf';
+import { conf } from '~/conf';
 import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
-import { isUserAgentMobile } from '~/utils/utils';
+import API from '~/services/api/API';
+import siteMetadata from '~/utils/site-metadata';
+import { getAnimeHeroPoster, isUserAgentMobile } from '~/utils/utils';
 
-import { WatchActions, WatchCheckMobile, WatchDetail, WatchDetails, WatchDubber, WatchEditLibs, WatchNextEpisode, WatchPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
+import { WatchActions, WatchCheckMobile, WatchDetail, WatchEditLibs, WatchExternalPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
 
 
 
 const getAnime = cache(async (query: string) => {
-  return await API.getAnime({ query, detailed: true, fetchDubbers: true, fetchRelated: true });
+  return await API.getAnime({ query }, { view: 'full', get_details: true });
 });
 
 
@@ -34,25 +35,25 @@ export async function generateMetadata(
 
   try {
     const { anime } = await getAnime(query);
-    const title = `${anime.names.ukr} (${anime.year})`;
-    const description = anime.description ?? 'Опис відсутній';
+    const title = `${anime.title_ua ?? anime.title_en} (${anime.year})`;
+    const description = anime.synopsis_ua ?? anime.synopsis_en ?? 'Опис відсутній';
 
-    return metaObject({
+    return siteMetadata({
       title,
       description,
-      keywords: [anime.names.ukr, anime.names.eng, ...anime.names.alt],
+      keywords: [anime.title_ua ?? '', anime.title_en, anime.title_ja, ...anime.title_synonims].filter(el => el.length),
       openGraph: {
         title,
         description,
         type: 'video.tv_show',
-        images: anime.poster,
+        images: getAnimeHeroPoster(anime.posters ?? []).original,
         url: Routes.watch.path({ query }),
         locale: 'uk_UA',
-        siteName: config.DOMAIN.nekomi.split('.')[0],
+        siteName: conf.domain.split('.')[0],
       }
     });
   } catch (e) {
-    return metaObject({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
+    return siteMetadata({ title: 'Аніме не знайдено', robots: ['nofollow', 'noindex'] });
   }
 }
 
@@ -67,12 +68,14 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
 
 
 
-  try {
-    const { anime, genres, media, rate, season, status, related, posterAdapt, nextBroadcast, dubbers } = await getAnime(query);
-    const hydratedAnime: HydratedAnime = { anime, genres, media, rate, season, status };
 
-    let maximumEpisode = 0;
-    anime.episodes.forEach(ep => ep.order > maximumEpisode ? maximumEpisode = ep.order : undefined);
+  try {
+    const anime = (await getAnime(query)).anime;
+    const poster = getAnimeHeroPoster(anime.posters ?? []);
+    const synopsis = anime.synopsis_ua ?? anime.synopsis_en;
+
+    const titleH1 = anime.title_ua ?? anime.title_en;
+    const titleH2 = titleH1 ? anime.title_en : null;
 
 
 
@@ -81,80 +84,77 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
       <main>
         <div className="w-full h-[500px] pt-[32px] flex justify-center relative">
           {/* Background */}
-          <div className="watch-mobile-poster" style={{ backgroundImage: `url(${anime.poster})` }}></div>
+          <div className="watch-mobile-poster" style={{ backgroundImage: `url(${poster.medium})` }}></div>
 
           <div className="flex flex-col items-center gap-[4px] z-[10] w-fit px-[24px]">
-            <StyledImage src={anime.poster} width="270px" height="370px" className="rounded-[4px] overflow-hidden" loading="eager" />
+            <StyledImage src={poster.medium} width="270px" height="370px" className="rounded-[4px] overflow-hidden" loading="eager" />
 
-            <WatchEditLibs hydratedAnime={hydratedAnime} />
+            <WatchEditLibs anime={anime} />
 
             <div className="flex items-center justify-between w-full">
-              <WatchRating hydratedAnime={hydratedAnime} />
+              <WatchRating anime={anime} />
             </div>
           </div>
         </div>
 
         <section className="wrapper gap-[16px]">
           <div className="flex flex-col gap-[4px]">
-            <h1 className="text-white font-manrope font-bold text-[20px]">{anime.names.ukr}</h1>
-            <h2 className="text-grey-new font-manrope">{anime.names.eng}</h2>
+            <h1 className="text-white font-manrope font-bold text-[20px]">{titleH1}</h1>
+            {titleH2 && <h2 className="text-grey-new font-manrope">{titleH2}</h2>}
           </div>
 
-          {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />}
+          {/* {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />} */}
 
-          <WatchActions hydratedAnime={hydratedAnime} />
+          <WatchActions anime={anime} />
 
           <div className="watch-section_divider"></div>
 
-          {/* Details */}
-          {anime.details && <WatchDetails hydratedAnime={hydratedAnime} />}
-
           {/* Meta */}
           <div className="flex flex-col gap-[6px]">
-            <WatchDetail name="епізоди" value={`${maximumEpisode !== 0 ? maximumEpisode : '—'} / ${anime.episodesCount ?? '—'}`} />
-            <WatchDetail name="Cтатус:" status={status} />
-            <WatchDetail name="Рейтинг:" rate={rate} />
-            <WatchDetail name="Cезон:" season={season} year={anime.year} />
-            <WatchDetail name="Тип:" media={media} />
-            <WatchDetail name="Жанри:" genres={genres} />
+            <WatchDetail name="епізоди" value={`${anime.episodes_released ?? '—'} / ${anime.episodes_total ?? '—'}`} />
+            {anime.status && <WatchDetail name="Cтатус:" status={anime.status} />}
+            {anime.rating && <WatchDetail name="Рейтинг:" rate={anime.rating} />}
+            {anime.season && <WatchDetail name="Cезон:" season={anime.season} year={anime.year} />}
+            {anime.type && <WatchDetail name="Тип:" type={anime.type} />}
+
+            <WatchDetail name="Жанри:" genres={anime.genres} />
             <WatchDetail name="Студії:" studios={anime.studios} />
           </div>
 
           {/* Description */}
-          {anime.description && <p className="text-white text-[14px] font-manrope">{anime.description}</p>}
-          {!anime.description && <p className="text-grey-new text-[14px] font-manrope">Опис відсутній</p>}
+          {synopsis && <p className="text-white text-[14px] font-manrope">{synopsis}</p>}
+          {!synopsis && <p className="text-grey-new text-[14px] font-manrope">Опис відсутній</p>}
 
           {/* Divider */}
           <div className="watch-section_divider"></div>
 
-          {/* Dubbing */}
-          {dubbers && dubbers?.length > 0 && <div className="flex flex-col gap-[8px]">
-            <WatchSectionLabel icon="mic" label="Переклад та озвучення" />
+          {/* Screenshots */}
+          {anime.screenshots && anime.screenshots.length > 0 && <div className="wrapper gap-[16px]">
+            <WatchSectionLabel icon="gallery_thumbnail" label={`Кадри`} />
 
-            <div className="flex flex-wrap gap-[8px]">
-              {posterAdapt && <WatchDubber dubber={posterAdapt} posterAdapt key={`animedub-posterAdapt--${posterAdapt.id}`} />}
-
-              {dubbers?.filter(el => el.id !== anime.posterAdapt).map(dubber => {
-                return <WatchDubber dubber={dubber} key={`animedub--${dubber.id}`} />;
+            <StyledSwiper>
+              {anime.screenshots.map((screenshot, i) => {
+                return <Link href={screenshot.original} target="_blank" title="Відкрити велике зображення" key={`screenshot-${i}`}>
+                  <StyledImage src={screenshot.preview} width="192px" height="108px" rounded={2} />
+                </Link>;
               })}
-            </div>
+            </StyledSwiper>
           </div>}
 
-          {/* Pictures */}
-
           {/* Related */}
-          {related && related?.length > 0 && <div className="wrapper gap-[16px]">
+          {anime.relations && anime.relations?.length > 0 && <div className="wrapper gap-[16px]">
             <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
 
             <StyledSwiper>
-              {related.map((hydrated, i) => {
-                return <AnimeItem hydrated={hydrated} className="!w-[170px]" key={`animerelated-${anime.uuid}--${i}`} />;
+              {anime.relations.map((hydrated, i) => {
+                return <AnimeItem anime={hydrated} className="!w-[170px]" key={`relation-${anime.id}--${i}`} />;
               })}
             </StyledSwiper>
           </div>}
 
           {/* Player */}
-          <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} />
+          {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
+          <WatchExternalPlayer animeId={anime.id} />
         </section>
       </main>
     </> : <>
@@ -169,10 +169,12 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
           {/* Poster */}
           <div className="flex flex-col gap-[8px] w-[500px] shrink-0 max-xl:w-[400px]">
             <div className="watch-poster w-full h-[700px] bg-dark-medium rounded-[4px] overflow-hidden max-xl:h-[600px]">
-              <StyledImage src={anime.poster} width="100%" height="100%" loading="eager" />
+              <Link href={poster.original} target="_blank" title="Відкрити велике зображення">
+                <StyledImage src={poster.medium} width="100%" height="100%" loading="eager" />
+              </Link>
             </div>
 
-            <WatchEditLibs hydratedAnime={hydratedAnime} />
+            <WatchEditLibs anime={anime} />
           </div>
 
           {/* Content */}
@@ -180,17 +182,17 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
             {/* Heading */}
             <div className="flex items-center justify-between w-full gap-[24px]">
               <div className="flex flex-col gap-[4px]">
-                <h1 className="text-white text-[32px] font-manrope font-bold" title={anime.names.ukr}>{anime.names.ukr}</h1>
-                <h2 className="text-grey-new text-[24px] font-space-grotesk" title={anime.names.eng}>{anime.names.eng}</h2>
+                <h1 className="text-white text-[32px] font-manrope font-bold" title={titleH1}>{titleH1}</h1>
+                {titleH2 && <h2 className="text-grey-new text-[24px] font-space-grotesk" title={titleH2}>{titleH2}</h2>}
               </div>
 
               <div className="flex flex-col items-center gap-[4px]">
-                <WatchRating hydratedAnime={hydratedAnime} />
+                <WatchRating anime={anime} />
               </div>
             </div>
 
             {/* Actions */}
-            <WatchActions hydratedAnime={hydratedAnime} />
+            <WatchActions anime={anime} />
 
             {/* Divider */}
             <div className="watch-section_divider"></div>
@@ -198,61 +200,56 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
             {/* Details */}
             <div className="flex flex-col gap-[8px]">
               <div className="flex flex-wrap gap-[8px] max-2xl:grid-cols-3">
-                <WatchDetail name="епізоди" value={`${maximumEpisode !== 0 ? maximumEpisode : '—'} / ${anime.episodesCount ?? '—'}`} />
-                <WatchDetail name="статус" status={status} />
-                <WatchDetail name="рейтинг" rate={rate} />
-                <WatchDetail name="сезон" season={season} year={anime.year} />
-                <WatchDetail name="тип" media={media} />
+                <WatchDetail name="епізоди" value={`${anime.episodes_released ?? '—'} / ${anime.episodes_total ?? '—'}`} />
+                {anime.status && <WatchDetail name="статус" status={anime.status} />}
+                {anime.rating && <WatchDetail name="рейтинг" rate={anime.rating} />}
+                {anime.season && <WatchDetail name="сезон" season={anime.season} year={anime.year} />}
+                {anime.type && <WatchDetail name="тип" type={anime.type} />}
               </div>
 
               <div className="flex flex-wrap gap-[8px] max-lg:grid-cols-1">
-                <WatchDetail name="жанри" genres={genres} />
+                <WatchDetail name="жанри" genres={anime.genres} />
                 <WatchDetail name="студії" studios={anime.studios} />
               </div>
 
-              <div className="flex gap-[8px] max-2xl:flex-col">
+              {/* <div className="flex gap-[8px] max-2xl:flex-col">
                 {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />}
-                {anime.details && <WatchDetails hydratedAnime={hydratedAnime} />}
-              </div>
+              </div> */}
             </div>
 
             {/* Description */}
-            {anime.description && <p className="text-white font-manrope">{anime.description}</p>}
-            {!anime.description && <p className="text-grey-new font-manrope">Опис відсутній</p>}
-
-            {/* Divider */}
-            <div className="watch-section_divider"></div>
-
-            {/* Dubbing */}
-            {dubbers && dubbers?.length > 0 && <div className="flex flex-col gap-[8px]">
-              <WatchSectionLabel icon="mic" label="Переклад та озвучення" />
-
-              <div className="flex flex-wrap gap-[8px]">
-                {posterAdapt && <WatchDubber dubber={posterAdapt} posterAdapt key={`animedub-posterAdapt--${posterAdapt.id}`} />}
-
-                {dubbers?.filter(el => el.id !== anime.posterAdapt).map(dubber => {
-                  return <WatchDubber dubber={dubber} key={`animedub--${dubber.id}`} />;
-                })}
-              </div>
-            </div>}
+            {synopsis && <p className="text-white font-manrope">{synopsis}</p>}
+            {!synopsis && <p className="text-grey-new font-manrope">Опис відсутній</p>}
           </div>
         </section>
 
-        {/* Pictures */}
+        {/* Screenshots */}
+        {anime.screenshots && anime.screenshots.length > 0 && <div className="wrapper gap-[16px]">
+          <WatchSectionLabel icon="gallery_thumbnail" label={`Кадри`} />
+
+          <StyledSwiper>
+            {anime.screenshots.map((screenshot, i) => {
+              return <Link href={screenshot.original} target="_blank" title="Відкрити велике зображення" key={`screenshot-${i}`}>
+                <StyledImage src={screenshot.preview} width="384px" height="216px" rounded={2} />
+              </Link>;
+            })}
+          </StyledSwiper>
+        </div>}
 
         {/* Related */}
-        {related && related?.length > 0 && <div className="wrapper gap-[16px]">
+        {anime.relations && anime.relations?.length > 0 && <div className="wrapper gap-[16px]">
           <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
 
           <StyledSwiper>
-            {related.map((hydrated, i) => {
-              return <AnimeItem hydrated={hydrated} className="!w-[230px]" key={`animerelated-${anime.uuid}--${i}`} />;
+            {anime.relations.map((anime, i) => {
+              return <AnimeItem anime={anime} className="!w-[230px]" key={`relation-${i}`} />;
             })}
           </StyledSwiper>
         </div>}
 
         {/* Player */}
-        <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} />
+        {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
+        <WatchExternalPlayer animeId={anime.id} />
       </main>
     </>;
   } catch (e) {

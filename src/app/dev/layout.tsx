@@ -1,12 +1,13 @@
 
 import { notFound } from 'next/navigation';
 
-import { DevelopmentMode, metaObject } from '~/config';
+import { DevelopmentMode } from '~/conf';
 import { LayoutProps } from '~/interfaces/types';
+import siteMetadata from '~/utils/site-metadata';
 
 
 
-export const metadata = metaObject({ robots: ['nofollow', 'noindex'] });
+export const metadata = siteMetadata({ robots: ['nofollow', 'noindex'] });
 
 
 

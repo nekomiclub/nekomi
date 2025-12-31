@@ -8,13 +8,14 @@ import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';
 import { H2, H3, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
-import { metaObject } from '~/config';
+import { IUserLib } from '~/interfaces/IUser';
 import { UserLibPageProps } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
-import { UserLib } from '~/interfaces/UserIntf';
+import API from '~/services/api/API';
 import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
 import CheckUserAccess from '~/utils/check-user-access';
 import { parseLibTitle } from '~/utils/parse-user-lib-ui';
+import siteMetadata from '~/utils/site-metadata';
 
 
 
@@ -27,17 +28,17 @@ export async function generateMetadata(
 
 
   try {
-    const { user, parsedLib } = await getCachedUser(username, libId, await getSessionToken());
-    const lib = user.libs.find(el => el.id === params.libId);
-    if (!lib || !parsedLib) return notFound();
+    const user = await getCachedUser(username, await getSessionToken());
+    const lib = user.libs!.find(el => el.id === params.libId);
+    if (!lib) return notFound();
 
-    return metaObject({
-      overwriteTitle: `${lib.settings.name} ― тека @${user.username} на nekomi`,
+    return siteMetadata({
+      overwriteTitle: `${parseLibTitle(lib.type)} ― тека @${user.username} на nekomi`,
       description: `Список аніме @${username}`,
       robots: ['nofollow', 'noindex']
     });
   } catch (e) {
-    return metaObject({
+    return siteMetadata({
       title: 'Цієї теки не існує',
       robots: ['nofollow', 'noindex']
     });
@@ -55,20 +56,19 @@ export default async function RSC(props: RSCProps<UserLibPageProps>) {
 
   try {
     const { user: currentUser } = await CheckUserAccess({ session });
-    const { user, parsedLib } = await getCachedUser(username, libId, session);
-    const lib = user.libs.find(el => el.id === params.libId);
-    if (!lib || !parsedLib) return notFound();
+    const { user, libs, catalog } = await API.getUserLib({ userId: username, libId: libId }, { sessionToken: session });
+    const lib = libs.find(el => el.id === libId);
+    if (!lib) return notFound();
 
     const isOwner = user.id === currentUser?.id;
-    const isLibHidden = lib.settings.hidden;
+    const isLibHidden = !lib.is_public;
 
-    const sortedLibs: UserLib[] = [
-      user.libs.find(el => el.type === 'favorite'),
-      user.libs.find(el => el.type === 'watching'),
-      user.libs.find(el => el.type === 'watched'),
-      user.libs.find(el => el.type === 'plans'),
-      user.libs.find(el => el.type === 'delayed'),
-      ...user.libs.filter(el => el.type === 'custom')
+    const sortedLibs: IUserLib[] = [
+      libs.find(el => el.type === 'favorite'),
+      libs.find(el => el.type === 'watching'),
+      libs.find(el => el.type === 'watched'),
+      libs.find(el => el.type === 'plans'),
+      libs.find(el => el.type === 'delayed'),
     ].filter(el => el !== undefined).filter(el => el.type !== lib.type);
 
 
@@ -85,13 +85,13 @@ export default async function RSC(props: RSCProps<UserLibPageProps>) {
 
           <div className="flex items-center gap-[8px]">
             <H2 text={parseLibTitle(lib.type)} bold size={24} />
-            {lib.titles.length !== 0 && <P text={`(${lib.titles.length})`} size={24} className="text-grey-new" />}
+            {lib.anime_ids.length !== 0 && <P text={`(${lib.anime_ids.length})`} size={24} className="text-grey-new" />}
           </div>
 
           <div className="w-full h-[2px] bg-dark-light"></div>
         </div>
 
-        {parsedLib.length === 0 && <div className="w-full flex justify-center items-center gap-[16px] py-[24px]">
+        {catalog.length === 0 && <div className="w-full flex justify-center items-center gap-[16px] py-[24px]">
           <MaterialSymbol icon="extension_off" size={64} className="text-white" />
 
           <div className="flex flex-col gap-[8px]">
@@ -100,9 +100,9 @@ export default async function RSC(props: RSCProps<UserLibPageProps>) {
           </div>
         </div>}
 
-        {parsedLib.length !== 0 && <div className="grid gap-[16px] grid-cols-6 max-[1470px]:grid-cols-5 max-[1250px]:grid-cols-4 max-[940px]:grid-cols-3 max-[720px]:grid-cols-2">
-          {parsedLib.toReversed().map((hydrated, i) => {
-            return <AnimeItem className="max-[720px]:!min-w-[160px]" hydrated={hydrated} key={`userlib-${lib.id}--${i}`} libControls />;
+        {catalog.length !== 0 && <div className="grid gap-[16px] grid-cols-6 max-[1470px]:grid-cols-5 max-[1250px]:grid-cols-4 max-[940px]:grid-cols-3 max-[720px]:grid-cols-2">
+          {catalog.toReversed().map((anime, i) => {
+            return <AnimeItem className="max-[720px]:!min-w-[160px]" anime={anime} key={`userlib-${lib.id}--${i}`} libControls />;
           })}
         </div>}
 

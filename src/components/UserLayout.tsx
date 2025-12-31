@@ -5,12 +5,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MaterialSymbol } from 'react-material-symbols';
 
-import { config } from '~/config';
+import { conf } from '~/conf';
 import { useAppSelector } from '~/hooks/redux';
-import { Dubber } from '~/interfaces/DubberIntf';
-import { User } from '~/interfaces/UserIntf';
+import { ROLE_PERMISSION } from '~/interfaces/IRole';
+import { UserCardType } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
-import API from '~/services/ApiService';
+import API from '~/services/api/API';
+import { DubberFullType } from '~/services/api/dubber/GetDubber.api';
 import cn from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
 
@@ -27,8 +28,8 @@ import { H1, H2, P } from './UI/Typography';
 interface IProps {
   type: 'user_profile' | 'user_settings' | 'user_lib' | 'dubber_profile' | 'dubber_settings'
 
-  user?: User
-  dubber?: Dubber
+  user?: UserCardType
+  dubber?: DubberFullType
 }
 
 interface IUserBannerProps {
@@ -64,22 +65,22 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const isDubber = Boolean(dubber);
 
   const avatarUrl = user?.avatar ?? dubber?.avatar ?? '';
-  const bannerUrl = user?.banner ?? dubber?.banner ?? '';
+  const coverUrl = user?.cover ?? dubber?.cover ?? '';
   const entityId = user?.id ?? dubber?.id ?? '';
   const entityType = user ? 'user' : dubber ? 'dubber' : 'user';
   const isEdit = type === 'dubber_settings' || type === 'user_settings';
 
   const profileUrl = user ? Routes.user.path({ username: user.username }) : dubber ? Routes.dubber.path({ slug: dubber.slug }) : '#';
-  const settingsUrl = user ? Routes.userSettings.path({ username: user.username }) : dubber ? Routes.dubberSettings.path({ slug: dubber.slug }) : '#';
+  const settingsUrl = user ? Routes.userSettings.path({ username: user.id }) : dubber ? Routes.dubberSettings.path({ slug: dubber.slug }) : '#';
 
-  const canEditUser = currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('root') || user?.id === currentUser.id;
-  const canEditDubber = currentUser.capabilities.includes('admin') || currentUser.capabilities.includes('root') || dubber?.members.find(el => el.id === currentUser.id)?.role === 'leader';
+  const canEditUser = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE) || user?.id === currentUser.id /* || currentUser.permissions.includes('admin') */;
+  const canEditDubber = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE); /* || currentUser.permissions.includes('admin') */ /* || dubber?.members.find(el => el.id === currentUser.id)?.role === 'leader'; */
   const showSettings = isUser ? canEditUser : isDubber ? canEditDubber : false;
 
 
 
   function copyLink() {
-    copyToClipboard(`${config.URL.nekomi_site}${pathname}`);
+    copyToClipboard(`${conf.URL.nekomiSite}${pathname}`);
     setIsLinkCopied(true);
 
     NotifySuccess({ title: 'Copied!', message: 'Посилання на команду скопійовано в буфер обміну' });
@@ -92,9 +93,8 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
 
 
-
   return <section className="wrapper relative pt-[16px] sm:pt-[var(--header-height)] gap-0">
-    <UserBanner bannerUrl={bannerUrl} isEdit={isEdit} entityId={entityId} entityType={entityType} />
+    <UserBanner bannerUrl={coverUrl} isEdit={isEdit} entityId={entityId} entityType={entityType} />
 
     <div className="flex items-end gap-[24px] relative px-[16px] max-md:flex-col max-md:items-start max-md:gap-[8px]">
       <div className="w-[256px] h-[128px] flex-shrink-0 max-lg:h-[64px] max-lg:w-[128px]">
@@ -103,7 +103,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
       <div className="w-full flex items-center justify-between gap-[24px] pb-[24px] max-lg:pb-[4px] max-lg:pt-[12px] max-md:p-0">
         <div className="flex flex-col gap-[8px] max-lg:gap-[4px]">
-          <H1 text={user?.username ?? dubber?.nameUkr} size={32} className={cn(`text-white font-bold break-all`, isUser && 'font-space-grotesk', isDubber && 'font-manrope')} />
+          <H1 text={user?.username ?? dubber?.name} size={32} className={cn(`text-white font-bold break-all`, isUser && 'font-space-grotesk', isDubber && 'font-manrope')} />
           {isDubber && <H2 text={`@${dubber?.slug}`} size={20} className="text-grey-new font-space-grotesk line-clamp-1 text-ellipsis break-all" />}
         </div>
 
@@ -206,9 +206,10 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
       NotifySuccess({ title: 'Завантажуємо аватар...', message: file.name });
 
       if (entityType === 'user') {
-        return NotifyWarn({ title: 'Аватар не завантажено', message: 'Ви можете оновити аватар тільки в акаунті Fullkekw' });
+        const res = await API.putUserAvatar({ id: entityId }, file);
+        url = res.url;
       } else if (entityType === 'dubber') {
-        const res = await API.putDubberAvatar({ dubberId: entityId, file });
+        const res = await API.putDubberAvatar({ id: entityId }, file);
         url = res.url;
       } else {
         return console.error(`[dev]: Entity type cannot be handled (${entityType})`);
@@ -314,10 +315,10 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
       NotifySuccess({ title: 'Завантажуємо банер...', message: file.name });
 
       if (entityType === 'user') {
-        const res = await API.userUploadBanner(file);
-        url = res.bannerUrl;
+        const res = await API.putUserCover({ id: entityId }, file);
+        url = res.url;
       } else if (entityType === 'dubber') {
-        const res = await API.putDubberBanner({ dubberId: entityId, file });
+        const res = await API.putDubberCover({ id: entityId }, file);
         url = res.url;
       } else {
         return console.error(`[dev]: Entity type cannot be handled (${entityType})`);

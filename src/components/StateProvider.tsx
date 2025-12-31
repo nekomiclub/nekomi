@@ -7,13 +7,13 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
-import API from '~/services/ApiService';
+import API from '~/services/api/API';
 import { IUserState } from '~/store/reducers/userSlice';
 import { setupStore } from '~/store/store';
 import { randomNumber } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
-import { NotifySuccess, NotifyWarn } from './UI/NotifyToast';
+import { NotifyWarn } from './UI/NotifyToast';
 import { UIReportModal } from './UI/Report';
 
 
@@ -55,7 +55,7 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
       (async function () {
         try {
           NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' });
-          await API.userLogout();
+          await API.getAuthLogout({});
         } catch (e) { HandleClientError(e); }
       })();
     }
@@ -65,25 +65,6 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
     // Log random fact
     const randMessageIndex = randomNumber(0, ConsoleMessages.length - 1);
     console.log(`[Fact #${randMessageIndex}]: ${ConsoleMessages[randMessageIndex]}`);
-
-    // Authorize
-    const signinToken = searchParams.get('signinPayload');
-
-    if (signinToken) {
-      router.replace(pathname);
-
-      (async function () {
-        try {
-          await API.userSignin({ token: signinToken });
-
-          NotifySuccess({ title: 'Ви увійшли в акаунт', message: 'welcome!' });
-
-          setTimeout(() => router.refresh(), 100);
-        } catch (e) {
-          HandleClientError(e);
-        }
-      })();
-    }
   }, []);
 
 

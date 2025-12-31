@@ -1,9 +1,9 @@
 import { ErrorNotFound } from '~/components/Errors';
-import { metaObject } from '~/config';
+import siteMetadata from '~/utils/site-metadata';
 
 
 
-export const metadata = metaObject({
+export const metadata = siteMetadata({
   title: '404',
   description: 'Те, що ви шукаєте, не існує',
   robots: ['nofollow', 'noindex']

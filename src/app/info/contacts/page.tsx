@@ -1,14 +1,14 @@
 
 import Link from 'next/link';
 
-import { IcoSocialGithub, IcoSocialTelegram } from '~/assets/Social';
+import { IcoSocialGithub, IcoSocialLinkedin, IcoSocialTelegram } from '~/assets/Social';
 import StyledImage from '~/components/Styled/StyledImage';
-import { metaObject } from '~/config';
+import siteMetadata from '~/utils/site-metadata';
 
 
 
 
-export const metadata = metaObject({
+export const metadata = siteMetadata({
   title: `Devs`
 });
 
@@ -43,6 +43,10 @@ export default async function RSC() {
 
               <Link href={'https://github.com/unniiiverse'} target="_blank">
                 <IcoSocialGithub width={24} height={24} />
+              </Link>
+
+              <Link href={'https://www.linkedin.com/in/unniiiverse/'} target="_blank">
+                <IcoSocialLinkedin width={24} height={24} />
               </Link>
             </div>
           </div>

@@ -6,18 +6,18 @@ import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';
-import { metaObject } from '~/config';
 import { DubberPageParams } from '~/interfaces/PagesParams';
 import { RSCProps } from '~/interfaces/types';
-import API from '~/services/ApiService';
-import { timestampToDayMonth } from '~/utils/utils';
+import API from '~/services/api/API';
+import siteMetadata from '~/utils/site-metadata';
+import { getUTC, timestampToDayMonth } from '~/utils/utils';
 
-import { DubberAbout, DubberAnimeDubbed, DubberAnswerInvite, DubberTeam } from './DubberPage';
+import { DubberAbout, DubberTeam } from './DubberPage';
 
 
 
 const getDubber = cache(async (query: string) => {
-  return await API.getDubberByQuery({ query, detailed: true, fetchDubbedAnime: true, parseMembers: true });
+  return await API.getDubber({ query }, { view: 'full', get_members: true, get_timestamps: true });
 });
 
 
@@ -29,13 +29,13 @@ export async function generateMetadata(
 
   try {
     const { dubber } = await getDubber(slug);
-    const title = dubber.nameUkr;
-    const description = dubber.description ?? 'Опис відсутній';
+    const title = dubber.name;
+    const description = dubber.about ?? 'Опис відсутній';
 
-    return metaObject({
+    return siteMetadata({
       title,
       description: description,
-      keywords: [dubber.nameUkr, dubber.nameEng],
+      keywords: [dubber.name],
       openGraph: {
         title,
         description: description,
@@ -44,7 +44,7 @@ export async function generateMetadata(
       }
     });
   } catch (e) {
-    return metaObject({ title: 'Команда озвучення не знайдена', robots: ['nofollow', 'noindex'] });
+    return siteMetadata({ title: 'Команда озвучення не знайдена', robots: ['nofollow', 'noindex'] });
   }
 }
 
@@ -57,21 +57,23 @@ export default async function RSC({ params, searchParams }: RSCProps<DubberPageP
 
 
   try {
-    const { dubber, dubbedHydratedAnimes, parsedMembers } = await getDubber(slug);
+    const { dubber } = await getDubber(slug);
+
+
 
     return <>
-      <DubberAnswerInvite dubber={dubber} invite={invite} />
+      {/* <DubberAnswerInvite dubber={dubber} invite={invite} /> */}
 
       <UserLayout type="dubber_profile" dubber={dubber} />
 
       <section className="wrapper gap-[40px] pt-[24px] relative">
         <DubberAbout dubber={dubber} />
-        {dubbedHydratedAnimes?.length ? <DubberAnimeDubbed dubber={dubber} hydratedAnimes={dubbedHydratedAnimes} /> : undefined}
-        {parsedMembers?.length ? <DubberTeam dubber={dubber} members={parsedMembers} /> : undefined}
+        {/* {dubbedHydratedAnimes?.length ? <DubberAnimeDubbed dubber={dubber} hydratedAnimes={dubbedHydratedAnimes} /> : undefined} */}
+        {dubber.members?.length ? <DubberTeam members={dubber.members} /> : undefined}
 
         <div className="flex items-center gap-[8px]">
           <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
-          <p className="text-grey-new text-[12px] font-manrope">На nekomi з: {timestampToDayMonth(dubber.statistics.createdAt)}</p>
+          <p className="text-grey-new text-[12px] font-manrope">На nekomi з: {timestampToDayMonth(getUTC(dubber.created_at).timestamp)}</p>
         </div>
       </section>
     </>;
