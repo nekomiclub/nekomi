@@ -51,6 +51,9 @@ interface IResponseMisc {
   /** @method get_episodes */
   episodes_meta?: IAnimeEpisodeMeta[]
 
+  /** @method get_episodes */
+  ashdi_url?: string
+
 
 
   /** @method get_details */

@@ -5,6 +5,7 @@ import { useEffect, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import Skeleton from 'react-loading-skeleton';
 import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
@@ -18,6 +19,7 @@ import { ANIME_TYPE, AnimeGenreType, AnimeRateType, AnimeSeasonType, AnimeStatus
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { Routes } from '~/routes';
 import { AnimeFullType } from '~/services/api/anime/GetAnime.api';
+import API from '~/services/api/API';
 import { cn } from '~/utils/classnames';
 import { getUTC, timestampToDayMonth } from '~/utils/utils';
 
@@ -317,6 +319,46 @@ export const WatchRating: NextPage<WatchGenericProps> = ({ anime }) => {
     </div>
 
     <p className="text-grey-new font-manrope whitespace-nowrap">{anime.scored_by ? scoredByFormatter.format(anime.scored_by) : 'Немає'} оцінок</p>
+  </>;
+};
+
+export const WatchExternalPlayer: NextPage<{ animeId: string }> = ({ animeId }) => {
+  const [ashdiUrl, setAshdiUrl] = useState<string | undefined>(undefined);
+  const [isFinished, setIsFinished] = useState(false);
+
+
+
+  useMemo(() => {
+    (async function () {
+      try {
+        const { anime } = await API.getAnime({ query: animeId }, { view: 'empty', get_episodes: true });
+
+        setAshdiUrl(anime.ashdi_url);
+        setIsFinished(true);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, []);
+
+
+
+  return <>
+    <div className="w-full bg-black" style={{ height: 'calc(100svh - var(--header-height))' }}>
+      {ashdiUrl && <iframe src={ashdiUrl} width={'100%'} height={'100%'} allowFullScreen frameBorder={0} scrolling="no" allowTransparency></iframe>}
+      {isFinished && !ashdiUrl && <>
+        <div className="w-full h-full bg-dark-bright flex gap-[32px] items-center justify-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
+          <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />
+
+          <div className="flex flex-col gap-[8px] items-center w-full">
+            <p className="text-white text-[40px] font-manrope font-bold max-sm:text-[24px]">Серії відсутні</p>
+            <p className="text-grey-new font-manrope">Або при завантаженні плеера сталась помилка</p>
+          </div>
+        </div>
+      </>}
+
+      {!isFinished && <Skeleton width={'100%'} height={'100%'} />}
+    </div>
   </>;
 };
 

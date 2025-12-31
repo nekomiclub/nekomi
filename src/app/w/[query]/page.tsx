@@ -17,7 +17,7 @@ import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
 import { getAnimeHeroPoster, isUserAgentMobile } from '~/utils/utils';
 
-import { WatchActions, WatchCheckMobile, WatchDetail, WatchEditLibs, WatchRating, WatchSectionLabel } from './WatchPage';
+import { WatchActions, WatchCheckMobile, WatchDetail, WatchEditLibs, WatchExternalPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
 
 
 
@@ -154,6 +154,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
 
           {/* Player */}
           {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
+          <WatchExternalPlayer animeId={anime.id} />
         </section>
       </main>
     </> : <>
@@ -248,6 +249,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
 
         {/* Player */}
         {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
+        <WatchExternalPlayer animeId={anime.id} />
       </main>
     </>;
   } catch (e) {
