@@ -316,11 +316,11 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
       <div className="menu-search-result_content">
         {animeResult.title_ua && <>
           <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.title_ua}>{animeResult.title_ua}</h4>
-          <h5 className="text-grey-new font-space-grotesk line-clamp-2" title={animeResult.title_en}>{animeResult.title_en}</h5>
+          {animeResult.title_en && <h5 className="text-grey-new font-space-grotesk line-clamp-2" title={animeResult.title_en}>{animeResult.title_en}</h5>}
         </>}
 
         {!animeResult.title_ua && <>
-          <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.title_en}>{animeResult.title_en}</h4>
+          <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.title_en ?? 'Untitled'}>{animeResult.title_en ?? 'Untitled'}</h4>
         </>}
 
         <div className="flex items-center gap-[8px] flex-wrap">

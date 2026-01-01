@@ -34,11 +34,11 @@ interface WatchDetailProps {
   name: string
 
   value?: string | null
-  status?: AnimeStatusType
-  rate?: AnimeRateType
-  season?: AnimeSeasonType
-  year?: number
-  type?: AnimeType
+  status?: AnimeStatusType | null
+  rate?: AnimeRateType | null
+  season?: AnimeSeasonType | null
+  year?: number | null
+  type?: AnimeType | null
   genres?: AnimeGenreType[]
   studios?: IAnimeStudio[]
 
