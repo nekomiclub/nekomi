@@ -41,7 +41,7 @@ export async function generateMetadata(
     return siteMetadata({
       title,
       description,
-      keywords: [anime.title_ua ?? '', anime.title_en, anime.title_ja, ...anime.title_synonims].filter(el => el.length),
+      keywords: [anime.title_ua, anime.title_en, anime.title_ja, ...anime.title_synonims].filter(el => el !== null && el?.length) as string[],
       openGraph: {
         title,
         description,
@@ -74,7 +74,7 @@ export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSear
     const poster = getAnimeHeroPoster(anime.posters ?? []);
     const synopsis = anime.synopsis_ua ?? anime.synopsis_en;
 
-    const titleH1 = anime.title_ua ?? anime.title_en;
+    const titleH1 = anime.title_ua ?? anime.title_en ?? `Untitled`;
     const titleH2 = titleH1 ? anime.title_en : null;
 
 
