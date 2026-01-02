@@ -48,13 +48,12 @@ export const StateProvider: NextPage<StateProviderProps> = ({ children, user, is
 
   // Handle user authorization
   useMemo(() => {
-    const signinToken = searchParams.get('signinPayload');
-
     // Logout if session expire
-    if (isSessionExpired && !signinToken) {
+    if (isSessionExpired) {
       (async function () {
         try {
           NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' });
+
           await API.getAuthLogout({});
         } catch (e) { HandleClientError(e); }
       })();

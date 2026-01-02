@@ -240,6 +240,7 @@ export const WatchActions: NextPage<WatchGenericProps> = ({ anime }) => {
 };
 
 export const WatchDetail: NextPage<WatchDetailProps> = ({ name, genres, type, rate, season, status, studios, value, year, className }) => {
+  if (season && !year) value = season.name;
   if (season && year) value = `${season.name} ${year}`;
   if (type) value = type.slug === ANIME_TYPE.UNKNOWN ? null : type.name;
   if (status) value = status.name;

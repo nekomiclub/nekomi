@@ -27,7 +27,6 @@ import { LayoutProps } from '~/interfaces/types';
 import API from '~/services/api/API';
 import { IUserState } from '~/store/reducers/userSlice';
 import siteMetadata from '~/utils/site-metadata';
-import { getUTC } from '~/utils/utils';
 
 
 
@@ -63,7 +62,7 @@ const getUser = cache(async (session: string) => {
 
 
 export default async function Layout({ children, params }: LayoutProps) {
-  const sessionToken = cookies().get(conf.vars.SessionCookie)?.value;
+  const sessionToken = cookies().get(conf.vars.SESSION_COOKIE_NAME)?.value;
 
   let isServerOnline = false;
   let isSessionExpired = false;
@@ -89,16 +88,12 @@ export default async function Layout({ children, params }: LayoutProps) {
 
       isServerOnline = true;
     } catch (e) {
-      const date = getUTC().ISO;
-
       if (e instanceof AxiosError && ['auth:session_token_expired', 'auth:session_token_invalid', 'auth:session_not_exist'].includes(e.response?.data.code)) isSessionExpired = true;
-
-      console.error(`[${date}]: Session fetch failed - ${JSON.stringify(e, null, 2)}`);
     }
   }
 
   // Ping API
-  if (!isServerOnline && !sessionToken) {
+  if (!isServerOnline || (!sessionToken || !isSessionExpired)) {
     try {
       await axios.options(`${conf.URL.nekomiApi}/ping`);
       isServerOnline = true;

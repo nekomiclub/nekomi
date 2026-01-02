@@ -37,13 +37,7 @@ const URL = {
 };
 
 const vars = {
-  /** 
-   * Nekomi security cookie
-   * 
-   * @deprecated redutant
-   */
-  SessionCookie: 'SEC_31N',
-
+  SESSION_COOKIE_NAME: 'nekomi-auth',
   CSRF_TOKEN_LIFETIME_MS: ms('1min'),
 };
 
