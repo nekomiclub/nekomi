@@ -1,9 +1,9 @@
 'use client';
 
 import { FC, useEffect, useRef, useState } from 'react';
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { conf } from '~/conf';
 import { useAppSelector } from '~/hooks/redux';

@@ -1,7 +1,7 @@
 import '~/styles/pages/home.scss';
 
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import { HandleServerError } from '~/components/Errors';

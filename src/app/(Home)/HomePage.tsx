@@ -3,9 +3,9 @@
 import { NextPage } from 'next';
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { useIdleTimer } from 'react-idle-timer';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import AnimeItem from '~/components/AnimeItem';

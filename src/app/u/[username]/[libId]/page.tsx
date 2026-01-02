@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
+import { MaterialSymbol } from 'material-symbols-rc';
 import { notFound } from 'next/navigation';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { UserLibItem } from '~/app/u/[username]/UserPage';
 import AnimeItem from '~/components/AnimeItem';
@@ -8,19 +8,20 @@ import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';
 import { H2, H3, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
+import { IRSCProps } from '~/interfaces/IRSC';
 import { IUserLib } from '~/interfaces/IUser';
 import { UserLibPageProps } from '~/interfaces/PagesParams';
-import { RSCProps } from '~/interfaces/types';
 import API from '~/services/api/API';
-import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
+import { getCachedUser } from '~/services/CachedAPI';
 import CheckUserAccess from '~/utils/check-user-access';
 import { parseLibTitle } from '~/utils/parse-user-lib-ui';
+import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 
 
 
 export async function generateMetadata(
-  props: RSCProps<UserLibPageProps>,
+  props: IRSCProps<UserLibPageProps>,
 ): Promise<Metadata> {
   const params = await props.params;
   const { username, libId } = params;
@@ -47,7 +48,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: RSCProps<UserLibPageProps>) {
+export default async function RSC(props: IRSCProps<UserLibPageProps>) {
   const params = await props.params;
   const { username, libId } = params;
   const session = await getSessionToken();

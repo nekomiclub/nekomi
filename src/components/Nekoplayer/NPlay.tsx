@@ -1,5 +1,5 @@
 import { FC, useContext } from 'react';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol } from 'material-symbols-rc';
 
 import { cn } from '~/utils/classnames';
 

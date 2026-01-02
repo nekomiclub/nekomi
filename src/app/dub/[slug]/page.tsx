@@ -2,12 +2,12 @@ import './styles.scss';
 
 import { Metadata } from 'next';
 import { cache } from 'react';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol } from 'material-symbols-rc';
 
 import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';
+import { IRSCProps } from '~/interfaces/IRSC';
 import { DubberPageParams } from '~/interfaces/PagesParams';
-import { RSCProps } from '~/interfaces/types';
 import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
 import { getUTC, timestampToDayMonth } from '~/utils/utils';
@@ -23,7 +23,7 @@ const getDubber = cache(async (query: string) => {
 
 
 export async function generateMetadata(
-  props: RSCProps<DubberPageParams>,
+  props: IRSCProps<DubberPageParams>,
 ): Promise<Metadata> {
   const { slug } = await props.params;
 
@@ -50,7 +50,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC({ params, searchParams }: RSCProps<DubberPageParams>) {
+export default async function RSC({ params, searchParams }: IRSCProps<DubberPageParams>) {
   const { slug } = await params;
   const { invite } = await searchParams as { invite?: 'accept' | 'decline' };
 

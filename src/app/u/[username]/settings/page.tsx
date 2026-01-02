@@ -4,17 +4,18 @@ import { notFound } from 'next/navigation';
 import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
+import { IRSCProps } from '~/interfaces/IRSC';
 import { UserPageProps, UserSettingsPageProps } from '~/interfaces/PagesParams';
-import { RSCProps } from '~/interfaces/types';
-import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
+import { getCachedUser } from '~/services/CachedAPI';
 import CheckUserAccess from '~/utils/check-user-access';
+import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 
 import { UserSettingsContent } from './UserSettingsPage';
 
 
 
-export async function generateMetadata({ params, searchParams }: RSCProps<UserPageProps>,): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: IRSCProps<UserPageProps>,): Promise<Metadata> {
   const { username } = await params;
 
   try {
@@ -34,7 +35,7 @@ export async function generateMetadata({ params, searchParams }: RSCProps<UserPa
 
 
 
-export default async function RSC({ params }: RSCProps<UserSettingsPageProps>) {
+export default async function RSC({ params }: IRSCProps<UserSettingsPageProps>) {
   const { username } = await params;
   const session = await getSessionToken();
 

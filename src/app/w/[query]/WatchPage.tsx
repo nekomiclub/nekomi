@@ -3,10 +3,10 @@
 import { NextPage } from 'next';
 import { useEffect, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
+import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
-import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';
@@ -329,7 +329,7 @@ export const WatchExternalPlayer: NextPage<{ animeId: string }> = ({ animeId }) 
 
 
 
-  useMemo(() => {
+  useEffect(() => {
     (async function () {
       try {
         const { anime } = await API.getAnime({ query: animeId }, { view: 'empty', get_episodes: true });
@@ -346,7 +346,7 @@ export const WatchExternalPlayer: NextPage<{ animeId: string }> = ({ animeId }) 
 
   return <>
     <div className="w-full bg-black" style={{ height: 'calc(100svh - var(--header-height))' }}>
-      {ashdiUrl && <iframe src={ashdiUrl} width={'100%'} height={'100%'} allowFullScreen frameBorder={0} scrolling="no" allowTransparency></iframe>}
+      {ashdiUrl && <iframe src={ashdiUrl} width={'100%'} height={'100%'} allowFullScreen frameBorder={0} scrolling="no"></iframe>}
       {isFinished && !ashdiUrl && <>
         <div className="w-full h-full bg-dark-bright flex gap-[32px] items-center justify-center px-[32px] py-[40px] rounded-[2px] max-lg:flex-col">
           <StyledImage src={'/assets/cat-standing.png'} width="100%" height="100%" className="shrink-0 rounded-[4px] overflow-hidden !w-[512px] !h-[512px] max-lg:!w-[386px] max-lg:!h-[386px] max-sm:!w-[256px] max-sm:!h-[256px]" />

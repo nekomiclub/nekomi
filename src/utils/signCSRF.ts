@@ -1,9 +1,5 @@
 'use server';
 
-/**
- * @fileoverview server-side function to sign CSRF token
- */
-
 import jwt from 'jsonwebtoken';
 
 import { conf } from '~/conf';

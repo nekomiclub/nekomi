@@ -3,8 +3,8 @@
 import { NextPage } from 'next';
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
+import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
-import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import { AnimeCardType } from '~/interfaces/IAnime';

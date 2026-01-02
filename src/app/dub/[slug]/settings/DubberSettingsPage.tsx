@@ -3,8 +3,8 @@
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
-import { MaterialSymbol } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '~/assets/Social';

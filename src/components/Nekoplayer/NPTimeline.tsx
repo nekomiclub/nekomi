@@ -9,9 +9,9 @@ import { NekoplayerContext, NekoplayerContextProps, NekoplayerIDs } from './NPTy
 
 
 interface NPTimelineProps {
-  progressRef: RefObject<HTMLDivElement>
-  loadedRef: RefObject<HTMLDivElement>
-  previewRef: RefObject<HTMLDivElement>
+  progressRef: RefObject<HTMLDivElement | null>
+  loadedRef: RefObject<HTMLDivElement | null>
+  previewRef: RefObject<HTMLDivElement | null>
   hoveredMoment: number
 }
 

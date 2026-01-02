@@ -1,4 +1,4 @@
-import { SymbolCodepoints } from 'react-material-symbols';
+import { SymbolCodepoints } from 'material-symbols-rc';
 
 import { UserLibType } from '~/interfaces/UserIntf';
 

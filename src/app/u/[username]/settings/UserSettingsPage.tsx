@@ -2,8 +2,8 @@
 
 import { NextPage } from 'next';
 import { FC, useEffect, useState } from 'react';
+import { MaterialSymbol } from 'material-symbols-rc';
 import { useRouter } from 'next/navigation';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { HandleClientError } from '~/components/Errors';
 import StyledButton from '~/components/Styled/StyledButton';

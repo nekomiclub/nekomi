@@ -2,7 +2,7 @@ import '@fullkekw/fkw-menu/css';
 import '@fullkekw/popup/css';
 import 'swiper/css';
 import 'react-loading-skeleton/dist/skeleton.css';
-import 'react-material-symbols/rounded';
+import 'material-symbols-rc/css';
 import '~/styles/index.scss';
 import '~/styles/typography.scss';
 import '~/styles/ui.scss';
@@ -14,7 +14,6 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import axios, { AxiosError } from 'axios';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
-import { cookies } from 'next/headers';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
@@ -23,9 +22,10 @@ import Footer from '~/components/Footer';
 import NavMenu from '~/components/NavMenu/NavMenu';
 import { StateProvider } from '~/components/StateProvider';
 import conf from '~/conf';
-import { LayoutProps } from '~/interfaces/types';
+import { ILayoutProps } from '~/interfaces/IRSC';
 import API from '~/services/api/API';
 import { IUserState } from '~/store/reducers/userSlice';
+import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 
 
@@ -61,8 +61,8 @@ const getUser = cache(async (session: string) => {
 });
 
 
-export default async function Layout({ children, params }: LayoutProps) {
-  const sessionToken = cookies().get(conf.vars.SESSION_COOKIE_NAME)?.value;
+export default async function Layout({ children, params }: ILayoutProps) {
+  const sessionToken = await getSessionToken();
 
   let isServerOnline = false;
   let isSessionExpired = false;

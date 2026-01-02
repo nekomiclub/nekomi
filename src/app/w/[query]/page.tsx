@@ -10,8 +10,8 @@ import { HandleServerError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { conf } from '~/conf';
+import { IRSCProps } from '~/interfaces/IRSC';
 import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams';
-import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
 import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
@@ -28,7 +28,7 @@ const getAnime = cache(async (query: string) => {
 
 
 export async function generateMetadata(
-  props: RSCProps<WatchPageParams>,
+  props: IRSCProps<WatchPageParams>,
 ): Promise<Metadata> {
   const params = await props.params;
   const { query } = params;
@@ -59,11 +59,11 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: RSCProps<WatchPageParams, WatchPageSearchParams>) {
+export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSearchParams>) {
   const { query } = await props.params;
   const { mobile } = await props.searchParams;
 
-  const userAgent = headers().get('user-agent') || '';
+  const userAgent = (await headers()).get('user-agent') || '';
   const isMobile = mobile ?? isUserAgentMobile(userAgent) ?? true;
 
 

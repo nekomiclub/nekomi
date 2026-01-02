@@ -1,18 +1,19 @@
 import '~/styles/pages/user.scss';
 
 import { Metadata } from 'next';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol } from 'material-symbols-rc';
 
 import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';
 import { P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { conf, DevelopmentMode } from '~/conf';
+import { IRSCProps } from '~/interfaces/IRSC';
 import { IUserLib } from '~/interfaces/IUser';
 import { UserPageProps } from '~/interfaces/PagesParams';
-import { RSCProps } from '~/interfaces/types';
 import { Routes } from '~/routes';
-import { getCachedUser, getSessionToken } from '~/services/CachedAPI';
+import { getCachedUser } from '~/services/CachedAPI';
+import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 import { getUTC, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
@@ -21,7 +22,7 @@ import { UserLibItem, UserStatisticsItem, UserTitle } from './UserPage';
 
 
 export async function generateMetadata(
-  props: RSCProps<UserPageProps>,
+  props: IRSCProps<UserPageProps>,
 ): Promise<Metadata> {
   const params = await props.params;
   const { username } = params;
@@ -54,7 +55,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: RSCProps<UserPageProps>) {
+export default async function RSC(props: IRSCProps<UserPageProps>) {
   const params = await props.params;
   const { username } = params;
 

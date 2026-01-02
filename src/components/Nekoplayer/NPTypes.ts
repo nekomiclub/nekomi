@@ -47,8 +47,8 @@ export interface NekoplayerContextProps {
   isVideoProcessed: boolean
 
   //* REFS
-  videoRef: RefObject<HTMLVideoElement>
-  playerRef: RefObject<HTMLDivElement>
+  videoRef: RefObject<HTMLVideoElement | null>
+  playerRef: RefObject<HTMLDivElement | null>
 
   //* HANDLERS
   loadProgress: () => void

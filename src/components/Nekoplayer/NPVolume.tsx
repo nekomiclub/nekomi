@@ -1,7 +1,7 @@
 'use client';
 
 import { FC, useContext, useEffect, useRef } from 'react';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol } from 'material-symbols-rc';
 import { Range } from 'react-range';
 
 import { cn } from '~/utils/classnames';

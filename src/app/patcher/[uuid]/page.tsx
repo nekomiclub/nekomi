@@ -2,8 +2,8 @@ import '~/styles/pages/patcher.scss';
 
 import { notFound } from 'next/navigation';
 
+import { IRSCProps } from '~/interfaces/IRSC';
 import { PatcherPageParams } from '~/interfaces/PagesParams';
-import { RSCProps } from '~/interfaces/types';
 
 
 
@@ -32,7 +32,7 @@ import { RSCProps } from '~/interfaces/types';
 
 
 
-export default async function RSC(props: RSCProps<PatcherPageParams>) {
+export default async function RSC(props: IRSCProps<PatcherPageParams>) {
   const { uuid } = await props.params;
 
   notFound();
