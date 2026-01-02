@@ -1,5 +1,5 @@
 
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol } from 'material-symbols-rc';
 
 import siteMetadata from '~/utils/site-metadata';
 

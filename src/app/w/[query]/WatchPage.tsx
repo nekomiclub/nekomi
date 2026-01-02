@@ -3,10 +3,10 @@
 import { NextPage } from 'next';
 import { useEffect, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
+import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
-import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { HandleClientError } from '~/components/Errors';

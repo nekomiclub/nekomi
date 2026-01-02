@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import * as DropMenu from '@fullkekw/fkw-menu';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol } from 'material-symbols-rc';
 
 import StyledImage from '~/components/Styled/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';

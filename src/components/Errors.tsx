@@ -3,9 +3,9 @@ import '~/styles/components/Errors.scss';
 import { NextPage } from 'next';
 import { ReactElement } from 'react';
 import { AxiosError } from 'axios';
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { DevelopmentMode } from '~/conf';
 import { Routes } from '~/routes';

@@ -6,7 +6,7 @@
 // import * as Loader from '@uiball/loaders';
 // import Link from 'next/link';
 // import { useRouter } from 'next/navigation';
-// import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
+// import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 // import { useDebounce } from 'use-debounce';
 
 // import { HandleClientError } from '~/components/Errors';

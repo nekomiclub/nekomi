@@ -2,8 +2,8 @@
 
 import { NextPage } from 'next';
 import { MenuWrapper } from '@fullkekw/fkw-menu';
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import StyledImage from '~/components/Styled/StyledImage';
 import { Routes } from '~/routes';

@@ -2,7 +2,7 @@ import './styles.scss';
 
 import { Metadata } from 'next';
 import { cache } from 'react';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol } from 'material-symbols-rc';
 
 import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';

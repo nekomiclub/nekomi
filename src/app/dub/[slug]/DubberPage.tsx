@@ -3,9 +3,9 @@
 import { NextPage } from 'next';
 import { useState } from 'react';
 import { PopupButton, PopupWindow } from '@fullkekw/popup';
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialTelegram } from '~/assets/Social';
 import StyledImage from '~/components/Styled/StyledImage';

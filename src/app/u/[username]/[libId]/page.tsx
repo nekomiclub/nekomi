@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
+import { MaterialSymbol } from 'material-symbols-rc';
 import { notFound } from 'next/navigation';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { UserLibItem } from '~/app/u/[username]/UserPage';
 import AnimeItem from '~/components/AnimeItem';

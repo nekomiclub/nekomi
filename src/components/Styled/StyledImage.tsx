@@ -4,9 +4,9 @@ import '~/styles/components/StyledComponents.scss';
 
 import { NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
+import { MaterialSymbol } from 'material-symbols-rc';
 import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { P } from '~/components/UI/Typography';
 import { cn } from '~/utils/classnames';

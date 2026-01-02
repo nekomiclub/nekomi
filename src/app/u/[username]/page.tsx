@@ -1,7 +1,7 @@
 import '~/styles/pages/user.scss';
 
 import { Metadata } from 'next';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol } from 'material-symbols-rc';
 
 import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';

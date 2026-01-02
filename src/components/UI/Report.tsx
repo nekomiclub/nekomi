@@ -2,8 +2,8 @@
 
 import { NextPage } from 'next';
 import { PopupButton, PopupWindow } from '@fullkekw/popup';
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialDiscord } from '~/assets/Social';
 import StyledButton from '~/components/Styled/StyledButton';

@@ -1,18 +1,16 @@
 'use client';
 
 import { FC, useMemo, useState } from 'react';
+import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
-import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
 
 import StyledButton from '~/components/Styled/StyledButton';
-import StyledImage from '~/components/Styled/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
 import { H3, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
 import { Dubber, DubberMember } from '~/interfaces/DubberIntf';
 import { IUserLib, UserCardType } from '~/interfaces/IUser';
 import { Routes } from '~/routes';
-import { DubberParseRoleName } from '~/utils/data-mappers';
 import parseUserLibUI, { parseLibTitle } from '~/utils/parse-user-lib-ui';
 
 
@@ -40,7 +38,7 @@ interface IUserLibItemProps {
 
 export const UserStatisticsItem: FC<IUserStatisticsItemProps> = ({ animeSeen, dubber, viewtime }) => {
   return <>
-    {dubber && <Link href={Routes.dubber.path({ slug: dubber.team.slug })}>
+    {/* {dubber && <Link href={Routes.dubber.path({ slug: dubber.team.slug })}>
       <StyledButton as="div" className="pgu-stat-item rounded-[2px]">
         <StyledImage src={dubber.team.avatar} width="80px" height="80px" rounded={4} />
 
@@ -53,10 +51,10 @@ export const UserStatisticsItem: FC<IUserStatisticsItemProps> = ({ animeSeen, du
           </div>
         </div>
       </StyledButton>
-    </Link>}
+    </Link>} */}
 
     {!dubber && <div className="pgu-stat-item">
-      <MaterialSymbol icon={animeSeen !== undefined ? 'bookmark_added' : viewtime !== undefined ? 'acute' : 'question_answer'} size={80} className="text-white shrink-0 max-lg:!text-[64px]" />
+      <MaterialSymbol icon={animeSeen !== undefined ? 'bookmark_added' : viewtime !== undefined ? 'acute' : 'question_mark'} size={80} className="text-white shrink-0 max-lg:!text-[64px]" />
 
       <div className="pgu-stat-item-content">
         <P text={animeSeen ?? viewtime ?? ''} size={32} bold className="text-white font-manrope" />

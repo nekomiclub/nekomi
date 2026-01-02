@@ -2,7 +2,7 @@ import '@fullkekw/fkw-menu/css';
 import '@fullkekw/popup/css';
 import 'swiper/css';
 import 'react-loading-skeleton/dist/skeleton.css';
-import 'react-material-symbols/rounded';
+import 'material-symbols-rc/css';
 import '~/styles/index.scss';
 import '~/styles/typography.scss';
 import '~/styles/ui.scss';

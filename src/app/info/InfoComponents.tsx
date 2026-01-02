@@ -1,7 +1,7 @@
 'use client';
 
 import React, { FC } from 'react';
-import { MaterialSymbol } from 'react-material-symbols';
+import { MaterialSymbol } from 'material-symbols-rc';
 
 import { H1, P } from '~/components/UI/Typography';
 

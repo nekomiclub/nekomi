@@ -1,6 +1,6 @@
 import { FC } from 'react';
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
-import { MaterialSymbol } from 'react-material-symbols';
 
 import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '~/assets/Social';
 import { conf } from '~/conf';

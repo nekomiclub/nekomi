@@ -6,10 +6,10 @@ import { NextPage } from 'next';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { PopupWindow } from '@fullkekw/popup';
+import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
-import { MaterialSymbol } from 'react-material-symbols';
 import { useDebounce } from 'use-debounce';
 
 import { HandleClientError } from '~/components/Errors';

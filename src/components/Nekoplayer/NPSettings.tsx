@@ -1,7 +1,7 @@
 import { FC, useContext, useEffect, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import axios from 'axios';
-import { MaterialSymbol, SymbolCodepoints } from 'react-material-symbols';
+import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
 import { NotifySuccess } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';
