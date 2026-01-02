@@ -1,5 +1,4 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: import('next').NextConfig = {
   images: {
     remotePatterns: [{
       hostname: '*.nekomi.club'
@@ -10,9 +9,6 @@ const nextConfig = {
   reactStrictMode: false,
   sassOptions: {
     silenceDeprecations: ['legacy-js-api'],
-  },
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
   },
 };
 

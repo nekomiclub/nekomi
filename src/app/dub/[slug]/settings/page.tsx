@@ -1,14 +1,14 @@
-import { cookies } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 
 import { HandleServerError } from '~/components/Errors';
 import UserLayout from '~/components/UserLayout';
 import { conf } from '~/conf';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
-import { RSCProps } from '~/interfaces/types';
+import { IRSCProps } from '~/interfaces/IRSC';
 import API from '~/services/api/API';
 import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import CheckUserAccess from '~/utils/check-user-access';
+import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 
 import { DubberSettingsContent } from './DubberSettingsPage';
@@ -19,11 +19,11 @@ export const metadata = siteMetadata({ title: 'Налаштування кома
 
 
 
-export default async function RSC({ params }: RSCProps) {
+export default async function RSC({ params }: IRSCProps) {
   const { slug } = await params as { slug: string };
 
   // const { user, capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SessionCookie)?.value, permissions: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
-  const { user, permissions: capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SESSION_COOKIE_NAME)?.value, permissions: [ROLE_PERMISSION.ABSOLUTE], checkMode: 'OR' });
+  const { user, permissions: capabilities } = await CheckUserAccess({ session: await getSessionToken(), permissions: [ROLE_PERMISSION.ABSOLUTE], checkMode: 'OR' });
   if (!user) return notFound();
 
   let dubber: DubberFullType | undefined;
