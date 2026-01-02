@@ -19,7 +19,7 @@ export default async function _GetAuthLogout(
 
   return (await $api.get(`/auth/logout${sessionId}`, {
     headers: {
-      Cookie: props?.sessionToken ? `${conf.vars.SessionCookie}=${props?.sessionToken}` : undefined
+      Cookie: props?.sessionToken ? `${conf.vars.SESSION_COOKIE_NAME}=${props?.sessionToken}` : undefined
     }
   })).data;
 }

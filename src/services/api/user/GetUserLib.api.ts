@@ -29,7 +29,7 @@ export default async function _GetUserLib(
 ): Promise<IResponse> {
   return (await $api.get<IResponse>(`/user/${params.userId}/lib/${params.libId}`, {
     headers: {
-      Cookie: props?.sessionToken ? `${conf.vars.SessionCookie}=${props?.sessionToken}` : undefined
+      Cookie: props?.sessionToken ? `${conf.vars.SESSION_COOKIE_NAME}=${props?.sessionToken}` : undefined
     }
   })).data;
 }

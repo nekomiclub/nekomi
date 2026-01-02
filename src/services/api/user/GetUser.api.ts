@@ -100,7 +100,7 @@ export default async function _GetUser<V extends ViewType>(
   return (await $api.get(`/user${userQuery}`, {
     params: query,
     headers: {
-      Cookie: props?.sessionToken ? `${conf.vars.SessionCookie}=${props?.sessionToken}` : undefined
+      Cookie: props?.sessionToken ? `${conf.vars.SESSION_COOKIE_NAME}=${props?.sessionToken}` : undefined
     }
   })).data;
 }

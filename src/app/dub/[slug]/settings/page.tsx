@@ -23,7 +23,7 @@ export default async function RSC({ params }: RSCProps) {
   const { slug } = await params as { slug: string };
 
   // const { user, capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SessionCookie)?.value, permissions: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
-  const { user, permissions: capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SessionCookie)?.value, permissions: [ROLE_PERMISSION.ABSOLUTE], checkMode: 'OR' });
+  const { user, permissions: capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SESSION_COOKIE_NAME)?.value, permissions: [ROLE_PERMISSION.ABSOLUTE], checkMode: 'OR' });
   if (!user) return notFound();
 
   let dubber: DubberFullType | undefined;
