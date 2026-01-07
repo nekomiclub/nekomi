@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
-import StyledButton from '~/components/Styled/StyledButton';
+import StyledButtonOld from '~/components/Styled/StyledButton.old';
 import StyledImage from '~/components/Styled/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
 import { Routes } from '~/routes';
@@ -71,13 +71,13 @@ const HeaderNav: NextPage<Props> = ({ user, logout, signin, searchPopupId, force
       {/* Unauthorized */}
       {!user.id && <div className="relative h-full">
         <div className="flex gap-[4px] absolute top-[50%] right-0 translate-y-[-50%] max-lg:relative">
-          <StyledButton className="px-[12px] py-[8px] border-none bg-transparent" onClick={signin} disabled={isSigningIn}>
+          <StyledButtonOld className="px-[12px] py-[8px] border-none bg-transparent" onClick={signin} disabled={isSigningIn}>
             <p className="text-white font-manrope font-bold">Увійти</p>
-          </StyledButton>
+          </StyledButtonOld>
 
-          <StyledButton className="px-[12px] py-[8px] bg-primary border-none" onClick={signin} disabled={isSigningIn}>
+          <StyledButtonOld className="px-[12px] py-[8px] bg-primary border-none" onClick={signin} disabled={isSigningIn}>
             <p className="text-white font-manrope font-bold">Реєстрація</p>
-          </StyledButton>
+          </StyledButtonOld>
         </div>
       </div>}
     </div>

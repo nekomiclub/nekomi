@@ -1,4 +1,4 @@
-@import "./vars.scss";
+@use "./vars.scss" as *;
 
 $fontColor: #000;
 $fontSize: 16px;

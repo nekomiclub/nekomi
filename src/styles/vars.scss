@@ -4,6 +4,28 @@
   --color-info-error: #e74c3c;
   --color-info-warn: #f39c12;
   --color-info-success: #2ecc71;
+
+  // * === 3.0 styles
+  --break-sm: 640px;
+  --break-md: 768px;
+  --break-lg: 1024px;
+  --break-xl: 1280px;
+  --break-2xl: 1536px;
+
+  --color-accent: hsla(357, 100, 64, 100%);
+  --color-accent-10: hsla(357, 100, 64, 10%);
+  --color-accent-20: hsla(357, 100, 64, 20%);
+  --color-accent-50: hsla(357, 100, 64, 50%);
+  --color-accent-600: hsla(357, 100, 60, 100%);
+
+  --color-text: hsla(0, 0, 95, 100%);
+  --color-text-muted: hsla(0, 0, 70, 100%);
+
+  --color-dark: hsla(0, 0, 5, 100%);
+  --color-dark-medium: hsla(0, 0, 7, 100%);
+  --color-dark-light: hsla(0, 0, 12, 100%);
+
+  --color-border: hsla(0, 0, 15, 100%);
 }
 
 $white: #ffffff;

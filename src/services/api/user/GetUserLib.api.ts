@@ -17,7 +17,7 @@ interface IResponse {
 }
 
 const ParamsSchema = z.object({
-  userId: z.string().nonempty(),
+  query: z.string().nonempty(),
   libId: z.string().nonempty(),
 });
 
@@ -27,7 +27,7 @@ export default async function _GetUserLib(
   params: z.infer<typeof ParamsSchema>,
   props?: { sessionToken?: string }
 ): Promise<IResponse> {
-  return (await $api.get<IResponse>(`/user/${params.userId}/lib/${params.libId}`, {
+  return (await $api.get<IResponse>(`/user/${params.query}/lib/${params.libId}`, {
     headers: {
       Cookie: props?.sessionToken ? `${conf.vars.SESSION_COOKIE_NAME}=${props?.sessionToken}` : undefined
     }

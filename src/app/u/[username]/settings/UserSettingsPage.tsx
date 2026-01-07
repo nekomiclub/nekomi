@@ -6,7 +6,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import { useRouter } from 'next/navigation';
 
 import { HandleClientError } from '~/components/Errors';
-import StyledButton from '~/components/Styled/StyledButton';
+import StyledButtonOld from '~/components/Styled/StyledButton.old';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import Tooltip from '~/components/UI/Tooltip';
@@ -284,13 +284,13 @@ const UserSettingsLinkSocial: FC<IUserSettingsLinkSocialProps> = ({ name, onLink
     </div>
 
     {/* Link */}
-    {status === 'not_connected' && <StyledButton onClick={onLink} className="w-[48px] h-[48px]">
+    {status === 'not_connected' && <StyledButtonOld onClick={onLink} className="w-[48px] h-[48px]">
       <MaterialSymbol icon="add_link" size={20} className="text-white" />
-    </StyledButton>}
+    </StyledButtonOld>}
 
     {/* Unlink */}
-    {status === 'connected' && <StyledButton onClick={onUnlink} className="w-[48px] h-[48px]">
+    {status === 'connected' && <StyledButtonOld onClick={onUnlink} className="w-[48px] h-[48px]">
       <MaterialSymbol icon="link_off" size={20} className="text-white" />
-    </StyledButton>}
+    </StyledButtonOld>}
   </div>;
 };

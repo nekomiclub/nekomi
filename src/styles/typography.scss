@@ -1,9 +1,9 @@
-@import "./vars.scss";
+@use "./vars.scss" as *;
 
 $sizes: 10, 12, 14, 16, 20, 24, 32, 40, 48, 56, 64;
 
 @function rem($px) {
-  @return ($px / 16) + rem;
+  @return calc($px / 16) + rem;
 }
 
 .ui-typo {

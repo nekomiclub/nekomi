@@ -4,7 +4,7 @@ import { FC, useMemo, useState } from 'react';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import StyledButton from '~/components/Styled/StyledButton';
+import StyledButtonOld from '~/components/Styled/StyledButton.old';
 import Tooltip from '~/components/UI/Tooltip';
 import { H3, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
@@ -89,7 +89,7 @@ export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
 
 
   return <Link href={Routes.userLib.path({ username: user.username, libId: lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
-    <StyledButton as="div" className="w-full flex flex-col items-center gap-[8px] p-[16px]">
+    <StyledButtonOld as="div" className="w-full flex flex-col items-center gap-[8px] p-[16px]">
       <MaterialSymbol icon={icon} size={80} className="text-white" fill={icon === 'favorite'} />
 
       <div className="flex items-center gap-[16px]">
@@ -102,6 +102,6 @@ export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
           {lib.anime_ids.length !== 0 && <P text={`(${lib.anime_ids.length})`} size={16} className="text-grey-new" />}
         </div>
       </div>
-    </StyledButton>
+    </StyledButtonOld>
   </Link>;
 };

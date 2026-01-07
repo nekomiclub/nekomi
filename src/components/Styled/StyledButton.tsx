@@ -1,51 +1,58 @@
-'use client';
-
-import '~/styles/components/StyledComponents.scss';
+import '~/styles/components/StyledComponent.scss';
 
 import React, { FC, JSX, ReactNode } from 'react';
+import { IMaterialSymbolProps, MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
-import { P } from '~/components/UI/Typography';
 import cn from '~/utils/classnames';
 
+import { StyledM, StyledTypoFontType } from './StyledTypo';
 
 
-interface ButtonProps extends React.DetailsHTMLAttributes<HTMLElement> {
+
+interface IProps {
   text?: string
-  disabled?: boolean
-  children?: ReactNode | ReactNode[]
-  type?: 'button' | 'submit' | 'reset'
-  width?: string
-  height?: string
+  icon?: SymbolCodepoints
+  iconProps?: IMaterialSymbolProps
+  textProps?: StyledTypoFontType
 
-  /** Whether component is icon (remove paddings & make it round) */
-  isIcon?: boolean
-
-  /** 
-   * Color of the button
-   * "none" - mean no styling at all, just a button with some features
+  /**
+   * Button type
    * 
    * @default "default"
    */
-  color?: 'none' | 'default'
+  style?: 'default' | 'primary' | 'secondary' | 'clear'
 
-  /** Rendered tag @default "button" */
+  /** 
+   * Tag 
+   * 
+   * @default "button"
+   */
   as?: 'div' | 'button'
+
+
+
+  id?: string
+  disabled?: boolean
+  children?: ReactNode | ReactNode[]
+  type?: 'button' | 'submit' | 'reset'
+  onClick?: (e: React.MouseEvent) => void
+  className?: string
 }
 
 
 
-/** 
- * Pretty button
- * Children will be rendered at the beginning
- */
-const StyledButton: FC<ButtonProps> = ({ text, color, className, children, disabled, as, type, isIcon, width, height, style, ...props }) => {
-  const Tag: keyof JSX.IntrinsicElements = as ?? 'button';
-  color = color ?? 'default';
+const StyledButton: FC<IProps> = (props) => {
+  const style = props.disabled ? 'default' : props.style ?? 'default';
+  const Tag: keyof JSX.IntrinsicElements = props.as ?? 'button';
+  const isIconOnly = props.icon && !props.children && !props.text;
 
-  return <Tag className={cn(`ui-buttonJam ui-button ui-button--${color}`, disabled && 'ui-button--disabled', isIcon && 'ui-button--icon', className)} disabled={disabled} aria-disabled={disabled} style={{ width, height, ...style }} {...props} type={type}>
-    {children}
 
-    {text && <P text={text} bold />}
+
+  return <Tag className={cn(`styled-button styled-button--${style}`, isIconOnly && `styled-button--icon`, props.disabled && `styled-button--disabled`, props.className)} tabIndex={0} disabled={props.disabled} id={props.id} onClick={props.onClick} type={props.type}>
+    {props.icon && <MaterialSymbol icon={props.icon} size={20} {...props.iconProps} />}
+    {props.text && <StyledM text={props.text} bold {...props.textProps} />}
+
+    {props.children}
   </Tag>;
 };
 
