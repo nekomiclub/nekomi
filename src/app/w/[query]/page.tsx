@@ -15,9 +15,10 @@ import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams
 import { Routes } from '~/routes';
 import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
-import { getAnimeHeroPoster, isUserAgentMobile } from '~/utils/utils';
+import { isUserAgentMobile } from '~/utils/utils';
 
-import { WatchActions, WatchCheckMobile, WatchDetail, WatchEditLibs, WatchExternalPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
+import WatchPagePlayer from './(components)/WatchPagePlayer';
+import { WatchActions, WatchCheckMobile, WatchDetail, WatchEditLibs, WatchRating, WatchSectionLabel } from './WatchPage';
 
 
 
@@ -46,7 +47,7 @@ export async function generateMetadata(
         title,
         description,
         type: 'video.tv_show',
-        images: getAnimeHeroPoster(anime.posters ?? []).original,
+        images: anime.poster.original,
         url: Routes.watch.path({ query }),
         locale: 'uk_UA',
         siteName: conf.domain.split('.')[0],
@@ -71,7 +72,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
 
   try {
     const anime = (await getAnime(query)).anime;
-    const poster = getAnimeHeroPoster(anime.posters ?? []);
+    const poster = anime.poster;
     const synopsis = anime.synopsis_ua ?? anime.synopsis_en;
 
     const titleH1 = anime.title_ua ?? anime.title_en ?? `Untitled`;
@@ -154,7 +155,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
 
           {/* Player */}
           {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
-          <WatchExternalPlayer animeId={anime.id} />
+          <WatchPagePlayer animeId={anime.id} />
         </section>
       </main>
     </> : <>
@@ -249,7 +250,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
 
         {/* Player */}
         {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
-        <WatchExternalPlayer animeId={anime.id} />
+        <WatchPagePlayer animeId={anime.id} />
       </main>
     </>;
   } catch (e) {

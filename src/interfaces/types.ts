@@ -8,6 +8,8 @@ export enum LocalStorageKeys {
 }
 
 
+
+export type StateSetter<S = any> = React.Dispatch<React.SetStateAction<S>>;
 export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
 export interface AnimeWithMedia extends Anime {

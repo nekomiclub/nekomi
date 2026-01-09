@@ -12,7 +12,7 @@ import { StyledM, StyledTypoFontType } from './StyledTypo';
 interface IProps {
   text?: string
   icon?: SymbolCodepoints
-  iconProps?: IMaterialSymbolProps
+  iconProps?: Omit<IMaterialSymbolProps, keyof Pick<IMaterialSymbolProps, 'icon'>>
   textProps?: StyledTypoFontType
 
   /**
