@@ -1,0 +1,1 @@
+export type USettingsLinkSocialStatusType = 'not_connected' | 'connecting' | 'error' | 'connected'

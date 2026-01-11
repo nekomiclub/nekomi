@@ -17,7 +17,7 @@ import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 import { getUTC, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
-import { UserLibItem, UserStatisticsItem, UserTitle } from './UserPage';
+import { UserLibItem, UserStatisticsItem, UserTitle } from './(components)/UserUI';
 
 
 
@@ -55,7 +55,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<UserPageProps>) {
+export default async function UserPageRSC(props: IRSCProps<UserPageProps>) {
   const params = await props.params;
   const { username } = params;
 

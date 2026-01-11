@@ -11,7 +11,8 @@ import CheckUserAccess from '~/utils/check-user-access';
 import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 
-import { DubberSettingsContent } from './DubberSettingsPage';
+import DSettingsPage from './DSettingsPage';
+
 
 
 
@@ -19,7 +20,7 @@ export const metadata = siteMetadata({ title: 'Налаштування кома
 
 
 
-export default async function RSC({ params }: IRSCProps) {
+export default async function DSettingsRSC({ params }: IRSCProps) {
   const { slug } = await params as { slug: string };
 
   // const { user, capabilities } = await CheckUserAccess({ session: cookies().get(conf.vars.SessionCookie)?.value, permissions: ['dubberEditProfile', 'admin', 'basic'], checkMode: 'OR' });
@@ -53,7 +54,7 @@ export default async function RSC({ params }: IRSCProps) {
     <UserLayout type="dubber_settings" dubber={dubber} />
 
     <section className="wrapper gap-[40px] pt-[24px] relative">
-      <DubberSettingsContent dubber={dubber} members={members} />
+      <DSettingsPage dubber={dubber} members={members} />
     </section>
   </>;
 }

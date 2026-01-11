@@ -10,7 +10,9 @@ export const metadata = siteMetadata({
   description: 'Дивись аніме на українській мові з друзями разом, без втрати якості!'
 });
 
-export default async function RSC() {
+
+
+export default async function TogetherPageRSC() {
   notFound();
 
   return <main>

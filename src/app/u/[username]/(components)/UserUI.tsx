@@ -36,7 +36,7 @@ interface IUserLibItemProps {
 
 
 
-export const UserStatisticsItem: FC<IUserStatisticsItemProps> = ({ animeSeen, dubber, viewtime }) => {
+export const UserStatisticsItem: FC<IUserStatisticsItemProps> = (props) => {
   return <>
     {/* {dubber && <Link href={Routes.dubber.path({ slug: dubber.team.slug })}>
       <StyledButton as="div" className="pgu-stat-item rounded-[2px]">
@@ -53,42 +53,46 @@ export const UserStatisticsItem: FC<IUserStatisticsItemProps> = ({ animeSeen, du
       </StyledButton>
     </Link>} */}
 
-    {!dubber && <div className="pgu-stat-item">
-      <MaterialSymbol icon={animeSeen !== undefined ? 'bookmark_added' : viewtime !== undefined ? 'acute' : 'question_mark'} size={80} className="text-white shrink-0 max-lg:!text-[64px]" />
+    {!props.dubber && <div className="pgu-stat-item">
+      <MaterialSymbol icon={props.animeSeen !== undefined ? 'bookmark_added' : props.viewtime !== undefined ? 'acute' : 'question_mark'} size={80} className="text-white shrink-0 max-lg:!text-[64px]" />
 
       <div className="pgu-stat-item-content">
-        <P text={animeSeen ?? viewtime ?? ''} size={32} bold className="text-white font-manrope" />
-        <P text={animeSeen !== undefined ? 'Аніме переглянуто' : viewtime !== undefined ? 'Час перегляду (год)' : ''} size={16} center className="text-grey-new font-manrope" />
+        <P text={props.animeSeen ?? props.viewtime ?? ''} size={32} bold className="text-white font-manrope" />
+        <P text={props.animeSeen !== undefined ? 'Аніме переглянуто' : props.viewtime !== undefined ? 'Час перегляду (год)' : ''} size={16} center className="text-grey-new font-manrope" />
       </div>
     </div>}
   </>;
 };
 
-export const UserTitle: FC<IUserTitleProps> = ({ title }) => {
+
+
+export const UserTitle: FC<IUserTitleProps> = (props) => {
   return <div className="flex items-center gap-[16px]">
-    <H3 text={title} size={32} className="text-white" bold />
+    <H3 text={props.title} size={32} className="text-white" bold />
     <div className="w-full h-[2px] bg-dark-light"></div>
   </div>;
 };
 
-export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
+
+
+export const UserLibItem: FC<IUserLibItemProps> = (props) => {
   const currentUser = useAppSelector(state => state.user);
 
-  const [title, setTitle] = useState(parseLibTitle(lib.type));
+  const [title, setTitle] = useState(parseLibTitle(props.lib.type));
   const [icon, setIcon] = useState<SymbolCodepoints>('favorite');
 
-  const isOwner = currentUser.id === user.id;
-  const isPublic = lib.is_public;
+  const isOwner = currentUser.id === props.user.id;
+  const isPublic = props.lib.is_public;
 
 
 
   useMemo(() => {
-    parseUserLibUI({ type: lib.type, setTitle, setIcon });
+    parseUserLibUI({ type: props.lib.type, setTitle, setIcon });
   }, []);
 
 
 
-  return <Link href={Routes.userLib.path({ username: user.username, libId: lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
+  return <Link href={Routes.userLib.path({ username: props.user.username, libId: props.lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
     <StyledButtonOld as="div" className="w-full flex flex-col items-center gap-[8px] p-[16px]">
       <MaterialSymbol icon={icon} size={80} className="text-white" fill={icon === 'favorite'} />
 
@@ -99,7 +103,7 @@ export const UserLibItem: FC<IUserLibItemProps> = ({ lib, user }) => {
 
         <div className="flex items-center gap-[8px]">
           <P text={title} size={16} bold className="text-white" />
-          {lib.anime_ids.length !== 0 && <P text={`(${lib.anime_ids.length})`} size={16} className="text-grey-new" />}
+          {props.lib.anime_ids.length !== 0 && <P text={`(${props.lib.anime_ids.length})`} size={16} className="text-grey-new" />}
         </div>
       </div>
     </StyledButtonOld>

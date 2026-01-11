@@ -217,3 +217,10 @@ export function getUTC(ts?: string | number | Date) {
     ISO: now.toISOString(),
   };
 }
+
+
+
+/** Wether provided array is empty */
+export function isEmpty(arr?: any[]): boolean {
+  return Boolean(arr?.length === 0);
+}

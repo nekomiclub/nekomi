@@ -14,7 +14,7 @@ export const metadata = siteMetadata({
 
 
 
-export default async function RSC() {
+export default async function IContactsPageRSC() {
   return <main className="w-full h-screen flex justify-center items-center">
     <div className="wrapper h-full justify-center items-center">
       <div className="flex flex-col gap-[8px] max-w-[600px] w-full">

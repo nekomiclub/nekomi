@@ -62,7 +62,8 @@ const getUser = cache(async (session: string) => {
 });
 
 
-export default async function Layout({ children, params }: ILayoutProps) {
+
+export default async function RootLayout({ children, params }: ILayoutProps) {
   const sessionToken = await getSessionToken();
 
   let isServerOnline = false;

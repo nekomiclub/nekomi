@@ -1,15 +1,14 @@
 'use client';
 
-import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { InfoArticle, InfoHeader, InfoLangType, InfoList, InfoWrapper } from '~/app/info/InfoComponents';
+import { InfoArticle, InfoHeader, InfoLangType, InfoList, InfoWrapper } from '~/app/info/(components)/InfoUI';
 import { H2, P } from '~/components/UI/Typography';
 
 
 
-const Agreement: NextPage = () => {
+const ITermsPage: FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -79,4 +78,4 @@ const Agreement: NextPage = () => {
   </InfoWrapper>;
 };
 
-export default Agreement;
+export default ITermsPage;

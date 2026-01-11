@@ -17,8 +17,12 @@ import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
 import { isUserAgentMobile } from '~/utils/utils';
 
+import { WatchActions } from './(components)/WatchActions';
+import WatchCheckMobile from './(components)/WatchCheckMobile';
+import WatchDetail from './(components)/WatchDetail';
+import WatchEditLibs from './(components)/WatchEditLibs';
 import WatchPagePlayer from './(components)/WatchPagePlayer';
-import { WatchActions, WatchCheckMobile, WatchDetail, WatchEditLibs, WatchRating, WatchSectionLabel } from './WatchPage';
+import { WatchRating, WatchSectionLabel } from './(components)/WatchUI';
 
 
 
@@ -60,7 +64,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSearchParams>) {
+export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, WatchPageSearchParams>) {
   const { query } = await props.params;
   const { mobile } = await props.searchParams;
 

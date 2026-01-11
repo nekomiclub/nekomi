@@ -49,7 +49,9 @@ export const metadata = siteMetadata({ title: 'Спільний перегляд
 //   return <TogetherRoomSecurityLayer user={user} dubbers={dubbers} room={room} title={title} userSessionToken={userSessionToken || '_NULL'} />
 // }
 
-export default async function RSC() {
+
+
+export default async function TRoomPageRSC() {
   return <div className="w-full h-screen bg-dark-primary flex justify-center items-center">
     <div className="wrapper !flex-row items-center justify-center h-full">
       <div className="flex gap-[40px]">
