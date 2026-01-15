@@ -35,6 +35,12 @@ interface IAnimePlayerTeamListProps {
   teams: IPlayerTeam[]
 }
 
+interface IEpisodeProps {
+  episode: number
+  selectedEpisode: number
+  setEpisode: (props: ISetEpisodeProps) => void
+}
+
 
 
 interface IPlayerTeam {
@@ -71,6 +77,7 @@ const WatchPagePlayer: FC<IProps> = (props) => {
   const [selectedEpisode, setSelectedEpisode] = useState<number | null>(null);
   const [selectedProvider, setSelectedProvider] = useState<VODProviderType | null>(null);
   const [vodUrl, setVodUrl] = useState<string | null>(null);
+  const [episodes, setEpisodes] = useState<number[]>([]);
 
 
 
@@ -160,6 +167,7 @@ const WatchPagePlayer: FC<IProps> = (props) => {
     setSelectedEpisode(episode.episode);
     setSelectedProvider(provider);
 
+    setEpisodes(team.vods.map(el => el.episode));
     setVodUrl(episode[provider] ?? null);
   }
 
@@ -230,7 +238,9 @@ const WatchPagePlayer: FC<IProps> = (props) => {
     </div>
 
     <ul className="wrapper wp-player_episodes">
-      <Episode />
+      {episodes.map((episode, i) => {
+        return <Episode episode={episode} selectedEpisode={selectedEpisode ?? 1} setEpisode={setEpisode} key={`episode--${i}`} />;
+      })}
     </ul>
   </section>;
 };
@@ -286,8 +296,10 @@ const AnimePlayerTeamList: FC<IAnimePlayerTeamListProps> = (props) => {
 
 
 
-const Episode: FC = () => {
-  return <li>1</li>;
+const Episode: FC<IEpisodeProps> = (props) => {
+  return <li className="wp-player-episode">
+    <StyledButton text={`${props.episode}`} className="wp-player-episode_button" style={props.episode === props.selectedEpisode ? 'primary' : 'default'} onClick={() => props.setEpisode({ episode: props.episode })} />
+  </li>;
 };
 
 
