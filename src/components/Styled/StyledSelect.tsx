@@ -21,7 +21,9 @@ interface IProps {
   slug: string
   setSlug: StateSetter<any>
 
-  opts: IStyledSelectOption<string>[]
+  options: IStyledSelectOption<string>[]
+
+  disabled?: boolean
 }
 
 
@@ -31,23 +33,28 @@ const StyledSelect: FC<IProps> = (props) => {
 
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const disabled = props.disabled ?? !props.options.length;
 
 
-  return <Menu id={id} className="styled-select_menu" settings={{ animation: 'slide', align: 'stretch', closeOn: 'both' }} state={isExpanded} stateSetter={setIsExpanded}>
+
+  return < Menu id={id} className="styled-select_menu" settings={{ animation: 'slide', align: 'stretch' }
+  } state={isExpanded} stateSetter={setIsExpanded} disabled={disabled} >
     <MenuTrigger className="styled-select-trigger" anchor>
-      <StyledButton as="div" className="styled-select_button">
-        <StyledM text={props.opts.find(el => el.slug === props.slug)?.title ?? '~~~'} color="text" lineClamp={1} />
+      <StyledButton as="div" className="styled-select_button" disabled={disabled}>
+        <StyledM text={props.options.find(el => el.slug === props.slug)?.title ?? '~~~'} color={disabled ? 'text-muted' : 'text'} lineClamp={1} />
 
-        <MaterialSymbol icon="keyboard_arrow_down" size={16} color="var(--color-text-muted)" className={cn(`styled-select-trigger_arrow`, isExpanded && 'styled-select-trigger_arrow--expanded')} />
+        <MaterialSymbol icon="expand_all" size={16} color="var(--color-text-muted)" className={cn(`styled-select-trigger_arrow`, isExpanded && 'styled-select-trigger_arrow--expanded')} />
       </StyledButton>
     </MenuTrigger>
 
     <MenuWrapper className="styled-select-menu">
-      {props.opts.map((opt, i) => {
-        return <StyledButton text={opt.title} className="styled-select-menu_option" key={`styled-select--${id}-opt--${i}`} onClick={() => props.setSlug(opt.slug)} textProps={{ lineClamp: 1 }} />;
+      {props.options.map((opt, i) => {
+        const isSelected = opt.slug === props.slug;
+
+        return <StyledButton text={opt.title} className={cn(`styled-select-menu_option`, isSelected && 'styled-select-menu_option--selected')} key={`styled-select--${id}-opt--${i}`} onClick={() => props.setSlug(opt.slug)} textProps={{ lineClamp: 1 }} />;
       })}
     </MenuWrapper>
-  </Menu>;
+  </ Menu>;
 };
 
 export default StyledSelect;

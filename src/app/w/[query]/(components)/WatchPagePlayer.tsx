@@ -1,24 +1,26 @@
 'use client';
 
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Skeleton from 'react-loading-skeleton';
 
-import { HandleClientError } from '~/components/Errors';
+import StyledAvatar from '~/components/Styled/StyledAvatar';
 import StyledButton from '~/components/Styled/StyledButton';
 import StyledImage from '~/components/Styled/StyledImage';
 import StyledSelect, { IStyledSelectOption } from '~/components/Styled/StyledSelect';
 import { StyledH3, StyledM, StyledS } from '~/components/Styled/StyledTypo';
-import { IAnimePlayer, IAnimePlayerTeam } from '~/interfaces/IAnime';
+import { NotifyWarn } from '~/components/UI/NotifyToast';
+import { IAnimeEpisode, IAnimePlayer, IAnimePlayerTeam, IAnimePlayerVOD } from '~/interfaces/IAnime';
 import { DubberCardType } from '~/interfaces/IDubber';
-import { StateSetter } from '~/interfaces/types';
-import API from '~/services/api/API';
 import cn from '~/utils/classnames';
+import { isEmpty } from '~/utils/utils';
 
 
 
 interface IProps {
-  animeId: string
+  player: IAnimePlayer
+  player_teams: DubberCardType[]
+  episodes: IAnimeEpisode[]
 }
 
 interface IAnimePlayerDividerProps {
@@ -28,29 +30,47 @@ interface IAnimePlayerDividerProps {
 
 interface IAnimePlayerTeamListProps {
   selectedTeamId: string | null
-  setSelectedTeamId: StateSetter<string | null>
+  setEpisode: (props: ISetEpisodeProps) => void
 
-  teams: IAnimePlayerTeam[]
-  dubbers: DubberCardType[]
+  teams: IPlayerTeam[]
 }
 
-type AnimeProviderType = 'ashdi' | 'moonanime' | 'tortuga'
+
+
+interface IPlayerTeam {
+  id: string
+  name: string
+  avatars: string[]
+  vods: IAnimePlayerVOD[]
+  subbed: boolean
+  members: string[]
+}
+
+interface ISetEpisodeProps {
+  teamId?: string
+  episode?: number
+  provider?: VODProviderType
+}
+
+type VODProviderType = keyof Pick<IAnimePlayerVOD, 'ashdi_vod' | 'moonanime_vod' | 'tortuga_vod'>
+
+
+
+const VODProviderList: Record<VODProviderType, string> = {
+  ashdi_vod: 'Ashdi',
+  moonanime_vod: 'Moonanime',
+  tortuga_vod: 'Tortuga'
+};
 
 
 
 const WatchPagePlayer: FC<IProps> = (props) => {
-  const [player, setPlayer] = useState<IAnimePlayer>();
-  const [dubbers, setDubbers] = useState<DubberCardType[]>([]);
-  const [providerOptions, setProviderOptions] = useState<IStyledSelectOption<AnimeProviderType>[]>([
-    { slug: 'ashdi', title: 'Ashdi' },
-    { slug: 'moonanime', title: 'Moonanime' },
-    { slug: 'tortuga', title: 'Tortuga' },
-  ]); // TODO: Define available providers at api load
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [selectedProvider, setSelectedProvider] = useState<AnimeProviderType | null>('ashdi'); // TODO: Define selected provider at api load
+  const [providerOptions, setProviderOptions] = useState<IStyledSelectOption<VODProviderType>[]>([]);
+  const [teams, setTeams] = useState<IPlayerTeam[]>([]);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<number | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<VODProviderType | null>(null);
+  const [vodUrl, setVodUrl] = useState<string | null>(null);
 
 
 
@@ -59,21 +79,47 @@ const WatchPagePlayer: FC<IProps> = (props) => {
 
 
 
-  // Handle API load
-  useEffect(() => {
-    (async function () {
-      try {
-        const { anime } = await API.getAnime({ query: props.animeId }, { view: 'empty', get_episodes: true });
+  // Handle initial load
+  useMemo(() => {
+    const teams: IPlayerTeam[] = [];
 
-        setPlayer(anime.player);
-        setDubbers(anime.player_teams);
+    props.player.dubbed[0].dubber_ids = ['057fe719-50ff-46cb-b0d4-dd052c0cd563', 'd979d465-1407-452f-8955-a7692480f9ac'];
+    props.player.dubbed[0].dubber_name = 'Amanogawa & РГ';
 
-        setIsLoading(false);
-      } catch (e) {
-        HandleClientError(e);
-      }
-    })();
+    props.player.dubbed.forEach(pt => parseTeam(pt, false));
+    props.player.subbed.forEach(pt => parseTeam(pt, true));
+
+    setTeams(teams);
+
+
+
+    function parseTeam(pt: IAnimePlayerTeam, subbed: boolean) {
+      const dubbers = props.player_teams.filter(dub => pt.dubber_ids.includes(dub.id));
+      const names = dubbers.map(el => el.name);
+
+      if (isEmpty(names)) names.push(pt.dubber_name);
+
+      const team: IPlayerTeam = {
+        id: `${pt.id}${subbed ? '-subbed' : ''}`,
+        name: names.join(' & '),
+        members: names,
+        avatars: dubbers.map(el => el.avatar),
+        subbed,
+        vods: pt.vods,
+      };
+
+      teams.push(team);
+    }
   }, []);
+
+  // Handle initial player state
+  useMemo(() => {
+    if (isEmpty(teams)) return;
+
+    setEpisode();
+  }, [teams]);
+
+
 
   // Handle settings max height
   useEffect(() => {
@@ -86,21 +132,52 @@ const WatchPagePlayer: FC<IProps> = (props) => {
     });
 
     observer.observe(video);
-  }, [isLoading]);
-
-  useEffect(() => console.log(selectedTeamId), [selectedTeamId]);
+  }, []);
 
 
+
+  function setEpisode(props?: ISetEpisodeProps) {
+    const team = teams.find(el => el.id === (props?.teamId ?? selectedTeamId ?? teams[0].id))!;
+    const episode = team.vods.find(el => el.episode === (props?.episode ?? selectedEpisode ?? team.vods[0].episode))!;
+    const providers: VODProviderType[] = [];
+
+    if (episode?.ashdi_vod) providers.push('ashdi_vod');
+    if (episode?.moonanime_vod) providers.push('moonanime_vod');
+    if (episode?.tortuga_vod) providers.push('tortuga_vod');
+    if (isEmpty(providers)) return NotifyWarn({ title: 'Нема доступних відео', message: 'Для цієї серії в цій озвучці нема доступних серій' });
+
+    let provider = providers[0];
+    if (props?.provider && providers.includes(props.provider)) provider = props.provider;
+    else if (selectedProvider && providers.includes(selectedProvider)) provider = selectedProvider;
+
+
+
+    setProviderOptions(providers.map(el => {
+      return { slug: el, title: VODProviderList[el] };
+    }));
+
+    setSelectedTeamId(team.id);
+    setSelectedEpisode(episode.episode);
+    setSelectedProvider(provider);
+
+    setVodUrl(episode[provider] ?? null);
+  }
 
   function nextEpisode() {
+    setEpisode({ episode: (selectedEpisode ?? 1) + 1 });
+  }
 
+  function selectProvider(slug: VODProviderType) {
+    setEpisode({ provider: slug });
   }
 
 
 
-  return isLoading ? <Skeleton width={'100%'} height={'80vh'} /> : <section className="wp-player_layer">
+  return <section className="wp-player_layer">
     <div className="wp-player">
-      <div className="wp-player_video" ref={videoRef}></div>
+      <div className="wp-player_video" ref={videoRef}>
+        {vodUrl && <iframe src={vodUrl} width={'100%'} height={'100%'} allowFullScreen frameBorder={0} scrolling="no"></iframe>}
+      </div>
 
       <article className="wp-player_settings" ref={settingsRef}>
         <div className="wp-player_preferences">
@@ -112,21 +189,23 @@ const WatchPagePlayer: FC<IProps> = (props) => {
             </div>
 
             {!selectedProvider && <Skeleton width={'100%'} height={38} />}
-            {selectedProvider && <StyledSelect opts={providerOptions} slug={selectedProvider} setSlug={setSelectedProvider} />}
+            {selectedProvider && <StyledSelect options={providerOptions} slug={selectedProvider} setSlug={selectProvider} />}
           </div>
 
-          {/* Divider */}
-          <div className="wp-player-divider_line"></div>
+          <div className="wp-player-selectTeam">
+            {/* Divider */}
+            <div className="wp-player-divider_line"></div>
 
-          {/* Select dubber */}
-          {player?.dubbed && player?.dubbed.length > 0 && <AnimePlayerTeamList teams={player.dubbed} dubbers={dubbers} selectedTeamId={selectedTeamId} setSelectedTeamId={setSelectedTeamId} />}
+            {/* Select dubber */}
+            {!isEmpty(teams.filter(el => !el.subbed)) && <AnimePlayerTeamList teams={teams.filter(el => !el.subbed)} selectedTeamId={selectedTeamId} setEpisode={setEpisode} />}
 
-          {/* Select subber */}
-          {player?.subbed && player?.subbed.length > 0 && <div className="wp-player-subs">
-            <AnimePlayerDivider icon="closed_caption" title="Субтитри" />
+            {/* Select subber */}
+            {!isEmpty(teams.filter(el => el.subbed)) && <div className="wp-player-subs">
+              <AnimePlayerDivider icon="closed_caption" title="Субтитри" />
 
-            <AnimePlayerTeamList teams={player.subbed} dubbers={dubbers} selectedTeamId={selectedTeamId} setSelectedTeamId={setSelectedTeamId} />
-          </div>}
+              <AnimePlayerTeamList teams={teams.filter(el => el.subbed)} selectedTeamId={selectedTeamId} setEpisode={setEpisode} />
+            </div>}
+          </div>
         </div>
 
         {/* Next episode */}
@@ -140,10 +219,10 @@ const WatchPagePlayer: FC<IProps> = (props) => {
 
             <div className="wp-player-next_content">
               <div className="wp-player-next_titles">
-                <StyledM text={`Я одружуюся з дівчиною, яку ненавиджу в своєму класі`} color="text" lineClamp={3} />
+                <StyledM text={props.episodes.find(el => el.episode === selectedEpisode)?.title} color="text" lineClamp={2} />
               </div>
 
-              <StyledButton icon="arrow_right_alt" text={`7 епізод`} style="secondary" iconProps={{ type: 'rounded' }} onClick={nextEpisode} />
+              <StyledButton icon="arrow_right_alt" text={`${(selectedEpisode ?? 1) + 1} епізод`} style="secondary" iconProps={{ type: 'rounded' }} onClick={nextEpisode} />
             </div>
           </article>
         </div>
@@ -180,14 +259,18 @@ const AnimePlayerDivider: FC<IAnimePlayerDividerProps> = (props) => {
 const AnimePlayerTeamList: FC<IAnimePlayerTeamListProps> = (props) => {
   return <section className="wp-player_teams">
     {props.teams.map((team, i) => {
-      const isSelected = false;
+      const teamId = team.id;
+      const isSelected = props.selectedTeamId === teamId;
 
-      return <StyledButton className={cn(`wp-player-team`, isSelected && 'wp-player-team--selected')} onClick={() => props.setSelectedTeamId(team.id)} key={`wp-player-teams--${team.id}-team--${i}`}>
-        <div className="wp-player-team_info">
+      return <StyledButton className={cn(`wp-player-team`, isSelected && 'wp-player-team--selected')} onClick={() => props.setEpisode({ teamId: team.id })} key={`wp-player-teams--${team.id}-team--${i}`}>
+        <div className="wp-player-team_about">
           {/* Avatars */}
-          <div></div>
+          <div className="wp-player-team_avatars" style={{ width: team.members.length === 1 ? 28 : 44 }}>
+            {team.members[0] && <StyledAvatar avatar={team.avatars[0]} width="28px" height="28px" initials={team.members[0]} />}
+            {team.members[1] && <StyledAvatar avatar={team.avatars[1]} width="28px" height="28px" initials={team.members[1]} />}
+          </div>
 
-          <StyledM text={team.dubber_name} color="text" lineClamp={1} title={team.dubber_name} />
+          <StyledM text={team.name} color="text" lineClamp={1} title={team.name} className="wp-player-team_name" />
         </div>
 
         {/* Info */}

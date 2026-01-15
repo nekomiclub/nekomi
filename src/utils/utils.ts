@@ -2,6 +2,8 @@
  * @fileoverview utils with zero-dependencies
  */
 
+import crypto from 'crypto';
+
 
 
 
@@ -217,6 +219,15 @@ export function getUTC(ts?: string | number | Date) {
     ISO: now.toISOString(),
   };
 }
+
+
+
+export function buffer2hash(data: Buffer) {
+  const hash = crypto.createHash('sha256');
+  hash.update(data);
+  return hash.digest('hex');
+}
+
 
 
 

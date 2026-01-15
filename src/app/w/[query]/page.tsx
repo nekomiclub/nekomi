@@ -27,7 +27,7 @@ import { WatchRating, WatchSectionLabel } from './(components)/WatchUI';
 
 
 const getAnime = cache(async (query: string) => {
-  return await API.getAnime({ query }, { view: 'full', get_details: true });
+  return await API.getAnime({ query }, { view: 'full', get_details: true, get_episodes: true });
 });
 
 
@@ -70,7 +70,6 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
 
   const userAgent = (await headers()).get('user-agent') || '';
   const isMobile = mobile ?? isUserAgentMobile(userAgent) ?? true;
-
 
 
 
@@ -159,7 +158,7 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
 
           {/* Player */}
           {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
-          <WatchPagePlayer animeId={anime.id} />
+          <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} />
         </section>
       </main>
     </> : <>
@@ -254,7 +253,7 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
 
         {/* Player */}
         {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
-        <WatchPagePlayer animeId={anime.id} />
+        <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} />
       </main>
     </>;
   } catch (e) {

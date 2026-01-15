@@ -30,7 +30,7 @@ export interface IStyledTypoProps {
   children?: React.ReactElement | React.ReactElement[]
 }
 
-export type StyledTypoColorType = 'inherit' | 'text' | 'text-muted' | 'accent'
+export type StyledTypoColorType = 'inherit' | 'text' | 'text-secondary' | 'text-muted' | 'accent'
 export type StyledTypoSizeType = 'heading' | 'h2' | 'h3' | 'm' | 's' | 'xs'
 export type StyledTypoFontType = Omit<IStyledTypoProps, 'tag' | 'size'>
 
