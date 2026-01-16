@@ -10,14 +10,17 @@ import StyledImage from '~/components/Styled/StyledImage';
 import StyledSelect, { IStyledSelectOption } from '~/components/Styled/StyledSelect';
 import { StyledH3, StyledM, StyledS } from '~/components/Styled/StyledTypo';
 import { NotifyWarn } from '~/components/UI/NotifyToast';
-import { IAnimeEpisode, IAnimePlayer, IAnimePlayerTeam, IAnimePlayerVOD } from '~/interfaces/IAnime';
+import { AnimeVODProviderList, AnimeVODProviderType, IAnimeEpisode, IAnimePlayer, IAnimePlayerTeam, IAnimePlayerVOD } from '~/interfaces/IAnime';
 import { DubberCardType } from '~/interfaces/IDubber';
+import { IAnimePlayerData, LOCAL_STORAGE_KEY } from '~/interfaces/types';
+import { AnimePlayerDataSchema } from '~/schemas/LocalStorageSchemas';
 import cn from '~/utils/classnames';
 import { isEmpty } from '~/utils/utils';
 
 
 
 interface IProps {
+  anime_id: string
   player: IAnimePlayer
   player_teams: DubberCardType[]
 
@@ -32,7 +35,7 @@ interface IAnimePlayerDividerProps {
 
 interface IAnimePlayerTeamListProps {
   selectedTeamId: string | null
-  setEpisode: (props: ISetEpisodeProps) => void
+  setEpisode: (params?: ISetEpisodeParams, synthetic?: boolean) => void
 
   teams: IPlayerTeam[]
 }
@@ -40,7 +43,7 @@ interface IAnimePlayerTeamListProps {
 interface IEpisodeProps {
   episode: number
   selectedEpisode: number
-  setEpisode: (props: ISetEpisodeProps) => void
+  setEpisode: (params?: ISetEpisodeParams, synthetic?: boolean) => void
 }
 
 interface INextEpisodeProps {
@@ -62,33 +65,28 @@ interface IPlayerTeam {
   members: string[]
 }
 
-interface ISetEpisodeProps {
+interface ISetEpisodeParams {
   teamId?: string
   episode?: number
-  provider?: VODProviderType
+  provider?: AnimeVODProviderType
 }
 
-type VODProviderType = keyof Pick<IAnimePlayerVOD, 'ashdi_vod' | 'moonanime_vod' | 'tortuga_vod'>
-
-
-
-const VODProviderList: Record<VODProviderType, string> = {
-  ashdi_vod: 'Ashdi',
-  moonanime_vod: 'Moonanime',
-  tortuga_vod: 'Tortuga'
-};
+interface ISaveLocalDataParams {
+  dubber_id: string | null
+  episode: number | null
+  provider: AnimeVODProviderType
+}
 
 
 
 const WatchPagePlayer: FC<IProps> = (props) => {
-  const [providerOptions, setProviderOptions] = useState<IStyledSelectOption<VODProviderType>[]>([]);
+  const [providerOptions, setProviderOptions] = useState<IStyledSelectOption<AnimeVODProviderType>[]>([]);
   const [teams, setTeams] = useState<IPlayerTeam[]>([]);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<number | null>(null);
-  const [selectedProvider, setSelectedProvider] = useState<VODProviderType | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<AnimeVODProviderType | null>(null);
   const [vodUrl, setVodUrl] = useState<string | null>(null);
   const [totalEpisodes, setTotalEpisodes] = useState<number[]>([]);
-  const [hasEpisodes, setHasEpisodes] = useState(false);
 
 
 
@@ -108,7 +106,6 @@ const WatchPagePlayer: FC<IProps> = (props) => {
     props.player.dubbed.forEach(pt => parseTeam(pt, false));
     props.player.subbed.forEach(pt => parseTeam(pt, true));
 
-    setHasEpisodes(teams.some(el => !isEmpty(el.vods)));
     setTeams(teams);
 
 
@@ -154,14 +151,60 @@ const WatchPagePlayer: FC<IProps> = (props) => {
     observer.observe(video);
   }, []);
 
+  // Handle initial state load
+  useEffect(() => {
+    const localData = retrieveLocalData();
+    const item = localData.find(el => el.anime_id === props.anime_id) as IAnimePlayerData;
+
+    if (item) setEpisode({
+      teamId: item.dubber_id ?? undefined,
+      episode: item.episode ?? undefined,
+      provider: item.provider ?? undefined
+    });
+  }, []);
 
 
-  function setEpisode(params?: ISetEpisodeProps) {
+
+  function retrieveLocalData(): IAnimePlayerData[] {
+    if (typeof window === 'undefined') return [];
+    const data: IAnimePlayerData[] = [];
+
+    try {
+      const preserved = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY.AnimePlayerData) ?? '[]') as IAnimePlayerData[];
+
+      preserved.forEach(el => {
+        const item = AnimePlayerDataSchema.safeParse(el);
+        if (item.data) data.push(item.data);
+      });
+    } catch (e) { null; }
+
+    return data;
+  }
+
+  function saveLocalData(params?: ISaveLocalDataParams) {
+    if (typeof window === 'undefined') return;
+    let data = retrieveLocalData();
+
+    const item: IAnimePlayerData = {
+      anime_id: props.anime_id,
+      dubber_id: params?.dubber_id ?? selectedTeamId ?? null,
+      episode: params?.episode ?? selectedEpisode ?? null,
+      provider: params?.provider ?? selectedProvider ?? null
+    };
+
+    console.log(`save`, item);
+
+    data = [...data.filter(el => el.anime_id !== item.anime_id), item];
+
+    localStorage.setItem(LOCAL_STORAGE_KEY.AnimePlayerData, JSON.stringify(data));
+  }
+
+  function setEpisode(params?: ISetEpisodeParams, synthetic = true) {
     const team = teams.find(el => el.id === (params?.teamId ?? selectedTeamId ?? teams[0].id))!;
     let episode = team.vods.find(el => el.episode === (params?.episode ?? selectedEpisode))!;
     if (!episode) episode = team.vods.find(el => el.episode === team.vods[0].episode)!;
 
-    const providers: VODProviderType[] = [];
+    const providers: AnimeVODProviderType[] = [];
 
     if (episode?.ashdi_vod) providers.push('ashdi_vod');
     if (episode?.moonanime_vod) providers.push('moonanime_vod');
@@ -169,13 +212,14 @@ const WatchPagePlayer: FC<IProps> = (props) => {
     if (isEmpty(providers)) return NotifyWarn({ title: 'Немає доступних відео', message: 'Для цієї серії в цій озвучці нема доступних серій' });
 
     let provider = providers[0];
+
     if (params?.provider && providers.includes(params.provider)) provider = params.provider;
     else if (selectedProvider && providers.includes(selectedProvider)) provider = selectedProvider;
 
 
 
     setProviderOptions(providers.map(el => {
-      return { slug: el, title: VODProviderList[el] };
+      return { slug: el, title: AnimeVODProviderList[el] };
     }));
 
     setSelectedTeamId(team.id);
@@ -184,19 +228,21 @@ const WatchPagePlayer: FC<IProps> = (props) => {
 
     setTotalEpisodes(team.vods.map(el => el.episode));
     setVodUrl(episode[provider] ?? null);
+
+    if (!synthetic) saveLocalData({ dubber_id: team.id, episode: episode.episode, provider });
   }
 
   function nextEpisode() {
-    setEpisode({ episode: (selectedEpisode ?? 1) + 1 });
+    setEpisode({ episode: (selectedEpisode ?? 1) + 1 }, false);
   }
 
-  function selectProvider(slug: VODProviderType) {
-    setEpisode({ provider: slug });
+  function selectProvider(slug: AnimeVODProviderType) {
+    setEpisode({ provider: slug }, false);
   }
 
 
 
-  return hasEpisodes && <section className="wp-player_layer" id="player">
+  return <section className="wp-player_layer" id="player">
     <div className="wp-player">
       <div className="wp-player_video" ref={videoRef}>
         {vodUrl && <iframe src={vodUrl} width={'100%'} height={'100%'} allowFullScreen frameBorder={0} scrolling="no"></iframe>}
@@ -271,7 +317,7 @@ const AnimePlayerTeamList: FC<IAnimePlayerTeamListProps> = (props) => {
       const teamId = team.id;
       const isSelected = props.selectedTeamId === teamId;
 
-      return <StyledButton className={cn(`wp-player-team`, isSelected && 'wp-player-team--selected')} onClick={() => props.setEpisode({ teamId: team.id })} key={`wp-player-teams--${team.id}-team--${i}`}>
+      return <StyledButton className={cn(`wp-player-team`, isSelected && 'wp-player-team--selected')} onClick={() => props.setEpisode({ teamId: team.id }, false)} key={`wp-player-teams--${team.id}-team--${i}`}>
         <div className="wp-player-team_about">
           {/* Avatars */}
           <div className="wp-player-team_avatars" style={{ width: team.members.length === 1 ? 28 : 44 }}>
@@ -297,7 +343,7 @@ const AnimePlayerTeamList: FC<IAnimePlayerTeamListProps> = (props) => {
 
 const Episode: FC<IEpisodeProps> = (props) => {
   return <li className="wp-player-episode">
-    <StyledButton text={`${props.episode}`} className="wp-player-episode_button" style={props.episode === props.selectedEpisode ? 'primary' : 'default'} onClick={() => props.setEpisode({ episode: props.episode })} />
+    <StyledButton text={`${props.episode}`} className="wp-player-episode_button" style={props.episode === props.selectedEpisode ? 'primary' : 'default'} onClick={() => props.setEpisode({ episode: props.episode }, false)} />
   </li>;
 };
 

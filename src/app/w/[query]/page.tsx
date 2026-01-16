@@ -16,7 +16,7 @@ import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams
 import { Routes } from '~/routes';
 import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
-import { isUserAgentMobile } from '~/utils/utils';
+import { isEmpty, isUserAgentMobile } from '~/utils/utils';
 
 import { WatchActions } from './(components)/WatchActions';
 import WatchCheckMobile from './(components)/WatchCheckMobile';
@@ -81,6 +81,7 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
 
     const titleH1 = anime.title_ua ?? anime.title_en ?? `Untitled`;
     const titleH2 = titleH1 ? anime.title_en : null;
+    const hasEpisodes = [...anime.player.dubbed, ...anime.player.subbed].some(el => !isEmpty(el.vods));
 
 
 
@@ -110,7 +111,7 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
 
           {/* {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />} */}
 
-          <WatchActions anime={anime} player={anime.player} />
+          <WatchActions anime={anime} hasEpisodes={hasEpisodes} />
 
           <div className="watch-section_divider"></div>
 
@@ -158,9 +159,9 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
           </div>}
 
           {/* Player */}
-          <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
-            <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} />
-          </Suspense>
+          {hasEpisodes && <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
+            <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} anime_id={anime.id} />
+          </Suspense>}
         </section>
       </main>
     </> : <>
@@ -198,7 +199,7 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
             </div>
 
             {/* Actions */}
-            <WatchActions anime={anime} player={anime.player} />
+            <WatchActions anime={anime} hasEpisodes={hasEpisodes} />
 
             {/* Divider */}
             <div className="watch-section_divider"></div>
@@ -254,9 +255,9 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
         </div>}
 
         {/* Player */}
-        <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
-          <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} />
-        </Suspense>
+        {hasEpisodes && <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
+          <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} anime_id={anime.id} />
+        </Suspense>}
       </main>
     </>;
   } catch (e) {

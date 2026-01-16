@@ -1,23 +1,21 @@
 'use client';
 
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import StyledImage from '~/components/Styled/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
-import { IAnimePlayer } from '~/interfaces/IAnime';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { Routes } from '~/routes';
 import { AnimeFullType } from '~/services/api/anime/GetAnime.api';
 import cn from '~/utils/classnames';
-import { isEmpty } from '~/utils/utils';
 
 
 
 interface IProps {
   anime: AnimeFullType
-  player: IAnimePlayer
+  hasEpisodes: boolean
 }
 
 
@@ -27,7 +25,8 @@ export const WatchActions: FC<IProps> = (props) => {
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
   const [isTogetherRoomCreating, setIsTogetherRoomCreating] = useState(false);
-  const [hasEpisodes, setHasEpisodes] = useState(false);
+
+
 
   const [canEditAnime] = useState(
     currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE)
@@ -37,19 +36,15 @@ export const WatchActions: FC<IProps> = (props) => {
     // || currentUser.permissions.includes('seriesAdd')
   );
 
+
+
   const isDMCARestricted = props.anime.is_DMCA_restricted && !currentUser.id;
 
 
 
-  useMemo(() => {
-    setHasEpisodes([...props.player.dubbed, ...props.player.subbed].some(el => !isEmpty(el.vods)));
-  }, []);
-
-
-
-  return (hasEpisodes || canEditAnime) && <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
+  return (props.hasEpisodes || canEditAnime) && <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
     {/* Anime has episodes and does not infringing dmca */}
-    {hasEpisodes && !isDMCARestricted && <Link href={'#player'} scroll className="ui-button watch-meta-action">
+    {props.hasEpisodes && !isDMCARestricted && <Link href={'#player'} scroll className="ui-button watch-meta-action">
       <MaterialSymbol icon="live_tv" size={24} className="text-white max-sm:text-[20px]" />
       <p className="text-white font-manrope uppercase max-sm:text-[14px]">розпочати перегляд</p>
     </Link>}

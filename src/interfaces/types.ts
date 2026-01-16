@@ -1,10 +1,16 @@
 import z from 'zod';
 
+import { AnimePlayerDataSchema } from '~/schemas/LocalStorageSchemas';
+
 import Anime, { HydratedAnime } from './AnimeIntf';
 
-export enum LocalStorageKeys {
+
+
+export enum LOCAL_STORAGE_KEY {
   NekoplayerData = 'np-data',
   NekoplayerPreferences = 'np-preferences',
+
+  AnimePlayerData = 'apd'
 }
 
 
@@ -51,3 +57,5 @@ export type ISODateString = string;
 
 /** Nekomi CDN string */
 export type CDNString = string;
+
+export type IAnimePlayerData = z.infer<typeof AnimePlayerDataSchema>

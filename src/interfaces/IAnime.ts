@@ -123,6 +123,16 @@ export interface IAnimeSchedule {
   airing_at: ISODateString
 }
 
+export type AnimeVODProviderType = keyof Pick<IAnimePlayerVOD, 'ashdi_vod' | 'moonanime_vod' | 'tortuga_vod'>
+
+
+
+export const AnimeVODProviderList: Record<AnimeVODProviderType, string> = {
+  ashdi_vod: 'Ashdi',
+  moonanime_vod: 'Moonanime',
+  tortuga_vod: 'Tortuga'
+};
+
 
 
 export type AnimeCardType = Pick<IAnime, 'id' | 'slug' | 'episodes_total' | 'score'> & {
