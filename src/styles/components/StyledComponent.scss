@@ -1,3 +1,50 @@
+.styled-text {
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  transition: 0.1s ease-in-out;
+  line-height: 1.4em;
+  overflow-wrap: anywhere;
+  position: relative;
+  width: fit-content;
+
+  &--heading {
+    font-size: 2rem;
+    font-weight: 800;
+  }
+
+  &--h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+
+  &--h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  &--m {
+    font-size: 1rem;
+  }
+
+  &--s {
+    font-size: 0.875rem;
+  }
+
+  &--xs {
+    font-size: 0.75rem;
+  }
+
+  &--clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .styled-button {
   transition: 0.1s ease-in-out;
 
@@ -7,6 +54,11 @@
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   border-radius: 0.25rem;
+
+  &_text {
+    width: 100%;
+    text-align: center;
+  }
 
   &--default {
     border: 1px solid var(--color-border);
@@ -77,53 +129,6 @@
   }
 }
 
-.styled-text {
-  color: inherit;
-  font-size: inherit;
-  font-family: inherit;
-  font-weight: inherit;
-  transition: 0.1s ease-in-out;
-  line-height: 1.4em;
-  overflow-wrap: anywhere;
-  position: relative;
-  width: fit-content;
-
-  &--heading {
-    font-size: 2rem;
-    font-weight: 800;
-  }
-
-  &--h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-  }
-
-  &--h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-  }
-
-  &--m {
-    font-size: 1rem;
-  }
-
-  &--s {
-    font-size: 0.75rem;
-  }
-
-  &--xs {
-    font-size: 0.5rem;
-  }
-
-  &--clamp {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
 .styled-select {
   &_menu {
     width: 100%;
@@ -138,10 +143,6 @@
 
     &_arrow {
       transition: 0.1s ease-in-out;
-
-      &--expanded {
-        transform: rotate(-180deg);
-      }
     }
   }
 
@@ -174,6 +175,10 @@
 
       &--selected {
         background: var(--color-accent);
+      }
+
+      .styled-button_text {
+        text-align: left;
       }
     }
   }

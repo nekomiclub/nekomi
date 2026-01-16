@@ -1,9 +1,10 @@
 import '~/styles/pages/watch.scss';
 
 import { Metadata } from 'next';
-import { cache } from 'react';
+import { cache, Suspense } from 'react';
 import { headers } from 'next/headers';
 import Link from 'next/link';
+import Skeleton from 'react-loading-skeleton';
 
 import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
@@ -109,7 +110,7 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
 
           {/* {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />} */}
 
-          <WatchActions anime={anime} />
+          <WatchActions anime={anime} player={anime.player} />
 
           <div className="watch-section_divider"></div>
 
@@ -157,8 +158,9 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
           </div>}
 
           {/* Player */}
-          {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
-          <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} />
+          <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
+            <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} />
+          </Suspense>
         </section>
       </main>
     </> : <>
@@ -196,7 +198,7 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
             </div>
 
             {/* Actions */}
-            <WatchActions anime={anime} />
+            <WatchActions anime={anime} player={anime.player} />
 
             {/* Divider */}
             <div className="watch-section_divider"></div>
@@ -252,8 +254,9 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
         </div>}
 
         {/* Player */}
-        {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
-        <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} />
+        <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
+          <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} />
+        </Suspense>
       </main>
     </>;
   } catch (e) {

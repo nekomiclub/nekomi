@@ -33,17 +33,17 @@ const StyledSelect: FC<IProps> = (props) => {
 
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const disabled = props.disabled ?? !props.options.length;
+  const disabled = props.disabled || !props.options.length || props.options.length === 1;
 
 
 
-  return < Menu id={id} className="styled-select_menu" settings={{ animation: 'slide', align: 'stretch' }
+  return <Menu id={id} className="styled-select_menu" settings={{ animation: 'slide', align: 'stretch' }
   } state={isExpanded} stateSetter={setIsExpanded} disabled={disabled} >
     <MenuTrigger className="styled-select-trigger" anchor>
       <StyledButton as="div" className="styled-select_button" disabled={disabled}>
-        <StyledM text={props.options.find(el => el.slug === props.slug)?.title ?? '~~~'} color={disabled ? 'text-muted' : 'text'} lineClamp={1} />
+        <StyledM text={props.options.find(el => el.slug === props.slug)?.title ?? 'N/A'} color={disabled ? 'text-muted' : 'text'} lineClamp={1} />
 
-        <MaterialSymbol icon="expand_all" size={16} color="var(--color-text-muted)" className={cn(`styled-select-trigger_arrow`, isExpanded && 'styled-select-trigger_arrow--expanded')} />
+        <MaterialSymbol icon="expand_all" size={16} color="var(--color-text-muted)" className={cn(`styled-select-trigger_arrow`)} />
       </StyledButton>
     </MenuTrigger>
 
