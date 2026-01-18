@@ -1,15 +1,14 @@
 'use client';
 
-import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { InfoHeader } from '~/app/info/InfoComponents';
+import { InfoHeader } from '~/app/info/(components)/InfoUI';
 import { conf } from '~/conf';
 
 
 
-const Copyright: NextPage = () => {
+const IDMCAPage: FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -101,4 +100,4 @@ const Copyright: NextPage = () => {
   );
 };
 
-export default Copyright;
+export default IDMCAPage;

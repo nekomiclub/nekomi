@@ -1,4 +1,4 @@
-import './styles.scss';
+import '~/styles/pages/dubber.scss';
 
 import { Metadata } from 'next';
 import { cache } from 'react';
@@ -10,9 +10,9 @@ import { IRSCProps } from '~/interfaces/IRSC';
 import { DubberPageParams } from '~/interfaces/PagesParams';
 import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
-import { getUTC, timestampToDayMonth } from '~/utils/utils';
+import { getUTC, isEmpty, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
-import { DubberAbout, DubberTeam } from './DubberPage';
+import { DubberAboutLink, DubberTeamMember } from './(components)/DubberUI';
 
 
 
@@ -50,7 +50,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC({ params, searchParams }: IRSCProps<DubberPageParams>) {
+export default async function DubberPageRSC({ params, searchParams }: IRSCProps<DubberPageParams>) {
   const { slug } = await params;
   const { invite } = await searchParams as { invite?: 'accept' | 'decline' };
 
@@ -67,9 +67,43 @@ export default async function RSC({ params, searchParams }: IRSCProps<DubberPage
       <UserLayout type="dubber_profile" dubber={dubber} />
 
       <section className="wrapper gap-[40px] pt-[24px] relative">
-        <DubberAbout dubber={dubber} />
+        {/* About */}
+        <div className="flex flex-col gap-[24px]">
+          <ul className="w-full flex items-center justify-center flex-wrap gap-[8px]">
+            {dubber.socials?.telegram && <DubberAboutLink link={dubber.socials.telegram} label="telegram" />}
+            {dubber.socials?.tiktok && <DubberAboutLink link={dubber.socials.tiktok} label="tiktok" />}
+            {dubber.socials?.youtube && <DubberAboutLink link={dubber.socials.youtube} label="youtube" />}
+            {dubber.socials?.instagram && <DubberAboutLink link={dubber.socials.instagram} label="instagram" />}
+            {dubber.support?.monobank && <DubberAboutLink link={dubber.support.monobank} label="monobank" />}
+            {dubber.support?.diaka && <DubberAboutLink link={dubber.support.diaka} label="diaka" />}
+            {dubber.support?.bymeacoffee && <DubberAboutLink link={dubber.support.bymeacoffee} label="bymeacoffee" />}
+            {dubber.support?.patreon && <DubberAboutLink link={dubber.support.patreon} label="patreon" />}
+          </ul>
+
+          <div className="w-full h-[1px] bg-dark-light"></div>
+
+          {dubber.about && <p className="w-full text-white text-[20px] font-manrope max-lg:text-[16px]">{dubber.about}</p>}
+          {!dubber.about && <p className="w-full text-grey-new font-manrope italic">Опис відсутній</p>}
+        </div>
+
         {/* {dubbedHydratedAnimes?.length ? <DubberAnimeDubbed dubber={dubber} hydratedAnimes={dubbedHydratedAnimes} /> : undefined} */}
-        {dubber.members?.length ? <DubberTeam members={dubber.members} /> : undefined}
+        {dubber.members && !isEmpty(dubber.members) && <div className="flex flex-col gap-[16px]">
+          <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
+
+          <div className="flex flex-wrap gap-[16px]">
+            {dubber.members.filter(el => el.role === 'leader').map(member => {
+              return <DubberTeamMember member={member} key={`member--${member.id}`} />;
+            })}
+
+            {dubber.members.filter(el => el.role === 'editor').map(member => {
+              return <DubberTeamMember member={member} key={`member--${member.id}`} />;
+            })}
+
+            {dubber.members.filter(el => el.role === 'member').map(member => {
+              return <DubberTeamMember member={member} key={`member--${member.id}`} />;
+            })}
+          </div>
+        </div>}
 
         <div className="flex items-center gap-[8px]">
           <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />

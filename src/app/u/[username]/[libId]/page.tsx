@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { MaterialSymbol } from 'material-symbols-rc';
 import { notFound } from 'next/navigation';
 
-import { UserLibItem } from '~/app/u/[username]/UserPage';
+import { UserLibItem } from '~/app/u/[username]/(components)/UserUI';
 import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';
@@ -48,7 +48,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<UserLibPageProps>) {
+export default async function ULibPageRSC(props: IRSCProps<UserLibPageProps>) {
   const params = await props.params;
   const { username, libId } = params;
   const session = await getSessionToken();
@@ -57,7 +57,7 @@ export default async function RSC(props: IRSCProps<UserLibPageProps>) {
 
   try {
     const { user: currentUser } = await CheckUserAccess({ session });
-    const { user, libs, catalog } = await API.getUserLib({ userId: username, libId: libId }, { sessionToken: session });
+    const { user, libs, catalog } = await API.getUserLib({ query: username, libId }, { sessionToken: session });
     const lib = libs.find(el => el.id === libId);
     if (!lib) return notFound();
 

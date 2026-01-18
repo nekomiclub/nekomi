@@ -39,6 +39,14 @@ const URL = {
 const vars = {
   SESSION_COOKIE_NAME: 'nekomi-auth',
   CSRF_TOKEN_LIFETIME_MS: ms('1min'),
+
+  breakpoints: {
+    breakSM: 640,
+    breakMD: 768,
+    breakLG: 1024,
+    breakXL: 1280,
+    breakXXL: 1536,
+  }
 };
 
 export const firebaseApp = initializeApp({

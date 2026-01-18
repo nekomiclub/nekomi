@@ -1,9 +1,10 @@
 import '~/styles/pages/watch.scss';
 
 import { Metadata } from 'next';
-import { cache } from 'react';
+import { cache, Suspense } from 'react';
 import { headers } from 'next/headers';
 import Link from 'next/link';
+import Skeleton from 'react-loading-skeleton';
 
 import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
@@ -15,14 +16,19 @@ import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams
 import { Routes } from '~/routes';
 import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
-import { getAnimeHeroPoster, isUserAgentMobile } from '~/utils/utils';
+import { isEmpty, isUserAgentMobile } from '~/utils/utils';
 
-import { WatchActions, WatchCheckMobile, WatchDetail, WatchEditLibs, WatchExternalPlayer, WatchRating, WatchSectionLabel } from './WatchPage';
+import AnimePlayer from './(components)/AnimePlayer';
+import { WatchActions } from './(components)/WatchActions';
+import WatchCheckMobile from './(components)/WatchCheckMobile';
+import WatchDetail from './(components)/WatchDetail';
+import WatchEditLibs from './(components)/WatchEditLibs';
+import { WatchRating, WatchSectionLabel } from './(components)/WatchUI';
 
 
 
 const getAnime = cache(async (query: string) => {
-  return await API.getAnime({ query }, { view: 'full', get_details: true });
+  return await API.getAnime({ query }, { view: 'full', get_details: true, get_episodes: true });
 });
 
 
@@ -46,7 +52,7 @@ export async function generateMetadata(
         title,
         description,
         type: 'video.tv_show',
-        images: getAnimeHeroPoster(anime.posters ?? []).original,
+        images: anime.poster.original,
         url: Routes.watch.path({ query }),
         locale: 'uk_UA',
         siteName: conf.domain.split('.')[0],
@@ -59,7 +65,7 @@ export async function generateMetadata(
 
 
 
-export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSearchParams>) {
+export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, WatchPageSearchParams>) {
   const { query } = await props.params;
   const { mobile } = await props.searchParams;
 
@@ -68,14 +74,14 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
 
 
 
-
   try {
     const anime = (await getAnime(query)).anime;
-    const poster = getAnimeHeroPoster(anime.posters ?? []);
+    const poster = anime.poster;
     const synopsis = anime.synopsis_ua ?? anime.synopsis_en;
 
     const titleH1 = anime.title_ua ?? anime.title_en ?? `Untitled`;
     const titleH2 = titleH1 ? anime.title_en : null;
+    const hasEpisodes = [...anime.player.dubbed, ...anime.player.subbed].some(el => !isEmpty(el.vods));
 
 
 
@@ -105,7 +111,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
 
           {/* {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />} */}
 
-          <WatchActions anime={anime} />
+          <WatchActions anime={anime} hasEpisodes={hasEpisodes} />
 
           <div className="watch-section_divider"></div>
 
@@ -153,8 +159,9 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
           </div>}
 
           {/* Player */}
-          {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
-          <WatchExternalPlayer animeId={anime.id} />
+          {hasEpisodes && <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
+            <AnimePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} anime_id={anime.id} />
+          </Suspense>}
         </section>
       </main>
     </> : <>
@@ -192,7 +199,7 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
             </div>
 
             {/* Actions */}
-            <WatchActions anime={anime} />
+            <WatchActions anime={anime} hasEpisodes={hasEpisodes} />
 
             {/* Divider */}
             <div className="watch-section_divider"></div>
@@ -248,8 +255,9 @@ export default async function RSC(props: IRSCProps<WatchPageParams, WatchPageSea
         </div>}
 
         {/* Player */}
-        {/* <WatchPlayer hydratedAnime={hydratedAnime} dubbers={dubbers ?? []} /> */}
-        <WatchExternalPlayer animeId={anime.id} />
+        {hasEpisodes && <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
+          <AnimePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} anime_id={anime.id} />
+        </Suspense>}
       </main>
     </>;
   } catch (e) {

@@ -1,6 +1,7 @@
 import z from 'zod';
 
-import IAnime, { AnimeCardType, AnimeGenreType, AnimeRateType, AnimeSeasonType, AnimeStatusType, AnimeType, IAnimeEpisode, IAnimeEpisodeMeta, IAnimePosterNode, IAnimeScreenshotNode } from '~/interfaces/IAnime';
+import IAnime, { AnimeCardType, AnimeGenreType, AnimeRateType, AnimeSeasonType, AnimeStatusType, AnimeType, IAnimeEpisode, IAnimePlayer, IAnimePosterNode, IAnimeScreenshotNode } from '~/interfaces/IAnime';
+import { DubberCardType } from '~/interfaces/IDubber';
 import { ISODateString, zBoolean } from '~/interfaces/types';
 import { $api } from '~/utils/http';
 
@@ -33,6 +34,8 @@ export type AnimeFullType = FullPublicResponseType & {
   status: AnimeStatusType | null
   rating: AnimeRateType | null
   type: AnimeType | null
+
+  poster: IAnimePosterNode
 }
 
 type ViewType = z.infer<typeof QuerySchema>['view']
@@ -40,16 +43,14 @@ type ViewType = z.infer<typeof QuerySchema>['view']
 
 
 interface IResponseMisc {
-  /** @method get_details */
-  relations?: AnimeCardType[]
-
-
+  /** @method get_episodes */
+  player: IAnimePlayer
 
   /** @method get_episodes */
-  episodes?: IAnimeEpisode[]
+  player_teams: DubberCardType[]
 
   /** @method get_episodes */
-  episodes_meta?: IAnimeEpisodeMeta[]
+  episodes_meta?: IAnimeEpisode[]
 
   /** @method get_episodes */
   ashdi_url?: string
@@ -57,10 +58,7 @@ interface IResponseMisc {
 
 
   /** @method get_details */
-  posters?: IAnimePosterNode[]
-
-  /** @method get_details */
-  hero_poster_author?: string | null
+  relations?: AnimeCardType[]
 
   /** @method get_details */
   screenshots?: IAnimeScreenshotNode[]
@@ -74,10 +72,10 @@ interface IResponseMisc {
   created_at?: ISODateString
 
   /** @method get_timestamps */
-  hikka_sync?: ISODateString | null
+  about_synced_at?: ISODateString | null
 
   /** @method get_timestamps */
-  myanimelist_sync?: ISODateString | null
+  episodes_synced_at?: ISODateString | null
 }
 
 type ResponseTypeMap = {

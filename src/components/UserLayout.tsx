@@ -16,7 +16,7 @@ import cn from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
-import StyledButton from './Styled/StyledButton';
+import StyledButtonOld from './Styled/StyledButton.old';
 import StyledImage from './Styled/StyledImage';
 import { NotifySuccess, NotifyWarn } from './UI/NotifyToast';
 import { UIReportButton } from './UI/Report';
@@ -111,25 +111,25 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
           {/* Settings */}
           {(type === 'dubber_profile' || type === 'user_profile') && showSettings && <Tooltip content="Налаштування">
             <Link href={settingsUrl}>
-              <StyledButton className="gui-ul-action">
+              <StyledButtonOld className="gui-ul-action">
                 <MaterialSymbol icon="settings" size={24} className="gui-ul-action_icon" />
-              </StyledButton>
+              </StyledButtonOld>
             </Link>
           </Tooltip>}
 
           {/* Copy link */}
           {(type === 'dubber_profile' || type === 'user_profile' || type === 'user_lib') && <Tooltip content={isLinkCopied ? 'Посилання скопійовано!' : 'Скопіювати посилання'}>
-            <StyledButton className={cn(`gui-ul-action`, isLinkCopied && 'gui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
+            <StyledButtonOld className={cn(`gui-ul-action`, isLinkCopied && 'gui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
               <MaterialSymbol icon="link" size={24} className="gui-ul-action_icon" />
-            </StyledButton>
+            </StyledButtonOld>
           </Tooltip>}
 
           {/* Back to profile */}
           {(type === 'dubber_settings' || type === 'user_settings' || type === 'user_lib') && <Tooltip content="В профіль">
             <Link href={profileUrl}>
-              <StyledButton className="gui-ul-action">
+              <StyledButtonOld className="gui-ul-action">
                 <MaterialSymbol icon="account_box" size={24} className="gui-ul-action_icon" />
-              </StyledButton>
+              </StyledButtonOld>
             </Link>
           </Tooltip>}
         </div>

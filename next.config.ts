@@ -10,6 +10,7 @@ const nextConfig: import('next').NextConfig = {
   sassOptions: {
     silenceDeprecations: ['legacy-js-api'],
   },
+  devIndicators: false
 };
 
 module.exports = nextConfig;

@@ -1,13 +1,21 @@
 import z from 'zod';
 
+import { AnimePlayerDataSchema } from '~/schemas/LocalStorageSchemas';
+
 import Anime, { HydratedAnime } from './AnimeIntf';
 
-export enum LocalStorageKeys {
+
+
+export enum LOCAL_STORAGE_KEY {
   NekoplayerData = 'np-data',
   NekoplayerPreferences = 'np-preferences',
+
+  AnimePlayerData = 'apd'
 }
 
 
+
+export type StateSetter<S = any> = React.Dispatch<React.SetStateAction<S>>;
 export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
 export interface AnimeWithMedia extends Anime {
@@ -49,3 +57,5 @@ export type ISODateString = string;
 
 /** Nekomi CDN string */
 export type CDNString = string;
+
+export type IAnimePlayerData = z.infer<typeof AnimePlayerDataSchema>

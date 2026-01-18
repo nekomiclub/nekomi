@@ -2,7 +2,8 @@
  * @fileoverview utils with zero-dependencies
  */
 
-import { IAnimePosterNode } from '~/interfaces/IAnime';
+import crypto from 'crypto';
+
 
 
 
@@ -221,6 +222,16 @@ export function getUTC(ts?: string | number | Date) {
 
 
 
-export function getAnimeHeroPoster(posters: IAnimePosterNode[]): IAnimePosterNode {
-  return posters.find(el => el.is_hero) ?? posters[0];
+export function buffer2hash(data: Buffer) {
+  const hash = crypto.createHash('sha256');
+  hash.update(data);
+  return hash.digest('hex');
+}
+
+
+
+
+/** Wether provided array is empty */
+export function isEmpty(arr?: any[]): boolean {
+  return Boolean(arr?.length === 0);
 }

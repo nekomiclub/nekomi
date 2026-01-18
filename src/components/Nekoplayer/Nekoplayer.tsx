@@ -14,7 +14,7 @@ import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import { useAppSelector } from '~/hooks/redux';
 import Anime, { AnimeEpisode } from '~/interfaces/AnimeIntf';
 import { DubberCompact } from '~/interfaces/DubberIntf';
-import { EpisodeQualityType, LocalStorageKeys } from '~/interfaces/types';
+import { EpisodeQualityType, LOCAL_STORAGE_KEY } from '~/interfaces/types';
 import API from '~/services/api/API';
 import { cn } from '~/utils/classnames';
 import { $api } from '~/utils/http';
@@ -681,7 +681,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     let items = GetNekoplayerData();
     items = [...items.filter(el => el.id !== record.id), record];
 
-    localStorage.setItem(LocalStorageKeys.NekoplayerData, JSON.stringify(items));
+    localStorage.setItem(LOCAL_STORAGE_KEY.NekoplayerData, JSON.stringify(items));
   }
 
   /** Delete user progress record */
@@ -698,7 +698,7 @@ const Nekoplayer: NextPage<NekoplayerProps> = ({ anime, dubbers, disableScreens 
     notify && NotifySuccess({ title: 'Прогрес перегляду видалено', message: '' });
 
     console.debug(`[nekoplayer]: User watch progress deleted. [dubber: ${record?.dub}]`);
-    localStorage.setItem(LocalStorageKeys.NekoplayerData, JSON.stringify(records.filter(record => record.id !== anime.uuid)));
+    localStorage.setItem(LOCAL_STORAGE_KEY.NekoplayerData, JSON.stringify(records.filter(record => record.id !== anime.uuid)));
   }
 
   /** Change dub, ep & moment

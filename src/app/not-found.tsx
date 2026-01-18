@@ -11,6 +11,6 @@ export const metadata = siteMetadata({
 
 
 
-export default async function RSC() {
+export default async function NotFoundRSC() {
   return <ErrorNotFound />;
 }

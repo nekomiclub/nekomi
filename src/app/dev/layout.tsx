@@ -1,4 +1,3 @@
-
 import { notFound } from 'next/navigation';
 
 import { DevelopmentMode } from '~/conf';
@@ -11,8 +10,7 @@ export const metadata = siteMetadata({ robots: ['nofollow', 'noindex'] });
 
 
 
-// Layout
-export default async function Layout({ children }: ILayoutProps) {
+export default async function DevLayout({ children }: ILayoutProps) {
   if (!DevelopmentMode) return notFound();
 
   return children;

@@ -7,6 +7,7 @@ import '~/styles/index.scss';
 import '~/styles/typography.scss';
 import '~/styles/ui.scss';
 import '~/styles/global.ui.scss';
+import '~/styles/components/StyledComponent.scss';
 import '~/styles/tailwind.css';
 
 import { cache } from 'react';
@@ -61,7 +62,8 @@ const getUser = cache(async (session: string) => {
 });
 
 
-export default async function Layout({ children, params }: ILayoutProps) {
+
+export default async function RootLayout({ children, params }: ILayoutProps) {
   const sessionToken = await getSessionToken();
 
   let isServerOnline = false;
@@ -93,7 +95,7 @@ export default async function Layout({ children, params }: ILayoutProps) {
   }
 
   // Ping API
-  if (!isServerOnline || (!sessionToken || !isSessionExpired)) {
+  if (!isServerOnline) {
     try {
       await axios.options(`${conf.URL.nekomiApi}/ping`);
       isServerOnline = true;

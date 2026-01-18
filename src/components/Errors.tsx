@@ -38,7 +38,7 @@ export async function HandleServerError(e: unknown): Promise<ReactElement> {
     const status = e.response?.status ?? 500;
 
     if (status === 401 || status === 403 || status === 404) {
-      DevelopmentMode && console.error(e.response?.data);
+      if (DevelopmentMode) console.error(e.response?.data);
       return notFound();
     } else {
       console.error(`[${date}]: HTTP error occured - ${JSON.stringify(e.response?.data ?? e, null, 2)}`);

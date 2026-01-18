@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
 import { H1, P } from '~/components/UI/Typography';
@@ -8,7 +8,7 @@ import { H1, P } from '~/components/UI/Typography';
 
 
 interface Props {
-  children: React.ReactNode | React.ReactNode[]
+  children: ReactNode | ReactNode[]
 }
 
 interface InfoHeaderProps {
@@ -27,11 +27,15 @@ export const InfoWrapper: FC<Props> = ({ children }) => {
   </section>;
 };
 
+
+
 export const InfoArticle: FC<Props> = ({ children }) => {
   return <article className="px-[24px] py-[16px] rounded-[2px] bg-dark-bright border border-dark-light flex flex-col gap-[16px]">
     {children}
   </article>;
 };
+
+
 
 export const InfoList: FC<Props> = ({ children }) => {
   return <ul className="flex flex-col gap-[4px] text-white">
@@ -42,6 +46,8 @@ export const InfoList: FC<Props> = ({ children }) => {
     })}
   </ul>;
 };
+
+
 
 export const InfoHeader: FC<InfoHeaderProps> = ({ heading, lang, setLang }) => {
   return <div className="flex items-center gap-[32px] justify-center w-full max-[880px]:flex-col">
@@ -56,6 +62,8 @@ export const InfoHeader: FC<InfoHeaderProps> = ({ heading, lang, setLang }) => {
     </button>
   </div>;
 };
+
+
 
 // export const InfoComponents: FC<Props> = ({ children }) => {
 //   return <div>

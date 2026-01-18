@@ -1,15 +1,14 @@
 'use client';
 
-import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { InfoArticle, InfoHeader, InfoLangType, InfoWrapper } from '~/app/info/InfoComponents';
+import { InfoArticle, InfoHeader, InfoLangType, InfoWrapper } from '~/app/info/(components)/InfoUI';
 import { H2 } from '~/components/UI/Typography';
 
 
 
-const Policy: NextPage = () => {
+const IPolicyPage: FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -354,4 +353,4 @@ const Policy: NextPage = () => {
   </InfoWrapper>;
 };
 
-export default Policy;
+export default IPolicyPage;

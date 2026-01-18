@@ -32,7 +32,7 @@ import { PatcherPageParams } from '~/interfaces/PagesParams';
 
 
 
-export default async function RSC(props: IRSCProps<PatcherPageParams>) {
+export default async function PatcherPageRSC(props: IRSCProps<PatcherPageParams>) {
   const { uuid } = await props.params;
 
   notFound();

@@ -8,7 +8,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import StyledButton from '~/components/Styled/StyledButton';
+import StyledButtonOld from '~/components/Styled/StyledButton.old';
 import { P } from '~/components/UI/Typography';
 import { Routes } from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
@@ -74,10 +74,10 @@ const MobileNav: NextPage<Props> = ({ user, logout, signin, searchPopupId, isDro
 
     {/* Unauthorized */}
     {!user.id && <>
-      <StyledButton className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px] bg-transparent border-none hover:bg-transparent" onClick={signin} disabled={isSigningIn}>
+      <StyledButtonOld className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px] bg-transparent border-none hover:bg-transparent" onClick={signin} disabled={isSigningIn}>
         <MaterialSymbol icon="login" className="text-white" size={24} />
         <P text="Увійти" className="font-bold" size={14} />
-      </StyledButton>
+      </StyledButtonOld>
     </>}
   </nav>;
 };

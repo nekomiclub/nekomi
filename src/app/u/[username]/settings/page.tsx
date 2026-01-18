@@ -11,7 +11,7 @@ import CheckUserAccess from '~/utils/check-user-access';
 import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 
-import { UserSettingsContent } from './UserSettingsPage';
+import USettingsPage from './USettingsPage';
 
 
 
@@ -52,7 +52,7 @@ export default async function RSC({ params }: IRSCProps<UserSettingsPageProps>) 
       <UserLayout type="user_settings" user={user} />
 
       <div className="wrapper pt-[24px] pb-[80px] gap-[24px]">
-        <UserSettingsContent user={user} />
+        <USettingsPage user={user} />
       </div>
     </>;
   } catch (e) {

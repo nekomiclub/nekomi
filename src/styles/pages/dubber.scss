@@ -1,6 +1,8 @@
-@import "../../../styles/vars.scss";
+// Dubber page styles
 
-.dubber {
+@use "../vars.scss" as *;
+
+.dpg {
   &-about {
     &_link {
       outline: none;
