@@ -95,7 +95,7 @@ export default async function RootLayout({ children, params }: ILayoutProps) {
   }
 
   // Ping API
-  if (!isServerOnline || (!sessionToken || !isSessionExpired)) {
+  if (!isServerOnline) {
     try {
       await axios.options(`${conf.URL.nekomiApi}/ping`);
       isServerOnline = true;
