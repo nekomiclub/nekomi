@@ -1,9 +1,11 @@
 'use client';
 
 import { NextPage } from 'next';
+import { FC } from 'react';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
 import StyledImage from '~/components/Styled/StyledImage';
+import { StyledH2, StyledH3 } from '~/components/Styled/StyledTypo';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
 import { H2, P } from '~/components/UI/Typography';
@@ -38,13 +40,17 @@ interface IWatchPlayerProps extends IWatchGenericProps {
   dubbers: DubberCompact[]
 }
 
+interface IAnimeGroupTitleProps {
+  title: string
+  icon: SymbolCodepoints
+
+  /** @default "h2" */
+  size?: 'h2' | 'h3'
+}
 
 
 
-
-
-
-export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp }) => {
+export const WatchNextEpisode: FC<WatchNextEpisodeProps> = ({ timestamp }) => {
   return <Tooltip className="w-full" content="Вказано час та дату виходу епізоду в Японії. Переклад та озвучення вийдуть пізніше.">
     <div className="watch-meta-detail_outlined">
       <MaterialSymbol icon="hourglass_bottom" size={24} className="text-grey-new max-sm:text-[20px]" />
@@ -64,7 +70,7 @@ export const WatchNextEpisode: NextPage<WatchNextEpisodeProps> = ({ timestamp })
 
 
 
-export const WatchSectionLabel: NextPage<WatchSectionLabelProps> = ({ label, icon }) => {
+export const WatchSectionLabel: FC<WatchSectionLabelProps> = ({ label, icon }) => {
   return <div className="flex items-center gap-[16px]">
     <MaterialSymbol icon={icon} size={24} className="text-white max-sm:text-[20px]" />
 
@@ -91,7 +97,7 @@ export const WatchRating: NextPage<IWatchGenericProps> = ({ anime }) => {
 
 
 /** @deprecated */
-export const WatchPlayer: NextPage<IWatchPlayerProps> = (props) => {
+export const WatchPlayer: FC<IWatchPlayerProps> = (props) => {
   const user = useAppSelector(state => state.user);
 
   const isDMCARestricted = props.anime.is_DMCA_restricted && !user.id;
@@ -124,5 +130,18 @@ export const WatchPlayer: NextPage<IWatchPlayerProps> = (props) => {
     {haveEpisodes && !isDMCARestricted && <div className="wrapper items-start">
       <UIReportButton type="text" text="Епізоди завантажені неправильно?" />
     </div>}
+  </div>;
+};
+
+
+
+export const AnimePlayerGroupTitle: FC<IAnimeGroupTitleProps> = (props) => {
+  const size = props.size ?? 'h2';
+
+  return <div className="ap-gt">
+    <MaterialSymbol icon={props.icon} color="var(--color-text)" size={size === 'h2' ? 24 : 18} />
+
+    {size === 'h2' && <StyledH2 text={props.title} color="text" />}
+    {size === 'h3' && <StyledH3 text={props.title} color="text" />}
   </div>;
 };

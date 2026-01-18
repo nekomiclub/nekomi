@@ -1,3 +1,5 @@
+@use "../vars.scss" as *;
+
 .styled-text {
   color: inherit;
   font-size: inherit;
@@ -10,17 +12,17 @@
   width: fit-content;
 
   &--heading {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
   }
 
   &--h2 {
-    font-size: 1.75rem;
+    font-size: 1.25rem;
     font-weight: 700;
   }
 
   &--h3 {
-    font-size: 1.5rem;
+    font-size: 1.125rem;
     font-weight: 600;
   }
 
@@ -58,6 +60,7 @@
   &_text {
     width: 100%;
     text-align: center;
+    flex-shrink: 0;
   }
 
   &--default {
@@ -104,7 +107,9 @@
 
   &:active,
   &:focus-visible {
-    transform: scale(0.95);
+    @media only screen and (min-width: $break-lg) {
+      transform: scale(0.95);
+    }
   }
 
   &:focus-visible {
@@ -158,6 +163,9 @@
     border: 1px solid var(--color-border);
     border-radius: 4px;
     overflow: hidden;
+    background: var(--color-dark-medium);
+    max-height: 60vh;
+    overflow-y: auto;
 
     &_option {
       border-radius: 0;

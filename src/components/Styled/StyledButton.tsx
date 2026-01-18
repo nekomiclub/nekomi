@@ -50,7 +50,7 @@ const StyledButton: FC<IProps> = (props) => {
 
   return <Tag className={cn(`styled-button styled-button--${style}`, isIconOnly && `styled-button--icon`, props.disabled && `styled-button--disabled`, props.className)} tabIndex={0} disabled={props.disabled} id={props.id} onClick={props.onClick} type={props.type}>
     {props.icon && <MaterialSymbol icon={props.icon} size={20} {...props.iconProps} />}
-    {props.text && <StyledM text={props.text} className="styled-button_text" bold {...props.textProps} />}
+    {props.text && <StyledM text={props.text} className="styled-button_text" bold {...props.textProps} lineClamp={1} />}
 
     {props.children}
   </Tag>;

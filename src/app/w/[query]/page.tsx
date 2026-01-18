@@ -18,11 +18,11 @@ import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
 import { isEmpty, isUserAgentMobile } from '~/utils/utils';
 
+import AnimePlayer from './(components)/AnimePlayer';
 import { WatchActions } from './(components)/WatchActions';
 import WatchCheckMobile from './(components)/WatchCheckMobile';
 import WatchDetail from './(components)/WatchDetail';
 import WatchEditLibs from './(components)/WatchEditLibs';
-import WatchPagePlayer from './(components)/WatchPagePlayer';
 import { WatchRating, WatchSectionLabel } from './(components)/WatchUI';
 
 
@@ -160,7 +160,7 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
 
           {/* Player */}
           {hasEpisodes && <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
-            <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} anime_id={anime.id} />
+            <AnimePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} anime_id={anime.id} />
           </Suspense>}
         </section>
       </main>
@@ -256,7 +256,7 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
 
         {/* Player */}
         {hasEpisodes && <Suspense fallback={<Skeleton width={'100%'} height={'60vh'} />}>
-          <WatchPagePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} anime_id={anime.id} />
+          <AnimePlayer player={anime.player} player_teams={anime.player_teams} episodes={anime.episodes_meta ?? []} episodes_total={anime.episodes_total} anime_id={anime.id} />
         </Suspense>}
       </main>
     </>;
