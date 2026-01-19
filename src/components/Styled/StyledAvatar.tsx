@@ -19,7 +19,7 @@ const StyledAvatar: FC<IStyledAvatarProps> = (props) => {
 
   return <div className={cn(`sui-avatar`, className)} style={{ width: props.width, height: props.height }}>
     <StyledM text={props.initials.charAt(0)} bold color="text-muted" />
-    {avatar && <StyledImage src={avatar} rounded={32} className="styled-avatar_image" {...rest} />}
+    {avatar && <StyledImage src={avatar} rounded={32} className="sui-avatar_image" {...rest} />}
   </div>;
 };
 

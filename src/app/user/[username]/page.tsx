@@ -1,4 +1,4 @@
-import '~/styles/pages/user.scss';
+import '~/styles/pages/user-page.scss';
 
 import { Metadata } from 'next';
 import { MaterialSymbol } from 'material-symbols-rc';

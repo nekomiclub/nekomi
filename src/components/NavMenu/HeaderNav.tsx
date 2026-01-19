@@ -7,7 +7,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { IcoNekomiLogo } from '~/assets/Icons';
+import { IcoNekomiLogoWhite } from '~/components/Icons';
 import StyledButtonOld from '~/components/Styled/StyledButton.old';
 import StyledImage from '~/components/Styled/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
@@ -45,7 +45,7 @@ const HeaderNav: FC<IProps> = ({ user, logout, signin, searchPopupId, forceFocus
     <div className="wrapper w-full h-full !flex-row justify-between items-center gap-[40px]">
       <Tooltip content="Головна">
         <Link href={routes.home.path()} className="outline-none">
-          <IcoNekomiLogo width={40} height={40} fill="#fff" />
+          <IcoNekomiLogoWhite width={40} height={40} fill="#fff" />
         </Link>
       </Tooltip>
 

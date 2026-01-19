@@ -1,7 +1,5 @@
 'use client';
 
-import '~/styles/components/StyledComponents.scss';
-
 import { NextPage } from 'next';
 import { useEffect, useRef, useState } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
@@ -81,17 +79,17 @@ export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, al
 
 
 
-  return <div className={cn('styled-image-wrapper', className)} style={{ width, height, borderRadius }}>
+  return <div className={cn('sui-image-wrapper', className)} style={{ width, height, borderRadius }}>
     {/* Preserved / default image */}
-    {useNativeImage && imageSrc && <img src={imageSrc} alt={alt} loading={loading} className={cn('styled-image', isErrored && 'styled-image--hide')} ref={imageRef} />}
+    {useNativeImage && imageSrc && <img src={imageSrc} alt={alt} loading={loading} className={cn('sui-image', isErrored && 'sui-image--hide')} ref={imageRef} />}
 
-    {!useNativeImage && imageSrc && <ImageNext src={imageSrc} alt={alt} fill loading={loading} className={cn('styled-image', isErrored && 'styled-image--hide')} ref={imageRef} />}
+    {!useNativeImage && imageSrc && <ImageNext src={imageSrc} alt={alt} fill loading={loading} className={cn('sui-image', isErrored && 'sui-image--hide')} ref={imageRef} />}
 
     {/* Image skeleton. Render it only when loading is lazy */}
-    {loading === 'lazy' && <Skeleton width={'100%'} height={'100%'} className="styled-image-skeleton" containerClassName={cn(`styled-image-skeleton`, (isLoaded || isErrored) && 'styled-image--hide')} />}
+    {loading === 'lazy' && <Skeleton width={'100%'} height={'100%'} className="sui-image-skeleton" containerClassName={cn(`sui-image-skeleton`, (isLoaded || isErrored) && 'sui-image--hide')} />}
 
     {/* Load error */}
-    <div className={cn(`styled-image-error`, !isErrored && 'styled-image--hide')}>
+    <div className={cn(`sui-image-error`, !isErrored && 'sui-image--hide')}>
       <MaterialSymbol icon="broken_image" size={32} className="text-grey-new" />
       {imageDims[0] > 84 && imageDims[1] > 84 && <P text="Зображення відсутнє" size={12} className="text-grey-new text-center" />}
     </div>

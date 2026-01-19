@@ -1,7 +1,5 @@
 'use client';
 
-import '~/styles/components/Menu.scss';
-
 import { NextPage } from 'next';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
@@ -192,9 +190,9 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
           </MenuTrigger>
 
           <MenuWrapper className="bg-dark-primary border rounded-t-none border-dark-light flex flex-col rounded-[4px] overflow-hidden min-w-fit w-full">
-            <MenuSearchSelectTypeButton className="menu-search_selectType" type={'anime'} setType={setSearchType} />
-            <MenuSearchSelectTypeButton className="menu-search_selectType" type={'dubber'} setType={setSearchType} />
-            <MenuSearchSelectTypeButton className="menu-search_selectType" type={'user'} setType={setSearchType} />
+            <MenuSearchSelectTypeButton className="cui-nav-searchsearch_selectType" type={'anime'} setType={setSearchType} />
+            <MenuSearchSelectTypeButton className="cui-nav-searchsearch_selectType" type={'dubber'} setType={setSearchType} />
+            <MenuSearchSelectTypeButton className="cui-nav-searchsearch_selectType" type={'user'} setType={setSearchType} />
           </MenuWrapper>
         </Menu>
 
@@ -283,10 +281,10 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
     {/* === Result placeholder */}
 
     {/* Anime type */}
-    {type === 'anime' && <div className="menu-search-result">
+    {type === 'anime' && <div className="cui-nav-searchsearch-result">
       <Skeleton width={'100%'} height={'100%'} containerClassName="w-[120px] h-[160px] relative flex-shrink-0" className="absolute top-0" />
 
-      <div className="menu-search-result_content">
+      <div className="cui-nav-searchsearch-result_content">
         <Skeleton width={firstLineWidth} height={27} className="max-w-full" />
         <Skeleton width={secondLineWidth} height={20} className="max-w-full" />
         <Skeleton width={260} height={22} className="max-w-full" />
@@ -294,10 +292,10 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
     </div>}
 
     {/* User type */}
-    {(type === 'user' || type === 'dubber') && <div className="menu-search-result">
+    {(type === 'user' || type === 'dubber') && <div className="cui-nav-searchsearch-result">
       <Skeleton width={'100%'} height={'100%'} containerClassName="w-[128px] h-[128px] relative flex-shrink-0" className="absolute top-0" />
 
-      <div className="menu-search-result_content">
+      <div className="cui-nav-searchsearch-result_content">
         <Skeleton width={firstLineWidth} height={27} />
         <Skeleton width={secondLineWidth} height={20} />
       </div>
@@ -306,10 +304,10 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
     {/* === Result ready */}
 
     {/* Anime type */}
-    {type === 'anime' && animeResult && <Link href={routes.anime.path({ query: animeResult.slug })} className="menu-search-result">
+    {type === 'anime' && animeResult && <Link href={routes.anime.path({ query: animeResult.slug })} className="cui-nav-searchsearch-result">
       <StyledImage src={animeResult.poster} width="120px" height="160px" />
 
-      <div className="menu-search-result_content">
+      <div className="cui-nav-searchsearch-result_content">
         {animeResult.title_ua && <>
           <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.title_ua}>{animeResult.title_ua}</h4>
           {animeResult.title_en && <h5 className="text-grey-new font-space-grotesk line-clamp-2" title={animeResult.title_en}>{animeResult.title_en}</h5>}
@@ -341,19 +339,19 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
     </Link>}
 
     {/* User type */}
-    {(type === 'user' && userResult) && <Link href={routes.user.path({ username: userResult.username })} className="menu-search-result">
+    {(type === 'user' && userResult) && <Link href={routes.user.path({ username: userResult.username })} className="cui-nav-searchsearch-result">
       <StyledImage src={userResult.avatar} width="128px" height="128px" />
 
-      <div className="menu-search-result_content">
+      <div className="cui-nav-searchsearch-result_content">
         <h4 className="text-white text-[20px] font-space-grotesk font-bold line-clamp-1" title={userResult.username}>@{userResult.username}</h4>
       </div>
     </Link>}
 
     {/* Dubber type */}
-    {(type === 'dubber' && dubberResult) && <Link href={routes.team.path({ slug: dubberResult.slug })} className="menu-search-result">
+    {(type === 'dubber' && dubberResult) && <Link href={routes.team.path({ slug: dubberResult.slug })} className="cui-nav-searchsearch-result">
       <StyledImage src={dubberResult.avatar} width="128px" height="128px" />
 
-      <div className="menu-search-result_content">
+      <div className="cui-nav-searchsearch-result_content">
         <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-1" title={dubberResult.name}>{dubberResult.name}</h4>
         {dubberResult.about && <p className="text-grey-new font-manrope line-clamp-2" title={dubberResult.about}>{dubberResult.about}</p>}
       </div>

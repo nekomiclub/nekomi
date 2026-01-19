@@ -1,4 +1,4 @@
-import '~/styles/pages/watch.scss';
+import '~/styles/pages/anime-page.scss';
 
 import { Metadata } from 'next';
 import { cache, Suspense } from 'react';

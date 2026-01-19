@@ -1,4 +1,4 @@
-import '~/styles/pages/dubber.scss';
+import '~/styles/pages/team-page.scss';
 
 import { Metadata } from 'next';
 import { cache } from 'react';

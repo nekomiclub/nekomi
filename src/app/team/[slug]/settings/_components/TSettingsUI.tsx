@@ -3,8 +3,7 @@
 import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
-import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube } from '~/assets/Social';
-import { IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/assets/Support';
+import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube, IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/components/Icons';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
 import Tooltip from '~/components/UI/Tooltip';
 import { H3, P } from '~/components/UI/Typography';

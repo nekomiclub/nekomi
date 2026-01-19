@@ -1,7 +1,7 @@
 
 import Link from 'next/link';
 
-import { IcoSocialGithub, IcoSocialLinkedin, IcoSocialTelegram } from '~/assets/Social';
+import { IcoSocialGithub, IcoSocialLinkedin, IcoSocialTelegram } from '~/components/Icons';
 import StyledImage from '~/components/Styled/StyledImage';
 import siteMetadata from '~/utils/site-metadata';
 

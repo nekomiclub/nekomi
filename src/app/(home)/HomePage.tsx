@@ -3,9 +3,9 @@
 import { NextPage } from 'next';
 import React, { FC, useEffect, useId, useRef, useState } from 'react';
 
-import { IcoNekomiLogo } from '~/assets/Icons';
 import AnimeItem from '~/components/AnimeItem';
 import Carousel from '~/components/Carousel';
+import { IcoNekomiLogoWhite } from '~/components/Icons';
 import { AnimeCardType } from '~/interfaces/IAnime';
 import { IHomeFeedHero } from '~/interfaces/types';
 import { cn } from '~/utils/classnames';
@@ -85,16 +85,16 @@ export const HomeHero: FC<IHomeHeroProps> = (props) => {
 
 
   return <div className="wrapper w-full h-[100svh] !mb-[40px]">
-    <div className={cn(`home-headliner-screen`)} ref={previewScreenRef}>
+    <div className={cn(`hpg-headliner-screen`)} ref={previewScreenRef}>
       <HomeHeroPosterScreen hero={props.hero} />
     </div>
 
-    <div className={cn(`home-headliner-screen opacity-0`)} ref={trailerScreenRef}>
+    <div className={cn(`hpg-headliner-screen opacity-0`)} ref={trailerScreenRef}>
       <HomeHeroTrailerScreen hero={props.hero} activeScreen={activeScreen} setActiveScreen={setActiveScreen} />
     </div>
 
-    <div className="home-headliner-screen items-center justify-center !z-[1]">
-      <IcoNekomiLogo width={128} height={128} fill="#fff" />
+    <div className="hpg-headliner-screen items-center justify-center !z-[1]">
+      <IcoNekomiLogoWhite width={128} height={128} fill="#fff" />
     </div>
   </div>;
 };

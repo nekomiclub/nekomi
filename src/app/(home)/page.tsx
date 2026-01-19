@@ -1,16 +1,16 @@
-import '~/styles/pages/home.scss';
+import '~/styles/pages/home-page.scss';
 
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import { IcoNekomiLogo } from '~/assets/Icons';
 import { HandleServerError } from '~/components/Errors';
+import { IcoNekomiLogoWhite } from '~/components/Icons';
 import { conf } from '~/conf';
 import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
 import { randomNumber } from '~/utils/utils';
 
-import { HomeCategory, HomeHero } from './(home)/HomePage';
+import { HomeCategory, HomeHero } from './HomePage';
 
 
 
@@ -38,7 +38,7 @@ export default async function HomePageRSC() {
 
       {/* Telegram advertisment */}
       <div className="wrapper !flex-row gap-[60px] py-[60px] !px-[16px] items-center !my-[60px] max-md:!flex-col">
-        <IcoNekomiLogo width={256} height={256} className="shrink-0 max-md:w-[128px] max-md:h-[128px]" fill="#fff" />
+        <IcoNekomiLogoWhite width={256} height={256} className="shrink-0 max-md:w-[128px] max-md:h-[128px]" fill="#fff" />
 
         <div className="flex flex-col gap-[24px]">
           <div className="flex flex-col gap-[8px]">

@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import { IcoSocialTelegram } from '~/assets/Social';
+import { IcoSocialTelegram } from '~/components/Icons';
 import StyledImage from '~/components/Styled/StyledImage';
 import routes from '~/routes';
 import { IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
@@ -23,7 +23,7 @@ interface ITeamMemberProps {
 
 export const TeamAboutLink: FC<ITeamAboutLinkProps> = (props) => {
   return <li>
-    <Link href={props.link} className="dpg-about_link flex items-center gap-[16px] py-[6px] px-[16px]" prefetch={false}>
+    <Link href={props.link} className="tpg-about_link flex items-center gap-[16px] py-[6px] px-[16px]" prefetch={false}>
       {props.label === 'telegram' && <IcoSocialTelegram width={24} height={24} fill="#555" />}
       {props.label !== 'telegram' && <MaterialSymbol icon="ungroup" size={24} color="#555" />}
 

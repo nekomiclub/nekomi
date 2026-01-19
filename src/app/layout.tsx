@@ -4,7 +4,6 @@ import 'swiper/css';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'material-symbols-rc/css';
 import '~/styles/index.scss';
-import '~/styles/typography.scss';
 import '~/styles/ui.scss';
 import '~/styles/components/styled-ui.scss';
 import '~/styles/tailwind.css';

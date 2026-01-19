@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '~/assets/Social';
+import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '~/components/Icons';
 import { conf } from '~/conf';
 import routes from '~/routes';
 

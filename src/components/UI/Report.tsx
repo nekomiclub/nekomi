@@ -5,7 +5,7 @@ import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import { IcoSocialDiscord } from '~/assets/Social';
+import { IcoSocialDiscord } from '~/components/Icons';
 import StyledButtonOld from '~/components/Styled/StyledButton.old';
 import { conf } from '~/conf';
 import { cn } from '~/utils/classnames';

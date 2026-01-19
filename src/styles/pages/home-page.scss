@@ -1,6 +1,8 @@
+// Home page styles
+
 @use "../vars.scss" as *;
 
-.home {
+.hpg {
   &-headliner {
     &-screen {
       width: 100%;
@@ -18,11 +20,7 @@
 }
 
 @media only screen and (max-width: $break-sm) {
-  .home {
-    &-headliner {
-      &-screen {
-        padding: 0 16px;
-      }
-    }
+  .hpg-headliner-screen {
+    padding: 0 16px;
   }
 }
