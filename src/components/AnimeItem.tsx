@@ -15,9 +15,9 @@ import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
 
 import { HandleClientError } from './Errors';
+import StyledCheckbox from './Styled/StyledCheckbox';
 import StyledImage from './Styled/StyledImage';
 import { NotifyWarn } from './UI/NotifyToast';
-import UICheckbox from './UI/UICheckbox';
 
 
 
@@ -230,7 +230,7 @@ const AnimeItemEditMenuLib: FC<IAnimeItemEditMenuLibProps> = ({ type, animeId })
 
 
   return <button className="flex items-center gap-[16px] p-[12px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={toggleLib}>
-    <UICheckbox isChecked={isChecked} setIsChecked={setIsChecked} disableDefaultToggle />
+    <StyledCheckbox isChecked={isChecked} />
 
     <MaterialSymbol icon={icon} size={24} className="text-white" />
 

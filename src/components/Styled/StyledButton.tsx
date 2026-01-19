@@ -9,16 +9,21 @@ import { StyledM, StyledTextFontType } from './StyledText';
 
 export interface IStyledButtonProps {
   text?: string
-  icon?: SymbolCodepoints
   iconProps?: Omit<IMaterialSymbolProps, keyof Pick<IMaterialSymbolProps, 'icon'>>
   textProps?: StyledTextFontType
+
+  /** Icon before text */
+  icon?: SymbolCodepoints
+
+  /** Icon after text & children */
+  iconAfter?: SymbolCodepoints
 
   /**
    * Button type
    * 
    * @default "default"
    */
-  style?: 'default' | 'primary' | 'secondary' | 'clear'
+  style?: 'default' | 'primary' | 'secondary' | 'transparent' | 'inline'
 
   /** 
    * Tag 
@@ -48,9 +53,11 @@ const StyledButton: FC<IStyledButtonProps> = (props) => {
 
   return <Tag className={cn(`sui-button sui-button--${style}`, isIconOnly && `sui-button--icon`, props.disabled && `sui-button--disabled`, props.className)} tabIndex={0} disabled={props.disabled} id={props.id} onClick={props.onClick} type={props.type}>
     {props.icon && <MaterialSymbol icon={props.icon} size={20} {...props.iconProps} />}
-    {props.text && <StyledM text={props.text} className="sui-button_text" bold {...props.textProps} lineClamp={1} />}
 
+    {props.text && <StyledM text={props.text} className="sui-button_text" bold {...props.textProps} lineClamp={1} />}
     {props.children}
+
+    {props.iconAfter && <MaterialSymbol icon={props.iconAfter} size={20} {...props.iconProps} />}
   </Tag>;
 };
 

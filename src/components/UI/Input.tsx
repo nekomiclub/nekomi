@@ -53,6 +53,8 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
   const [value, setValue] = useState<string>(initialValue);
   const [status, setStatus] = useState<UIFieldState['status']>(state.status);
 
+  const [a] = useState();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const symbolsLimitedRef = useRef<HTMLParagraphElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
