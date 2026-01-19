@@ -1,38 +1,26 @@
-interface Params {
-  [param: string]: any;
-}
-
-
-
-export interface DubberPageParams extends Params {
+export interface IDubberPageParams {
   slug: string;
 }
 
 
 
-export interface PatcherPageParams extends Params {
-  uuid: string;
-}
-
-
-
-export interface UserLibPageProps extends UserPageProps {
+export interface IUserLibPageProps extends IUserPageProps {
   libId: string;
 }
 
-export interface UserPageProps extends Params {
+export interface IUserPageProps {
   username: string;
 }
 
-export interface UserSettingsPageProps extends UserPageProps { }
+export interface IUserSettingsPageProps extends IUserPageProps { }
 
 
 
-export interface WatchPageParams extends Params {
+export interface IAnimePageParams {
   query: string;
 }
 
-export interface WatchPageSearchParams extends Params {
+export interface IAnimePageSearchParams {
   /** Whether device is mobile */
   mobile?: any;
 }

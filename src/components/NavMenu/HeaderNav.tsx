@@ -1,7 +1,6 @@
 'use client';
 
-import { NextPage } from 'next';
-import { useId } from 'react';
+import { FC, useId } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import { PopupButton } from '@fullkekw/popup';
 import { MaterialSymbol } from 'material-symbols-rc';
@@ -12,7 +11,7 @@ import { IcoNekomiLogo } from '~/assets/Icons';
 import StyledButtonOld from '~/components/Styled/StyledButton.old';
 import StyledImage from '~/components/Styled/StyledImage';
 import Tooltip from '~/components/UI/Tooltip';
-import { Routes } from '~/routes';
+import routes from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 
@@ -20,7 +19,7 @@ import NavMenuDropdown from './NavMenuDropdown';
 
 
 
-interface Props {
+interface IProps {
   user: IUserState
   searchPopupId: string
 
@@ -36,7 +35,7 @@ interface Props {
 
 
 
-const HeaderNav: NextPage<Props> = ({ user, logout, signin, searchPopupId, forceFocus, isDropdownMenuOpen, setIsDropdownMenuOpen, isSigningIn }) => {
+const HeaderNav: FC<IProps> = ({ user, logout, signin, searchPopupId, forceFocus, isDropdownMenuOpen, setIsDropdownMenuOpen, isSigningIn }) => {
   const pathname = usePathname();
   const dropdownMenuId = useId().replaceAll(':', '');
 
@@ -45,7 +44,7 @@ const HeaderNav: NextPage<Props> = ({ user, logout, signin, searchPopupId, force
   return <header className="fixed w-full h-[var(--header-height)] bg-dark-primary top-0 left-0 z-[110] max-sm:hidden">
     <div className="wrapper w-full h-full !flex-row justify-between items-center gap-[40px]">
       <Tooltip content="Головна">
-        <Link href={Routes.home.path()} className="outline-none">
+        <Link href={routes.home.path()} className="outline-none">
           <IcoNekomiLogo width={40} height={40} fill="#fff" />
         </Link>
       </Tooltip>

@@ -7,8 +7,8 @@ import Link from 'next/link';
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import { AnimeCardType } from '~/interfaces/IAnime';
-import { UserLibType } from '~/interfaces/UserIntf';
-import { Routes } from '~/routes';
+import { USER_LIB_TYPE } from '~/interfaces/IUser';
+import routes from '~/routes';
 import API from '~/services/api/API';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
@@ -34,7 +34,7 @@ interface IAnimeItemEditMenuProps {
 
 interface IAnimeItemEditMenuLibProps {
   animeId: string
-  type: UserLibType
+  type: USER_LIB_TYPE
 }
 
 
@@ -127,7 +127,7 @@ const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
       </Menu>
     </div>}
 
-    <Link href={Routes.watch.path({ query: anime.slug })} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef} prefetch={false}>
+    <Link href={routes.anime.path({ query: anime.slug })} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef} prefetch={false}>
       <StyledImage src={anime.poster} className="!absolute top-0 left-0" width="100%" height="100%" />
 
       <div className="flex flex-col">
@@ -167,11 +167,11 @@ export default AnimeItem;
 
 export const AnimeItemEditMenu: FC<IAnimeItemEditMenuProps> = ({ animeId }) => {
   return <MenuWrapper className="w-full min-w-fit bg-dark-primary rounded-[4px] flex flex-col border border-dark-light">
-    <AnimeItemEditMenuLib type="favorite" animeId={animeId} />
-    <AnimeItemEditMenuLib type="watching" animeId={animeId} />
-    <AnimeItemEditMenuLib type="watched" animeId={animeId} />
-    <AnimeItemEditMenuLib type="plans" animeId={animeId} />
-    <AnimeItemEditMenuLib type="delayed" animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.FAVORITE} animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.WATCHING} animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.WATCHED} animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.PLANS} animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.DELAYED} animeId={animeId} />
   </MenuWrapper>;
 };
 

@@ -1,7 +1,6 @@
 'use client';
 
-import { NextPage } from 'next';
-import { useId, useState } from 'react';
+import { FC, useId, useState } from 'react';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
@@ -19,7 +18,7 @@ import NavMenuSearch from './NavMenuSearch';
 
 
 
-const NavMenu: NextPage = () => {
+const NavMenu: FC = () => {
   const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const router = useRouter();

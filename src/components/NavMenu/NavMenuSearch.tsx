@@ -15,7 +15,7 @@ import { useDebounce } from 'use-debounce';
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
 import IUser from '~/interfaces/IUser';
-import { Routes } from '~/routes';
+import routes from '~/routes';
 import { AnimeSearchResultType } from '~/services/api/anime/GetAnimeSearch.api';
 import API from '~/services/api/API';
 import { DubberSearchResultType } from '~/services/api/dubber/GetDubberSearch.api';
@@ -25,26 +25,25 @@ import { randomNumber } from '~/utils/utils';
 
 
 
-interface Props {
+interface IProps {
   dialogId: string
 }
 
-type MenuSearchType = 'user' | 'dubber' | 'anime'
-
-interface MenuSearchSelectTypeButtonProps {
+interface IMenuSearchSelectTypeButtonProps {
   type: MenuSearchType
 
   setType?: (val: MenuSearchType) => void
   className?: string
 }
 
-type MenuSearchResultType = DubberSearchResultType | AnimeSearchResultType | UserSearchResultType | null
-
-interface MenuSearchResultProps {
+interface IMenuSearchResultProps {
   item: MenuSearchResultType
   type: MenuSearchType
   usePatcherRouting: boolean
 }
+
+type MenuSearchType = 'user' | 'dubber' | 'anime'
+type MenuSearchResultType = DubberSearchResultType | AnimeSearchResultType | UserSearchResultType | null
 
 
 
@@ -56,7 +55,7 @@ const SearchStartTypingDictionary: Record<MenuSearchType, string[]> = {
 
 
 
-const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
+const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
   const pathname = usePathname();
   const selectSearchTypeMenuId = useId().replaceAll(':', '');
 
@@ -243,7 +242,7 @@ const NavMenuSearch: NextPage<Props> = ({ dialogId }) => {
 
 
 
-const MenuSearchSelectTypeButton: NextPage<MenuSearchSelectTypeButtonProps> = ({ type, className, setType }) => {
+const MenuSearchSelectTypeButton: NextPage<IMenuSearchSelectTypeButtonProps> = ({ type, className, setType }) => {
   return <div role="button" className={cn(`flex items-center gap-[8px]`, className)} onClick={() => setType && setType(type)}>
     <MaterialSymbol className="text-white" icon={
       type === 'anime' ? 'slideshow'
@@ -262,7 +261,7 @@ const MenuSearchSelectTypeButton: NextPage<MenuSearchSelectTypeButtonProps> = ({
 
 
 
-const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatcherRouting }) => {
+const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePatcherRouting }) => {
   const [firstLineWidth] = useState(randomNumber(80, 320));
   const [secondLineWidth] = useState(randomNumber(40, 250));
 
@@ -307,10 +306,7 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
     {/* === Result ready */}
 
     {/* Anime type */}
-    {type === 'anime' && animeResult && <Link href={
-      usePatcherRouting ? Routes.patcher.path({ uuid: animeResult.id })
-        : Routes.watch.path({ query: animeResult.slug })
-    } className="menu-search-result">
+    {type === 'anime' && animeResult && <Link href={routes.anime.path({ query: animeResult.slug })} className="menu-search-result">
       <StyledImage src={animeResult.poster} width="120px" height="160px" />
 
       <div className="menu-search-result_content">
@@ -345,7 +341,7 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
     </Link>}
 
     {/* User type */}
-    {(type === 'user' && userResult) && <Link href={Routes.user.path({ username: userResult.username })} className="menu-search-result">
+    {(type === 'user' && userResult) && <Link href={routes.user.path({ username: userResult.username })} className="menu-search-result">
       <StyledImage src={userResult.avatar} width="128px" height="128px" />
 
       <div className="menu-search-result_content">
@@ -354,7 +350,7 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
     </Link>}
 
     {/* Dubber type */}
-    {(type === 'dubber' && dubberResult) && <Link href={Routes.dubber.path({ slug: dubberResult.slug })} className="menu-search-result">
+    {(type === 'dubber' && dubberResult) && <Link href={routes.dubber.path({ slug: dubberResult.slug })} className="menu-search-result">
       <StyledImage src={dubberResult.avatar} width="128px" height="128px" />
 
       <div className="menu-search-result_content">

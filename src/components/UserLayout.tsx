@@ -9,7 +9,7 @@ import { conf } from '~/conf';
 import { useAppSelector } from '~/hooks/redux';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { UserCardType } from '~/interfaces/IUser';
-import { Routes } from '~/routes';
+import routes from '~/routes';
 import API from '~/services/api/API';
 import { DubberFullType } from '~/services/api/dubber/GetDubber.api';
 import cn from '~/utils/classnames';
@@ -70,8 +70,8 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const entityType = user ? 'user' : dubber ? 'dubber' : 'user';
   const isEdit = type === 'dubber_settings' || type === 'user_settings';
 
-  const profileUrl = user ? Routes.user.path({ username: user.username }) : dubber ? Routes.dubber.path({ slug: dubber.slug }) : '#';
-  const settingsUrl = user ? Routes.userSettings.path({ username: user.id }) : dubber ? Routes.dubberSettings.path({ slug: dubber.slug }) : '#';
+  const profileUrl = user ? routes.user.path({ username: user.username }) : dubber ? routes.dubber.path({ slug: dubber.slug }) : '#';
+  const settingsUrl = user ? routes.user_settings.path({ username: user.id }) : dubber ? routes.dubber_settings.path({ slug: dubber.slug }) : '#';
 
   const canEditUser = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE) || user?.id === currentUser.id /* || currentUser.permissions.includes('admin') */;
   const canEditDubber = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE); /* || currentUser.permissions.includes('admin') */ /* || dubber?.members.find(el => el.id === currentUser.id)?.role === 'leader'; */

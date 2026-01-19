@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { DevelopmentMode } from '~/conf';
-import { Routes } from '~/routes';
+import routes from '~/routes';
 import { getUTC } from '~/utils/utils';
 
 import { NotifyError } from './UI/NotifyToast';
@@ -74,7 +74,7 @@ export const ErrorNotFound: FC = () => {
       <P text="Ми не можемо знайти контент за цим запитом, або ж просто - 404" className="text-grey-new text-center" />
     </div>
 
-    <Link href={Routes.home.path()} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
+    <Link href={routes.home.path()} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
       <MaterialSymbol icon="home" size={24} className="text-white" />
     </Link>
   </div>;

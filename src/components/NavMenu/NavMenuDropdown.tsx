@@ -1,19 +1,19 @@
 'use client';
 
-import { NextPage } from 'next';
+import { FC } from 'react';
 import { MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import StyledImage from '~/components/Styled/StyledImage';
-import { Routes } from '~/routes';
+import routes from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 
 
 
 
-interface NavMenuDropdownProps {
+interface IProps {
   user: IUserState
   logout(): Promise<void>
 
@@ -22,19 +22,19 @@ interface NavMenuDropdownProps {
 
 
 
-const NavMenuDropdown: NextPage<NavMenuDropdownProps> = ({ user, logout, className }) => {
+const NavMenuDropdown: FC<IProps> = ({ user, logout, className }) => {
   return <MenuWrapper className={cn(`bg-dark-primary border border-dark-light rounded-[4px] w-[200px] flex flex-col`, className)}>
-    <Link href={Routes.user.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+    <Link href={routes.user.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
       <StyledImage src={user.avatar} width={`24px`} height={`24px`} loading="eager" className="rounded-[2px] overflow-hidden" alt="avatar" />
       <p className="text-white w-full font-manrope">Профіль</p>
     </Link>
 
-    <Link href={`${Routes.user.path({ username: user.username })}#user-libs`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+    <Link href={`${routes.user.path({ username: user.username })}#user-libs`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
       <MaterialSymbol icon="folder_copy" size={24} className="text-white" />
       <p className="text-white w-full font-manrope">Теки</p>
     </Link>
 
-    <Link href={Routes.userSettings.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+    <Link href={routes.user_settings.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
       <MaterialSymbol icon="settings" size={24} className="text-white" />
       <p className="text-white w-full font-manrope">Налаштування</p>
     </Link>

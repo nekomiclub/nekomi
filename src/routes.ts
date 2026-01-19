@@ -1,55 +1,51 @@
-import { DubberPageParams, PatcherPageParams, UserLibPageProps, UserPageProps, UserSettingsPageProps, WatchPageParams } from './interfaces/PagesParams';
+import { IAnimePageParams, IDubberPageParams, IUserLibPageProps, IUserPageProps, IUserSettingsPageProps } from './interfaces/PagesParams';
 
 
 
-interface Route<P extends any[] = any[]> {
+interface IRoute<P extends any[] = any[]> {
   path: (...args: P) => string;
 }
 
-type RoutesMap = {
-  [K in keyof typeof routeDefinitions]: Route<
-    Parameters<typeof routeDefinitions[K]['path']>
+type RoutesMapType = {
+  [K in keyof typeof definitions]: IRoute<
+    Parameters<typeof definitions[K]['path']>
   >
 };
 
 
 
-const routeDefinitions = {
+const definitions = {
   // === Pages
   home: { path: () => `/` },
 
   // === Dev Pages
-  devIcons: { path: () => `/dev/icons` },
-  devScreenNoConnection: { path: () => `/dev/screen/noConnection` },
-  devScreenNotFound: { path: () => `/dev/screen/notFound` },
-  devScreenNotRendered: { path: () => `/dev/screen/notRendered` },
+  dev_icons: { path: () => `/dev/icons` },
+  dev_screen_no_connection: { path: () => `/dev/screen/noConnection` },
+  dev_screen_not_found: { path: () => `/dev/screen/notFound` },
+  dev_screen_not_rendered: { path: () => `/dev/screen/notRendered` },
 
   // === Dubber Pages
-  dubber: { path: ({ slug }: DubberPageParams) => `/dub/${slug}` },
-  dubberSettings: { path: ({ slug }: DubberPageParams) => `/dub/${slug}/settings` },
+  dubber: { path: ({ slug }: IDubberPageParams) => `/dubber/${slug}` },
+  dubber_settings: { path: ({ slug }: IDubberPageParams) => `/dubber/${slug}/settings` },
 
   // === Info Pages
-  infoAgreement: { path: () => `/info/agreement` },
-  infoContacts: { path: () => `/info/contacts` },
-  infoDMCA: { path: () => `/info/dmca` },
-  infoPolicy: { path: () => `/info/policy` },
-  infoTerms: { path: () => `/info/terms` },
-
-  // === Patcher Pages
-  patcher: { path: ({ uuid }: PatcherPageParams) => `/patcher/${uuid}` },
-  patcherMedia: { path: () => `/patcher/media` },
-
-  // === Together Pages
-  together: { path: () => `/together` },
-  togetherRoom: { path: () => `/together/notexist` },
+  info_agreement: { path: () => `/info/agreement` },
+  info_contacts: { path: () => `/info/contacts` },
+  info_DMCA: { path: () => `/info/dmca` },
+  info_policy: { path: () => `/info/policy` },
+  info_terms: { path: () => `/info/terms` },
 
   // === User Pages
-  user: { path: ({ username }: UserPageProps) => `/u/${username}` },
-  userLib: { path: ({ username, libId }: Required<UserLibPageProps>) => `/u/${username}/${libId}` },
-  userSettings: { path: ({ username }: Required<UserSettingsPageProps>) => `/u/${username}/settings` },
+  user: { path: ({ username }: IUserPageProps) => `/user/${username}` },
+  user_lib: { path: ({ username, libId }: Required<IUserLibPageProps>) => `/user/${username}/${libId}` },
+  user_settings: { path: ({ username }: Required<IUserSettingsPageProps>) => `/user/${username}/settings` },
 
   // === Watch Pages
-  watch: { path: ({ query }: WatchPageParams) => `/w/${query}` },
+  anime: { path: ({ query }: IAnimePageParams) => `/anime/${query}` },
 };
 
-export const Routes: RoutesMap = routeDefinitions;
+
+
+const routes: RoutesMapType = definitions;
+
+export default routes;

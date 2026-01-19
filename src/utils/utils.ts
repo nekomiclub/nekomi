@@ -100,36 +100,6 @@ export function copyToClipboard(textToCopy: string) {
 
 
 
-/** Timestamp to date
- * @returns localizedMonth is month on ukranian
- */
-export function timestampToDate(timestamp: number): { day: number; month: number; year: number; localizedMonth: string; } {
-  const month = new Date(timestamp).getMonth();
-  const months: string[] = [
-    'Січень',
-    'Лютий',
-    'Березень',
-    'Квітень',
-    'Травень',
-    'Червень',
-    'Липень',
-    'Серпень',
-    'Вересень',
-    'Жовтень',
-    'Листопад',
-    'Грудень'
-  ];
-  const localizedMonth = months[month];
-
-  return {
-    day: new Date(timestamp).getDate(),
-    localizedMonth,
-    month,
-    year: new Date(timestamp).getFullYear()
-  };
-}
-
-
 /** Transform timestamp to date
  * @returns DD Month YYYY (if not current)
 */
@@ -227,7 +197,6 @@ export function buffer2hash(data: Buffer) {
   hash.update(data);
   return hash.digest('hex');
 }
-
 
 
 

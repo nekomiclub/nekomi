@@ -1,7 +1,6 @@
 'use client';
 
-import { NextPage } from 'next';
-import { useId } from 'react';
+import { FC, useId } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import { PopupButton } from '@fullkekw/popup';
 import { MaterialSymbol } from 'material-symbols-rc';
@@ -10,7 +9,7 @@ import { usePathname } from 'next/navigation';
 
 import StyledButtonOld from '~/components/Styled/StyledButton.old';
 import { P } from '~/components/UI/Typography';
-import { Routes } from '~/routes';
+import routes from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 
@@ -18,7 +17,7 @@ import NavMenuDropdown from './NavMenuDropdown';
 
 
 
-interface Props {
+interface IProps {
   user: IUserState
   searchPopupId: string
 
@@ -34,14 +33,14 @@ interface Props {
 
 
 
-const MobileNav: NextPage<Props> = ({ user, logout, signin, searchPopupId, isDropdownMenuOpen, forceFocus, setIsDropdownMenuOpen, isSigningIn }) => {
+const MobileNav: FC<IProps> = ({ user, logout, signin, searchPopupId, isDropdownMenuOpen, forceFocus, setIsDropdownMenuOpen, isSigningIn }) => {
   const pathname = usePathname();
   const dropdownMenuId = useId().replaceAll(':', '');
 
 
 
   return <nav className="fixed w-full h-[var(--header-height)] bg-dark-primary bottom-0 left-0 z-[110] flex items-center sm:hidden">
-    <Link href={Routes.home.path()} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
+    <Link href={routes.home.path()} className="w-full flex flex-col gap-[2px] items-center duration-200 px-[12px] py-[4px]">
       <MaterialSymbol icon="home" className="text-white" size={24} />
       <P text="Головна" className="font-bold" size={14} />
     </Link>
