@@ -9,8 +9,8 @@ import { useAppSelector } from '~/hooks/redux';
 import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import { cn } from '~/utils/classnames';
 
-import TSettingsMember from './(components)/TSettingsMember';
-import { TSettingLink, TSettingsControls, TSettingsGroup } from './(components)/TSettingsUI';
+import TSettingsMember from './_components/TSettingsMember';
+import { TSettingLink, TSettingsControls, TSettingsGroup } from './_components/TSettingsUI';
 
 
 

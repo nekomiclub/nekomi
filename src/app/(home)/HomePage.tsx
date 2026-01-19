@@ -10,8 +10,8 @@ import { AnimeCardType } from '~/interfaces/IAnime';
 import { IHomeFeedHero } from '~/interfaces/types';
 import { cn } from '~/utils/classnames';
 
-import HomeHeroPosterScreen from './(components)/HomeHeroPosterScreen';
-import HomeHeroTrailerScreen from './(components)/HomeHeroTrailerScreen';
+import HomeHeroPosterScreen from './_components/HomeHeroPosterScreen';
+import HomeHeroTrailerScreen from './_components/HomeHeroTrailerScreen';
 import { HomeHeroScreenType } from './HomePageData';
 
 

@@ -18,12 +18,12 @@ import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
 import { isEmpty, isUserAgentMobile } from '~/utils/utils';
 
-import AnimePlayer from './(components)/AnimePlayer';
-import { WatchActions } from './(components)/WatchActions';
-import WatchCheckMobile from './(components)/WatchCheckMobile';
-import WatchDetail from './(components)/WatchDetail';
-import WatchEditLibs from './(components)/WatchEditLibs';
-import { WatchRating, WatchSectionLabel } from './(components)/WatchUI';
+import AnimePlayer from './_components/AnimePlayer';
+import { WatchActions } from './_components/WatchActions';
+import WatchCheckMobile from './_components/WatchCheckMobile';
+import WatchDetail from './_components/WatchDetail';
+import WatchEditLibs from './_components/WatchEditLibs';
+import { WatchRating, WatchSectionLabel } from './_components/WatchUI';
 
 
 

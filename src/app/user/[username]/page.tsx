@@ -17,7 +17,7 @@ import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 import { getUTC, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
-import { UserLibItem, UserStatisticsItem, UserTitle } from './(components)/UserUI';
+import { UserLibItem, UserStatisticsItem, UserTitle } from './_components/UserUI';
 
 
 

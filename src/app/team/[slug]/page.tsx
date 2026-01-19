@@ -12,7 +12,7 @@ import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
 import { getUTC, isEmpty, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
-import { TeamAboutLink, TeamMember } from './(components)/TeamUI';
+import { TeamAboutLink, TeamMember } from './_components/TeamUI';
 
 
 

@@ -3,7 +3,7 @@
 import { FC, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { InfoHeader } from '~/app/info/(components)/InfoUI';
+import { InfoHeader } from '~/app/info/_components/InfoUI';
 import { conf } from '~/conf';
 
 

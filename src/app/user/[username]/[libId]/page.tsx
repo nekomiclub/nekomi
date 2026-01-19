@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { MaterialSymbol } from 'material-symbols-rc';
 import { notFound } from 'next/navigation';
 
-import { UserLibItem } from '~/app/user/[username]/(components)/UserUI';
+import { UserLibItem } from '~/app/user/[username]/_components/UserUI';
 import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
 import Tooltip from '~/components/UI/Tooltip';

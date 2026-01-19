@@ -9,7 +9,7 @@ import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import API from '~/services/api/API';
 import { UserFullType } from '~/services/api/user/GetUser.api';
 
-import { USettingsControls, USettingsGroup } from './(components)/USettingsUI';
+import { USettingsControls, USettingsGroup } from './_components/USettingsUI';
 
 
 
