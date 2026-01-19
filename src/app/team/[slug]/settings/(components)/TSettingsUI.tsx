@@ -13,20 +13,20 @@ import { cn } from '~/utils/classnames';
 
 
 
-interface IDSettingsLinkProps {
+interface ITSettingsLinkProps {
   state: IUIFieldState
   setState: (val: IUIFieldState) => void
   type: keyof IDubber['socials'] | keyof IDubber['support']
 }
 
-interface IDSettingsControlsProps {
+interface ITSettingsControlsProps {
   resetChanges: () => void
   saveChanges: () => void
   isSomethingChanged: boolean
   isSaving: boolean
 }
 
-interface IDSettingsGroupProps {
+interface ITSettingsGroupProps {
   title: string
   description: string
   children: React.ReactNode
@@ -38,7 +38,7 @@ interface IDSettingsGroupProps {
 
 
 
-export const DSettingLink: FC<IDSettingsLinkProps> = (props) => {
+export const TSettingLink: FC<ITSettingsLinkProps> = (props) => {
   let placeholder: string | undefined = undefined;
 
 
@@ -73,7 +73,7 @@ export const DSettingLink: FC<IDSettingsLinkProps> = (props) => {
 
 
 
-export const DSettingsControls: FC<IDSettingsControlsProps> = (props) => {
+export const TSettingsControls: FC<ITSettingsControlsProps> = (props) => {
   const isDisabled = props.isSaving || !props.isSomethingChanged;
 
   return <Tooltip content={!props.isSomethingChanged ? 'Відсутні зміни' : props.isSaving ? 'Зберігаємо..' : ''} className="flex gap-[8px] max-md:w-full">
@@ -97,7 +97,7 @@ export const DSettingsControls: FC<IDSettingsControlsProps> = (props) => {
 
 
 
-export const DSettingsGroup: FC<IDSettingsGroupProps> = (props) => {
+export const TSettingsGroup: FC<ITSettingsGroupProps> = (props) => {
   return <div className="w-full flex justify-between pt-[24px] border-t border-dark-light gap-[16px] max-lg:flex-col">
     <div className="w-[300px] flex flex-col gap-[4px] shrink-0 max-lg:w-auto">
       <H3 text={props.title} size={24} className="text-white" bold />

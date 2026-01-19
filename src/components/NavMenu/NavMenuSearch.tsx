@@ -350,7 +350,7 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
     </Link>}
 
     {/* Dubber type */}
-    {(type === 'dubber' && dubberResult) && <Link href={routes.dubber.path({ slug: dubberResult.slug })} className="menu-search-result">
+    {(type === 'dubber' && dubberResult) && <Link href={routes.team.path({ slug: dubberResult.slug })} className="menu-search-result">
       <StyledImage src={dubberResult.avatar} width="128px" height="128px" />
 
       <div className="menu-search-result_content">

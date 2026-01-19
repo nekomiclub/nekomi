@@ -70,8 +70,8 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const entityType = user ? 'user' : dubber ? 'dubber' : 'user';
   const isEdit = type === 'dubber_settings' || type === 'user_settings';
 
-  const profileUrl = user ? routes.user.path({ username: user.username }) : dubber ? routes.dubber.path({ slug: dubber.slug }) : '#';
-  const settingsUrl = user ? routes.user_settings.path({ username: user.id }) : dubber ? routes.dubber_settings.path({ slug: dubber.slug }) : '#';
+  const profileUrl = user ? routes.user.path({ username: user.username }) : dubber ? routes.team.path({ slug: dubber.slug }) : '#';
+  const settingsUrl = user ? routes.user_settings.path({ username: user.id }) : dubber ? routes.team_settings.path({ slug: dubber.slug }) : '#';
 
   const canEditUser = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE) || user?.id === currentUser.id /* || currentUser.permissions.includes('admin') */;
   const canEditDubber = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE); /* || currentUser.permissions.includes('admin') */ /* || dubber?.members.find(el => el.id === currentUser.id)?.role === 'leader'; */

@@ -25,8 +25,8 @@ const definitions = {
   dev_screen_not_rendered: { path: () => `/dev/screen/notRendered` },
 
   // === Dubber Pages
-  dubber: { path: ({ slug }: IDubberPageParams) => `/dubber/${slug}` },
-  dubber_settings: { path: ({ slug }: IDubberPageParams) => `/dubber/${slug}/settings` },
+  team: { path: ({ slug }: IDubberPageParams) => `/team/${slug}` },
+  team_settings: { path: ({ slug }: IDubberPageParams) => `/team/${slug}/settings` },
 
   // === Info Pages
   info_agreement: { path: () => `/info/agreement` },

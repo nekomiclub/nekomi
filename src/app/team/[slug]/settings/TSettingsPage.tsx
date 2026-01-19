@@ -1,7 +1,6 @@
 'use client';
 
-import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import { IUIFieldState, UIField } from '~/components/UI/Input';
 import { NotifySuccess } from '~/components/UI/NotifyToast';
@@ -10,8 +9,8 @@ import { useAppSelector } from '~/hooks/redux';
 import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import { cn } from '~/utils/classnames';
 
-import DSettingsMember from './(components)/DSettingsMember';
-import { DSettingLink, DSettingsControls, DSettingsGroup } from './(components)/DSettingsUI';
+import TSettingsMember from './(components)/TSettingsMember';
+import { TSettingLink, TSettingsControls, TSettingsGroup } from './(components)/TSettingsUI';
 
 
 
@@ -22,7 +21,7 @@ interface IProps {
 
 
 
-const DSettingsPage: NextPage<IProps> = (props) => {
+const TSettingsPage: FC<IProps> = (props) => {
   const currentUser = useAppSelector(state => state.user);
 
   const [nameUkr, setNameUkr] = useState<IUIFieldState>({ initialValue: props.dubber.name });
@@ -172,10 +171,10 @@ const DSettingsPage: NextPage<IProps> = (props) => {
     <div className="w-full flex justify-between items-center gap-[16px] max-md:flex-col">
       <h2 className="text-white text-[32px] font-manrope max-md:text-[24px] font-bold">Налаштування команди</h2>
 
-      <DSettingsControls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
+      <TSettingsControls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>
 
-    <DSettingsGroup title="Назва та опис" description="Розкажіть світу хто ви є">
+    <TSettingsGroup title="Назва та опис" description="Розкажіть світу хто ви є">
       <div className="flex gap-[32px] w-full max-md:flex-col">
         <div className="flex flex-col gap-[8px] w-full">
           <div className="flex flex-col gap-[4px] w-full">
@@ -189,25 +188,25 @@ const DSettingsPage: NextPage<IProps> = (props) => {
           <UIField fieldType="textarea" state={description} stateSetter={setDescription} symbolsLimited={500} className="min-h-[42px] h-fit max-h-[500px] outline-none grow" parentClassName="h-full grow" />
         </div>
       </div>
-    </DSettingsGroup>
+    </TSettingsGroup>
 
-    <DSettingsGroup title="Посилання" description="Мережі команди та підтримка (без www.)">
+    <TSettingsGroup title="Посилання" description="Мережі команди та підтримка (без www.)">
       <div className="flex gap-[4px] w-full max-md:flex-col max-md:gap-[16px]">
         <div className="flex flex-col gap-[4px] w-full">
-          <DSettingLink state={telegramLink} setState={setTelegramLink} type="telegram" />
-          <DSettingLink state={instagramLink} setState={setInstagramLink} type="instagram" />
-          <DSettingLink state={tiktokLink} setState={setTiktokLink} type="tiktok" />
-          <DSettingLink state={youtubeLink} setState={setYoutubeLink} type="youtube" />
+          <TSettingLink state={telegramLink} setState={setTelegramLink} type="telegram" />
+          <TSettingLink state={instagramLink} setState={setInstagramLink} type="instagram" />
+          <TSettingLink state={tiktokLink} setState={setTiktokLink} type="tiktok" />
+          <TSettingLink state={youtubeLink} setState={setYoutubeLink} type="youtube" />
         </div>
 
         <div className="flex flex-col gap-[4px] w-full">
-          <DSettingLink state={patreonLink} setState={setPatreonLink} type="patreon" />
-          <DSettingLink state={bmcLink} setState={setBmcLink} type="bymeacoffee" />
-          <DSettingLink state={monobankLink} setState={setMonobankLink} type="monobank" />
-          <DSettingLink state={diakaLink} setState={setDiakaLink} type="diaka" />
+          <TSettingLink state={patreonLink} setState={setPatreonLink} type="patreon" />
+          <TSettingLink state={bmcLink} setState={setBmcLink} type="bymeacoffee" />
+          <TSettingLink state={monobankLink} setState={setMonobankLink} type="monobank" />
+          <TSettingLink state={diakaLink} setState={setDiakaLink} type="diaka" />
         </div>
       </div>
-    </DSettingsGroup>
+    </TSettingsGroup>
 
     {/* <SettingsGroup title={`Команда (${dubberMembers.length} ${wordDeclination(dubberMembers.length, ['учасник', 'учасника', 'учасників'])})`} description="Керування складом команди">
       <DSettingsInviteMembers dubber={dubber} />
@@ -215,24 +214,24 @@ const DSettingsPage: NextPage<IProps> = (props) => {
 
     <div className={cn('grid gap-[8px] max-lg:grid-cols-1', dubberMembers.length === 1 ? 'grid-cols-1' : 'grid-cols-2')}>
       {dubberMembers.filter(el => el.role === 'leader').map(member => {
-        return <DSettingsMember member={member} currentUser={currentUser} dubber={props.dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
+        return <TSettingsMember member={member} currentUser={currentUser} dubber={props.dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
       })}
 
       {dubberMembers.filter(el => el.role === 'editor').map(member => {
-        return <DSettingsMember member={member} currentUser={currentUser} dubber={props.dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
+        return <TSettingsMember member={member} currentUser={currentUser} dubber={props.dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
       })}
 
       {dubberMembers.filter(el => el.role === 'member').map(member => {
-        return <DSettingsMember member={member} currentUser={currentUser} dubber={props.dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
+        return <TSettingsMember member={member} currentUser={currentUser} dubber={props.dubber} kickMember={kickMember} key={`dubber-settings-member--${member.id}`} />;
       })}
     </div>
 
     <div className="w-full flex justify-between gap-[16px] max-md:flex-col-reverse">
       <UIReportButton type="text" text="Виникли проблеми?" />
 
-      <DSettingsControls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
+      <TSettingsControls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>
   </div>;
 };
 
-export default DSettingsPage;
+export default TSettingsPage;

@@ -27,7 +27,7 @@ interface IProps {
 
 
 
-const DSettingsMember: FC<IProps> = (props) => {
+const TSettingsMember: FC<IProps> = (props) => {
   const canKick = props.currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE) /* || currentUser.permissions.includes('admin') || currentUser.permissions.includes('dubberEditEditors') */;
   const canRedactRole = canKick && props.currentUser.id !== props.member.id || (props.currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE)) /* || currentUser.permissions.includes('admin')) */;
 
@@ -97,4 +97,4 @@ const DSettingsMember: FC<IProps> = (props) => {
   </div>;
 };
 
-export default DSettingsMember;
+export default TSettingsMember;

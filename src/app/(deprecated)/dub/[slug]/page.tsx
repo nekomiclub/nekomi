@@ -9,5 +9,5 @@ import routes from '~/routes';
 export default async function DubberOldPageRSC({ params }: IRSCProps<IDubberPageParams>) {
   const { slug } = await params;
 
-  return redirect(routes.dubber.path({ slug }), RedirectType.replace);
+  return redirect(routes.team.path({ slug }), RedirectType.replace);
 }

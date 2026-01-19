@@ -12,7 +12,7 @@ import API from '~/services/api/API';
 import siteMetadata from '~/utils/site-metadata';
 import { getUTC, isEmpty, timestampToDayMonth, wordDeclination } from '~/utils/utils';
 
-import { DubberAboutLink, DubberTeamMember } from './(components)/DubberUI';
+import { TeamAboutLink, TeamMember } from './(components)/TeamUI';
 
 
 
@@ -50,7 +50,7 @@ export async function generateMetadata(
 
 
 
-export default async function DubberPageRSC({ params, searchParams }: IRSCProps<IDubberPageParams>) {
+export default async function TeamPageRSC({ params, searchParams }: IRSCProps<IDubberPageParams>) {
   const { slug } = await params;
 
 
@@ -67,14 +67,14 @@ export default async function DubberPageRSC({ params, searchParams }: IRSCProps<
         {/* About */}
         <div className="flex flex-col gap-[24px]">
           <ul className="w-full flex items-center justify-center flex-wrap gap-[8px]">
-            {dubber.socials?.telegram && <DubberAboutLink link={dubber.socials.telegram} label="telegram" />}
-            {dubber.socials?.tiktok && <DubberAboutLink link={dubber.socials.tiktok} label="tiktok" />}
-            {dubber.socials?.youtube && <DubberAboutLink link={dubber.socials.youtube} label="youtube" />}
-            {dubber.socials?.instagram && <DubberAboutLink link={dubber.socials.instagram} label="instagram" />}
-            {dubber.support?.monobank && <DubberAboutLink link={dubber.support.monobank} label="monobank" />}
-            {dubber.support?.diaka && <DubberAboutLink link={dubber.support.diaka} label="diaka" />}
-            {dubber.support?.bymeacoffee && <DubberAboutLink link={dubber.support.bymeacoffee} label="bymeacoffee" />}
-            {dubber.support?.patreon && <DubberAboutLink link={dubber.support.patreon} label="patreon" />}
+            {dubber.socials?.telegram && <TeamAboutLink link={dubber.socials.telegram} label="telegram" />}
+            {dubber.socials?.tiktok && <TeamAboutLink link={dubber.socials.tiktok} label="tiktok" />}
+            {dubber.socials?.youtube && <TeamAboutLink link={dubber.socials.youtube} label="youtube" />}
+            {dubber.socials?.instagram && <TeamAboutLink link={dubber.socials.instagram} label="instagram" />}
+            {dubber.support?.monobank && <TeamAboutLink link={dubber.support.monobank} label="monobank" />}
+            {dubber.support?.diaka && <TeamAboutLink link={dubber.support.diaka} label="diaka" />}
+            {dubber.support?.bymeacoffee && <TeamAboutLink link={dubber.support.bymeacoffee} label="bymeacoffee" />}
+            {dubber.support?.patreon && <TeamAboutLink link={dubber.support.patreon} label="patreon" />}
           </ul>
 
           <div className="w-full h-[1px] bg-dark-light"></div>
@@ -89,15 +89,15 @@ export default async function DubberPageRSC({ params, searchParams }: IRSCProps<
 
           <div className="flex flex-wrap gap-[16px]">
             {dubber.members.filter(el => el.role === 'leader').map(member => {
-              return <DubberTeamMember member={member} key={`member--${member.id}`} />;
+              return <TeamMember member={member} key={`member--${member.id}`} />;
             })}
 
             {dubber.members.filter(el => el.role === 'editor').map(member => {
-              return <DubberTeamMember member={member} key={`member--${member.id}`} />;
+              return <TeamMember member={member} key={`member--${member.id}`} />;
             })}
 
             {dubber.members.filter(el => el.role === 'member').map(member => {
-              return <DubberTeamMember member={member} key={`member--${member.id}`} />;
+              return <TeamMember member={member} key={`member--${member.id}`} />;
             })}
           </div>
         </div>}

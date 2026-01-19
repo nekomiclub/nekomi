@@ -16,7 +16,7 @@ interface IProps {
 
 
 
-const DSettingsInviteMembers: FC<IProps> = (props) => {
+const TSettingsInviteMembers: FC<IProps> = (props) => {
   const [searchQuery, setSearchQuery] = useState<IUIFieldState>({ status: 'waiting', initialValue: '' });
   const [debouncedSearchQuery] = useDebounce(searchQuery.value ?? '', 500);
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -102,4 +102,4 @@ const DSettingsInviteMembers: FC<IProps> = (props) => {
   </div>;
 };
 
-export default DSettingsInviteMembers;
+export default TSettingsInviteMembers;
