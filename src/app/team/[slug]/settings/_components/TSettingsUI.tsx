@@ -4,8 +4,8 @@ import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
 import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube, IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/components/Icons';
+import Tooltip from '~/components/Tooltip';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
-import Tooltip from '~/components/UI/Tooltip';
 import { H3, P } from '~/components/UI/Typography';
 import IDubber from '~/interfaces/IDubber';
 import { cn } from '~/utils/classnames';

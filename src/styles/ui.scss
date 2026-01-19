@@ -10,25 +10,6 @@
     }
   }
 
-  &-notifyToast {
-    &_progressBar {
-      &--success {
-        animation: uiNotifyToastProgressBar 3s linear;
-        background: $info-success;
-      }
-
-      &--warn {
-        animation: uiNotifyToastProgressBar 3s linear;
-        background: $info-warn;
-      }
-
-      &--error {
-        animation: uiNotifyToastProgressBar 6s linear;
-        background: $info-error;
-      }
-    }
-  }
-
   &-input {
     padding: 8px;
     background: transparent;
@@ -171,16 +152,6 @@
       justify-content: center;
       align-items: center;
     }
-  }
-}
-
-@keyframes uiNotifyToastProgressBar {
-  from {
-    height: 100%;
-  }
-
-  to {
-    height: 0;
   }
 }
 

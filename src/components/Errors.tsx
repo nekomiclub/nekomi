@@ -10,8 +10,8 @@ import { DevelopmentMode } from '~/conf';
 import routes from '~/routes';
 import { getUTC } from '~/utils/utils';
 
-import { NotifyError } from './UI/NotifyToast';
-import { UIReportButton } from './UI/Report';
+import { NotifyError } from './nofity/NotifyStatus';
+import { ReportButton } from './Report';
 import { H1, P } from './UI/Typography';
 
 
@@ -91,6 +91,6 @@ export const ErrorNotRendered: FC = () => {
       <P text="Створіть  будь ласка тікет" className="text-grey-new text-center" />
     </div>
 
-    <UIReportButton type="button" />
+    <ReportButton type="button" />
   </div>;
 };

@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import { MaterialSymbol } from 'material-symbols-rc';
 
 import { HandleServerError } from '~/components/Errors';
-import Tooltip from '~/components/UI/Tooltip';
+import Tooltip from '~/components/Tooltip';
 import { P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { conf, DevelopmentMode } from '~/conf';

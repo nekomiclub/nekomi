@@ -14,7 +14,7 @@ interface IProps {
 
 
 
-const Carousel: FC<IProps> = ({ children }) => {
+const Carousel: FC<IProps> = (props) => {
   const id = useId().replaceAll(':', '');
 
   const [isSwiperInitialized, setIsSwiperInitialized] = useState(false);
@@ -23,7 +23,7 @@ const Carousel: FC<IProps> = ({ children }) => {
 
   return <div className="relative">
     <Swiper className="w-full h-full" spaceBetween={8} slidesPerView={'auto'} onInit={() => setIsSwiperInitialized(true)}>
-      {children.map((child, i) => {
+      {props.children.map((child, i) => {
         return <SwiperSlide className="!w-fit" key={`swiper-${id}--${i}`}>
           {child}
         </SwiperSlide>;

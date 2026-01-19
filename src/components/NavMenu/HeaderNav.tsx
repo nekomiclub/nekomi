@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation';
 import { IcoNekomiLogoWhite } from '~/components/Icons';
 import StyledButtonOld from '~/components/Styled/StyledButton.old';
 import StyledImage from '~/components/Styled/StyledImage';
-import Tooltip from '~/components/UI/Tooltip';
+import Tooltip from '~/components/Tooltip';
 import routes from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';

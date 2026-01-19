@@ -2,9 +2,9 @@
 
 import { FC, useEffect, useState } from 'react';
 
+import { NotifySuccess } from '~/components/nofity/NotifyStatus';
+import { ReportButton } from '~/components/Report';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
-import { NotifySuccess } from '~/components/UI/NotifyToast';
-import { UIReportButton } from '~/components/UI/Report';
 import { useAppSelector } from '~/hooks/redux';
 import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import { cn } from '~/utils/classnames';
@@ -67,7 +67,7 @@ const TSettingsPage: FC<IProps> = (props) => {
 
 
   function resetChanges() {
-    NotifySuccess({ title: 'Зміни відхилені', message: 'Ми прибрали нові зміни за вас' });
+    NotifySuccess({ title: 'Зміни відхилені' });
 
     DubberParamsSetters.forEach(setter => {
       setter(prev => {
@@ -227,7 +227,7 @@ const TSettingsPage: FC<IProps> = (props) => {
     </div>
 
     <div className="w-full flex justify-between gap-[16px] max-md:flex-col-reverse">
-      <UIReportButton type="text" text="Виникли проблеми?" />
+      <ReportButton type="text" text="Виникли проблеми?" />
 
       <TSettingsControls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>

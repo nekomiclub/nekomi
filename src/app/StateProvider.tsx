@@ -5,14 +5,13 @@ import { PopupLayer } from '@fullkekw/popup';
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
+import { HandleClientError } from '~/components/Errors';
+import { NotifyWarn } from '~/components/nofity/NotifyStatus';
+import { ReportModal } from '~/components/Report';
 import API from '~/services/api/API';
 import { IUserState } from '~/store/reducers/userSlice';
 import { setupStore } from '~/store/store';
 import { randomNumber } from '~/utils/utils';
-
-import { HandleClientError } from './Errors';
-import { NotifyWarn } from './UI/NotifyToast';
-import { UIReportModal } from './UI/Report';
 
 
 
@@ -70,7 +69,7 @@ const StateProvider: FC<IProps> = ({ children, user, isSessionExpired }) => {
     />
 
     <PopupLayer>
-      <UIReportModal />
+      <ReportModal />
 
       {children}
     </PopupLayer>

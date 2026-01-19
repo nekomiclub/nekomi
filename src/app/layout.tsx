@@ -19,13 +19,14 @@ import { ToastContainer } from 'react-toastify';
 import { ErrorNoConnection } from '~/components/Errors';
 import Footer from '~/components/Footer';
 import NavMenu from '~/components/NavMenu/NavMenu';
-import StateProvider from '~/components/StateProvider';
 import conf from '~/conf';
 import { ILayoutProps } from '~/interfaces/types';
 import API from '~/services/api/API';
 import { IUserState } from '~/store/reducers/userSlice';
 import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
+
+import StateProvider from './StateProvider';
 
 
 

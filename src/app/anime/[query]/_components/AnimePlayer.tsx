@@ -4,12 +4,12 @@ import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } f
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import MediaQuery from 'react-responsive';
 
+import { NotifyWarn } from '~/components/nofity/NotifyStatus';
 import StyledAvatar from '~/components/Styled/StyledAvatar';
 import StyledButton from '~/components/Styled/StyledButton';
 import StyledImage from '~/components/Styled/StyledImage';
 import StyledSelect, { IStyledSelectOption, IStyledSelectOptionContentProps } from '~/components/Styled/StyledSelect';
 import { StyledM, StyledS } from '~/components/Styled/StyledText';
-import { NotifyWarn } from '~/components/UI/NotifyToast';
 import conf from '~/conf';
 import { AnimeVODProviderList, AnimeVODProviderType, IAnimeEpisode, IAnimePlayer, IAnimePlayerTeam, IAnimePlayerVOD } from '~/interfaces/IAnime';
 import { DubberCardType } from '~/interfaces/IDubber';

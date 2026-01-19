@@ -5,7 +5,7 @@ import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import StyledButtonOld from '~/components/Styled/StyledButton.old';
-import Tooltip from '~/components/UI/Tooltip';
+import Tooltip from '~/components/Tooltip';
 import { H3, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';
 import IDubber, { IDubberMember } from '~/interfaces/IDubber';

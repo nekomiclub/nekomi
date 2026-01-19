@@ -1,6 +1,6 @@
 'use client';
 
-import { NextPage } from 'next';
+import { FC } from 'react';
 import { PopupButton, PopupWindow } from '@fullkekw/popup';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
@@ -26,7 +26,7 @@ const REPORT_MODAL_ID = `report-modal-generic`;
 
 
 
-export const UIReportModal: NextPage = ({ }) => {
+export const ReportModal: FC = (props) => {
   return <PopupWindow className="px-[24px] py-[40px] max-w-[700px] w-full" id={REPORT_MODAL_ID}>
     <div className="w-full bg-dark-primary flex flex-col gap-[24px] p-[16px] rounded-[4px]">
       <div className="flex flex-col gap-[8px] items-center">
@@ -48,11 +48,15 @@ export const UIReportModal: NextPage = ({ }) => {
   </PopupWindow>;
 };
 
-export const UIReportButton: NextPage<IReportButtonProps> = ({ type, text, className }) => {
-  text = text ?? `Створити тікет`;
+
+
+export const ReportButton: FC<IReportButtonProps> = (props) => {
+  const text = props.text ?? `Створити тікет`;
+
+
 
   return <>
-    {type === 'icon' && <Tooltip content={text} className={cn(`z-[5] w-fit h-fit`, className)}>
+    {props.type === 'icon' && <Tooltip content={text} className={cn(`z-[5] w-fit h-fit`, props.className)}>
       <PopupButton popupId={REPORT_MODAL_ID}>
         <StyledButtonOld as="div" isIcon className={cn('w-[40px] h-[40px] flex justify-center items-center rounded-[4px]')}>
           <MaterialSymbol icon="flag" size={24} className="text-white" />
@@ -60,13 +64,13 @@ export const UIReportButton: NextPage<IReportButtonProps> = ({ type, text, class
       </PopupButton>
     </Tooltip>}
 
-    {type === 'text' && <PopupButton className={cn('flex justify-center items-center gap-[8px]')} popupId={REPORT_MODAL_ID}>
+    {props.type === 'text' && <PopupButton className={cn('flex justify-center items-center gap-[8px]')} popupId={REPORT_MODAL_ID}>
       <MaterialSymbol icon="flag" size={24} className="text-grey-new" />
 
       <p className="text-grey-new font-manrope">{text}</p>
     </PopupButton>}
 
-    {type === 'button' && <PopupButton popupId={REPORT_MODAL_ID}>
+    {props.type === 'button' && <PopupButton popupId={REPORT_MODAL_ID}>
       <StyledButtonOld as="div" className={cn('flex justify-center items-center gap-[8px] px-[16px] py-[8px]')}>
         <MaterialSymbol icon="flag" size={24} className="text-white" />
 

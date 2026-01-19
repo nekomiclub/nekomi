@@ -5,7 +5,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
 import { HandleClientError } from '~/components/Errors';
-import { NotifySuccess } from '~/components/UI/NotifyToast';
+import { NotifySuccess } from '~/components/nofity/NotifyStatus';
 import { firebaseApp } from '~/conf';
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import API from '~/services/api/API';

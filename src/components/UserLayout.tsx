@@ -16,11 +16,11 @@ import cn from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
+import { NotifySuccess, NotifyWarn } from './nofity/NotifyStatus';
+import { ReportButton } from './Report';
 import StyledButtonOld from './Styled/StyledButton.old';
 import StyledImage from './Styled/StyledImage';
-import { NotifySuccess, NotifyWarn } from './UI/NotifyToast';
-import { UIReportButton } from './UI/Report';
-import Tooltip from './UI/Tooltip';
+import Tooltip from './Tooltip';
 import { H1, H2, P } from './UI/Typography';
 
 
@@ -357,7 +357,7 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
     </>}
 
     {/* Report button */}
-    {!isEdit && <UIReportButton className="!absolute top-[8px] right-[8px] opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" type="icon" text="Надіслати скаргу" />}
+    {!isEdit && <ReportButton className="!absolute top-[8px] right-[8px] opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" type="icon" text="Надіслати скаргу" />}
   </div>;
 };
 

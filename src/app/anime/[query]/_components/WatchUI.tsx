@@ -5,7 +5,7 @@ import { FC } from 'react';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
 import { StyledH2, StyledH3 } from '~/components/Styled/StyledText';
-import Tooltip from '~/components/UI/Tooltip';
+import Tooltip from '~/components/Tooltip';
 import { AnimeFullType } from '~/services/api/anime/GetAnime.api';
 import { cn } from '~/utils/classnames';
 import { getUTC, timestampToDayMonth } from '~/utils/utils';

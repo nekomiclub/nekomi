@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import Tooltip from '~/components/UI/Tooltip';
+import Tooltip from '~/components/Tooltip';
 import { ANIME_TYPE, AnimeGenreType, AnimeRateType, AnimeSeasonType, AnimeStatusType, AnimeType, IAnimeStudio } from '~/interfaces/IAnime';
 import cn from '~/utils/classnames';
 

@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { UserLibItem } from '~/app/user/[username]/_components/UserUI';
 import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
-import Tooltip from '~/components/UI/Tooltip';
+import Tooltip from '~/components/Tooltip';
 import { H2, H3, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { IUserLib } from '~/interfaces/IUser';

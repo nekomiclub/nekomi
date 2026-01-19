@@ -15,9 +15,9 @@ import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
 
 import { HandleClientError } from './Errors';
+import { NotifyWarn } from './nofity/NotifyStatus';
 import StyledCheckbox from './Styled/StyledCheckbox';
 import StyledImage from './Styled/StyledImage';
-import { NotifyWarn } from './UI/NotifyToast';
 
 
 

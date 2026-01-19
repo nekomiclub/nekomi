@@ -161,3 +161,32 @@
     }
   }
 }
+
+.cui-notify {
+  &_progressBar {
+    &--success {
+      animation: uiNotifyToastProgressBar 3s linear;
+      background: $info-success;
+    }
+
+    &--warn {
+      animation: uiNotifyToastProgressBar 3s linear;
+      background: $info-warn;
+    }
+
+    &--error {
+      animation: uiNotifyToastProgressBar 6s linear;
+      background: $info-error;
+    }
+  }
+}
+
+@keyframes uiNotifyToastProgressBar {
+  from {
+    height: 100%;
+  }
+
+  to {
+    height: 0;
+  }
+}

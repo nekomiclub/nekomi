@@ -4,8 +4,8 @@ import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { HandleClientError } from '~/components/Errors';
+import { NotifySuccess, NotifyWarn } from '~/components/nofity/NotifyStatus';
 import { IUIFieldState, UIField } from '~/components/UI/Input';
-import { NotifySuccess, NotifyWarn } from '~/components/UI/NotifyToast';
 import API from '~/services/api/API';
 import { UserFullType } from '~/services/api/user/GetUser.api';
 
