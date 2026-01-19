@@ -8,7 +8,7 @@ import StyledAvatar from '~/components/Styled/StyledAvatar';
 import StyledButton from '~/components/Styled/StyledButton';
 import StyledImage from '~/components/Styled/StyledImage';
 import StyledSelect, { IStyledSelectOption, IStyledSelectOptionContentProps } from '~/components/Styled/StyledSelect';
-import { StyledM, StyledS } from '~/components/Styled/StyledTypo';
+import { StyledM, StyledS } from '~/components/Styled/StyledText';
 import { NotifyWarn } from '~/components/UI/NotifyToast';
 import conf from '~/conf';
 import { AnimeVODProviderList, AnimeVODProviderType, IAnimeEpisode, IAnimePlayer, IAnimePlayerTeam, IAnimePlayerVOD } from '~/interfaces/IAnime';
@@ -441,7 +441,7 @@ const AnimePLayerEpisodesList: FC<IAnimePLayerEpisodesListProps> = (props) => {
 
 
 
-  return <ul className={cn(`wrapper ap-player_episodes`, props.className)}>
+  return episodes.length > 1 && <ul className={cn(`wrapper ap-player_episodes`, props.className)}>
     {episodes.map(episode => {
       return <li className="ap-player-episode" key={`ap-player-episode--${episode}`}>
         <StyledButton text={`${episode}`} className="ap-player-episode_button" style={episode === ctx.selectedEpisode ? 'primary' : 'default'} onClick={() => ctx.setEpisode({ episode }, false)} />

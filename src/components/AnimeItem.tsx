@@ -1,7 +1,6 @@
 'use client';
 
-import { NextPage } from 'next';
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
@@ -14,7 +13,6 @@ import API from '~/services/api/API';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
-import { prettySeconds } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
 import StyledImage from './Styled/StyledImage';
@@ -23,25 +21,25 @@ import UICheckbox from './UI/UICheckbox';
 
 
 
-interface AnimeItemProps {
+interface IProps {
   anime: AnimeCardType
 
   className?: string
   libControls?: boolean
 }
 
-interface AnimeItemEditMenuProps {
+interface IAnimeItemEditMenuProps {
   animeId: string
 }
 
-interface AnimeItemEditMenuLibProps {
+interface IAnimeItemEditMenuLibProps {
   animeId: string
   type: UserLibType
 }
 
 
 
-const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) => {
+const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
   const editLibsMenuId = useId().replaceAll(':', '');
   const currentUser = useAppSelector(state => state.user);
 
@@ -53,7 +51,6 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) 
 
   const topOffset = 4;
   const bottomOffset = 8;
-  const watchProgress = currentUser.view_progress.find(el => el.anime_id === anime.id);
 
 
 
@@ -159,18 +156,16 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) 
             </div>
           </div>
         </div>
-
-        {watchProgress && watchProgress.progress > 3 && <div className="bg-primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
-          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episode} еп, {prettySeconds(watchProgress.progress).pretty}</p>
-
-          <MaterialSymbol icon="resume" size={16} color="#fff" />
-        </div>}
       </div>
     </Link>
   </div>;
 };
 
-export const AnimeItemEditMenu: NextPage<AnimeItemEditMenuProps> = ({ animeId }) => {
+export default AnimeItem;
+
+
+
+export const AnimeItemEditMenu: FC<IAnimeItemEditMenuProps> = ({ animeId }) => {
   return <MenuWrapper className="w-full min-w-fit bg-dark-primary rounded-[4px] flex flex-col border border-dark-light">
     <AnimeItemEditMenuLib type="favorite" animeId={animeId} />
     <AnimeItemEditMenuLib type="watching" animeId={animeId} />
@@ -182,7 +177,7 @@ export const AnimeItemEditMenu: NextPage<AnimeItemEditMenuProps> = ({ animeId })
 
 
 
-const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, animeId }) => {
+const AnimeItemEditMenuLib: FC<IAnimeItemEditMenuLibProps> = ({ type, animeId }) => {
   const currentUser = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
 
@@ -242,7 +237,3 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, anime
     <p className="text-white font-manrope">{title}</p>
   </button>;
 };
-
-
-
-export default AnimeItem;

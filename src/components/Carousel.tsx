@@ -8,13 +8,13 @@ import { cn } from '~/utils/classnames';
 
 
 
-interface Props {
+interface IProps {
   children: React.ReactElement[]
 }
 
 
 
-const StyledSwiper: FC<Props> = ({ children }) => {
+const Carousel: FC<IProps> = ({ children }) => {
   const id = useId().replaceAll(':', '');
 
   const [isSwiperInitialized, setIsSwiperInitialized] = useState(false);
@@ -36,4 +36,4 @@ const StyledSwiper: FC<Props> = ({ children }) => {
   </div>;
 };
 
-export default StyledSwiper;
+export default Carousel;

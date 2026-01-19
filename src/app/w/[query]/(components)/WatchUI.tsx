@@ -5,7 +5,7 @@ import { FC } from 'react';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
 import StyledImage from '~/components/Styled/StyledImage';
-import { StyledH2, StyledH3 } from '~/components/Styled/StyledTypo';
+import { StyledH2, StyledH3 } from '~/components/Styled/StyledText';
 import { UIReportButton } from '~/components/UI/Report';
 import Tooltip from '~/components/UI/Tooltip';
 import { H2, P } from '~/components/UI/Typography';

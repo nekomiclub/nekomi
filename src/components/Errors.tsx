@@ -1,7 +1,6 @@
-import '~/styles/components/Errors.scss';
+import '~/styles/components/common-ui.scss';
 
-import { NextPage } from 'next';
-import { ReactElement } from 'react';
+import { FC, ReactElement } from 'react';
 import { AxiosError } from 'axios';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
@@ -53,22 +52,24 @@ export async function HandleServerError(e: unknown): Promise<ReactElement> {
 
 
 
-export const ErrorNoConnection: NextPage = () => {
-  return <div className="wrapper error-wrapper">
+export const ErrorNoConnection: FC = () => {
+  return <div className="wrapper cui-error-wrapper">
     <MaterialSymbol icon="cloud_off" size={256} className="text-white" />
 
-    <div className="error-content">
+    <div className="cui-error-content">
       <H1 text="Відсутнє з’єднання з сервером" className="text-center" />
       <P text="Якщо у вас є інтернет, то ми вже працюємо над його відновленням. Це не повинно тривати довго" className="text-grey-new text-center" />
     </div>
   </div>;
 };
 
-export const ErrorNotFound: NextPage = () => {
-  return <div className="wrapper error-wrapper">
+
+
+export const ErrorNotFound: FC = () => {
+  return <div className="wrapper cui-error-wrapper">
     <MaterialSymbol icon="mystery" size={256} className="text-white" />
 
-    <div className="error-content">
+    <div className="cui-error-content">
       <H1 text="Те, що ви шукаєте, не існує" className="text-center" />
       <P text="Ми не можемо знайти контент за цим запитом, або ж просто - 404" className="text-grey-new text-center" />
     </div>
@@ -79,11 +80,13 @@ export const ErrorNotFound: NextPage = () => {
   </div>;
 };
 
-export const ErrorNotRendered: NextPage = () => {
-  return <div className="wrapper error-wrapper">
+
+
+export const ErrorNotRendered: FC = () => {
+  return <div className="wrapper cui-error-wrapper">
     <MaterialSymbol icon="contract_delete" size={256} className="text-white" />
 
-    <div className="error-content">
+    <div className="cui-error-content">
       <H1 text="Сталась помилка при відображенні сторінки" className="text-center" />
       <P text="Створіть  будь ласка тікет" className="text-grey-new text-center" />
     </div>

@@ -6,11 +6,11 @@
     height: 100%;
     transition: 0.2s ease-in-out;
     border-radius: inherit;
-
-    // IOS border-radius fix
     display: block;
-    -webkit-mask-image: -webkit-radial-gradient(white, black); /* For Safari */
-    mask-image: radial-gradient(white, black); /* Standard syntax */
+
+    // Fix IOS border radius
+    mask-image: radial-gradient(white, black);
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
 
     &--hide {
       opacity: 0;

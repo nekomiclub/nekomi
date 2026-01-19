@@ -21,35 +21,35 @@ const Footer: FC = () => {
 
       <ul className="h-[50px] flex items-center gap-y-[8px] gap-[32px] flex-wrap max-2xl:h-auto">
         <li>
-          <Link href={Routes.infoContacts.path()} className="gui-footer-link">
+          <Link href={Routes.infoContacts.path()} className="cui-footer-link">
             <MaterialSymbol icon="code_blocks" size={20} className="text-white" />
             <p className="text-white font-manrope">Розробники</p>
           </Link>
         </li>
 
         <li>
-          <Link href={Routes.infoAgreement.path()} className="gui-footer-link">
+          <Link href={Routes.infoAgreement.path()} className="cui-footer-link">
             <MaterialSymbol icon="contract" size={20} className="text-white" />
             <p className="text-white font-manrope">Угода користувача</p>
           </Link>
         </li>
 
         <li>
-          <Link href={Routes.infoPolicy.path()} className="gui-footer-link">
+          <Link href={Routes.infoPolicy.path()} className="cui-footer-link">
             <MaterialSymbol icon="encrypted" size={20} className="text-white" />
             <p className="text-white font-manrope">Політика конфіденційності</p>
           </Link>
         </li>
 
         <li>
-          <Link href={Routes.infoTerms.path()} className="gui-footer-link">
+          <Link href={Routes.infoTerms.path()} className="cui-footer-link">
             <MaterialSymbol icon="gavel" size={20} className="text-white" />
             <p className="text-white font-manrope">Умови користування</p>
           </Link>
         </li>
 
         <li>
-          <Link href={Routes.infoDMCA.path()} className="gui-footer-link">
+          <Link href={Routes.infoDMCA.path()} className="cui-footer-link">
             <MaterialSymbol icon="copyright" size={20} className="text-white" />
             <p className="text-white font-manrope">DMCA</p>
           </Link>
@@ -58,19 +58,19 @@ const Footer: FC = () => {
 
       <ul className="h-[50px] flex justify-center items-center gap-[16px]">
         <li>
-          <Link href={conf.URL.telegram} className="gui-footer-social">
+          <Link href={conf.URL.telegram} className="cui-footer-social">
             <IcoSocialTelegram width={32} height={32} fill="#fff" />
           </Link>
         </li>
 
         <li>
-          <Link href={conf.URL.tiktok} className="gui-footer-social">
+          <Link href={conf.URL.tiktok} className="cui-footer-social">
             <IcoSocialTiktok width={32} height={32} fill="#fff" />
           </Link>
         </li>
 
         <li>
-          <Link href={conf.URL.discord} className="gui-footer-social">
+          <Link href={conf.URL.discord} className="cui-footer-social">
             <IcoSocialDiscord width={32} height={32} fill="#fff" />
           </Link>
         </li>

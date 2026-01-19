@@ -177,11 +177,11 @@
       }
 
       &_teams {
-        .styled-select-menu_option {
+        .sui-select-menu_option {
           padding: 0;
         }
 
-        .styled-select-menu_option--selected {
+        .sui-select-menu_option--selected {
           background: var(--color-dark-medium);
         }
       }
@@ -389,7 +389,7 @@
       justify-content: center;
       width: 44px;
 
-      .styled-avatar:nth-child(2) {
+      .sui-avatar:nth-child(2) {
         margin-left: -12px;
       }
     }
@@ -414,8 +414,8 @@
     &_button {
       width: 100%;
 
-      &:not(.styled-button--primary) {
-        .styled-text {
+      &:not(.sui-button--primary) {
+        .sui-text {
           color: var(--color-text-secondary) !important;
         }
       }

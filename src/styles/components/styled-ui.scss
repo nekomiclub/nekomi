@@ -1,6 +1,9 @@
+// Styled ui styles
+
 @use "../vars.scss" as *;
 
-.styled-text {
+// StyledText
+.sui-text {
   color: inherit;
   font-size: inherit;
   font-family: inherit;
@@ -10,6 +13,9 @@
   overflow-wrap: anywhere;
   position: relative;
   width: fit-content;
+
+  // Fix IOS clip subpixel
+  -webkit-font-smoothing: antialiased;
 
   &--heading {
     font-size: 1.5rem;
@@ -47,7 +53,8 @@
   }
 }
 
-.styled-button {
+// StyledButton
+.sui-button {
   transition: 0.1s ease-in-out;
 
   display: flex;
@@ -57,10 +64,26 @@
   padding: 0.75rem 1.5rem;
   border-radius: 0.25rem;
 
+  // Fix IOS clip subpixel
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
+
   &_text {
     width: 100%;
     text-align: center;
     flex-shrink: 0;
+  }
+
+  &:active,
+  &:focus-visible {
+    @media only screen and (min-width: $break-lg) {
+      transform: scale(0.95), translateZ(0);
+    }
+  }
+
+  &:focus-visible {
+    outline: 1px solid #fff;
   }
 
   &--default {
@@ -105,17 +128,6 @@
     }
   }
 
-  &:active,
-  &:focus-visible {
-    @media only screen and (min-width: $break-lg) {
-      transform: scale(0.95);
-    }
-  }
-
-  &:focus-visible {
-    outline: 1px solid #fff;
-  }
-
   &--icon {
     width: 38px;
     padding: 0;
@@ -134,7 +146,8 @@
   }
 }
 
-.styled-select {
+// StyledSelect
+.sui-select {
   &_menu {
     width: 100%;
   }
@@ -192,7 +205,8 @@
   }
 }
 
-.styled-avatar {
+// StyledAvatar
+.sui-avatar {
   background: var(--color-dark-light);
   display: flex;
   align-items: center;

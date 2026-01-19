@@ -14,7 +14,7 @@ import { useDebounce } from 'use-debounce';
 
 import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
-import { User } from '~/interfaces/UserIntf';
+import IUser from '~/interfaces/IUser';
 import { Routes } from '~/routes';
 import { AnimeSearchResultType } from '~/services/api/anime/GetAnimeSearch.api';
 import API from '~/services/api/API';
@@ -267,14 +267,14 @@ const MenuSearchResult: NextPage<MenuSearchResultProps> = ({ item, type, usePatc
   const [secondLineWidth] = useState(randomNumber(40, 250));
 
   const [animeResult, setAnimeResult] = useState<AnimeSearchResultType | null>(null);
-  const [userResult, setUserResult] = useState<User | null>(null);
+  const [userResult, setUserResult] = useState<IUser | null>(null);
   const [dubberResult, setDubberResult] = useState<DubberSearchResultType | null>(null);
 
 
 
   useEffect(() => {
     setAnimeResult(type === 'anime' ? item as AnimeSearchResultType : null);
-    setUserResult(type === 'user' ? item as User : null);
+    setUserResult(type === 'user' ? item as IUser : null);
     setDubberResult(type === 'dubber' ? item as DubberSearchResultType : null);
   }, [item]);
 

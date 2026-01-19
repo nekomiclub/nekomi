@@ -111,24 +111,24 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
           {/* Settings */}
           {(type === 'dubber_profile' || type === 'user_profile') && showSettings && <Tooltip content="Налаштування">
             <Link href={settingsUrl}>
-              <StyledButtonOld className="gui-ul-action">
-                <MaterialSymbol icon="settings" size={24} className="gui-ul-action_icon" />
+              <StyledButtonOld className="cui-ul-action">
+                <MaterialSymbol icon="settings" size={24} className="cui-ul-action_icon" />
               </StyledButtonOld>
             </Link>
           </Tooltip>}
 
           {/* Copy link */}
           {(type === 'dubber_profile' || type === 'user_profile' || type === 'user_lib') && <Tooltip content={isLinkCopied ? 'Посилання скопійовано!' : 'Скопіювати посилання'}>
-            <StyledButtonOld className={cn(`gui-ul-action`, isLinkCopied && 'gui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
-              <MaterialSymbol icon="link" size={24} className="gui-ul-action_icon" />
+            <StyledButtonOld className={cn(`cui-ul-action`, isLinkCopied && 'cui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
+              <MaterialSymbol icon="link" size={24} className="cui-ul-action_icon" />
             </StyledButtonOld>
           </Tooltip>}
 
           {/* Back to profile */}
           {(type === 'dubber_settings' || type === 'user_settings' || type === 'user_lib') && <Tooltip content="В профіль">
             <Link href={profileUrl}>
-              <StyledButtonOld className="gui-ul-action">
-                <MaterialSymbol icon="account_box" size={24} className="gui-ul-action_icon" />
+              <StyledButtonOld className="cui-ul-action">
+                <MaterialSymbol icon="account_box" size={24} className="cui-ul-action_icon" />
               </StyledButtonOld>
             </Link>
           </Tooltip>}
@@ -236,7 +236,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
         <MaterialSymbol icon="edit" size={16} color="#fff" />
       </button>
 
-      <button className={cn(`gui-ub-upload`, isDrag && 'gui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
+      <button className={cn(`cui-ub-upload`, isDrag && 'cui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
         <MaterialSymbol icon="backup" size={64} className="text-white" />
 
         <div className="flex flex-col items-center gap-[8px]">
@@ -345,7 +345,7 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
         <MaterialSymbol icon="edit" size={16} color="#fff" />
       </div>
 
-      <button className={cn(`gui-ub-upload`, isDrag && 'gui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
+      <button className={cn(`cui-ub-upload`, isDrag && 'cui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
         <MaterialSymbol icon="backup" size={128} className="text-white max-xl:!text-[64px]" />
 
         <div className="flex flex-col items-center gap-[8px]">

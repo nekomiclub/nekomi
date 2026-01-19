@@ -5,7 +5,7 @@ import React, { FC, useEffect, useId, useRef, useState } from 'react';
 
 import { IcoNekomiLogo } from '~/assets/Icons';
 import AnimeItem from '~/components/AnimeItem';
-import StyledSwiper from '~/components/Styled/StyledSwiper';
+import Carousel from '~/components/Carousel';
 import { AnimeCardType } from '~/interfaces/IAnime';
 import { IHomeFeedHero } from '~/interfaces/types';
 import { cn } from '~/utils/classnames';
@@ -119,11 +119,11 @@ export const HomeCategory: NextPage<IHomeCategoryProps> = (props) => {
 const HomeCategorySwiper: NextPage<IHomeCategorySwiperProps> = (props) => {
   const id = useId().replaceAll(':', '');
 
-  return <StyledSwiper>
+  return <Carousel>
     {props.animes.map((anime, i) => {
       return <AnimeItem anime={anime} className="!w-[230px]" key={`homecategory-${id}--${i}`} />;
     })}
-  </StyledSwiper>;
+  </Carousel>;
 };
 
 

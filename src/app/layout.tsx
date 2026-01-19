@@ -6,8 +6,7 @@ import 'material-symbols-rc/css';
 import '~/styles/index.scss';
 import '~/styles/typography.scss';
 import '~/styles/ui.scss';
-import '~/styles/global.ui.scss';
-import '~/styles/components/StyledComponent.scss';
+import '~/styles/components/styled-ui.scss';
 import '~/styles/tailwind.css';
 
 import { cache } from 'react';

@@ -7,9 +7,9 @@ import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
 
 import AnimeItem from '~/components/AnimeItem';
+import Carousel from '~/components/Carousel';
 import { HandleServerError } from '~/components/Errors';
 import StyledImage from '~/components/Styled/StyledImage';
-import StyledSwiper from '~/components/Styled/StyledSwiper';
 import { conf } from '~/conf';
 import { IRSCProps } from '~/interfaces/IRSC';
 import { WatchPageParams, WatchPageSearchParams } from '~/interfaces/PagesParams';
@@ -138,24 +138,24 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
           {anime.screenshots && anime.screenshots.length > 0 && <div className="wrapper gap-[16px]">
             <WatchSectionLabel icon="gallery_thumbnail" label={`Кадри`} />
 
-            <StyledSwiper>
+            <Carousel>
               {anime.screenshots.map((screenshot, i) => {
                 return <Link href={screenshot.original} target="_blank" title="Відкрити велике зображення" key={`screenshot-${i}`}>
                   <StyledImage src={screenshot.preview} width="192px" height="108px" rounded={2} />
                 </Link>;
               })}
-            </StyledSwiper>
+            </Carousel>
           </div>}
 
           {/* Related */}
           {anime.relations && anime.relations?.length > 0 && <div className="wrapper gap-[16px]">
             <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
 
-            <StyledSwiper>
+            <Carousel>
               {anime.relations.map((hydrated, i) => {
                 return <AnimeItem anime={hydrated} className="!w-[170px]" key={`relation-${anime.id}--${i}`} />;
               })}
-            </StyledSwiper>
+            </Carousel>
           </div>}
 
           {/* Player */}
@@ -234,24 +234,24 @@ export default async function WatchPageRSC(props: IRSCProps<WatchPageParams, Wat
         {anime.screenshots && anime.screenshots.length > 0 && <div className="wrapper gap-[16px]">
           <WatchSectionLabel icon="gallery_thumbnail" label={`Кадри`} />
 
-          <StyledSwiper>
+          <Carousel>
             {anime.screenshots.map((screenshot, i) => {
               return <Link href={screenshot.original} target="_blank" title="Відкрити велике зображення" key={`screenshot-${i}`}>
                 <StyledImage src={screenshot.preview} width="384px" height="216px" rounded={2} />
               </Link>;
             })}
-          </StyledSwiper>
+          </Carousel>
         </div>}
 
         {/* Related */}
         {anime.relations && anime.relations?.length > 0 && <div className="wrapper gap-[16px]">
           <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
 
-          <StyledSwiper>
+          <Carousel>
             {anime.relations.map((anime, i) => {
               return <AnimeItem anime={anime} className="!w-[230px]" key={`relation-${i}`} />;
             })}
-          </StyledSwiper>
+          </Carousel>
         </div>}
 
         {/* Player */}
