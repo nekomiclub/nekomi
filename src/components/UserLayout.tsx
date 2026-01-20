@@ -18,8 +18,9 @@ import { copyToClipboard } from '~/utils/utils';
 import { HandleClientError } from './Errors';
 import { NotifySuccess, NotifyWarn } from './nofity/NotifyStatus';
 import { ReportButton } from './Report';
-import StyledButtonOld from './Styled/StyledButton.old';
-import StyledImage from './Styled/StyledImage';
+import StyledAvatar from './styled/StyledAvatar';
+import StyledButtonOld from './styled/StyledButton.old';
+import StyledImage from './styled/StyledImage';
 import Tooltip from './Tooltip';
 import { H1, H2, P } from './UI/Typography';
 
@@ -44,6 +45,7 @@ interface IUserBannerProps {
 
 interface IUserAvatarProps {
   avatarUrl: string
+  initials: string
 
   isEdit?: boolean
   entityType?: 'user' | 'dubber'
@@ -64,6 +66,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const isUser = Boolean(user);
   const isDubber = Boolean(dubber);
 
+  const initials = user?.username ?? dubber?.name ?? '';
   const avatarUrl = user?.avatar ?? dubber?.avatar ?? '';
   const coverUrl = user?.cover ?? dubber?.cover ?? '';
   const entityId = user?.id ?? dubber?.id ?? '';
@@ -98,7 +101,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
     <div className="flex items-end gap-[24px] relative px-[16px] max-md:flex-col max-md:items-start max-md:gap-[8px]">
       <div className="w-[256px] h-[128px] flex-shrink-0 max-lg:h-[64px] max-lg:w-[128px]">
-        <UserAvatar avatarUrl={avatarUrl} isEdit={isEdit} entityId={entityId} entityType={entityType} className="!absolute bottom-0 max-md:-top-[64px]" />
+        <UserAvatar avatarUrl={avatarUrl} initials={initials} isEdit={isEdit} entityId={entityId} entityType={entityType} className="!absolute bottom-0 max-md:-top-[64px]" />
       </div>
 
       <div className="w-full flex items-center justify-between gap-[24px] pb-[24px] max-lg:pb-[4px] max-lg:pt-[12px] max-md:p-0">
@@ -140,7 +143,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
 
 
-const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityId, entityType, isEdit, className }) => {
+const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityId, entityType, isEdit, className, initials }) => {
   const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl);
   const [isDrag, setIsDrag] = useState(false);
 
@@ -226,7 +229,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
 
 
   return <div className={cn(`relative w-[256px] h-[256px] rounded-[4px] overflow-hidden shrink-0 max-lg:w-[128px] max-lg:h-[128px]`, className)}>
-    <StyledImage src={avatarUrl} width={'100%'} height={'100%'} alt="Dubber avatar" rounded={4} />
+    <StyledAvatar avatar={avatarUrl} width="100%" height="100%" alt="Avatar" initials={initials} borderRadius={4} />
 
     {/* Edit layout */}
     {isEdit && <>
@@ -335,7 +338,7 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
 
 
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[250px]">
-    <StyledImage src={bannerUrl} width="100%" height="100%" alt={`Team banner`} rounded={4} />
+    <StyledImage src={bannerUrl} width="100%" height="100%" alt={`Team banner`} borderRadius={4} />
 
     {/* Edit layout */}
     {isEdit && <>

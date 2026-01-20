@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react';
 
 import { NotifySuccess } from '~/components/nofity/NotifyStatus';
 import { ReportButton } from '~/components/Report';
-import { IUIFieldState, UIField } from '~/components/UI/Input';
+import { UIField, UIFieldState } from '~/components/UI/Input';
 import { useAppSelector } from '~/hooks/redux';
 import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import { cn } from '~/utils/classnames';
@@ -24,18 +24,18 @@ interface IProps {
 const TSettingsPage: FC<IProps> = (props) => {
   const currentUser = useAppSelector(state => state.user);
 
-  const [nameUkr, setNameUkr] = useState<IUIFieldState>({ initialValue: props.dubber.name });
-  const [description, setDescription] = useState<IUIFieldState>({ initialValue: props.dubber.about });
+  const [nameUkr, setNameUkr] = useState<UIFieldState>({ initialValue: props.dubber.name });
+  const [description, setDescription] = useState<UIFieldState>({ initialValue: props.dubber.about });
 
-  const [telegramLink, setTelegramLink] = useState<IUIFieldState>({ initialValue: props.dubber.socials?.telegram ?? '' });
-  const [instagramLink, setInstagramLink] = useState<IUIFieldState>({ initialValue: props.dubber.socials?.instagram ?? '' });
-  const [tiktokLink, setTiktokLink] = useState<IUIFieldState>({ initialValue: props.dubber.socials?.tiktok ?? '' });
-  const [youtubeLink, setYoutubeLink] = useState<IUIFieldState>({ initialValue: props.dubber.socials?.youtube ?? '' });
+  const [telegramLink, setTelegramLink] = useState<UIFieldState>({ initialValue: props.dubber.socials?.telegram ?? '' });
+  const [instagramLink, setInstagramLink] = useState<UIFieldState>({ initialValue: props.dubber.socials?.instagram ?? '' });
+  const [tiktokLink, setTiktokLink] = useState<UIFieldState>({ initialValue: props.dubber.socials?.tiktok ?? '' });
+  const [youtubeLink, setYoutubeLink] = useState<UIFieldState>({ initialValue: props.dubber.socials?.youtube ?? '' });
 
-  const [patreonLink, setPatreonLink] = useState<IUIFieldState>({ initialValue: props.dubber.support?.patreon ?? '' });
-  const [bmcLink, setBmcLink] = useState<IUIFieldState>({ initialValue: props.dubber.support?.bymeacoffee ?? '' });
-  const [monobankLink, setMonobankLink] = useState<IUIFieldState>({ initialValue: props.dubber.support?.monobank ?? '' });
-  const [diakaLink, setDiakaLink] = useState<IUIFieldState>({ initialValue: props.dubber.support?.diaka ?? '' });
+  const [patreonLink, setPatreonLink] = useState<UIFieldState>({ initialValue: props.dubber.support?.patreon ?? '' });
+  const [bmcLink, setBmcLink] = useState<UIFieldState>({ initialValue: props.dubber.support?.bymeacoffee ?? '' });
+  const [monobankLink, setMonobankLink] = useState<UIFieldState>({ initialValue: props.dubber.support?.monobank ?? '' });
+  const [diakaLink, setDiakaLink] = useState<UIFieldState>({ initialValue: props.dubber.support?.diaka ?? '' });
 
   const [dubberMembers, setDubberMembers] = useState<IDubberMemberCard[]>(props.members);
   const [isSomethingChanged, setIsSomethingChanged] = useState(false);

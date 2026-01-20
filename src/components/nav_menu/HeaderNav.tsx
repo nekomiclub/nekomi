@@ -8,8 +8,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { IcoNekomiLogoWhite } from '~/components/Icons';
-import StyledButtonOld from '~/components/Styled/StyledButton.old';
-import StyledImage from '~/components/Styled/StyledImage';
+import StyledAvatar from '~/components/styled/StyledAvatar';
+import StyledButtonOld from '~/components/styled/StyledButton.old';
 import Tooltip from '~/components/Tooltip';
 import routes from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
@@ -37,7 +37,7 @@ interface IProps {
 
 const HeaderNav: FC<IProps> = ({ user, logout, signin, searchPopupId, forceFocus, isDropdownMenuOpen, setIsDropdownMenuOpen, isSigningIn }) => {
   const pathname = usePathname();
-  const dropdownMenuId = useId().replaceAll(':', '');
+  const dropdownMenuId = useId();
 
 
 
@@ -58,7 +58,7 @@ const HeaderNav: FC<IProps> = ({ user, logout, signin, searchPopupId, forceFocus
       {user.id && <>
         <Menu gap={16} settings={{ align: 'end' }} className="ui-dropdownMenu--scaleAnimation" state={isDropdownMenuOpen} stateSetter={setIsDropdownMenuOpen} id={dropdownMenuId}>
           <MenuTrigger className="flex items-center gap-[8px] duration-200 relative" anchor>
-            <StyledImage src={user.avatar} width={`40px`} height={`40px`} loading="eager" className="rounded-[4px] overflow-hidden" alt="avatar" />
+            <StyledAvatar avatar={user.avatar} initials={user.username} borderRadius={4} width={`40px`} height={`40px`} priority className="rounded-[4px] overflow-hidden" alt="avatar" />
 
             <MaterialSymbol icon="arrow_drop_down" size={24} className={cn(`text-white duration-200 p-[8px]`, isDropdownMenuOpen && 'rotate-180')} />
           </MenuTrigger>

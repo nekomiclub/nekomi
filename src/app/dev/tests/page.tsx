@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import StyledButton from '~/components/Styled/StyledButton';
-import StyledCheckbox from '~/components/Styled/StyledCheckbox';
+import StyledButton from '~/components/styled/StyledButton';
+import StyledCheckbox from '~/components/styled/StyledCheckbox';
 
 export default function TestsPageRSC() {
   const [isChecked, setIsChecked] = useState(true);

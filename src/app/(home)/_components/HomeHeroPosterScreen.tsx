@@ -2,7 +2,7 @@
 
 import React, { FC, useEffect, useState } from 'react';
 
-import StyledImage from '~/components/Styled/StyledImage';
+import StyledImage from '~/components/styled/StyledImage';
 import { IHomeFeedHero } from '~/interfaces/types';
 import { cn } from '~/utils/classnames';
 

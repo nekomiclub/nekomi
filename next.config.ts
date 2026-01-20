@@ -1,5 +1,6 @@
 const nextConfig: import('next').NextConfig = {
   images: {
+    unoptimized: true,
     remotePatterns: [{
       hostname: '*.nekomi.club'
     }, {

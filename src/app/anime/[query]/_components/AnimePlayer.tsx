@@ -5,11 +5,11 @@ import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import MediaQuery from 'react-responsive';
 
 import { NotifyWarn } from '~/components/nofity/NotifyStatus';
-import StyledAvatar from '~/components/Styled/StyledAvatar';
-import StyledButton from '~/components/Styled/StyledButton';
-import StyledImage from '~/components/Styled/StyledImage';
-import StyledSelect, { IStyledSelectOption, IStyledSelectOptionContentProps } from '~/components/Styled/StyledSelect';
-import { StyledM, StyledS } from '~/components/Styled/StyledText';
+import StyledAvatar from '~/components/styled/StyledAvatar';
+import StyledButton from '~/components/styled/StyledButton';
+import StyledImage from '~/components/styled/StyledImage';
+import StyledSelect, { IStyledSelectOption, IStyledSelectOptionContentProps } from '~/components/styled/StyledSelect';
+import { StyledM, StyledS } from '~/components/styled/StyledText';
 import conf from '~/conf';
 import { AnimeVODProviderList, AnimeVODProviderType, IAnimeEpisode, IAnimePlayer, IAnimePlayerTeam, IAnimePlayerVOD } from '~/interfaces/IAnime';
 import { DubberCardType } from '~/interfaces/IDubber';
@@ -477,7 +477,7 @@ const AnimePlayerNextEpisode: FC<IAnimePlayerNextEpisodeProps> = (props) => {
       <button className="ap-player-next_screenshot" onClick={ctx.nextEpisode}>
         {/* Screenshot exist */}
         {false && <>
-          <StyledImage src="https://cdn.nekomi.club/26585c1e-e49d-46b0-a703-f9bee858f25a" width="100%" height="100%" rounded={4} />
+          <StyledImage src="https://cdn.nekomi.club/26585c1e-e49d-46b0-a703-f9bee858f25a" width="100%" height="100%" borderRadius={4} />
         </>}
 
         {/* Screenshot does not exist fallback */}

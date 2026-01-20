@@ -4,7 +4,7 @@ import { FC, useMemo } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import StyledImage from '~/components/Styled/StyledImage';
+import StyledImage from '~/components/styled/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { AnimeFullType } from '~/services/api/anime/GetAnime.api';
@@ -40,7 +40,7 @@ export const WatchActions: FC<IProps> = (props) => {
     </Link>}
 
     <Link href={`https://hikka.io/edit/new?slug=${props.anime.hikka_slug}&content_type=anime`} target="_blank" className="ui-button watch-meta-action">
-      <StyledImage src="https://avatars.githubusercontent.com/u/48723041?s=200&v=4" width="24px" height="24px" rounded={4} useImg />
+      <StyledImage src="https://avatars.githubusercontent.com/u/48723041?s=200&v=4" width="24px" height="24px" borderRadius={4} unoptimized />
       <p className="text-white font-manrope uppercase max-sm:text-[14px]">Редагувати на hikka.io</p>
     </Link>
   </div>;

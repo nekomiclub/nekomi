@@ -5,7 +5,7 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import StyledImage from '~/components/Styled/StyledImage';
+import StyledImage from '~/components/styled/StyledImage';
 import { DubberRoleType } from '~/interfaces/IDubber';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import routes from '~/routes';

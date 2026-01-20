@@ -2,7 +2,7 @@
 import Link from 'next/link';
 
 import { IcoSocialGithub, IcoSocialLinkedin, IcoSocialTelegram } from '~/components/Icons';
-import StyledImage from '~/components/Styled/StyledImage';
+import StyledImage from '~/components/styled/StyledImage';
 import siteMetadata from '~/utils/site-metadata';
 
 

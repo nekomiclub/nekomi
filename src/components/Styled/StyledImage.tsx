@@ -1,98 +1,82 @@
 'use client';
 
 import { NextPage } from 'next';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 
-import { P } from '~/components/UI/Typography';
 import { cn } from '~/utils/classnames';
 
+import { StyledM } from './StyledText';
 
 
-export interface StyledImageProps {
+
+export interface IStyledImageProps {
   src: string
   width: string
   height: string
 
   className?: string
+  hideFallback?: boolean
+  priority?: boolean
+  unoptimized?: boolean
+  borderRadius?: number
 
-  /** Use native img instead of next image */
-  useImg?: boolean
-
-  /** @default "lazy" */
+  /** 
+   * Will preserve "eager" when priority specified
+   * 
+   * @default "lazy"
+   */
   loading?: 'lazy' | 'eager'
 
   /** @default "..." */
   alt?: string
-
-  /** Border radius in px */
-  rounded?: number
 }
 
 
 
-export const StyledImage: NextPage<StyledImageProps> = ({ height, src, width, alt, className, loading, useImg, rounded }) => {
-  alt = alt ?? '...';
-  loading = loading ?? 'lazy';
+const StyledImage: NextPage<IStyledImageProps> = (props) => {
+  const { width, height, borderRadius } = props;
 
-  const borderRadius = rounded ?? `${rounded}px`;
-
-  const [imageSrc, setImageSrc] = useState('');
-  const [imageDims, setImageDims] = useState<number[]>([]); // width, height
-
+  const [imageSrc, setImageSrc] = useState<string>();
   const [isLoaded, setIsLoaded] = useState(false);
   const [isErrored, setIsErrored] = useState(false);
-  const [useNativeImage, setUseNativeImage] = useState(Boolean(useImg));
 
-  const imageRef = useRef<HTMLImageElement>(null);
-
+  const loading = props.priority ? 'eager' : props.loading ?? 'lazy';
 
 
-  // Handle image dims
-  useEffect(() => {
-    const img = imageRef.current;
-    if (!img) return;
 
-    setImageDims([img.width, img.height]);
-  }, [imageSrc]);
-
-  // Handle image load
+  // Handle image load & error handling
   useEffect(() => {
     const img = new Image();
-    img.src = src;
+    img.src = props.src;
 
     img.onload = () => {
       setIsLoaded(true);
       setIsErrored(false);
-      setImageSrc(src);
+      setImageSrc(props.src);
     };
 
     img.onerror = () => {
       setIsErrored(true);
       setIsLoaded(false);
     };
-
-    setUseNativeImage(Boolean(useImg));
-  }, [src]);
+  }, [props.src]);
 
 
 
-  return <div className={cn('sui-image-wrapper', className)} style={{ width, height, borderRadius }}>
-    {/* Preserved / default image */}
-    {useNativeImage && imageSrc && <img src={imageSrc} alt={alt} loading={loading} className={cn('sui-image', isErrored && 'sui-image--hide')} ref={imageRef} />}
+  return <div className={cn('sui-image-wrapper', props.className)} style={{ width, height, borderRadius }}>
+    {imageSrc && <ImageNext src={imageSrc} alt={props.alt ?? '...'} loading={loading} priority={props.priority} unoptimized={props.unoptimized ?? true} fill className={cn('sui-image', (!isLoaded || isErrored) && 'sui-image--hide')} />}
 
-    {!useNativeImage && imageSrc && <ImageNext src={imageSrc} alt={alt} fill loading={loading} className={cn('sui-image', isErrored && 'sui-image--hide')} ref={imageRef} />}
+    {/* Loading */}
+    <Skeleton width={'100%'} height={'100%'} className="sui-image-skeleton" containerClassName={cn(`sui-image-skeleton`, (isLoaded || isErrored) && 'sui-image--hide')} />
 
-    {/* Image skeleton. Render it only when loading is lazy */}
-    {loading === 'lazy' && <Skeleton width={'100%'} height={'100%'} className="sui-image-skeleton" containerClassName={cn(`sui-image-skeleton`, (isLoaded || isErrored) && 'sui-image--hide')} />}
-
-    {/* Load error */}
-    <div className={cn(`sui-image-error`, !isErrored && 'sui-image--hide')}>
-      <MaterialSymbol icon="broken_image" size={32} className="text-grey-new" />
-      {imageDims[0] > 84 && imageDims[1] > 84 && <P text="Зображення відсутнє" size={12} className="text-grey-new text-center" />}
-    </div>
+    {/* Fallback */}
+    {!props.hideFallback && <div className={cn(`sui-image-error`, !isErrored && 'sui-image--hide')}>
+      <MaterialSymbol icon="broken_image" className="sui-image-error_icon" color="var(--color-text-muted)" />
+      <StyledM text={`Зображення відсутнє`} color="text-muted" center className="sui-image-error_message" />
+    </div>}
   </div>;
 };
 

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { HandleClientError } from '~/components/Errors';
 import { NotifySuccess, NotifyWarn } from '~/components/nofity/NotifyStatus';
-import { IUIFieldState, UIField } from '~/components/UI/Input';
+import { UIField,UIFieldState } from '~/components/UI/Input';
 import API from '~/services/api/API';
 import { UserFullType } from '~/services/api/user/GetUser.api';
 
@@ -22,7 +22,7 @@ interface IProps {
 const USettingsPage: FC<IProps> = (props) => {
   const router = useRouter();
 
-  const [username, setUsername] = useState<IUIFieldState>({ initialValue: props.user.username });
+  const [username, setUsername] = useState<UIFieldState>({ initialValue: props.user.username });
   const [isSomethingChanged, setIsSomethingChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 

@@ -4,7 +4,7 @@ import { FC, useMemo, useState } from 'react';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import StyledButtonOld from '~/components/Styled/StyledButton.old';
+import StyledButtonOld from '~/components/styled/StyledButton.old';
 import Tooltip from '~/components/Tooltip';
 import { H3, P } from '~/components/UI/Typography';
 import { useAppSelector } from '~/hooks/redux';

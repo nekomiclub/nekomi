@@ -16,8 +16,8 @@ import parseUserLibUI from '~/utils/parse-user-lib-ui';
 
 import { HandleClientError } from './Errors';
 import { NotifyWarn } from './nofity/NotifyStatus';
-import StyledCheckbox from './Styled/StyledCheckbox';
-import StyledImage from './Styled/StyledImage';
+import StyledCheckbox from './styled/StyledCheckbox';
+import StyledImage from './styled/StyledImage';
 
 
 
@@ -40,7 +40,7 @@ interface IAnimeItemEditMenuLibProps {
 
 
 const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
-  const editLibsMenuId = useId().replaceAll(':', '');
+  const editLibsMenuId = useId();
   const currentUser = useAppSelector(state => state.user);
 
   const [isEditLibsMenuOpen, setIsEditLibsMenuOpen] = useState(false);

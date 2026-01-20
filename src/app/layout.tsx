@@ -18,7 +18,7 @@ import { ToastContainer } from 'react-toastify';
 
 import { ErrorNoConnection } from '~/components/Errors';
 import Footer from '~/components/Footer';
-import NavMenu from '~/components/NavMenu/NavMenu';
+import NavMenu from '~/components/nav_menu/NavMenu';
 import conf from '~/conf';
 import { ILayoutProps } from '~/interfaces/types';
 import API from '~/services/api/API';

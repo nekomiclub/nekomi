@@ -5,7 +5,7 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'material-symbols-rc';
 import { useDebounce } from 'use-debounce';
 
-import { IUIFieldState, UIField } from '~/components/UI/Input';
+import { UIField,UIFieldState } from '~/components/UI/Input';
 import IDubber from '~/interfaces/IDubber';
 
 
@@ -17,7 +17,7 @@ interface IProps {
 
 
 const TSettingsInviteMembers: FC<IProps> = (props) => {
-  const [searchQuery, setSearchQuery] = useState<IUIFieldState>({ status: 'waiting', initialValue: '' });
+  const [searchQuery, setSearchQuery] = useState<UIFieldState>({ status: 'waiting', initialValue: '' });
   const [debouncedSearchQuery] = useDebounce(searchQuery.value ?? '', 500);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);

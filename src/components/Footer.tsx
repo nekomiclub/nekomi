@@ -6,13 +6,13 @@ import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '~/componen
 import { conf } from '~/conf';
 import routes from '~/routes';
 
-import StyledImage from './Styled/StyledImage';
+import StyledImage from './styled/StyledImage';
 
 
 
 const Footer: FC = () => {
   return <footer className="h-[500px] bg-dark-bright flex flex-col justify-end relative mt-[40px]">
-    <StyledImage width="100%" height="100%" src="/assets/footer-bg.png" useImg className="!absolute top-0 left-0" />
+    <StyledImage width="100%" height="100%" src="/assets/footer-bg.png" className="!absolute top-0 left-0" />
 
     <div className="wrapper gap-[32px] !flex-row justify-between items-end mb-[16px] max-2xl:!flex-col max-2xl:items-start max-sm:pb-[var(--header-height)]">
       <Link href={routes.home.path()}>

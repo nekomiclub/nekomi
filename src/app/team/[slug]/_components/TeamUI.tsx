@@ -3,7 +3,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import { IcoSocialTelegram } from '~/components/Icons';
-import StyledImage from '~/components/Styled/StyledImage';
+import StyledImage from '~/components/styled/StyledImage';
 import routes from '~/routes';
 import { IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
 import cn from '~/utils/classnames';

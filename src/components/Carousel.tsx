@@ -15,7 +15,7 @@ interface IProps {
 
 
 const Carousel: FC<IProps> = (props) => {
-  const id = useId().replaceAll(':', '');
+  const id = useId();
 
   const [isSwiperInitialized, setIsSwiperInitialized] = useState(false);
 

@@ -9,7 +9,7 @@ import Skeleton from 'react-loading-skeleton';
 import AnimeItem from '~/components/AnimeItem';
 import Carousel from '~/components/Carousel';
 import { HandleServerError } from '~/components/Errors';
-import StyledImage from '~/components/Styled/StyledImage';
+import StyledImage from '~/components/styled/StyledImage';
 import { conf } from '~/conf';
 import { IAnimePageParams, IAnimePageSearchParams } from '~/interfaces/PagesParams';
 import { IRSCProps } from '~/interfaces/types';
@@ -141,7 +141,7 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
             <Carousel>
               {anime.screenshots.map((screenshot, i) => {
                 return <Link href={screenshot.original} target="_blank" title="Відкрити велике зображення" key={`screenshot-${i}`}>
-                  <StyledImage src={screenshot.preview} width="192px" height="108px" rounded={2} />
+                  <StyledImage src={screenshot.preview} width="192px" height="108px" borderRadius={2} />
                 </Link>;
               })}
             </Carousel>
@@ -237,7 +237,7 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
           <Carousel>
             {anime.screenshots.map((screenshot, i) => {
               return <Link href={screenshot.original} target="_blank" title="Відкрити велике зображення" key={`screenshot-${i}`}>
-                <StyledImage src={screenshot.preview} width="384px" height="216px" rounded={2} />
+                <StyledImage src={screenshot.preview} width="384px" height="216px" borderRadius={2} />
               </Link>;
             })}
           </Carousel>

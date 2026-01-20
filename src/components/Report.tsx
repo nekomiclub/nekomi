@@ -6,7 +6,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import { IcoSocialDiscord } from '~/components/Icons';
-import StyledButtonOld from '~/components/Styled/StyledButton.old';
+import StyledButtonOld from '~/components/styled/StyledButton.old';
 import { conf } from '~/conf';
 import { cn } from '~/utils/classnames';
 

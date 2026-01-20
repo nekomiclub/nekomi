@@ -19,7 +19,7 @@ interface IProps {
 
 const WatchEditLibs: FC<IProps> = (props) => {
   const currentUser = useAppSelector(state => state.user);
-  const id = useId().replaceAll(':', '');
+  const id = useId();
 
   const [icon, setIcon] = useState<SymbolCodepoints>('create_new_folder');
   const [title, setTitle] = useState('ДОДАТИ В ТЕКУ');

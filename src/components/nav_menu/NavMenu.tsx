@@ -22,7 +22,7 @@ const NavMenu: FC = () => {
   const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const searchPopupId = useId().replaceAll(':', '');
+  const searchPopupId = useId();
 
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);

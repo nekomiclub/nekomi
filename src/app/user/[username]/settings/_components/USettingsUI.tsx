@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
 import { USettingsLinkSocialStatusType } from '~/app/user/[username]/settings/USettingsPageData';
-import StyledButtonOld from '~/components/Styled/StyledButton.old';
+import StyledButtonOld from '~/components/styled/StyledButton.old';
 import Tooltip from '~/components/Tooltip';
 import { H3, P } from '~/components/UI/Typography';
 import cn from '~/utils/classnames';

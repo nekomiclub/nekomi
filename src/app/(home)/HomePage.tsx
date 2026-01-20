@@ -117,7 +117,7 @@ export const HomeCategory: NextPage<IHomeCategoryProps> = (props) => {
 
 
 const HomeCategorySwiper: NextPage<IHomeCategorySwiperProps> = (props) => {
-  const id = useId().replaceAll(':', '');
+  const id = useId();
 
   return <Carousel>
     {props.animes.map((anime, i) => {

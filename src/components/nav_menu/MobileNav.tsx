@@ -7,7 +7,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import StyledButtonOld from '~/components/Styled/StyledButton.old';
+import StyledButtonOld from '~/components/styled/StyledButton.old';
 import { P } from '~/components/UI/Typography';
 import routes from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
@@ -35,7 +35,7 @@ interface IProps {
 
 const MobileNav: FC<IProps> = ({ user, logout, signin, searchPopupId, isDropdownMenuOpen, forceFocus, setIsDropdownMenuOpen, isSigningIn }) => {
   const pathname = usePathname();
-  const dropdownMenuId = useId().replaceAll(':', '');
+  const dropdownMenuId = useId();
 
 
 

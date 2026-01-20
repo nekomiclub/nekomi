@@ -5,7 +5,7 @@ import { MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import StyledImage from '~/components/Styled/StyledImage';
+import StyledAvatar from '~/components/styled/StyledAvatar';
 import routes from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
@@ -25,7 +25,7 @@ interface IProps {
 const NavMenuDropdown: FC<IProps> = ({ user, logout, className }) => {
   return <MenuWrapper className={cn(`bg-dark-primary border border-dark-light rounded-[4px] w-[200px] flex flex-col`, className)}>
     <Link href={routes.user.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-      <StyledImage src={user.avatar} width={`24px`} height={`24px`} loading="eager" className="rounded-[2px] overflow-hidden" alt="avatar" />
+      <StyledAvatar avatar={user.avatar} initials={user.username} borderRadius={4} width={`24px`} height={`24px`} className="rounded-[2px] overflow-hidden" alt="avatar" />
       <p className="text-white w-full font-manrope">Профіль</p>
     </Link>
 
