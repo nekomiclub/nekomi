@@ -303,7 +303,7 @@ const AnimePlayer: FC<IProps> = (props) => {
           </div>
 
           {/* Mid-size episodes under player */}
-          <MediaQuery maxWidth={conf.vars.breakpoints.breakXXL}>
+          <MediaQuery maxWidth={conf.vars.breakpoints.breakXXL - 1}>
             <AnimePLayerEpisodesList className="ap-player-video_episodes" />
           </MediaQuery>
         </div>
