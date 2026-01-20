@@ -1,16 +1,10 @@
 import { NextPage } from 'next';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
+import Tooltip from '~/components/Tooltip';
 import { cn } from '~/utils/classnames';
 
-import Tooltip from './Tooltip';
 
-
-
-interface IInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  state: any
-  stateSetter: (prop: any) => void
-}
 
 export interface UIFieldState {
   readonly initialValue: string | null
@@ -23,9 +17,6 @@ export interface UIFieldState {
   /** Contain value if it is different from initial or undefined if not  */
   readonly newValue?: string
 }
-
-/** @deprecated use UIFieldState instead */
-export type IUIFieldState = UIFieldState;
 
 export interface UIFieldProps extends React.InputHTMLAttributes<HTMLElement> {
   state: UIFieldState
@@ -40,11 +31,6 @@ export interface UIFieldProps extends React.InputHTMLAttributes<HTMLElement> {
 }
 
 
-
-/** @deprecated use UIField instead */
-const Input: NextPage<IInputProps> = ({ state, stateSetter, className, placeholder, ...props }) => {
-  return <input {...props} className={cn('px-[12px] py-[8px] bg-grey text-white text-[16px] placeholder:text-lightGrey placeholder:text-[16px]', className)} value={state} onChange={e => stateSetter(e.target.value)} placeholder={placeholder ?? '...'} />;
-};
 
 export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className, placeholder, disablePending, symbolsLimited, fieldType, parentClassName, disabled, ...props }) => {
   fieldType = fieldType ?? 'input';
@@ -202,7 +188,3 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
     </Tooltip>}
   </>;
 };
-
-
-
-export default Input;

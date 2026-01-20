@@ -1,4 +1,4 @@
-import { ILayoutProps } from '~/interfaces/IRSC';
+import { ILayoutProps } from '~/interfaces/types';
 import siteMetadata from '~/utils/site-metadata';
 
 

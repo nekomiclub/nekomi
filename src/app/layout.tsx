@@ -4,10 +4,8 @@ import 'swiper/css';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'material-symbols-rc/css';
 import '~/styles/index.scss';
-import '~/styles/typography.scss';
 import '~/styles/ui.scss';
-import '~/styles/global.ui.scss';
-import '~/styles/components/StyledComponent.scss';
+import '~/styles/components/styled-ui.scss';
 import '~/styles/tailwind.css';
 
 import { cache } from 'react';
@@ -20,14 +18,15 @@ import { ToastContainer } from 'react-toastify';
 
 import { ErrorNoConnection } from '~/components/Errors';
 import Footer from '~/components/Footer';
-import NavMenu from '~/components/NavMenu/NavMenu';
-import { StateProvider } from '~/components/StateProvider';
+import NavMenu from '~/components/nav_menu/NavMenu';
 import conf from '~/conf';
-import { ILayoutProps } from '~/interfaces/IRSC';
+import { ILayoutProps } from '~/interfaces/types';
 import API from '~/services/api/API';
 import { IUserState } from '~/store/reducers/userSlice';
 import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
+
+import StateProvider from './StateProvider';
 
 
 

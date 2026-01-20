@@ -1,7 +1,5 @@
 'use client';
 
-import '~/styles/components/StyledComponents.scss';
-
 import React, { FC, JSX, ReactNode } from 'react';
 
 import { P } from '~/components/UI/Typography';

@@ -3,7 +3,7 @@
 import { FC, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { InfoArticle, InfoHeader, InfoLangType, InfoWrapper } from '~/app/info/(components)/InfoUI';
+import { InfoArticle, InfoHeader, InfoLangType, InfoWrapper } from '~/app/info/_components/InfoUI';
 import { H2 } from '~/components/UI/Typography';
 
 

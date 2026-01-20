@@ -1,0 +1,27 @@
+// Team page styles
+
+@use "../vars.scss" as *;
+
+.tpg {
+  &-about {
+    &_link {
+      outline: none;
+
+      p,
+      span,
+      svg path {
+        transition: 0.1s ease-in-out;
+      }
+
+      &:hover,
+      &:focus-visible {
+        p,
+        span,
+        svg path {
+          color: $primary !important;
+          fill: $primary;
+        }
+      }
+    }
+  }
+}

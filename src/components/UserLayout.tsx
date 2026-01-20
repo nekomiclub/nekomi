@@ -9,18 +9,19 @@ import { conf } from '~/conf';
 import { useAppSelector } from '~/hooks/redux';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { UserCardType } from '~/interfaces/IUser';
-import { Routes } from '~/routes';
+import routes from '~/routes';
 import API from '~/services/api/API';
 import { DubberFullType } from '~/services/api/dubber/GetDubber.api';
 import cn from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
-import StyledButtonOld from './Styled/StyledButton.old';
-import StyledImage from './Styled/StyledImage';
-import { NotifySuccess, NotifyWarn } from './UI/NotifyToast';
-import { UIReportButton } from './UI/Report';
-import Tooltip from './UI/Tooltip';
+import { NotifySuccess, NotifyWarn } from './nofity/NotifyStatus';
+import { ReportButton } from './Report';
+import StyledAvatar from './styled/StyledAvatar';
+import StyledButtonOld from './styled/StyledButton.old';
+import StyledImage from './styled/StyledImage';
+import Tooltip from './Tooltip';
 import { H1, H2, P } from './UI/Typography';
 
 
@@ -44,6 +45,7 @@ interface IUserBannerProps {
 
 interface IUserAvatarProps {
   avatarUrl: string
+  initials: string
 
   isEdit?: boolean
   entityType?: 'user' | 'dubber'
@@ -64,14 +66,15 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const isUser = Boolean(user);
   const isDubber = Boolean(dubber);
 
+  const initials = user?.username ?? dubber?.name ?? '';
   const avatarUrl = user?.avatar ?? dubber?.avatar ?? '';
   const coverUrl = user?.cover ?? dubber?.cover ?? '';
   const entityId = user?.id ?? dubber?.id ?? '';
   const entityType = user ? 'user' : dubber ? 'dubber' : 'user';
   const isEdit = type === 'dubber_settings' || type === 'user_settings';
 
-  const profileUrl = user ? Routes.user.path({ username: user.username }) : dubber ? Routes.dubber.path({ slug: dubber.slug }) : '#';
-  const settingsUrl = user ? Routes.userSettings.path({ username: user.id }) : dubber ? Routes.dubberSettings.path({ slug: dubber.slug }) : '#';
+  const profileUrl = user ? routes.user.path({ username: user.username }) : dubber ? routes.team.path({ slug: dubber.slug }) : '#';
+  const settingsUrl = user ? routes.user_settings.path({ username: user.id }) : dubber ? routes.team_settings.path({ slug: dubber.slug }) : '#';
 
   const canEditUser = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE) || user?.id === currentUser.id /* || currentUser.permissions.includes('admin') */;
   const canEditDubber = currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE); /* || currentUser.permissions.includes('admin') */ /* || dubber?.members.find(el => el.id === currentUser.id)?.role === 'leader'; */
@@ -98,7 +101,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
     <div className="flex items-end gap-[24px] relative px-[16px] max-md:flex-col max-md:items-start max-md:gap-[8px]">
       <div className="w-[256px] h-[128px] flex-shrink-0 max-lg:h-[64px] max-lg:w-[128px]">
-        <UserAvatar avatarUrl={avatarUrl} isEdit={isEdit} entityId={entityId} entityType={entityType} className="!absolute bottom-0 max-md:-top-[64px]" />
+        <UserAvatar avatarUrl={avatarUrl} initials={initials} isEdit={isEdit} entityId={entityId} entityType={entityType} className="!absolute bottom-0 max-md:-top-[64px]" />
       </div>
 
       <div className="w-full flex items-center justify-between gap-[24px] pb-[24px] max-lg:pb-[4px] max-lg:pt-[12px] max-md:p-0">
@@ -111,24 +114,24 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
           {/* Settings */}
           {(type === 'dubber_profile' || type === 'user_profile') && showSettings && <Tooltip content="Налаштування">
             <Link href={settingsUrl}>
-              <StyledButtonOld className="gui-ul-action">
-                <MaterialSymbol icon="settings" size={24} className="gui-ul-action_icon" />
+              <StyledButtonOld className="cui-ul-action">
+                <MaterialSymbol icon="settings" size={24} className="cui-ul-action_icon" />
               </StyledButtonOld>
             </Link>
           </Tooltip>}
 
           {/* Copy link */}
           {(type === 'dubber_profile' || type === 'user_profile' || type === 'user_lib') && <Tooltip content={isLinkCopied ? 'Посилання скопійовано!' : 'Скопіювати посилання'}>
-            <StyledButtonOld className={cn(`gui-ul-action`, isLinkCopied && 'gui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
-              <MaterialSymbol icon="link" size={24} className="gui-ul-action_icon" />
+            <StyledButtonOld className={cn(`cui-ul-action`, isLinkCopied && 'cui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
+              <MaterialSymbol icon="link" size={24} className="cui-ul-action_icon" />
             </StyledButtonOld>
           </Tooltip>}
 
           {/* Back to profile */}
           {(type === 'dubber_settings' || type === 'user_settings' || type === 'user_lib') && <Tooltip content="В профіль">
             <Link href={profileUrl}>
-              <StyledButtonOld className="gui-ul-action">
-                <MaterialSymbol icon="account_box" size={24} className="gui-ul-action_icon" />
+              <StyledButtonOld className="cui-ul-action">
+                <MaterialSymbol icon="account_box" size={24} className="cui-ul-action_icon" />
               </StyledButtonOld>
             </Link>
           </Tooltip>}
@@ -140,7 +143,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
 
 
-const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityId, entityType, isEdit, className }) => {
+const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityId, entityType, isEdit, className, initials }) => {
   const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl);
   const [isDrag, setIsDrag] = useState(false);
 
@@ -226,7 +229,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
 
 
   return <div className={cn(`relative w-[256px] h-[256px] rounded-[4px] overflow-hidden shrink-0 max-lg:w-[128px] max-lg:h-[128px]`, className)}>
-    <StyledImage src={avatarUrl} width={'100%'} height={'100%'} alt="Dubber avatar" rounded={4} />
+    <StyledAvatar avatar={avatarUrl} width="100%" height="100%" alt="Avatar" initials={initials} borderRadius={4} />
 
     {/* Edit layout */}
     {isEdit && <>
@@ -236,7 +239,7 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
         <MaterialSymbol icon="edit" size={16} color="#fff" />
       </button>
 
-      <button className={cn(`gui-ub-upload`, isDrag && 'gui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
+      <button className={cn(`cui-ub-upload`, isDrag && 'cui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
         <MaterialSymbol icon="backup" size={64} className="text-white" />
 
         <div className="flex flex-col items-center gap-[8px]">
@@ -335,7 +338,7 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
 
 
   return <div className="w-full h-fit aspect-[3.8] relative rounded-[4px] overflow-hidden max-h-[500px] min-h-[250px]">
-    <StyledImage src={bannerUrl} width="100%" height="100%" alt={`Team banner`} rounded={4} />
+    <StyledImage src={bannerUrl} width="100%" height="100%" alt={`Team banner`} borderRadius={4} />
 
     {/* Edit layout */}
     {isEdit && <>
@@ -345,7 +348,7 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
         <MaterialSymbol icon="edit" size={16} color="#fff" />
       </div>
 
-      <button className={cn(`gui-ub-upload`, isDrag && 'gui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
+      <button className={cn(`cui-ub-upload`, isDrag && 'cui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
         <MaterialSymbol icon="backup" size={128} className="text-white max-xl:!text-[64px]" />
 
         <div className="flex flex-col items-center gap-[8px]">
@@ -357,7 +360,7 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
     </>}
 
     {/* Report button */}
-    {!isEdit && <UIReportButton className="!absolute top-[8px] right-[8px] opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" type="icon" text="Надіслати скаргу" />}
+    {!isEdit && <ReportButton className="!absolute top-[8px] right-[8px] opacity-[.5] duration-200 hover:opacity-100 focus-visible:opacity-100" type="icon" text="Надіслати скаргу" />}
   </div>;
 };
 

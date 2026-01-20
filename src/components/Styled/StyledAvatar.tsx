@@ -2,24 +2,25 @@ import { FC } from 'react';
 
 import cn from '~/utils/classnames';
 
-import StyledImage, { StyledImageProps } from './StyledImage';
-import { StyledM } from './StyledTypo';
+import StyledImage, { IStyledImageProps } from './StyledImage';
+import { StyledM } from './StyledText';
 
 
 
-interface IProps extends Omit<StyledImageProps, keyof Pick<StyledImageProps, 'src' | 'rounded'>> {
+export interface IStyledAvatarProps extends Omit<IStyledImageProps, keyof Pick<IStyledImageProps, 'src' | 'hideFallback'>> {
   avatar: string | undefined
   initials: string
 }
 
 
 
-const StyledAvatar: FC<IProps> = (props) => {
+const StyledAvatar: FC<IStyledAvatarProps> = (props) => {
   const { avatar, initials, className, ...rest } = props;
+  const rounded = props.borderRadius ?? 32;
 
-  return <div className={cn(`styled-avatar`, className)} style={{ width: props.width, height: props.height }}>
-    <StyledM text={props.initials.charAt(0)} bold color="text-muted" />
-    {avatar && <StyledImage src={avatar} rounded={32} className="styled-avatar_image" {...rest} />}
+  return <div className={cn(`sui-avatar`, className)} style={{ width: props.width, height: props.height, borderRadius: rounded }}>
+    <StyledM text={props.initials.charAt(0).toUpperCase()} bold color="text-muted" className="sui-avatar_initials" />
+    {avatar && <StyledImage src={avatar} borderRadius={rounded} className="sui-avatar_image" {...rest} hideFallback />}
   </div>;
 };
 

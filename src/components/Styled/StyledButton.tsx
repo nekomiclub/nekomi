@@ -1,26 +1,29 @@
-import '~/styles/components/StyledComponent.scss';
-
 import React, { FC, JSX, ReactNode } from 'react';
 import { IMaterialSymbolProps, MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
 import cn from '~/utils/classnames';
 
-import { StyledM, StyledTypoFontType } from './StyledTypo';
+import { StyledM, StyledTextFontType } from './StyledText';
 
 
 
-interface IProps {
+export interface IStyledButtonProps {
   text?: string
-  icon?: SymbolCodepoints
   iconProps?: Omit<IMaterialSymbolProps, keyof Pick<IMaterialSymbolProps, 'icon'>>
-  textProps?: StyledTypoFontType
+  textProps?: StyledTextFontType
+
+  /** Icon before text */
+  icon?: SymbolCodepoints
+
+  /** Icon after text & children */
+  iconAfter?: SymbolCodepoints
 
   /**
    * Button type
    * 
    * @default "default"
    */
-  style?: 'default' | 'primary' | 'secondary' | 'clear'
+  style?: 'default' | 'primary' | 'secondary' | 'transparent' | 'inline'
 
   /** 
    * Tag 
@@ -41,18 +44,20 @@ interface IProps {
 
 
 
-const StyledButton: FC<IProps> = (props) => {
+const StyledButton: FC<IStyledButtonProps> = (props) => {
   const style = props.disabled ? 'default' : props.style ?? 'default';
   const Tag: keyof JSX.IntrinsicElements = props.as ?? 'button';
   const isIconOnly = props.icon && !props.children && !props.text;
 
 
 
-  return <Tag className={cn(`styled-button styled-button--${style}`, isIconOnly && `styled-button--icon`, props.disabled && `styled-button--disabled`, props.className)} tabIndex={0} disabled={props.disabled} id={props.id} onClick={props.onClick} type={props.type}>
+  return <Tag className={cn(`sui-button sui-button--${style}`, isIconOnly && `sui-button--icon`, props.disabled && `sui-button--disabled`, props.className)} tabIndex={0} disabled={props.disabled} id={props.id} onClick={props.onClick} type={props.type}>
     {props.icon && <MaterialSymbol icon={props.icon} size={20} {...props.iconProps} />}
-    {props.text && <StyledM text={props.text} className="styled-button_text" bold {...props.textProps} lineClamp={1} />}
 
+    {props.text && <StyledM text={props.text} className="sui-button_text" bold {...props.textProps} lineClamp={1} />}
     {props.children}
+
+    {props.iconAfter && <MaterialSymbol icon={props.iconAfter} size={20} {...props.iconProps} />}
   </Tag>;
 };
 

@@ -1,48 +1,46 @@
 'use client';
 
-import { NextPage } from 'next';
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import { AnimeCardType } from '~/interfaces/IAnime';
-import { UserLibType } from '~/interfaces/UserIntf';
-import { Routes } from '~/routes';
+import { USER_LIB_TYPE } from '~/interfaces/IUser';
+import routes from '~/routes';
 import API from '~/services/api/API';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
-import { prettySeconds } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
-import StyledImage from './Styled/StyledImage';
-import { NotifyWarn } from './UI/NotifyToast';
-import UICheckbox from './UI/UICheckbox';
+import { NotifyWarn } from './nofity/NotifyStatus';
+import StyledCheckbox from './styled/StyledCheckbox';
+import StyledImage from './styled/StyledImage';
 
 
 
-interface AnimeItemProps {
+interface IProps {
   anime: AnimeCardType
 
   className?: string
   libControls?: boolean
 }
 
-interface AnimeItemEditMenuProps {
+interface IAnimeItemEditMenuProps {
   animeId: string
 }
 
-interface AnimeItemEditMenuLibProps {
+interface IAnimeItemEditMenuLibProps {
   animeId: string
-  type: UserLibType
+  type: USER_LIB_TYPE
 }
 
 
 
-const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) => {
-  const editLibsMenuId = useId().replaceAll(':', '');
+const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
+  const editLibsMenuId = useId();
   const currentUser = useAppSelector(state => state.user);
 
   const [isEditLibsMenuOpen, setIsEditLibsMenuOpen] = useState(false);
@@ -53,7 +51,6 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) 
 
   const topOffset = 4;
   const bottomOffset = 8;
-  const watchProgress = currentUser.view_progress.find(el => el.anime_id === anime.id);
 
 
 
@@ -130,7 +127,7 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) 
       </Menu>
     </div>}
 
-    <Link href={Routes.watch.path({ query: anime.slug })} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef} prefetch={false}>
+    <Link href={routes.anime.path({ query: anime.slug })} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef} prefetch={false}>
       <StyledImage src={anime.poster} className="!absolute top-0 left-0" width="100%" height="100%" />
 
       <div className="flex flex-col">
@@ -159,30 +156,28 @@ const AnimeItem: NextPage<AnimeItemProps> = ({ anime, className, libControls }) 
             </div>
           </div>
         </div>
-
-        {watchProgress && watchProgress.progress > 3 && <div className="bg-primary z-[2] px-[8px] py-[4px] flex items-center justify-between gap-[4px]">
-          <p className="text-[12px] text-white font-manrope font-bold">Продовжити: {watchProgress.episode} еп, {prettySeconds(watchProgress.progress).pretty}</p>
-
-          <MaterialSymbol icon="resume" size={16} color="#fff" />
-        </div>}
       </div>
     </Link>
   </div>;
 };
 
-export const AnimeItemEditMenu: NextPage<AnimeItemEditMenuProps> = ({ animeId }) => {
+export default AnimeItem;
+
+
+
+export const AnimeItemEditMenu: FC<IAnimeItemEditMenuProps> = ({ animeId }) => {
   return <MenuWrapper className="w-full min-w-fit bg-dark-primary rounded-[4px] flex flex-col border border-dark-light">
-    <AnimeItemEditMenuLib type="favorite" animeId={animeId} />
-    <AnimeItemEditMenuLib type="watching" animeId={animeId} />
-    <AnimeItemEditMenuLib type="watched" animeId={animeId} />
-    <AnimeItemEditMenuLib type="plans" animeId={animeId} />
-    <AnimeItemEditMenuLib type="delayed" animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.FAVORITE} animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.WATCHING} animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.WATCHED} animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.PLANS} animeId={animeId} />
+    <AnimeItemEditMenuLib type={USER_LIB_TYPE.DELAYED} animeId={animeId} />
   </MenuWrapper>;
 };
 
 
 
-const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, animeId }) => {
+const AnimeItemEditMenuLib: FC<IAnimeItemEditMenuLibProps> = ({ type, animeId }) => {
   const currentUser = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
 
@@ -235,14 +230,10 @@ const AnimeItemEditMenuLib: NextPage<AnimeItemEditMenuLibProps> = ({ type, anime
 
 
   return <button className="flex items-center gap-[16px] p-[12px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={toggleLib}>
-    <UICheckbox isChecked={isChecked} setIsChecked={setIsChecked} disableDefaultToggle />
+    <StyledCheckbox isChecked={isChecked} />
 
     <MaterialSymbol icon={icon} size={24} className="text-white" />
 
     <p className="text-white font-manrope">{title}</p>
   </button>;
 };
-
-
-
-export default AnimeItem;

@@ -6,13 +6,14 @@ import { MaterialSymbol } from 'material-symbols-rc';
 
 import { StateSetter } from '~/interfaces/types';
 import cn from '~/utils/classnames';
+import { isEmpty } from '~/utils/utils';
 
 import StyledButton from './StyledButton';
-import { StyledM } from './StyledTypo';
+import { StyledM } from './StyledText';
 
 
 
-interface IProps {
+export interface IStyledSelectProps {
   slug: string
   setSlug: StateSetter<any>
 
@@ -25,6 +26,10 @@ interface IProps {
   optionContent?: FC<IStyledSelectOptionContentProps>
 }
 
+export interface IStyledSelectOptionContentProps {
+  option: IStyledSelectOption
+}
+
 
 
 export interface IStyledSelectOption<T = string> {
@@ -32,41 +37,41 @@ export interface IStyledSelectOption<T = string> {
   title: string
 }
 
-export interface IStyledSelectOptionContentProps {
-  option: IStyledSelectOption
-}
 
 
-
-const StyledSelect: FC<IProps> = (props) => {
+/**
+ * Styled select component
+ * Will force disabled when: disabled prop specified, empty options array or options length equals 1
+ */
+const StyledSelect: FC<IStyledSelectProps> = (props) => {
   const id = useId();
 
   const [isExpanded, setIsExpanded] = useState(false);
 
   const disabled = useMemo(() => {
-    return props.disabled || !props.options.length || props.options.length === 1;
+    return props.disabled || isEmpty(props.options) || props.options.length === 1;
   }, [props.disabled, props.options]);
 
 
 
-  return <Menu id={id} className={cn(`styled-select_menu`, props.className)} settings={{ animation: 'slide', align: 'stretch' }
+  return <Menu id={id} className={cn(`sui-select_menu`, props.className)} settings={{ animation: 'slide', align: 'stretch' }
   } state={isExpanded} stateSetter={setIsExpanded} disabled={disabled} >
-    <MenuTrigger className="styled-select-trigger" anchor>
-      <StyledButton as="div" className="styled-select_button" disabled={disabled}>
+    <MenuTrigger className="sui-select-trigger" anchor>
+      <StyledButton as="div" className="sui-select_button" disabled={disabled}>
         {props.triggerContent && <props.triggerContent />}
         {!props.triggerContent && <StyledM text={props.options.find(el => el.slug === props.slug)?.title ?? 'N/A'} color={disabled ? 'text-muted' : 'text'} lineClamp={1} />}
 
-        <MaterialSymbol icon="expand_all" size={16} color="var(--color-text-muted)" className={cn(`styled-select-trigger_arrow`)} />
+        <MaterialSymbol icon="expand_all" size={16} color="var(--color-text-muted)" className={cn(`sui-select-trigger_arrow`)} />
       </StyledButton>
     </MenuTrigger>
 
-    <MenuWrapper className="styled-select-menu">
+    <MenuWrapper className="sui-select-menu">
       {props.options.map((option, i) => {
         const isSelected = option.slug === props.slug;
 
-        return <Fragment key={`styled-select--${id}-opt--${i}`}>
+        return <Fragment key={`sui-select--${id}-opt--${i}`}>
           {props.optionContent && <props.optionContent option={option} />}
-          {!props.optionContent && <StyledButton className={cn(`styled-select-menu_option`, isSelected && 'styled-select-menu_option--selected')} onClick={() => props.setSlug(option.slug)}>
+          {!props.optionContent && <StyledButton className={cn(`sui-select-menu_option`, isSelected && 'sui-select-menu_option--selected')} onClick={() => props.setSlug(option.slug)}>
             <StyledM text={option.title} lineClamp={1} color="text" />
           </StyledButton>}
         </Fragment>;
