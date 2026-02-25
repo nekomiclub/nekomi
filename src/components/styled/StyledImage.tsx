@@ -13,7 +13,7 @@ import { StyledM } from './StyledText';
 
 
 export interface IStyledImageProps {
-  src: string
+  src: string | undefined
   width: string
   height: string
 
@@ -41,7 +41,7 @@ const StyledImage: NextPage<IStyledImageProps> = (props) => {
 
   const [imageSrc, setImageSrc] = useState<string>();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isErrored, setIsErrored] = useState(false);
+  const [isErrored, setIsErrored] = useState(!Boolean(props.src));
 
   const loading = props.priority ? 'eager' : props.loading ?? 'lazy';
 
@@ -49,6 +49,8 @@ const StyledImage: NextPage<IStyledImageProps> = (props) => {
 
   // Handle image load & error handling
   useEffect(() => {
+    if (!props.src) return setIsErrored(true);
+
     const img = new Image();
     img.src = props.src;
 
@@ -67,16 +69,19 @@ const StyledImage: NextPage<IStyledImageProps> = (props) => {
 
 
   return <div className={cn('sui-image-wrapper', props.className)} style={{ width, height, borderRadius }}>
-    {imageSrc && <ImageNext src={imageSrc} alt={props.alt ?? '...'} loading={loading} priority={props.priority} unoptimized={props.unoptimized ?? true} fill className={cn('sui-image', (!isLoaded || isErrored) && 'sui-image--hide')} />}
-
-    {/* Loading */}
-    <Skeleton width={'100%'} height={'100%'} className="sui-image-skeleton" containerClassName={cn(`sui-image-skeleton`, (isLoaded || isErrored) && 'sui-image--hide')} />
-
     {/* Fallback */}
     {!props.hideFallback && <div className={cn(`sui-image-error`, !isErrored && 'sui-image--hide')}>
       <MaterialSymbol icon="broken_image" className="sui-image-error_icon" color="var(--color-text-muted)" />
       <StyledM text={`Зображення відсутнє`} color="text-muted" center className="sui-image-error_message" />
     </div>}
+
+    {/* Loading */}
+    <Skeleton width={'100%'} height={'100%'} className="sui-image-skeleton" containerClassName={cn(`sui-image-skeleton`, (isLoaded || isErrored) && 'sui-image--hide')} />
+
+    {/* Image */}
+    <div className={cn('sui-image', (!isLoaded || isErrored) && 'sui-image--hide')}>
+      {imageSrc && <ImageNext src={imageSrc} alt={props.alt ?? '...'} loading={loading} priority={props.priority} unoptimized={props.unoptimized ?? true} fill />}
+    </div>
   </div>;
 };
 

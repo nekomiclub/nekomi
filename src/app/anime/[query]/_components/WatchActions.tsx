@@ -6,7 +6,6 @@ import Link from 'next/link';
 
 import StyledImage from '~/components/styled/StyledImage';
 import { useAppSelector } from '~/hooks/redux';
-import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { AnimeFullType } from '~/services/api/anime/GetAnime.api';
 import cn from '~/utils/classnames';
 
@@ -22,17 +21,13 @@ interface IProps {
 export const WatchActions: FC<IProps> = (props) => {
   const currentUser = useAppSelector(state => state.user);
 
-  const canEditAnime = useMemo(() => {
-    return currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE);
-  }, [currentUser]);
-
   const isDMCARestricted = useMemo(() => {
     return props.anime.is_DMCA_restricted && !currentUser.id;
   }, [props.anime.is_DMCA_restricted, currentUser]);
 
 
 
-  return (props.hasEpisodes || canEditAnime) && <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
+  return <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
     {/* Anime has episodes and does not infringing dmca */}
     {props.hasEpisodes && !isDMCARestricted && <Link href={'#player'} scroll className="ui-button watch-meta-action">
       <MaterialSymbol icon="live_tv" size={24} className="text-white max-sm:text-[20px]" />

@@ -40,7 +40,7 @@ const StyledText: FC<IStyledTextProps> = (props) => {
   const fontWeight = props.bold ? 700 : props.fontWeight;
   const fontFamily = props.fontFamily ?? 'manrope';
   const textAlign = props.center ? 'center' : undefined;
-  const color = props.color && props.color !== 'inherit' ? `var(--color-${props.color})` : undefined;
+  const color = props.color ? props.color !== 'inherit' ? `var(--color-${props.color})` : 'inherit' : undefined;
   const lineClamp = props.lineClamp;
 
 
