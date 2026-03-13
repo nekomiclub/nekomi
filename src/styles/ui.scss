@@ -1,4 +1,4 @@
-@use "./vars.scss" as *;
+@use "./variables.scss" as *;
 
 .ui {
   &-buttonJam {
@@ -13,9 +13,9 @@
   &-input {
     padding: 8px;
     background: transparent;
-    color: $white;
+    color: $color-text;
     border-radius: 4px;
-    border: 1px solid $dark-light;
+    border: 1px solid $color-border;
     font-size: 16px;
     font-family: var(--font-manrope);
     transition: 0.2s ease-in-out border-color;
@@ -24,23 +24,23 @@
     max-height: 500px;
 
     &::placeholder {
-      color: $grey;
+      color: $color-text-muted;
     }
 
     &--pending {
-      border-color: rgba($color: $info-warn, $alpha: 0.5) !important;
+      border-color: rgba($color: $color-info-warning, $alpha: 0.5) !important;
     }
 
     &--error {
-      border-color: $info-error !important;
+      border-color: $color-info-danger !important;
     }
 
     &--success {
-      border-color: $info-success !important;
+      border-color: $color-info-success !important;
     }
 
     &--disabled {
-      color: $grey;
+      color: $color-text-muted;
       cursor: not-allowed !important;
     }
   }
@@ -58,15 +58,15 @@
   }
 
   &-button {
-    background: $dark-medium;
-    border: 1px solid $dark-light;
+    background: $color-dark-medium;
+    border: 1px solid $color-border;
     transition: 0.2s ease-in-out;
     border-radius: 4px;
     outline: none;
 
     &:hover,
     &:focus-visible {
-      background: $dark-light;
+      background: $color-border;
     }
 
     &:active,
@@ -82,14 +82,14 @@
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    border: 1px solid $dark-light;
-    background: $dark-medium;
+    border: 1px solid $color-border;
+    background: $color-dark-medium;
     cursor: pointer;
     transition: 0.07s ease-in-out;
 
     &:hover,
     &:focus-visible {
-      background: $dark-light;
+      background: $color-border;
     }
 
     &:active,
@@ -98,7 +98,7 @@
     }
 
     &--checked {
-      background: $primary;
+      background: $color-accent;
 
       .ui-checkbox_checkmark {
         opacity: 1;
@@ -107,7 +107,7 @@
     }
 
     &_checkmark {
-      color: $white;
+      color: $color-text;
       opacity: 0;
       visibility: hidden;
       transition: 0.07s ease-in-out;
@@ -129,12 +129,12 @@
     gap: 12px;
 
     &--default {
-      background: $dark-medium;
-      border: 1px solid $dark-light;
+      background: $color-dark-medium;
+      border: 1px solid $color-border;
 
       &:hover,
       &:focus-visible {
-        background: $dark-light;
+        background: $color-border;
       }
     }
 

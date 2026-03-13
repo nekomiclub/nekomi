@@ -12,15 +12,15 @@ export default function TestsPageRSC() {
 
   return <main className="p-8 min-h-screen flex flex-col gap-4 items-start pt-[80px]">
     <StyledButton text="Default" />
-    <StyledButton text="Disabled" style="primary" disabled />
-    <StyledButton text="Primary" style="primary" />
-    <StyledButton text="Loading" style="primary" isLoading />
-    <StyledButton text="Secondary" style="secondary" />
-    <StyledButton text="Loading" style="secondary" isLoading />
-    <StyledButton text="Transparent" style="transparent" />
-    <StyledButton text="Transparent" style="transparent" isLoading />
-    <StyledButton text="Inline" style="inline" />
-    <StyledButton text="Inline" style="inline" isLoading />
+    <StyledButton text="Disabled" color="primary" disabled />
+    <StyledButton text="Primary" color="primary" />
+    <StyledButton text="Loading" color="primary" isLoading />
+    <StyledButton text="Secondary" color="secondary" />
+    <StyledButton text="Loading" color="secondary" isLoading />
+    <StyledButton text="Transparent" color="transparent" />
+    <StyledButton text="Transparent" color="transparent" isLoading />
+    <StyledButton text="Inline" color="inline" />
+    <StyledButton text="Inline" color="inline" isLoading />
 
     <StyledCheckbox isChecked={isChecked} setIsChecked={setIsChecked} label="dfdfsfds" />
   </main>;

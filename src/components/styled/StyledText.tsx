@@ -49,6 +49,7 @@ const StyledText: FC<IStyledTextProps> = (props) => {
     fontWeight,
     fontFamily: `var(--font-${fontFamily})`,
     textAlign,
+    width: textAlign === 'center' ? '100%' : undefined,
     color,
     lineClamp,
     WebkitLineClamp: lineClamp,

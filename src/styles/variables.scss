@@ -1,0 +1,58 @@
+// Breakpoints
+$break-xsm: 400px;
+$break-sm: 640px;
+$break-md: 768px;
+$break-lg: 1024px;
+$break-xl: 1280px;
+$break-2xl: 1536px;
+
+// Colors
+$color-accent: hsla(357, 100%, 64%, 100%);
+$color-accent-10: hsla(357, 100%, 64%, 10%);
+$color-accent-20: hsla(357, 100%, 64%, 20%);
+$color-accent-50: hsla(357, 100%, 64%, 50%);
+$color-accent-600: hsla(357, 100%, 60%, 100%);
+
+$color-text: hsla(0, 0%, 95%, 100%);
+$color-text-secondary: hsla(0, 0%, 70%, 100%);
+$color-text-muted: hsla(0, 0%, 45%, 100%);
+
+$color-dark: hsla(0, 0%, 5%, 100%);
+$color-dark-medium: hsla(0, 0%, 7%, 100%);
+$color-dark-light: hsla(0, 0%, 12%, 100%);
+
+$color-border: hsla(0, 0%, 15%, 100%);
+
+$color-info-danger: hsla(6, 78%, 57%, 100%);
+$color-info-warning: hsla(48, 89%, 50%, 100%);
+$color-info-success: hsla(145, 63%, 49%, 100%);
+
+// Variables
+:root {
+  // * === 3.0 styles
+  --wrapper-maxWidth: none;
+  --wrapper-minWidth: 320px;
+  --wrapper-side-paddingLG: 32px;
+  --wrapper-side-paddingMD: 16px;
+  --wrapper-side-paddingSM: 8px;
+
+  --color-accent: #{$color-accent};
+  --color-accent-10: #{$color-accent-10};
+  --color-accent-20: #{$color-accent-20};
+  --color-accent-50: #{$color-accent-50};
+  --color-accent-600: #{$color-accent-600};
+
+  --color-text: #{$color-text};
+  --color-text-secondary: #{$color-text-secondary};
+  --color-text-muted: #{$color-text-muted};
+
+  --color-dark: #{$color-dark};
+  --color-dark-medium: #{$color-dark-medium};
+  --color-dark-light: #{$color-dark-light};
+
+  --color-border: #{$color-border};
+
+  --color-info-danger: #{$color-info-danger};
+  --color-info-warning: #{$color-info-warning};
+  --color-info-success: #{$color-info-success};
+}

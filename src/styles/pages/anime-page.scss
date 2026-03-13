@@ -1,6 +1,6 @@
 // Anime page styles
 
-@use "../vars.scss" as *;
+@use "../variables.scss" as *;
 
 // deprecated. use .wp instead
 .watch {
@@ -9,7 +9,7 @@
       display: block;
       width: 100%;
       height: 2px;
-      background: $dark-light;
+      background: $color-border;
     }
   }
 
@@ -27,7 +27,7 @@
 
     &-detail {
       width: 100%;
-      background: $dark-bright;
+      background: $color-dark-light;
       border-radius: 4px;
       padding: 12px 16px;
       display: flex;
@@ -41,11 +41,11 @@
 
       &_value {
         text-transform: uppercase;
-        color: $white;
+        color: $color-text;
       }
 
       &_label {
-        color: $grey;
+        color: $color-text-muted;
         text-transform: uppercase;
       }
 
@@ -58,7 +58,7 @@
 
       &_outlined {
         width: 100%;
-        border: 1px solid $dark-light;
+        border: 1px solid $color-border;
         padding: 16px;
         display: flex;
         align-content: center;

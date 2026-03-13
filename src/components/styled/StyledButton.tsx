@@ -1,6 +1,6 @@
 import 'ldrs/react/Ring.css';
 
-import React, { FC, JSX, ReactNode } from 'react';
+import React, { CSSProperties, FC, JSX, ReactNode } from 'react';
 import { Ring } from 'ldrs/react';
 import { IMaterialSymbolProps, MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
@@ -22,11 +22,11 @@ export interface IStyledButtonProps {
   iconAfter?: SymbolCodepoints
 
   /**
-   * Button type
+   * Button color
    * 
    * @default "default"
    */
-  style?: 'default' | 'primary' | 'secondary' | 'transparent' | 'inline'
+  color?: 'default' | 'primary' | 'secondary' | 'transparent' | 'inline'
 
   /** 
    * Tag 
@@ -42,6 +42,7 @@ export interface IStyledButtonProps {
   children?: ReactNode | ReactNode[]
   type?: 'button' | 'submit' | 'reset'
   onClick?: (e: React.MouseEvent) => void
+  style?: CSSProperties
   isLoading?: boolean
   className?: string
 }
@@ -49,7 +50,7 @@ export interface IStyledButtonProps {
 
 
 const StyledButton: FC<IStyledButtonProps> = (props) => {
-  const style = props.disabled ? 'default' : props.style ?? 'default';
+  const style = props.disabled ? 'default' : props.color ?? 'default';
   const Tag: keyof JSX.IntrinsicElements = props.as ?? 'button';
   const isIconOnly = props.icon && !props.children && !props.text;
   const disabled = props.disabled || props.isLoading;

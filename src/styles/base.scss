@@ -1,0 +1,51 @@
+@use "./variables.scss" as *;
+
+* {
+  &::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  &::-webkit-scrollbar:horizontal {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $color-dark-medium;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-accent;
+  }
+}
+
+svg {
+  user-select: none;
+}
+
+.material-symbols-outlined {
+  user-select: none;
+}
+
+.wrapper {
+  --wrapper-side-padding: var(--wrapper-side-paddingLG);
+
+  width: 100%;
+  max-width: var(--wrapper-maxWidth);
+  min-width: calc(var(--wrapper-minWidth) + calc(var(--wrapper-side-padding) * 2));
+
+  padding-left: var(--wrapper-side-padding);
+  padding-right: var(--wrapper-side-padding);
+
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin: 0 auto;
+
+  @media only screen and (max-width: $break-md) {
+    --wrapper-side-padding: var(--wrapper-side-paddingMD);
+  }
+
+  @media only screen and (max-width: $break-sm) {
+    --wrapper-side-padding: var(--wrapper-side-paddingSM);
+  }
+}

@@ -1,6 +1,6 @@
 // Team page styles
 
-@use "../vars.scss" as *;
+@use "../variables.scss" as *;
 
 .tpg {
   &-about {
@@ -18,8 +18,8 @@
         p,
         span,
         svg path {
-          color: $primary !important;
-          fill: $primary;
+          color: $color-accent !important;
+          fill: $color-accent;
         }
       }
     }

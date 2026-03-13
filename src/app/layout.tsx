@@ -1,12 +1,4 @@
-import '@fullkekw/fkw-menu/css';
-import '@fullkekw/popup/css';
-import 'swiper/css';
-import 'react-loading-skeleton/dist/skeleton.css';
-import 'material-symbols-rc/css';
-import '~/styles/index.scss';
-import '~/styles/ui.scss';
-import '~/styles/components/styled-ui.scss';
-import '~/styles/tailwind.css';
+import '~/styles/_main.scss';
 
 import { cache } from 'react';
 import { Analytics } from '@vercel/analytics/react';
