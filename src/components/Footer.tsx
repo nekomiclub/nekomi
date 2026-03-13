@@ -16,42 +16,42 @@ const Footer: FC = () => {
 
     <div className="wrapper gap-[32px] !flex-row justify-between items-end mb-[16px] max-2xl:!flex-col max-2xl:items-start max-sm:pb-[var(--header-height)]">
       <Link href={routes.home.path()}>
-        <h3 className="text-white text-[60px] font-space-grotesk font-bold">nekomi</h3>
+        <h3 className="text-white text-[60px]  font-bold">nekomi</h3>
       </Link>
 
       <ul className="h-[50px] flex items-center gap-y-[8px] gap-[32px] flex-wrap max-2xl:h-auto">
         <li>
           <Link href={routes.info_contacts.path()} className="cui-footer-link">
             <MaterialSymbol icon="code_blocks" size={20} className="text-white" />
-            <p className="text-white font-manrope">Розробники</p>
+            <p className="text-white ">Розробники</p>
           </Link>
         </li>
 
         <li>
           <Link href={routes.info_agreement.path()} className="cui-footer-link">
             <MaterialSymbol icon="contract" size={20} className="text-white" />
-            <p className="text-white font-manrope">Угода користувача</p>
+            <p className="text-white ">Угода користувача</p>
           </Link>
         </li>
 
         <li>
           <Link href={routes.info_policy.path()} className="cui-footer-link">
             <MaterialSymbol icon="encrypted" size={20} className="text-white" />
-            <p className="text-white font-manrope">Політика конфіденційності</p>
+            <p className="text-white ">Політика конфіденційності</p>
           </Link>
         </li>
 
         <li>
           <Link href={routes.info_terms.path()} className="cui-footer-link">
             <MaterialSymbol icon="gavel" size={20} className="text-white" />
-            <p className="text-white font-manrope">Умови користування</p>
+            <p className="text-white ">Умови користування</p>
           </Link>
         </li>
 
         <li>
           <Link href={routes.info_DMCA.path()} className="cui-footer-link">
             <MaterialSymbol icon="copyright" size={20} className="text-white" />
-            <p className="text-white font-manrope">DMCA</p>
+            <p className="text-white ">DMCA</p>
           </Link>
         </li>
       </ul>

@@ -19,9 +19,6 @@ export interface IStyledTextProps {
   bold?: boolean
   fontWeight?: 'inherit' | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
 
-  /** @default "manrope" */
-  fontFamily?: 'manrope' | 'space-grotesk'
-
   /** If children specified, text will not be rendered */
   text?: string | number | undefined
 
@@ -38,7 +35,6 @@ export type StyledTextFontType = Omit<IStyledTextProps, 'tag' | 'size'>
 const StyledText: FC<IStyledTextProps> = (props) => {
   const Tag: keyof JSX.IntrinsicElements = props.tag;
   const fontWeight = props.bold ? 700 : props.fontWeight;
-  const fontFamily = props.fontFamily ?? 'manrope';
   const textAlign = props.center ? 'center' : undefined;
   const color = props.color ? props.color !== 'inherit' ? `var(--color-${props.color})` : 'inherit' : undefined;
   const lineClamp = props.lineClamp;
@@ -47,7 +43,7 @@ const StyledText: FC<IStyledTextProps> = (props) => {
 
   return <Tag className={cn(`sui-text sui-text--${props.size}`, lineClamp && 'sui-text--clamp', props.className)} suppressHydrationWarning style={{
     fontWeight,
-    fontFamily: `var(--font-${fontFamily})`,
+    fontFamily: `var(--font-manrope)`,
     textAlign,
     width: textAlign === 'center' ? '100%' : undefined,
     color,

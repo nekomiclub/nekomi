@@ -2,57 +2,6 @@
 
 @use "../variables.scss" as *;
 
-// StyledText
-.sui-text {
-  color: inherit;
-  font-size: inherit;
-  font-family: inherit;
-  font-weight: inherit;
-  transition: 0.1s ease-in-out;
-  line-height: 1.4em;
-  overflow-wrap: anywhere;
-  position: relative;
-  width: fit-content;
-
-  // Fix IOS clip subpixel
-  -webkit-font-smoothing: antialiased;
-
-  &--heading {
-    font-size: 1.5rem;
-    font-weight: 800;
-  }
-
-  &--h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-
-  &--h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-  }
-
-  &--m {
-    font-size: 1rem;
-  }
-
-  &--s {
-    font-size: 0.875rem;
-  }
-
-  &--xs {
-    font-size: 0.75rem;
-  }
-
-  &--clamp {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
 // StyledButton
 .sui-button {
   transition: 0.1s ease-in-out;

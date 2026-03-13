@@ -47,10 +47,10 @@ const Notification: FC<IProps> = (props) => {
       {type === 'warn' && <MaterialSymbol icon="error" size={24} color={`var(--color-info-${type})`} />}
       {type === 'error' && <MaterialSymbol icon="cancel" size={24} color={`var(--color-info-${type})`} />}
 
-      <p className="text-white text-[20px] font-manrope">{title}</p>
+      <p className="text-white text-[20px] ">{title}</p>
     </div>
 
-    <p className="text-grey-new font-manrope whitespace-pre-wrap">{message}</p>
+    <p className="text-grey-new  whitespace-pre-wrap">{message}</p>
   </div>;
 };
 

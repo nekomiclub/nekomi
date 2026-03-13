@@ -3,7 +3,7 @@
 import React, { FC, ReactNode } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
-import { H1, P } from '~/components/UI/Typography';
+import { StyledHeading, StyledM } from '~/components/styled/StyledText';
 
 
 
@@ -51,11 +51,11 @@ export const InfoList: FC<Props> = ({ children }) => {
 
 export const InfoHeader: FC<InfoHeaderProps> = ({ heading, lang, setLang }) => {
   return <div className="flex items-center gap-[32px] justify-center w-full max-[880px]:flex-col">
-    <H1 text={heading} size={40} bold center />
+    <StyledHeading text={heading} className="text-[40px]" bold center />
 
     <button className="ui-button flex items-center gap-[16px] py-[8px] px-[16px]" onClick={() => setLang(lang)}>
       <MaterialSymbol icon="translate" size={20} className="text-white" />
-      <P text={
+      <StyledM text={
         lang === 'ukr' ? 'Українською'
           : 'English'
       } />

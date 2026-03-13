@@ -4,8 +4,8 @@ import { Metadata } from 'next';
 import { MaterialSymbol } from 'material-symbols-rc';
 
 import { HandleServerError } from '~/components/Errors';
+import { StyledM } from '~/components/styled/StyledText';
 import Tooltip from '~/components/Tooltip';
-import { P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { conf, DevelopmentMode } from '~/conf';
 import { IUserLib } from '~/interfaces/IUser';
@@ -101,7 +101,7 @@ export default async function UserPageRSC(props: IRSCProps<IUserPageProps>) {
         <div className="flex items-center gap-[8px]">
           <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
           <Tooltip content={`Акаунт зареєстровано: ${timestampToDayMonth(getUTC(user.created_at).timestamp)}`}>
-            <P text={`${daysOnNekomi} ${wordDeclination(daysOnNekomi, ['день', 'дні', 'днів'])} на nekomi!`} size={12} className="text-grey-new" />
+            <StyledM text={`${daysOnNekomi} ${wordDeclination(daysOnNekomi, ['день', 'дні', 'днів'])} на nekomi!`} className="text-[12px]" color="text-muted" />
           </Tooltip>
         </div>
       </div>

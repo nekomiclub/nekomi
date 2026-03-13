@@ -48,11 +48,11 @@ const TSettingsMember: FC<IProps> = (props) => {
         <StyledImage src={props.member.avatar} width="48px" height="48px" className="rounded-[4px] overflow-hidden" />
 
         <div className="flex flex-col gap-[4px]">
-          <p className="text-white font-space-grotesk">@{props.member.username}</p>
+          <p className="text-white ">@{props.member.username}</p>
 
           <div className="flex items-center gap-[8px]">
             <MaterialSymbol icon="calendar_add_on" size={16} color="#555" />
-            <p className="text-grey-new text-[12px] font-manrope">Учасник з: {timestampToDayMonth(getUTC(props.member.member_since).timestamp)}</p>
+            <p className="text-grey-new text-[12px] ">Учасник з: {timestampToDayMonth(getUTC(props.member.member_since).timestamp)}</p>
           </div>
         </div>
       </Link>
@@ -65,7 +65,7 @@ const TSettingsMember: FC<IProps> = (props) => {
           {memberRole === 'editor' && <MaterialSymbol icon="edit" size={16} color="#fff" />}
           {memberRole === 'member' && <MaterialSymbol icon="group" size={16} color="#fff" />}
 
-          <p className="text-white font-manrope">{DubberParseRoleName(memberRole)}</p>
+          <p className="text-white ">{DubberParseRoleName(memberRole)}</p>
         </div>
 
         {canRedactRole && <MaterialSymbol icon="arrow_drop_down" size={16} color="#fff" className={cn(`duration-200`, isMenuOpen && 'rotate-180')} />}
@@ -74,17 +74,17 @@ const TSettingsMember: FC<IProps> = (props) => {
       <MenuWrapper className="flex flex-col w-[160px] bg-dark-bright border border-dark-light rounded-[2px]">
         <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('leader')}>
           <MaterialSymbol icon="star" size={16} color="#fff" />
-          <p className="text-white font-manrope">Лідер</p>
+          <p className="text-white ">Лідер</p>
         </button>
 
         <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('editor')}>
           <MaterialSymbol icon="edit" size={16} color="#fff" />
-          <p className="text-white font-manrope">Редактор</p>
+          <p className="text-white ">Редактор</p>
         </button>
 
         <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('member')}>
           <MaterialSymbol icon="group" size={16} color="#fff" />
-          <p className="text-white font-manrope">Учасник</p>
+          <p className="text-white ">Учасник</p>
         </button>
       </MenuWrapper>
     </Menu>

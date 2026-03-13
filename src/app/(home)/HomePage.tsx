@@ -134,7 +134,7 @@ const HomeDivider: NextPage<IHomeDividerProps> = ({ icon, label }) => {
       <div className="w-[32px] h-[32px] flex justify-center items-center max-md:w-[24px] max-md:h-[24px]">
         {icon}
       </div>
-      <h3 className="text-white text-[32px] font-bold max-md:text-[24px] font-manrope">{label}</h3>
+      <h3 className="text-white text-[32px] font-bold max-md:text-[24px] ">{label}</h3>
     </div>
 
     <span className="w-full h-[3px] gradient--primary"></span>

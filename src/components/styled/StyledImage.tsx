@@ -8,7 +8,6 @@ import Skeleton from 'react-loading-skeleton';
 
 import { cn } from '~/utils/classnames';
 
-import { StyledM } from './StyledText';
 
 
 
@@ -72,7 +71,6 @@ const StyledImage: NextPage<IStyledImageProps> = (props) => {
     {/* Fallback */}
     {!props.hideFallback && <div className={cn(`sui-image-error`, !isErrored && 'sui-image--hide')}>
       <MaterialSymbol icon="broken_image" className="sui-image-error_icon" color="var(--color-text-muted)" />
-      <StyledM text={`Зображення відсутнє`} color="text-muted" center className="sui-image-error_message" />
     </div>}
 
     {/* Loading */}

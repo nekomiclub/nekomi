@@ -34,10 +34,10 @@ const WatchDetail: FC<IProps> = (props) => {
 
 
   return <div className={cn(`watch-meta-detail`, props.className)}>
-    {value && <p className="watch-meta-detail_value font-manrope">{value}</p>}
-    {value === null && <p className="watch-meta-detail_value !text-grey-new font-manrope">—</p>}
+    {value && <p className="watch-meta-detail_value ">{value}</p>}
+    {value === null && <p className="watch-meta-detail_value !text-grey-new ">—</p>}
 
-    {props.rate && <Tooltip content={props.rate.description}><p className="watch-meta-detail_value font-manrope">{props.rate.name}</p></Tooltip>}
+    {props.rate && <Tooltip content={props.rate.description}><p className="watch-meta-detail_value ">{props.rate.name}</p></Tooltip>}
 
     {props.genres && <>
       {props.genres.length > 0 ? <div className="watch-meta-detail_container">
@@ -45,13 +45,13 @@ const WatchDetail: FC<IProps> = (props) => {
           let immutableI = i;
 
           return <Tooltip content={genre.description} key={`animemeta-genre--${i}`}>
-            <span className="watch-meta-detail_value font-bold font-manrope">
+            <span className="watch-meta-detail_value font-bold ">
               {genre.name}
               {++immutableI < props.genres!.length ? ',' : ''}
             </span>
           </Tooltip>;
         })}
-      </div> : <p className="text-grey-new text-center font-manrope max-sm:text-start">—</p>}
+      </div> : <p className="text-grey-new text-center  max-sm:text-start">—</p>}
     </>}
 
     {props.studios && <>
@@ -64,10 +64,10 @@ const WatchDetail: FC<IProps> = (props) => {
             {++immutableI < props.studios!.length ? ',' : ''}
           </span>;
         })}
-      </div> : <p className="text-grey-new text-center font-manrope max-sm:text-start">—</p>}
+      </div> : <p className="text-grey-new text-center  max-sm:text-start">—</p>}
     </>}
 
-    <p className="watch-meta-detail_label font-manrope">{props.name}</p>
+    <p className="watch-meta-detail_label ">{props.name}</p>
   </div>;
 };
 

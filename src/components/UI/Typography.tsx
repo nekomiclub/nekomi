@@ -33,18 +33,8 @@ const Text: FC<TextProps> = ({ tag, size, text, className, bold, italic, center,
 };
 
 /** @deprecated use StyledType */
-export const H1: FC<FontProps> = ({ ...props }) => {
-  return <Text tag="h1" {...props} />;
-};
-
-/** @deprecated use StyledType */
 export const H2: FC<FontProps> = ({ ...props }) => {
   return <Text tag="h2" {...props} />;
-};
-
-/** @deprecated use StyledType */
-export const H3: FC<FontProps> = ({ ...props }) => {
-  return <Text tag="h3" {...props} />;
 };
 
 /** @deprecated use StyledType */

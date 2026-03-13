@@ -197,7 +197,7 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
         </Menu>
 
         <form onSubmit={search} className="w-full flex justify-between items-center">
-          <input className="p-[12px] bg-transparent w-full font-manrope text-white placeholder:font-manrope placeholder:text-grey-new" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} placeholder="Що шукаємо?" autoComplete="off" id="search-searchBar" />
+          <input className="p-[12px] bg-transparent w-full  text-white placeholder: placeholder:text-grey-new" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} placeholder="Що шукаємо?" autoComplete="off" id="search-searchBar" />
 
           <button className="p-[12px] flex justify-center items-center" type="submit">
             <MaterialSymbol className={cn(`duration-100`, searchText.length > 0 ? 'text-primary' : 'text-grey-new')} icon="search" size={24} />
@@ -212,21 +212,21 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
           {showStartTyping && !usePatcherRouting && <div className="flex items-center gap-[16px] px-[12px]">
             <MaterialSymbol className="text-grey-new" icon="star" size={16} />
 
-            <p className="text-grey-new font-manrope">Наприклад: {startTypingText}</p>
+            <p className="text-grey-new ">Наприклад: {startTypingText}</p>
           </div>}
 
           {/* Not found */}
           {showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
             <MaterialSymbol className="text-grey-new" icon="live_help" size={16} />
 
-            <p className="text-grey-new font-manrope">Здається, в нас такого нема...</p>
+            <p className="text-grey-new ">Здається, в нас такого нема...</p>
           </div>}
 
           {/* Patcher hint */}
           {usePatcherRouting && searchType === 'anime' && !showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
             <MaterialSymbol className="text-grey-new" icon="edit" size={16} />
 
-            <p className="text-grey-new font-manrope">Нове аніме буде відкрито в редакторі</p>
+            <p className="text-grey-new ">Нове аніме буде відкрито в редакторі</p>
           </div>}
         </div>
 
@@ -249,7 +249,7 @@ const MenuSearchSelectTypeButton: NextPage<IMenuSearchSelectTypeButtonProps> = (
             : 'question_mark'
     } size={16} />
 
-    <p className="text-white font-manrope">
+    <p className="text-white ">
       {type === 'anime' && 'Аніме'}
       {type === 'user' && 'Користувач'}
       {type === 'dubber' && 'Озвучення'}
@@ -309,31 +309,31 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
 
       <div className="cui-nav-search-result_content">
         {animeResult.title_ua && <>
-          <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.title_ua}>{animeResult.title_ua}</h4>
-          {animeResult.title_en && <h5 className="text-grey-new font-space-grotesk line-clamp-2" title={animeResult.title_en}>{animeResult.title_en}</h5>}
+          <h4 className="text-white text-[20px]  font-bold line-clamp-2" title={animeResult.title_ua}>{animeResult.title_ua}</h4>
+          {animeResult.title_en && <h5 className="text-grey-new  line-clamp-2" title={animeResult.title_en}>{animeResult.title_en}</h5>}
         </>}
 
         {!animeResult.title_ua && <>
-          <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-2" title={animeResult.title_en ?? 'Untitled'}>{animeResult.title_en ?? 'Untitled'}</h4>
+          <h4 className="text-white text-[20px]  font-bold line-clamp-2" title={animeResult.title_en ?? 'Untitled'}>{animeResult.title_en ?? 'Untitled'}</h4>
         </>}
 
         <div className="flex items-center gap-[8px] flex-wrap">
           <div className="flex items-center gap-[8px]">
             <MaterialSymbol className="text-primary" icon="star_half" size={16} />
-            <p className="text-primary font-space-grotesk font-bold whitespace-nowrap">{animeResult.score.toFixed(2) ?? '—'}</p>
+            <p className="text-primary  font-bold whitespace-nowrap">{animeResult.score.toFixed(2) ?? '—'}</p>
           </div>
-          <span className="text-grey-new font-manrope">•</span>
+          <span className="text-grey-new ">•</span>
 
           <div className="flex items-center gap-[8px]">
             <MaterialSymbol className="text-white" icon="acute" size={16} />
-            <p className="text-white font-space-grotesk whitespace-nowrap">{`${animeResult.episodes_released ?? '—'} / ${animeResult.episodes_total ?? '—'}`}</p>
+            <p className="text-white  whitespace-nowrap">{`${animeResult.episodes_released ?? '—'} / ${animeResult.episodes_total ?? '—'}`}</p>
           </div>
-          <span className="text-grey-new font-manrope">•</span>
+          <span className="text-grey-new ">•</span>
 
-          <p className="text-white font-manrope">{animeResult.type?.name}</p>
-          <span className="text-grey-new font-manrope">•</span>
+          <p className="text-white ">{animeResult.type?.name}</p>
+          <span className="text-grey-new ">•</span>
 
-          <p className="text-white font-space-grotesk whitespace-nowrap">{animeResult.year}</p>
+          <p className="text-white  whitespace-nowrap">{animeResult.year}</p>
         </div>
       </div>
     </Link>}
@@ -343,7 +343,7 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
       <StyledImage src={userResult.avatar} width="128px" height="128px" />
 
       <div className="cui-nav-search-result_content">
-        <h4 className="text-white text-[20px] font-space-grotesk font-bold line-clamp-1" title={userResult.username}>@{userResult.username}</h4>
+        <h4 className="text-white text-[20px]  font-bold line-clamp-1" title={userResult.username}>@{userResult.username}</h4>
       </div>
     </Link>}
 
@@ -352,8 +352,8 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
       <StyledImage src={dubberResult.avatar} width="128px" height="128px" />
 
       <div className="cui-nav-search-result_content">
-        <h4 className="text-white text-[20px] font-manrope font-bold line-clamp-1" title={dubberResult.name}>{dubberResult.name}</h4>
-        {dubberResult.about && <p className="text-grey-new font-manrope line-clamp-2" title={dubberResult.about}>{dubberResult.about}</p>}
+        <h4 className="text-white text-[20px]  font-bold line-clamp-1" title={dubberResult.name}>{dubberResult.name}</h4>
+        {dubberResult.about && <p className="text-grey-new  line-clamp-2" title={dubberResult.about}>{dubberResult.about}</p>}
       </div>
     </Link>}
   </>;

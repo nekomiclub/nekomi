@@ -5,7 +5,7 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'material-symbols-rc';
 import { useDebounce } from 'use-debounce';
 
-import { UIField,UIFieldState } from '~/components/UI/Input';
+import { UIField, UIFieldState } from '~/components/UI/Input';
 import IDubber from '~/interfaces/IDubber';
 
 
@@ -74,11 +74,11 @@ const TSettingsInviteMembers: FC<IProps> = (props) => {
 
 
   return <div className="flex flex-col gap-[4px] w-full">
-    <p className="text-grey-new font-manrope">Запросити нового учасника</p>
+    <p className="text-grey-new ">Запросити нового учасника</p>
 
     <Menu className="w-full" gap={4} state={isMenuOpen} stateSetter={setIsMenuOpen} id="dubber-settings-inviteMemberMenu">
       <MenuTrigger anchor className="w-full">
-        <UIField fieldType="input" state={searchQuery} stateSetter={setSearchQuery} placeholder="@username" disablePending className="font-space-grotesk" />
+        <UIField fieldType="input" state={searchQuery} stateSetter={setSearchQuery} placeholder="@username" disablePending className="" />
       </MenuTrigger>
 
       <MenuWrapper className="w-full bg-dark-bright rounded-[2px] flex flex-col border border-dark-light max-h-[300px] overflow-y-auto">
@@ -89,12 +89,12 @@ const TSettingsInviteMembers: FC<IProps> = (props) => {
         </> : <div className="px-[12px] py-[8px]">
           {isNotFound && <div className="flex items-center gap-[16px]">
             <MaterialSymbol icon="indeterminate_question_box" size={16} className="text-info-warn" />
-            <p className="text-info-warn font-manrope max-md:text-[14px]">Ми не змогли знайти користувача за цим запитом</p>
+            <p className="text-info-warn  max-md:text-[14px]">Ми не змогли знайти користувача за цим запитом</p>
           </div>}
 
           {isWaiting && <div className="flex items-center gap-[16px]">
             <MaterialSymbol icon="alternate_email" size={16} className="text-grey-new" />
-            <p className="text-grey-new font-manrope max-md:text-[14px]">Кого шукаємо?</p>
+            <p className="text-grey-new  max-md:text-[14px]">Кого шукаємо?</p>
           </div>}
         </div>}
       </MenuWrapper>

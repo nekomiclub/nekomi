@@ -79,13 +79,13 @@ export default async function TeamPageRSC({ params, searchParams }: IRSCProps<ID
 
           <div className="w-full h-[1px] bg-dark-light"></div>
 
-          {dubber.about && <p className="w-full text-white text-[20px] font-manrope max-lg:text-[16px]">{dubber.about}</p>}
-          {!dubber.about && <p className="w-full text-grey-new font-manrope italic">Опис відсутній</p>}
+          {dubber.about && <p className="w-full text-white text-[20px]  max-lg:text-[16px]">{dubber.about}</p>}
+          {!dubber.about && <p className="w-full text-grey-new  italic">Опис відсутній</p>}
         </div>
 
         {/* {dubbedHydratedAnimes?.length ? <DubberAnimeDubbed dubber={dubber} hydratedAnimes={dubbedHydratedAnimes} /> : undefined} */}
         {dubber.members && !isEmpty(dubber.members) && <div className="flex flex-col gap-[16px]">
-          <h3 className="text-white text-[32px] font-bold font-manrope max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
+          <h3 className="text-white text-[32px] font-bold  max-lg:text-[24px]">Команда - {dubber.members.length} {wordDeclination(dubber.members.length, ['учасник', 'учасника', 'учасників'])}</h3>
 
           <div className="flex flex-wrap gap-[16px]">
             {dubber.members.filter(el => el.role === 'leader').map(member => {
@@ -104,7 +104,7 @@ export default async function TeamPageRSC({ params, searchParams }: IRSCProps<ID
 
         <div className="flex items-center gap-[8px]">
           <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
-          <p className="text-grey-new text-[12px] font-manrope">На nekomi з: {timestampToDayMonth(getUTC(dubber.created_at).timestamp)}</p>
+          <p className="text-grey-new text-[12px] ">На nekomi з: {timestampToDayMonth(getUTC(dubber.created_at).timestamp)}</p>
         </div>
       </section>
     </>;

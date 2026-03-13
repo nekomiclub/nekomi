@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { HandleClientError } from '~/components/Errors';
 import { NotifySuccess, NotifyWarn } from '~/components/nofity/NotifyStatus';
-import { UIField,UIFieldState } from '~/components/UI/Input';
+import { UIField, UIFieldState } from '~/components/UI/Input';
 import API from '~/services/api/API';
 import { UserFullType } from '~/services/api/user/GetUser.api';
 
@@ -130,7 +130,7 @@ const USettingsPage: FC<IProps> = (props) => {
 
   return <>
     <div className="w-full flex justify-between items-center gap-[16px] max-md:flex-col">
-      <h2 className="text-white text-[32px] font-manrope max-md:text-[24px] font-bold">Налаштування профілю</h2>
+      <h2 className="text-white text-[32px]  max-md:text-[24px] font-bold">Налаштування профілю</h2>
 
       <USettingsControls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>
@@ -139,7 +139,7 @@ const USettingsPage: FC<IProps> = (props) => {
       <div className="w-full flex items-center">
         <div className="flex flex-col gap-[8px] w-full max-w-[500px]">
           <div className="flex flex-col gap-[4px] w-full">
-            <p className="text-grey-new font-manrope"><span className="text-info-error font-bold">*</span> Юзернейм</p>
+            <p className="text-grey-new "><span className="text-info-error font-bold">*</span> Юзернейм</p>
             <UIField fieldType="input" state={username} stateSetter={setUsername} symbolsLimited={24} required />
           </div>
         </div>

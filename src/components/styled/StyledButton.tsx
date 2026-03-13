@@ -2,7 +2,7 @@ import 'ldrs/react/Ring.css';
 
 import React, { CSSProperties, FC, JSX, ReactNode } from 'react';
 import { Ring } from 'ldrs/react';
-import { IMaterialSymbolProps, MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
+import { IMaterialSymbolProps, MaterialSymbol, MaterialSymbolIconType } from 'material-symbols-rc';
 
 import cn from '~/utils/classnames';
 
@@ -16,10 +16,10 @@ export interface IStyledButtonProps {
   textProps?: StyledTextFontType
 
   /** Icon before text */
-  icon?: SymbolCodepoints
+  icon?: MaterialSymbolIconType
 
   /** Icon after text & children */
-  iconAfter?: SymbolCodepoints
+  iconAfter?: MaterialSymbolIconType
 
   /**
    * Button color
@@ -45,19 +45,21 @@ export interface IStyledButtonProps {
   style?: CSSProperties
   isLoading?: boolean
   className?: string
+  size?: string
 }
 
 
 
 const StyledButton: FC<IStyledButtonProps> = (props) => {
-  const style = props.disabled ? 'default' : props.color ?? 'default';
+  const color = props.disabled ? 'default' : props.color ?? 'default';
   const Tag: keyof JSX.IntrinsicElements = props.as ?? 'button';
   const isIconOnly = props.icon && !props.children && !props.text;
   const disabled = props.disabled || props.isLoading;
+  const style: CSSProperties = { ...props.style, width: props.size, height: props.size };
 
 
 
-  return <Tag className={cn(`sui-button sui-button--${style}`, isIconOnly && `sui-button--icon`, disabled && `sui-button--disabled`, props.isLoading && 'sui-button--loading', props.className)} tabIndex={0} disabled={disabled} id={props.id} onClick={props.onClick} type={props.type}>
+  return <Tag className={cn(`sui-button sui-button--${color}`, isIconOnly && `sui-button--icon`, disabled && `sui-button--disabled`, props.isLoading && 'sui-button--loading', props.className)} tabIndex={0} disabled={disabled} id={props.id} onClick={props.onClick} type={props.type} style={style}>
     {props.icon && <MaterialSymbol icon={props.icon} size={20} {...props.iconProps} />}
 
     {props.text && <StyledM text={props.text} className="sui-button_text" bold {...props.textProps} lineClamp={1} />}

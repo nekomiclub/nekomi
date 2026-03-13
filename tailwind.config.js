@@ -23,16 +23,12 @@ module.exports = {
         'info-success': '#2ECC71',
         'info-warn': '#F39C12',
 
-        // deprecated
-        lightGrey: '#747474',
         grey: '#222222',
       },
       plugins: [],
     },
-
-    fontFamily: {
-      manrope: 'var(--font-manrope)',
-      'space-grotesk': 'var(--font-space-grotesk)',
-    }
+  },
+  corePlugins: {
+    preflight: false
   }
 };

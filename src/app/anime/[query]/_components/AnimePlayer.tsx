@@ -484,7 +484,7 @@ const AnimePlayerNextEpisode: FC<IAnimePlayerNextEpisodeProps> = (props) => {
         {true && <>
           <div className="ap-player-next_rate ap-player-next_rate--large">
             <MaterialSymbol icon="star_half" color="var(--color-text)" size={20} />
-            <StyledM text={Number(episodeMeta?.score).toFixed(2)} color="text" fontFamily="space-grotesk" bold />
+            <StyledM text={Number(episodeMeta?.score).toFixed(2)} color="text" bold />
           </div>
         </>}
       </button>

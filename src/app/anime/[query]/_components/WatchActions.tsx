@@ -31,12 +31,12 @@ export const WatchActions: FC<IProps> = (props) => {
     {/* Anime has episodes and does not infringing dmca */}
     {props.hasEpisodes && !isDMCARestricted && <Link href={'#player'} scroll className="ui-button watch-meta-action">
       <MaterialSymbol icon="live_tv" size={24} className="text-white max-sm:text-[20px]" />
-      <p className="text-white font-manrope uppercase max-sm:text-[14px]">розпочати перегляд</p>
+      <p className="text-white  uppercase max-sm:text-[14px]">розпочати перегляд</p>
     </Link>}
 
     <Link href={`https://hikka.io/edit/new?slug=${props.anime.hikka_slug}&content_type=anime`} target="_blank" className="ui-button watch-meta-action">
       <StyledImage src="https://avatars.githubusercontent.com/u/48723041?s=200&v=4" width="24px" height="24px" borderRadius={4} unoptimized />
-      <p className="text-white font-manrope uppercase max-sm:text-[14px]">Редагувати на hikka.io</p>
+      <p className="text-white  uppercase max-sm:text-[14px]">Редагувати на hikka.io</p>
     </Link>
   </div>;
 };

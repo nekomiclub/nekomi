@@ -12,7 +12,8 @@ import { getUTC } from '~/utils/utils';
 
 import { NotifyError } from './nofity/NotifyStatus';
 import { ReportButton } from './Report';
-import { H1, P } from './UI/Typography';
+import StyledButton from './styled/StyledButton';
+import { StyledHeading, StyledM } from './styled/StyledText';
 
 
 
@@ -54,11 +55,11 @@ export async function HandleServerError(e: unknown): Promise<ReactElement> {
 
 export const ErrorNoConnection: FC = () => {
   return <div className="wrapper cui-error-wrapper">
-    <MaterialSymbol icon="cloud_off" size={256} className="text-white" />
+    <MaterialSymbol icon="cloud_off" size={256} className="text-[var(--color-text)]" />
 
     <div className="cui-error-content">
-      <H1 text="Відсутнє з’єднання з сервером" className="text-center" />
-      <P text="Якщо у вас є інтернет, то ми вже працюємо над його відновленням. Це не повинно тривати довго" className="text-grey-new text-center" />
+      <StyledHeading text="Відсутнє з’єднання з сервером" center />
+      <StyledM text="Якщо у вас є інтернет, то ми вже працюємо над його відновленням. Це не повинно тривати довго" color="text-muted" center />
     </div>
   </div>;
 };
@@ -67,16 +68,17 @@ export const ErrorNoConnection: FC = () => {
 
 export const ErrorNotFound: FC = () => {
   return <div className="wrapper cui-error-wrapper">
-    <MaterialSymbol icon="mystery" size={256} className="text-white" />
+    <MaterialSymbol icon="mystery" size={256} className="text-[var(--color-text)]" />
 
     <div className="cui-error-content">
-      <H1 text="Те, що ви шукаєте, не існує" className="text-center" />
-      <P text="Ми не можемо знайти контент за цим запитом, або ж просто - 404" className="text-grey-new text-center" />
+      <StyledHeading text="Те, що ви шукаєте, не існує" center />
+      <StyledM text="Ми не можемо знайти контент за цим запитом, або ж просто - 404" color="text-muted" center />
     </div>
 
-    <Link href={routes.home.path()} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
-      <MaterialSymbol icon="home" size={24} className="text-white" />
+    <Link href={routes.home.path()}>
+      <StyledButton as="div" icon="home" iconProps={{ size: 24 }} size="40px" />
     </Link>
+
   </div>;
 };
 
@@ -84,11 +86,11 @@ export const ErrorNotFound: FC = () => {
 
 export const ErrorNotRendered: FC = () => {
   return <div className="wrapper cui-error-wrapper">
-    <MaterialSymbol icon="contract_delete" size={256} className="text-white" />
+    <MaterialSymbol icon="contract_delete" size={256} className="text-[var(--color-text)]" />
 
     <div className="cui-error-content">
-      <H1 text="Сталась помилка при відображенні сторінки" className="text-center" />
-      <P text="Створіть  будь ласка тікет" className="text-grey-new text-center" />
+      <StyledHeading text="Сталась помилка при відображенні сторінки" center />
+      <StyledM text="Створіть  будь ласка тікет" color="text-muted" center />
     </div>
 
     <ReportButton type="button" />
