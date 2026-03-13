@@ -21,8 +21,7 @@
   -webkit-font-smoothing: antialiased;
 
   &_text {
-    width: 100%;
-    text-align: center;
+    color: inherit;
     flex-shrink: 0;
   }
 

@@ -21,6 +21,7 @@ const URL = {
   nekomiApi: env.NEXT_PUBLIC_NEKOMI_API_URL,
 
   telegram: 'https://t.me/nekomiclub',
+  telegramChat: 'https://t.me/nekomiclub',
   telegramBot: env.NEXT_PUBLIC_TELEGRAM_BOT_URL,
   discord: 'https://discord.gg/UmDfKTpsh5',
   discordCreateTicket: 'https://discord.gg/ZXEHQjevEw',
