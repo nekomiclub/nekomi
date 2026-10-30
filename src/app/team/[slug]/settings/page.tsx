@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 
-import { HandleServerError } from '~/components/Errors';
+import { HandleServerError } from '~/components/handle-server-error';
 import UserLayout from '~/components/UserLayout';
 import { conf } from '~/conf';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';

@@ -1,13 +1,11 @@
 'use client';
 
-import { FC, ReactElement } from 'react';
+import { FC } from 'react';
 import { AxiosError } from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 
-import conf, { DevelopmentMode } from '~/conf';
-import { getUTC } from '~/utils/utils';
+import conf, { IsDevelopment } from '~/conf';
 
 import { NotifyError } from './nofity/NotifyStatus';
 import StyledButton from './styled/StyledButton';
@@ -21,35 +19,12 @@ interface IErrorWentWrongProps {
 
 export function HandleClientError(e: unknown) {
   if (e instanceof AxiosError) {
-    if (DevelopmentMode) console.error(e);
+    if (IsDevelopment) console.error(e);
 
     NotifyError({ message: e.response?.data?.message ?? e.message, title: `HTTP - ${e.status ?? e.code}` });
   } else {
     console.error(e);
     NotifyError({ message: `При обробці запиту виникла невідома помилка. Створіть тікет з логом консолі (F12)`, title: 'Щось пішло не так...' });
-  }
-}
-
-export async function HandleServerError(e: unknown): Promise<ReactElement> {
-  const date = getUTC().ISO;
-
-  // Handle notFound nextjs directive
-  if ('digest' in (e as any) && (e as any)?.digest === 'NEXT_NOT_FOUND') return notFound();
-
-  if (e instanceof AxiosError) {
-    const status = e.response?.status ?? 500;
-
-    if (status === 401 || status === 403 || status === 404) {
-      if (DevelopmentMode) console.error(e.response?.data);
-      return notFound();
-    } else {
-      console.error(`[${date}]: HTTP error occured - ${JSON.stringify(e.response?.data ?? e, null, 2)}`);
-      return <ErrorWentWrong />;
-    }
-  } else {
-    console.error(`[${date}]: Server error occured - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
-
-    return <ErrorWentWrong />;
   }
 }
 

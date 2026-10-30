@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { HandleServerError } from '~/components/Errors';
+import { HandleServerError } from '~/components/handle-server-error';
 import UserLayout from '~/components/UserLayout';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { IUserPageProps, IUserSettingsPageProps } from '~/interfaces/PagesParams';

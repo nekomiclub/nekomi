@@ -3,7 +3,7 @@ import '~/styles/pages/home-page.scss';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import { HandleServerError } from '~/components/Errors';
+import { HandleServerError } from '~/components/handle-server-error';
 import { IcoNekomiLogoWhite } from '~/components/Icons';
 import { conf } from '~/conf';
 import API from '~/services/api/API';

@@ -1,4 +1,4 @@
-import { DevelopmentMode } from '~/conf';
+import { IsDevelopment } from '~/conf';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import API from '~/services/api/API';
 import { UserFullType } from '~/services/api/user/GetUser.api';
@@ -48,7 +48,7 @@ export default async function CheckUserAccess({ permissions: requiredPermissions
 
     return {};
   } catch (e) {
-    if (DevelopmentMode) console.error(e);
+    if (IsDevelopment) console.error(e);
 
     return {};
   }

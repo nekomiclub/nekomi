@@ -3,11 +3,11 @@ import '~/styles/pages/user-page.scss';
 import { Metadata } from 'next';
 import { MaterialSymbol } from 'material-symbols-rc';
 
-import { HandleServerError } from '~/components/Errors';
+import { HandleServerError } from '~/components/handle-server-error';
 import { StyledM } from '~/components/styled/StyledText';
 import Tooltip from '~/components/Tooltip';
 import UserLayout from '~/components/UserLayout';
-import { conf, DevelopmentMode } from '~/conf';
+import { conf, IsDevelopment } from '~/conf';
 import { IUserLib } from '~/interfaces/IUser';
 import { IUserPageProps } from '~/interfaces/PagesParams';
 import { IRSCProps } from '~/interfaces/types';
@@ -47,7 +47,7 @@ export async function generateMetadata(
       }
     });
   } catch (e) {
-    if (DevelopmentMode) console.error(`User page generateMetadata error`, e);
+    if (IsDevelopment) console.error(`User page generateMetadata error`, e);
 
     return siteMetadata({ title: 'Користувач не знайдений', robots: ['nofollow', 'noindex'] });
   }

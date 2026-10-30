@@ -38,3 +38,6 @@ docs/secrets.md
 src/app/patcher/.old
 
 .env
+
+**/@generated*.*
+**/@pulled*.*

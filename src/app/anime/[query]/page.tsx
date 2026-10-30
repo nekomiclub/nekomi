@@ -8,7 +8,7 @@ import Skeleton from 'react-loading-skeleton';
 
 import AnimeItem from '~/components/AnimeItem';
 import Carousel from '~/components/Carousel';
-import { HandleServerError } from '~/components/Errors';
+import { HandleServerError } from '~/components/handle-server-error';
 import StyledImage from '~/components/styled/StyledImage';
 import { conf } from '~/conf';
 import { IAnimePageParams, IAnimePageSearchParams } from '~/interfaces/PagesParams';
@@ -78,6 +78,7 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
     const anime = (await getAnime(query)).anime;
     const poster = anime.poster;
     const synopsis = anime.synopsis_ua ?? anime.synopsis_en;
+    console.log(anime);
 
     const titleH1 = anime.title_ua ?? anime.title_en ?? `Untitled`;
     const titleH2 = titleH1 ? anime.title_en : null;

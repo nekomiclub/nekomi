@@ -16,6 +16,7 @@ import putUserCover from './user/PutUserCover.api';
 
 
 
+/** @deprecated */
 const API = {
   getAnime,
   getAnimeSearch,

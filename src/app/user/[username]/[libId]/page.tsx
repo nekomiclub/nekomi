@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { UserLibItem } from '~/app/user/[username]/_components/UserUI';
 import AnimeItem from '~/components/AnimeItem';
-import { HandleServerError } from '~/components/Errors';
+import { HandleServerError } from '~/components/handle-server-error';
 import { StyledH2, StyledH3, StyledM } from '~/components/styled/StyledText';
 import Tooltip from '~/components/Tooltip';
 import UserLayout from '~/components/UserLayout';

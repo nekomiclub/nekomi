@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import { cache } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
-import { HandleServerError } from '~/components/Errors';
+import { HandleServerError } from '~/components/handle-server-error';
 import UserLayout from '~/components/UserLayout';
 import { IDubberPageParams } from '~/interfaces/PagesParams';
 import { IRSCProps } from '~/interfaces/types';
