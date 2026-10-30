@@ -27,7 +27,7 @@ export const TeamAboutLink: FC<ITeamAboutLinkProps> = (props) => {
       {props.label === 'telegram' && <IcoSocialTelegram width={24} height={24} fill="#555" />}
       {props.label !== 'telegram' && <MaterialSymbol icon="ungroup" size={24} color="#555" />}
 
-      <p className="text-grey-new text-[24px] font-space-grotesk max-lg:text-[16px]">{`${props.label.charAt(0).toUpperCase()}${props.label.slice(1)}`}</p>
+      <p className="text-grey-new text-[24px]  max-lg:text-[16px]">{`${props.label.charAt(0).toUpperCase()}${props.label.slice(1)}`}</p>
     </Link>
   </li>;
 };
@@ -39,7 +39,7 @@ export const TeamMember: FC<ITeamMemberProps> = (props) => {
     <StyledImage height="64px" width="64px" src={props.member.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full">
-      <p className={cn(`text-white font-space-grotesk text-[20px] max-md:text-[20px] line-clamp-1 text-ellipsis break-all w-full`, props.member.role === 'leader' && 'font-bold !text-primary')}>@{props.member.username}</p>
+      <p className={cn(`text-white  text-[20px] max-md:text-[20px] line-clamp-1 text-ellipsis break-all w-full`, props.member.role === 'leader' && 'font-bold !text-primary')}>@{props.member.username}</p>
 
       <div className="flex items-center gap-[8px]">
         {props.member.role === 'leader' && <MaterialSymbol icon="star" size={24} color="#fff" />}

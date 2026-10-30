@@ -5,15 +5,22 @@ import { useState } from 'react';
 import StyledButton from '~/components/styled/StyledButton';
 import StyledCheckbox from '~/components/styled/StyledCheckbox';
 
+
+
 export default function TestsPageRSC() {
   const [isChecked, setIsChecked] = useState(true);
 
   return <main className="p-8 min-h-screen flex flex-col gap-4 items-start pt-[80px]">
     <StyledButton text="Default" />
-    <StyledButton text="Primary" style="primary" />
-    <StyledButton text="Secondary" style="secondary" />
-    <StyledButton text="Transparent" style="transparent" />
-    <StyledButton text="Inline" style="inline" />
+    <StyledButton text="Disabled" color="primary" disabled />
+    <StyledButton text="Primary" color="primary" />
+    <StyledButton text="Loading" color="primary" isLoading />
+    <StyledButton text="Secondary" color="secondary" />
+    <StyledButton text="Loading" color="secondary" isLoading />
+    <StyledButton text="Transparent" color="transparent" />
+    <StyledButton text="Transparent" color="transparent" isLoading />
+    <StyledButton text="Inline" color="inline" />
+    <StyledButton text="Inline" color="inline" isLoading />
 
     <StyledCheckbox isChecked={isChecked} setIsChecked={setIsChecked} label="dfdfsfds" />
   </main>;

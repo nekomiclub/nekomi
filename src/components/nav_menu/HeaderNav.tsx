@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 
 import { IcoNekomiLogoWhite } from '~/components/Icons';
 import StyledAvatar from '~/components/styled/StyledAvatar';
-import StyledButtonOld from '~/components/styled/StyledButton.old';
+import StyledButton from '~/components/styled/StyledButton';
 import Tooltip from '~/components/Tooltip';
 import routes from '~/routes';
 import { IUserState } from '~/store/reducers/userSlice';
@@ -70,13 +70,13 @@ const HeaderNav: FC<IProps> = ({ user, logout, signin, searchPopupId, forceFocus
       {/* Unauthorized */}
       {!user.id && <div className="relative h-full">
         <div className="flex gap-[4px] absolute top-[50%] right-0 translate-y-[-50%] max-lg:relative">
-          <StyledButtonOld className="px-[12px] py-[8px] border-none bg-transparent" onClick={signin} disabled={isSigningIn}>
-            <p className="text-white font-manrope font-bold">Увійти</p>
-          </StyledButtonOld>
+          <StyledButton className="px-[12px] py-[8px] border-none bg-transparent" onClick={signin} disabled={isSigningIn}>
+            <p className="text-white  font-bold">Увійти</p>
+          </StyledButton>
 
-          <StyledButtonOld className="px-[12px] py-[8px] bg-primary border-none" onClick={signin} disabled={isSigningIn}>
-            <p className="text-white font-manrope font-bold">Реєстрація</p>
-          </StyledButtonOld>
+          <StyledButton className="px-[12px] py-[8px] bg-primary border-none" onClick={signin} disabled={isSigningIn}>
+            <p className="text-white  font-bold">Реєстрація</p>
+          </StyledButton>
         </div>
       </div>}
     </div>

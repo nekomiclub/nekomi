@@ -1,20 +1,23 @@
-import '~/styles/components/common-ui.scss';
+'use client';
 
 import { FC, ReactElement } from 'react';
 import { AxiosError } from 'axios';
-import { MaterialSymbol } from 'material-symbols-rc';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { DevelopmentMode } from '~/conf';
-import routes from '~/routes';
+import conf, { DevelopmentMode } from '~/conf';
 import { getUTC } from '~/utils/utils';
 
 import { NotifyError } from './nofity/NotifyStatus';
-import { ReportButton } from './Report';
-import { H1, P } from './UI/Typography';
+import StyledButton from './styled/StyledButton';
+import { StyledHeading, StyledM, StyledXS } from './styled/StyledText';
 
 
+
+interface IErrorWentWrongProps {
+  code?: string
+}
 
 export function HandleClientError(e: unknown) {
   if (e instanceof AxiosError) {
@@ -41,12 +44,12 @@ export async function HandleServerError(e: unknown): Promise<ReactElement> {
       return notFound();
     } else {
       console.error(`[${date}]: HTTP error occured - ${JSON.stringify(e.response?.data ?? e, null, 2)}`);
-      return <ErrorNotRendered />;
+      return <ErrorWentWrong />;
     }
   } else {
     console.error(`[${date}]: Server error occured - ${JSON.stringify(e, Object.getOwnPropertyNames(e), 2)}`);
 
-    return <ErrorNotRendered />;
+    return <ErrorWentWrong />;
   }
 }
 
@@ -54,12 +57,16 @@ export async function HandleServerError(e: unknown): Promise<ReactElement> {
 
 export const ErrorNoConnection: FC = () => {
   return <div className="wrapper cui-error-wrapper">
-    <MaterialSymbol icon="cloud_off" size={256} className="text-white" />
+    <Image src={'/assets/NoConnectionIllust.svg'} alt="Server is not available illustration" width={380} height={491} />
 
-    <div className="cui-error-content">
-      <H1 text="Відсутнє з’єднання з сервером" className="text-center" />
-      <P text="Якщо у вас є інтернет, то ми вже працюємо над його відновленням. Це не повинно тривати довго" className="text-grey-new text-center" />
+    <div className="flex flex-col gap-2 items-center">
+      <StyledHeading text={`Неможливо зв’язатись з сервером`} center bold />
+      <StyledM text={`Перевірте ваше підключення до інтернету або зачекайте поки ми вирішимо проблему`} color="text-secondary" center />
     </div>
+
+    <Link href={conf.URL.telegramChat} target="_blank">
+      <StyledButton as="div" text="Повідомити про проблему" color="secondary" icon="emergency_home" />
+    </Link>
   </div>;
 };
 
@@ -67,30 +74,42 @@ export const ErrorNoConnection: FC = () => {
 
 export const ErrorNotFound: FC = () => {
   return <div className="wrapper cui-error-wrapper">
-    <MaterialSymbol icon="mystery" size={256} className="text-white" />
+    <Image src={'/assets/NotFoundIllust.svg'} alt="Page not found illustration" width={540} height={267} />
 
-    <div className="cui-error-content">
-      <H1 text="Те, що ви шукаєте, не існує" className="text-center" />
-      <P text="Ми не можемо знайти контент за цим запитом, або ж просто - 404" className="text-grey-new text-center" />
+    <div className="flex flex-col gap-2 items-center">
+      <StyledHeading text={`Сторінку не знайдено`} center bold />
+      <StyledM text={`Ми шукали всюди, але все ж не змогли знайти сторінку, яку ви шукаєте`} color="text-secondary" center />
     </div>
 
-    <Link href={routes.home.path()} className="ui-button w-[40px] h-[40px] flex justify-center items-center">
-      <MaterialSymbol icon="home" size={24} className="text-white" />
-    </Link>
+    <StyledButton text="На головну" color="primary" icon="cottage" />
   </div>;
 };
 
 
 
-export const ErrorNotRendered: FC = () => {
-  return <div className="wrapper cui-error-wrapper">
-    <MaterialSymbol icon="contract_delete" size={256} className="text-white" />
+export const ErrorWentWrong: FC<IErrorWentWrongProps> = (props) => {
+  function refreshPage() {
+    window.location.reload();
+  }
 
-    <div className="cui-error-content">
-      <H1 text="Сталась помилка при відображенні сторінки" className="text-center" />
-      <P text="Створіть  будь ласка тікет" className="text-grey-new text-center" />
+
+
+  return <div className="wrapper cui-error-wrapper">
+    <Image src={'/assets/WentWrongIllust.svg'} alt="Something went wrong illustration" width={610} height={258} />
+
+    <div className="flex flex-col gap-2 items-center">
+      <StyledHeading text={`Щось пішло не так`} center bold />
+      <StyledM text={`Спробуйте пізніше або повідомте нам про помилку`} color="text-secondary" center />
     </div>
 
-    <ReportButton type="button" />
+    <div className="flex items-center gap-2">
+      <StyledButton text="Спробувати ще раз" color="primary" icon="refresh" onClick={refreshPage} />
+
+      <Link href={conf.URL.telegramChat} target="_blank">
+        <StyledButton as="div" text="Повідомити про помилку" color="secondary" icon="emergency_home" />
+      </Link>
+    </div>
+
+    {props.code && <StyledXS text={`code: ${props.code}`} color="text-muted" className="absolute bottom-[40px] left-[50%] translate-x-[-50%]" />}
   </div>;
 };

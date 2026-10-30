@@ -23,17 +23,17 @@ export default async function IContactsPageRSC() {
             <StyledImage src="/assets/unniiiverse-avatar.png" width="128px" height="128px" className="rounded-[4px] overflow-hidden" />
 
             <div className="flex flex-col items-center w-full">
-              <h2 className="text-white text-[40px] font-space-grotesk font-bold">Mykhailo</h2>
-              <h4 className="text-grey-new text-[24px] font-space-grotesk">@unniiiverse</h4>
+              <h2 className="text-white text-[40px]  font-bold">Mykhailo</h2>
+              <h4 className="text-grey-new text-[24px] ">@unniiiverse</h4>
             </div>
           </div>
 
           <div className="flex items-center gap-[8px] p-[24px] bg-dark-bright border border-dark-light border-t-0 rounded-[4px] rounded-t-none">
             <div className="w-full flex items-center gap-[8px] flex-wrap">
-              <p className="text-primary font-space-grotesk font-bold">Software Engineer</p>
-              <p className="text-grey-new font-space-grotesk">•</p>
+              <p className="text-primary  font-bold">Software Engineer</p>
+              <p className="text-grey-new ">•</p>
 
-              <p className="text-white font-space-grotesk">nekomi CEO</p>
+              <p className="text-white ">nekomi CEO</p>
             </div>
 
             <div className="flex items-center gap-[8px] flex-shrink-0">

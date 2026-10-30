@@ -1,0 +1,23 @@
+@layer normalize, pckg, base, components, utilities;
+
+// Normalize
+@import "./normalize.css" layer(normalize);
+
+// Packages
+@import "@fullkekw/fkw-menu/css" layer(pckg);
+@import "@fullkekw/popup/css" layer(pckg);
+@import "swiper/css" layer(pckg);
+@import "react-loading-skeleton/dist/skeleton.css" layer(pckg);
+@import "material-symbols-rc/css" layer(pckg);
+
+// Base (zero-deps styles, e.g: Typography)
+@import "./base.scss" layer(base);
+
+// Components
+@import "./ui.scss" layer(components);
+@import "./components/styled-ui.scss" layer(components);
+@import "./components/common-ui.scss" layer(components);
+
+// Utilities (global classes, e.g: .wrapper)
+@import "./utilities.scss" layer(utilities);
+@import "./tailwind.css" layer(utilities);

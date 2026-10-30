@@ -42,16 +42,16 @@ export default async function HomePageRSC() {
 
         <div className="flex flex-col gap-[24px]">
           <div className="flex flex-col gap-[8px]">
-            <h2 className="text-white text-[40px] font-bold max-[650px]:text-[32px] font-manrope">А ти, підписаний на <span className="text-primary">телеграм nekomi?</span></h2>
-            <p className="text-white text-[24px] max-[650px]:text-[16px] font-manrope">Тут то ти і попався. Там публікується багато цікавого. Новини, оновлення там, та всяке інше з аніме тематики.</p>
+            <h2 className="text-white text-[40px] font-bold max-[650px]:text-[32px] ">А ти, підписаний на <span className="text-primary">телеграм nekomi?</span></h2>
+            <p className="text-white text-[24px] max-[650px]:text-[16px] ">Тут то ти і попався. Там публікується багато цікавого. Новини, оновлення там, та всяке інше з аніме тематики.</p>
           </div>
 
           <div className="flex flex-col gap-[8px] w-fit max-[650px]:w-full">
             <Link href={conf.URL.telegram} target="_blank" className="px-[16px] py-[16px] rounded-[2px] bg-dark-medium border border-dark-light flex items-center justify-center gap-[16px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95]">
               <MaterialSymbol icon="ungroup" size={24} className="text-white" />
-              <p className="text-white text-[24px] uppercase max-[650px]:text-[16px] font-manrope">підписатися</p>
+              <p className="text-white text-[24px] uppercase max-[650px]:text-[16px] ">підписатися</p>
             </Link>
-            <p className="text-lightGrey max-[650px]:text-center font-manrope">Підпишись будь ласка, нам буде приємно 👉👈</p>
+            <p className="text-[var(--color-text-secondary))] max-[650px]:text-center ">Підпишись будь ласка, нам буде приємно 👉👈</p>
           </div>
         </div>
       </div>

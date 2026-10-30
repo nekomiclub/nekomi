@@ -169,7 +169,7 @@ const TSettingsPage: FC<IProps> = (props) => {
 
   return <div className="flex flex-col gap-[24px]">
     <div className="w-full flex justify-between items-center gap-[16px] max-md:flex-col">
-      <h2 className="text-white text-[32px] font-manrope max-md:text-[24px] font-bold">Налаштування команди</h2>
+      <h2 className="text-white text-[32px]  max-md:text-[24px] font-bold">Налаштування команди</h2>
 
       <TSettingsControls resetChanges={resetChanges} saveChanges={saveChanges} isSomethingChanged={isSomethingChanged} isSaving={isSaving} />
     </div>
@@ -178,13 +178,13 @@ const TSettingsPage: FC<IProps> = (props) => {
       <div className="flex gap-[32px] w-full max-md:flex-col">
         <div className="flex flex-col gap-[8px] w-full">
           <div className="flex flex-col gap-[4px] w-full">
-            <p className="text-grey-new font-manrope"><span className="text-info-error font-bold">*</span> Українська назва</p>
+            <p className="text-grey-new "><span className="text-info-error font-bold">*</span> Українська назва</p>
             <UIField fieldType="input" state={nameUkr} stateSetter={setNameUkr} symbolsLimited={32} required />
           </div>
         </div>
 
         <div className="flex flex-col gap-[4px] w-full h-full">
-          <p className="text-grey-new font-manrope">Опис</p>
+          <p className="text-grey-new ">Опис</p>
           <UIField fieldType="textarea" state={description} stateSetter={setDescription} symbolsLimited={500} className="min-h-[42px] h-fit max-h-[500px] outline-none grow" parentClassName="h-full grow" />
         </div>
       </div>

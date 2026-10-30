@@ -1,18 +1,10 @@
-import '@fullkekw/fkw-menu/css';
-import '@fullkekw/popup/css';
-import 'swiper/css';
-import 'react-loading-skeleton/dist/skeleton.css';
-import 'material-symbols-rc/css';
-import '~/styles/index.scss';
-import '~/styles/ui.scss';
-import '~/styles/components/styled-ui.scss';
-import '~/styles/tailwind.css';
+import '~/styles/_main.scss';
 
 import { cache } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import axios, { AxiosError } from 'axios';
-import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
@@ -34,24 +26,11 @@ export const metadata = siteMetadata({});
 
 
 
-const montserrat = Montserrat({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  fallback: ['system-ui'],
-  subsets: ['cyrillic', 'cyrillic-ext', 'latin'],
-});
-
 const manrope = Manrope({
   weight: ['400', '700'],
   fallback: ['system-ui'],
   subsets: ['cyrillic', 'latin'],
   variable: '--font-manrope'
-});
-
-const spaceGrotesk = Space_Grotesk({
-  weight: ['400', '700'],
-  fallback: ['system-ui'],
-  subsets: ['latin'],
-  variable: '--font-space-grotesk'
 });
 
 
@@ -104,7 +83,7 @@ export default async function RootLayout({ children, params }: ILayoutProps) {
 
 
   return <html lang="uk">
-    <body className={`bg-dark-primary ${montserrat.className} ${manrope.variable} ${spaceGrotesk.variable}`}>
+    <body className={`bg-[var(--color-dark)] ${manrope.variable}`}>
       {isServerOnline ? <StateProvider user={user} isSessionExpired={isSessionExpired}>
         <SkeletonTheme baseColor="#181818" highlightColor="#222">
           <NavMenu />

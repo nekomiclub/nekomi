@@ -444,7 +444,7 @@ const AnimePLayerEpisodesList: FC<IAnimePLayerEpisodesListProps> = (props) => {
   return episodes.length > 1 && <ul className={cn(`wrapper ap-player_episodes`, props.className)}>
     {episodes.map(episode => {
       return <li className="ap-player-episode" key={`ap-player-episode--${episode}`}>
-        <StyledButton text={`${episode}`} className="ap-player-episode_button" style={episode === ctx.selectedEpisode ? 'primary' : 'default'} onClick={() => ctx.setEpisode({ episode }, false)} />
+        <StyledButton text={`${episode}`} className="ap-player-episode_button" color={episode === ctx.selectedEpisode ? 'primary' : 'default'} onClick={() => ctx.setEpisode({ episode }, false)} />
       </li>;
     })}
   </ul>;
@@ -484,7 +484,7 @@ const AnimePlayerNextEpisode: FC<IAnimePlayerNextEpisodeProps> = (props) => {
         {true && <>
           <div className="ap-player-next_rate ap-player-next_rate--large">
             <MaterialSymbol icon="star_half" color="var(--color-text)" size={20} />
-            <StyledM text={Number(episodeMeta?.score).toFixed(2)} color="text" fontFamily="space-grotesk" bold />
+            <StyledM text={Number(episodeMeta?.score).toFixed(2)} color="text" bold />
           </div>
         </>}
       </button>
@@ -494,12 +494,12 @@ const AnimePlayerNextEpisode: FC<IAnimePlayerNextEpisodeProps> = (props) => {
           <StyledS text={episodeMeta?.title} color="text" lineClamp={3} />
         </div>
 
-        <StyledButton icon="arrow_right_alt" text={`${(ctx.selectedEpisode ?? 1) + 1} епізод`} className="ap-player-next_button" style="secondary" iconProps={{ type: 'rounded' }} onClick={ctx.nextEpisode} />
+        <StyledButton icon="arrow_right_alt" text={`${(ctx.selectedEpisode ?? 1) + 1} епізод`} className="ap-player-next_button" color="secondary" iconProps={{ type: 'rounded' }} onClick={ctx.nextEpisode} />
       </div>
     </article>}
 
     {/* Episode meta is missing, but next episode exist */}
-    {!episodeMeta && <StyledButton icon="arrow_right_alt" text={`${(ctx.selectedEpisode ?? 1) + 1} епізод`} className="ap-player-next_button" style="secondary" iconProps={{ type: 'rounded' }} onClick={ctx.nextEpisode} />}
+    {!episodeMeta && <StyledButton icon="arrow_right_alt" text={`${(ctx.selectedEpisode ?? 1) + 1} епізод`} className="ap-player-next_button" color="secondary" iconProps={{ type: 'rounded' }} onClick={ctx.nextEpisode} />}
   </div>;
 };
 

@@ -105,8 +105,8 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
 
         <section className="wrapper gap-[16px]">
           <div className="flex flex-col gap-[4px]">
-            <h1 className="text-white font-manrope font-bold text-[20px]">{titleH1}</h1>
-            {titleH2 && <h2 className="text-grey-new font-manrope">{titleH2}</h2>}
+            <h1 className="text-white  font-bold text-[20px]">{titleH1}</h1>
+            {titleH2 && <h2 className="text-grey-new ">{titleH2}</h2>}
           </div>
 
           {/* {nextBroadcast && <WatchNextEpisode timestamp={nextBroadcast} />} */}
@@ -128,8 +128,8 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
           </div>
 
           {/* Description */}
-          {synopsis && <p className="text-white text-[14px] font-manrope">{synopsis}</p>}
-          {!synopsis && <p className="text-grey-new text-[14px] font-manrope">Опис відсутній</p>}
+          {synopsis && <p className="text-white text-[14px] ">{synopsis}</p>}
+          {!synopsis && <p className="text-grey-new text-[14px] ">Опис відсутній</p>}
 
           {/* Divider */}
           <div className="watch-section_divider"></div>
@@ -189,8 +189,8 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
             {/* Heading */}
             <div className="flex items-center justify-between w-full gap-[24px]">
               <div className="flex flex-col gap-[4px]">
-                <h1 className="text-white text-[32px] font-manrope font-bold" title={titleH1}>{titleH1}</h1>
-                {titleH2 && <h2 className="text-grey-new text-[24px] font-space-grotesk" title={titleH2}>{titleH2}</h2>}
+                <h1 className="text-white text-[32px]  font-bold" title={titleH1}>{titleH1}</h1>
+                {titleH2 && <h2 className="text-grey-new text-[24px] " title={titleH2}>{titleH2}</h2>}
               </div>
 
               <div className="flex flex-col items-center gap-[4px]">
@@ -225,8 +225,8 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
             </div>
 
             {/* Description */}
-            {synopsis && <p className="text-white font-manrope">{synopsis}</p>}
-            {!synopsis && <p className="text-grey-new font-manrope">Опис відсутній</p>}
+            {synopsis && <p className="text-white ">{synopsis}</p>}
+            {!synopsis && <p className="text-grey-new ">Опис відсутній</p>}
           </div>
         </section>
 

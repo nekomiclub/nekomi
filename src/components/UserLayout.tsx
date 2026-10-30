@@ -19,10 +19,10 @@ import { HandleClientError } from './Errors';
 import { NotifySuccess, NotifyWarn } from './nofity/NotifyStatus';
 import { ReportButton } from './Report';
 import StyledAvatar from './styled/StyledAvatar';
-import StyledButtonOld from './styled/StyledButton.old';
+import StyledButton from './styled/StyledButton';
 import StyledImage from './styled/StyledImage';
+import { StyledH2, StyledHeading, StyledM } from './styled/StyledText';
 import Tooltip from './Tooltip';
-import { H1, H2, P } from './UI/Typography';
 
 
 
@@ -106,33 +106,33 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
       <div className="w-full flex items-center justify-between gap-[24px] pb-[24px] max-lg:pb-[4px] max-lg:pt-[12px] max-md:p-0">
         <div className="flex flex-col gap-[8px] max-lg:gap-[4px]">
-          <H1 text={user?.username ?? dubber?.name} size={32} className={cn(`text-white font-bold break-all`, isUser && 'font-space-grotesk', isDubber && 'font-manrope')} />
-          {isDubber && <H2 text={`@${dubber?.slug}`} size={20} className="text-grey-new font-space-grotesk line-clamp-1 text-ellipsis break-all" />}
+          <StyledHeading text={user?.username ?? dubber?.name} className={cn(`text-[32px]`)} lineClamp={1} bold color="text" />
+          {isDubber && <StyledH2 text={`@${dubber?.slug}`} color="text-muted" className="text-[20px]" lineClamp={1} />}
         </div>
 
         <div className="flex items-center gap-[4px]">
           {/* Settings */}
           {(type === 'dubber_profile' || type === 'user_profile') && showSettings && <Tooltip content="Налаштування">
             <Link href={settingsUrl}>
-              <StyledButtonOld className="cui-ul-action">
+              <StyledButton className="cui-ul-action">
                 <MaterialSymbol icon="settings" size={24} className="cui-ul-action_icon" />
-              </StyledButtonOld>
+              </StyledButton>
             </Link>
           </Tooltip>}
 
           {/* Copy link */}
           {(type === 'dubber_profile' || type === 'user_profile' || type === 'user_lib') && <Tooltip content={isLinkCopied ? 'Посилання скопійовано!' : 'Скопіювати посилання'}>
-            <StyledButtonOld className={cn(`cui-ul-action`, isLinkCopied && 'cui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
+            <StyledButton className={cn(`cui-ul-action`, isLinkCopied && 'cui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
               <MaterialSymbol icon="link" size={24} className="cui-ul-action_icon" />
-            </StyledButtonOld>
+            </StyledButton>
           </Tooltip>}
 
           {/* Back to profile */}
           {(type === 'dubber_settings' || type === 'user_settings' || type === 'user_lib') && <Tooltip content="В профіль">
             <Link href={profileUrl}>
-              <StyledButtonOld className="cui-ul-action">
+              <StyledButton className="cui-ul-action">
                 <MaterialSymbol icon="account_box" size={24} className="cui-ul-action_icon" />
-              </StyledButtonOld>
+              </StyledButton>
             </Link>
           </Tooltip>}
         </div>
@@ -243,9 +243,9 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
         <MaterialSymbol icon="backup" size={64} className="text-white" />
 
         <div className="flex flex-col items-center gap-[8px]">
-          <P text="завантажити" size={24} className="text-white font-manrope font-bold uppercase" />
-          <P text=".png .jpg .webp, до 1го мегабайта" size={14} className="text-white font-manrope" />
-          <P text="Рекомендований розмір: 256х256" size={12} className="text-white font-manrope" />
+          <StyledM text="завантажити" className="text-[24px] uppercase" bold />
+          <StyledM text=".png .jpg .webp, до 1го мегабайта" className="text-[14px]" />
+          <StyledM text="Рекомендований розмір: 256х256" className="text-[12px]" />
         </div>
       </button>
     </>}
@@ -352,9 +352,9 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
         <MaterialSymbol icon="backup" size={128} className="text-white max-xl:!text-[64px]" />
 
         <div className="flex flex-col items-center gap-[8px]">
-          <P text="завантажити" size={32} className="text-white font-manrope font-bold uppercase" />
-          <P text=".png .jpg .webp, до 2х мегабайтів" className="text-white font-manrope" />
-          <P text="Рекомендований розмір: 1920x500" className="text-white font-manrope" />
+          <StyledM text="завантажити" className="text-[32px] uppercase" bold />
+          <StyledM text=".png .jpg .webp, до 2х мегабайтів" />
+          <StyledM text="Рекомендований розмір: 1920x500" />
         </div>
       </button>
     </>}

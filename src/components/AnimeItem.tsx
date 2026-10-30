@@ -133,9 +133,9 @@ const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
       <div className="flex flex-col">
         <div className={`px-[8px] backdrop-blur-[40px] relative z-[2] duration-200 max-h-0 flex flex-col gap-[12px] bg-dark-primary/[.8]`} ref={bottomRef}>
           <div className="flex flex-col gap-[4px]">
-            <p className="titleCardNew-heading text-white text-[14px] font-bold text-ellipsis line-clamp-[2] font-manrope max-md:text-[14px]" title={anime.title} ref={titleRef}>{anime.title}</p>
+            <p className="titleCardNew-heading text-white text-[14px] font-bold text-ellipsis line-clamp-[2]  max-md:text-[14px]" title={anime.title} ref={titleRef}>{anime.title}</p>
 
-            <p className="text-lightGrey text-[12px] whitespace-break-spaces font-manrope">
+            <p className="text-[var(--color-text-secondary)] text-[12px] whitespace-break-spaces ">
               {anime.genres.length ? anime.genres.slice(0, 3).map((genre, i) => {
                 let immutableI = i;
 
@@ -147,12 +147,12 @@ const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-[4px]">
               <MaterialSymbol icon="acute" size={16} color="#fff" />
-              <p className="text-white text-[12px] font-space-grotesk">{anime.episodes_total ?? '—'}</p>
+              <p className="text-white text-[12px] ">{anime.episodes_total ?? '—'}</p>
             </div>
 
             <div className="flex items-center gap-[4px]">
               <MaterialSymbol icon="star_half" size={16} color="#FF464E" />
-              <p className="text-primary text-[12px] font-bold font-space-grotesk">{anime.score ?? '—'}</p>
+              <p className="text-primary text-[12px] font-bold ">{anime.score ?? '—'}</p>
             </div>
           </div>
         </div>
@@ -234,6 +234,6 @@ const AnimeItemEditMenuLib: FC<IAnimeItemEditMenuLibProps> = ({ type, animeId })
 
     <MaterialSymbol icon={icon} size={24} className="text-white" />
 
-    <p className="text-white font-manrope">{title}</p>
+    <p className="text-white ">{title}</p>
   </button>;
 };

@@ -164,7 +164,7 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
         {...props}
       />
 
-      {symbolsLimited !== undefined && <p className={cn('duration-200 absolute right-[8px] top-[50%] translate-y-[-50%] font-space-grotesk text-[12px]', value?.length > symbolsLimited ? 'text-info-error' : 'text-grey-new')} ref={symbolsLimitedRef}>{value?.length} / {symbolsLimited}</p>}
+      {symbolsLimited !== undefined && <p className={cn('duration-200 absolute right-[8px] top-[50%] translate-y-[-50%] text-[12px]', value?.length > symbolsLimited ? 'text-info-error' : 'text-grey-new')} ref={symbolsLimitedRef}>{value?.length} / {symbolsLimited}</p>}
     </Tooltip>}
 
     {fieldType === 'textarea' && <Tooltip content={status === 'changes_pending' ? `Значення змінено з: ${initialValue}` : ''} className={cn('flex flex-col gap-[4px] items-end', parentClassName)}>
@@ -184,7 +184,7 @@ export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className,
         ref={textareaRef}
         {...props}
       />
-      {symbolsLimited !== undefined && <p className={cn('duration-200 font-space-grotesk text-[12px]', value?.length > symbolsLimited ? 'text-info-error' : 'text-grey-new')}>{value?.length} / {symbolsLimited}</p>}
+      {symbolsLimited !== undefined && <p className={cn('duration-200 text-[12px]', value?.length > symbolsLimited ? 'text-info-error' : 'text-grey-new')}>{value?.length} / {symbolsLimited}</p>}
     </Tooltip>}
   </>;
 };

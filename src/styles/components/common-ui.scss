@@ -1,6 +1,6 @@
 // Common ui styles
 
-@use "../vars.scss" as *;
+@use "../variables.scss" as *;
 
 // Errors
 .cui-error {
@@ -12,7 +12,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 40px;
+    gap: 2rem;
   }
 
   &-content {
@@ -72,7 +72,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba($color: $dark_primary, $alpha: 0.5);
+    background: rgba($color: $color-dark, $alpha: 0.5);
     transition: 0.2s ease-in-out;
     opacity: 0;
     display: flex;
@@ -114,11 +114,11 @@
     }
 
     &--succeed {
-      background: $info-success;
+      background: $color-info-success;
 
       &:hover,
       &:focus-visible {
-        background: $info-success;
+        background: $color-info-success;
       }
     }
   }
@@ -133,7 +133,7 @@
 
       &:hover,
       &:focus-visible {
-        background: $dark-light;
+        background: $color-border;
       }
     }
 
@@ -150,7 +150,7 @@
 
       &:hover,
       &:focus-visible {
-        background: $dark-light;
+        background: $color-border;
       }
 
       &_content {
@@ -166,17 +166,17 @@
   &_progressBar {
     &--success {
       animation: uiNotifyToastProgressBar 3s linear;
-      background: $info-success;
+      background: $color-info-success;
     }
 
     &--warn {
       animation: uiNotifyToastProgressBar 3s linear;
-      background: $info-warn;
+      background: $color-info-warning;
     }
 
     &--error {
       animation: uiNotifyToastProgressBar 6s linear;
-      background: $info-error;
+      background: $color-info-danger;
     }
   }
 }

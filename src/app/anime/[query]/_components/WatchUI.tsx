@@ -41,8 +41,8 @@ export const WatchNextEpisode: FC<WatchNextEpisodeProps> = ({ timestamp }) => {
       <MaterialSymbol icon="hourglass_bottom" size={24} className="text-grey-new max-sm:text-[20px]" />
 
       <div className="flex items-center gap-[8px] flex-wrap">
-        <p className="text-grey-new font-manrope max-sm:text-[14px] whitespace-nowrap">Наступна серія вийде:</p>
-        <p className="text-white font-manrope max-sm:text-[14px]">
+        <p className="text-grey-new  max-sm:text-[14px] whitespace-nowrap">Наступна серія вийде:</p>
+        <p className="text-white  max-sm:text-[14px]">
           {`
           ${timestampToDayMonth(timestamp)},
           ${String(getUTC(timestamp).hrs).padStart(2, '0')}:${String(getUTC(timestamp).mins).padStart(2, '0')}
@@ -59,7 +59,7 @@ export const WatchSectionLabel: FC<WatchSectionLabelProps> = ({ label, icon }) =
   return <div className="flex items-center gap-[16px]">
     <MaterialSymbol icon={icon} size={24} className="text-white max-sm:text-[20px]" />
 
-    <h3 className="text-white text-[24px] font-manrope font-bold max-sm:text-[20px]">{label}</h3>
+    <h3 className="text-white text-[24px]  font-bold max-sm:text-[20px]">{label}</h3>
   </div>;
 };
 
@@ -70,12 +70,12 @@ export const WatchRating: NextPage<IWatchGenericProps> = ({ anime }) => {
 
   return <>
     <div className="flex items-center gap-[8px]">
-      <p className={cn('text-primary text-[24px] font-bold font-space-grotesk max-sm:text-[16px]')}>{anime.score.toFixed(2) ?? '―'}</p>
+      <p className={cn('text-primary text-[24px] font-bold  max-sm:text-[16px]')}>{anime.score.toFixed(2) ?? '―'}</p>
 
       <MaterialSymbol icon="star_half" size={24} className={cn(`text-primary max-sm:text-[20px]`)} />
     </div>
 
-    <p className="text-grey-new font-manrope whitespace-nowrap">{anime.scored_by ? scoredByFormatter.format(anime.scored_by) : 'Немає'} оцінок</p>
+    <p className="text-grey-new  whitespace-nowrap">{anime.scored_by ? scoredByFormatter.format(anime.scored_by) : 'Немає'} оцінок</p>
   </>;
 };
 

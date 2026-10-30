@@ -5,8 +5,8 @@ import { notFound } from 'next/navigation';
 import { UserLibItem } from '~/app/user/[username]/_components/UserUI';
 import AnimeItem from '~/components/AnimeItem';
 import { HandleServerError } from '~/components/Errors';
+import { StyledH2, StyledH3, StyledM } from '~/components/styled/StyledText';
 import Tooltip from '~/components/Tooltip';
-import { H2, H3, P } from '~/components/UI/Typography';
 import UserLayout from '~/components/UserLayout';
 import { IUserLib } from '~/interfaces/IUser';
 import { IUserLibPageProps } from '~/interfaces/PagesParams';
@@ -85,8 +85,8 @@ export default async function ULibPageRSC(props: IRSCProps<IUserLibPageProps>) {
           </Tooltip>}
 
           <div className="flex items-center gap-[8px]">
-            <H2 text={parseLibTitle(lib.type)} bold size={24} />
-            {lib.anime_ids.length !== 0 && <P text={`(${lib.anime_ids.length})`} size={24} className="text-grey-new" />}
+            <StyledH2 text={parseLibTitle(lib.type)} bold className="text-[24px] flex-shrink-0" />
+            {lib.anime_ids.length !== 0 && <StyledM text={`(${lib.anime_ids.length})`} className="text-[24px] flex-shrink-0" color="text-muted" />}
           </div>
 
           <div className="w-full h-[2px] bg-dark-light"></div>
@@ -96,8 +96,8 @@ export default async function ULibPageRSC(props: IRSCProps<IUserLibPageProps>) {
           <MaterialSymbol icon="extension_off" size={64} className="text-white" />
 
           <div className="flex flex-col gap-[8px]">
-            <H3 text={`Ця тека порожня`} size={24} bold />
-            <P text={`Вона оновиться після того як сюди буде додане аніме`} size={16} className={`text-grey-new`} />
+            <StyledH3 text={`Ця тека порожня`} className="text-[24px]" bold />
+            <StyledM text={`Вона оновиться після того як сюди буде додане аніме`} color="text-muted" />
           </div>
         </div>}
 

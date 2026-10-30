@@ -97,7 +97,7 @@ const HomeHeroTrailerScreen: FC<IProps> = (props) => {
 
     {/* Main */}
     <div className={cn(`wrapper !absolute bottom-[60px] left-0 flex flex-col gap-[16px] max-w-[1170px] duration-200 z-[3] max-sm:pr-[16px] max-sm:max-w-none max-sm:w-full max-sm:bottom-[90px]`, isIdle && 'translate-y-[40px] opacity-0 invisible')}>
-      <h3 className="text-white uppercase text-[32px] font-black text-ellipsis line-clamp-[1] font-manrope max-md:text-[24px] max-sm:line-clamp-3 w-fit" title={props.hero.title}>{props.hero.title}</h3>
+      <h3 className="text-white uppercase text-[32px] font-black text-ellipsis line-clamp-[1]  max-md:text-[24px] max-sm:line-clamp-3 w-fit" title={props.hero.title}>{props.hero.title}</h3>
 
       <div className="flex gap-[8px] w-full">
         <HomeHeroWatch hero={props.hero} className="max-sm:w-full" />
