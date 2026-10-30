@@ -152,36 +152,6 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
 
 
 
-  // Handle drag and dtop
-  useEffect(() => {
-    if (!isEdit) return;
-
-    const select = fileSelectRef.current;
-    if (!select) return console.error(`[dev]: File select is not provided`);
-
-    select.addEventListener('dragover', e => {
-      e.preventDefault();
-      setIsDrag(true);
-
-      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
-    });
-
-    select.addEventListener('dragend', () => setIsDrag(false));
-    select.addEventListener('dragleave', () => setIsDrag(false));
-
-    select.addEventListener('drop', e => {
-      e.preventDefault();
-      setIsDrag(false);
-
-      const file = e.dataTransfer?.files[0];
-      if (!file) return NotifyWarn({ title: 'Файл не завантажено', message: '' });
-
-      uploadFile(file);
-    });
-  }, []);
-
-
-
   function focusFileSelect() {
     const input = fileInputRef.current;
     if (!input) return;
@@ -228,6 +198,37 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
 
 
 
+
+  // Handle drag and dtop
+  useEffect(() => {
+    if (!isEdit) return;
+
+    const select = fileSelectRef.current;
+    if (!select) return console.error(`[dev]: File select is not provided`);
+
+    select.addEventListener('dragover', e => {
+      e.preventDefault();
+      setIsDrag(true);
+
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    });
+
+    select.addEventListener('dragend', () => setIsDrag(false));
+    select.addEventListener('dragleave', () => setIsDrag(false));
+
+    select.addEventListener('drop', e => {
+      e.preventDefault();
+      setIsDrag(false);
+
+      const file = e.dataTransfer?.files[0];
+      if (!file) return NotifyWarn({ title: 'Файл не завантажено', message: '' });
+
+      uploadFile(file);
+    });
+  }, []);
+
+
+
   return <div className={cn(`relative w-[256px] h-[256px] rounded-[4px] overflow-hidden shrink-0 max-lg:w-[128px] max-lg:h-[128px]`, className)}>
     <StyledAvatar avatar={avatarUrl} width="100%" height="100%" alt="Avatar" initials={initials} borderRadius={4} />
 
@@ -258,36 +259,6 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileSelectRef = useRef<HTMLButtonElement>(null);
-
-
-
-  // Handle drag and dtop
-  useEffect(() => {
-    if (!isEdit) return;
-
-    const select = fileSelectRef.current;
-    if (!select) return console.error(`[dev]: File select is not provided`);
-
-    select.addEventListener('dragover', e => {
-      e.preventDefault();
-      setIsDrag(true);
-
-      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
-    });
-
-    select.addEventListener('dragend', () => setIsDrag(false));
-    select.addEventListener('dragleave', () => setIsDrag(false));
-
-    select.addEventListener('drop', e => {
-      e.preventDefault();
-      setIsDrag(false);
-
-      const file = e.dataTransfer?.files[0];
-      if (!file) return NotifyWarn({ title: 'Банер не завантажено', message: '' });
-
-      uploadFile(file);
-    });
-  }, []);
 
 
 
@@ -334,6 +305,36 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
       HandleClientError(e);
     }
   }
+
+
+
+  // Handle drag and dtop
+  useEffect(() => {
+    if (!isEdit) return;
+
+    const select = fileSelectRef.current;
+    if (!select) return console.error(`[dev]: File select is not provided`);
+
+    select.addEventListener('dragover', e => {
+      e.preventDefault();
+      setIsDrag(true);
+
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    });
+
+    select.addEventListener('dragend', () => setIsDrag(false));
+    select.addEventListener('dragleave', () => setIsDrag(false));
+
+    select.addEventListener('drop', e => {
+      e.preventDefault();
+      setIsDrag(false);
+
+      const file = e.dataTransfer?.files[0];
+      if (!file) return NotifyWarn({ title: 'Банер не завантажено', message: '' });
+
+      uploadFile(file);
+    });
+  }, []);
 
 
 

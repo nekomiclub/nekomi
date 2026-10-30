@@ -40,7 +40,7 @@ const StyledImage: NextPage<IStyledImageProps> = (props) => {
 
   const [imageSrc, setImageSrc] = useState<string>();
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isErrored, setIsErrored] = useState(!Boolean(props.src));
+  const [isErrored, setIsErrored] = useState(!props.src);
 
   const loading = props.priority ? 'eager' : props.loading ?? 'lazy';
 

@@ -22,6 +22,7 @@ import StateProvider from './StateProvider';
 
 
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata = siteMetadata({});
 
 
@@ -77,7 +78,7 @@ export default async function RootLayout({ children, params }: ILayoutProps) {
     try {
       await axios.options(`${conf.URL.nekomiApi}/ping`);
       isServerOnline = true;
-    } catch (e) { }
+    } catch (e) { /*  */ }
   }
 
 

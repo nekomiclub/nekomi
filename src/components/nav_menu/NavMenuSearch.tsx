@@ -74,6 +74,52 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
 
 
 
+  async function search(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+
+    // Reset states
+    if (searchText.length === 0) {
+      setShowStartTyping(true);
+      setShowNotFound(false);
+      setSearchResults([]);
+
+      return;
+    }
+
+    // Skip if already searching this query
+    if (searchingQueryRef.current === searchText) return;
+    searchingQueryRef.current = searchText;
+
+    try {
+      if (searchType === 'anime') {
+        const { results } = await API.getAnimeSearch({ q: searchText });
+
+        setSearchResults(results);
+      }
+
+      if (searchType === 'user') {
+        const { results } = await API.getUserSearch({ q: searchText });
+
+        setSearchResults(results);
+      }
+
+      if (searchType === 'dubber') {
+        const { results } = await API.getDubberSearch({ q: searchText });
+
+        setSearchResults(results);
+      }
+
+      setShowStartTyping(false);
+    } catch (e) {
+      setShowStartTyping(true);
+      setShowNotFound(false);
+      setSearchResults([]);
+      HandleClientError(e);
+    }
+  }
+
+
+
   // Handle startTypingText
   useEffect(() => {
     const dictionary = SearchStartTypingDictionary[searchType];
@@ -129,52 +175,6 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
     setIsSelectSearchTypeOpen(false);
     setSearchResults([]);
   }, [searchType]);
-
-
-
-  async function search(e?: React.FormEvent) {
-    e && e.preventDefault();
-
-    // Reset states
-    if (searchText.length === 0) {
-      setShowStartTyping(true);
-      setShowNotFound(false);
-      setSearchResults([]);
-
-      return;
-    }
-
-    // Skip if already searching this query
-    if (searchingQueryRef.current === searchText) return;
-    searchingQueryRef.current = searchText;
-
-    try {
-      if (searchType === 'anime') {
-        const { results } = await API.getAnimeSearch({ q: searchText });
-
-        setSearchResults(results);
-      }
-
-      if (searchType === 'user') {
-        const { results } = await API.getUserSearch({ q: searchText });
-
-        setSearchResults(results);
-      }
-
-      if (searchType === 'dubber') {
-        const { results } = await API.getDubberSearch({ q: searchText });
-
-        setSearchResults(results);
-      }
-
-      setShowStartTyping(false);
-    } catch (e) {
-      setShowStartTyping(true);
-      setShowNotFound(false);
-      setSearchResults([]);
-      HandleClientError(e);
-    }
-  }
 
 
 

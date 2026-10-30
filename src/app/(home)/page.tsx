@@ -14,6 +14,7 @@ import { HomeCategory, HomeHero } from './HomePage';
 
 
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata = siteMetadata({
   title: 'nekomi',
   description: 'Nekomi - безкоштовний онлайн-кінотеатр аніме з великою кількістю озвучення на українській мові!'

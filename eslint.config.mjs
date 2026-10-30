@@ -1,88 +1,96 @@
-/**
- * @fileoverview nextjs eslint config
- * @version 07.08.2025
- */
-
-
-
-import { FlatCompat } from '@eslint/eslintrc';
-import js from '@eslint/js';
-import { defineConfig, globalIgnores } from 'eslint/config';
-import pathPlugin from 'eslint-plugin-path';
+import js from '@eslint/js'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+import { defineConfig, globalIgnores } from 'eslint/config'
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unusedImports from 'eslint-plugin-unused-imports';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import importPlugin from 'eslint-plugin-import';
 
 
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all
-});
+export default defineConfig(globalIgnores([
+  '**/node_modules', '**/dist', '**/build', '**/.next', '**/@generated.*'
+]), [
+  {
+    files: ['**/*.{ts,tsx}'],
 
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+      importPlugin.flatConfigs.typescript
+    ],
 
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
 
-export default defineConfig([globalIgnores(['**/node_modules', '**/dist', '**/build', '**/.next']), {
-  extends: compat.extends('next/core-web-vitals'),
+    plugins: {
+      'unused-imports': unusedImports,
+      'simple-import-sort': simpleImportSort,
+    },
 
-  plugins: {
-    'unused-imports': unusedImports,
-    'path': pathPlugin,
-    'simple-import-sort': simpleImportSort
-  },
+    rules: {
+      'semi': ['warn', 'always'],
+      // 'indent': ['error', 2, { SwitchCase: 1, }],
+      'prefer-const': 'off',
+      'no-empty': 'warn',
+      'preserve-caught-error': 'off',
 
-  languageOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-  },
+      'quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true, }], // Prefer single quotes over double, ifnore template literals
+      'jsx-quotes': ['error', 'prefer-double'], // Prefer double quotes for jsx (classname="")
 
-  rules: {
-    'semi': ['warn', 'always'],
-    '@next/next/no-img-element': 'off',
-    'react-hooks/exhaustive-deps': 'off',
-    'unused-imports/no-unused-imports': 'warn',
-    'jsx-quotes': ['error', 'prefer-double'],
-    'react/jsx-key': 'warn',
-    'import/first': 'error',
-    'import/newline-after-import': 'error',
-    'import/no-duplicates': 'error',
+      'react-hooks/set-state-in-render': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/error-boundaries': 'off', // TODO: Temporary fix
+      'react-hooks/exhaustive-deps': 'off', // Disable react warn for hooks dependencies
 
-    'quotes': ['error', 'single', {
-      avoidEscape: true,
-      allowTemplateLiterals: true,
-    }],
+      'react-refresh/only-export-components': 'warn', // Allow exporting consts from nextjs
 
-    'simple-import-sort/imports': ['warn', {
-      groups: [
-        // Side effect imports (css, etc)
-        ['^\\u0000'],
+      'prefer-rest-params': 'off',
 
-        // React / next firts
-        ['^(react|next)$', '^@?\\w'],
+      'unused-imports/no-unused-imports': 'warn', // Remove unused imports
 
-        // Packages
-        ['^@?\\w', '^(?![^/]+\\.)'],
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
 
-        // Absolute imports
-        ['^~'],
+      'import/first': 'error', // Reorder imports to first line
+      'import/newline-after-import': 'error', // Add one line after imports
+      'import/no-duplicates': 'error', // Merge different imports from single file into one
 
-        // Relative imports
-        ['^\\./'],
+      // '@next/next/no-img-element': 'off', // Disable nextjs error when using <img /> tag
 
-        // CSS modules
-        ['^.+\\.(module.css|module.scss)$'],
+      // Sort import order
+      'simple-import-sort/imports': ['warn', {
+        groups: [
+          // Side effect imports (css, etc)
+          ['^\\u0000'],
 
-        // Media imports
-        ['^.+\\.(gif|png|svg|jpg)$'],
-      ],
-    }],
+          // React / next firts
+          ['^(react|next)$', '^@?\\w'],
 
-    'path/no-relative-imports': ['error', {
-      maxDepth: 0,
-    }],
-  },
-}]);
+          // Packages
+          ['^@?\\w', '^(?![^/]+\\.)'],
+
+          // Absolute imports
+          ['^~'],
+
+          // Relative imports
+          ['^\\./'],
+
+          // CSS modules
+          ['^.+\\.(module.css|module.scss)$'],
+
+          // Media imports
+          ['^.+\\.(gif|png|svg|jpg)$'],
+        ],
+      }],
+    }
+  }])

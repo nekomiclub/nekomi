@@ -21,6 +21,7 @@ import { UserLibItem, UserStatisticsItem, UserTitle } from './_components/UserUI
 
 
 
+// eslint-disable-next-line react-refresh/only-export-components
 export async function generateMetadata(
   props: IRSCProps<IUserPageProps>,
 ): Promise<Metadata> {

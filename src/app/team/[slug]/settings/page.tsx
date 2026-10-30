@@ -16,6 +16,7 @@ import TSettingsPage from './TSettingsPage';
 
 
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata = siteMetadata({ title: 'Налаштування команди озвучення', robots: ['nofollow', 'noindex'] });
 
 

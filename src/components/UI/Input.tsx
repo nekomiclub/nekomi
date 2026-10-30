@@ -32,8 +32,8 @@ export interface UIFieldProps extends React.InputHTMLAttributes<HTMLElement> {
 
 
 
-export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className, placeholder, disablePending, symbolsLimited, fieldType, parentClassName, disabled, ...props }) => {
-  fieldType = fieldType ?? 'input';
+export const UIField: NextPage<UIFieldProps> = ({ state, stateSetter, className, placeholder, disablePending, symbolsLimited, fieldType: FT, parentClassName, disabled, ...props }) => {
+  const fieldType = FT ?? 'input';
 
   const [initialValue, setInitialValue] = useState<string>(state.value ?? state.initialValue ?? '');
   const [value, setValue] = useState<string>(initialValue);

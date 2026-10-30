@@ -7,7 +7,6 @@ import MediaQuery from 'react-responsive';
 import { NotifyWarn } from '~/components/nofity/NotifyStatus';
 import StyledAvatar from '~/components/styled/StyledAvatar';
 import StyledButton from '~/components/styled/StyledButton';
-import StyledImage from '~/components/styled/StyledImage';
 import StyledSelect, { IStyledSelectOption, IStyledSelectOptionContentProps } from '~/components/styled/StyledSelect';
 import { StyledM, StyledS } from '~/components/styled/StyledText';
 import conf from '~/conf';
@@ -199,7 +198,7 @@ const AnimePlayer: FC<IProps> = (props) => {
         const item = AnimePlayerDataSchema.safeParse(el);
         if (item.data) data.push(item.data);
       });
-    } catch (e) { null; }
+    } catch (e) { /*  */ }
 
     return data;
   }
@@ -476,17 +475,15 @@ const AnimePlayerNextEpisode: FC<IAnimePlayerNextEpisodeProps> = (props) => {
     {episodeMeta && <article className={cn(`ap-player-next ap-player-next--${props.style}`)}>
       <button className="ap-player-next_screenshot" onClick={ctx.nextEpisode}>
         {/* Screenshot exist */}
-        {false && <>
+        {/* {false && <>
           <StyledImage src="https://cdn.nekomi.club/26585c1e-e49d-46b0-a703-f9bee858f25a" width="100%" height="100%" borderRadius={4} />
-        </>}
+        </>} */}
 
         {/* Screenshot does not exist fallback */}
-        {true && <>
-          <div className="ap-player-next_rate ap-player-next_rate--large">
-            <MaterialSymbol icon="star_half" color="var(--color-text)" size={20} />
-            <StyledM text={Number(episodeMeta?.score).toFixed(2)} color="text" bold />
-          </div>
-        </>}
+        <div className="ap-player-next_rate ap-player-next_rate--large">
+          <MaterialSymbol icon="star_half" color="var(--color-text)" size={20} />
+          <StyledM text={Number(episodeMeta?.score).toFixed(2)} color="text" bold />
+        </div>
       </button>
 
       <div className="ap-player-next_content">

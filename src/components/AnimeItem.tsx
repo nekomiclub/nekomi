@@ -139,7 +139,7 @@ const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
               {anime.genres.length ? anime.genres.slice(0, 3).map((genre, i) => {
                 let immutableI = i;
 
-                return `${genre.name}${++immutableI < anime.genres?.slice(0, 3).length! ? ' • ' : ''}`;
+                return `${genre.name}${immutableI + 1 < anime.genres.slice(0, 3).length ? ' • ' : ''}`;
               }) : 'Жанри відсутні'}
             </p>
           </div>

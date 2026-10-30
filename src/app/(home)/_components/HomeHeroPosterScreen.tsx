@@ -21,15 +21,14 @@ const HomeHeroPosterScreen: FC<IProps> = (props) => {
 
 
 
+  const handleIsSm = () => setIsSm(window.innerWidth <= 620);
+
+
   useEffect(() => {
     handleIsSm();
 
     window.addEventListener('resize', handleIsSm);
   }, []);
-
-  function handleIsSm() {
-    setIsSm(window.innerWidth <= 620);
-  }
 
 
 

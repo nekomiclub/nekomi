@@ -33,6 +33,7 @@ const getAnime = cache(async (query: string) => {
 
 
 
+// eslint-disable-next-line react-refresh/only-export-components
 export async function generateMetadata(
   props: IRSCProps<IAnimePageParams>,
 ): Promise<Metadata> {

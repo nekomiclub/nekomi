@@ -15,6 +15,7 @@ import USettingsPage from './USettingsPage';
 
 
 
+// eslint-disable-next-line react-refresh/only-export-components
 export async function generateMetadata({ params, searchParams }: IRSCProps<IUserPageProps>,): Promise<Metadata> {
   const { username } = await params;
 

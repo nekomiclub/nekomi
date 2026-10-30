@@ -47,7 +47,7 @@ const WatchDetail: FC<IProps> = (props) => {
           return <Tooltip content={genre.description} key={`animemeta-genre--${i}`}>
             <span className="watch-meta-detail_value font-bold ">
               {genre.name}
-              {++immutableI < props.genres!.length ? ',' : ''}
+              {immutableI + 1 < props.genres!.length ? ',' : ''}
             </span>
           </Tooltip>;
         })}
@@ -61,7 +61,7 @@ const WatchDetail: FC<IProps> = (props) => {
 
           return <span className="text-white max-sm:text-[14px]" key={`animemeta-studio--${i}`}>
             {studio.name}
-            {++immutableI < props.studios!.length ? ',' : ''}
+            {immutableI + 1 < props.studios!.length ? ',' : ''}
           </span>;
         })}
       </div> : <p className="text-grey-new text-center  max-sm:text-start">—</p>}
