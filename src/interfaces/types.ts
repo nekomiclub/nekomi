@@ -58,3 +58,11 @@ export const zBoolean = z.preprocess((value) => {
   if (value === 'false') return false;
   return value;
 }, z.boolean());
+
+
+
+/** Type errors to cause NoConnection error */
+export const NoConnectionTypeErrorCodes = ['ECONNREFUSED', 'EADDRNOTAVAIL', 'ENETUNREACH', 'ENOTFOUND'];
+
+/** API error codes to cause session timeout */
+export const SessionTimeoutErrorCodes = ['auth:session_token_expired', 'auth:session_token_invalid', 'auth:session_not_exist'];

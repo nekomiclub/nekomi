@@ -18,11 +18,11 @@ export type NormalizedErrorType = {
   /** Trace id */
   traceId: string
 
-  /** API errors by fieldname */
-  api_errors?: Record<string, string[]> | null
-
   /** HTTP response status */
   status?: number
+
+  /** HTTP response code */
+  code?: string
 }
 
 
@@ -30,13 +30,26 @@ export type NormalizedErrorType = {
 export default async function normalizeError(e: any, traceId?: string): Promise<NormalizedErrorType> {
   traceId = traceId ?? IDv7();
 
-  const detailsMessage = `Detailed message is sent to the productuion logs.`;
+
+  // Handle type errors
+  if (e instanceof TypeError) {
+    const cause = e.cause as NodeJS.ErrnoException;
+    const message = `❌ Internal Client Error: TypeError`;
+
+    Log.error(`[TypeError]: ❌ Internal Client Error: ${cause.message}\ntraceId=${traceId}`);
+
+    return {
+      traceId,
+      message,
+      code: cause.code
+    };
+  }
 
 
 
   // Handle zod error
   if (e instanceof ZodError) {
-    const message = `❌ Internal Client Error: Server returned an unexpected data structure. ${detailsMessage}`;
+    const message = `❌ Internal Client Error: Server returned an unexpected data structure`;
 
     Log.error(`[ZodError]: ${message}\ntraceId=${traceId}`, z.prettifyError(e));
 
@@ -51,24 +64,23 @@ export default async function normalizeError(e: any, traceId?: string): Promise<
   // Handle axios error
   if (e instanceof AxiosError) {
     const response = BaseResponseSchema.safeParse(e.response?.data);
-    const message = `❌ Internal Client Error: Fetch failed`;
+    const message = `❌ Internal Client Error: Axios request failed`;
 
     if (response.success) {
       const data = response.data;
 
       if (IsDevelopment) console.log(e);
-      Log.error(`[AxiosError]: Response failed with valid basic data structure: "${data.message ?? e.message}". traceId=${traceId}`, JSON.stringify(data.error, null, 2));
+      Log.error(`[AxiosError]: ❌ Internal Client Error: Response failed with valid basic data structure: "${data.message ?? e.message}". traceId=${traceId}`, JSON.stringify(data.error, null, 2));
 
       return {
         traceId,
         message,
-        api_errors: data.errors as any,
         status: e.status
       };
     }
 
     console.log(e);
-    Log.error(`[AxiosError]: Response failed. Message: ${e.message}. traceId=${traceId}`, JSON.stringify(e, null, 2));
+    Log.error(`[AxiosError]: ❌ Internal Client Error: Response failed. Message: ${e.message}. traceId=${traceId}`, JSON.stringify(e, null, 2));
 
     return {
       traceId,
@@ -83,35 +95,36 @@ export default async function normalizeError(e: any, traceId?: string): Promise<
   if (e instanceof Response) {
     const response = BaseResponseSchema.safeParse(await e.json());
     const message = `❌ Internal Client Error: Fetch failed`;
+    const status = e.status;
 
     if (response.success) {
       const data = response.data;
 
       if (IsDevelopment) console.error(e, response.data);
-      Log.error(`[FetchError]: Response failed with valid basic data structure: "${data.message ?? e.statusText}". traceId=${traceId}`, JSON.stringify(data.error, null, 2));
+      Log.error(`[FetchError]: ❌ Internal Client Error: Response failed with valid basic data structure: "${data.message ?? e.statusText}". traceId=${traceId}`, JSON.stringify(data.error, null, 2));
 
       return {
         traceId,
         message,
-        api_errors: data.errors as any,
-        status: e.status
+        status,
+        code: data.code ?? undefined
       };
     }
 
-    console.error(e, await e.json());
-    Log.error(`[FetchError]: Response failed. Message: ${e.statusText}. traceId=${traceId}`, JSON.stringify(e, null, 2));
+    console.error(e, await e.json().catch(e => undefined));
+    Log.error(`[FetchError]: ❌ Internal Client Error: Response failed. Message: ${e.statusText}. traceId=${traceId}`, JSON.stringify(e, null, 2));
 
     return {
       traceId,
       message,
-      status: e.status,
+      status,
     };
   }
 
 
 
   // Handle unexpected errors
-  const message = `❌ Internal Client Error: Something went wrong, try again later. ${detailsMessage}`;
+  const message = `❌ Internal Client Error: Something went wrong, try again later`;
 
   console.error(e);
   Log.error(`[UnexpectedError]: ${message}\ntraceId=${traceId}`, JSON.stringify(e, null, 2));

@@ -26,6 +26,7 @@ export function parseEnv(): z.infer<typeof EnvConfigSchema> {
   try {
     return EnvConfigSchema.parse({
       CSRF_SK: process.env.CSRF_SK,
+
       NEXT_PUBLIC_TELEGRAM_BOT_URL: process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL,
       NEXT_PUBLIC_NEKOMI_NEXTJS_URL: process.env.NEXT_PUBLIC_NEKOMI_NEXTJS_URL,
       NEXT_PUBLIC_NEKOMI_API_URL: process.env.NEXT_PUBLIC_NEKOMI_API_URL,

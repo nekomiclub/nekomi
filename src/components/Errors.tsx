@@ -30,13 +30,18 @@ export function HandleClientError(e: unknown) {
 
 
 
-export const ErrorNoConnection: FC = () => {
+type IErrorNoConnectionProps = {
+  code?: string
+}
+
+export const ErrorNoConnection: FC<IErrorNoConnectionProps> = (props) => {
   return <div className="wrapper cui-error-wrapper">
     <Image src={'/assets/NoConnectionIllust.svg'} alt="Server is not available illustration" width={380} height={491} />
 
     <div className="flex flex-col gap-2 items-center">
       <StyledHeading text={`Неможливо зв’язатись з сервером`} center bold />
       <StyledM text={`Перевірте ваше підключення до інтернету або зачекайте поки ми вирішимо проблему`} color="text-secondary" center />
+      {props.code && <StyledXS text={props.code} color="text-muted" center />}
     </div>
 
     <Link href={conf.URL.telegramChat} target="_blank">

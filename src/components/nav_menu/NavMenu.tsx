@@ -8,8 +8,8 @@ import { HandleClientError } from '~/components/Errors';
 import { NotifySuccess } from '~/components/nofity/NotifyStatus';
 import { firebaseApp } from '~/conf';
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
-import API from '~/services/api/API';
-import { AUTH_METHOD } from '~/services/api/generic/PostAuth.api';
+import { InvokeClientLogout, InvokeGoogleSignin } from '~/shared/lib/auth-lib';
+import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import userSlice, { userStateDefault } from '~/store/reducers/userSlice';
 
 import HeaderNav from './HeaderNav';
@@ -39,7 +39,8 @@ const NavMenu: FC = () => {
 
       if ('accessToken' in data.user) {
         const token = data.user.accessToken as string;
-        await API.postAuth({ method: AUTH_METHOD.GOOGLE, token });
+        const signinRes = await InvokeGoogleSignin(token);
+        if (!signinRes.success) return HandleClientNormalizedError(signinRes.error);
 
         router.refresh();
       } else throw new Error('No access token in provider data');
@@ -56,7 +57,7 @@ const NavMenu: FC = () => {
       dispatch(userSlice.actions.reducer(userStateDefault));
       setIsDropdownMenuOpen(false);
 
-      await API.getAuthLogout({});
+      await InvokeClientLogout();
 
       router.refresh();
     } catch (e) {

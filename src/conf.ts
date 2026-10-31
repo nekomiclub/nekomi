@@ -44,8 +44,11 @@ export const conf = {
     tiktok: 'https://tiktok.com/@nekomiclub'
   },
   vars: {
+    /** @deprecated use authorization_cookie_name instead */
     SESSION_COOKIE_NAME: 'nekomi-auth',
     CSRF_TOKEN_LIFETIME_MS: ms('1min'),
+
+    authorization_cookie_name: 'nekomi:auth',
 
     breakpoints: {
       breakSM: 640,

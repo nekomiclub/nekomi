@@ -1,14 +1,14 @@
 'use client';
 
-import { FC, ReactNode, useEffect, useMemo } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { PopupLayer } from '@fullkekw/popup';
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
-import { HandleClientError } from '~/components/Errors';
 import { NotifyWarn } from '~/components/nofity/NotifyStatus';
 import { ReportModal } from '~/components/Report';
-import API from '~/services/api/API';
+import { InvokeClientLogout } from '~/shared/lib/auth-lib';
+import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import { IUserState } from '~/store/reducers/userSlice';
 import { setupStore } from '~/store/store';
 import { randomNumber } from '~/utils/utils';
@@ -37,15 +37,14 @@ const ConsoleMessagesList = [
 
 const StateProvider: FC<IProps> = ({ children, user, isSessionExpired }) => {
   // Handle user authorization
-  useMemo(() => {
+  useEffect(() => {
     // Logout if session expire
     if (isSessionExpired) {
       (async function () {
-        try {
-          NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' });
+        NotifyWarn({ title: 'Ваша авторизація закінчилась', message: 'Перезайдіть в акаунт' });
 
-          await API.getAuthLogout({});
-        } catch (e) { HandleClientError(e); }
+        const logoutRes = await InvokeClientLogout();
+        if (!logoutRes.success) return HandleClientNormalizedError(logoutRes.error);
       })();
     }
   }, []);

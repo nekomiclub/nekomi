@@ -1,9 +1,8 @@
 import '~/styles/_main.scss';
 
-import { cache } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Manrope } from 'next/font/google';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
@@ -12,10 +11,10 @@ import { ErrorNoConnection } from '~/components/Errors';
 import Footer from '~/components/Footer';
 import NavMenu from '~/components/nav_menu/NavMenu';
 import conf from '~/conf';
-import { ILayoutProps } from '~/interfaces/types';
-import API from '~/services/api/API';
+import { ILayoutProps, NoConnectionTypeErrorCodes, SessionTimeoutErrorCodes } from '~/interfaces/types';
+import API from '~/shared/lib/api';
+import { getAuthorizationToken } from '~/shared/lib/auth-lib';
 import { IUserState } from '~/store/reducers/userSlice';
-import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 
 import StateProvider from './StateProvider';
@@ -36,48 +35,53 @@ const manrope = Manrope({
 
 
 
-const getUser = cache(async (session: string) => {
-  return await API.getUser({}, { view: 'full', get_permissions: true, get_view_progress: true, get_libs: true }, { sessionToken: session });
-});
-
-
-
 export default async function RootLayout({ children, params }: ILayoutProps) {
-  const sessionToken = await getSessionToken();
+  const authToken = await getAuthorizationToken();
 
-  let isServerOnline = false;
+  let isServerAlive = true;
   let isSessionExpired = false;
-  let user: IUserState | undefined;
+  let user: IUserState | undefined = undefined;
 
 
 
   // Get user by cookie
-  if (sessionToken) {
-    try {
-      const data = await getUser(sessionToken);
+  if (authToken) {
+    const userRes = await API.User.getUser({
+      searchParams: {
+        is_extended: true,
+        get_permissions: true
+      }
+    });
 
-      user = {
-        avatar: data.user.avatar,
-        id: data.user.id,
-        roles: data.user.roles,
-        username: data.user.username,
-        view_progress: data.user.view_progress ?? [],
-        permissions: data.user.permissions ?? [],
-        libs: data.user.libs ?? [],
-        dubber_team_member: data.user.dubber_team_member,
+    if (userRes.success) {
+      const data = {
+        ...userRes.response.data.user,
+        ...userRes.response.data.user_extended!,
+        ...userRes.response.data.user_permissions!,
       };
 
-      isServerOnline = true;
-    } catch (e) {
-      if (e instanceof AxiosError && ['auth:session_token_expired', 'auth:session_token_invalid', 'auth:session_not_exist'].includes(e.response?.data.code)) isSessionExpired = true;
+      user = {
+        avatar: data.avatar,
+        id: data.id,
+        username: data.username,
+        view_progress: data.view_progress ?? [],
+        permissions: data.permissions ?? [],
+        libs: data.libs ?? [],
+        dubber_team_member: data.dubber_team_member,
+      };
+
+      isServerAlive = true;
+    } else {
+      if (userRes.error.code && NoConnectionTypeErrorCodes.includes(userRes.error.code)) isServerAlive = false; // Handle server or user is offline 
+      if (userRes.error.code && SessionTimeoutErrorCodes.includes(userRes.error.code)) isSessionExpired = true; // Handle user session timeout
     }
   }
 
   // Ping API
-  if (!isServerOnline) {
+  if (!authToken) {
     try {
       await axios.options(`${conf.URL.nekomiApi}/ping`);
-      isServerOnline = true;
+      isServerAlive = true;
     } catch (e) { /*  */ }
   }
 
@@ -85,7 +89,7 @@ export default async function RootLayout({ children, params }: ILayoutProps) {
 
   return <html lang="uk">
     <body className={`bg-[var(--color-dark)] ${manrope.variable}`}>
-      {isServerOnline ? <StateProvider user={user} isSessionExpired={isSessionExpired}>
+      {isServerAlive ? <StateProvider user={user} isSessionExpired={isSessionExpired}>
         <SkeletonTheme baseColor="#181818" highlightColor="#222">
           <NavMenu />
 

@@ -62,6 +62,8 @@ export type NormalizedResponseType<TSchema> = NormalizedSuccessResponseType<TSch
 // =======================================================
 export type THomeFeedHero = z.infer<typeof OpenAPI.HomeFeedHero>
 
+
+
 // === Anime entity ===
 export type TAnime = z.infer<typeof OpenAPI.Anime>
 export type TAnimeMinified = z.infer<typeof OpenAPI.AnimeMinified>
@@ -74,6 +76,8 @@ export type TAnimeStatus = z.infer<typeof OpenAPI.AnimeStatus>
 export type TAnimeRating = z.infer<typeof OpenAPI.AnimeRating>
 export type TAnimeGenre = z.infer<typeof OpenAPI.AnimeGenre>
 
+
+
 // === Team entity ===
 export type TTeam = z.infer<typeof OpenAPI.Team>
 export type TTeamMinified = z.infer<typeof OpenAPI.TeamMinified>
@@ -81,9 +85,16 @@ export type TTeamMinified = z.infer<typeof OpenAPI.TeamMinified>
 export type TTeamMember = z.infer<typeof OpenAPI.TeamMember>
 export type TTeamMemberExtended = z.infer<typeof OpenAPI.TeamMemberExtended>
 
+
+
 // === User entity ===
 export type TUser = z.infer<typeof OpenAPI.User>
 export type TUserMinified = z.infer<typeof OpenAPI.UserMinified>
 
 export type TUserLib = z.infer<typeof OpenAPI.UserLib>
 export const USER_LIB_TYPE_ENUM = OpenAPI.UserLibTypeEnum.enum;
+
+
+
+// === Role entity ===
+export const ROLE_PERMISSION_ENUM = OpenAPI.RolePermissionEnum.enum;

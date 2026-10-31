@@ -1,19 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { ROLE_PERMISSION } from '~/interfaces/IRole';
-import { IUserLib, IUserViewProgress } from '~/interfaces/IUser';
+import { IUserViewProgress } from '~/interfaces/IUser';
+import { ROLE_PERMISSION_ENUM, TUserLib } from '~/shared/lib/api/api-types';
 import { IReduxAction } from '~/store/store';
 
 /** User local state */
 export interface IUserState {
   id: string
   username: string
-  roles: string[]
   avatar: string
 
-  permissions: ROLE_PERMISSION[]
+  permissions: (keyof typeof ROLE_PERMISSION_ENUM)[]
   view_progress: IUserViewProgress[]
-  libs: IUserLib[]
+  libs: TUserLib[]
   dubber_team_member: string | null
 }
 
@@ -22,7 +21,6 @@ export const userStateDefault: IUserState = {
   id: '',
   username: '',
   avatar: '',
-  roles: [],
   permissions: [],
   view_progress: [],
   libs: [],

@@ -8,6 +8,8 @@ import signCSRF from '~/utils/signCSRF';
 
 import { APIOptionsType, APISchemaType, NormalizedResponseType } from './api-types';
 
+import { getAuthorizationToken } from '../auth-lib';
+
 
 
 type APIRequestPayloadType = Omit<APISchemaType, keyof Pick<APISchemaType, 'method' | 'response'>>
@@ -20,6 +22,7 @@ type APIRequestPayloadType = Omit<APISchemaType, keyof Pick<APISchemaType, 'meth
  * If error occured, will return it as response with success: false
  */
 export default async function APIRequest<TSchema>(url: string, payload: APIRequestPayloadType, schema: APISchemaType, opts?: APIOptionsType): Promise<NormalizedResponseType<TSchema>> {
+  const authToken = await getAuthorizationToken();
   const traceId = IDv7();
 
   // Replace dynamic path tokens (e.g., /api/agents/:id -> /api/agents/123)
@@ -50,6 +53,7 @@ export default async function APIRequest<TSchema>(url: string, payload: APIReque
   headers['Content-Type'] = 'application/json';
   headers['X-Trace-ID'] = traceId;
 
+  if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
 
 
   try {
