@@ -3,7 +3,7 @@
 import React, { FC, useEffect, useState } from 'react';
 
 import StyledImage from '~/components/styled/StyledImage';
-import { IHomeFeedHero } from '~/interfaces/types';
+import { THomeFeedHero } from '~/shared/lib/api/api-types';
 import { cn } from '~/utils/classnames';
 
 import HomeHeroWatch from './HomeHeroWatch';
@@ -11,7 +11,7 @@ import HomeHeroWatch from './HomeHeroWatch';
 
 
 interface IProps {
-  hero: IHomeFeedHero
+  hero: THomeFeedHero
 }
 
 

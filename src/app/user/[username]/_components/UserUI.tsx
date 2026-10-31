@@ -8,9 +8,8 @@ import StyledButton from '~/components/styled/StyledButton';
 import { StyledH3, StyledM } from '~/components/styled/StyledText';
 import Tooltip from '~/components/Tooltip';
 import { useAppSelector } from '~/hooks/redux';
-import IDubber, { IDubberMember } from '~/interfaces/IDubber';
-import { IUserLib, UserCardType } from '~/interfaces/IUser';
 import routes from '~/routes';
+import { TTeam, TTeamMemberExtended, TUserLib, TUserMinified } from '~/shared/lib/api/api-types';
 import parseUserLibUI, { parseLibTitle } from '~/utils/parse-user-lib-ui';
 
 
@@ -20,8 +19,8 @@ interface IUserStatisticsItemProps {
   viewtime?: number
 
   dubber?: {
-    team: IDubber
-    member: IDubberMember
+    team: TTeam
+    member: TTeamMemberExtended
   }
 }
 
@@ -30,8 +29,8 @@ interface IUserTitleProps {
 }
 
 interface IUserLibItemProps {
-  lib: IUserLib
-  user: UserCardType
+  lib: TUserLib
+  user: TUserMinified
 }
 
 

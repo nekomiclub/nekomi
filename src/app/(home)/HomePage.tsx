@@ -6,28 +6,27 @@ import React, { FC, useEffect, useId, useRef, useState } from 'react';
 import AnimeItem from '~/components/AnimeItem';
 import Carousel from '~/components/Carousel';
 import { IcoNekomiLogoWhite } from '~/components/Icons';
-import { AnimeCardType } from '~/interfaces/IAnime';
-import { IHomeFeedHero } from '~/interfaces/types';
+import { TAnimeMinified, THomeFeedHero } from '~/shared/lib/api/api-types';
 import { cn } from '~/utils/classnames';
 
 import HomeHeroPosterScreen from './_components/HomeHeroPosterScreen';
 import HomeHeroTrailerScreen from './_components/HomeHeroTrailerScreen';
-import { HomeHeroScreenType } from './HomePageData';
+import { HomeHeroScreenType } from './_utils';
 
 
 
 interface IHomeHeroProps {
-  hero: IHomeFeedHero
+  hero: THomeFeedHero
 }
 
 interface IHomeCategoryProps {
   label: string
   icon: React.ReactElement
-  animes: AnimeCardType[]
+  animes: TAnimeMinified[]
 }
 
 interface IHomeCategorySwiperProps {
-  animes: AnimeCardType[]
+  animes: TAnimeMinified[]
 }
 
 interface IHomeDividerProps {

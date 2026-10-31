@@ -6,10 +6,10 @@ import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
-import { AnimeCardType } from '~/interfaces/IAnime';
 import { USER_LIB_TYPE } from '~/interfaces/IUser';
 import routes from '~/routes';
 import API from '~/services/api/API';
+import { TAnimeMinified } from '~/shared/lib/api/api-types';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
@@ -22,7 +22,7 @@ import StyledImage from './styled/StyledImage';
 
 
 interface IProps {
-  anime: AnimeCardType
+  anime: TAnimeMinified
 
   className?: string
   libControls?: boolean

@@ -19,15 +19,16 @@ export const getSearch = APIMethodFactory(`/anime/search`, APIOptionsSchemaFacto
 
 
 
-export const getAnime = APIMethodFactory(`/anime/:query`, APIOptionsSchemaFactory({
+export const getAnime = APIMethodFactory(`/anime/:qr`, APIOptionsSchemaFactory({
   method: 'get',
   params: OpenAPI.GetAnimeQrEpisodesParams,
+  searchParams: OpenAPI.GetAnimeQrQueryParams,
   response: OpenAPI.GetAnimeQrResponse,
 }));
 
 
 
-export const getEpisodes = APIMethodFactory(`/anime/:query/episodes`, APIOptionsSchemaFactory({
+export const getEpisodes = APIMethodFactory(`/anime/:qr/episodes`, APIOptionsSchemaFactory({
   method: 'get',
   params: OpenAPI.GetAnimeQrEpisodesParams,
   response: OpenAPI.GetAnimeQrEpisodesResponse,
@@ -35,7 +36,7 @@ export const getEpisodes = APIMethodFactory(`/anime/:query/episodes`, APIOptions
 
 
 
-export const getForceParse = APIMethodFactory(`/anime/:query/parse`, APIOptionsSchemaFactory({
+export const getForceParse = APIMethodFactory(`/anime/:qr/parse`, APIOptionsSchemaFactory({
   method: 'get',
   params: OpenAPI.GetAnimeQrParseParams,
   response: OpenAPI.GetAnimeQrParseResponse,

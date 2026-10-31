@@ -1,12 +1,11 @@
 import { notFound, redirect } from 'next/navigation';
 
-import { HandleServerError } from '~/components/handle-server-error';
 import UserLayout from '~/components/UserLayout';
 import { conf } from '~/conf';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { IRSCProps } from '~/interfaces/types';
-import API from '~/services/api/API';
-import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
+import API from '~/shared/lib/api';
+import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import CheckUserAccess from '~/utils/check-user-access';
 import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
@@ -28,19 +27,20 @@ export default async function TSettingsRSC({ params }: IRSCProps) {
   const { user, permissions: capabilities } = await CheckUserAccess({ session: await getSessionToken(), permissions: [ROLE_PERMISSION.ABSOLUTE], checkMode: 'OR' });
   if (!user) return notFound();
 
-  let dubber: DubberFullType | undefined;
-  let members: IDubberMemberCard[] | undefined;
+  const teamRes = await API.Team.getTeam({
+    params: {
+      qr: slug
+    },
+    searchParams: {
+      is_extended: true
+    }
+  });
+  if (!teamRes.success) return HandleServerNormalizedError(teamRes.error);
+
+  let team = teamRes.response.data.team;
+  let members = teamRes.response.data.team_members!;
 
 
-
-  try {
-    const data = await API.getDubber({ query: slug }, { view: 'full', get_members: true });
-
-    dubber = data.dubber;
-    members = data.dubber.members ?? [];
-  } catch (e) {
-    return HandleServerError(e);
-  }
 
   // Skip checks if user is root or admin
   if (!capabilities?.includes(ROLE_PERMISSION.ABSOLUTE) /* && !capabilities?.includes('admin') */) {
@@ -52,10 +52,10 @@ export default async function TSettingsRSC({ params }: IRSCProps) {
 
 
   return user && <>
-    <UserLayout type="dubber_settings" dubber={dubber} />
+    <UserLayout type="dubber_settings" dubber={team} />
 
     <section className="wrapper gap-[40px] pt-[24px] relative">
-      <TSettingsPage dubber={dubber} members={members} />
+      <TSettingsPage dubber={team} members={members} />
     </section>
   </>;
 }

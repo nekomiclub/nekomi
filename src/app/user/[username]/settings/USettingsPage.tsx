@@ -7,14 +7,14 @@ import { HandleClientError } from '~/components/Errors';
 import { NotifySuccess, NotifyWarn } from '~/components/nofity/NotifyStatus';
 import { UIField, UIFieldState } from '~/components/UI/Input';
 import API from '~/services/api/API';
-import { UserFullType } from '~/services/api/user/GetUser.api';
+import { TUser } from '~/shared/lib/api/api-types';
 
 import { USettingsControls, USettingsGroup } from './_components/USettingsUI';
 
 
 
 interface IProps {
-  user: UserFullType
+  user: TUser
 }
 
 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { IcoSocialTelegram } from '~/components/Icons';
 import StyledImage from '~/components/styled/StyledImage';
 import routes from '~/routes';
-import { IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
+import { TTeamMemberExtended } from '~/shared/lib/api/api-types';
 import cn from '~/utils/classnames';
 
 
@@ -16,7 +16,7 @@ interface ITeamAboutLinkProps {
 }
 
 interface ITeamMemberProps {
-  member: IDubberMemberCard
+  member: TTeamMemberExtended
 }
 
 

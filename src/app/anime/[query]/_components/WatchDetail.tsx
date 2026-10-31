@@ -1,7 +1,8 @@
 import { FC } from 'react';
 
 import Tooltip from '~/components/Tooltip';
-import { ANIME_TYPE, AnimeGenreType, AnimeRateType, AnimeSeasonType, AnimeStatusType, AnimeType, IAnimeStudio } from '~/interfaces/IAnime';
+import { ANIME_TYPE } from '~/interfaces/IAnime';
+import { TAnimeGenre, TAnimeRating, TAnimeSeason, TAnimeStatus, TAnimeStudio, TAnimeType } from '~/shared/lib/api/api-types';
 import cn from '~/utils/classnames';
 
 
@@ -10,13 +11,13 @@ interface IProps {
   name: string
 
   value?: string | null
-  status?: AnimeStatusType | null
-  rate?: AnimeRateType | null
-  season?: AnimeSeasonType | null
+  status?: TAnimeStatus | null
+  rate?: TAnimeRating | null
+  season?: TAnimeSeason | null
   year?: number | null
-  type?: AnimeType | null
-  genres?: AnimeGenreType[]
-  studios?: IAnimeStudio[]
+  type?: TAnimeType | null
+  genres?: TAnimeGenre[]
+  studios?: TAnimeStudio[]
 
   className?: string
 }

@@ -45,7 +45,6 @@ export default defineConfig(globalIgnores([
 
       'react-hooks/set-state-in-render': 'off',
       'react-hooks/set-state-in-effect': 'off',
-      'react-hooks/error-boundaries': 'off', // TODO: Temporary fix
       'react-hooks/exhaustive-deps': 'off', // Disable react warn for hooks dependencies
 
       'react-refresh/only-export-components': 'warn', // Allow exporting consts from nextjs

@@ -6,13 +6,13 @@ import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
 import { AnimeItemEditMenu } from '~/components/AnimeItem';
 import { useAppSelector } from '~/hooks/redux';
-import { AnimeFullType } from '~/services/api/anime/GetAnime.api';
+import { TAnime } from '~/shared/lib/api/api-types';
 import cn from '~/utils/classnames';
 
 
 
 interface IProps {
-  anime: AnimeFullType
+  anime: TAnime
 }
 
 

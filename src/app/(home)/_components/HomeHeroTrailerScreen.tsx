@@ -5,8 +5,8 @@ import * as loader from '@uiball/loaders';
 import { MaterialSymbol } from 'material-symbols-rc';
 import { useIdleTimer } from 'react-idle-timer';
 
-import { HomeHeroScreenType } from '~/app/(home)/HomePageData';
-import { IHomeFeedHero } from '~/interfaces/types';
+import { HomeHeroScreenType } from '~/app/(home)/_utils';
+import { THomeFeedHero } from '~/shared/lib/api/api-types';
 import { cn } from '~/utils/classnames';
 
 import HomeHeroWatch from './HomeHeroWatch';
@@ -14,7 +14,7 @@ import HomeHeroWatch from './HomeHeroWatch';
 
 
 interface IProps {
-  hero: IHomeFeedHero
+  hero: THomeFeedHero
 
   activeScreen: HomeHeroScreenType
   setActiveScreen: (val: HomeHeroScreenType) => void
@@ -86,7 +86,7 @@ const HomeHeroTrailerScreen: FC<IProps> = (props) => {
   return <>
     {/* Trailer */}
     <div className="w-full h-full absolute top-0 left-0 flex justify-center items-center bg-black">
-      <video src={props.hero.video} muted controls={false} ref={videoRef} preload="metadata" className="absolute top-0 left-0 w-full h-full object-cover" />
+      {props.hero.video && <video src={props.hero.video} muted controls={false} ref={videoRef} preload="metadata" className="absolute top-0 left-0 w-full h-full object-cover" />}
       <div className="absolute top-0 left-0 w-full h-full block z-[2]" style={{ background: 'linear-gradient(180deg, rgba(18, 18, 18, 0), rgba(18, 18, 18, .5))' }}></div>
 
       {/* Loading */}

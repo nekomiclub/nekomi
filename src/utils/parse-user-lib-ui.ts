@@ -1,9 +1,10 @@
 import { SymbolCodepoints } from 'material-symbols-rc';
 
 import { USER_LIB_TYPE } from '~/interfaces/IUser';
+import { USER_LIB_TYPE_ENUM } from '~/shared/lib/api/api-types';
 
 interface ParseUserLibUIProps {
-  type: USER_LIB_TYPE
+  type: keyof typeof USER_LIB_TYPE_ENUM
 
   setTitle(val: string): void
   setIcon(icon: SymbolCodepoints): void
@@ -21,12 +22,12 @@ function parseUserLibUI({ type, setIcon, setTitle }: ParseUserLibUIProps) {
   if (type === USER_LIB_TYPE.DELAYED) setIcon('auto_delete');
 }
 
-export function parseLibTitle(type: USER_LIB_TYPE): string {
-  if (type === USER_LIB_TYPE.FAVORITE) return 'Улюблені';
-  if (type === USER_LIB_TYPE.WATCHING) return 'Переглядаю';
-  if (type === USER_LIB_TYPE.WATCHED) return 'Переглянуті';
-  if (type === USER_LIB_TYPE.PLANS) return 'Заплановані';
-  if (type === USER_LIB_TYPE.DELAYED) return 'Відкладені';
+export function parseLibTitle(type: keyof typeof USER_LIB_TYPE_ENUM): string {
+  if (type === USER_LIB_TYPE_ENUM.favorite) return 'Улюблені';
+  if (type === USER_LIB_TYPE_ENUM.watching) return 'Переглядаю';
+  if (type === USER_LIB_TYPE_ENUM.watched) return 'Переглянуті';
+  if (type === USER_LIB_TYPE_ENUM.plans) return 'Заплановані';
+  if (type === USER_LIB_TYPE_ENUM.delayed) return 'Відкладені';
 
   return '~~~';
 }

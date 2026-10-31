@@ -19,7 +19,7 @@ export const getSearch = APIMethodFactory(`/team/search`, APIOptionsSchemaFactor
 
 
 
-export const getTeam = APIMethodFactory(`/team/:query`, APIOptionsSchemaFactory({
+export const getTeam = APIMethodFactory(`/team/:qr`, APIOptionsSchemaFactory({
   method: 'get',
   params: OpenAPI.GetTeamQrParams,
   searchParams: OpenAPI.GetTeamQrQueryParams,

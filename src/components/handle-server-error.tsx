@@ -10,6 +10,7 @@ import { ErrorWentWrong } from './Errors';
 
 
 
+/** @deprecated */
 export async function HandleServerError(e: unknown): Promise<ReactElement> {
   const date = getUTC().ISO;
 

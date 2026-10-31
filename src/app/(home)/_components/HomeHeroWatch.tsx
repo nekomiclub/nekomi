@@ -2,14 +2,14 @@ import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import { IHomeFeedHero } from '~/interfaces/types';
 import routes from '~/routes';
+import { THomeFeedHero } from '~/shared/lib/api/api-types';
 import cn from '~/utils/classnames';
 
 
 
 interface IProps {
-  hero: IHomeFeedHero
+  hero: THomeFeedHero
 
   className?: string
 }

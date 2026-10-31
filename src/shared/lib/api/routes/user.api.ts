@@ -22,35 +22,26 @@ export const getSearch = APIMethodFactory(`/user/search`, APIOptionsSchemaFactor
 /** Get authenticated user */
 export const getUser = APIMethodFactory(`/user`, APIOptionsSchemaFactory({
   method: 'get',
-  searchParams: OpenAPI.GetUserQrQueryParams,
-  response: OpenAPI.GetUserQrResponse,
+  searchParams: OpenAPI.GetUserQueryParams,
+  response: OpenAPI.GetUserResponse,
 }));
 
 
 
 /** Get user by query */
-export const getUserByQuery = APIMethodFactory(`/user/:query`, APIOptionsSchemaFactory({
+export const getUserByQuery = APIMethodFactory(`/user/:qr`, APIOptionsSchemaFactory({
   method: 'get',
-  params: OpenAPI.GetUserQueryParams,
+  params: OpenAPI.GetUserQrParams,
   searchParams: OpenAPI.GetUserQrQueryParams,
   response: OpenAPI.GetUserQrResponse,
 }));
 
 
 
-export const getLib = APIMethodFactory(`/user/:query/lib/:libId`, APIOptionsSchemaFactory({
+export const getLib = APIMethodFactory(`/user/:qr/lib/:libId`, APIOptionsSchemaFactory({
   method: 'get',
   params: OpenAPI.GetUserQrLibLibIdParams,
   response: OpenAPI.GetUserQrLibLibIdResponse,
-}));
-
-
-
-/** Patch authenticated user */
-export const patchUser = APIMethodFactory(`/user`, APIOptionsSchemaFactory({
-  method: 'patch',
-  body: OpenAPI.PatchUserBody,
-  response: OpenAPI.PatchUserResponse,
 }));
 
 
@@ -61,14 +52,6 @@ export const patchUserById = APIMethodFactory(`/user/:id`, APIOptionsSchemaFacto
   params: OpenAPI.PatchUserIdParams,
   body: OpenAPI.PatchUserIdBody,
   response: OpenAPI.PatchUserIdResponse,
-}));
-
-
-
-/** Delete the authenticated user */
-export const deleteUser = APIMethodFactory(`/user`, APIOptionsSchemaFactory({
-  method: 'delete',
-  response: OpenAPI.DeleteUserResponse,
 }));
 
 
