@@ -1,4 +1,4 @@
-import { IAnimePageParams, IDubberPageParams, IUserLibPageProps, IUserPageProps, IUserSettingsPageProps } from './interfaces/PagesParams';
+import { IAnimePageParams, ITeamPageParams, IUserLibPageProps, IUserPageProps, IUserSettingsPageProps } from './interfaces/PagesParams';
 
 
 
@@ -25,8 +25,8 @@ const definitions = {
   dev_screen_not_rendered: { path: () => `/dev/screen/notRendered` },
 
   // === Dubber Pages
-  team: { path: ({ slug }: IDubberPageParams) => `/team/${slug}` },
-  team_settings: { path: ({ slug }: IDubberPageParams) => `/team/${slug}/settings` },
+  team: { path: ({ slug }: ITeamPageParams) => `/team/${slug}` },
+  team_settings: { path: ({ slug }: ITeamPageParams) => `/team/${slug}/settings` },
 
   // === Info Pages
   info_agreement: { path: () => `/info/agreement` },
@@ -37,7 +37,7 @@ const definitions = {
 
   // === User Pages
   user: { path: ({ username }: IUserPageProps) => `/user/${username}` },
-  user_lib: { path: ({ username, libId }: Required<IUserLibPageProps>) => `/user/${username}/${libId}` },
+  user_lib: { path: ({ username, lib_id: libId }: Required<IUserLibPageProps>) => `/user/${username}/${libId}` },
   user_settings: { path: ({ username }: Required<IUserSettingsPageProps>) => `/user/${username}/settings` },
 
   // === Watch Pages

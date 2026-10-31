@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import { ErrorNoConnection, ErrorWentWrong } from '~/components/Errors';
 import { NotifyError } from '~/components/nofity/NotifyStatus';
 import { IsDevelopment, IsProduction } from '~/conf';
-import { NoConnectionTypeErrorCodes } from '~/interfaces/types';
+import { NoConnectionTypeErrorCodes, NotFoundErrorStatuses } from '~/interfaces/types';
+import { ErrorWentWrongMetadata } from '~/utils/site-metadata';
 
 import { NormalizedErrorType } from './normalize-error';
 
@@ -18,13 +19,13 @@ import { NormalizedErrorType } from './normalize-error';
 export async function HandleServerNormalizedError(e: NormalizedErrorType) {
   if (IsDevelopment) console.error(e);
 
-  // Handle type errors
+  // Handle no connection errors
   if (e.code && NoConnectionTypeErrorCodes.includes(e.code)) {
     return <ErrorNoConnection code={e.code} />;
   }
 
   // Treat Unauthorized, Forbidden, Not Found as not found
-  if (e.status && [401, 403, 404].includes(e.status)) {
+  if (e.status && NotFoundErrorStatuses.includes(e.status)) {
     return notFound();
   }
 
@@ -32,7 +33,7 @@ export async function HandleServerNormalizedError(e: NormalizedErrorType) {
   if (e.status && e.status >= 500) {
     if (IsProduction) console.error(e);
 
-    return <ErrorWentWrong />;
+    return <ErrorWentWrong code={e.code} />;
   }
 
   return <ErrorWentWrong />;
@@ -40,9 +41,7 @@ export async function HandleServerNormalizedError(e: NormalizedErrorType) {
 
 
 
-/**
- * Handle client-side normalized errors
- */
+/** Handle client-side normalized errors */
 export function HandleClientNormalizedError(e: NormalizedErrorType) {
   console.error(e);
 
@@ -50,4 +49,13 @@ export function HandleClientNormalizedError(e: NormalizedErrorType) {
     title: `Щось пішло не так ...`,
     message: e.message
   });
+}
+
+
+
+/** Handle metadata normalized errors */
+export function HandleMetadataNormalizedError(e: NormalizedErrorType) {
+  if (e.status && NotFoundErrorStatuses.includes(e.status)) return notFound();
+
+  return ErrorWentWrongMetadata;
 }

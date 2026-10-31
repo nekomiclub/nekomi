@@ -4,8 +4,10 @@ import { cookies } from 'next/headers';
 
 import conf, { IsProduction } from '~/conf';
 import { AUTH_METHOD } from '~/services/api/generic/PostAuth.api';
+import { getCachedUser } from '~/shared/lib/cached-api';
 
 import API from './api';
+import { ROLE_PERMISSION_ENUM } from './api/api-types';
 
 
 
@@ -72,6 +74,26 @@ export async function InvokeClientLogout(sessionId?: string) {
   if (sessionId) {
     return await API.Auth.getLogoutSession({ params: { sessionId } });;
   } else {
-    return await API.Auth.getLogout({});;
+    return await API.Auth.getLogout({});
   }
+}
+
+
+
+/** Requires user to have any of required permissions */
+export async function hasAnyPermission(requiredPermissions: ROLE_PERMISSION_ENUM[]): Promise<boolean> {
+  const userRes = await getCachedUser(undefined, true);
+  if (!userRes.success) return false;
+
+  return requiredPermissions.some(permission => userRes.response.data.user_permissions!.permissions.includes(permission));
+}
+
+
+
+/** Requires user to have each required permissions */
+export async function hasAllPermissions(requiredPermissions: ROLE_PERMISSION_ENUM[]): Promise<boolean> {
+  const userRes = await getCachedUser(undefined, true);
+  if (!userRes.success) return false;
+
+  return requiredPermissions.every(permission => userRes.response.data.user_permissions!.permissions.includes(permission));
 }

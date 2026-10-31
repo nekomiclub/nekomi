@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { cache } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import { notFound } from 'next/navigation';
 
@@ -10,89 +9,48 @@ import Tooltip from '~/components/Tooltip';
 import UserLayout from '~/components/UserLayout';
 import { IUserLibPageProps } from '~/interfaces/PagesParams';
 import { IRSCProps } from '~/interfaces/types';
-import API from '~/shared/lib/api';
 import { TUserLib } from '~/shared/lib/api/api-types';
-import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import CheckUserAccess from '~/utils/check-user-access';
+import { getCachedUserLib } from '~/shared/lib/cached-api';
+import { HandleMetadataNormalizedError, HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import { parseLibTitle } from '~/utils/parse-user-lib-ui';
-import { getSessionToken } from '~/utils/server-utils';
 import siteMetadata from '~/utils/site-metadata';
 
 
-const getCachedUser = cache(async (query: string) => {
-  return await API.User.getUserByQuery({
-    params: {
-      qr: query
-    },
-    searchParams: {
-      is_extended: true
-    }
-  });
-});
+
+type PagePropsType = IRSCProps<IUserLibPageProps>
 
 
 
 // eslint-disable-next-line react-refresh/only-export-components
-export async function generateMetadata(
-  props: IRSCProps<IUserLibPageProps>,
-): Promise<Metadata> {
-  const params = await props.params;
-  const { username, libId } = params;
+export async function generateMetadata(props: PagePropsType): Promise<Metadata> {
+  const { username, lib_id } = await props.params;
 
-  const userRes = await getCachedUser(username);
-  if (!userRes.success) {
-    if (userRes.error.status === 404) return siteMetadata({
-      title: `Користувач не знайдений`,
-      robots: ['nofollow', 'noindex']
-    });
+  const targetUserLibRes = await getCachedUserLib(username, lib_id);
+  if (!targetUserLibRes.success) return HandleMetadataNormalizedError(targetUserLibRes.error);
 
-    return siteMetadata({
-      title: `Щось пішло не так ...`,
-      robots: ['nofollow', 'noindex']
-    });
-  }
+  const { user, libs } = targetUserLibRes.response.data;
 
-  const user = {
-    ...userRes.response.data.user,
-    ...userRes.response.data.user_extended!
-  };
-
-  const lib = user.libs.find(el => el.id === params.libId);
-  if (!lib) return siteMetadata({
-    title: `Тека не існує`,
-    robots: ['nofollow', 'noindex']
-  });
+  const lib = libs.find(lib => lib.id === lib_id);
+  if (!lib) return notFound(); // Throw not found if target user lib is not found
 
   return siteMetadata({
     overwriteTitle: `${parseLibTitle(lib.type)} ― тека @${user.username} на nekomi`,
-    description: `Список аніме @${username}`,
+    description: `Список аніме @${user.username}`,
     robots: ['nofollow', 'noindex']
   });
 }
 
 
 
-export default async function ULibPageRSC(props: IRSCProps<IUserLibPageProps>) {
-  const params = await props.params;
-  const { username, libId } = params;
-  const session = await getSessionToken();
+export default async function ULibPageRSC(props: PagePropsType) {
+  const { username, lib_id } = await props.params;
 
-  const userLibRes = await API.User.getLib({
-    params: {
-      qr: username,
-      libId
-    }
-  });
+  const userLibRes = await getCachedUserLib(username, lib_id);
   if (!userLibRes.success) return HandleServerNormalizedError(userLibRes.error);
-  const { catalog, libs, user } = userLibRes.response.data;
+  const { catalog, libs, user, is_owner } = userLibRes.response.data;
 
-  const lib = libs.find(el => el.id === libId);
-  if (!lib) return notFound();
-
-  const { user: currentUser } = await CheckUserAccess({ session });
-
-  const isOwner = user.id === currentUser?.id;
-  const isLibHidden = !lib.is_public;
+  const lib = libs.find(el => el.id === lib_id);
+  if (!lib) return notFound(); // Throw not found if target user lib is not found
 
   const sortedLibs: TUserLib[] = [
     libs.find(el => el.type === 'favorite'),
@@ -110,7 +68,7 @@ export default async function ULibPageRSC(props: IRSCProps<IUserLibPageProps>) {
     <div className="wrapper pt-[24px] gap-[24px]">
       {/* Title */}
       <div className="flex items-center gap-[16px]">
-        {isOwner && isLibHidden && <Tooltip content="Прихована тека, вона доступна тільки вам" className="flex items-center">
+        {is_owner && !lib.is_public && <Tooltip content="Прихована тека, вона доступна тільки вам" className="flex items-center">
           <MaterialSymbol icon={'visibility_lock'} size={20} className="text-grey-new" />
         </Tooltip>}
 

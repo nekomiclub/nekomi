@@ -1,50 +1,36 @@
 import { Metadata } from 'next';
-import { cache } from 'react';
 import { notFound } from 'next/navigation';
 
 import UserLayout from '~/components/UserLayout';
-import { ROLE_PERMISSION } from '~/interfaces/IRole';
-import { IUserPageProps, IUserSettingsPageProps } from '~/interfaces/PagesParams';
+import { IUserSettingsPageProps } from '~/interfaces/PagesParams';
 import { IRSCProps } from '~/interfaces/types';
-import API from '~/shared/lib/api';
-import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import CheckUserAccess from '~/utils/check-user-access';
-import { getSessionToken } from '~/utils/server-utils';
+import { TUser } from '~/shared/lib/api/api-types';
+import { hasAnyPermission } from '~/shared/lib/auth-lib';
+import { getCachedUser } from '~/shared/lib/cached-api';
+import { HandleMetadataNormalizedError, HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import siteMetadata from '~/utils/site-metadata';
 
 import USettingsPage from './USettingsPage';
 
 
 
-const getCachedUser = cache(async (query: string) => {
-  return await API.User.getUserByQuery({
-    params: {
-      qr: query
-    },
-    searchParams: {
-      is_extended: true
-    }
-  });
-});
+type PagePropsType = IRSCProps<IUserSettingsPageProps>;
 
 
 
 // eslint-disable-next-line react-refresh/only-export-components
-export async function generateMetadata({ params, searchParams }: IRSCProps<IUserPageProps>,): Promise<Metadata> {
-  const { username } = await params;
+export async function generateMetadata(props: PagePropsType): Promise<Metadata> {
+  const { username } = await props.params;
 
-  const userRes = await getCachedUser(username);
-  if (!userRes.success) {
-    if (userRes.error.status === 404) return siteMetadata({
-      title: `Користувач не знайдений`,
-      robots: ['nofollow', 'noindex']
-    });
+  const targetUserRes = await getCachedUser(username);
+  if (!targetUserRes.success) return HandleMetadataNormalizedError(targetUserRes.error);
 
-    return siteMetadata({
-      title: `Щось пішло не так ...`,
-      robots: ['nofollow', 'noindex']
-    });
-  }
+  const currentUserRes = await getCachedUser(undefined, true);
+  if (!currentUserRes.success) return HandleMetadataNormalizedError(currentUserRes.error);
+
+  await checkRSCPermissions(targetUserRes.response.data.user, currentUserRes.response.data.user);
+
+
 
   return siteMetadata({
     title: `Налаштування @${username}`,
@@ -54,26 +40,40 @@ export async function generateMetadata({ params, searchParams }: IRSCProps<IUser
 
 
 
-export default async function RSC({ params }: IRSCProps<IUserSettingsPageProps>) {
-  const { username } = await params;
-  const session = await getSessionToken();
+export default async function UserSettingsRSC(props: PagePropsType) {
+  const { username } = await props.params;
 
-  const userRes = await getCachedUser(username);
-  if (!userRes.success) return HandleServerNormalizedError(userRes.error);
+  const targetUserRes = await getCachedUser(username);
+  if (!targetUserRes.success) return HandleServerNormalizedError(targetUserRes.error);
+  const targetUser = targetUserRes.response.data.user;
 
-  const user = userRes.response.data.user;
-  const { user: currentUser, permissions: capabilities } = await CheckUserAccess({ session });
+  const currentUserRes = await getCachedUser(undefined, true);
+  if (!currentUserRes.success) return HandleServerNormalizedError(currentUserRes.error);
 
-  const isOwner = currentUser?.id === user.id;
-  if (!isOwner && !capabilities?.includes(ROLE_PERMISSION.ABSOLUTE) /* && !capabilities?.includes('admn') && !capabilities?.includes('mod') */) return notFound();
+  await checkRSCPermissions(targetUser, currentUserRes.response.data.user);
 
 
 
   return <>
-    <UserLayout type="user_settings" user={user} />
+    <UserLayout type="user_settings" user={targetUser} />
 
     <div className="wrapper pt-[24px] pb-[80px] gap-[24px]">
-      <USettingsPage user={user} />
+      <USettingsPage user={targetUser} />
     </div>
   </>;
+}
+
+
+
+/** 
+ * Check user permissions. 
+ * 
+ * @throws notFound if user is not permitted
+ * @returns whether is user is owner
+ */
+async function checkRSCPermissions(targetUser: TUser, currentUser: TUser) {
+  const isOwner = currentUser.id === targetUser.id;
+  if (!isOwner && !await hasAnyPermission(['sys:absolute'])) return notFound(); // Throw not found if user is not permitted
+
+  return isOwner;
 }

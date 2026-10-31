@@ -90,6 +90,6 @@ export const ErrorWentWrong: FC<IErrorWentWrongProps> = (props) => {
       </Link>
     </div>
 
-    {props.code && <StyledXS text={`code: ${props.code}`} color="text-muted" className="absolute bottom-[40px] left-[50%] translate-x-[-50%]" />}
+    {props.code && <StyledXS text={props.code} color="text-muted" className="absolute bottom-[40px] left-[50%] translate-x-[-50%]" />}
   </div>;
 };

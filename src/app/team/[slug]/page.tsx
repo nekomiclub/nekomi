@@ -5,7 +5,7 @@ import { cache } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
 import UserLayout from '~/components/UserLayout';
-import { IDubberPageParams } from '~/interfaces/PagesParams';
+import { ITeamPageParams } from '~/interfaces/PagesParams';
 import { IRSCProps } from '~/interfaces/types';
 import API from '~/shared/lib/api';
 import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
@@ -31,7 +31,7 @@ const getCachedTeam = cache(async (query: string) => {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export async function generateMetadata(
-  props: IRSCProps<IDubberPageParams>,
+  props: IRSCProps<ITeamPageParams>,
 ): Promise<Metadata> {
   const { slug } = await props.params;
 
@@ -61,7 +61,7 @@ export async function generateMetadata(
 
 
 
-export default async function TeamPageRSC({ params, searchParams }: IRSCProps<IDubberPageParams>) {
+export default async function TeamPageRSC({ params, searchParams }: IRSCProps<ITeamPageParams>) {
   const { slug } = await params;
 
   const teamRes = await getCachedTeam(slug);

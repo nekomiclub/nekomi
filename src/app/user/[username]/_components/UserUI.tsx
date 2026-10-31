@@ -76,7 +76,7 @@ export const UserLibItem: FC<IUserLibItemProps> = (props) => {
 
 
 
-  return <Link href={routes.user_lib.path({ username: props.user.username, libId: props.lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
+  return <Link href={routes.user_lib.path({ username: props.user.username, lib_id: props.lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
     <StyledButton as="div" className="w-full flex flex-col items-center gap-[8px] p-[16px]">
       <MaterialSymbol icon={icon} size={80} className="text-white" fill={icon === 'favorite'} />
 

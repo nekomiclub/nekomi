@@ -44,3 +44,16 @@ function siteMetadata(payload: {
 
 
 export default siteMetadata;
+
+
+
+export const ErrorNotFoundMetadata = siteMetadata({
+  title: '404',
+  description: 'Те, що ви шукаєте, не існує',
+  robots: ['nofollow', 'noindex']
+});
+
+export const ErrorWentWrongMetadata = siteMetadata({
+  title: 'Щось пішло не так',
+  robots: ['nofollow', 'noindex']
+});

@@ -92,9 +92,12 @@ export type TUser = z.infer<typeof OpenAPI.User>
 export type TUserMinified = z.infer<typeof OpenAPI.UserMinified>
 
 export type TUserLib = z.infer<typeof OpenAPI.UserLib>
+
 export const USER_LIB_TYPE_ENUM = OpenAPI.UserLibTypeEnum.enum;
+export type USER_LIB_TYPE_ENUM = keyof typeof USER_LIB_TYPE_ENUM
 
 
 
 // === Role entity ===
 export const ROLE_PERMISSION_ENUM = OpenAPI.RolePermissionEnum.enum;
+export type ROLE_PERMISSION_ENUM = keyof typeof ROLE_PERMISSION_ENUM

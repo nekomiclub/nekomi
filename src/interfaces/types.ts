@@ -66,3 +66,6 @@ export const NoConnectionTypeErrorCodes = ['ECONNREFUSED', 'EADDRNOTAVAIL', 'ENE
 
 /** API error codes to cause session timeout */
 export const SessionTimeoutErrorCodes = ['auth:session_token_expired', 'auth:session_token_invalid', 'auth:session_not_exist'];
+
+/** Not found metadata statuses */
+export const NotFoundErrorStatuses = [401, 403, 404];

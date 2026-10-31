@@ -12,8 +12,8 @@ import Footer from '~/components/Footer';
 import NavMenu from '~/components/nav_menu/NavMenu';
 import conf from '~/conf';
 import { ILayoutProps, NoConnectionTypeErrorCodes, SessionTimeoutErrorCodes } from '~/interfaces/types';
-import API from '~/shared/lib/api';
 import { getAuthorizationToken } from '~/shared/lib/auth-lib';
+import { getCachedUser } from '~/shared/lib/cached-api';
 import { IUserState } from '~/store/reducers/userSlice';
 import siteMetadata from '~/utils/site-metadata';
 
@@ -46,12 +46,7 @@ export default async function RootLayout({ children, params }: ILayoutProps) {
 
   // Get user by cookie
   if (authToken) {
-    const userRes = await API.User.getUser({
-      searchParams: {
-        is_extended: true,
-        get_permissions: true
-      }
-    });
+    const userRes = await getCachedUser(undefined, true);
 
     if (userRes.success) {
       const data = {

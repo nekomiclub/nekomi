@@ -1,15 +1,17 @@
-export interface IDubberPageParams {
+export interface ITeamPageParams {
   slug: string;
 }
+
+export type ITeamSettingsPageParams = ITeamPageParams
 
 
 
 export interface IUserLibPageProps extends IUserPageProps {
-  libId: string;
+  lib_id: string
 }
 
 export interface IUserPageProps {
-  username: string;
+  username: string
 }
 
 export interface IUserSettingsPageProps extends IUserPageProps { }
