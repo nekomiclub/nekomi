@@ -3,8 +3,8 @@
 import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { NotifySuccess, NotifyWarn } from '~/components/nofity/NotifyStatus';
-import { UIField, UIFieldState } from '~/components/UI/Input';
+import { NotifySuccess, NotifyWarn } from '~/shared/components/nofity/NotifyStatus';
+import { UIField, UIFieldState } from '~/shared/components/UI/Input';
 import API from '~/shared/lib/api';
 import { TUser } from '~/shared/lib/api/api-types';
 import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';

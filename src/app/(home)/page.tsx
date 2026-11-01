@@ -3,8 +3,8 @@ import '~/styles/pages/home-page.scss';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import { IcoNekomiLogoWhite } from '~/components/Icons';
 import conf from '~/conf';
+import { IcoNekomiLogoWhite } from '~/shared/components/Icons';
 import API from '~/shared/lib/api';
 import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import siteMetadata from '~/utils/site-metadata';

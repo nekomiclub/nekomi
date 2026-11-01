@@ -1,4 +1,4 @@
-import { ErrorNotFound } from '~/components/Errors';
+import { ErrorNotFound } from '~/shared/components/Errors';
 import siteMetadata from '~/utils/site-metadata';
 
 

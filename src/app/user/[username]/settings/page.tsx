@@ -1,12 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import UserLayout from '~/components/UserLayout';
-import { IUserSettingsPageProps } from '~/interfaces/PagesParams';
-import { IRSCProps } from '~/interfaces/types';
+import UserLayout from '~/shared/components/UserLayout';
 import { TUser } from '~/shared/lib/api/api-types';
 import { hasAnyPermission } from '~/shared/lib/auth-lib';
 import { getCachedUser } from '~/shared/lib/cached-api';
+import { IRSCProps,IUserSettingsPageProps  } from '~/shared/types/PagesParams';
 import { HandleMetadataNormalizedError, HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import siteMetadata from '~/utils/site-metadata';
 

@@ -3,7 +3,7 @@
 import React, { FC, ReactNode } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
-import { StyledHeading, StyledM } from '~/components/styled/StyledText';
+import { StyledHeading, StyledM } from '~/shared/components/styled/StyledText';
 
 
 

@@ -6,14 +6,13 @@ import { headers } from 'next/headers';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
 
-import AnimeItem from '~/components/AnimeItem';
-import Carousel from '~/components/Carousel';
-import StyledImage from '~/components/styled/StyledImage';
 import conf from '~/conf';
-import { IAnimePageParams, IAnimePageSearchParams } from '~/interfaces/PagesParams';
-import { IRSCProps } from '~/interfaces/types';
 import routes from '~/routes';
+import AnimeItem from '~/shared/components/AnimeItem';
+import Carousel from '~/shared/components/Carousel';
+import StyledImage from '~/shared/components/styled/StyledImage';
 import API from '~/shared/lib/api';
+import { IAnimePageParams, IAnimePageSearchParams , IRSCProps } from '~/shared/types/PagesParams';
 import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import siteMetadata from '~/utils/site-metadata';
 import { isEmpty, isUserAgentMobile } from '~/utils/utils';

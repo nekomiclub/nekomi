@@ -4,8 +4,8 @@ import { NextPage } from 'next';
 import { FC } from 'react';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
-import { StyledH2, StyledH3 } from '~/components/styled/StyledText';
-import Tooltip from '~/components/Tooltip';
+import { StyledH2, StyledH3 } from '~/shared/components/styled/StyledText';
+import Tooltip from '~/shared/components/Tooltip';
 import { TAnime } from '~/shared/lib/api/api-types';
 import { cn } from '~/utils/classnames';
 import { getUTC, timestampToDayMonth } from '~/utils/utils';

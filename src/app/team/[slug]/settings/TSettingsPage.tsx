@@ -2,11 +2,11 @@
 
 import { FC, useEffect, useState } from 'react';
 
-import { NotifySuccess } from '~/components/nofity/NotifyStatus';
-import { ReportButton } from '~/components/Report';
-import { UIField, UIFieldState } from '~/components/UI/Input';
-import { useAppSelector } from '~/hooks/redux';
-import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
+import { NotifySuccess } from '~/shared/components/nofity/NotifyStatus';
+import { ReportButton } from '~/shared/components/Report';
+import { UIField, UIFieldState } from '~/shared/components/UI/Input';
+import { useAppSelector } from '~/shared/hooks/redux';
+import { TTeam, TTeamMemberExtended } from '~/shared/lib/api/api-types';
 import { cn } from '~/utils/classnames';
 
 import TSettingsMember from './_components/TSettingsMember';
@@ -15,8 +15,8 @@ import { TSettingLink, TSettingsControls, TSettingsGroup } from './_components/T
 
 
 interface IProps {
-  dubber: DubberFullType
-  members: IDubberMemberCard[]
+  dubber: TTeam
+  members: TTeamMemberExtended[]
 }
 
 
@@ -37,7 +37,7 @@ const TSettingsPage: FC<IProps> = (props) => {
   const [monobankLink, setMonobankLink] = useState<UIFieldState>({ initialValue: props.dubber.support?.monobank ?? '' });
   const [diakaLink, setDiakaLink] = useState<UIFieldState>({ initialValue: props.dubber.support?.diaka ?? '' });
 
-  const [dubberMembers, setDubberMembers] = useState<IDubberMemberCard[]>(props.members);
+  const [dubberMembers, setDubberMembers] = useState<TTeamMemberExtended[]>(props.members);
   const [isSomethingChanged, setIsSomethingChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 

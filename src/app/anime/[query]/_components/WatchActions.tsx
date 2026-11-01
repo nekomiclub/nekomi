@@ -4,8 +4,8 @@ import { FC, useMemo } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import StyledImage from '~/components/styled/StyledImage';
-import { useAppSelector } from '~/hooks/redux';
+import StyledImage from '~/shared/components/styled/StyledImage';
+import { useAppSelector } from '~/shared/hooks/redux';
 import { TAnime } from '~/shared/lib/api/api-types';
 import cn from '~/utils/classnames';
 

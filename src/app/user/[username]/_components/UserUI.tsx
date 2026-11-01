@@ -4,11 +4,11 @@ import { FC, useMemo, useState } from 'react';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import StyledButton from '~/components/styled/StyledButton';
-import { StyledH3, StyledM } from '~/components/styled/StyledText';
-import Tooltip from '~/components/Tooltip';
-import { useAppSelector } from '~/hooks/redux';
 import routes from '~/routes';
+import StyledButton from '~/shared/components/styled/StyledButton';
+import { StyledH3, StyledM } from '~/shared/components/styled/StyledText';
+import Tooltip from '~/shared/components/Tooltip';
+import { useAppSelector } from '~/shared/hooks/redux';
 import { TTeam, TTeamMemberExtended, TUserLib, TUserMinified } from '~/shared/lib/api/api-types';
 import parseUserLibUI, { parseLibTitle } from '~/utils/parse-user-lib-ui';
 

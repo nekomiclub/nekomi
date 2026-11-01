@@ -3,9 +3,9 @@
 import { NextPage } from 'next';
 import React, { FC, useEffect, useId, useRef, useState } from 'react';
 
-import AnimeItem from '~/components/AnimeItem';
-import Carousel from '~/components/Carousel';
-import { IcoNekomiLogoWhite } from '~/components/Icons';
+import AnimeItem from '~/shared/components/AnimeItem';
+import Carousel from '~/shared/components/Carousel';
+import { IcoNekomiLogoWhite } from '~/shared/components/Icons';
 import { TAnimeMinified, THomeFeedHero } from '~/shared/lib/api/api-types';
 import { cn } from '~/utils/classnames';
 

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { IsDevelopment } from '~/conf';
-import { ILayoutProps } from '~/interfaces/types';
+import { ILayoutProps } from '~/shared/types/PagesParams';
 import siteMetadata from '~/utils/site-metadata';
 
 

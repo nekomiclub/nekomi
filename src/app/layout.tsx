@@ -7,14 +7,15 @@ import { Manrope } from 'next/font/google';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { ToastContainer } from 'react-toastify';
 
-import { ErrorNoConnection } from '~/components/Errors';
-import Footer from '~/components/Footer';
-import NavMenu from '~/components/nav_menu/NavMenu';
 import conf from '~/conf';
-import { ILayoutProps, NoConnectionTypeErrorCodes, SessionTimeoutErrorCodes } from '~/interfaces/types';
+import { ErrorNoConnection } from '~/shared/components/Errors';
+import Footer from '~/shared/components/Footer';
+import NavMenu from '~/shared/components/nav_menu/NavMenu';
 import { getAuthorizationToken } from '~/shared/lib/auth-lib';
 import { getCachedUser } from '~/shared/lib/cached-api';
-import { IUserState } from '~/store/reducers/userSlice';
+import { IUserState } from '~/shared/store/reducers/userSlice';
+import { ILayoutProps } from '~/shared/types/PagesParams';
+import { NoConnectionTypeErrorCodes, SessionTimeoutErrorCodes } from '~/shared/types/types';
 import siteMetadata from '~/utils/site-metadata';
 
 import StateProvider from './StateProvider';

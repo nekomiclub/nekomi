@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 
-import { ErrorNotFound } from '~/components/Errors';
+import { ErrorNotFound } from '~/shared/components/Errors';
 
 
 const RSC: NextPage = (props) => {

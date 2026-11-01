@@ -1,13 +1,14 @@
-import { SymbolCodepoints } from 'material-symbols-rc';
+import { MaterialSymbolIconType } from 'material-symbols-rc';
 
-import { USER_LIB_TYPE } from '~/interfaces/IUser';
 import { USER_LIB_TYPE_ENUM } from '~/shared/lib/api/api-types';
+
+
 
 interface ParseUserLibUIProps {
   type: keyof typeof USER_LIB_TYPE_ENUM
 
   setTitle(val: string): void
-  setIcon(icon: SymbolCodepoints): void
+  setIcon(icon: MaterialSymbolIconType): void
 }
 
 
@@ -15,11 +16,11 @@ interface ParseUserLibUIProps {
 function parseUserLibUI({ type, setIcon, setTitle }: ParseUserLibUIProps) {
   setTitle(parseLibTitle(type));
 
-  if (type === USER_LIB_TYPE.FAVORITE) setIcon('favorite');
-  if (type === USER_LIB_TYPE.WATCHING) setIcon('visibility');
-  if (type === USER_LIB_TYPE.WATCHED) setIcon('bookmark_added');
-  if (type === USER_LIB_TYPE.PLANS) setIcon('stack');
-  if (type === USER_LIB_TYPE.DELAYED) setIcon('auto_delete');
+  if (type === USER_LIB_TYPE_ENUM.favorite) setIcon('favorite');
+  if (type === USER_LIB_TYPE_ENUM.watching) setIcon('visibility');
+  if (type === USER_LIB_TYPE_ENUM.watched) setIcon('bookmark_added');
+  if (type === USER_LIB_TYPE_ENUM.plans) setIcon('stack');
+  if (type === USER_LIB_TYPE_ENUM.delayed) setIcon('auto_delete');
 }
 
 export function parseLibTitle(type: keyof typeof USER_LIB_TYPE_ENUM): string {

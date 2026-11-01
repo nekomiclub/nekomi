@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 
-import StyledButton from '~/components/styled/StyledButton';
-import StyledCheckbox from '~/components/styled/StyledCheckbox';
+import StyledButton from '~/shared/components/styled/StyledButton';
+import StyledCheckbox from '~/shared/components/styled/StyledCheckbox';
 
 
 

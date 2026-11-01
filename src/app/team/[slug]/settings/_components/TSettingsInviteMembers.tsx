@@ -5,13 +5,13 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'material-symbols-rc';
 import { useDebounce } from 'use-debounce';
 
-import { UIField, UIFieldState } from '~/components/UI/Input';
-import IDubber from '~/interfaces/IDubber';
+import { UIField, UIFieldState } from '~/shared/components/UI/Input';
+import { TTeam } from '~/shared/lib/api/api-types';
 
 
 
 interface IProps {
-  dubber: IDubber
+  dubber: TTeam
 }
 
 

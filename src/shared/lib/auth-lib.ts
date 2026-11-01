@@ -3,11 +3,10 @@
 import { cookies } from 'next/headers';
 
 import conf, { IsProduction } from '~/conf';
-import { AUTH_METHOD } from '~/services/api/generic/PostAuth.api';
 import { getCachedUser } from '~/shared/lib/cached-api';
 
 import API from './api';
-import { ROLE_PERMISSION_ENUM } from './api/api-types';
+import { AUTH_METHOD_ENUM, ROLE_PERMISSION_ENUM } from './api/api-types';
 
 
 
@@ -54,7 +53,7 @@ export async function getAuthorizationToken() {
 export async function InvokeGoogleSignin(token: string) {
   const authRes = await API.Auth.postAuth({
     body: {
-      method: AUTH_METHOD.GOOGLE,
+      method: AUTH_METHOD_ENUM['provider:google'],
       token
     }
   });

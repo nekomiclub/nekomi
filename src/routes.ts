@@ -1,4 +1,4 @@
-import { IAnimePageParams, ITeamPageParams, IUserLibPageProps, IUserPageProps, IUserSettingsPageProps } from './interfaces/PagesParams';
+import { IAnimePageParams, ITeamPageParams, IUserLibPageProps, IUserPageProps, IUserSettingsPageProps } from './shared/types/PagesParams';
 
 
 

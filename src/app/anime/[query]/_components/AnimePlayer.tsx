@@ -1,19 +1,18 @@
 'use client';
 
 import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
+import { MaterialSymbol, MaterialSymbolIconType } from 'material-symbols-rc';
 import MediaQuery from 'react-responsive';
 
-import { NotifyWarn } from '~/components/nofity/NotifyStatus';
-import StyledAvatar from '~/components/styled/StyledAvatar';
-import StyledButton from '~/components/styled/StyledButton';
-import StyledSelect, { IStyledSelectOption, IStyledSelectOptionContentProps } from '~/components/styled/StyledSelect';
-import { StyledM, StyledS } from '~/components/styled/StyledText';
 import conf from '~/conf';
-import { AnimeVODProviderList, AnimeVODProviderType, IAnimeEpisode, IAnimePlayer, IAnimePlayerTeam, IAnimePlayerVOD } from '~/interfaces/IAnime';
-import { DubberCardType } from '~/interfaces/IDubber';
-import { IAnimePlayerData, LOCAL_STORAGE_KEY } from '~/interfaces/types';
-import { AnimePlayerDataSchema } from '~/schemas/LocalStorageSchemas';
+import { NotifyWarn } from '~/shared/components/nofity/NotifyStatus';
+import StyledAvatar from '~/shared/components/styled/StyledAvatar';
+import StyledButton from '~/shared/components/styled/StyledButton';
+import StyledSelect, { IStyledSelectOption, IStyledSelectOptionContentProps } from '~/shared/components/styled/StyledSelect';
+import { StyledM, StyledS } from '~/shared/components/styled/StyledText';
+import { AnimeVODProviderList, TAnimeEpisode, TAnimePlayer, TAnimePlayerTeam, TAnimePlayerVOD, TAnimeVODProvider, TTeamMinified } from '~/shared/lib/api/api-types';
+import { AnimePlayerDataSchema } from '~/shared/schemas/LocalStorageSchemas';
+import { IAnimePlayerData, LOCAL_STORAGE_KEY } from '~/shared/types/types';
 import cn from '~/utils/classnames';
 import { isEmpty } from '~/utils/utils';
 
@@ -23,27 +22,27 @@ import { AnimePlayerGroupTitle } from './WatchUI';
 
 interface IProps {
   anime_id: string
-  player: IAnimePlayer
-  player_teams: DubberCardType[]
+  player: TAnimePlayer
+  player_teams: TTeamMinified[]
 
-  episodes: IAnimeEpisode[]
+  episodes: TAnimeEpisode[]
   episodes_total: number | null
 }
 
 interface IAnimePlayerContextParams {
   teams: IPlayerTeam[]
-  episodes: IAnimeEpisode[]
+  episodes: TAnimeEpisode[]
   selectedTeamId: string | undefined
   selectedEpisode: number | undefined
-  selectedProvider: AnimeVODProviderType | undefined
+  selectedProvider: TAnimeVODProvider | undefined
 
   setEpisode: (params?: ISetEpisodeParams, synthetic?: boolean) => void
   nextEpisode(): void
-  selectProvider(provider: AnimeVODProviderType): void
+  selectProvider(provider: TAnimeVODProvider): void
 }
 
 interface IAnimePlayerDividerProps {
-  icon: SymbolCodepoints
+  icon: MaterialSymbolIconType
   title: string
 }
 
@@ -76,7 +75,7 @@ interface IPlayerTeam {
   id: TeamSlugType
   name: string
   avatars: string[]
-  vods: IAnimePlayerVOD[]
+  vods: TAnimePlayerVOD[]
   subbed: boolean
   members: string[]
 }
@@ -84,13 +83,13 @@ interface IPlayerTeam {
 interface ISetEpisodeParams {
   teamId?: string
   episode?: number
-  provider?: AnimeVODProviderType
+  provider?: TAnimeVODProvider
 }
 
 interface ISaveLocalDataParams {
   dubber_id: string | undefined
   episode: number | undefined
-  provider: AnimeVODProviderType
+  provider: TAnimeVODProvider
 }
 
 /** First argument is id, second is "dubbed"/"subbed" */
@@ -104,12 +103,12 @@ const AnimePlayerContext = createContext<IAnimePlayerContextParams>({} as IAnime
 
 const AnimePlayer: FC<IProps> = (props) => {
   const [teamOptions, setTeamOptions] = useState<IStyledSelectOption<TeamSlugType>[]>([]);
-  const [providerOptions, setProviderOptions] = useState<IStyledSelectOption<AnimeVODProviderType>[]>([]);
+  const [providerOptions, setProviderOptions] = useState<IStyledSelectOption<TAnimeVODProvider>[]>([]);
 
   const [teams, setTeams] = useState<IPlayerTeam[]>([]);
   const [selectedTeamId, setSelectedTeamId] = useState<TeamSlugType>();
   const [selectedEpisode, setSelectedEpisode] = useState<number>();
-  const [selectedProvider, setSelectedProvider] = useState<AnimeVODProviderType>();
+  const [selectedProvider, setSelectedProvider] = useState<TAnimeVODProvider>();
   const [vodUrl, setVodUrl] = useState<string>();
 
   const videoRef = useRef<HTMLDivElement>(null);
@@ -135,7 +134,7 @@ const AnimePlayer: FC<IProps> = (props) => {
 
 
 
-    function parseTeam(pt: IAnimePlayerTeam, isSubbed: boolean) {
+    function parseTeam(pt: TAnimePlayerTeam, isSubbed: boolean) {
       const dubbers = props.player_teams.filter(dub => pt.dubber_ids.includes(dub.id));
       const names = dubbers.map(el => el.name);
 
@@ -226,7 +225,7 @@ const AnimePlayer: FC<IProps> = (props) => {
     let episode = team.vods.find(el => el.episode === (params?.episode ?? selectedEpisode))!;
     if (!episode) episode = team.vods.find(el => el.episode === team.vods[0].episode)!;
 
-    const providers: AnimeVODProviderType[] = [];
+    const providers: TAnimeVODProvider[] = [];
 
     if (episode?.ashdi_vod) providers.push('ashdi_vod');
     if (episode?.moonanime_vod) providers.push('moonanime_vod');
@@ -257,7 +256,7 @@ const AnimePlayer: FC<IProps> = (props) => {
     setEpisode({ episode: (selectedEpisode ?? 1) + 1 }, false);
   }
 
-  function selectProvider(provider: AnimeVODProviderType) {
+  function selectProvider(provider: TAnimeVODProvider) {
     setEpisode({ provider }, false);
   }
 
@@ -453,7 +452,7 @@ const AnimePLayerEpisodesList: FC<IAnimePLayerEpisodesListProps> = (props) => {
 const AnimePlayerNextEpisode: FC<IAnimePlayerNextEpisodeProps> = (props) => {
   const ctx = useContext(AnimePlayerContext);
 
-  const [episodeMeta, setEpisodeMeta] = useState<IAnimeEpisode>();
+  const [episodeMeta, setEpisodeMeta] = useState<TAnimeEpisode>();
   const [hasNextEpisode, setHasNextEpisode] = useState(false);
 
 

@@ -25,20 +25,8 @@
       }
     ],
     "paths": {
-      "~/components/*": [
-        "./src/components/*"
-      ],
       "~/assets/*": [
         "./src/assets/*"
-      ],
-      "~/interfaces/*": [
-        "./src/interfaces/*"
-      ],
-      "~/store/*": [
-        "./src/services/store/*"
-      ],
-      "~/hooks/*": [
-        "./src/services/hooks/*"
       ],
       "~/*": [
         "./src/*"

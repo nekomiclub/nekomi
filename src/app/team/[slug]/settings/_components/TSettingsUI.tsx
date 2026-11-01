@@ -3,11 +3,11 @@
 import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
-import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube, IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/components/Icons';
-import { StyledH3, StyledM } from '~/components/styled/StyledText';
-import Tooltip from '~/components/Tooltip';
-import { UIField, UIFieldState } from '~/components/UI/Input';
-import IDubber from '~/interfaces/IDubber';
+import { IcoSocialInstagram, IcoSocialTelegram, IcoSocialTiktok, IcoSocialYoutube, IcoSupportByMeACoffee, IcoSupportDiaka, IcoSupportMonobank, IcoSupportPatreon } from '~/shared/components/Icons';
+import { StyledH3, StyledM } from '~/shared/components/styled/StyledText';
+import Tooltip from '~/shared/components/Tooltip';
+import { UIField, UIFieldState } from '~/shared/components/UI/Input';
+import { TTeam } from '~/shared/lib/api/api-types';
 import { cn } from '~/utils/classnames';
 
 
@@ -15,7 +15,7 @@ import { cn } from '~/utils/classnames';
 interface ITSettingsLinkProps {
   state: UIFieldState
   setState: (val: UIFieldState) => void
-  type: keyof IDubber['socials'] | keyof IDubber['support']
+  type: keyof TTeam['socials'] | keyof TTeam['support']
 }
 
 interface ITSettingsControlsProps {

@@ -5,12 +5,10 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import StyledImage from '~/components/styled/StyledImage';
-import { DubberRoleType } from '~/interfaces/IDubber';
-import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import routes from '~/routes';
-import { DubberFullType, IDubberMemberCard } from '~/services/api/dubber/GetDubber.api';
-import { IUserState } from '~/store/reducers/userSlice';
+import StyledImage from '~/shared/components/styled/StyledImage';
+import { ROLE_PERMISSION_ENUM, TEAM_ROLE_ENUM, TTeam, TTeamMemberExtended } from '~/shared/lib/api/api-types';
+import { IUserState } from '~/shared/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import { DubberParseRoleName } from '~/utils/data-mappers';
 import { getUTC, timestampToDayMonth } from '~/utils/utils';
@@ -18,9 +16,9 @@ import { getUTC, timestampToDayMonth } from '~/utils/utils';
 
 
 interface IProps {
-  member: IDubberMemberCard
+  member: TTeamMemberExtended
   currentUser: IUserState
-  dubber: DubberFullType
+  dubber: TTeam
 
   kickMember: (id: string, username: string) => void
 }
@@ -28,15 +26,15 @@ interface IProps {
 
 
 const TSettingsMember: FC<IProps> = (props) => {
-  const canKick = props.currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE) /* || currentUser.permissions.includes('admin') || currentUser.permissions.includes('dubberEditEditors') */;
-  const canRedactRole = canKick && props.currentUser.id !== props.member.id || (props.currentUser.permissions.includes(ROLE_PERMISSION.ABSOLUTE)) /* || currentUser.permissions.includes('admin')) */;
+  const canKick = props.currentUser.permissions.includes(ROLE_PERMISSION_ENUM['sys:absolute']) /* || currentUser.permissions.includes('admin') || currentUser.permissions.includes('dubberEditEditors') */;
+  const canRedactRole = canKick && props.currentUser.id !== props.member.id || (props.currentUser.permissions.includes(ROLE_PERMISSION_ENUM['sys:absolute'])) /* || currentUser.permissions.includes('admin')) */;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [memberRole, setMemberRole] = useState(props.member.role);
 
 
 
-  async function changeRole(role: DubberRoleType) {
+  async function changeRole(role: TEAM_ROLE_ENUM) {
 
   }
 

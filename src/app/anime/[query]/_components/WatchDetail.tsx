@@ -1,8 +1,7 @@
 import { FC } from 'react';
 
-import Tooltip from '~/components/Tooltip';
-import { ANIME_TYPE } from '~/interfaces/IAnime';
-import { TAnimeGenre, TAnimeRating, TAnimeSeason, TAnimeStatus, TAnimeStudio, TAnimeType } from '~/shared/lib/api/api-types';
+import Tooltip from '~/shared/components/Tooltip';
+import { ANIME_TYPE_ENUM, TAnimeGenre, TAnimeRating, TAnimeSeason, TAnimeStatus, TAnimeStudio, TAnimeType } from '~/shared/lib/api/api-types';
 import cn from '~/utils/classnames';
 
 
@@ -29,7 +28,7 @@ const WatchDetail: FC<IProps> = (props) => {
 
   if (props.season && !props.year) value = props.season.name;
   if (props.season && props.year) value = `${props.season.name} ${props.year}`;
-  if (props.type) value = props.type.slug === ANIME_TYPE.UNKNOWN ? null : props.type.name;
+  if (props.type) value = props.type.slug === ANIME_TYPE_ENUM.unknown ? null : props.type.name;
   if (props.status) value = props.status.name;
 
 

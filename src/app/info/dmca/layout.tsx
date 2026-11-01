@@ -1,4 +1,4 @@
-import { ILayoutProps } from '~/interfaces/types';
+import { ILayoutProps } from '~/shared/types/PagesParams';
 import siteMetadata from '~/utils/site-metadata';
 
 

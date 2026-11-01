@@ -4,8 +4,8 @@ import { FC, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 
-import { AnimeItemEditMenu } from '~/components/AnimeItem';
-import { useAppSelector } from '~/hooks/redux';
+import { AnimeItemEditMenu } from '~/shared/components/AnimeItem';
+import { useAppSelector } from '~/shared/hooks/redux';
 import { TAnime } from '~/shared/lib/api/api-types';
 import cn from '~/utils/classnames';
 

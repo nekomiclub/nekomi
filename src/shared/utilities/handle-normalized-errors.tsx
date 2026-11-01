@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 
-import { ErrorNoConnection, ErrorWentWrong } from '~/components/Errors';
-import { NotifyError } from '~/components/nofity/NotifyStatus';
 import { IsDevelopment, IsProduction } from '~/conf';
-import { NoConnectionTypeErrorCodes, NotFoundErrorStatuses } from '~/interfaces/types';
+import { ErrorNoConnection, ErrorWentWrong } from '~/shared/components/Errors';
+import { NotifyError } from '~/shared/components/nofity/NotifyStatus';
+import { NoConnectionTypeErrorCodes, NotFoundErrorStatuses } from '~/shared/types/types';
 import { ErrorWentWrongMetadata } from '~/utils/site-metadata';
 
 import { NormalizedErrorType } from './normalize-error';

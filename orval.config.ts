@@ -17,9 +17,10 @@ export default defineConfig({
       client: 'zod',
 
       override: {
+        enumGenerationType: 'enum',
         zod: {
           version: 4,
-          generateReusableSchemas: true
+          generateReusableSchemas: true,
         }
       },
     },

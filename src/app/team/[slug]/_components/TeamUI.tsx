@@ -2,9 +2,9 @@ import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import { IcoSocialTelegram } from '~/components/Icons';
-import StyledImage from '~/components/styled/StyledImage';
 import routes from '~/routes';
+import { IcoSocialTelegram } from '~/shared/components/Icons';
+import StyledImage from '~/shared/components/styled/StyledImage';
 import { TTeamMemberExtended } from '~/shared/lib/api/api-types';
 import cn from '~/utils/classnames';
 

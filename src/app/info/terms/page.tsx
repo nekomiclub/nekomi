@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { InfoArticle, InfoHeader, InfoLangType, InfoList, InfoWrapper } from '~/app/info/_components/InfoUI';
-import { H2, P } from '~/components/UI/Typography';
+import { H2, P } from '~/shared/components/UI/Typography';
 
 
 

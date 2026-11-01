@@ -5,12 +5,12 @@ import { PopupLayer } from '@fullkekw/popup';
 import { AppProgressBar } from 'next-nprogress-bar';
 import { Provider } from 'react-redux';
 
-import { NotifyWarn } from '~/components/nofity/NotifyStatus';
-import { ReportModal } from '~/components/Report';
+import { NotifyWarn } from '~/shared/components/nofity/NotifyStatus';
+import { ReportModal } from '~/shared/components/Report';
 import { InvokeClientLogout } from '~/shared/lib/auth-lib';
+import { IUserState } from '~/shared/store/reducers/userSlice';
+import { setupStore } from '~/shared/store/store';
 import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import { IUserState } from '~/store/reducers/userSlice';
-import { setupStore } from '~/store/store';
 import { randomNumber } from '~/utils/utils';
 
 
