@@ -10,7 +10,7 @@ import z, { ZodError } from 'zod';
  * Not NEXT_PUBLIC key should be marked as optional to prevent client-server errors
  */
 const EnvConfigSchema = z.object({
-  CSRF_SK: z.string().optional(),
+  API_KEY_SK: z.string().optional(),
 
   NEXT_PUBLIC_TELEGRAM_BOT_URL: z.string(),
   NEXT_PUBLIC_NEKOMI_NEXTJS_URL: z.string(),
@@ -25,7 +25,7 @@ export type TEnvConfigSchema = z.infer<typeof EnvConfigSchema>
 export function parseEnv(): z.infer<typeof EnvConfigSchema> {
   try {
     return EnvConfigSchema.parse({
-      CSRF_SK: process.env.CSRF_SK,
+      API_KEY_SK: process.env.API_KEY_SK,
 
       NEXT_PUBLIC_TELEGRAM_BOT_URL: process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL,
       NEXT_PUBLIC_NEKOMI_NEXTJS_URL: process.env.NEXT_PUBLIC_NEKOMI_NEXTJS_URL,

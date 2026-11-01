@@ -2,8 +2,8 @@
 
 import conf from '~/conf';
 import Log from '~/shared/utilities/console-utils';
+import env from '~/shared/utilities/env';
 import normalizeError from '~/shared/utilities/normalize-error';
-import signCSRF from '~/shared/utilities/signCSRF';
 import { IDv7 } from '~/shared/utilities/utilities';
 
 import { APIOptionsType, APISchemaType, NormalizedResponseType } from './api-types';
@@ -49,7 +49,7 @@ export default async function APIRequest<TSchema>(url: string, payload: APIReque
   // Append headers
   let headers = payload.headers ?? {};
 
-  headers['X-CSRF-Token'] = await signCSRF();
+  headers['X-API-Key'] = env('API_KEY_SK');
   headers['Content-Type'] = 'application/json';
   headers['X-Trace-ID'] = traceId;
 

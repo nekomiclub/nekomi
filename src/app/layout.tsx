@@ -11,14 +11,13 @@ import conf from '~/conf';
 import { ErrorNoConnection } from '~/shared/components/Errors';
 import Footer from '~/shared/components/Footer';
 import NavMenu from '~/shared/components/nav_menu/NavMenu';
+import StateProvider from '~/shared/components/StateProvider';
 import { getAuthorizationToken } from '~/shared/lib/auth-lib';
 import { getCachedUser } from '~/shared/lib/cached-api';
 import { IUserState } from '~/shared/store/reducers/userSlice';
 import { ILayoutProps } from '~/shared/types/PagesParams';
 import { NoConnectionTypeErrorCodes, SessionTimeoutErrorCodes } from '~/shared/types/types';
 import siteMetadata from '~/shared/utilities/site-metadata';
-
-import StateProvider from './StateProvider';
 
 
 

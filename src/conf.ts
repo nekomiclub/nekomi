@@ -1,5 +1,4 @@
 import { initializeApp } from 'firebase/app';
-import ms from 'ms';
 
 
 
@@ -10,7 +9,7 @@ export const IsProduction = process.env.NODE_ENV === 'production';
 
 /** @deprecated */
 const env = {
-  CSRF_SK: String(process.env['CSRF_SK']),
+  API_KEY_SK: String(process.env['API_KEY_SK']),
 
   NEXT_PUBLIC_NEKOMI_API_URL: String(process.env['NEXT_PUBLIC_NEKOMI_API_URL']),
   NEXT_PUBLIC_TELEGRAM_BOT_URL: String(process.env['NEXT_PUBLIC_TELEGRAM_BOT_URL']),
@@ -44,10 +43,6 @@ export const conf = {
     tiktok: 'https://tiktok.com/@nekomiclub'
   },
   vars: {
-    /** @deprecated use authorization_cookie_name instead */
-    SESSION_COOKIE_NAME: 'nekomi-auth',
-    CSRF_TOKEN_LIFETIME_MS: ms('1min'),
-
     authorization_cookie_name: 'nekomi:auth',
 
     breakpoints: {
