@@ -3,11 +3,11 @@
 import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { HandleClientError } from '~/components/Errors';
 import { NotifySuccess, NotifyWarn } from '~/components/nofity/NotifyStatus';
 import { UIField, UIFieldState } from '~/components/UI/Input';
-import API from '~/services/api/API';
+import API from '~/shared/lib/api';
 import { TUser } from '~/shared/lib/api/api-types';
+import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 
 import { USettingsControls, USettingsGroup } from './_components/USettingsUI';
 
@@ -57,44 +57,21 @@ const USettingsPage: FC<IProps> = (props) => {
   async function saveChanges() {
     if (!isSomethingChanged) return NotifyWarn({ title: 'Нема що зберігати', message: 'Ніяких змін не сталося' });
 
-    try {
-      setIsSaving(true);
+    setIsSaving(true);
 
-      await API.patchUser({ id: props.user.id }, {
+    const patchRes = await API.User.patchUserById({
+      params: {
+        id: props.user.id
+      },
+      body: {
         set_username: username.mutated ? {
           username: username.value!
         } : undefined
-      });
+      }
+    });
 
-      UserParamsSetters.forEach(setter => {
-        setter(prev => {
-          if (prev.status === 'changes_pending' || prev.status === 'error') {
-            const instance = { ...prev };
-            instance.status = 'success';
-
-            return instance;
-          } else return prev;
-        });
-      });
-
-      NotifySuccess({ title: 'Збережено!', message: 'Зміни збережені' });
-
-      setTimeout(() => {
-        UserParamsSetters.forEach(setter => {
-          setter(prev => {
-            if (prev.status === 'success') {
-              const instance = { ...prev };
-              instance.status = 'waiting';
-
-              return instance;
-            } else return prev;
-          });
-        });
-      }, 3000);
-
-      router.refresh();
-    } catch (e) {
-      HandleClientError(e);
+    if (!patchRes.success) {
+      HandleClientNormalizedError(patchRes.error);
 
       UserParamsSetters.forEach(setter => {
         setter(prev => {
@@ -106,9 +83,40 @@ const USettingsPage: FC<IProps> = (props) => {
           } else return prev;
         });
       });
-    } finally {
+
       setIsSaving(false);
+
+      return;
     }
+
+    UserParamsSetters.forEach(setter => {
+      setter(prev => {
+        if (prev.status === 'changes_pending' || prev.status === 'error') {
+          const instance = { ...prev };
+          instance.status = 'success';
+
+          return instance;
+        } else return prev;
+      });
+    });
+
+    NotifySuccess({ title: 'Збережено!', message: 'Зміни збережені' });
+
+    setTimeout(() => {
+      UserParamsSetters.forEach(setter => {
+        setter(prev => {
+          if (prev.status === 'success') {
+            const instance = { ...prev };
+            instance.status = 'waiting';
+
+            return instance;
+          } else return prev;
+        });
+      });
+    }, 3000);
+
+    setIsSaving(false);
+    router.refresh();
   }
 
   function resetChanges() {

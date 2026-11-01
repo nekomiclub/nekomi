@@ -31,17 +31,18 @@ export default async function normalizeError(e: any, traceId?: string): Promise<
   traceId = traceId ?? IDv7();
 
 
+
   // Handle type errors
   if (e instanceof TypeError) {
     const cause = e.cause as NodeJS.ErrnoException;
     const message = `❌ Internal Client Error: TypeError`;
 
-    Log.error(`[TypeError]: ❌ Internal Client Error: ${cause.message}\ntraceId=${traceId}`);
+    Log.error(`[TypeError]: ❌ Internal Client Error: ${cause?.message ?? e.message}\ntraceId=${traceId}`);
 
     return {
       traceId,
       message,
-      code: cause.code
+      code: cause?.code
     };
   }
 
@@ -79,8 +80,8 @@ export default async function normalizeError(e: any, traceId?: string): Promise<
       };
     }
 
-    console.log(e);
     Log.error(`[AxiosError]: ❌ Internal Client Error: Response failed. Message: ${e.message}. traceId=${traceId}`, JSON.stringify(e, null, 2));
+    console.log(e);
 
     return {
       traceId,
@@ -93,30 +94,38 @@ export default async function normalizeError(e: any, traceId?: string): Promise<
 
   // Handle fetch error
   if (e instanceof Response) {
-    const response = BaseResponseSchema.safeParse(await e.json());
-    const message = `❌ Internal Client Error: Fetch failed`;
+    const responseText = await e.text();
+    let responseData: unknown = null;
+
+    if (responseText.length > 0) {
+      try {
+        responseData = JSON.parse(responseText);
+      } catch (e) {/*  */ }
+    }
+
+    const response = BaseResponseSchema.safeParse(responseData);
     const status = e.status;
 
     if (response.success) {
       const data = response.data;
 
-      if (IsDevelopment) console.error(e, response.data);
       Log.error(`[FetchError]: ❌ Internal Client Error: Response failed with valid basic data structure: "${data.message ?? e.statusText}". traceId=${traceId}`, JSON.stringify(data.error, null, 2));
+      if (IsDevelopment) console.error(e, response.data);
 
       return {
         traceId,
-        message,
+        message: `❌ Internal Client Error: ${data.message}`,
         status,
         code: data.code ?? undefined
       };
     }
 
-    console.error(e, await e.json().catch(e => undefined));
     Log.error(`[FetchError]: ❌ Internal Client Error: Response failed. Message: ${e.statusText}. traceId=${traceId}`, JSON.stringify(e, null, 2));
+    console.error(e, responseData);
 
     return {
       traceId,
-      message,
+      message: '❌ Internal Client Error: Fetch failed',
       status,
     };
   }

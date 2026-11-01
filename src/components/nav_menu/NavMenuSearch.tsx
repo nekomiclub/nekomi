@@ -10,14 +10,14 @@ import { usePathname } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
 import { useDebounce } from 'use-debounce';
 
-import { HandleClientError } from '~/components/Errors';
 import StyledImage from '~/components/styled/StyledImage';
 import IUser from '~/interfaces/IUser';
 import routes from '~/routes';
 import { AnimeSearchResultType } from '~/services/api/anime/GetAnimeSearch.api';
-import API from '~/services/api/API';
 import { DubberSearchResultType } from '~/services/api/dubber/GetDubberSearch.api';
-import { UserSearchResultType } from '~/services/api/user/GetUserSearch.api';
+import API from '~/shared/lib/api';
+import { TAnimeSearchResult, TTeamSearchResult, TUserSearchResult } from '~/shared/lib/api/api-types';
+import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import { cn } from '~/utils/classnames';
 import { randomNumber } from '~/utils/utils';
 
@@ -41,7 +41,7 @@ interface IMenuSearchResultProps {
 }
 
 type MenuSearchType = 'user' | 'dubber' | 'anime'
-type MenuSearchResultType = DubberSearchResultType | AnimeSearchResultType | UserSearchResultType | null
+type MenuSearchResultType = TTeamSearchResult | TAnimeSearchResult | TUserSearchResult | null
 
 
 
@@ -90,32 +90,56 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
     if (searchingQueryRef.current === searchText) return;
     searchingQueryRef.current = searchText;
 
-    try {
-      if (searchType === 'anime') {
-        const { results } = await API.getAnimeSearch({ q: searchText });
+    let errored = false;
 
-        setSearchResults(results);
-      }
+    if (searchType === 'anime') {
+      const searchRes = await API.Anime.getSearch({
+        searchParams: {
+          q: searchText
+        }
+      });
 
-      if (searchType === 'user') {
-        const { results } = await API.getUserSearch({ q: searchText });
+      if (!searchRes.success) {
+        errored = true;
+        HandleClientNormalizedError(searchRes.error);
+      } else setSearchResults(searchRes.response.data.results);
+    }
 
-        setSearchResults(results);
-      }
+    if (searchType === 'user') {
+      const searchRes = await API.User.getSearch({
+        searchParams: {
+          q: searchText
+        }
+      });
 
-      if (searchType === 'dubber') {
-        const { results } = await API.getDubberSearch({ q: searchText });
+      if (!searchRes.success) {
+        errored = true;
+        HandleClientNormalizedError(searchRes.error);
+      } else setSearchResults(searchRes.response.data.results);
+    }
 
-        setSearchResults(results);
-      }
+    if (searchType === 'dubber') {
+      const searchRes = await API.Team.getSearch({
+        searchParams: {
+          q: searchText
+        }
+      });
 
-      setShowStartTyping(false);
-    } catch (e) {
+      if (!searchRes.success) {
+        errored = true;
+        HandleClientNormalizedError(searchRes.error);
+      } else setSearchResults(searchRes.response.data.results);
+    }
+
+    if (errored) {
       setShowStartTyping(true);
       setShowNotFound(false);
       setSearchResults([]);
-      HandleClientError(e);
+
+      return;
     }
+
+    setShowStartTyping(false);
   }
 
 

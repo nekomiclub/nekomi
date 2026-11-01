@@ -61,14 +61,23 @@ export default async function APIRequest<TSchema>(url: string, payload: APIReque
 
     // Execute the request
     const request = await fetch(`${conf.URL.nekomiApi}${finalUrl}`, {
-      method: schema.method,
+      method: schema.method.toUpperCase(),
       headers,
-      body: JSON.stringify(payload.body),
+      body: payload.body ? JSON.stringify(payload.body) : undefined,
       next: opts?.next,
       cache: opts?.cache
     });
 
     if (!request.ok) throw request;
+
+    // Implicit 204 handle
+    if (request.status === 204) {
+      return {
+        success: true,
+        response: {} as Required<TSchema>,
+        error: undefined
+      };
+    }
 
     // Runtime validation
     const validation = schema.response.safeParse(await request.json());

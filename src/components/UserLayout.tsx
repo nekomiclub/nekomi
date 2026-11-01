@@ -10,8 +10,9 @@ import { useAppSelector } from '~/hooks/redux';
 import { ROLE_PERMISSION } from '~/interfaces/IRole';
 import { UserCardType } from '~/interfaces/IUser';
 import routes from '~/routes';
-import API from '~/services/api/API';
 import { DubberFullType } from '~/services/api/dubber/GetDubber.api';
+import API from '~/shared/lib/api';
+import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import cn from '~/utils/classnames';
 import { copyToClipboard } from '~/utils/utils';
 
@@ -179,11 +180,15 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
       NotifySuccess({ title: 'Завантажуємо аватар...', message: file.name });
 
       if (entityType === 'user') {
-        const res = await API.putUserAvatar({ id: entityId }, file);
-        url = res.url;
+        const uploadRes = await API.User.uploadAvatarOrCover(entityId, file, 'avatar');
+        if (!uploadRes.success) return HandleClientNormalizedError(uploadRes.error);
+
+        url = uploadRes.response.data.url;
       } else if (entityType === 'dubber') {
-        const res = await API.putDubberAvatar({ id: entityId }, file);
-        url = res.url;
+        const uploadRes = await API.Team.uploadAvatarOrCover(entityId, file, 'avatar');
+        if (!uploadRes.success) return HandleClientNormalizedError(uploadRes.error);
+
+        url = uploadRes.response.data.url;
       } else {
         return console.error(`[dev]: Entity type cannot be handled (${entityType})`);
       }
@@ -289,11 +294,15 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
       NotifySuccess({ title: 'Завантажуємо банер...', message: file.name });
 
       if (entityType === 'user') {
-        const res = await API.putUserCover({ id: entityId }, file);
-        url = res.url;
+        const uploadRes = await API.User.uploadAvatarOrCover(entityId, file, 'cover');
+        if (!uploadRes.success) return HandleClientNormalizedError(uploadRes.error);
+
+        url = uploadRes.response.data.url;
       } else if (entityType === 'dubber') {
-        const res = await API.putDubberCover({ id: entityId }, file);
-        url = res.url;
+        const uploadRes = await API.Team.uploadAvatarOrCover(entityId, file, 'cover');
+        if (!uploadRes.success) return HandleClientNormalizedError(uploadRes.error);
+
+        url = uploadRes.response.data.url;
       } else {
         return console.error(`[dev]: Entity type cannot be handled (${entityType})`);
       }

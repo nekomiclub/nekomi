@@ -67,7 +67,8 @@ export type THomeFeedHero = z.infer<typeof OpenAPI.HomeFeedHero>
 // === Anime entity ===
 export type TAnime = z.infer<typeof OpenAPI.Anime>
 export type TAnimeMinified = z.infer<typeof OpenAPI.AnimeMinified>
-export type TAnimeExtended = z.infer<typeof OpenAPI.AnimeExtended>
+// export type TAnimeExtended = z.infer<typeof OpenAPI.AnimeExtended>
+export type TAnimeSearchResult = z.infer<typeof OpenAPI.AnimeSearchResult>
 
 export type TAnimeStudio = z.infer<typeof OpenAPI.AnimeStudio>
 export type TAnimeType = z.infer<typeof OpenAPI.AnimeType>
@@ -81,6 +82,7 @@ export type TAnimeGenre = z.infer<typeof OpenAPI.AnimeGenre>
 // === Team entity ===
 export type TTeam = z.infer<typeof OpenAPI.Team>
 export type TTeamMinified = z.infer<typeof OpenAPI.TeamMinified>
+export type TTeamSearchResult = z.infer<typeof OpenAPI.TeamSearchResult>
 
 export type TTeamMember = z.infer<typeof OpenAPI.TeamMember>
 export type TTeamMemberExtended = z.infer<typeof OpenAPI.TeamMemberExtended>
@@ -90,6 +92,7 @@ export type TTeamMemberExtended = z.infer<typeof OpenAPI.TeamMemberExtended>
 // === User entity ===
 export type TUser = z.infer<typeof OpenAPI.User>
 export type TUserMinified = z.infer<typeof OpenAPI.UserMinified>
+export type TUserSearchResult = z.infer<typeof OpenAPI.UserSearchResult>
 
 export type TUserLib = z.infer<typeof OpenAPI.UserLib>
 

@@ -8,13 +8,13 @@ import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '~/hooks/redux';
 import { USER_LIB_TYPE } from '~/interfaces/IUser';
 import routes from '~/routes';
-import API from '~/services/api/API';
+import API from '~/shared/lib/api';
 import { TAnimeMinified } from '~/shared/lib/api/api-types';
+import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import userSlice, { IUserState } from '~/store/reducers/userSlice';
 import { cn } from '~/utils/classnames';
 import parseUserLibUI from '~/utils/parse-user-lib-ui';
 
-import { HandleClientError } from './Errors';
 import { NotifyWarn } from './nofity/NotifyStatus';
 import StyledCheckbox from './styled/StyledCheckbox';
 import StyledImage from './styled/StyledImage';
@@ -200,31 +200,62 @@ const AnimeItemEditMenuLib: FC<IAnimeItemEditMenuLibProps> = ({ type, animeId })
 
 
   async function toggleLib() {
-    try {
-      if (!isUserAuth) return NotifyWarn({ title: 'Потрібна авторизація!', message: 'Нажаль, ви не можете додати аніме в теку, не маючи акаунту :(' });
+    if (!isUserAuth) return NotifyWarn({ title: 'Потрібна авторизація!', message: 'Нажаль, ви не можете додати аніме в теку, не маючи акаунту :(' });
 
-      setIsChecked(prev => !prev);
+    setIsChecked(prev => !prev);
 
-      const state = JSON.parse(JSON.stringify(currentUser)) as IUserState;
+    const state = JSON.parse(JSON.stringify(currentUser)) as IUserState;
+    const lib = state.libs.find(el => el.type === type)!;
 
-      const lib = state.libs.find(el => el.type === type)!;
+    let errored = false;
 
-      if (lib.anime_ids.includes(animeId)) {
-        // remove
-        await API.patchUser({}, { remove_lib_anime: { lib_id: lib.id, anime_id: animeId } });
-        lib.anime_ids = lib.anime_ids.filter(el => el !== animeId);
-      } else {
-        // add
-        await API.patchUser({}, { add_lib_anime: { lib_id: lib.id, anime_id: animeId } });
-        lib.anime_ids.push(animeId);
-      }
+    if (lib.anime_ids.includes(animeId)) {
+      // remove
+      const patchRes = await API.User.patchUserById({
+        params: {
+          id: currentUser.id
+        },
+        body: {
+          remove_lib_anime: {
+            lib_id: lib.id,
+            anime_id: animeId
+          }
+        }
+      });
 
-      dispatch(userSlice.actions.reducer(state));
-    } catch (e) {
-      setIsChecked(prev => !prev);
+      if (!patchRes.success) {
+        errored = true;
 
-      return HandleClientError(e);
+        HandleClientNormalizedError(patchRes.error);
+      } else lib.anime_ids = lib.anime_ids.filter(el => el !== animeId);
+    } else {
+      // add
+      const patchRes = await API.User.patchUserById({
+        params: {
+          id: currentUser.id
+        },
+        body: {
+          add_lib_anime: {
+            lib_id: lib.id,
+            anime_id: animeId
+          }
+        }
+      });
+
+      if (!patchRes.success) {
+        errored = true;
+
+        HandleClientNormalizedError(patchRes.error);
+      } else lib.anime_ids.push(animeId);
     }
+
+    if (errored) {
+      setIsChecked(prev => !prev);
+
+      return;
+    }
+
+    dispatch(userSlice.actions.reducer(state));
   }
 
 
