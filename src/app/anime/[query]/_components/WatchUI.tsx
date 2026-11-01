@@ -7,8 +7,8 @@ import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import { StyledH2, StyledH3 } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
 import { TAnime } from '~/shared/lib/api/api-types';
-import { cn } from '~/utils/classnames';
-import { getUTC, timestampToDayMonth } from '~/utils/utils';
+import { cn } from '~/shared/utilities/classnames';
+import { getUTC, timestampToDayMonth } from '~/shared/utilities/utilities';
 
 
 

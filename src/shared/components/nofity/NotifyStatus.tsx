@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import { ToastContentProps } from 'react-toastify';
 
-import { createStringID } from '~/utils/utils';
+import { IDv4 } from '~/shared/utilities/utilities';
 
 import { TriggerNotify } from './Notify';
 
@@ -24,7 +24,7 @@ interface IProps extends ToastContentProps<IData> { }
 
 
 const Notification: FC<IProps> = (props) => {
-  const id = createStringID(8);
+  const id = IDv4();
   const { message, title, type } = props.data;
 
   const duration = type === 'error' ? 6000 : 3000;

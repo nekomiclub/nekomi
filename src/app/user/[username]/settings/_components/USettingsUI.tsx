@@ -6,7 +6,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import { USettingsLinkSocialStatusType } from '~/app/user/[username]/settings/USettingsPageData';
 import { StyledH3, StyledM } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
-import cn from '~/utils/classnames';
+import cn from '~/shared/utilities/classnames';
 
 
 

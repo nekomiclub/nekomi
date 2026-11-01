@@ -7,15 +7,15 @@ import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
 
 import conf from '~/conf';
-import routes from '~/routes';
+import Routes from '~/routes';
 import AnimeItem from '~/shared/components/AnimeItem';
 import Carousel from '~/shared/components/Carousel';
 import StyledImage from '~/shared/components/styled/StyledImage';
 import API from '~/shared/lib/api';
-import { IAnimePageParams, IAnimePageSearchParams , IRSCProps } from '~/shared/types/PagesParams';
+import { IAnimePageParams, IAnimePageSearchParams, IRSCProps } from '~/shared/types/PagesParams';
 import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import siteMetadata from '~/utils/site-metadata';
-import { isEmpty, isUserAgentMobile } from '~/utils/utils';
+import siteMetadata from '~/shared/utilities/site-metadata';
+import { isEmpty, isUserAgentMobile } from '~/shared/utilities/utilities';
 
 import AnimePlayer from './_components/AnimePlayer';
 import { WatchActions } from './_components/WatchActions';
@@ -69,7 +69,7 @@ export async function generateMetadata(
       description,
       type: 'video.tv_show',
       images: anime.poster,
-      url: routes.anime.path({ query }),
+      url: Routes.anime.path({ query }),
       locale: 'uk_UA',
       siteName: conf.domain.split('.')[0],
     }

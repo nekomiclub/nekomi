@@ -6,12 +6,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { conf } from '~/conf';
-import routes from '~/routes';
+import Routes from '~/routes';
 import { useAppSelector } from '~/shared/hooks/redux';
 import API from '~/shared/lib/api';
+import cn from '~/shared/utilities/classnames';
 import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import cn from '~/utils/classnames';
-import { copyToClipboard } from '~/utils/utils';
 
 import { HandleClientError } from './Errors';
 import { NotifySuccess, NotifyWarn } from './nofity/NotifyStatus';
@@ -23,6 +22,7 @@ import { StyledH2, StyledHeading, StyledM } from './styled/StyledText';
 import Tooltip from './Tooltip';
 
 import { ROLE_PERMISSION_ENUM, TTeam, TUserMinified } from '../lib/api/api-types';
+import { copyToClipboard } from '../utilities/utilities';
 
 
 
@@ -73,8 +73,8 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
   const entityType = user ? 'user' : dubber ? 'dubber' : 'user';
   const isEdit = type === 'dubber_settings' || type === 'user_settings';
 
-  const profileUrl = user ? routes.user.path({ username: user.username }) : dubber ? routes.team.path({ slug: dubber.slug }) : '#';
-  const settingsUrl = user ? routes.user_settings.path({ username: user.id }) : dubber ? routes.team_settings.path({ slug: dubber.slug }) : '#';
+  const profileUrl = user ? Routes.user.path({ username: user.username }) : dubber ? Routes.team.path({ slug: dubber.slug }) : '#';
+  const settingsUrl = user ? Routes.user_settings.path({ username: user.id }) : dubber ? Routes.team_settings.path({ slug: dubber.slug }) : '#';
 
   const canEditUser = currentUser.permissions.includes(ROLE_PERMISSION_ENUM['sys:absolute']) || user?.id === currentUser.id /* || currentUser.permissions.includes('admin') */;
   const canEditDubber = currentUser.permissions.includes(ROLE_PERMISSION_ENUM['sys:absolute']); /* || currentUser.permissions.includes('admin') */ /* || dubber?.members.find(el => el.id === currentUser.id)?.role === 'leader'; */

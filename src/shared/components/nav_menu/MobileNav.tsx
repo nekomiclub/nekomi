@@ -7,11 +7,11 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import routes from '~/routes';
+import Routes from '~/routes';
 import StyledButton from '~/shared/components/styled/StyledButton';
 import { P } from '~/shared/components/UI/Typography';
 import { IUserState } from '~/shared/store/reducers/userSlice';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 import NavMenuDropdown from './NavMenuDropdown';
 
@@ -40,7 +40,7 @@ const MobileNav: FC<IProps> = ({ user, logout, signin, searchPopupId, isDropdown
 
 
   return <nav className="fixed w-full h-[var(--header-height)] bg-dark-primary bottom-0 left-0 z-[110] flex items-center sm:hidden">
-    <Link href={routes.home.path()} className="w-full flex flex-col flex-1 gap-[2px] items-center duration-200 px-[12px] py-[4px]">
+    <Link href={Routes.home.path()} className="w-full flex flex-col flex-1 gap-[2px] items-center duration-200 px-[12px] py-[4px]">
       <MaterialSymbol icon="home" className="text-white" size={24} />
       <P text="Головна" className="font-bold" size={14} />
     </Link>

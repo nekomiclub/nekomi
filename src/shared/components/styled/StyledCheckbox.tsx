@@ -5,7 +5,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 
 import useMixedState from '~/shared/hooks/useMixedState';
 import { StateSetter } from '~/shared/types/types';
-import cn from '~/utils/classnames';
+import cn from '~/shared/utilities/classnames';
 
 import { StyledS } from './StyledText';
 

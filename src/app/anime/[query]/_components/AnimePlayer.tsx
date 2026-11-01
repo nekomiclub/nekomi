@@ -13,8 +13,8 @@ import { StyledM, StyledS } from '~/shared/components/styled/StyledText';
 import { AnimeVODProviderList, TAnimeEpisode, TAnimePlayer, TAnimePlayerTeam, TAnimePlayerVOD, TAnimeVODProvider, TTeamMinified } from '~/shared/lib/api/api-types';
 import { AnimePlayerDataSchema } from '~/shared/schemas/LocalStorageSchemas';
 import { IAnimePlayerData, LOCAL_STORAGE_KEY } from '~/shared/types/types';
-import cn from '~/utils/classnames';
-import { isEmpty } from '~/utils/utils';
+import cn from '~/shared/utilities/classnames';
+import { isEmpty } from '~/shared/utilities/utilities';
 
 import { AnimePlayerGroupTitle } from './WatchUI';
 

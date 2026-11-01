@@ -6,7 +6,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 
 

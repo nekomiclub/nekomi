@@ -5,8 +5,8 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'material-symbols-rc';
 
 import { StateSetter } from '~/shared/types/types';
-import cn from '~/utils/classnames';
-import { isEmpty } from '~/utils/utils';
+import cn from '~/shared/utilities/classnames';
+import { isEmpty } from '~/shared/utilities/utilities';
 
 import StyledButton from './StyledButton';
 import { StyledM } from './StyledText';

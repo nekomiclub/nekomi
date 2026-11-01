@@ -11,7 +11,7 @@ import { InvokeClientLogout } from '~/shared/lib/auth-lib';
 import { IUserState } from '~/shared/store/reducers/userSlice';
 import { setupStore } from '~/shared/store/store';
 import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import { randomNumber } from '~/utils/utils';
+import { randomNumber } from '~/shared/utilities/utilities';
 
 
 

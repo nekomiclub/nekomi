@@ -10,13 +10,13 @@ import { usePathname } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
 import { useDebounce } from 'use-debounce';
 
-import routes from '~/routes';
+import Routes from '~/routes';
 import StyledImage from '~/shared/components/styled/StyledImage';
 import API from '~/shared/lib/api';
 import { TAnimeSearchResult, TTeamSearchResult, TUserSearchResult } from '~/shared/lib/api/api-types';
+import { cn } from '~/shared/utilities/classnames';
 import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import { cn } from '~/utils/classnames';
-import { randomNumber } from '~/utils/utils';
+import { randomNumber } from '~/shared/utilities/utilities';
 
 
 
@@ -325,7 +325,7 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
     {/* === Result ready */}
 
     {/* Anime type */}
-    {type === 'anime' && animeResult && <Link href={routes.anime.path({ query: animeResult.slug })} className="cui-nav-search-result">
+    {type === 'anime' && animeResult && <Link href={Routes.anime.path({ query: animeResult.slug })} className="cui-nav-search-result">
       <StyledImage src={animeResult.poster} width="120px" height="160px" />
 
       <div className="cui-nav-search-result_content">
@@ -360,7 +360,7 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
     </Link>}
 
     {/* User type */}
-    {(type === 'user' && userResult) && <Link href={routes.user.path({ username: userResult.username })} className="cui-nav-search-result">
+    {(type === 'user' && userResult) && <Link href={Routes.user.path({ username: userResult.username })} className="cui-nav-search-result">
       <StyledImage src={userResult.avatar} width="128px" height="128px" />
 
       <div className="cui-nav-search-result_content">
@@ -369,7 +369,7 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
     </Link>}
 
     {/* Dubber type */}
-    {(type === 'dubber' && dubberResult) && <Link href={routes.team.path({ slug: dubberResult.slug })} className="cui-nav-search-result">
+    {(type === 'dubber' && dubberResult) && <Link href={Routes.team.path({ slug: dubberResult.slug })} className="cui-nav-search-result">
       <StyledImage src={dubberResult.avatar} width="128px" height="128px" />
 
       <div className="cui-nav-search-result_content">

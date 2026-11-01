@@ -7,13 +7,13 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import routes from '~/routes';
+import Routes from '~/routes';
 import { IcoNekomiLogoWhite } from '~/shared/components/Icons';
 import StyledAvatar from '~/shared/components/styled/StyledAvatar';
 import StyledButton from '~/shared/components/styled/StyledButton';
 import Tooltip from '~/shared/components/Tooltip';
 import { IUserState } from '~/shared/store/reducers/userSlice';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 import NavMenuDropdown from './NavMenuDropdown';
 
@@ -44,7 +44,7 @@ const HeaderNav: FC<IProps> = ({ user, logout, signin, searchPopupId, forceFocus
   return <header className="fixed w-full h-[var(--header-height)] bg-dark-primary top-0 left-0 z-[110] max-sm:hidden">
     <div className="wrapper w-full h-full !flex-row justify-between items-center gap-[40px]">
       <Tooltip content="Головна">
-        <Link href={routes.home.path()} className="outline-none">
+        <Link href={Routes.home.path()} className="outline-none">
           <IcoNekomiLogoWhite width={40} height={40} fill="#fff" />
         </Link>
       </Tooltip>

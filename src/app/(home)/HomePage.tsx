@@ -7,7 +7,7 @@ import AnimeItem from '~/shared/components/AnimeItem';
 import Carousel from '~/shared/components/Carousel';
 import { IcoNekomiLogoWhite } from '~/shared/components/Icons';
 import { TAnimeMinified, THomeFeedHero } from '~/shared/lib/api/api-types';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 import HomeHeroPosterScreen from './_components/HomeHeroPosterScreen';
 import HomeHeroTrailerScreen from './_components/HomeHeroTrailerScreen';

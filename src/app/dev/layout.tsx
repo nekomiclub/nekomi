@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { IsDevelopment } from '~/conf';
 import { ILayoutProps } from '~/shared/types/PagesParams';
-import siteMetadata from '~/utils/site-metadata';
+import siteMetadata from '~/shared/utilities/site-metadata';
 
 
 

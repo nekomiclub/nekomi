@@ -1,6 +1,6 @@
 import React, { FC, JSX } from 'react';
 
-import cn from '~/utils/classnames';
+import cn from '~/shared/utilities/classnames';
 
 
 

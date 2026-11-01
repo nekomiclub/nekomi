@@ -16,7 +16,7 @@ import { getCachedUser } from '~/shared/lib/cached-api';
 import { IUserState } from '~/shared/store/reducers/userSlice';
 import { ILayoutProps } from '~/shared/types/PagesParams';
 import { NoConnectionTypeErrorCodes, SessionTimeoutErrorCodes } from '~/shared/types/types';
-import siteMetadata from '~/utils/site-metadata';
+import siteMetadata from '~/shared/utilities/site-metadata';
 
 import StateProvider from './StateProvider';
 

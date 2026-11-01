@@ -1,6 +1,16 @@
 import { MaterialSymbolIconType } from 'material-symbols-rc';
 
-import { USER_LIB_TYPE_ENUM } from '~/shared/lib/api/api-types';
+import { TEAM_ROLE_ENUM, USER_LIB_TYPE_ENUM } from '~/shared/lib/api/api-types';
+
+
+
+export function DubberParseRoleName(role: TEAM_ROLE_ENUM) {
+  switch (role) {
+    case 'leader': return 'Лідер';
+    case 'editor': return 'Редактор';
+    case 'member': return 'Учасник';
+  }
+}
 
 
 
@@ -13,7 +23,7 @@ interface ParseUserLibUIProps {
 
 
 
-function parseUserLibUI({ type, setIcon, setTitle }: ParseUserLibUIProps) {
+export function parseUserLibUI({ type, setIcon, setTitle }: ParseUserLibUIProps) {
   setTitle(parseLibTitle(type));
 
   if (type === USER_LIB_TYPE_ENUM.favorite) setIcon('favorite');
@@ -32,7 +42,3 @@ export function parseLibTitle(type: keyof typeof USER_LIB_TYPE_ENUM): string {
 
   return '~~~';
 }
-
-
-
-export default parseUserLibUI;

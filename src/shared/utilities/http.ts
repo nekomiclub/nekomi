@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 import { conf } from '~/conf';
+import { getUTC } from '~/shared/utilities/utilities';
 
 import signCSRF from './signCSRF';
-import { getUTC } from './utils';
 
 
 

@@ -10,8 +10,8 @@ import z from 'zod';
 
 import { APIMethodFactory, APIOptionsSchemaFactory } from '~/shared/lib/api/api-client';
 import * as OpenAPI from '~/shared/lib/api/routes/@generated.schema';
+import { $api } from '~/shared/utilities/http';
 import normalizeError from '~/shared/utilities/normalize-error';
-import { $api } from '~/utils/http';
 
 import { getAuthorizationToken } from '../../auth-lib';
 import { NormalizedResponseType } from '../api-types';

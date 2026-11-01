@@ -4,7 +4,7 @@ import { IsDevelopment, IsProduction } from '~/conf';
 import { ErrorNoConnection, ErrorWentWrong } from '~/shared/components/Errors';
 import { NotifyError } from '~/shared/components/nofity/NotifyStatus';
 import { NoConnectionTypeErrorCodes, NotFoundErrorStatuses } from '~/shared/types/types';
-import { ErrorWentWrongMetadata } from '~/utils/site-metadata';
+import { ErrorWentWrongMetadata } from '~/shared/utilities/site-metadata';
 
 import { NormalizedErrorType } from './normalize-error';
 

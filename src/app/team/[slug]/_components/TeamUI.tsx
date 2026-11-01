@@ -2,11 +2,11 @@ import { FC } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import routes from '~/routes';
+import Routes from '~/routes';
 import { IcoSocialTelegram } from '~/shared/components/Icons';
 import StyledImage from '~/shared/components/styled/StyledImage';
 import { TTeamMemberExtended } from '~/shared/lib/api/api-types';
-import cn from '~/utils/classnames';
+import cn from '~/shared/utilities/classnames';
 
 
 
@@ -35,7 +35,7 @@ export const TeamAboutLink: FC<ITeamAboutLinkProps> = (props) => {
 
 
 export const TeamMember: FC<ITeamMemberProps> = (props) => {
-  return <Link href={routes.user.path({ username: props.member.username })} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none" prefetch={false}>
+  return <Link href={Routes.user.path({ username: props.member.username })} className="p-[16px] flex grow min-w-[250px] basis-[270px] max-w-[420px] gap-[16px] items-center bg-dark-medium rounded-[4px] w-full duration-200 border border-dark-light hover:bg-dark-light focus-visible:bg-dark-light max-sm:max-w-none outline-none" prefetch={false}>
     <StyledImage height="64px" width="64px" src={props.member.avatar} className="rounded-[4px] overflow-hidden" />
 
     <div className="flex flex-col gap-[8px] w-full">

@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 import Tooltip from '~/shared/components/Tooltip';
 import { ANIME_TYPE_ENUM, TAnimeGenre, TAnimeRating, TAnimeSeason, TAnimeStatus, TAnimeStudio, TAnimeType } from '~/shared/lib/api/api-types';
-import cn from '~/utils/classnames';
+import cn from '~/shared/utilities/classnames';
 
 
 

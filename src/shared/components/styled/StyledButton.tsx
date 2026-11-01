@@ -4,7 +4,7 @@ import React, { CSSProperties, FC, JSX, ReactNode } from 'react';
 import { Ring } from 'ldrs/react';
 import { IMaterialSymbolProps, MaterialSymbol, MaterialSymbolIconType } from 'material-symbols-rc';
 
-import cn from '~/utils/classnames';
+import cn from '~/shared/utilities/classnames';
 
 import { StyledM, StyledTextFontType } from './StyledText';
 

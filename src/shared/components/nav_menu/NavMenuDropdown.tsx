@@ -5,10 +5,10 @@ import { MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import routes from '~/routes';
+import Routes from '~/routes';
 import StyledAvatar from '~/shared/components/styled/StyledAvatar';
 import { IUserState } from '~/shared/store/reducers/userSlice';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 
 
@@ -24,17 +24,17 @@ interface IProps {
 
 const NavMenuDropdown: FC<IProps> = ({ user, logout, className }) => {
   return <MenuWrapper className={cn(`bg-dark-primary border border-dark-light rounded-[4px] w-[200px] flex flex-col`, className)}>
-    <Link href={routes.user.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+    <Link href={Routes.user.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
       <StyledAvatar avatar={user.avatar} initials={user.username} borderRadius={4} width={`24px`} height={`24px`} className="rounded-[2px] overflow-hidden" alt="avatar" />
       <p className="text-white w-full ">Профіль</p>
     </Link>
 
-    <Link href={`${routes.user.path({ username: user.username })}#user-libs`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+    <Link href={`${Routes.user.path({ username: user.username })}#user-libs`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
       <MaterialSymbol icon="folder_copy" size={24} className="text-white" />
       <p className="text-white w-full ">Теки</p>
     </Link>
 
-    <Link href={routes.user_settings.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
+    <Link href={Routes.user_settings.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
       <MaterialSymbol icon="settings" size={24} className="text-white" />
       <p className="text-white w-full ">Налаштування</p>
     </Link>

@@ -9,10 +9,10 @@ import Tooltip from '~/shared/components/Tooltip';
 import UserLayout from '~/shared/components/UserLayout';
 import { TUserLib } from '~/shared/lib/api/api-types';
 import { getCachedUserLib } from '~/shared/lib/cached-api';
-import { IRSCProps,IUserLibPageProps  } from '~/shared/types/PagesParams';
+import { IRSCProps, IUserLibPageProps } from '~/shared/types/PagesParams';
+import { parseLibTitle } from '~/shared/utilities/data-mappers';
 import { HandleMetadataNormalizedError, HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import { parseLibTitle } from '~/utils/parse-user-lib-ui';
-import siteMetadata from '~/utils/site-metadata';
+import siteMetadata from '~/shared/utilities/site-metadata';
 
 
 

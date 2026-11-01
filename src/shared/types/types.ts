@@ -10,18 +10,10 @@ export enum LOCAL_STORAGE_KEY {
 
 
 
-export interface IHomeFeedHero {
-  id: string
-  slug: string
-  title: string
-  synopsys: string | null
-
-  poster: CDNString
-  cover: CDNString
-  video: CDNString
-}
-
 export type StateSetter<S = any> = React.Dispatch<React.SetStateAction<S>>;
+export type StateTuple<T> = [T, StateSetter<T>]
+
+
 
 /** ISO Date string */
 export type ISODateString = string;

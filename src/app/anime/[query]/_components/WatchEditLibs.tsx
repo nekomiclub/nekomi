@@ -7,7 +7,7 @@ import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import { AnimeItemEditMenu } from '~/shared/components/AnimeItem';
 import { useAppSelector } from '~/shared/hooks/redux';
 import { TAnime } from '~/shared/lib/api/api-types';
-import cn from '~/utils/classnames';
+import cn from '~/shared/utilities/classnames';
 
 
 

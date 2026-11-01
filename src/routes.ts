@@ -46,6 +46,6 @@ const definitions = {
 
 
 
-const routes: RoutesMapType = definitions;
+const Routes: RoutesMapType = definitions;
 
-export default routes;
+export default Routes;

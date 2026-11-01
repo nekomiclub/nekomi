@@ -4,13 +4,13 @@ import { FC, useMemo, useState } from 'react';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import routes from '~/routes';
+import Routes from '~/routes';
 import StyledButton from '~/shared/components/styled/StyledButton';
 import { StyledH3, StyledM } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
 import { useAppSelector } from '~/shared/hooks/redux';
 import { TTeam, TTeamMemberExtended, TUserLib, TUserMinified } from '~/shared/lib/api/api-types';
-import parseUserLibUI, { parseLibTitle } from '~/utils/parse-user-lib-ui';
+import { parseLibTitle, parseUserLibUI } from '~/shared/utilities/data-mappers';
 
 
 
@@ -76,7 +76,7 @@ export const UserLibItem: FC<IUserLibItemProps> = (props) => {
 
 
 
-  return <Link href={routes.user_lib.path({ username: props.user.username, lib_id: props.lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
+  return <Link href={Routes.user_lib.path({ username: props.user.username, lib_id: props.lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
     <StyledButton as="div" className="w-full flex flex-col items-center gap-[8px] p-[16px]">
       <MaterialSymbol icon={icon} size={80} className="text-white" fill={icon === 'favorite'} />
 

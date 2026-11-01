@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 import { conf } from '~/conf';
 import { IcoSocialDiscord } from '~/shared/components/Icons';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 import StyledButton from './styled/StyledButton';
 import Tooltip from './Tooltip';

@@ -7,7 +7,7 @@ import { ReportButton } from '~/shared/components/Report';
 import { UIField, UIFieldState } from '~/shared/components/UI/Input';
 import { useAppSelector } from '~/shared/hooks/redux';
 import { TTeam, TTeamMemberExtended } from '~/shared/lib/api/api-types';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 import TSettingsMember from './_components/TSettingsMember';
 import { TSettingLink, TSettingsControls, TSettingsGroup } from './_components/TSettingsUI';

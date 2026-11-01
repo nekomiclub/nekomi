@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import Tooltip from '~/shared/components/Tooltip';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 
 

@@ -6,10 +6,10 @@ import { MaterialSymbol } from 'material-symbols-rc';
 
 import UserLayout from '~/shared/components/UserLayout';
 import API from '~/shared/lib/api';
-import { IRSCProps,ITeamPageParams  } from '~/shared/types/PagesParams';
+import { IRSCProps, ITeamPageParams } from '~/shared/types/PagesParams';
 import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import siteMetadata from '~/utils/site-metadata';
-import { getUTC, isEmpty, timestampToDayMonth, wordDeclination } from '~/utils/utils';
+import siteMetadata from '~/shared/utilities/site-metadata';
+import { getUTC, isEmpty, timestampToDayMonth, wordDeclination } from '~/shared/utilities/utilities';
 
 import { TeamAboutLink, TeamMember } from './_components/TeamUI';
 

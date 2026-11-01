@@ -1,5 +1,5 @@
 import { ILayoutProps } from '~/shared/types/PagesParams';
-import siteMetadata from '~/utils/site-metadata';
+import siteMetadata from '~/shared/utilities/site-metadata';
 
 
 

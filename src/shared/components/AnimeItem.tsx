@@ -5,18 +5,19 @@ import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
 import Link from 'next/link';
 
-import routes from '~/routes';
+import Routes from '~/routes';
 import { useAppDispatch, useAppSelector } from '~/shared/hooks/redux';
 import API from '~/shared/lib/api';
 import { TAnimeMinified, USER_LIB_TYPE_ENUM } from '~/shared/lib/api/api-types';
 import userSlice, { IUserState } from '~/shared/store/reducers/userSlice';
+import { cn } from '~/shared/utilities/classnames';
 import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import { cn } from '~/utils/classnames';
-import parseUserLibUI from '~/utils/parse-user-lib-ui';
 
 import { NotifyWarn } from './nofity/NotifyStatus';
 import StyledCheckbox from './styled/StyledCheckbox';
 import StyledImage from './styled/StyledImage';
+
+import { parseUserLibUI } from '../utilities/data-mappers';
 
 
 
@@ -126,7 +127,7 @@ const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
       </Menu>
     </div>}
 
-    <Link href={routes.anime.path({ query: anime.slug })} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef} prefetch={false}>
+    <Link href={Routes.anime.path({ query: anime.slug })} className={cn(`flex flex-col justify-end relative min-w-[200px] w-full h-auto min-h-[240px] aspect-[.7] rounded-[4px] overflow-hidden outline-none max-md:min-w-[170px]`, className)} ref={cardRef} prefetch={false}>
       <StyledImage src={anime.poster} className="!absolute top-0 left-0" width="100%" height="100%" />
 
       <div className="flex flex-col">

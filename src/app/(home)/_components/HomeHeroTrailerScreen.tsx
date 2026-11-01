@@ -7,7 +7,7 @@ import { useIdleTimer } from 'react-idle-timer';
 
 import { HomeHeroScreenType } from '~/app/(home)/_utils';
 import { THomeFeedHero } from '~/shared/lib/api/api-types';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 import HomeHeroWatch from './HomeHeroWatch';
 

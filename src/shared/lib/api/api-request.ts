@@ -3,8 +3,8 @@
 import conf from '~/conf';
 import Log from '~/shared/utilities/console-utils';
 import normalizeError from '~/shared/utilities/normalize-error';
+import signCSRF from '~/shared/utilities/signCSRF';
 import { IDv7 } from '~/shared/utilities/utilities';
-import signCSRF from '~/utils/signCSRF';
 
 import { APIOptionsType, APISchemaType, NormalizedResponseType } from './api-types';
 

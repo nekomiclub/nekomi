@@ -4,7 +4,7 @@ import { FC, useId, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import LoadingContent from '~/shared/components/LoadingContent';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 
 

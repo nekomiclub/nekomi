@@ -7,8 +7,8 @@ import conf from '~/conf';
 import { IcoNekomiLogoWhite } from '~/shared/components/Icons';
 import API from '~/shared/lib/api';
 import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import siteMetadata from '~/utils/site-metadata';
-import { randomNumber } from '~/utils/utils';
+import siteMetadata from '~/shared/utilities/site-metadata';
+import { randomNumber } from '~/shared/utilities/utilities';
 
 import { HomeCategory, HomeHero } from './HomePage';
 

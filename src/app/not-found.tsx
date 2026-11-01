@@ -1,5 +1,5 @@
 import { ErrorNotFound } from '~/shared/components/Errors';
-import siteMetadata from '~/utils/site-metadata';
+import siteMetadata from '~/shared/utilities/site-metadata';
 
 
 

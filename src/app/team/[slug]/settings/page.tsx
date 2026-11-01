@@ -5,9 +5,9 @@ import UserLayout from '~/shared/components/UserLayout';
 import { TTeamMemberExtended, TUser } from '~/shared/lib/api/api-types';
 import { hasAnyPermission } from '~/shared/lib/auth-lib';
 import { getCachedTeam, getCachedUser } from '~/shared/lib/cached-api';
-import { IRSCProps,ITeamSettingsPageParams  } from '~/shared/types/PagesParams';
+import { IRSCProps, ITeamSettingsPageParams } from '~/shared/types/PagesParams';
 import { HandleMetadataNormalizedError, HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import siteMetadata from '~/utils/site-metadata';
+import siteMetadata from '~/shared/utilities/site-metadata';
 
 import TSettingsPage from './TSettingsPage';
 

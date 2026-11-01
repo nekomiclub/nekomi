@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import cn from '~/utils/classnames';
+import cn from '~/shared/utilities/classnames';
 
 import StyledImage, { IStyledImageProps } from './StyledImage';
 import { StyledM } from './StyledText';

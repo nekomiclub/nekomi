@@ -5,16 +5,16 @@ import { cache } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
 import { conf } from '~/conf';
-import routes from '~/routes';
+import Routes from '~/routes';
 import { StyledM } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
 import UserLayout from '~/shared/components/UserLayout';
 import API from '~/shared/lib/api';
 import { TUserLib } from '~/shared/lib/api/api-types';
-import { IRSCProps,IUserPageProps  } from '~/shared/types/PagesParams';
+import { IRSCProps, IUserPageProps } from '~/shared/types/PagesParams';
 import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
-import siteMetadata from '~/utils/site-metadata';
-import { getUTC, timestampToDayMonth, wordDeclination } from '~/utils/utils';
+import siteMetadata from '~/shared/utilities/site-metadata';
+import { getUTC, timestampToDayMonth, wordDeclination } from '~/shared/utilities/utilities';
 
 import { UserLibItem, UserStatisticsItem, UserTitle } from './_components/UserUI';
 
@@ -60,7 +60,7 @@ export async function generateMetadata(
       type: 'profile',
       images: user.avatar,
       username: user.username,
-      url: routes.user.path({ username }),
+      url: Routes.user.path({ username }),
       locale: 'uk_UA',
       siteName: conf.domain.split('.')[0],
     }

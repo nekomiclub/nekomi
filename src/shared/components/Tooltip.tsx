@@ -3,7 +3,7 @@
 import { FC, ReactNode, useId } from 'react';
 import { PlacesType, Tooltip as RT } from 'react-tooltip';
 
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 
 

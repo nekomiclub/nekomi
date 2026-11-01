@@ -8,7 +8,7 @@ import { StyledH3, StyledM } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
 import { UIField, UIFieldState } from '~/shared/components/UI/Input';
 import { TTeam } from '~/shared/lib/api/api-types';
-import { cn } from '~/utils/classnames';
+import { cn } from '~/shared/utilities/classnames';
 
 
 
