@@ -36,8 +36,13 @@ export default async function HomePageRSC() {
     {hero && <HomeHero hero={hero} />}
 
     {/* Hot category */}
-    <div className="wrapper gap-[32px]">
+    {/* <div className="wrapper gap-[32px]">
       <HomeCategory label="Популярні" icon={<MaterialSymbol icon="star" size={32} fill className="text-[#FF464E]" />} animes={feed.hot} />
+    </div> */}
+
+    {/* Updated recently */}
+    <div className="wrapper gap-[32px]">
+      {feed.updated_recently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<MaterialSymbol icon="schedule" size={32} className="text-white max-md:!text-[24px]" />} animes={feed.updated_recently} />}
     </div>
 
     {/* Telegram advertisment */}
@@ -58,9 +63,8 @@ export default async function HomePageRSC() {
       </div>
     </div>
 
-    {/* Categories */}
+    {/* Hight rate */}
     <div className="wrapper gap-[32px]">
-      {feed.updated_recently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<MaterialSymbol icon="schedule" size={32} className="text-white max-md:!text-[24px]" />} animes={feed.updated_recently} />}
       {feed.highest_rate.length > 0 && <HomeCategory label="З високою оцінкою" icon={<MaterialSymbol icon="star_half" size={32} className="text-white max-md:!text-[24px]" />} animes={feed.highest_rate} />}
     </div>
   </main>;

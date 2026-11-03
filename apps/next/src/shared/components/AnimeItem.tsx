@@ -261,7 +261,7 @@ const AnimeItemEditMenuLib: FC<IAnimeItemEditMenuLibProps> = ({ type, animeId })
 
 
   return <button className="flex items-center gap-[16px] p-[12px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={toggleLib}>
-    <StyledCheckbox isChecked={isChecked} />
+    <StyledCheckbox isChecked={isChecked} as="div" />
 
     <MaterialSymbol icon={icon} size={24} className="text-white" />
 

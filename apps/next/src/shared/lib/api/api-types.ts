@@ -107,8 +107,12 @@ export const ANIME_GENRE_ENUM = OpenAPI.AnimeGenreEnum.enum;
 export type ANIME_GENRE_ENUM = keyof typeof ANIME_GENRE_ENUM
 
 // AnimeVODProvider
-export const AnimeVODProviderList = ['moonanime_vod', 'ashdi_vod', 'tortuga_vod'] as const;
-export type TAnimeVODProvider = typeof AnimeVODProviderList[number]
+export const AnimeVODProviderList = {
+  moonanime_vod: 'Moonanime',
+  ashdi_vod: 'Ashdi',
+  tortuga_vod: 'Tortuga',
+};
+export type TAnimeVODProvider = keyof typeof AnimeVODProviderList
 
 
 

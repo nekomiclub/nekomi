@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useMemo } from 'react';
+import { FC, JSX, useMemo } from 'react';
 import { MaterialSymbol } from 'material-symbols-rc';
 
 import useMixedState from '~/shared/hooks/useMixedState';
@@ -15,6 +15,8 @@ export interface IStyledCheckboxProps {
   isChecked?: boolean
   setIsChecked?: StateSetter<boolean>
 
+  as?: 'div' | 'button'
+
   label?: string
   className?: string
   disabled?: boolean
@@ -23,6 +25,8 @@ export interface IStyledCheckboxProps {
 
 
 const StyledCheckbox: FC<IStyledCheckboxProps> = (props) => {
+  const Tag: keyof JSX.IntrinsicElements = props.as ?? 'button';
+
   const [isChecked, setIsChecked] = useMixedState<boolean>(props.isChecked ?? false, props.setIsChecked);
 
 
@@ -42,14 +46,14 @@ const StyledCheckbox: FC<IStyledCheckboxProps> = (props) => {
 
 
 
-  return <button className={cn(`sui-checkbox`, isChecked && 'sui-checkbox--checked', props.disabled && 'sui-checkbox--disabled')} role="checkbox" tabIndex={0} aria-checked={isChecked} disabled={props.disabled} onClick={toggle}>
+  return <Tag className={cn(`sui-checkbox`, isChecked && 'sui-checkbox--checked', props.disabled && 'sui-checkbox--disabled')} role="checkbox" tabIndex={0} aria-checked={isChecked} disabled={props.disabled} onClick={toggle}>
     <div className="sui-checkbox_item">
       {props.disabled && <MaterialSymbol icon="close_small" color={props.isChecked ? 'var(--color-text)' : 'var(--color-text-muted)'} size={16} />}
       {!props.disabled && <MaterialSymbol icon="check_small" className="sui-checkbox_mark" size={16} />}
     </div>
 
     {props.label && <StyledS text={props.label} color={!props.disabled ? 'text-secondary' : 'text-muted'} />}
-  </button>;
+  </Tag>;
 };
 
 export default StyledCheckbox;

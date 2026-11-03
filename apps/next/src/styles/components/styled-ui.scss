@@ -218,6 +218,7 @@
   transition: 0.1s ease-in-out;
   border-radius: inherit;
   display: block;
+  position: relative;
 
   // Fix IOS border radius
   mask-image: radial-gradient(white, black);
