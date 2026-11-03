@@ -1,0 +1,193 @@
+// Common ui styles
+
+@use "../variables.scss" as *;
+
+// Errors
+.cui-error {
+  &-wrapper {
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+}
+
+// Footer
+.cui-footer {
+  &-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    transition: 0.1s ease-in-out;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: #fff;
+      transition: 0.2s ease-in-out;
+    }
+
+    &:hover,
+    &:focus-visible {
+      &::after {
+        width: 100%;
+      }
+    }
+
+    &:active {
+      scale: 0.97;
+    }
+  }
+
+  &-social {
+    transition: 0.2s ease-in-out;
+
+    &:active {
+      scale: 0.97;
+    }
+  }
+}
+
+// UserBanner
+.cui-ub {
+  &-upload {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba($color: $color-dark, $alpha: 0.5);
+    transition: 0.2s ease-in-out;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    z-index: 4;
+
+    @media only screen and (max-width: $break-md) {
+      opacity: 0 !important;
+    }
+
+    &--visible {
+      opacity: 100;
+    }
+
+    &:hover,
+    &:focus-visible {
+      @extend .cui-ub-upload--visible;
+    }
+  }
+}
+
+// UserLayout
+.cui-ul {
+  &-action {
+    padding: 16px;
+
+    @media only screen and (max-width: $break-md) {
+      padding: 12px;
+    }
+
+    &_icon {
+      color: #fff;
+
+      @media only screen and (max-width: $break-md) {
+        font-size: 20px !important;
+      }
+    }
+
+    &--succeed {
+      background: $color-info-success;
+
+      &:hover,
+      &:focus-visible {
+        background: $color-info-success;
+      }
+    }
+  }
+}
+
+// NavMenu
+.cui-nav {
+  &-search {
+    &_selectType {
+      padding: 12px;
+      transition: 0.2s ease-in-out;
+
+      &:hover,
+      &:focus-visible {
+        background: $color-border;
+      }
+    }
+
+    &-result {
+      display: flex;
+      gap: 16px;
+      transition: 0.2s ease-in-out;
+      border-radius: 4px;
+
+      img {
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      &:hover,
+      &:focus-visible {
+        background: $color-border;
+      }
+
+      &_content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+  }
+}
+
+.cui-notify {
+  &_progressBar {
+    &--success {
+      animation: uiNotifyToastProgressBar 3s linear;
+      background: $color-info-success;
+    }
+
+    &--warn {
+      animation: uiNotifyToastProgressBar 3s linear;
+      background: $color-info-warning;
+    }
+
+    &--error {
+      animation: uiNotifyToastProgressBar 6s linear;
+      background: $color-info-danger;
+    }
+  }
+}
+
+@keyframes uiNotifyToastProgressBar {
+  from {
+    height: 100%;
+  }
+
+  to {
+    height: 0;
+  }
+}

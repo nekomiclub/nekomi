@@ -1,1 +1,1 @@
-npm run build && git add .
+pnpm -w run lint && pnpm -w run check-types && git add . 
