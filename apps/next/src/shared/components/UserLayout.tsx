@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 
 import { conf } from '~/conf';
 import Routes from '~/routes';
-import { useAppSelector } from '~/shared/hooks/redux';
+import { useAppDispatch, useAppSelector } from '~/shared/hooks/redux';
 import API from '~/shared/lib/api';
 import cn from '~/shared/utilities/classnames';
 import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
@@ -22,6 +22,7 @@ import { StyledH2, StyledHeading, StyledM } from './styled/StyledText';
 import Tooltip from './Tooltip';
 
 import { ROLE_PERMISSION_ENUM, TTeam, TUserMinified } from '../lib/api/api-types';
+import userSlice from '../store/reducers/userSlice';
 import { copyToClipboard } from '../utilities/utilities';
 
 
@@ -144,6 +145,9 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
 
 
 const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityId, entityType, isEdit, className, initials }) => {
+  const user = useAppSelector(state => state.user);
+  const dispatch = useAppDispatch();
+
   const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl);
   const [isDrag, setIsDrag] = useState(false);
 
@@ -183,6 +187,11 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
         if (!uploadRes.success) return HandleClientNormalizedError(uploadRes.error);
 
         url = uploadRes.response.data.url;
+
+        dispatch(userSlice.actions.reducer({
+          ...user,
+          avatar: url
+        }));
       } else if (entityType === 'dubber') {
         const uploadRes = await API.Team.uploadAvatarOrCover(entityId, file, 'avatar');
         if (!uploadRes.success) return HandleClientNormalizedError(uploadRes.error);

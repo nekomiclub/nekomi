@@ -11,7 +11,12 @@ const nextConfig: import('next').NextConfig = {
   sassOptions: {
     silenceDeprecations: ['legacy-js-api'],
   },
-  devIndicators: false
+  devIndicators: false,
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '100mb'
+    }
+  }
 };
 
 module.exports = nextConfig;
