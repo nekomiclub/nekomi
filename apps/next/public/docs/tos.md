@@ -4,7 +4,7 @@
  
 ## 1. General provisions
  
-1.1. This User Agreement (the "Agreement") governs the relationship between the administration of the website https://nekomi.club (the "Site", the "Administration") and any person who uses the Site (the "User").
+1.1. This User Agreement (the "Agreement") governs the relationship between the administration of the website [https://nekomi.club](https://nekomi.club) (the "Site", the "Administration") and any person who uses the Site (the "User").
  
 1.2. The Site is a Ukrainian aggregator of anime titles, related information, and third-party video players, where Users can watch anime with Ukrainian subtitles or voiceover.
  
@@ -22,7 +22,7 @@
  
 2.4. You may not share your account or its credentials with third parties, and you may not register an account in the name of another person, except where permitted by law.
  
-2.5. You may delete your account at any time by account settings or email to fullkekw@gmail.com.
+2.5. You may delete your account at any time by account settings or email to [fullkekw@gmail.com](mailto:fullkekw@gmail.com).
  
 ## 3. Subject of the Agreement
  
@@ -54,7 +54,7 @@
 - restrict access to any content on the Site, and edit or remove content, including User content that violates this Agreement or the law;
 - warn, restrict, suspend, or delete accounts that violate this Agreement or the law;
 - refuse registration where there are reasonable grounds, for example prior violations, suspected abuse, or a risk to other Users;
-- make moderation decisions at its own discretion. The Administration is not required to give detailed reasons, but a User may contact fullkekw@gmail.com to appeal a decision.
+- make moderation decisions at its own discretion. The Administration is not required to give detailed reasons, but a User may contact [fullkekw@gmail.com](mailto:fullkekw@gmail.com) to appeal a decision.
 
 ## 5. User obligations
  
@@ -94,13 +94,13 @@ The Administration will:
  
 8.2. Information about titles (descriptions, posters, metadata) comes from third-party sources, and the Administration does not guarantee its accuracy.
  
-8.3. **Copyright holders.** If you believe that any material available through the Site infringes your rights, send a notice to fullkekw@gmail.com that includes: (a) your name and contact details; (b) a description of the work you claim is infringed; (c) the exact URL of the material on the Site; (d) a statement that you are the rights holder or authorized to act for them; and (e) a statement that the information in your notice is accurate. The Administration will review the notice and, where it is justified, will promptly remove or disable access to the material.
+8.3. **Copyright holders.** If you believe that any material available through the Site infringes your rights, send a notice to [fullkekw@gmail.com](mailto:fullkekw@gmail.com) that includes: (a) your name and contact details; (b) a description of the work you claim is infringed; (c) the exact URL of the material on the Site; (d) a statement that you are the rights holder or authorized to act for them; and (e) a statement that the information in your notice is accurate. The Administration will review the notice and, where it is justified, will promptly remove or disable access to the material.
  
 8.4. The Administration may terminate the accounts of Users who repeatedly infringe the rights of others.
  
 ## 9. Open-source software, warranties, and liability
  
-9.1. The source code of the Site is open source and licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. The source code is available at https://github.com/nekomiclub/nekomi. The AGPL-3.0 license governs your rights to the source code. This Agreement governs your use of the Site as an online service, including the content and accounts on it. If there is a conflict regarding the source code itself, the AGPL-3.0 prevails.
+9.1. The source code of the Site is open source and licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. The source code is available at [https://github.com/nekomiclub/nekomi](https://github.com/nekomiclub/nekomi). The AGPL-3.0 license governs your rights to the source code. This Agreement governs your use of the Site as an online service, including the content and accounts on it. If there is a conflict regarding the source code itself, the AGPL-3.0 prevails.
  
 9.2. The Site and its software are provided **"as is" and "as available"**, without warranties of any kind, express or implied, including warranties of merchantability, fitness for a particular purpose, uninterrupted or error-free operation, and non-infringement, to the extent permitted by law.
  
@@ -139,11 +139,11 @@ The Administration will:
  
 12.1. This Agreement is governed by the laws of Ukraine.
  
-12.2. The parties will first try to resolve disputes through negotiation, by contacting fullkekw@gmail.com. If a dispute cannot be resolved this way, it will be heard by the competent court in Ukraine, unless mandatory consumer-protection rules of the User's country of residence provide otherwise.
+12.2. The parties will first try to resolve disputes through negotiation, by contacting [fullkekw@gmail.com](mailto:fullkekw@gmail.com). If a dispute cannot be resolved this way, it will be heard by the competent court in Ukraine, unless mandatory consumer-protection rules of the User's country of residence provide otherwise.
  
 ## 13. Contacts
  
-Questions about this Agreement: **fullkekw@gmail.com** <br />
-Copyright notices: **fullkekw@gmail.com** <br />
-Source code: **https://github.com/nekomiclub/nekomi** <br />
+Questions about this Agreement: **[fullkekw@gmail.com](mailto:fullkekw@gmail.com)** <br />
+Copyright notices: **[fullkekw@gmail.com](mailto:fullkekw@gmail.com)** <br />
+Source code: **[[https://github.com/nekomiclub/nekomi](https://github.com/nekomiclub/nekomi)]([https://github.com/nekomiclub/nekomi](https://github.com/nekomiclub/nekomi))** <br />
  

@@ -46,3 +46,10 @@ export interface IAnimePageSearchParams {
   /** Whether device is mobile */
   mobile?: any;
 }
+
+
+
+export type ILegalPagesQueryParams = {
+  /** @default "uk" */
+  lang?: 'uk' | 'en'
+}

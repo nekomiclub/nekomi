@@ -16,7 +16,7 @@ import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalize
 import siteMetadata from '~/shared/utilities/site-metadata';
 import { getUTC, timestampToDayMonth, wordDeclination } from '~/shared/utilities/utilities';
 
-import { UserLibItem, UserStatisticsItem, UserTitle } from './_components/UserUI';
+import { UserLibItem, UserTitle } from './_components/UserUI';
 
 
 
@@ -100,10 +100,10 @@ export default async function UserPageRSC(props: IRSCProps<IUserPageProps>) {
     <UserLayout type="user_profile" user={user} />
 
     <div className="wrapper pt-[24px] gap-[24px]">
-      <div className="flex gap-[8px] w-full overflow-x-auto ui-hideScroll">
+      {/* <div className="flex gap-[8px] w-full overflow-x-auto ui-hideScroll">
         <UserStatisticsItem animeSeen={animeSeen} />
         <UserStatisticsItem viewtime={viewtime} />
-      </div>
+      </div> */}
 
       {libs.length !== 0 && <div className="flex flex-col gap-[16px]" id="user-libs">
         <UserTitle title="Теки" />

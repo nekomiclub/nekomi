@@ -72,7 +72,7 @@ export default async function ULibPageRSC(props: PagePropsType) {
         </Tooltip>}
 
         <div className="flex items-center gap-[8px]">
-          <StyledH2 text={parseLibTitle(lib.type)} bold className="text-[24px] flex-shrink-0" />
+          <StyledH2 text={parseLibTitle(lib.type)} bold className="text-[24px] flex-shrink-0 whitespace-nowrap" />
           {lib.anime_ids.length !== 0 && <StyledM text={`(${lib.anime_ids.length})`} className="text-[24px] flex-shrink-0" color="text-muted" />}
         </div>
 

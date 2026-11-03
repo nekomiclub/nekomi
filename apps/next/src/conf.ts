@@ -32,6 +32,7 @@ export const conf = {
   env,
   /** @deprecated */
   URL: {
+    nekomiRepository: 'https://github.com/nekomiclub/nekomi',
     nekomiSite: env.NEXT_PUBLIC_NEKOMI_NEXTJS_URL,
     nekomiApi: env.NEXT_PUBLIC_NEKOMI_API_URL,
 

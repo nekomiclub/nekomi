@@ -21,37 +21,23 @@ const Footer: FC = () => {
 
       <ul className="h-[50px] flex items-center gap-y-[8px] gap-[32px] flex-wrap max-2xl:h-auto">
         <li>
-          <Link href={Routes.info_contacts.path()} className="cui-footer-link">
+          <Link href={conf.URL.nekomiRepository} className="cui-footer-link">
             <MaterialSymbol icon="code_blocks" size={20} className="text-white" />
-            <p className="text-white ">Розробники</p>
+            <p className="text-white ">Вихідний код</p>
           </Link>
         </li>
 
         <li>
-          <Link href={Routes.info_agreement.path()} className="cui-footer-link">
+          <Link href={Routes.legal_tos.path()} className="cui-footer-link">
             <MaterialSymbol icon="contract" size={20} className="text-white" />
             <p className="text-white ">Угода користувача</p>
           </Link>
         </li>
 
         <li>
-          <Link href={Routes.info_policy.path()} className="cui-footer-link">
+          <Link href={Routes.legal_privacy.path()} className="cui-footer-link">
             <MaterialSymbol icon="encrypted" size={20} className="text-white" />
             <p className="text-white ">Політика конфіденційності</p>
-          </Link>
-        </li>
-
-        <li>
-          <Link href={Routes.info_terms.path()} className="cui-footer-link">
-            <MaterialSymbol icon="gavel" size={20} className="text-white" />
-            <p className="text-white ">Умови користування</p>
-          </Link>
-        </li>
-
-        <li>
-          <Link href={Routes.info_DMCA.path()} className="cui-footer-link">
-            <MaterialSymbol icon="copyright" size={20} className="text-white" />
-            <p className="text-white ">DMCA</p>
           </Link>
         </li>
       </ul>

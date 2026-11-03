@@ -4,9 +4,9 @@
  
 ## 1. General provisions
  
-1.1. This Privacy Policy (the "Policy") explains what personal data the website https://nekomi.club (the "Site") and its related services (such as the user API) collect, why we collect it, how we use and protect it, and what rights you have.
+1.1. This Privacy Policy (the "Policy") explains what personal data the website [https://nekomi.club](https://nekomi.club) (the "Site") and its related services (such as the user API) collect, why we collect it, how we use and protect it, and what rights you have.
  
-1.2. The Policy is issued by the administration of the Site (the "Administration", "we", "us"), which acts as the controller of your personal data. Contact: **fullkekw@gmail.com**.
+1.2. The Policy is issued by the administration of the Site (the "Administration", "we", "us"), which acts as the controller of your personal data. Contact: **[fullkekw@gmail.com](mailto:fullkekw@gmail.com)**.
  
 1.3. We process personal data in accordance with the Law of Ukraine "On Personal Data Protection" and other applicable Ukrainian legislation.
  
@@ -67,18 +67,16 @@ We process your data on the basis of your **consent** (given when you sign in an
 ## 6. Cookies and analytics
  
 6.1. Cookies are small files stored in your browser. We use them for:
- 
-| Type                        | Purpose                                                                                                          |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **Essential cookies**       | Keeping you signed in and maintaining your session. The Site cannot work properly without them.                  |
-| **Personalization cookies** | Remembering your preferences and determining your interests in order to personalize content and recommendations. |
-| **Analytics cookies**       | Collecting statistics on how the Site is used through Google Analytics.                                          |
+
+- **Essential cookies:** keeping you signed in and maintaining your session. The Site cannot work properly without them.
+- **Personalization cookies:** remembering your preferences and determining your interests in order to personalize content and recommendations.
+- **Analytics cookies:** collecting statistics on how the Site is used through Google Analytics.
  
 6.2. You can block or delete cookies in your browser settings. If you block essential cookies, you may not be able to sign in or use parts of the Site.
  
 6.3. You can opt out of Google Analytics using the [Google Analytics opt-out browser add-on](https://tools.google.com/dlpage/gaoptout).
  
-6.4. Google may process analytics data under its own privacy policy: https://policies.google.com/privacy.
+6.4. Google may process analytics data under its own privacy policy: [https://policies.google.com/privacy](https://policies.google.com/privacy).
  
 ## 7. Sharing and transfer of data
  
@@ -117,11 +115,11 @@ Under Ukrainian law, you have the right to:
 - object to processing;
 - lodge a complaint with the **Ukrainian Parliament Commissioner for Human Rights** or a court.
 
-To exercise these rights, email **fullkekw@gmail.com**. You can also delete your account in the account settings or by letter on fullkekw@gmail.com. If you withdraw consent or delete your data, we may not be able to provide you with the Site's features that depend on that data. We will respond to your request within a reasonable time and in accordance with the law.
+To exercise these rights, email **[fullkekw@gmail.com](mailto:fullkekw@gmail.com)**. You can also delete your account in the account settings or by letter on [fullkekw@gmail.com](mailto:fullkekw@gmail.com). If you withdraw consent or delete your data, we may not be able to provide you with the Site's features that depend on that data. We will respond to your request within a reasonable time and in accordance with the law.
  
 ## 10. Children
  
-The Site is intended for people aged **13 and over**. We do not knowingly collect personal data from children under 13. If you believe a child under 13 has provided us with personal data, contact us at **fullkekw@gmail.com** and we will delete it.
+The Site is intended for people aged **13 and over**. We do not knowingly collect personal data from children under 13. If you believe a child under 13 has provided us with personal data, contact us at **[fullkekw@gmail.com](mailto:fullkekw@gmail.com)** and we will delete it.
  
 ## 11. Changes to this Policy
  
@@ -131,4 +129,4 @@ The Site is intended for people aged **13 and over**. We do not knowingly collec
  
 ## 12. Contacts
  
-Questions about this Policy or your personal data: **fullkekw@gmail.com**
+Questions about this Policy or your personal data: **[fullkekw@gmail.com](mailto:fullkekw@gmail.com)**

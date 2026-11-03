@@ -28,12 +28,9 @@ const definitions = {
   team: { path: ({ slug }: ITeamPageParams) => `/team/${slug}` },
   team_settings: { path: ({ slug }: ITeamPageParams) => `/team/${slug}/settings` },
 
-  // === Info Pages
-  info_agreement: { path: () => `/info/agreement` },
-  info_contacts: { path: () => `/info/contacts` },
-  info_DMCA: { path: () => `/info/dmca` },
-  info_policy: { path: () => `/info/policy` },
-  info_terms: { path: () => `/info/terms` },
+  // === Legal pages
+  legal_tos: { path: () => `/legal/terms-of-service` },
+  legal_privacy: { path: () => `/legal/privacy-policy` },
 
   // === User Pages
   user: { path: ({ username }: IUserPageProps) => `/user/${username}` },
