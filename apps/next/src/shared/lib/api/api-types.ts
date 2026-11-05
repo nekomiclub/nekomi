@@ -64,7 +64,7 @@ export type NormalizedResponseType<TSchema> = NormalizedSuccessResponseType<TSch
 export const AUTH_METHOD_ENUM = OpenAPI.AuthMethodEnum.enum;
 export type AUTH_METHOD_ENUM = keyof typeof AUTH_METHOD_ENUM
 
-export type THomeFeedHero = z.infer<typeof OpenAPI.HomeFeedHero>
+export type TFeedHydrated = z.infer<typeof OpenAPI.FeedHydrated>
 
 
 

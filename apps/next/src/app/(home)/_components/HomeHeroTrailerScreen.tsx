@@ -6,7 +6,7 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import { useIdleTimer } from 'react-idle-timer';
 
 import { HomeHeroScreenType } from '~/app/(home)/_utils';
-import { THomeFeedHero } from '~/shared/lib/api/api-types';
+import { TFeedHydrated } from '~/shared/lib/api/api-types';
 import { cn } from '~/shared/utilities/classnames';
 
 import HomeHeroWatch from './HomeHeroWatch';
@@ -14,7 +14,7 @@ import HomeHeroWatch from './HomeHeroWatch';
 
 
 interface IProps {
-  hero: THomeFeedHero
+  hero: TFeedHydrated
 
   activeScreen: HomeHeroScreenType
   setActiveScreen: (val: HomeHeroScreenType) => void

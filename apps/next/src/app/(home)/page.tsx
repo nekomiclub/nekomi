@@ -24,7 +24,7 @@ export const metadata = siteMetadata({
 
 
 export default async function HomePageRSC() {
-  const homeFeedRes = await API.Generic.getHomeFeed({});
+  const homeFeedRes = await API.Generic.getFeed({});
   if (!homeFeedRes.success) return HandleServerNormalizedError(homeFeedRes.error);
 
   const feed = homeFeedRes.response.data;
