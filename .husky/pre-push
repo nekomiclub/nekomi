@@ -2,6 +2,6 @@ export FORCE_COLOR=1
 
 status=0
 
-pnpm build || status=1
+turbo build || status=1
 
 exit $status
