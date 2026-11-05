@@ -107,3 +107,6 @@ jobs:
           cache-from: type=gha,scope=next
           cache-to: type=gha,mode=max,scope=next
           provenance: false
+          build-args: |
+            APP_NAME=@nekomi/next
+            NEXT_PUBLIC_NEKOMI_API_URL=${{ vars.NEXT_PUBLIC_NEKOMI_API_URL }}

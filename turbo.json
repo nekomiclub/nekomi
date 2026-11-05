@@ -26,6 +26,12 @@
         ".next/**",
         "!.next/cache/**",
         "!.next/dev/**"
+      ],
+      "env": [
+        "API_KEY_SK",
+        "NEXT_PUBLIC_TELEGRAM_BOT_URL",
+        "NEXT_PUBLIC_NEKOMI_NEXTJS_URL",
+        "NEXT_PUBLIC_NEKOMI_API_URL",
       ]
     },
     "lint": {
