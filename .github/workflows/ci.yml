@@ -6,6 +6,14 @@ on:
   push:
     branches: [main]
 
+env:
+  # Implicitly provide env variables for tests
+  API_KEY_SK: ${{ secrets.API_KEY_SK }}
+
+  NEXT_PUBLIC_TELEGRAM_BOT_URL: ${{ vars.NEXT_PUBLIC_TELEGRAM_BOT_URL }}
+  NEXT_PUBLIC_NEKOMI_NEXTJS_URL: ${{ vars.NEXT_PUBLIC_NEKOMI_NEXTJS_URL }}
+  NEXT_PUBLIC_NEKOMI_API_URL: ${{ vars.NEXT_PUBLIC_NEKOMI_API_URL }}
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
