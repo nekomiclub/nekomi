@@ -1,0 +1,8 @@
+export FORCE_COLOR=1
+
+status=0
+
+pnpm load:openapi || status=1
+pnpm build || status=1
+
+exit $status

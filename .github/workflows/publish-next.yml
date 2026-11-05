@@ -110,3 +110,5 @@ jobs:
           build-args: |
             APP_NAME=@nekomi/next
             NEXT_PUBLIC_NEKOMI_API_URL=${{ vars.NEXT_PUBLIC_NEKOMI_API_URL }}
+            GIT_SHA=${{ github.sha }}
+            APP_VERSION=${{ steps.meta.outputs.version }}
