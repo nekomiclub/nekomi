@@ -1,7 +1,5 @@
 import '~/styles/_main.scss';
 
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import axios from 'axios';
 import { Manrope } from 'next/font/google';
 import { SkeletonTheme } from 'react-loading-skeleton';
@@ -97,9 +95,6 @@ export default async function RootLayout({ children, params }: ILayoutProps) {
           <ToastContainer />
         </SkeletonTheme>
       </StateProvider> : <ErrorNoConnection />}
-
-      <Analytics />
-      <SpeedInsights />
     </body>
   </html>;
 }

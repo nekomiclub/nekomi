@@ -2,16 +2,43 @@
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
   "tasks": {
+    "load:openapi": {
+      "env": [
+        "NEXT_PUBLIC_NEKOMI_API_URL"
+      ],
+      "inputs": [
+        "orval.config.ts"
+      ],
+      "outputs": [
+        "src/shared/lib/api/routes/@generated.schema.ts"
+      ]
+    },
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
+      "dependsOn": [
+        "^build",
+        "load:openapi"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "!.next/dev/**"
+      ]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": [
+        "^lint",
+        "load:openapi"
+      ]
     },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+    "typecheck": {
+      "dependsOn": [
+        "^typecheck",
+        "load:openapi"
+      ]
     },
     "dev": {
       "cache": false,
