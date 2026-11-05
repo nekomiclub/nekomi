@@ -1,3 +1,5 @@
+import path from 'path';
+
 const nextConfig: import('next').NextConfig = {
   images: {
     unoptimized: true,
@@ -16,7 +18,9 @@ const nextConfig: import('next').NextConfig = {
     serverActions: {
       bodySizeLimit: '100mb'
     }
-  }
+  },
+  output: 'standalone',
+  outputFileTracingRoot: path.join(import.meta.dirname, '../../'),
 };
 
 module.exports = nextConfig;

@@ -1,22 +1,22 @@
 {
   "name": "@nekomi/next",
-  "version": "3.1.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm exec next dev -H 127.0.0.1 -p 3001",
-    "build": "pnpm exec next build",
-    "start": "pnpm exec next start",
-    "lint": "pnpm exec eslint . --fix",
-    "check-types": "pnpm exec tsc --noEmit",
-    "load:openapi": "pnpm exec orval"
+    "dev": "next dev -H 127.0.0.1 -p 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "lint-staged",
+    "typecheck": "tsc --noEmit",
+    "load:openapi": "orval --config orval.config.ts"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --fix"
   },
   "dependencies": {
     "@fullkekw/fkw-menu": "^1.1.1",
     "@fullkekw/popup": "^2.0.9",
     "@reduxjs/toolkit": "^2.0.1",
     "@uiball/loaders": "^1.3.1",
-    "@vercel/analytics": "^1.3.1",
-    "@vercel/speed-insights": "^1.0.12",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
     "firebase": "^12.7.0",
@@ -59,6 +59,7 @@
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "eslint-plugin-unused-imports": "^4.4.1",
     "husky": "^9.1.6",
+    "lint-staged": "^17.6.0",
     "orval": "^8.46.0",
     "postcss": "^8.4.32",
     "react": "^19.2.3",
