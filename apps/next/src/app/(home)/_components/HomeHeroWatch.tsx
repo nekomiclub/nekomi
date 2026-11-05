@@ -3,13 +3,13 @@ import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import Routes from '~/routes';
-import { THomeFeedHero } from '~/shared/lib/api/api-types';
+import { TFeedHydrated } from '~/shared/lib/api/api-types';
 import cn from '~/shared/utilities/classnames';
 
 
 
 interface IProps {
-  hero: THomeFeedHero
+  hero: TFeedHydrated
 
   className?: string
 }

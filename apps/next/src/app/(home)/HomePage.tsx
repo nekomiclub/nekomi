@@ -6,7 +6,7 @@ import React, { FC, useEffect, useId, useRef, useState } from 'react';
 import AnimeItem from '~/shared/components/AnimeItem';
 import Carousel from '~/shared/components/Carousel';
 import { IcoNekomiLogoWhite } from '~/shared/components/Icons';
-import { TAnimeMinified, THomeFeedHero } from '~/shared/lib/api/api-types';
+import { TAnimeMinified, TFeedHydrated } from '~/shared/lib/api/api-types';
 import { cn } from '~/shared/utilities/classnames';
 
 import HomeHeroPosterScreen from './_components/HomeHeroPosterScreen';
@@ -16,7 +16,7 @@ import { HomeHeroScreenType } from './_utils';
 
 
 interface IHomeHeroProps {
-  hero: THomeFeedHero
+  hero: TFeedHydrated
 }
 
 interface IHomeCategoryProps {

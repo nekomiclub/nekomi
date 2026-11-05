@@ -11,14 +11,14 @@ import * as OpenAPI from '~/shared/lib/api/routes/@generated.schema';
 
 
 
-export const getPing = APIMethodFactory(`/`, APIOptionsSchemaFactory({
+export const getHealthcheck = APIMethodFactory(`/healthcheck`, APIOptionsSchemaFactory({
   method: 'get',
-  response: OpenAPI.GetResponse,
+  response: OpenAPI.GetHealthcheckResponse,
 }));
 
 
 
-export const getHomeFeed = APIMethodFactory(`/home-feed`, APIOptionsSchemaFactory({
+export const getFeed = APIMethodFactory(`/feed`, APIOptionsSchemaFactory({
   method: 'get',
-  response: OpenAPI.GetHomeFeedResponse,
+  response: OpenAPI.GetFeedResponse,
 }));

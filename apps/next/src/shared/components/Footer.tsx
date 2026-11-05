@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { conf } from '~/conf';
 import Routes from '~/routes';
-import { IcoSocialDiscord, IcoSocialTelegram, IcoSocialTiktok } from '~/shared/components/Icons';
+import { IcoSocialTelegram } from '~/shared/components/Icons';
 
 import StyledImage from './styled/StyledImage';
 
@@ -46,18 +46,6 @@ const Footer: FC = () => {
         <li>
           <Link href={conf.URL.telegram} className="cui-footer-social">
             <IcoSocialTelegram width={32} height={32} fill="#fff" />
-          </Link>
-        </li>
-
-        <li>
-          <Link href={conf.URL.tiktok} className="cui-footer-social">
-            <IcoSocialTiktok width={32} height={32} fill="#fff" />
-          </Link>
-        </li>
-
-        <li>
-          <Link href={conf.URL.discord} className="cui-footer-social">
-            <IcoSocialDiscord width={32} height={32} fill="#fff" />
           </Link>
         </li>
       </ul>

@@ -3,7 +3,7 @@
 import React, { FC, useEffect, useState } from 'react';
 
 import StyledImage from '~/shared/components/styled/StyledImage';
-import { THomeFeedHero } from '~/shared/lib/api/api-types';
+import { TFeedHydrated } from '~/shared/lib/api/api-types';
 import { cn } from '~/shared/utilities/classnames';
 
 import HomeHeroWatch from './HomeHeroWatch';
@@ -11,7 +11,7 @@ import HomeHeroWatch from './HomeHeroWatch';
 
 
 interface IProps {
-  hero: THomeFeedHero
+  hero: TFeedHydrated
 }
 
 
@@ -44,7 +44,6 @@ const HomeHeroPosterScreen: FC<IProps> = (props) => {
     {/* Main */}
     <div className="relative z-[3] max-w-[1170px] flex flex-col gap-[24px] max-lg:max-w-none">
       <div className="flex flex-col gap-[8px]">
-        <p className="text-white text-[24px] uppercase max-md:text-[16px] ">ОБРАНЕ КОРИСТУВАЧАМИ NEKOMI</p>
         <h1 className="text-white text-[60px] font-black text-ellipsis line-clamp-[2] uppercase max-lg:text-[40px] max-sm:text-[32px] max-sm:line-clamp-4  w-fit" title={props.hero.title}>{props.hero.title}</h1>
       </div>
 

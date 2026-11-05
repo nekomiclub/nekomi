@@ -15,6 +15,9 @@ const EnvConfigSchema = z.object({
   NEXT_PUBLIC_TELEGRAM_BOT_URL: z.string(),
   NEXT_PUBLIC_NEKOMI_NEXTJS_URL: z.string(),
   NEXT_PUBLIC_NEKOMI_API_URL: z.string(),
+
+  NEXT_PUBLIC_GIT_SHA: z.string().optional(),
+  NEXT_PUBLIC_APP_VERSION: z.string().optional(),
 });
 
 export type TEnvConfigSchema = z.infer<typeof EnvConfigSchema>
@@ -30,6 +33,9 @@ export function parseEnv(): z.infer<typeof EnvConfigSchema> {
       NEXT_PUBLIC_TELEGRAM_BOT_URL: process.env.NEXT_PUBLIC_TELEGRAM_BOT_URL,
       NEXT_PUBLIC_NEKOMI_NEXTJS_URL: process.env.NEXT_PUBLIC_NEKOMI_NEXTJS_URL,
       NEXT_PUBLIC_NEKOMI_API_URL: process.env.NEXT_PUBLIC_NEKOMI_API_URL,
+
+      NEXT_PUBLIC_GIT_SHA: process.env.NEXT_PUBLIC_GIT_SHA,
+      NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
     } satisfies Record<keyof TEnvConfigSchema, string | undefined>);
   } catch (e) {
     if (e instanceof ZodError) {
