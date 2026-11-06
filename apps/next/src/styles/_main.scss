@@ -1,23 +1,28 @@
+@use "sass:meta";
+
 @layer normalize, pckg, base, components, utilities;
 
-// Normalize
-@import "./normalize.css" layer(normalize);
+// Base
+@layer base {
+  @include meta.load-css("./base.scss");
+}
 
-// Packages
+// Components
+@layer components {
+  @include meta.load-css("./ui.scss");
+  @include meta.load-css("./components/styled-ui.scss");
+  @include meta.load-css("./components/common-ui.scss");
+}
+
+// Utilities
+@layer utilities {
+  @include meta.load-css("./utilities.scss");
+  @include meta.load-css("./tailwind.css");
+}
+
+@import "./normalize.css" layer(normalize);
 @import "@fullkekw/fkw-menu/css" layer(pckg);
 @import "@fullkekw/popup/css" layer(pckg);
 @import "swiper/css" layer(pckg);
 @import "react-loading-skeleton/dist/skeleton.css" layer(pckg);
 @import "material-symbols-rc/css" layer(pckg);
-
-// Base (zero-deps styles, e.g: Typography)
-@import "./base.scss" layer(base);
-
-// Components
-@import "./ui.scss" layer(components);
-@import "./components/styled-ui.scss" layer(components);
-@import "./components/common-ui.scss" layer(components);
-
-// Utilities (global classes, e.g: .wrapper)
-@import "./utilities.scss" layer(utilities);
-@import "./tailwind.css" layer(utilities);
