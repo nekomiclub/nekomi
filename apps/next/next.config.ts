@@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '100mb'
     }
   },
+
   // Docker build
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '../../'),

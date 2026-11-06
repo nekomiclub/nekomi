@@ -1,0 +1,25 @@
+{
+  "name": "@nekomi/icons",
+  "private": true,
+  "exports": {
+    "./index": "./dist/index.d.ts",
+    "./*.js": "./dist/*.tsx"
+  },
+  "scripts": {
+    "build": "tsx src/main.ts"
+  },
+  "dependencies": {
+    "@material-symbols/svg-400": "^0.48.3"
+  },
+  "devDependencies": {
+    "@svgr/babel-plugin-remove-jsx-attribute": "^8.0.0",
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
+    "@svgr/plugin-svgo": "^8.1.0",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "react": "^19.3.1",
+    "tsx": "^4.23.15"
+  },
+  "packageManager": "pnpm@12.16.1+sha512.091d1dee7927575661b25dab3c2ae31cafc1c54d6b71ed6a6600cf0c1cb10434a447eae14015f1b23e2e6bedeed79df94a932e2164d2832280dce3fb32f656d1"
+}
