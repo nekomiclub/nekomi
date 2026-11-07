@@ -2,8 +2,9 @@
 
 import { NextPage } from 'next';
 import { FC } from 'react';
-import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
+import TMaterialSymbolName from '@nekomi/icons/types';
 
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import { StyledH2, StyledH3 } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
 import { TAnime } from '~/shared/lib/api/api-types';
@@ -22,12 +23,12 @@ interface WatchNextEpisodeProps {
 
 interface WatchSectionLabelProps {
   label: string
-  icon: SymbolCodepoints
+  icon: TMaterialSymbolName
 }
 
 interface IAnimeGroupTitleProps {
   title: string
-  icon: SymbolCodepoints
+  icon: TMaterialSymbolName
 
   /** @default "h2" */
   size?: 'h2' | 'h3'
@@ -38,7 +39,7 @@ interface IAnimeGroupTitleProps {
 export const WatchNextEpisode: FC<WatchNextEpisodeProps> = ({ timestamp }) => {
   return <Tooltip className="w-full" content="Вказано час та дату виходу епізоду в Японії. Переклад та озвучення вийдуть пізніше.">
     <div className="watch-meta-detail_outlined">
-      <MaterialSymbol icon="hourglass_bottom" size={24} className="text-grey-new max-sm:text-[20px]" />
+      <StyledIcon icon="HourglassBottom" size={24} color="#555 max-sm:w-[20px] max-sm:h-[20px]" />
 
       <div className="flex items-center gap-[8px] flex-wrap">
         <p className="text-grey-new  max-sm:text-[14px] whitespace-nowrap">Наступна серія вийде:</p>
@@ -57,7 +58,7 @@ export const WatchNextEpisode: FC<WatchNextEpisodeProps> = ({ timestamp }) => {
 
 export const WatchSectionLabel: FC<WatchSectionLabelProps> = ({ label, icon }) => {
   return <div className="flex items-center gap-[16px]">
-    <MaterialSymbol icon={icon} size={24} className="text-white max-sm:text-[20px]" />
+    <StyledIcon icon={icon} size={24} color="#fff max-sm:w-[20px] max-sm:h-[20px]" />
 
     <h3 className="text-white text-[24px]  font-bold max-sm:text-[20px]">{label}</h3>
   </div>;
@@ -72,7 +73,7 @@ export const WatchRating: NextPage<IWatchGenericProps> = ({ anime }) => {
     <div className="flex items-center gap-[8px]">
       <p className={cn('text-primary text-[24px] font-bold  max-sm:text-[16px]')}>{anime.score.toFixed(2) ?? '―'}</p>
 
-      <MaterialSymbol icon="star_half" size={24} className={cn(`text-primary max-sm:text-[20px]`)} />
+      <StyledIcon icon="StarHalf" size={24} color="#ff464e max-sm:w-[20px] max-sm:h-[20px]" />
     </div>
 
     <p className="text-grey-new  whitespace-nowrap">{anime.scored_by ? scoredByFormatter.format(anime.scored_by) : 'Немає'} оцінок</p>
@@ -85,7 +86,7 @@ export const AnimePlayerGroupTitle: FC<IAnimeGroupTitleProps> = (props) => {
   const size = props.size ?? 'h2';
 
   return <div className="ap-gt">
-    <MaterialSymbol icon={props.icon} color="var(--color-text)" size={size === 'h2' ? 24 : 18} />
+    <StyledIcon icon={props.icon} size={size === 'h2' ? 24 : 18} color="#fff" />
 
     {size === 'h2' && <StyledH2 text={props.title} color="text" />}
     {size === 'h3' && <StyledH3 text={props.title} color="text" />}

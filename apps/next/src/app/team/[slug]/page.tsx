@@ -2,8 +2,8 @@ import '~/styles/pages/team-page.scss';
 
 import { Metadata } from 'next';
 import { cache } from 'react';
-import { MaterialSymbol } from 'material-symbols-rc';
 
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import UserLayout from '~/shared/components/UserLayout';
 import API from '~/shared/lib/api';
 import { IRSCProps, ITeamPageParams } from '~/shared/types/PagesParams';
@@ -117,7 +117,8 @@ export default async function TeamPageRSC({ params, searchParams }: IRSCProps<IT
       </div>}
 
       <div className="flex items-center gap-[8px]">
-        <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
+        <StyledIcon icon="CalendarMonth" size={16} color="#555555" />
+
         <p className="text-grey-new text-[12px] ">На nekomi з: {timestampToDayMonth(getUTC(team.created_at).timestamp)}</p>
       </div>
     </section>

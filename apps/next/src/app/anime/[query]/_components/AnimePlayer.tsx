@@ -1,13 +1,14 @@
 'use client';
 
 import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { MaterialSymbol, MaterialSymbolIconType } from 'material-symbols-rc';
+import TMaterialSymbolName from '@nekomi/icons/types';
 import MediaQuery from 'react-responsive';
 
 import conf from '~/conf';
 import { NotifyWarn } from '~/shared/components/nofity/NotifyStatus';
 import StyledAvatar from '~/shared/components/styled/StyledAvatar';
 import StyledButton from '~/shared/components/styled/StyledButton';
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import StyledSelect, { IStyledSelectOption, IStyledSelectOptionContentProps } from '~/shared/components/styled/StyledSelect';
 import { StyledM, StyledS } from '~/shared/components/styled/StyledText';
 import { AnimeVODProviderList, TAnimeEpisode, TAnimePlayer, TAnimePlayerTeam, TAnimePlayerVOD, TAnimeVODProvider, TTeamMinified } from '~/shared/lib/api/api-types';
@@ -42,7 +43,7 @@ interface IAnimePlayerContextParams {
 }
 
 interface IAnimePlayerDividerProps {
-  icon: MaterialSymbolIconType
+  icon: TMaterialSymbolName
   title: string
 }
 
@@ -284,12 +285,12 @@ const AnimePlayer: FC<IProps> = (props) => {
           <MediaQuery maxWidth={conf.vars.breakpoints.breakLG}>
             <div className="wrapper ap-player-video-settings">
               <div className="ap-player-video-settings_group">
-                <AnimePlayerGroupTitle icon="movie" title="Плеер:" size="h3" />
+                <AnimePlayerGroupTitle icon="Movie" title="Плеер:" size="h3" />
                 <StyledSelect options={providerOptions} slug={selectedProvider ?? ''} setSlug={selectProvider} />
               </div>
 
               <div className="ap-player-video-settings_group">
-                <AnimePlayerGroupTitle icon="adaptive_audio_mic" title="Команда:" size="h3" />
+                <AnimePlayerGroupTitle icon="AdaptiveAudioMic" title="Команда:" size="h3" />
                 <StyledSelect className="ap-player-video-settings_teams" options={teamOptions} slug={selectedTeamId ?? ''} setSlug={selectTeam} triggerContent={AnimePlayerTeamSelectTrigger} optionContent={AnimePlayerTeamSelectOption} />
               </div>
             </div>
@@ -312,7 +313,7 @@ const AnimePlayer: FC<IProps> = (props) => {
             <div className="ap-player_preferences">
               {/* Player select */}
               <div className="ap-player-selectProvider">
-                <AnimePlayerGroupTitle icon="movie" title="Плеер:" size="h3" />
+                <AnimePlayerGroupTitle icon="Movie" title="Плеер:" size="h3" />
                 <StyledSelect options={providerOptions} slug={selectedProvider ?? ''} setSlug={selectProvider} />
               </div>
 
@@ -326,7 +327,7 @@ const AnimePlayer: FC<IProps> = (props) => {
 
                 {/* Select subber */}
                 {!isEmpty(teams.filter(el => el.subbed)) && <div className="ap-player-subs">
-                  <AnimePlayerDivider icon="closed_caption" title="Субтитри" />
+                  <AnimePlayerDivider icon="ClosedCaption" title="Субтитри" />
                   <AnimePlayerTeamsList subbed />
                 </div>}
               </div>
@@ -366,7 +367,8 @@ const AnimePlayerDivider: FC<IAnimePlayerDividerProps> = (props) => {
     <div className="ap-player-divider_line ap-player-divider_line--start"></div>
 
     <div className="ap-player-divider-title">
-      <MaterialSymbol icon={props.icon} color="var(--color-text-muted)" size={18} />
+      <StyledIcon icon={props.icon} size={18} color="var(--color-text-muted)" />
+
       <StyledS text={props.title} color="text-muted" />
     </div>
 
@@ -417,7 +419,7 @@ const AnimePlayerTeamItem: FC<IAnimePlayerTeamItemProps> = (props) => {
 
       {!isEmpty(props.team.vods) && <StyledS text={`${props.team.vods.length} еп.`} fontWeight={600} color="accent" className="ap-player-team-info_item ap-player-team_episodesReleased" />}
 
-      {props.isSelected && <MaterialSymbol icon="stat_0" size={16} color="var(--color-accent)" />}
+      {props.isSelected && <StyledIcon icon="Stat0" size={16} color="var(--color-accent)" />}
     </div>
   </StyledButton>;
 };
@@ -468,7 +470,7 @@ const AnimePlayerNextEpisode: FC<IAnimePlayerNextEpisodeProps> = (props) => {
 
 
   return hasNextEpisode && <div className="ap-player-next_layer">
-    <AnimePlayerDivider icon="autoplay" title="Наступний епізод" />
+    <AnimePlayerDivider icon="Autoplay" title="Наступний епізод" />
 
     {/* Episode meta is present */}
     {episodeMeta && <article className={cn(`ap-player-next ap-player-next--${props.style}`)}>
@@ -480,7 +482,8 @@ const AnimePlayerNextEpisode: FC<IAnimePlayerNextEpisodeProps> = (props) => {
 
         {/* Screenshot does not exist fallback */}
         <div className="ap-player-next_rate ap-player-next_rate--large">
-          <MaterialSymbol icon="star_half" color="var(--color-text)" size={20} />
+          <StyledIcon icon="StarHalf" size={20} color="var(--color-text)" />
+
           <StyledM text={Number(episodeMeta?.score).toFixed(2)} color="text" bold />
         </div>
       </button>
@@ -490,12 +493,12 @@ const AnimePlayerNextEpisode: FC<IAnimePlayerNextEpisodeProps> = (props) => {
           <StyledS text={episodeMeta?.title} color="text" lineClamp={3} />
         </div>
 
-        <StyledButton icon="arrow_right_alt" text={`${(ctx.selectedEpisode ?? 1) + 1} епізод`} className="ap-player-next_button" color="secondary" iconProps={{ type: 'rounded' }} onClick={ctx.nextEpisode} />
+        <StyledButton iconLeading="ArrowRightAlt" text={`${(ctx.selectedEpisode ?? 1) + 1} епізод`} className="ap-player-next_button" color="secondary" iconProps={{ type: 'rounded' }} onClick={ctx.nextEpisode} />
       </div>
     </article>}
 
     {/* Episode meta is missing, but next episode exist */}
-    {!episodeMeta && <StyledButton icon="arrow_right_alt" text={`${(ctx.selectedEpisode ?? 1) + 1} епізод`} className="ap-player-next_button" color="secondary" iconProps={{ type: 'rounded' }} onClick={ctx.nextEpisode} />}
+    {!episodeMeta && <StyledButton iconLeading="ArrowRightAlt" text={`${(ctx.selectedEpisode ?? 1) + 1} епізод`} className="ap-player-next_button" color="secondary" iconProps={{ type: 'rounded' }} onClick={ctx.nextEpisode} />}
   </div>;
 };
 

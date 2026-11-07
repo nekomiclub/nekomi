@@ -1,9 +1,9 @@
 'use client';
 
 import React, { FC, ReactNode } from 'react';
-import { MaterialSymbol } from 'material-symbols-rc';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import { StyledM } from '~/shared/components/styled/StyledText';
 
 
@@ -46,7 +46,8 @@ export const LegalHeader: FC = (props) => {
 
   return <div className="flex items-center gap-[32px] justify-center w-full max-[880px]:flex-col">
     <button className="ui-button flex items-center gap-[16px] py-[8px] px-[16px]" onClick={toggleLocale}>
-      <MaterialSymbol icon="translate" size={20} className="text-white" />
+      <StyledIcon icon="Translate" size={20} color="#fff" />
+
       <StyledM text={locale === 'en' ? 'Українською' : 'English'} className="whitespace-nowrap" />
     </button>
   </div>;

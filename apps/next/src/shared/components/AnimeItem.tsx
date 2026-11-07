@@ -2,7 +2,7 @@
 
 import React, { FC, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
-import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
+import TMaterialSymbolName from '@nekomi/icons/types';
 import Link from 'next/link';
 
 import Routes from '~/routes';
@@ -15,6 +15,7 @@ import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalize
 
 import { NotifyWarn } from './nofity/NotifyStatus';
 import StyledCheckbox from './styled/StyledCheckbox';
+import StyledIcon from './styled/StyledIcon';
 import StyledImage from './styled/StyledImage';
 
 import { parseUserLibUI } from '../utilities/data-mappers';
@@ -120,7 +121,7 @@ const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
     {currentUser.id && libControls && <div className="!absolute p-[4px] w-full touch-none pointer-events-none z-[3]">
       <Menu id={editLibsMenuId} className="w-full flex justify-end" settings={{ align: 'stretch' }} gap={4} state={isEditLibsMenuOpen} stateSetter={setIsEditLibsMenuOpen}>
         <MenuTrigger className="w-[32px] h-[20px] flex justify-center items-center bg-dark-medium border border-dark-light rounded-[2px] opacity-[.7] duration-100 hover:opacity-100 touch-auto pointer-events-auto" anchor>
-          <MaterialSymbol className="text-white" icon="more_horiz" size={16} />
+          <StyledIcon icon="MoreHoriz" size={16} color="#fff" />
         </MenuTrigger>
 
         <AnimeItemEditMenu animeId={anime.id} />
@@ -146,12 +147,14 @@ const AnimeItem: FC<IProps> = ({ anime, className, libControls }) => {
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-[4px]">
-              <MaterialSymbol icon="acute" size={16} color="#fff" />
+              <StyledIcon icon="Acute" size={16} color="#fff" />
+
               <p className="text-white text-[12px] ">{anime.episodes_total ?? '—'}</p>
             </div>
 
             <div className="flex items-center gap-[4px]">
-              <MaterialSymbol icon="star_half" size={16} color="#FF464E" />
+              <StyledIcon icon="StarHalf" size={16} color="#FF464E" />
+
               <p className="text-primary text-[12px] font-bold ">{anime.score ?? '—'}</p>
             </div>
           </div>
@@ -183,7 +186,7 @@ const AnimeItemEditMenuLib: FC<IAnimeItemEditMenuLibProps> = ({ type, animeId })
 
   const [isUserAuth] = useState(Boolean(currentUser.id));
   const [title, setTitle] = useState('—');
-  const [icon, setIcon] = useState<SymbolCodepoints>('question_mark');
+  const [icon, setIcon] = useState<TMaterialSymbolName>('QuestionMark');
   const [isChecked, setIsChecked] = useState(false);
 
 
@@ -263,7 +266,7 @@ const AnimeItemEditMenuLib: FC<IAnimeItemEditMenuLibProps> = ({ type, animeId })
   return <button className="flex items-center gap-[16px] p-[12px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={toggleLib}>
     <StyledCheckbox isChecked={isChecked} as="div" />
 
-    <MaterialSymbol icon={icon} size={24} className="text-white" />
+    <StyledIcon icon={icon} size={24} color="#fff" />
 
     <p className="text-white ">{title}</p>
   </button>;

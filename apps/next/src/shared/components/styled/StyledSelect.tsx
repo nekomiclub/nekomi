@@ -2,13 +2,13 @@
 
 import { FC, Fragment, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
-import { MaterialSymbol } from 'material-symbols-rc';
 
 import { StateSetter } from '~/shared/types/types';
 import cn from '~/shared/utilities/classnames';
 import { isEmpty } from '~/shared/utilities/utilities';
 
 import StyledButton from './StyledButton';
+import StyledIcon from './StyledIcon';
 import { StyledM } from './StyledText';
 
 
@@ -61,7 +61,7 @@ const StyledSelect: FC<IStyledSelectProps> = (props) => {
         {props.triggerContent && <props.triggerContent />}
         {!props.triggerContent && <StyledM text={props.options.find(el => el.slug === props.slug)?.title ?? 'N/A'} color={disabled ? 'text-muted' : 'text'} lineClamp={1} />}
 
-        <MaterialSymbol icon="expand_all" size={16} color="var(--color-text-muted)" className={cn(`sui-select-trigger_arrow`)} />
+        <StyledIcon icon="ExpandAll" size={16} color="var(--color-text-muted)" className={cn(`sui-select-trigger_arrow`)} />
       </StyledButton>
     </MenuTrigger>
 

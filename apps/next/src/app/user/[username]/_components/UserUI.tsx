@@ -1,11 +1,12 @@
 'use client';
 
 import { FC, useMemo, useState } from 'react';
-import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
+import TMaterialSymbolName from '@nekomi/icons/types';
 import Link from 'next/link';
 
 import Routes from '~/routes';
 import StyledButton from '~/shared/components/styled/StyledButton';
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import { StyledH3, StyledM } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
 import { useAppSelector } from '~/shared/hooks/redux';
@@ -38,7 +39,7 @@ interface IUserLibItemProps {
 export const UserStatisticsItem: FC<IUserStatisticsItemProps> = (props) => {
   return <>
     {!props.dubber && <div className="pgu-stat-item">
-      <MaterialSymbol icon={props.animeSeen !== undefined ? 'bookmark_added' : props.viewtime !== undefined ? 'acute' : 'question_mark'} size={80} className="text-white shrink-0 max-lg:!text-[64px]" />
+      <StyledIcon icon={props.animeSeen !== undefined ? 'BookmarkAdded' : props.viewtime !== undefined ? 'Acute' : 'QuestionMark'} size={80} color="#fff" className="shrink-0 max-lg:w-[64px] max-lg:h-[64px]" />
 
       <div className="pgu-stat-item-content">
         <StyledM text={props.animeSeen ?? props.viewtime ?? ''} bold className="text-[32px]" />
@@ -63,7 +64,7 @@ export const UserLibItem: FC<IUserLibItemProps> = (props) => {
   const currentUser = useAppSelector(state => state.user);
 
   const [title, setTitle] = useState(parseLibTitle(props.lib.type));
-  const [icon, setIcon] = useState<SymbolCodepoints>('favorite');
+  const [icon, setIcon] = useState<TMaterialSymbolName>('Favorite');
 
   const isOwner = currentUser.id === props.user.id;
   const isPublic = props.lib.is_public;
@@ -78,11 +79,12 @@ export const UserLibItem: FC<IUserLibItemProps> = (props) => {
 
   return <Link href={Routes.user_lib.path({ username: props.user.username, lib_id: props.lib.id })} className="grow basis-[290px] w-full max-lg:basis-[250px] max-md:basis-[220px] max-sm:basis-[160px]">
     <StyledButton as="div" className="w-full flex flex-col items-center gap-[8px] p-[16px]">
-      <MaterialSymbol icon={icon} size={80} className="text-white" fill={icon === 'favorite'} />
+      {icon === 'Favorite' && <StyledIcon icon={'FavoriteFill'} size={80} color="#fff" />}
+      {icon !== 'Favorite' && <StyledIcon icon={icon} size={80} color="#fff" />}
 
       <div className="flex items-center gap-[16px]">
         {isOwner && !isPublic && <Tooltip content="Прихована тека, вона доступна тільки вам" className="flex items-center">
-          <MaterialSymbol icon={'visibility_lock'} size={20} className="text-grey-new" />
+          <StyledIcon icon="VisibilityLock" size={20} color="#555" />
         </Tooltip>}
 
         <div className="flex items-center gap-[8px]">

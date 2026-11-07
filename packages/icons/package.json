@@ -2,7 +2,7 @@
   "name": "@nekomi/icons",
   "private": true,
   "exports": {
-    "./index": "./dist/index.d.ts",
+    "./types": "./dist/index.d.ts",
     "./*.js": "./dist/*.tsx"
   },
   "scripts": {

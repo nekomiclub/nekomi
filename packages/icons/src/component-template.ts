@@ -7,7 +7,9 @@ export default ({ imports, interfaces, componentName, props, jsx, exports }, { t
       size?: number;
   }
   
-  export const ${componentName}:FC<Props> = ({size=24,color='currentColor',...props}) => (
+  const ${componentName}:FC<Props> = ({size=24,color='currentColor',className,...props}) => (
       ${jsx}
-  );`;
+  );
+  
+  export default ${componentName} `;
 }

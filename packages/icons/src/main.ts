@@ -45,6 +45,7 @@ async function main() {
         width: "{size}",
         height: "{size}",
         fill: "{color}",
+        className: "{className}",
         strokeWidth: "2",
         strokeLinecap: "round",
         strokeLinejoin: "round",
@@ -89,7 +90,7 @@ async function main() {
       { componentName: name },
     );
 
-    iconNames.push(name)
+    iconNames.push(name.replace('Material', ''))
 
     fs.writeFileSync(path.join(OUT, `${name}.tsx`), code);
     console.log(`[@nekomi/icons:build]: Icon converted: ${name}.tsx`)

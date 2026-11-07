@@ -2,10 +2,10 @@
 
 import React, { FC, useEffect, useRef, useState } from 'react';
 import * as loader from '@uiball/loaders';
-import { MaterialSymbol } from 'material-symbols-rc';
 import { useIdleTimer } from 'react-idle-timer';
 
 import { HomeHeroScreenType } from '~/app/(home)/_utils';
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import { TFeedHydrated } from '~/shared/lib/api/api-types';
 import { cn } from '~/shared/utilities/classnames';
 
@@ -104,8 +104,8 @@ const HomeHeroTrailerScreen: FC<IProps> = (props) => {
 
         <button className="ui-button relative p-[16px] duration-200 rounded-[4px] flex justify-center items-center" tabIndex={0} onClick={mute}>
           <div className="relative w-[40px] h-[40px] max-sm:w-[24px] max-sm:h-[24px]">
-            <MaterialSymbol icon="volume_off" size={40} className={cn(`text-white absolute top-0 left-0 duration-200 max-sm:!text-[24px]`, !isMuted && 'opacity-0')} />
-            <MaterialSymbol icon="volume_up" size={40} className={cn(`text-white absolute top-0 left-0 duration-200 max-sm:!text-[24px]`, isMuted && 'opacity-0')} />
+            <StyledIcon icon="VolumeOff" size={40} color="#fff" className={cn(`absolute inset-0 duration-200 max-sm:w-[24px] max-sm:h-[24px]`, isMuted && 'opacity-0')} />
+            <StyledIcon icon="VolumeUp" size={40} color="#fff" className={cn(`absolute inset-0 duration-200 max-sm:w-[24px] max-sm:h-[24px]`, !isMuted && 'opacity-0')} />
           </div>
         </button>
       </div>

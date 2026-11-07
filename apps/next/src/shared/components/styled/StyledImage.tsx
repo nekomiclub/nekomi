@@ -2,11 +2,12 @@
 
 import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import { MaterialSymbol } from 'material-symbols-rc';
 import ImageNext from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 
 import { cn } from '~/shared/utilities/classnames';
+
+import StyledIcon from './StyledIcon';
 
 
 
@@ -70,7 +71,7 @@ const StyledImage: NextPage<IStyledImageProps> = (props) => {
   return <div className={cn('sui-image-wrapper', props.className)} style={{ width, height, borderRadius }}>
     {/* Fallback */}
     {!props.hideFallback && <div className={cn(`sui-image-error`, !isErrored && 'sui-image--hide')}>
-      <MaterialSymbol icon="broken_image" className="sui-image-error_icon" color="var(--color-text-muted)" />
+      <StyledIcon icon="BrokenImage" className="sui-image-error_icon" color="var(--color-text-muted)" />
     </div>}
 
     {/* Loading */}
