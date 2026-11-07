@@ -1,9 +1,9 @@
 'use client';
 
 import { FC } from 'react';
-import { MaterialSymbol } from 'material-symbols-rc';
 
 import { USettingsLinkSocialStatusType } from '~/app/user/[username]/settings/USettingsPageData';
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import { StyledH3, StyledM } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
 import cn from '~/shared/utilities/classnames';
@@ -56,8 +56,8 @@ export const USettingsControls: FC<IControlsProps> = (props) => {
 
     <button className={cn('flex gap-[16px] items-center justify-center w-[190px] shrink-0 px-[16px] py-[8px] border border-dark-light bg-dark-medium duration-200 rounded-[4px] hover:bg-dark-light focus-visible:bg-dark-light', isDisabled && 'cursor-not-allowed', props.isSaving && '!cursor-wait')} disabled={isDisabled} onClick={props.saveChanges}>
       <div className="w-[20px] h-[20px] relative max-md:w-full">
-        <MaterialSymbol icon="update" size={20} className={cn(`absolute top-0 left-0 duration-200`, !isDisabled ? 'text-white' : 'text-grey-new', props.isSaving && 'opacity-0')} />
-        <MaterialSymbol icon="clock_loader_40" size={20} className={cn(`absolute top-0 left-0 duration-200`, !props.isSaving && 'opacity-0')} color="#555" />
+        <StyledIcon icon="Update" size={20} color={!isDisabled ? '#fff' : '#555'} className={cn(`absolute inset-0 duration-200`, props.isSaving && 'opacity-0')} />
+        <StyledIcon icon="ClockLoader40" size={20} color="#555" className={cn(`absolute inset-0 duration-200`, !props.isSaving && 'opacity-0')} />
       </div>
 
       <p className={cn(' duration-200 whitespace-nowrap', !isDisabled ? 'text-white' : 'text-grey-new')}>

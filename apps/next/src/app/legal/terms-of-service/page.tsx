@@ -8,7 +8,6 @@ import LegalMarkdown from '../_components/LegalMarkdown';
 import { LegalArticle, LegalHeader, LegalWrapper } from '../_components/LegalUI';
 
 
-
 type PageParamsType = IRSCProps<undefined, ILegalPagesQueryParams>
 
 
@@ -17,7 +16,8 @@ type PageParamsType = IRSCProps<undefined, ILegalPagesQueryParams>
 export async function generateMetadata(
   props: PageParamsType,
 ): Promise<Metadata> {
-  const { lang } = await props.searchParams;
+  let { lang } = await props.searchParams;
+  if (!lang) lang = 'uk';
 
 
 

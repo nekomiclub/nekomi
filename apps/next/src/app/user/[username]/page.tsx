@@ -2,10 +2,10 @@ import '~/styles/pages/user-page.scss';
 
 import { Metadata } from 'next';
 import { cache } from 'react';
-import { MaterialSymbol } from 'material-symbols-rc';
 
 import { conf } from '~/conf';
 import Routes from '~/routes';
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import { StyledM } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
 import UserLayout from '~/shared/components/UserLayout';
@@ -116,7 +116,8 @@ export default async function UserPageRSC(props: IRSCProps<IUserPageProps>) {
       </div>}
 
       <div className="flex items-center gap-[8px]">
-        <MaterialSymbol icon="calendar_month" size={16} className="text-grey-new" />
+        <StyledIcon icon="CalendarMonth" size={16} color="#555555" />
+
         <Tooltip content={`Акаунт зареєстровано: ${timestampToDayMonth(getUTC(user.created_at).timestamp)}`}>
           <StyledM text={`${daysOnNekomi} ${wordDeclination(daysOnNekomi, ['день', 'дні', 'днів'])} на nekomi!`} className="text-[12px]" color="text-muted" />
         </Tooltip>

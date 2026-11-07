@@ -4,7 +4,6 @@ import { NextPage } from 'next';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
 import { PopupWindow } from '@fullkekw/popup';
-import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Skeleton from 'react-loading-skeleton';
@@ -17,6 +16,8 @@ import { TAnimeSearchResult, TTeamSearchResult, TUserSearchResult } from '~/shar
 import { cn } from '~/shared/utilities/classnames';
 import { HandleClientNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import { randomNumber } from '~/shared/utilities/utilities';
+
+import StyledIcon from '../styled/StyledIcon';
 
 
 
@@ -207,7 +208,7 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
           <MenuTrigger className="flex gap-[12px] items-center p-[12px] border-r border-dark-medium" anchor>
             <MenuSearchSelectTypeButton type={searchType} />
 
-            <MaterialSymbol className="text-grey-new" icon="expand_all" size={12} />
+            <StyledIcon icon="ExpandAll" size={12} color="#555" />
           </MenuTrigger>
 
           <MenuWrapper className="bg-dark-primary border rounded-t-none border-dark-light flex flex-col rounded-[4px] overflow-hidden min-w-fit w-full">
@@ -221,7 +222,7 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
           <input className="p-[12px] bg-transparent w-full  text-white placeholder: placeholder:text-grey-new" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} placeholder="Що шукаємо?" autoComplete="off" id="search-searchBar" />
 
           <button className="p-[12px] flex justify-center items-center" type="submit">
-            <MaterialSymbol className={cn(`duration-100`, searchText.length > 0 ? 'text-primary' : 'text-grey-new')} icon="search" size={24} />
+            <StyledIcon icon="Search" size={24} color={searchText.length > 0 ? '#fff' : '#555'} className="duration-100" />
           </button>
         </form>
       </div>
@@ -231,21 +232,21 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
         <div className={cn('flex flex-col gap-[4px]', searchResults.length && (showStartTyping || showNotFound || usePatcherRouting) && 'pb-[16px]')}>
           {/* Start typing */}
           {showStartTyping && !usePatcherRouting && <div className="flex items-center gap-[16px] px-[12px]">
-            <MaterialSymbol className="text-grey-new" icon="star" size={16} />
+            <StyledIcon icon="Star" size={16} color="#555" />
 
             <p className="text-grey-new ">Наприклад: {startTypingText}</p>
           </div>}
 
           {/* Not found */}
           {showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
-            <MaterialSymbol className="text-grey-new" icon="live_help" size={16} />
+            <StyledIcon icon="LiveHelp" size={16} color="#555" />
 
             <p className="text-grey-new ">Здається, в нас такого нема...</p>
           </div>}
 
           {/* Patcher hint */}
           {usePatcherRouting && searchType === 'anime' && !showNotFound && <div className="flex items-center gap-[16px] px-[12px]">
-            <MaterialSymbol className="text-grey-new" icon="edit" size={16} />
+            <StyledIcon icon="Edit" size={16} color="#555" />
 
             <p className="text-grey-new ">Нове аніме буде відкрито в редакторі</p>
           </div>}
@@ -263,12 +264,12 @@ const NavMenuSearch: NextPage<IProps> = ({ dialogId }) => {
 
 const MenuSearchSelectTypeButton: NextPage<IMenuSearchSelectTypeButtonProps> = ({ type, className, setType }) => {
   return <div role="button" className={cn(`flex items-center gap-[8px]`, className)} onClick={() => setType && setType(type)}>
-    <MaterialSymbol className="text-white" icon={
-      type === 'anime' ? 'slideshow'
-        : type === 'user' ? 'person'
-          : type === 'dubber' ? 'mic'
-            : 'question_mark'
-    } size={16} />
+    <StyledIcon size={16} color="#fff" icon={
+      type === 'anime' ? 'Slideshow'
+        : type === 'user' ? 'Person'
+          : type === 'dubber' ? 'Mic'
+            : 'QuestionMark'
+    } />
 
     <p className="text-white ">
       {type === 'anime' && 'Аніме'}
@@ -340,13 +341,15 @@ const MenuSearchResult: NextPage<IMenuSearchResultProps> = ({ item, type, usePat
 
         <div className="flex items-center gap-[8px] flex-wrap">
           <div className="flex items-center gap-[8px]">
-            <MaterialSymbol className="text-primary" icon="star_half" size={16} />
+            <StyledIcon icon="StarHalf" size={16} color="#ff464e" />
+
             <p className="text-primary  font-bold whitespace-nowrap">{animeResult.score.toFixed(2) ?? '—'}</p>
           </div>
           <span className="text-grey-new ">•</span>
 
           <div className="flex items-center gap-[8px]">
-            <MaterialSymbol className="text-white" icon="acute" size={16} />
+            <StyledIcon icon="Acute" size={16} color="#fff" />
+
             <p className="text-white  whitespace-nowrap">{`${animeResult.episodes_released ?? '—'} / ${animeResult.episodes_total ?? '—'}`}</p>
           </div>
           <span className="text-grey-new ">•</span>

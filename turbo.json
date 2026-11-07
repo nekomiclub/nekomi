@@ -22,7 +22,8 @@
       "outputs": [
         ".next/**",
         "!.next/cache/**",
-        "!.next/dev/**"
+        "!.next/dev/**",
+        "dist"
       ],
       "env": [
         "API_KEY_SK",

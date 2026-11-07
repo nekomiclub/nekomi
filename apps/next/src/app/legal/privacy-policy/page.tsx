@@ -17,7 +17,8 @@ type PageParamsType = IRSCProps<undefined, ILegalPagesQueryParams>
 export async function generateMetadata(
   props: PageParamsType,
 ): Promise<Metadata> {
-  const { lang } = await props.searchParams;
+  let { lang } = await props.searchParams;
+  if (!lang) lang = 'uk';
 
 
 

@@ -1,9 +1,9 @@
 'use client';
 
 import { FC, useMemo } from 'react';
-import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import StyledImage from '~/shared/components/styled/StyledImage';
 import { useAppSelector } from '~/shared/hooks/redux';
 import { TAnime } from '~/shared/lib/api/api-types';
@@ -30,7 +30,8 @@ export const WatchActions: FC<IProps> = (props) => {
   return <div className={cn(`flex gap-[8px] max-sm:flex-col max-sm:gap-[4px]`)}>
     {/* Anime has episodes and does not infringing dmca */}
     {props.hasEpisodes && !isDMCARestricted && <Link href={'#player'} scroll className="ui-button watch-meta-action">
-      <MaterialSymbol icon="live_tv" size={24} className="text-white max-sm:text-[20px]" />
+      <StyledIcon icon="LiveTv" size={24} color="#fff" className="max-md:w-[20px] max-md:h-[20px]" />
+
       <p className="text-white  uppercase max-sm:text-[14px]">розпочати перегляд</p>
     </Link>}
 

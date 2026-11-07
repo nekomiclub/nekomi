@@ -1,12 +1,13 @@
 'use client';
 
 import { FC } from 'react';
-import { MaterialSymbol } from 'material-symbols-rc';
 import { ToastContentProps } from 'react-toastify';
 
 import { IDv4 } from '~/shared/utilities/utilities';
 
 import { TriggerNotify } from './Notify';
+
+import StyledIcon from '../styled/StyledIcon';
 
 
 
@@ -43,9 +44,9 @@ const Notification: FC<IProps> = (props) => {
     <div className={`cui-notify_progressBar w-[2px] h-full absolute bottom-0 left-0 z-[2] cui-notify_progressBar--${type}`} id={id}></div>
 
     <div className="flex items-center gap-[16px]">
-      {type === 'success' && <MaterialSymbol icon="check_circle" size={24} color={`var(--color-info-${type})`} />}
-      {type === 'warn' && <MaterialSymbol icon="error" size={24} color={`var(--color-info-${type})`} />}
-      {type === 'error' && <MaterialSymbol icon="cancel" size={24} color={`var(--color-info-${type})`} />}
+      {type === 'success' && <StyledIcon icon="CheckCircle" size={24} color={`var(--color-info-${type})`} />}
+      {type === 'warn' && <StyledIcon icon="Error" size={24} color={`var(--color-info-${type})`} />}
+      {type === 'error' && <StyledIcon icon="Cancel" size={24} color={`var(--color-info-${type})`} />}
 
       <p className="text-white text-[20px] ">{title}</p>
     </div>

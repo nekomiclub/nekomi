@@ -1,11 +1,11 @@
 import { FC } from 'react';
-import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import { conf } from '~/conf';
 import Routes from '~/routes';
 import { IcoSocialTelegram } from '~/shared/components/Icons';
 
+import StyledIcon from './styled/StyledIcon';
 import StyledImage from './styled/StyledImage';
 
 
@@ -22,21 +22,21 @@ const Footer: FC = () => {
       <ul className="h-[50px] flex items-center gap-y-[8px] gap-[32px] flex-wrap max-2xl:h-auto">
         <li>
           <Link href={conf.URL.nekomiRepository} className="cui-footer-link">
-            <MaterialSymbol icon="code_blocks" size={20} className="text-white" />
+            <StyledIcon icon="CodeBlocks" size={20} color="#fff" />
             <p className="text-white ">Вихідний код</p>
           </Link>
         </li>
 
         <li>
           <Link href={Routes.legal_tos.path()} className="cui-footer-link">
-            <MaterialSymbol icon="contract" size={20} className="text-white" />
+            <StyledIcon icon="Contract" size={20} color="#fff" />
             <p className="text-white ">Угода користувача</p>
           </Link>
         </li>
 
         <li>
           <Link href={Routes.legal_privacy.path()} className="cui-footer-link">
-            <MaterialSymbol icon="encrypted" size={20} className="text-white" />
+            <StyledIcon icon="Encrypted" size={20} color="#fff" />
             <p className="text-white ">Політика конфіденційності</p>
           </Link>
         </li>

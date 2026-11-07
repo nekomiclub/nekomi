@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
-import { MaterialSymbol } from 'material-symbols-rc';
 import { notFound } from 'next/navigation';
 
 import { UserLibItem } from '~/app/user/[username]/_components/UserUI';
 import AnimeItem from '~/shared/components/AnimeItem';
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import { StyledH2, StyledH3, StyledM } from '~/shared/components/styled/StyledText';
 import Tooltip from '~/shared/components/Tooltip';
 import UserLayout from '~/shared/components/UserLayout';
@@ -68,7 +68,7 @@ export default async function ULibPageRSC(props: PagePropsType) {
       {/* Title */}
       <div className="flex items-center gap-[16px]">
         {is_owner && !lib.is_public && <Tooltip content="Прихована тека, вона доступна тільки вам" className="flex items-center">
-          <MaterialSymbol icon={'visibility_lock'} size={20} className="text-grey-new" />
+          <StyledIcon icon="VisibilityLock" size={20} color="#555" />
         </Tooltip>}
 
         <div className="flex items-center gap-[8px]">
@@ -80,7 +80,7 @@ export default async function ULibPageRSC(props: PagePropsType) {
       </div>
 
       {catalog.length === 0 && <div className="w-full flex justify-center items-center gap-[16px] py-[24px]">
-        <MaterialSymbol icon="extension_off" size={64} className="text-white" />
+        <StyledIcon icon="ExtensionOff" size={64} color="#fff" />
 
         <div className="flex flex-col gap-[8px]">
           <StyledH3 text={`Ця тека порожня`} className="text-[24px]" bold />
