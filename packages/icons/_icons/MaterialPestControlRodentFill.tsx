@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialPestControlRodentFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M478-120q-92 0-159.5-62T240-336q-69-13-114.5-66.5T80-526q0-79 59.5-131.5T280-710h107q14 0 23.5-10.5T420-745t-10.5-24.5T385-780h-60q-14 0-24.5-8T290-810t10.5-22 24.5-8h60q39 0 67 28t28 67-27 67-66 28H280q-57 0-98.5 35T140-526q0 45 29.5 79.5T242-396q13-88 80-146t156-58q20 0 38.5 2.5T554-589q-51 21-82.5 65.5T440-425q0 38 12 73t41 59l21-19q-23-21-33.5-51T470-425q0-61 44.5-103T621-570q61 0 104 42t45 103q1 26-7.5 49.5T737-333l115 107q12 11 19.5 24.5T879-172q0 23-19.5 37.5T814-120zm223.5-98.5Q710-227 710-240t-8.5-21.5T680-270t-21.5 8.5T650-240t8.5 21.5T680-210t21.5-8.5" /></svg>;
+export default MaterialPestControlRodentFill;

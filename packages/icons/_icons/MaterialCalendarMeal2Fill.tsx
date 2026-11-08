@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialCalendarMeal2Fill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M414-350q-42 0-64-28t-33-72h326q-11 44-33 72t-64 28zM180-120q-24 0-42-18t-18-42v-620q0-24 18-42t42-18h65v-60h65v60h340v-60h65v60h65q24 0 42 18t18 42v620q0 24-18 42t-42 18zm174-390q4-30 23.5-45t42.5-15h49q26-26 38.5-33t32.5-7q29 0 49.5 20.5T610-540v30zm60 220h132q85 0 123.5-63T710-510h-40v-30q0-54-38-92t-92-38q-29 0-52.5 10T444-630h-24q-48 0-84.5 33T292-510h-42q2 94 40.5 157T414-290" /></svg>;
+export default MaterialCalendarMeal2Fill;

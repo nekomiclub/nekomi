@@ -1,6 +1,14 @@
+import bundleAnalyzer from '@next/bundle-analyzer';
+import type { NextConfig } from 'next';
 import path from 'path';
 
-const nextConfig: import('next').NextConfig = {
+
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
     remotePatterns: [{
@@ -19,8 +27,10 @@ const nextConfig: import('next').NextConfig = {
       bodySizeLimit: '100mb'
     }
   },
+
+  // Docker build
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '../../'),
 };
 
-module.exports = nextConfig;
+export default withBundleAnalyzer(nextConfig);

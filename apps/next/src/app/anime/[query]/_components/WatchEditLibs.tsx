@@ -2,9 +2,10 @@
 
 import { FC, useId, useMemo, useState } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
-import { MaterialSymbol, SymbolCodepoints } from 'material-symbols-rc';
+import TMaterialSymbolName from '@nekomi/icons/types';
 
 import { AnimeItemEditMenu } from '~/shared/components/AnimeItem';
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import { useAppSelector } from '~/shared/hooks/redux';
 import { TAnime } from '~/shared/lib/api/api-types';
 import cn from '~/shared/utilities/classnames';
@@ -21,7 +22,7 @@ const WatchEditLibs: FC<IProps> = (props) => {
   const currentUser = useAppSelector(state => state.user);
   const id = useId();
 
-  const [icon, setIcon] = useState<SymbolCodepoints>('create_new_folder');
+  const [icon, setIcon] = useState<TMaterialSymbolName>('CreateNewFolder');
   const [title, setTitle] = useState('ДОДАТИ В ТЕКУ');
   const [isFavorite, setIsFavorite] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
@@ -33,7 +34,7 @@ const WatchEditLibs: FC<IProps> = (props) => {
     let isChanged = false;
 
     setTitle('ДОДАТИ В ТЕКУ');
-    setIcon('create_new_folder');
+    setIcon('CreateNewFolder');
     setIsChanged(false);
     setIsFavorite(false);
 
@@ -41,29 +42,29 @@ const WatchEditLibs: FC<IProps> = (props) => {
       if (lib.type === 'favorite') {
         setIsFavorite(true);
         setTitle('УЛЮБЛЕНІ');
-        setIcon('favorite');
+        setIcon('Favorite');
       }
 
       if (isChanged) return;
 
       if (lib.type === 'delayed') {
         setTitle('ВІДКЛАДЕНІ');
-        setIcon('auto_delete');
+        setIcon('AutoDelete');
       }
 
       if (lib.type === 'plans') {
         setTitle('ЗАПЛАНОВАНІ');
-        setIcon('stack');
+        setIcon('Stack');
       }
 
       if (lib.type === 'watched') {
         setTitle('ПЕРЕГЛЯНУТІ');
-        setIcon('bookmark_added');
+        setIcon('BookmarkAdded');
       }
 
       if (lib.type === 'watching') {
         setTitle('ПЕРЕГЛЯДАЮ');
-        setIcon('visibility');
+        setIcon('Visibility');
       }
 
       isChanged = true;
@@ -76,7 +77,7 @@ const WatchEditLibs: FC<IProps> = (props) => {
 
   return <Menu className="w-full" id={id} settings={{ animation: 'slide', align: 'start' }}>
     <MenuTrigger className={cn(`ui-button w-full px-[16px] py-[12px] rounded-[4px] flex items-center justify-center gap-[16px] max-sm:py-[8px]`, isChanged && 'bg-info-success', isFavorite && 'bg-primary max-sm:py-[8px]')} anchor>
-      <MaterialSymbol icon={icon} size={24} className={cn(`text-white max-sm:text-[20px]`)} />
+      <StyledIcon icon={icon} size={24} className={cn(`text-white max-sm:w-[20px] max-sm:h-[20px]`)} />
 
       <p className={cn(`text-white  uppercase max-sm:text-[14px]`, isChanged && 'font-bold')}>{title}</p>
     </MenuTrigger>

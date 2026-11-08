@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialDashboard2Gear: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M450-510v-290h430v290zM80-160v-290h390v290zm0-350v-290h310v290zm430-60h310v-170H510zM140-220h270v-170H140zm0-350h190v-170H140zM700-63l-5-48q-21-6-40-17t-35-26l-42 20-35-54 38-30q-6-20-6-41.5t6-41.5l-38-30 35-55 42 20q17-14 35.5-25t39.5-17l5-49h60l6 49q21 6 39.5 17t35.5 25l42-20 35 55-38 30q6 20 6 41.5t-6 41.5l38 30-35 54-42-20q-16 15-35 26t-40 17l-6 48zm102-125q30-30 30-72t-30-72-72-30-72 30-30 72 30 72 72 30 72-30" /></svg>;
+export default MaterialDashboard2Gear;

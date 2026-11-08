@@ -154,7 +154,7 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
 
         {/* Screenshots */}
         {anime.screenshots && anime.screenshots.length > 0 && <div className="wrapper gap-[16px]">
-          <WatchSectionLabel icon="gallery_thumbnail" label={`Кадри`} />
+          <WatchSectionLabel icon="GalleryThumbnail" label={`Кадри`} />
 
           <Carousel>
             {anime.screenshots.map((screenshot, i) => {
@@ -167,7 +167,7 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
 
         {/* Related */}
         {anime.relations && anime.relations?.length > 0 && <div className="wrapper gap-[16px]">
-          <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
+          <WatchSectionLabel icon="Link" label={`Пов’язане аніме`} />
 
           <Carousel>
             {anime.relations.map((hydrated, i) => {
@@ -250,7 +250,7 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
 
       {/* Screenshots */}
       {anime.screenshots && anime.screenshots.length > 0 && <div className="wrapper gap-[16px]">
-        <WatchSectionLabel icon="gallery_thumbnail" label={`Кадри`} />
+        <WatchSectionLabel icon="GalleryThumbnail" label={`Кадри`} />
 
         <Carousel>
           {anime.screenshots.map((screenshot, i) => {
@@ -263,7 +263,7 @@ export default async function WatchPageRSC(props: IRSCProps<IAnimePageParams, IA
 
       {/* Related */}
       {anime.relations && anime.relations?.length > 0 && <div className="wrapper gap-[16px]">
-        <WatchSectionLabel icon="link" label={`Пов’язане аніме`} />
+        <WatchSectionLabel icon="Link" label={`Пов’язане аніме`} />
 
         <Carousel>
           {anime.relations.map((anime, i) => {

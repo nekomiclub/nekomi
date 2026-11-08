@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialNestHelloDoorbell: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M338.5-138.5Q280-197 280-280v-400q0-83 58.5-141.5T480-880t141.5 58.5T680-680v400q0 83-58.5 141.5T480-80t-141.5-58.5M579-180.83q41-40.84 41-99.17v-400q0-58.33-40.76-99.17-40.77-40.83-99-40.83Q422-820 381-779.17q-41 40.84-41 99.17v400q0 58.33 40.76 99.17 40.77 40.83 99 40.83Q538-140 579-180.83M536.5-583.5Q560-607 560-640t-23.5-56.5T480-720t-56.5 23.5T400-640t23.5 56.5T480-560t56.5-23.5m0 320Q560-287 560-320t-23.5-56.5T480-400t-56.5 23.5T400-320t23.5 56.5T480-240t56.5-23.5M448-287.91q-13-12.91-13-32T447.91-352t32-13T512-352.09t13 32T512.09-288t-32 13T448-287.91" /></svg>;
+export default MaterialNestHelloDoorbell;

@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialSoba: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M225-80q-39 0-70-24t-40-62L80-308h66q2-14 5.5-27t8.5-26v-439l720-80v50l-470 52v87h470v50H410v68q17-4 34.5-5.5T480-580q125 0 219 77t116 195h65l-35 142q-10 38-40 62t-69 24zm0-60h511q18 0 32-11.5t19-29.5l16-67H157l16 67q4 18 18.5 29.5T225-140m-19-168h88q20-56 71-90.5T480-433t115 34.5 71 90.5h88q-21-92-97.5-152T480-520t-176.5 60T206-308m156 0h236q-17-29-48.5-47T480-373t-69.5 18-48.5 47M210-450q11-14 23.5-27t26.5-24v-140h-50zm100-86q12-7 24.5-12.5T360-559v-82h-50zM210-691h50v-71l-50 6zm100 0h50v-82l-50 6zm170 443" /></svg>;
+export default MaterialSoba;

@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialBlenderFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M300-80q-24 0-42-18t-18-42v-56q0-45 22.5-82t65.5-65l-33-190H180q-24 0-42-18t-18-42v-187q0-25 17.5-42.5T180-840h212v-40h166v40h161l-87 497q43 28 65.5 65t22.5 82v56q0 24-18 42t-42 18zm-16-513-32-187h-72v187zm224.5 381.5Q520-223 520-240t-11.5-28.5T480-280t-28.5 11.5T440-240t11.5 28.5T480-200t28.5-11.5M382-380h196l70-400H312z" /></svg>;
+export default MaterialBlenderFill;

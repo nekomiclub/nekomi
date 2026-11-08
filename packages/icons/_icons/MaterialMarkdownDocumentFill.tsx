@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialMarkdownDocumentFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M500-80v-280q0-25 17.5-42.5T560-420h260q25 0 42.5 17.5T880-360v280h-60v-280H720v200h-60v-200H560v280zM314-285h96v165H231q-47 0-79.5-32.5T119-233v-494q0-47 32.5-80t79.5-33h501q46 0 77 33.5t31 79.5v217H314q-12 0-21 8.5t-9 21.5q0 12 9 21t21 9h126q-14 19-22 41.5t-8 48.5v15h-96q-12 0-21 8.5t-9 21.5q0 12 9 21t21 9" /></svg>;
+export default MaterialMarkdownDocumentFill;

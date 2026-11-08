@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialSpeed4: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M192-160q-18 0-34-8.5T134-193q-26-48.27-40-100.14Q80-345 80-399q0-83 31.5-156T197-682.5t126.36-86T478-800q28.67 0 57.33 4.5Q564-791 592-783l-38 52q-19-5-37.67-7T478-740q-141 0-239.5 99.5T140-399q0 48 12 93t36 86h584q25-41 36.5-86t11.5-93q0-80-35-151t-98-119l15-63q84 56 131 144t47 189q0 54-13 106.5T827-193q-9 16-25 24.5t-34 8.5zm249-163q34 16 68 3.5t42-47.5q25-100 49-197.5T648-762L528-598q-60 82-120.97 163.52Q386-406 397-372.5t44 49.5m35-71" /></svg>;
+export default MaterialSpeed4;

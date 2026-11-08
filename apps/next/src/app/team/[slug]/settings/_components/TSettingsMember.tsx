@@ -2,10 +2,10 @@
 
 import { FC, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
-import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import Routes from '~/routes';
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import StyledImage from '~/shared/components/styled/StyledImage';
 import { ROLE_PERMISSION_ENUM, TEAM_ROLE_ENUM, TTeam, TTeamMemberExtended } from '~/shared/lib/api/api-types';
 import { IUserState } from '~/shared/store/reducers/userSlice';
@@ -49,7 +49,8 @@ const TSettingsMember: FC<IProps> = (props) => {
           <p className="text-white ">@{props.member.username}</p>
 
           <div className="flex items-center gap-[8px]">
-            <MaterialSymbol icon="calendar_add_on" size={16} color="#555" />
+            <StyledIcon icon="CalendarAddOn" size={16} color="#555" />
+
             <p className="text-grey-new text-[12px] ">Учасник з: {timestampToDayMonth(getUTC(props.member.member_since).timestamp)}</p>
           </div>
         </div>
@@ -59,29 +60,29 @@ const TSettingsMember: FC<IProps> = (props) => {
     <Menu stateSetter={setIsMenuOpen} settings={{ align: 'end' }} id={`dubber-settings-memberSettings--${props.member.id}`}>
       <MenuTrigger anchor className="flex items-center gap-[16px] p-[8px]" disabled={!canRedactRole}>
         <div className="flex items-center gap-[8px]">
-          {memberRole === 'leader' && <MaterialSymbol icon="star" size={16} color="#fff" />}
-          {memberRole === 'editor' && <MaterialSymbol icon="edit" size={16} color="#fff" />}
-          {memberRole === 'member' && <MaterialSymbol icon="group" size={16} color="#fff" />}
+          {memberRole === 'leader' && <StyledIcon icon="Star" size={16} color="#fff" />}
+          {memberRole === 'editor' && <StyledIcon icon="Edit" size={16} color="#fff" />}
+          {memberRole === 'member' && <StyledIcon icon="Group" size={16} color="#fff" />}
 
           <p className="text-white ">{DubberParseRoleName(memberRole)}</p>
         </div>
 
-        {canRedactRole && <MaterialSymbol icon="arrow_drop_down" size={16} color="#fff" className={cn(`duration-200`, isMenuOpen && 'rotate-180')} />}
+        {canRedactRole && <StyledIcon icon="ArrowDropDown" size={16} color="#fff" className={cn(`duration-200`, isMenuOpen && 'rotate-180')} />}
       </MenuTrigger>
 
       <MenuWrapper className="flex flex-col w-[160px] bg-dark-bright border border-dark-light rounded-[2px]">
         <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('leader')}>
-          <MaterialSymbol icon="star" size={16} color="#fff" />
+          <StyledIcon icon="Star" size={16} color="#fff" />
           <p className="text-white ">Лідер</p>
         </button>
 
         <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('editor')}>
-          <MaterialSymbol icon="edit" size={16} color="#fff" />
+          <StyledIcon icon="Edit" size={16} color="#fff" />
           <p className="text-white ">Редактор</p>
         </button>
 
         <button className="flex items-center gap-[8px] px-[12px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={() => changeRole('member')}>
-          <MaterialSymbol icon="group" size={16} color="#fff" />
+          <StyledIcon icon="Group" size={16} color="#fff" />
           <p className="text-white ">Учасник</p>
         </button>
       </MenuWrapper>
@@ -89,7 +90,7 @@ const TSettingsMember: FC<IProps> = (props) => {
 
     {/* {canKick && <Tooltip content="Видалити учасника">
       <button className="p-[8px] flex justify-center items-center rounded-[2px] duration-200 hover:bg-info-error focus-visible:bg-info-error" onClick={() => kickMember(user.id, user.username)}>
-        <MaterialSymbol icon="person_remove" size={24} color="#fff" />
+        <StyledIcon icon="PersonRemove" size={24} color="#fff" />
       </button>
     </Tooltip>} */}
   </div>;

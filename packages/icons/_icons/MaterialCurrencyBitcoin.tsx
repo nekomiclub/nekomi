@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialCurrencyBitcoin: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M370-120v-90H240v-60h90v-420h-90v-60h130v-90h60v90h110v-90h60v93q54 11 87 53t33 94q0 28-11 55.5T677-495q39 20 61 56.5t22 78.5q0 62-43.5 106T610-210h-10v90h-60v-90H430v90zm20-390h180q38 0 64-26.5t26-63.5q0-38-26-64t-64-26H390zm0 240h220q38 0 64-26.5t26-63.5q0-38-26-64t-64-26H390z" /></svg>;
+export default MaterialCurrencyBitcoin;

@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialGlobeClockFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M636-848.5Q709-817 763-763t85.5 127T880-480q0 6-.5 11.5T879-458q-14-8-28.5-14T820-483q-1-105-58.5-190.5T607-799v18q0 35-24 61t-59 26h-87v87q0 17-13.5 28T393-568h-83v88h367q-77 25-127 90.5T500-239q0 4 .5 8t.5 8h-64q-35 0-59-26t-24-61v-44L149-559q-5 20-7 39.5t-2 39.5q0 140 98 241.5T480-139q10-1 20-1t20-1q6 15 14 28.5T552-86q-17 3-35 4.5T480-80q-83 0-156-31.5T197-197t-85.5-127T80-480t31.5-156T197-763t127-85.5T480-880t156 31.5M617-103q-57-57-57-136t57-136 136-57 136 57 57 136-57 136-136 57-136-57m210-35 27-27-84-76v-124h-42v136z" /></svg>;
+export default MaterialGlobeClockFill;

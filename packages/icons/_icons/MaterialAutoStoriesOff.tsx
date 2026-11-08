@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialAutoStoriesOff: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M480-160q-48-38-104-59t-116-21q-42 0-82.5 11T100-198q-21 11-40.5-1T40-234v-482q0-11 5.5-21T62-752t21-9.5 21-9.5l-65-65 42-42L890-69l-42 42-207-207q-44 8-85 27t-76 47m-60-104v-191L151-724q-14 5-27 9.5T100-704v440q35-17 75.5-26.5T260-300q45 0 85 9.5t75 26.5m60-302L246-800q62-2 121.5 13T480-740zm0 332q26-17 53.5-30t56.5-21L480-395zm156-176-96-96v-174l260-260v387zm224 212-98-98q25 4 50 11.5t48 20.5v-505q10 4 19.5 8t18.5 9q10 6 16 15.5t6 20.5v482q0 23-19.5 35t-40.5 1m-440-66v-191z" /></svg>;
+export default MaterialAutoStoriesOff;

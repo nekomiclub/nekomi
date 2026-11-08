@@ -3,7 +3,6 @@
 import { FC, useId } from 'react';
 import { Menu, MenuTrigger } from '@fullkekw/fkw-menu';
 import { PopupButton } from '@fullkekw/popup';
-import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -16,6 +15,8 @@ import { IUserState } from '~/shared/store/reducers/userSlice';
 import { cn } from '~/shared/utilities/classnames';
 
 import NavMenuDropdown from './NavMenuDropdown';
+
+import StyledIcon from '../styled/StyledIcon';
 
 
 
@@ -50,7 +51,8 @@ const HeaderNav: FC<IProps> = ({ user, logout, signin, searchPopupId, forceFocus
       </Tooltip>
 
       <PopupButton popupId={searchPopupId} onClick={forceFocus} className="ui-button max-w-[500px] w-full flex flex-row items-center gap-[8px] px-[12px] py-[8px]">
-        <MaterialSymbol icon="search" size={16} className="text-grey-new" />
+        <StyledIcon icon="Search" size={16} color="#555" />
+
         <p className="text-grey-new">Пошук...</p>
       </PopupButton>
 
@@ -60,7 +62,7 @@ const HeaderNav: FC<IProps> = ({ user, logout, signin, searchPopupId, forceFocus
           <MenuTrigger className="flex items-center gap-[8px] duration-200 relative" anchor>
             <StyledAvatar avatar={user.avatar} initials={user.username} borderRadius={4} width={`40px`} height={`40px`} priority className="rounded-[4px] overflow-hidden" alt="avatar" />
 
-            <MaterialSymbol icon="arrow_drop_down" size={24} className={cn(`text-white duration-200 p-[8px]`, isDropdownMenuOpen && 'rotate-180')} />
+            <StyledIcon icon="ArrowDropDown" size={24} color="#fff" className={cn(`duration-200`, isDropdownMenuOpen && 'rotate-180')} />
           </MenuTrigger>
 
           <NavMenuDropdown user={user} logout={logout} />

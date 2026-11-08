@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialArOnYou: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M701-701q91 91 91 221t-91 221-221 91-221-91-91-221 91-221 221-91 221 91m-43 399q74-74 74-178t-74-178-178-74-178 74-74 178 74 178 178 74 178-74m-93-67q38-26 57-70H338q18 44 56.5 70t85.5 26 85-26M349-536q11 11 28 11t28-11 11-28-11-28-28-11-28 11-11 28 11 28m206 0q11 11 28 11t28-11 11-28-11-28-28-11-28 11-11 28 11 28M40-731v-129q0-24.75 17.63-42.38Q75.25-920 100-920h129v60H100v129zM229-40H100q-24.75 0-42.37-17.63Q40-75.25 40-100v-129h60v129h129zm502-4v-60h129v-130h60v130q0 24.75-17.62 42.37Q884.75-44 860-44zm129-687v-129H731v-60h129q24.75 0 42.38 17.62Q920-884.75 920-860v129zM480-480" /></svg>;
+export default MaterialArOnYou;

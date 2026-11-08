@@ -1,7 +1,6 @@
 'use client';
 
 import { FC, useEffect, useRef, useState } from 'react';
-import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -17,6 +16,7 @@ import { NotifySuccess, NotifyWarn } from './nofity/NotifyStatus';
 import { ReportButton } from './Report';
 import StyledAvatar from './styled/StyledAvatar';
 import StyledButton from './styled/StyledButton';
+import StyledIcon from './styled/StyledIcon';
 import StyledImage from './styled/StyledImage';
 import { StyledH2, StyledHeading, StyledM } from './styled/StyledText';
 import Tooltip from './Tooltip';
@@ -116,7 +116,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
           {(type === 'dubber_profile' || type === 'user_profile') && showSettings && <Tooltip content="Налаштування">
             <Link href={settingsUrl}>
               <StyledButton className="cui-ul-action">
-                <MaterialSymbol icon="settings" size={24} className="cui-ul-action_icon" />
+                <StyledIcon icon="Settings" size={24} className="cui-ul-action_icon" />
               </StyledButton>
             </Link>
           </Tooltip>}
@@ -124,7 +124,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
           {/* Copy link */}
           {(type === 'dubber_profile' || type === 'user_profile' || type === 'user_lib') && <Tooltip content={isLinkCopied ? 'Посилання скопійовано!' : 'Скопіювати посилання'}>
             <StyledButton className={cn(`cui-ul-action`, isLinkCopied && 'cui-ul-action--succeed')} disabled={isLinkCopied} onClick={copyLink}>
-              <MaterialSymbol icon="link" size={24} className="cui-ul-action_icon" />
+              <StyledIcon icon="Link" size={24} className="cui-ul-action_icon" />
             </StyledButton>
           </Tooltip>}
 
@@ -132,7 +132,7 @@ const UserLayout: FC<IProps> = ({ type, dubber, user }) => {
           {(type === 'dubber_settings' || type === 'user_settings' || type === 'user_lib') && <Tooltip content="В профіль">
             <Link href={profileUrl}>
               <StyledButton className="cui-ul-action">
-                <MaterialSymbol icon="account_box" size={24} className="cui-ul-action_icon" />
+                <StyledIcon icon="AccountBox" size={24} className="cui-ul-action_icon" />
               </StyledButton>
             </Link>
           </Tooltip>}
@@ -250,11 +250,11 @@ const UserAvatar: FC<IUserAvatarProps> = ({ avatarUrl: initialAvatarUrl, entityI
       <input type="file" accept=".png,.jpg,.webp" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} />
 
       <button className="w-[32px] h-[32px] flex justify-center items-center rounded-[32px] absolute top-[8px] right-[8px] opacity-[.5] bg-dark-primary">
-        <MaterialSymbol icon="edit" size={16} color="#fff" />
+        <StyledIcon icon="Edit" size={16} color="#fff" />
       </button>
 
       <button className={cn(`cui-ub-upload`, isDrag && 'cui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
-        <MaterialSymbol icon="backup" size={64} className="text-white" />
+        <StyledIcon icon="Backup" size={64} color="#fff" />
 
         <div className="flex flex-col items-center gap-[8px]">
           <StyledM text="завантажити" className="text-[24px] uppercase" bold />
@@ -363,11 +363,11 @@ const UserBanner: FC<IUserBannerProps> = ({ bannerUrl: initialBannerUrl, isEdit,
       <input type="file" accept=".png,.jpg,.webp" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} />
 
       <div className="w-[32px] h-[32px] flex justify-center items-center rounded-[32px] absolute top-[16px] right-[16px] opacity-[.5] bg-dark-primary">
-        <MaterialSymbol icon="edit" size={16} color="#fff" />
+        <StyledIcon icon="Edit" size={16} color="#fff" />
       </div>
 
       <button className={cn(`cui-ub-upload`, isDrag && 'cui-ub-upload--visible')} onClick={focusFileSelect} ref={fileSelectRef}>
-        <MaterialSymbol icon="backup" size={128} className="text-white max-xl:!text-[64px]" />
+        <StyledIcon icon="Backup" size={128} color="#fff" className="max-xl:w-[64px] max-xl:h-[64px]" />
 
         <div className="flex flex-col items-center gap-[8px]">
           <StyledM text="завантажити" className="text-[32px] uppercase" bold />

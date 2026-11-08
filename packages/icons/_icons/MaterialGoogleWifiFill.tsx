@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialGoogleWifiFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="m104-550 12-194q2-24 19-40t41-16h608q24 0 41 16t19 40l13 194zm94 390-11-30h-43q-26 0-43.5-19T85-254l15-236h760l15 236q2 26-15.5 45T816-190h-43l-11 30z" /></svg>;
+export default MaterialGoogleWifiFill;

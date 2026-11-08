@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialBatteryAndroidShield: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M130-240q-38 0-64-26t-26-64v-300q0-38 26-64t64-26h559l-189 60H130q-13 0-21.5 8.5T100-630v300q0 13 8.5 21.5T130-300h484q16 17 34 32.5t39 27.5zm-30-60v-360zm640 20q-77-28-128.5-119.5T560-600q34 0 77-19t103-61q60 42 103 61t77 19q0 109-51.5 200.5T740-280m0-66q45-25 76-80.5T857-550q-26-8-54.5-22.5T740-608z" /></svg>;
+export default MaterialBatteryAndroidShield;

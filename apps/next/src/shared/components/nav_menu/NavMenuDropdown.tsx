@@ -2,13 +2,14 @@
 
 import { FC } from 'react';
 import { MenuWrapper } from '@fullkekw/fkw-menu';
-import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import Routes from '~/routes';
 import StyledAvatar from '~/shared/components/styled/StyledAvatar';
 import { IUserState } from '~/shared/store/reducers/userSlice';
 import { cn } from '~/shared/utilities/classnames';
+
+import StyledIcon from '../styled/StyledIcon';
 
 
 
@@ -30,12 +31,14 @@ const NavMenuDropdown: FC<IProps> = ({ user, logout, className }) => {
     </Link>
 
     <Link href={`${Routes.user.path({ username: user.username })}#user-libs`} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-      <MaterialSymbol icon="folder_copy" size={24} className="text-white" />
+      <StyledIcon icon="FolderCopy" size={24} color="#fff" />
+
       <p className="text-white w-full ">Теки</p>
     </Link>
 
     <Link href={Routes.user_settings.path({ username: user.username })} className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light">
-      <MaterialSymbol icon="settings" size={24} className="text-white" />
+      <StyledIcon icon="Settings" size={24} color="#fff" />
+
       <p className="text-white w-full ">Налаштування</p>
     </Link>
 
@@ -43,7 +46,8 @@ const NavMenuDropdown: FC<IProps> = ({ user, logout, className }) => {
     <span className="w-full h-[1px] block bg-grey"></span>
 
     <button className="flex items-center gap-[16px] px-[16px] py-[8px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light" onClick={logout}>
-      <MaterialSymbol icon="logout" size={24} className="text-primary" />
+      <StyledIcon icon="Logout" size={24} color="#ff464e" />
+
       <p className="text-white text-center w-full font-bold ">Вийти</p>
     </button>
   </MenuWrapper>;

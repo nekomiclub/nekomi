@@ -261,14 +261,17 @@
     border-radius: inherit;
 
     &_icon {
-      font-size: 40cqw;
+      width: 40cqw;
+      height: 40cqw;
 
       @container (84px > width) {
-        font-size: 60cqw;
+        width: 60cqw;
+        height: 60cqw;
       }
 
       @container (width > 384px) {
-        font-size: 128px;
+        width: 128px;
+        height: 128px;
       }
     }
 

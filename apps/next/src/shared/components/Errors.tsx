@@ -45,7 +45,7 @@ export const ErrorNoConnection: FC<IErrorNoConnectionProps> = (props) => {
     </div>
 
     <Link href={conf.URL.telegramChat} target="_blank">
-      <StyledButton as="div" text="Повідомити про проблему" color="secondary" icon="emergency_home" />
+      <StyledButton as="div" text="Повідомити про проблему" color="secondary" iconLeading="EmergencyHome" />
     </Link>
   </div>;
 };
@@ -61,7 +61,7 @@ export const ErrorNotFound: FC = () => {
       <StyledM text={`Ми шукали всюди, але все ж не змогли знайти сторінку, яку ви шукаєте`} color="text-secondary" center />
     </div>
 
-    <StyledButton text="На головну" color="primary" icon="cottage" />
+    <StyledButton text="На головну" color="primary" iconLeading="Cottage" />
   </div>;
 };
 
@@ -83,10 +83,10 @@ export const ErrorWentWrong: FC<IErrorWentWrongProps> = (props) => {
     </div>
 
     <div className="flex items-center gap-2">
-      <StyledButton text="Спробувати ще раз" color="primary" icon="refresh" onClick={refreshPage} />
+      <StyledButton text="Спробувати ще раз" color="primary" iconLeading="Refresh" onClick={refreshPage} />
 
       <Link href={conf.URL.telegramChat} target="_blank">
-        <StyledButton as="div" text="Повідомити про помилку" color="secondary" icon="emergency_home" />
+        <StyledButton as="div" text="Повідомити про помилку" color="secondary" iconLeading="EmergencyHome" />
       </Link>
     </div>
 

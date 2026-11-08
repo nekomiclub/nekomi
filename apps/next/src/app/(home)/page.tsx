@@ -1,10 +1,10 @@
 import '~/styles/pages/home-page.scss';
 
-import { MaterialSymbol } from 'material-symbols-rc';
 import Link from 'next/link';
 
 import conf from '~/conf';
 import { IcoNekomiLogoWhite } from '~/shared/components/Icons';
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import API from '~/shared/lib/api';
 import { HandleServerNormalizedError } from '~/shared/utilities/handle-normalized-errors';
 import siteMetadata from '~/shared/utilities/site-metadata';
@@ -37,12 +37,12 @@ export default async function HomePageRSC() {
 
     {/* Hot category */}
     {/* <div className="wrapper gap-[32px]">
-      <HomeCategory label="Популярні" icon={<MaterialSymbol icon="star" size={32} fill className="text-[#FF464E]" />} animes={feed.hot} />
+      <HomeCategory label="Популярні" icon={<StyledIcon icon="Star" size={32} color="#FF464E" className="max-md:w-[24x] max-md:h-[24px]" />} animes={feed.hot} />
     </div> */}
 
     {/* Updated recently */}
     <div className="wrapper gap-[32px]">
-      {feed.updated_recently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<MaterialSymbol icon="schedule" size={32} className="text-white max-md:!text-[24px]" />} animes={feed.updated_recently} />}
+      {feed.updated_recently.length > 0 && <HomeCategory label="Оновлено нещодавно" icon={<StyledIcon icon="Schedule" size={32} color="#fff" className="max-md:w-[24x] max-md:h-[24px]" />} animes={feed.updated_recently} />}
     </div>
 
     {/* Telegram advertisment */}
@@ -56,7 +56,7 @@ export default async function HomePageRSC() {
 
         <div className="flex flex-col gap-[8px] w-fit max-[650px]:w-full">
           <Link href={conf.URL.telegram} target="_blank" className="px-[16px] py-[16px] rounded-[2px] bg-dark-medium border border-dark-light flex items-center justify-center gap-[16px] duration-200 hover:bg-dark-light focus-visible:bg-dark-light active:scale-[.95]">
-            <MaterialSymbol icon="ungroup" size={24} className="text-white" />
+            <StyledIcon icon="Ungroup" size={24} color="#fff" />
             <p className="text-white text-[24px] uppercase max-[650px]:text-[16px] ">підписатися</p>
           </Link>
         </div>
@@ -65,7 +65,7 @@ export default async function HomePageRSC() {
 
     {/* Hight rate */}
     <div className="wrapper gap-[32px]">
-      {feed.highest_rate.length > 0 && <HomeCategory label="З високою оцінкою" icon={<MaterialSymbol icon="star_half" size={32} className="text-white max-md:!text-[24px]" />} animes={feed.highest_rate} />}
+      {feed.highest_rate.length > 0 && <HomeCategory label="З високою оцінкою" icon={<StyledIcon icon="StarHalf" size={32} color="#fff" className="max-md:w-[24x] max-md:h-[24px]" />} animes={feed.highest_rate} />}
     </div>
   </main>;
 }

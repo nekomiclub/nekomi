@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialLightGroup2Fill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="m78-80 164-406v-128H43l152-266h153l152 266H301v128L464-80h-64l-99-245v245h-60v-243L142-80zm608-164q-51 0-90-31.5T544-357h-95q0-58 28-109t76-86q5-42 33-74.5t70-42.5v-211h60v211q42 10 69.5 42.5T818-552q48 35 76.5 85.5T923-357h-97q-13 50-51 81.5T686-244m0-60q25 0 45-15t31-38H610q11 23 31 38t45 15" /></svg>;
+export default MaterialLightGroup2Fill;

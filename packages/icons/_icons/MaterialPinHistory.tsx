@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialPinHistory: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M563-434 450-546v-170h60v145l95 95zM160-556h59q1 38 12 73.5t32 66.5q31 46 71 84t78 80q19 20 35.5 42t31.5 45q14-23 30-44.5t36-42.5q38-40 78.5-78t72.5-85q21-32 32.5-68.5T740-559q1-109-75.5-185T479-820q-62 0-116.5 27T272-716h72v60H160v-184h60v95q45-64 113-99.5T479-880q134 0 227.5 93.5T800-559q0 48-14 93t-40 84q-36 54-83 98t-89 92q-16 19-29.5 38T520-114l-7 14q-5 10-14 15t-19 5q-11 0-20-5.5T446-100l-7-14q-11-21-24-40.5T386-192q-42-50-90-92.5T213-382q-27-38-40-82t-13-92" /></svg>;
+export default MaterialPinHistory;

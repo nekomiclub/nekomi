@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialUsbFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M428-100q-20-20-20-52 0-22 11-40t31-29v-111H302q-24 0-42-18t-18-42v-109q-20-9-31-26.61t-11-40.11Q200-600 220-620t52-20 52 20 20 52.41q0 22.59-11 40.09T302-501v109h148v-340h-80l110-149 110 149h-80v340h148v-104h-42v-144h144v144h-42v104q0 24-18 42t-42 18H510v111q19.95 10.65 30.97 29.83Q552-172 552-152q0 32-20 52t-52 20-52-20" /></svg>;
+export default MaterialUsbFill;

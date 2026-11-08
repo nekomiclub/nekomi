@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialVillaFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M370-120v-360h350q0-24.75 17.68-42.38Q755.35-540 780.18-540q24.82 0 42.32 17.62Q840-504.75 840-480v360H635v-170h-60v170zm-250 0v-522l515-198v300H310v420z" /></svg>;
+export default MaterialVillaFill;

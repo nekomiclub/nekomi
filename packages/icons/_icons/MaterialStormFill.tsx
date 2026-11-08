@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialStormFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M747-80q26-69 34.5-141t.5-145q-33 95-115.5 151.5T483-158q-85 0-154-40.5T212-306t-74-154.5T112-641q0-61 8.5-121.5T151-880h62q-25 69-33 141t-2 144q34-96 118-151.5T483-802q85 0 152.5 40.5t115 108 72.5 154T848-320q0 62-8.5 122.5T809-80zM589.5-373.5Q633-417 633-480t-43.5-106.5T483-630t-106.5 43.5T333-480t43.5 106.5T483-330t106.5-43.5M419-416q-26-26-26-64t26-64 64-26 64 26 26 64-26 64-64 26-64-26" /></svg>;
+export default MaterialStormFill;

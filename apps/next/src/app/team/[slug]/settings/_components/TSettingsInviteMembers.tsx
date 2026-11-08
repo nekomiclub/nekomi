@@ -2,9 +2,9 @@
 
 import { FC, useEffect, useState } from 'react';
 import { Menu, MenuTrigger, MenuWrapper } from '@fullkekw/fkw-menu';
-import { MaterialSymbol } from 'material-symbols-rc';
 import { useDebounce } from 'use-debounce';
 
+import StyledIcon from '~/shared/components/styled/StyledIcon';
 import { UIField, UIFieldState } from '~/shared/components/UI/Input';
 import { TTeam } from '~/shared/lib/api/api-types';
 
@@ -88,12 +88,14 @@ const TSettingsInviteMembers: FC<IProps> = (props) => {
           })} */}
         </> : <div className="px-[12px] py-[8px]">
           {isNotFound && <div className="flex items-center gap-[16px]">
-            <MaterialSymbol icon="indeterminate_question_box" size={16} className="text-info-warn" />
+            <StyledIcon icon="IndeterminateQuestionBox" size={16} color="#f39c12 " />
+
             <p className="text-info-warn  max-md:text-[14px]">Ми не змогли знайти користувача за цим запитом</p>
           </div>}
 
           {isWaiting && <div className="flex items-center gap-[16px]">
-            <MaterialSymbol icon="alternate_email" size={16} className="text-grey-new" />
+            <StyledIcon icon="AlternateEmail" size={16} color="#555555" />
+
             <p className="text-grey-new  max-md:text-[14px]">Кого шукаємо?</p>
           </div>}
         </div>}

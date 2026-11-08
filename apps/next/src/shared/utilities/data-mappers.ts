@@ -1,4 +1,4 @@
-import { MaterialSymbolIconType } from 'material-symbols-rc';
+import TMaterialSymbolName from '@nekomi/icons/types';
 
 import { TEAM_ROLE_ENUM, USER_LIB_TYPE_ENUM } from '~/shared/lib/api/api-types';
 
@@ -18,7 +18,7 @@ interface ParseUserLibUIProps {
   type: keyof typeof USER_LIB_TYPE_ENUM
 
   setTitle(val: string): void
-  setIcon(icon: MaterialSymbolIconType): void
+  setIcon(icon: TMaterialSymbolName): void
 }
 
 
@@ -26,11 +26,11 @@ interface ParseUserLibUIProps {
 export function parseUserLibUI({ type, setIcon, setTitle }: ParseUserLibUIProps) {
   setTitle(parseLibTitle(type));
 
-  if (type === USER_LIB_TYPE_ENUM.favorite) setIcon('favorite');
-  if (type === USER_LIB_TYPE_ENUM.watching) setIcon('visibility');
-  if (type === USER_LIB_TYPE_ENUM.watched) setIcon('bookmark_added');
-  if (type === USER_LIB_TYPE_ENUM.plans) setIcon('stack');
-  if (type === USER_LIB_TYPE_ENUM.delayed) setIcon('auto_delete');
+  if (type === USER_LIB_TYPE_ENUM.favorite) setIcon('Favorite');
+  if (type === USER_LIB_TYPE_ENUM.watching) setIcon('Visibility');
+  if (type === USER_LIB_TYPE_ENUM.watched) setIcon('BookmarkAdded');
+  if (type === USER_LIB_TYPE_ENUM.plans) setIcon('Stack');
+  if (type === USER_LIB_TYPE_ENUM.delayed) setIcon('AutoDelete');
 }
 
 export function parseLibTitle(type: keyof typeof USER_LIB_TYPE_ENUM): string {

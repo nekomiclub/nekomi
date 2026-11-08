@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialPaymentArrowDownFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M480.24-530Q522-530 551-559.24q29-29.23 29-71Q580-672 550.76-701q-29.23-29-71-29Q438-730 409-700.76q-29 29.23-29 71Q380-588 409.24-559q29.23 29 71 29M180-380q-24.75 0-42.37-17.63Q120-415.25 120-440v-380q0-24.75 17.63-42.38Q155.25-880 180-880h600q24.75 0 42.38 17.62Q840-844.75 840-820v380q0 24.75-17.62 42.37Q804.75-380 780-380zM480-80l126-126-42-42-54 54v-126h-60v126l-54-54-42 42zM180-540v100h100q0-42-29-71t-71-29m500 100h100v-100q-42 0-71 29t-29 71m100-280v-100H680q0 42 29 71t71 29M280-820H180v100q42 0 71-29t29-71" /></svg>;
+export default MaterialPaymentArrowDownFill;

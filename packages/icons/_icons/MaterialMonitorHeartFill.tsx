@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialMonitorHeartFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M140-160q-24 0-42-18t-18-42v-230h221l72 144q4 8 11.5 12t15.5 4 15.5-4 11.5-12l133-266 53 106q4 8 11.5 12t15.5 4h240v230q0 24-18 42t-42 18zM80-510v-230q0-24 18-42t42-18h680q24 0 42 18t18 42v230H659l-72-143q-4-8-11.5-11.5T560-668t-15.5 3.5T533-653L400-388l-53-106q-4-8-11.5-12t-15.5-4z" /></svg>;
+export default MaterialMonitorHeartFill;

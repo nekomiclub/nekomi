@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialTitlecase: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M354-260v-396H224v-44h308v44H402v396zm344 10q-35 0-59-25.5T615-336v-202h-55v-38h55v-87h44v87h75v38h-75v189q0 23 12.65 41 12.66 18 34.35 18 7.3 0 15-1.35 7.7-1.34 15-3.65v40q-9 2-18.5 3.5T698-250" /></svg>;
+export default MaterialTitlecase;
