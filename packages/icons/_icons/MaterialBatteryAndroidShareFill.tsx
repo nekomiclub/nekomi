@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialBatteryAndroidShareFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M130-240q-38 0-64-26t-26-64v-300q0-38 26-64t64-26h642L619-570h-29q-48 0-84 36t-36 84v210zm630-94-43-43 74-73H590v120h-60v-120q0-24 18-42t42-18h201l-73-74 42-42 146 146z" /></svg>;
+export default MaterialBatteryAndroidShareFill;

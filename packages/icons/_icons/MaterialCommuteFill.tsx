@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialCommuteFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M413-182v-227l57-168q2-7 8-12t17-5h303q11 0 16.5 4.5T823-577l57 168v227q0 9-6.5 15.5T858-160h-22q-9 0-15.5-6.5T814-182v-45H479v45q0 9-6.5 15.5T457-160h-22q-9 0-15.5-6.5T413-182m53-257h361l-38-115H504zm54 146q17 0 28-11t11-28-11-28-28-11-28 11-11 28 11 28 28 11m253 0q17 0 28-11t11-28-11-28-28-11-28 11-11 28 11 28 28 11M164-160v-21l57-57q-57 0-99-34.5T80-361v-328q0-66 52-88.5T338-800q143 0 200.5 24.5T596-689v65h-60v-77H140v269h243v272zm55-173q11-11 11-28t-11-28-28-11-28 11-11 28 11 28 28 11 28-11" /></svg>;
+export default MaterialCommuteFill;

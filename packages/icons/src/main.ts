@@ -8,7 +8,7 @@ import componentTemplate from './component-template';
 
 
 const SRC = 'node_modules/@material-symbols/svg-400/outlined';
-const OUT = 'dist';
+const OUT = '_icons';
 
 
 

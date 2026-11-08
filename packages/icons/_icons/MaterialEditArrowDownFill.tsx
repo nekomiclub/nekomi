@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialEditArrowDownFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M792-160 663-289l42-42 56 56v-525h60v526l57-57 42 42zm-672-84v-154l309-310q18-18 43-18t42 18l68 69q17 17 17 42t-17 42L273-244zm351-283 59-61-67-67-60 59z" /></svg>;
+export default MaterialEditArrowDownFill;

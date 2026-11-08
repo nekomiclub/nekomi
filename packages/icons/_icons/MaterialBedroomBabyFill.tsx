@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialBedroomBabyFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M482-219q84 0 162.5-32T780-340l-45-40q-9 9-23 19.5T685-343l-41-76v-103h48v-34H451l-77-132H247l35 25-69 73 34 35 69-48v184l-40 76q-13-7-27.5-17.5T225-380l-45 40q57 57 138 89t164 32m0-59q-40 0-82-10.5T316-318l46-76q31 12 60 18t58 6 58-6 60-18l46 76q-42 18-81.5 29T482-278M140-80q-24 0-42-18t-18-42v-680q0-24 18-42t42-18h680q24 0 42 18t18 42v680q0 24-18 42t-42 18z" /></svg>;
+export default MaterialBedroomBabyFill;

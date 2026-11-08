@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialFindReplace: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M164-572q17-100 95.5-164T440-800q65 0 121.5 30t98.5 81v-111h60v228H492v-60h134q-32-48-80.5-78T440-740q-77 0-137.5 46.5T225-572zm633 452L613-304q-37 31-81 47t-92 16q-65 0-122.5-27T220-346v106h-60v-228h228v60H249q33 48 83 77.5T440-301q75 0 133.5-47T651-468h61q-5 34-19.5 64.5T656-347l184 184z" /></svg>;
+export default MaterialFindReplace;

@@ -2,11 +2,11 @@
   "name": "@nekomi/icons",
   "private": true,
   "exports": {
-    "./types": "./dist/index.d.ts",
-    "./*.js": "./dist/*.tsx"
+    "./types": "./_icons/index.d.ts",
+    "./*.js": "./_icons/*.tsx"
   },
   "scripts": {
-    "build": "tsx src/main.ts"
+    "build:icons": "tsx src/main.ts"
   },
   "dependencies": {
     "@material-symbols/svg-400": "^0.48.3"

@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialFireCheck: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M662-80 532-210l42-43 88 88 175-175 43 42zM477-180l56 56q-13 2-26 3t-27 1q-134 0-227-93t-93-227q0-128 86-246.5T480-880v132q0 34 23.5 57t57.5 23q18 0 33.5-7.5T622-698l18-22q74 42 117 117t43 163h-60q0-27-6-53.5t-17-52-28-49.5-38-45q-21 15-44 23.5t-46 8.5q-61 0-101-41.5T420-754v-20q-92 66-146 156.5T220-440q0 108 75 183t182 77" /></svg>;
+export default MaterialFireCheck;

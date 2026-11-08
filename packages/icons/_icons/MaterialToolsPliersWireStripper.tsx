@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialToolsPliersWireStripper: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M281-42q-17-37-25.5-91.5T246-252q0-88 18.5-154.5T320-520v-200l120-200h80l120 200v200q38 47 56 112.5T714-257q0 62-9 118.5T679-42q-35-14-57.5-47T598-160q-1-28 7.5-57.5T614-287q0-58-31-116.5T480-500q-71 38-102.5 96.5T346-286q0 38 8.5 68t8.5 57q0 39-23.5 73.5T281-42m170.5-609.5Q440-663 440-680q0-11 5.5-20t14.5-14v-123l-80 133v124h200v-124l-80-133v123q10 5 15 14t5 20q0 17-11.5 28.5T480-640t-28.5-11.5M500-837h-40zm-40 0h40z" /></svg>;
+export default MaterialToolsPliersWireStripper;

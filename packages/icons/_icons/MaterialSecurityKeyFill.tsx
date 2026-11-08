@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialSecurityKeyFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M384-40q-24 0-42-18t-18-42v-145h-24q-24 0-42-18t-18-42v-555q0-24 18-42t42-18h360q24 0 42 18t18 42v555q0 24-18 42t-42 18h-24v145q0 24-18 42t-42 18zm96-429q47.5 0 80.75-33.25T594-583t-33.25-80.75T480-697t-80.75 33.25T366-583t33.25 80.75T480-469m-96 369h192v-145H384zm95.96-429q-22.96 0-38.46-15.54-15.5-15.53-15.5-38.5 0-22.96 15.54-38.46 15.53-15.5 38.5-15.5 22.96 0 38.46 15.54 15.5 15.53 15.5 38.5 0 22.96-15.54 38.46-15.53 15.5-38.5 15.5" /></svg>;
+export default MaterialSecurityKeyFill;

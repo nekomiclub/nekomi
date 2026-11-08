@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialMonitorWeight: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M480.5-489q50.5 0 84-33.5t33.5-84-33.5-84.5-84-34-84.5 34-34 84.5 34 84 84.5 33.5M403-593q-6-6-6-14t6-14 14-6 14 6 6 14-6 14-14 6-14-6m63 0q-6-6-6-14t6-14 14-6 14 6 6 14-6 14-14 6-14-6m63 0q-6-6-6-14t6-14 14-6 14 6 6 14-6 14-14 6-14-6M180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18zm0-60h600v-600H180zm0-600v600z" /></svg>;
+export default MaterialMonitorWeight;

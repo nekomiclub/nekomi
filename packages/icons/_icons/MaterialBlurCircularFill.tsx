@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialBlurCircularFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M425-535q11-11 11-28t-11-28-28-11-28 11-11 28 11 28 28 11 28-11m0 167q11-11 11-28t-11-28-28-11-28 11-11 28 11 28 28 11 28-11M285-546q7-7 7-17t-7-17-17-7-17 7-7 17 7 17 17 7 17-7m112 303q9 0 16.5-7t7.5-17-7.5-17-16.5-7q-10 0-17 7t-7 17 7 17 17 7M285-379q7-7 7-17t-7-17-17-7-17 7-7 17 7 17 17 7 17-7m129-296q7-7 7-17t-7-17-17-7-17 7-7 17 7 17 17 7 17-7m178 140q11-11 11-28t-11-28-28-11-28 11-11 28 11 28 28 11 28-11m-11-140q7-7 7-17t-7-17-17-7-17 7-7 17 7 17 17 7 17-7m129 296q7-7 7-17t-7-17-17-7-17 7-7 17 7 17 17 7 17-7m0-167q7-7 7-17t-7-17-17-7-17 7-7 17 7 17 17 7 17-7M324-111.5Q251-143 197-197t-85.5-127T80-480t31.5-156T197-763t127-85.5T480-880t156 31.5T763-763t85.5 127T880-480t-31.5 156T763-197t-127 85.5T480-80t-156-31.5M581-250q7-7 7-17t-7-17-17-7-17 7-7 17 7 17 17 7 17-7m11-118q11-11 11-28t-11-28-28-11-28 11-11 28 11 28 28 11 28-11" /></svg>;
+export default MaterialBlurCircularFill;

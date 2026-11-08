@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialLips: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M473-247h16q126 0 208-67.5T844-488q-65 23-161.5 47T481-417t-202-25-162-47q65 108 147 175t209 67m0 47q-149 0-267.5-92.5T39-527l222-212q13-12 29-18t33-6q13 0 26 3t24 11l108 71 108-70q11-7 23.5-11t25.5-4q17 0 32.5 6t27.5 17l221 197q-45 154-163 248.5T489-200zm9-264q105 0 202-27t153-48L660-708q-5-4-9.5-6t-10.5-2q-4 0-8 1t-8 3l-142 88-143-88q-4-2-8-3t-8-1q-6 0-11 2t-10 6L126-539q56 22 153 48.5T482-464" /></svg>;
+export default MaterialLips;

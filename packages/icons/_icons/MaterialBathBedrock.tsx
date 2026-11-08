@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialBathBedrock: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M360-240v-280h368q63 0 107 44t44 107v129zm60-220v160zM80-120v-60h800v60zm35-155q-35-35-35-85t35-85 85-35 85 35 35 85-35 85-85 35-85-35m127.5-42.5Q260-335 260-360t-17.5-42.5T200-420t-42.5 17.5T140-360t17.5 42.5T200-300t42.5-17.5M420-300h399v-69q0-38-26.5-64.5T728-460H420zM319-600q1-8 1.5-15t.5-14q0-25-8.5-47.5T284-727q-23-33-33-60.5T241-847q0-8 .5-16t1.5-17h57q-1 7-1 13.5v12.5q0 26 8 48t28 50q23 32 33 59.5t10 59.5v18q0 9-2 19zm170 0q1-8 1.5-15t.5-14q0-25-8.5-47.5T454-727q-23-33-33-60.5T411-847q0-8 1-16t2-17h57q-1 7-1.5 13.5T469-854q0 26 8 48t28 50q23 32 33 59.5t10 59.5v18q0 9-2 19zm170 0q1-8 1.5-15t.5-14q0-25-8.5-47.5T624-727q-23-33-33-60.5T581-847q0-8 1-16t2-17h57q-1 7-1.5 13.5T639-854q0 26 8 48t28 50q23 32 33 59.5t10 59.5v18q0 9-2 19z" /></svg>;
+export default MaterialBathBedrock;

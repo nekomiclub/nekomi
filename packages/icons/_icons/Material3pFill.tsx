@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const Material3pFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M320-400h320v-19q0-42-42.5-65T480-507t-117.5 23-42.5 65zm212.5-194.5Q554-616 554-647t-21.5-52.5T480-721t-52.5 21.5T406-647t21.5 52.5T480-573t52.5-21.5M80-80v-740q0-24 18-42t42-18h680q24 0 42 18t18 42v520q0 24-18 42t-42 18H240z" /></svg>;
+export default Material3pFill;

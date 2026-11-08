@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialWatchButtonFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="m177-40-50-31q55-94 64-197t9-212q0-108-9-211t-64-197l50-32q17 29 29.5 59t21.5 61h85q64 0 109 47t45 114v317q0 68-45 115t-109 47h-85q-9 31-21.5 61T177-40m551-284L578-480l150-155 42 42-77 83h189v60H693l77 83z" /></svg>;
+export default MaterialWatchButtonFill;

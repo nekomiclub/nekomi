@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialDewPointFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M584.5-544.5Q570-559 570-580q0-13 4.5-24t12-21.5 16.5-20 17-19.5q8 10 17 19.5t16.5 20 12 21.5 4.5 24q0 21-14.5 35.5T620-530t-35.5-14.5m170-132Q740-691 740-712q0-13 4.5-24t12-21.5 16.5-20 17-19.5q8 10 17 19.5t16.5 20 12 21.5 4.5 24q0 21-14.5 35.5T790-662t-35.5-14.5m0 262Q740-429 740-450q0-13 4.5-24t12-21.5 16.5-20 17-19.5q8 10 17 19.5t16.5 20 12 21.5 4.5 24q0 21-14.5 35.5T790-400t-35.5-14.5M207-174q-53-53-53-129 0-48 24-90.5t66-68.5v-286q0-38 27-65t65-27 65 27 27 65v286q42 26 66 68.5t24 90.5q0 76-53 129t-129 53-129-53m7-129h244q0-40-19-71.5T388-420l-20-9v-319q0-14-9-23t-23-9-23 9-9 23v319l-20 9q-32 14-51 46t-19 71" /></svg>;
+export default MaterialDewPointFill;

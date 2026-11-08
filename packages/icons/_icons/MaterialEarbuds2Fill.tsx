@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialEarbuds2Fill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M707-40q-21 0-35.5-15T657-91v-379h212q20 0 35.5 15t15.5 35v124q0 22.1-14.87 36.55Q890.25-245 869-245h-29v154q0 22.1-14.87 36.55Q810.25-40 789-40zM486-204q-65.1 0-111.05-43.97Q329-291.95 329-356.95q0-64.05 45.95-108.55T486-510h71v306zM171-450q-22.1 0-36.55-14.45T120-501v-154H91q-22.1 0-36.55-14.45T40-706v-124q0-20 15-35t36-15h212v379q0 21-15 36t-35 15zm232-164v-306h71q64.14 0 110.57 44.46T631-767.02Q631-702 584.57-658T474-614z" /></svg>;
+export default MaterialEarbuds2Fill;

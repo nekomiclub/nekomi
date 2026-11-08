@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialMoveFill: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M428-284q-5-4-7-10-14-42-34-70t-40-54-33.5-54-13.5-68q0-58 41-99t99-41 99 41 41 99q0 40-13.5 68T533-418t-40 54-34 70q-2 6-7 10t-12 4-12-4m47.5-220.5Q490-519 490-540t-14.5-35.5T440-590t-35.5 14.5T390-540t14.5 35.5T440-490t35.5-14.5M443-116q-152 0-258-106T79-480q0-76 28.5-142t78-115.5 115.5-78T443-844t142 28.5 115.5 78 78 115.5T807-480v18l70-70 42 42-142 142-142-142 42-42 70 70v-18q0-125-89.5-214.5T443-784t-214.5 89.5T139-480t89.5 214.5T443-176q57 0 110.5-21.5T647-256l43 43q-48 45-113 71t-134 26" /></svg>;
+export default MaterialMoveFill;

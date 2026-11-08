@@ -1,0 +1,13 @@
+import React from 'react';
+import type { SVGProps, FC } from 'react';
+interface Props extends SVGProps<SVGSVGElement> {
+  color?: string;
+  size?: number;
+}
+const MaterialMatchCaseOff: FC<Props> = ({
+  size = 24,
+  color = 'currentColor',
+  className,
+  ...props
+}) => <svg viewBox="0 -960 960 960" width={size} height={size} fill={color} className={className} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="m150-260 121-331L57-805l43-43L849-99l-43 43-324-324 44 120h-52l-43-121H244l-43 121zm156-296-46 131h155l-12-34zm418 247q18-14 30-36t12-49q-16-8-38-13t-43-5q-16 0-29 3t-24 8l-31-31q16-9 35-13.5t42-4.5q26 0 48.5 4.5T765-433v-18q0-38-20.5-58.5T685-530q-23 0-43 8t-37 25l-31-28q24-23 50-34t61-11q62 0 93.5 31t31.5 93v186h-37z" /></svg>;
+export default MaterialMatchCaseOff;
